@@ -4,7 +4,7 @@ use omastudio_engine::pipeline::{
 };
 use omastudio_engine::raw::RawImage;
 use omastudio_engine::recipe::Recipe;
-use std::path::Path;
+use std::path::PathBuf;
 
 #[test]
 fn test_16bit_pipeline_precision_and_dynamic_range() {
@@ -65,13 +65,14 @@ fn test_16bit_pipeline_precision_and_dynamic_range() {
 
 #[test]
 fn test_real_raw_16bit_loading_and_tiff_export() {
-    let sample_raw = Path::new("/home/ozdil/Downloads/yurt/_DSF2246.RAF");
+    let home = std::env::var("HOME").unwrap_or_else(|_| ".".to_string());
+    let sample_raw = PathBuf::from(home).join("Downloads/yurt/_DSF2246.RAF");
     if !sample_raw.exists() {
         eprintln!("Sample RAW not present on system, skipping real RAW integration test");
         return;
     }
 
-    let raw = RawImage::open(sample_raw).expect("Should open sample Fujifilm RAW");
+    let raw = RawImage::open(&sample_raw).expect("Should open sample Fujifilm RAW");
     let preview16 = raw.process_preview_16(true).expect("Should process 16-bit preview");
     assert_eq!(preview16.bits_per_sample, 16);
     assert!(preview16.width > 0);

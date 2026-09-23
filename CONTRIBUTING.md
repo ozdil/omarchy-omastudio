@@ -118,4 +118,4 @@ Bu belge, Omarchy Linux ekosistemi için geliştirilen tüm yerel uygulamalarda,
      ```
    - Lisans bölümünden önce resmi `Support & Sponsorship` başlığı ve buton görseli (`https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png`) yer almalıdır.
 3. **Masaüstü ve Web Arayüzü Buton Standartları**:
-   - QML / Quickshell panellerinde veya web arayüzlerinde geliştiriciye destek butonu (`☕`) yer almalı; `#FFDD00` altın sarısı vurgu rengiyle `Qt.openUrlExternally("https://buymeacoffee.com/ozdil")` tetiklenmelidir.
+   - QML / Quickshell panellerinde veya web arayüzlerinde geliştiriciye destek butonu yer almalı; `#FFDD00` altın sarısı vurgu rengiyle `Qt.openUrlExternally("https://buymeacoffee.com/ozdil")` tetiklenmelidir.

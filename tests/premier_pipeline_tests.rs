@@ -1,7 +1,7 @@
 use omastudio_engine::pipeline::{process_buffer_16_to_8, process_buffer_16_to_16};
 use omastudio_engine::raw::RawImage;
 use omastudio_engine::recipe::Recipe;
-use std::path::Path;
+use std::path::PathBuf;
 
 #[test]
 fn test_presence_clarity_midtone_isolation() {
@@ -170,13 +170,14 @@ fn test_detail_sharpness_and_chroma_denoise() {
 
 #[test]
 fn test_real_medium_format_raw_full_pipeline_benchmark() {
-    let sample_path = Path::new("/home/ozdil/Downloads/yurt/_DSF2254.RAF");
+    let home = std::env::var("HOME").unwrap_or_else(|_| ".".to_string());
+    let sample_path = PathBuf::from(home).join("Downloads/yurt/_DSF2254.RAF");
     if !sample_path.exists() {
         eprintln!("Sample RAW not present on system, skipping benchmark");
         return;
     }
 
-    let raw = RawImage::open(sample_path).expect("Should open RAF");
+    let raw = RawImage::open(&sample_path).expect("Should open RAF");
     let preview16 = raw.process_preview_16(true).expect("Should process 16-bit preview");
     let u16_slice = preview16.as_slice_u16();
 
