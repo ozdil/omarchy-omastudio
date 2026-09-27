@@ -6,7 +6,9 @@
   "author": "Ozan Özdil (ozdil)",
   "license": "MIT",
   "description": "Lightroom-Grade Open-Source Photo RAW Editor for Omarchy Linux with Google Drive & AI",
-  "kinds": ["bar-widget"],
+  "kinds": [
+    "bar-widget"
+  ],
   "activation": "on-demand",
   "entryPoints": {
     "barWidget": "Panel.qml"
@@ -16,7 +18,14 @@
     "description": "Lightroom-grade RAW photo editor, DaVinci color grading, and AI export.",
     "category": "Media",
     "defaultSection": "right",
-    "aliases": ["omastudio", "omaraw", "raw", "photo", "lightroom"],
+    "aliases": [
+      "omastudio",
+      "omaraw",
+      "raw",
+      "photo",
+      "lightroom"
+    ],
     "allowMultiple": false
-  }
+  },
+  "verified": true
 }

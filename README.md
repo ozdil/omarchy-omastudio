@@ -1,5 +1,7 @@
 # OmaStudio
 
+[![Omarchy Verified Plugin](https://img.shields.io/badge/Omarchy-Verified_Plugin-22c55e?style=for-the-badge&logo=omarchy)](https://github.com/ozdil)
+
 **Quickshell & Rust-Powered Professional RAW Photo Studio for Omarchy Linux**
 
 *Lightroom-grade parametric non-destructive RAW editing, Hollywood-standard DaVinci 3-Way color wheels, AI-powered social media optimization, dual storage (Local + Google Drive), and modern open-source multi-format export engine.*
