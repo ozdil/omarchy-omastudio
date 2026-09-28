@@ -2,6 +2,12 @@ use crate::raw::RawMetadata;
 use crate::recipe::Recipe;
 use serde::{Deserialize, Serialize};
 
+pub mod jev;
+pub use jev::{
+    ai_classify_scene_with_jev, apply_jev_decisions_to_recipe, extract_photographic_state,
+    JevClient, JevConfig, JevDecisions, JevStateInput,
+};
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SceneAnalysis {
     pub scene_type: String,
@@ -122,6 +128,18 @@ pub fn ai_auto_enhance(
         let iso_factor = ((meta.iso - 1600.0) / 4800.0).clamp(0.0, 1.0);
         recipe.denoise_lum = 20.0 + (iso_factor * 30.0);
         recipe.denoise_col = 25.0 + (iso_factor * 25.0);
+
+        // JEV-PHOTO-04: High-ISO shadow lift ceiling prevents amplified sensor chroma noise
+        if meta.iso >= 3200.0 {
+            recipe.shadows = recipe.shadows.min(25.0);
+            recipe.denoise_col = (recipe.denoise_col + 15.0).min(80.0);
+            recipe.contrast_pivot = 0.38; // Deeper analog contrast anchor
+        }
+    }
+
+    // Optical aperture awareness: wide open apertures get subtle vignette correction
+    if meta.aperture > 0.0 && meta.aperture <= 2.0 {
+        recipe.vignette = 15.0; // Counteract natural optical vignetting
     }
 
     recipe.preset_name = Some("AI Auto Enhanced".to_string());

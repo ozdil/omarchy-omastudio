@@ -64,8 +64,8 @@ ColumnLayout {
         Layout.fillWidth: true
         implicitHeight: 38
         radius: Theme.radiusSm
-        color: Qt.rgba(Theme.accentPurple.r, Theme.accentPurple.g, Theme.accentPurple.b, 0.2)
-        border.color: Theme.accentPurple
+        color: Qt.rgba(Theme.accent.r, Theme.accent.g, Theme.accent.b, 0.15)
+        border.color: Theme.accent
         border.width: 1
 
         RowLayout {
@@ -77,7 +77,7 @@ ColumnLayout {
                 text: Theme.iconAi
                 font.family: Theme.iconFont
                 font.pixelSize: 12
-                color: Theme.accentPurple
+                color: Theme.accent
             }
 
             ColumnLayout {
@@ -94,7 +94,7 @@ ColumnLayout {
                     text: "Auto Exposure, Dynamic Range & WB"
                     textFormat: Text.PlainText
                     font.pixelSize: 9
-                    color: Theme.accentPurple
+                    color: Theme.textMuted
                 }
             }
 
@@ -103,7 +103,7 @@ ColumnLayout {
                 textFormat: Text.PlainText
                 font.pixelSize: 10
                 font.weight: Font.Bold
-                color: Theme.accentPurple
+                color: Theme.accent
             }
         }
 
@@ -125,11 +125,11 @@ ColumnLayout {
         columnSpacing: 6
 
         property var presets: [
-            { name: "Fuji Classic Chrome", sub: "Documentary Muted", col: Theme.accent },
-            { name: "Fuji Velvia 50", sub: "Vivid Landscapes", col: Theme.accentGreen },
-            { name: "Kodak Portra 400", sub: "Warm Skin Tones", col: Theme.accentOrange },
-            { name: "Leica Monochrom HC", sub: "High Contrast B&W", col: Theme.textMain },
-            { name: "Cinematic Teal & Orange", sub: "Film Grade", col: Theme.accentCyan }
+            { name: "Fuji Classic Chrome", sub: "Documentary Muted" },
+            { name: "Fuji Velvia 50", sub: "Vivid Landscapes" },
+            { name: "Kodak Portra 400", sub: "Warm Skin Tones" },
+            { name: "Leica Monochrom HC", sub: "High Contrast B&W" },
+            { name: "Cinematic Teal & Orange", sub: "Film Grade" }
         ]
 
         Repeater {
@@ -138,8 +138,8 @@ ColumnLayout {
                 Layout.fillWidth: true
                 implicitHeight: 38
                 radius: Theme.radiusSm
-                color: root.activePreset === modelData.name ? Qt.rgba(modelData.col.r, modelData.col.g, modelData.col.b, 0.25) : Theme.bgCard
-                border.color: root.activePreset === modelData.name ? modelData.col : Theme.border
+                color: root.activePreset === modelData.name ? Qt.rgba(Theme.accent.r, Theme.accent.g, Theme.accent.b, 0.22) : (presetMouse.containsMouse ? Theme.bgCardHover : Theme.bgCard)
+                border.color: root.activePreset === modelData.name ? Theme.accent : (presetMouse.containsMouse ? Theme.borderLight : Theme.border)
                 border.width: 1
 
                 ColumnLayout {

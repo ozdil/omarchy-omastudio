@@ -128,12 +128,14 @@ unsigned char* omaraw_process_image(void *handle, int half_size, int quality, in
     if (out_colors) *out_colors = img->colors;
     if (out_size) *out_size = img->data_size;
 
-    // Allocate continuous buffer to return to Rust
+    // Allocate continuous buffer to return to Rust with fail-closed safety
     unsigned char *buf = (unsigned char*)malloc(img->data_size);
-    if (buf) {
-        memcpy(buf, img->data, img->data_size);
+    if (!buf) {
+        libraw_dcraw_clear_mem(img);
+        return NULL;
     }
 
+    memcpy(buf, img->data, img->data_size);
     libraw_dcraw_clear_mem(img);
     return buf;
 }

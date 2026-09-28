@@ -119,3 +119,18 @@ Bu belge, Omarchy Linux ekosistemi için geliştirilen tüm yerel uygulamalarda,
    - Lisans bölümünden önce resmi `Support & Sponsorship` başlığı ve buton görseli (`https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png`) yer almalıdır.
 3. **Masaüstü ve Web Arayüzü Buton Standartları**:
    - QML / Quickshell panellerinde veya web arayüzlerinde geliştiriciye destek butonu yer almalı; `#FFDD00` altın sarısı vurgu rengiyle `Qt.openUrlExternally("https://buymeacoffee.com/ozdil")` tetiklenmelidir.
+
+---
+
+## 8. Renk Yönetimi, 3D LUT ve Video Skobu Standartları
+
+1. **3D LUT Dosya Ayrıştırma Güvenliği (`.cube`)**:
+   - Harici `.cube` 3D LUT dosyaları okunurken bellek tüketimi ve DoS saldırılarını engellemek için mutlak boyut sınırı (1 MiB tavan sınır, `take(MAX_LUT_FILE_SIZE + 1)`) uygulanmalıdır.
+   - Dosya açılmadan önce `symlink_metadata` ile sembolik bağlar (`symlink`) istisnasız reddedilmelidir.
+   - Ayrıştırıcı tablolarda boyut sınırları (`LUT_3D_SIZE` en fazla 65) denetlenmeli; ayrıştırma hatalarında panik oluşmadan güvenli hata (`Result<Lut3D, String>`) döndürülmelidir.
+2. **Gerçek Zamanlı Video Skobu Performans ve IPC İzolasyonu**:
+   - Luma Waveform (64x32), RGB Parade (32x32) ve Vectorscope (48x48) skop matrisleri, CPU döngüsünü minimize etmek için tek geçişli (single-pass) hesaplanmalıdır.
+   - JSON IPC üzerinden aktarılan skop verileri önceden ayrılmış sabit boyutlu tamponlarla sınırlanmalı, arayüz 60 FPS akıcılığını korumalıdır.
+3. **DaVinci Renk Bilimi Matematiksel Sınırları**:
+   - Contrast Pivot işlemi [0.05, 0.95] sınırları içinde sıkıştırılmalı (clamp), logaritmik veya S-eğrisi dönüşümlerinde sıfıra bölme veya NaN oluşumu engellenmelidir.
+   - DaVinci Color Boost ve Midtone Detail algoritmalarında renk patlamasını ve aşırı keskinleştirme halelerini (ringing) önlemek için korumalı lüminans/kroma ağırlıkları kullanılmalıdır.

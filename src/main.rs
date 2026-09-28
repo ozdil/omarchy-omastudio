@@ -9,7 +9,10 @@ pub mod raw;
 pub mod recipe;
 pub mod security;
 
-use ai::{ai_auto_enhance, ai_classify_scene, ai_optimize_for_social};
+use ai::{
+    ai_auto_enhance, ai_classify_scene, ai_classify_scene_with_jev, ai_optimize_for_social,
+    apply_jev_decisions_to_recipe, JevDecisions,
+};
 use export::{export_photo, ExportOptions};
 use gdrive::{fetch_remote_raw, is_gdrive_available, list_gdrive_folder};
 use pipeline::{
@@ -85,6 +88,16 @@ struct InspectResult {
     thumbnail: String,
     recipe: Recipe,
     scene: ai::SceneAnalysis,
+}
+
+#[derive(Serialize)]
+struct JevInspectResult {
+    path: String,
+    metadata: raw::RawMetadata,
+    thumbnail: String,
+    recipe: Recipe,
+    scene: ai::SceneAnalysis,
+    jev_decisions: Option<JevDecisions>,
 }
 
 #[derive(Serialize)]
@@ -175,6 +188,7 @@ fn main() {
         eprintln!("  inspect <raw_file>");
         eprintln!("  render <raw_file> [--recipe <json>] [--split <0.0-1.0>] [--out <dest>]");
         eprintln!("  ai-auto <raw_file>");
+        eprintln!("  ai-jev <raw_file>");
         eprintln!("  export <raw_file> [--recipe <json>] [--options <json>]");
         eprintln!("  gdrive list [folder]");
         eprintln!("  gdrive fetch <remote_file>");
@@ -238,6 +252,17 @@ fn main() {
             }
             let raw_path = &args[2];
             match run_ai_auto(raw_path) {
+                Ok(res) => print_json(&ResponseWrapper::ok(res)),
+                Err(e) => print_json::<()>(&ResponseWrapper::err(e)),
+            }
+        }
+        "ai-jev" => {
+            if args.len() < 3 {
+                print_json::<()>(&ResponseWrapper::err("Missing RAW file path"));
+                return;
+            }
+            let raw_path = &args[2];
+            match run_ai_jev(raw_path) {
                 Ok(res) => print_json(&ResponseWrapper::ok(res)),
                 Err(e) => print_json::<()>(&ResponseWrapper::err(e)),
             }
@@ -386,6 +411,7 @@ fn main() {
                     "detail_and_optics_engine".into(),
                     "medium_format_16bit_raw_pipeline".into(),
                     "perceptual_shadow_retinal_toe".into(),
+                    "typesafe_ai_jev_decision_engine".into(),
                 ],
             };
             print_json(&ResponseWrapper::ok(status));
@@ -400,6 +426,7 @@ fn main() {
             println!("  status                                Output engine and feature status as JSON");
             println!("  inspect <raw_file>                    Parse EXIF, dynamic range, AI scene classification, histogram");
             println!("  ai-auto <raw_file>                    Calculate optimal tone, white balance, and contrast via AI");
+            println!("  ai-jev <raw_file>                     Execute TypeSafe AI Jev System 1 typed decision engine");
             println!("  ai-social <raw_file> [platform]       Calculate social media crop & OLED recipe (ig, story, x, ig_square, fb, yt)");
             println!("  render <raw_file> [options]           Process RAW image to preview PPM/PNG/JPG");
             println!("  export <raw_file> [options]           High-res demosaic & export (jxl, avif, webp, tiff, png, jpg)");
@@ -599,6 +626,33 @@ fn run_ai_auto(raw_path: &str) -> Result<InspectResult, String> {
         thumbnail: thumb_path.to_string_lossy().to_string(),
         recipe: auto_recipe,
         scene,
+    })
+}
+
+fn run_ai_jev(raw_path: &str) -> Result<JevInspectResult, String> {
+    let raw = RawImage::open(raw_path)?;
+    let meta = raw.get_metadata()?;
+    let preview = raw.process_preview(true)?;
+
+    let mut auto_recipe = ai_auto_enhance(preview.as_slice(), preview.width, preview.height, preview.channels, &meta);
+    let (scene, jev_opt) = ai_classify_scene_with_jev(preview.as_slice(), preview.width, preview.height, preview.channels, &meta);
+
+    if let Some(ref jev) = jev_opt {
+        apply_jev_decisions_to_recipe(&mut auto_recipe, jev);
+    }
+
+    let home = env::var("HOME").unwrap_or_else(|_| ".".to_string());
+    let thumb_path = PathBuf::from(home)
+        .join(".cache/omastudio/thumbnails")
+        .join(format!("{}.jpg", Path::new(raw_path).file_stem().and_then(|s| s.to_str()).unwrap_or("thumb")));
+
+    Ok(JevInspectResult {
+        path: raw_path.to_string(),
+        metadata: meta,
+        thumbnail: thumb_path.to_string_lossy().to_string(),
+        recipe: auto_recipe,
+        scene,
+        jev_decisions: jev_opt,
     })
 }
 
@@ -843,6 +897,27 @@ fn run_daemon() {
                     }));
                 } else {
                     print_json::<()>(&ResponseWrapper::err_action("ai_auto", "No image loaded in cache for AI Auto"));
+                }
+            }
+            "ai_jev" => {
+                let c = cache.lock().unwrap();
+                if let (Some(ref buffer), Some(ref meta)) = (&c.raw_buffer_8, &c.metadata) {
+                    let mut auto_recipe = ai_auto_enhance(buffer, c.width, c.height, c.channels, meta);
+                    let (scene, jev_opt) = ai_classify_scene_with_jev(buffer, c.width, c.height, c.channels, meta);
+                    if let Some(ref jev) = jev_opt {
+                        apply_jev_decisions_to_recipe(&mut auto_recipe, jev);
+                    }
+                    let path_str = c.current_path.clone().unwrap_or_default();
+                    print_json(&ResponseWrapper::ok_action("ai_jev", JevInspectResult {
+                        path: path_str,
+                        metadata: meta.clone(),
+                        thumbnail: String::new(),
+                        recipe: auto_recipe,
+                        scene,
+                        jev_decisions: jev_opt,
+                    }));
+                } else {
+                    print_json::<()>(&ResponseWrapper::err_action("ai_jev", "No image loaded in cache for AI Jev"));
                 }
             }
             "ai_social" => {

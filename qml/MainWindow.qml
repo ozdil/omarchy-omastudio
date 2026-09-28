@@ -64,6 +64,47 @@ Rectangle {
     property var offsetRgb: [0.0, 0.0, 0.0]
     property real offsetLuma: 0.0
 
+    // DaVinci Resolve Primaries: Contrast Pivot, Color Boost, Midtone Detail
+    property real contrastPivot: 0.435
+    property real colorBoost: 0.0
+    property real midtoneDetail: 0.0
+
+    // DaVinci 3D LUT State
+    property string activeLutName: ""
+    property real activeLutIntensity: 1.0
+    property string activeLutPath: ""
+
+    // DaVinci Resolve Local Grade Versions (A, B, C, D)
+    property string currentGradeVersion: "A"
+    property var gradeVersions: ({ "A": null, "B": null, "C": null, "D": null })
+
+    function switchGradeVersion(ver) {
+        if (ver === root.currentGradeVersion) return;
+        var cur = root.buildRecipeObject();
+        var vMap = Object.assign({}, root.gradeVersions);
+        vMap[root.currentGradeVersion] = cur;
+
+        root.currentGradeVersion = ver;
+        if (vMap[ver]) {
+            root.gradeVersions = vMap;
+            root.applyRecipeObject(vMap[ver]);
+            root.showToast("[Grade] Switched to Version " + ver, Theme.accentCyan);
+        } else {
+            vMap[ver] = cur;
+            root.gradeVersions = vMap;
+            root.showToast("[Grade] Version " + ver + " initialized", Theme.accentYellow);
+        }
+        root.requestRender();
+    }
+
+    function copyCurrentToVersion(ver) {
+        var cur = root.buildRecipeObject();
+        var vMap = Object.assign({}, root.gradeVersions);
+        vMap[ver] = cur;
+        root.gradeVersions = vMap;
+        root.showToast("[Grade] Copied current grade to Version " + ver, Theme.accentGreen);
+    }
+
     // Optics & Crop State
     property real defringeVal: 0.0
     property real lensDistortionVal: 0.0
@@ -203,6 +244,12 @@ Rectangle {
         root.gainLuma = 0.0;
         root.offsetRgb = [0.0, 0.0, 0.0];
         root.offsetLuma = 0.0;
+        root.contrastPivot = 0.435;
+        root.colorBoost = 0.0;
+        root.midtoneDetail = 0.0;
+        root.activeLutName = "";
+        root.activeLutIntensity = 1.0;
+        root.activeLutPath = "";
         root.defringeVal = 0.0;
         root.lensDistortionVal = 0.0;
         root.cropX = 0.0;
@@ -279,6 +326,12 @@ Rectangle {
             "gain_luma": root.gainLuma,
             "offset": root.offsetRgb,
             "offset_luma": root.offsetLuma,
+            "contrast_pivot": root.contrastPivot,
+            "color_boost": root.colorBoost,
+            "midtone_detail": root.midtoneDetail,
+            "lut_name": root.activeLutName !== "" ? root.activeLutName : null,
+            "lut_intensity": root.activeLutIntensity,
+            "lut_path": root.activeLutPath !== "" ? root.activeLutPath : null,
             "defringe": root.defringeVal,
             "lens_distortion": root.lensDistortionVal,
             "crop_x": root.cropX,
@@ -330,6 +383,14 @@ Rectangle {
         if (r.offset) root.offsetRgb = r.offset;
         if (r.offset_luma !== undefined) root.offsetLuma = Number(r.offset_luma) || 0.0;
 
+        // DaVinci Primaries & 3D LUT
+        if (r.contrast_pivot !== undefined) root.contrastPivot = Number(r.contrast_pivot) || 0.435;
+        if (r.color_boost !== undefined) root.colorBoost = Number(r.color_boost) || 0.0;
+        if (r.midtone_detail !== undefined) root.midtoneDetail = Number(r.midtone_detail) || 0.0;
+        if (r.lut_name !== undefined) root.activeLutName = r.lut_name || "";
+        if (r.lut_intensity !== undefined) root.activeLutIntensity = Number(r.lut_intensity) || 1.0;
+        if (r.lut_path !== undefined) root.activeLutPath = r.lut_path || "";
+
         // Optics
         if (r.defringe !== undefined) root.defringeVal = Number(r.defringe) || 0.0;
         if (r.lens_distortion !== undefined) root.lensDistortionVal = Number(r.lens_distortion) || 0.0;
@@ -371,7 +432,7 @@ Rectangle {
                 console.warn("Daemon returned error for action " + resp.action + ": " + resp.error);
                 if (resp.action === "load") {
                     root.showToast("[ERR] Failed to load RAW: " + (resp.error || "Unknown error"), Theme.highlightClip);
-                } else if (resp.action === "ai_auto" || resp.action === "ai_social") {
+                } else if (resp.action === "ai_auto" || resp.action === "ai_social" || resp.action === "ai_jev") {
                     root.showToast("[ERR] " + (resp.error || "AI action failed"), Theme.highlightClip);
                 }
                 return;
@@ -397,6 +458,13 @@ Rectangle {
                     root.applyRecipeObject(data.recipe);
                     root.activeScene = data.scene;
                     root.showToast("[OK] AI Auto Tone Applied", Theme.accentCyan);
+                }
+            } else if (act === "ai_jev") {
+                if (data) {
+                    root.applyRecipeObject(data.recipe);
+                    root.activeScene = data.scene;
+                    var label = data.jev_decisions ? "TypeSafe Jev System 1" : "Local Heuristic";
+                    root.showToast("[OK] " + label + " Applied", Theme.accentCyan);
                 }
             } else if (act === "ai_social") {
                 if (data) {
@@ -424,6 +492,12 @@ Rectangle {
         root.pushUndoState();
         root.showToast("[AI] Analyzing dynamic range & scene...", Theme.accentCyan);
         root.sendDaemonCommand({ cmd: "ai_auto" });
+    }
+
+    function triggerAiJev() {
+        root.pushUndoState();
+        root.showToast("[JEV] Querying TypeSafe AI Decision Engine...", Theme.accentCyan);
+        root.sendDaemonCommand({ cmd: "ai_jev" });
     }
 
     function requestRender() {
@@ -592,6 +666,22 @@ Rectangle {
             root.isSplitView = !root.isSplitView;
             root.requestRender();
         }
+    }
+    Shortcut {
+        sequence: "Alt+1"
+        onActivated: root.switchGradeVersion("A")
+    }
+    Shortcut {
+        sequence: "Alt+2"
+        onActivated: root.switchGradeVersion("B")
+    }
+    Shortcut {
+        sequence: "Alt+3"
+        onActivated: root.switchGradeVersion("C")
+    }
+    Shortcut {
+        sequence: "Alt+4"
+        onActivated: root.switchGradeVersion("D")
     }
 
     function loadPhoto(path) {
@@ -763,8 +853,9 @@ Rectangle {
                             }
                         }
 
-                        // 2. LIVE RGB & LUMA HISTOGRAM (Positioned right below Navigator)
-                        HistogramView {
+                        // 2. DAVINCI RESOLVE VIDEO SCOPES (Waveform, RGB Parade, Vectorscope, Histogram)
+                        ScopesView {
+                            id: scopesView
                             Layout.fillWidth: true
                             histData: root.activeHistogram
                             showClippingHighlights: viewport.showHighlightMask
@@ -846,26 +937,70 @@ Rectangle {
                 }
             }
 
-            // CENTER CANVAS (With Mac-like Touchpad Pinch-to-Zoom & Kinetic Pan)
-            Viewport {
-                id: viewport
+            // CENTER CANVAS (With DaVinci Grade Versions & Mac-like Touchpad Pinch-to-Zoom & Kinetic Pan)
+            ColumnLayout {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                isSplitView: root.isSplitView
-                splitRatio: root.splitRatio
-                onSplitRatioChangedByUser: function(r) {
-                    root.splitRatio = r;
-                    requestRender();
+                spacing: 0
+
+                // DaVinci Resolve Secondary Toolstrip: Grade Versions & Look tools
+                Rectangle {
+                    Layout.fillWidth: true
+                    implicitHeight: 32
+                    color: Theme.bgDark
+                    border.color: Theme.border
+                    border.width: 1
+
+                    RowLayout {
+                        anchors.fill: parent
+                        anchors.leftMargin: 12
+                        anchors.rightMargin: 12
+                        spacing: 8
+
+                        GradeVersionsBar {
+                            currentVersion: root.currentGradeVersion
+                            activeVersions: ({
+                                "A": root.gradeVersions["A"] !== null,
+                                "B": root.gradeVersions["B"] !== null,
+                                "C": root.gradeVersions["C"] !== null,
+                                "D": root.gradeVersions["D"] !== null
+                            })
+                            onSwitchVersion: function(v) { root.switchGradeVersion(v) }
+                            onCopyCurrentToVersion: function(v) { root.copyCurrentToVersion(v) }
+                        }
+
+                        Item { Layout.fillWidth: true }
+
+                        Text {
+                            text: "DaVinci Color Engine • [Alt+1..4] Switch Version"
+                            textFormat: Text.PlainText
+                            font.pixelSize: 8
+                            font.family: Theme.monoFont
+                            color: Theme.textDim
+                        }
+                    }
                 }
-                onRotationChangedByUser: function(a) {
-                    root.requestRender();
-                }
-                onCropChangedByUser: function(cx, cy, cw, ch, aspect) {
-                    root.cropX = cx;
-                    root.cropY = cy;
-                    root.cropW = cw;
-                    root.cropH = ch;
-                    root.cropAspect = aspect;
+
+                Viewport {
+                    id: viewport
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    isSplitView: root.isSplitView
+                    splitRatio: root.splitRatio
+                    onSplitRatioChangedByUser: function(r) {
+                        root.splitRatio = r;
+                        requestRender();
+                    }
+                    onRotationChangedByUser: function(a) {
+                        root.requestRender();
+                    }
+                    onCropChangedByUser: function(cx, cy, cw, ch, aspect) {
+                        root.cropX = cx;
+                        root.cropY = cy;
+                        root.cropW = cw;
+                        root.cropH = ch;
+                        root.cropAspect = aspect;
+                    }
                 }
             }
 
@@ -1453,7 +1588,23 @@ Rectangle {
                                 onColorChanged: root.requestRender()
                             }
 
-                            // DaVinci Resolve 3-Way Color Wheels
+                            // DaVinci 3D LUT Engine (.cube)
+                            Rectangle { Layout.fillWidth: true; height: 1; color: Theme.border }
+                            LutSelector {
+                                id: lutSelector
+                                Layout.fillWidth: true
+                                activeLut: root.activeLutName
+                                lutIntensity: root.activeLutIntensity
+                                customLutPath: root.activeLutPath
+                                onLutChanged: function(name, intensity, path) {
+                                    root.activeLutName = name;
+                                    root.activeLutIntensity = intensity;
+                                    root.activeLutPath = path;
+                                    root.requestRender();
+                                }
+                            }
+
+                            // DaVinci Resolve Primaries (Color Wheels + MD + Color Boost + Pivot)
                             Rectangle { Layout.fillWidth: true; height: 1; color: Theme.border }
                             ColorGradingWheels {
                                 id: colorWheels
@@ -1466,6 +1617,9 @@ Rectangle {
                                 gainLuma: root.gainLuma
                                 offsetRgb: root.offsetRgb
                                 offsetLuma: root.offsetLuma
+                                colorBoost: root.colorBoost
+                                midtoneDetail: root.midtoneDetail
+                                contrastPivot: root.contrastPivot
                                 onGradingChanged: {
                                     root.liftRgb = colorWheels.liftRgb;
                                     root.liftLuma = colorWheels.liftLuma;
@@ -1475,6 +1629,9 @@ Rectangle {
                                     root.gainLuma = colorWheels.gainLuma;
                                     root.offsetRgb = colorWheels.offsetRgb;
                                     root.offsetLuma = colorWheels.offsetLuma;
+                                    root.colorBoost = colorWheels.colorBoost;
+                                    root.midtoneDetail = colorWheels.midtoneDetail;
+                                    root.contrastPivot = colorWheels.contrastPivot;
                                     root.requestRender();
                                 }
                             }

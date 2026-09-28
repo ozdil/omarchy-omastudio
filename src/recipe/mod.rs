@@ -21,6 +21,10 @@ pub struct Recipe {
     pub shadows: f32,    // -100.0 to +100.0 (Default: 0.0)
     pub whites: f32,     // -100.0 to +100.0 (Default: 0.0)
     pub blacks: f32,     // -100.0 to +100.0 (Default: 0.0)
+    #[serde(default)]
+    pub highlight_reconstruct: bool, // Luma-guided clipped channel inpainting
+    #[serde(default)]
+    pub filmic_agx: bool,            // Sigmoidal AgX perceptual tone mapper
 
     // Presence
     pub texture: f32,    // -100.0 to +100.0 (Default: 0.0)
@@ -40,7 +44,7 @@ pub struct Recipe {
     pub hsl_sat: [f32; 8],
     pub hsl_lum: [f32; 8],
 
-    // DaVinci Resolve 3-Way Color Wheels (Lift, Gamma, Gain, Offset)
+    // DaVinci Resolve Primaries: Lift, Gamma, Gain, Offset
     #[serde(default)]
     pub lift: [f32; 3], // RGB Tint (-1.0 to +1.0)
     #[serde(default)]
@@ -57,6 +61,20 @@ pub struct Recipe {
     pub offset: [f32; 3], // RGB Tint (-1.0 to +1.0)
     #[serde(default)]
     pub offset_luma: f32, // Overall Master Luma (-1.0 to +1.0)
+
+    // DaVinci Resolve Signature Primaries & 3D LUT
+    #[serde(default = "default_contrast_pivot")]
+    pub contrast_pivot: f32, // 0.0 to 1.0 (Default: 0.435)
+    #[serde(default)]
+    pub color_boost: f32, // -100.0 to +100.0 (Default: 0.0)
+    #[serde(default)]
+    pub midtone_detail: f32, // -100.0 to +100.0 (Default: 0.0)
+    #[serde(default)]
+    pub lut_name: Option<String>,
+    #[serde(default = "default_lut_intensity")]
+    pub lut_intensity: f32, // 0.0 to 1.0 (Default: 1.0)
+    #[serde(default)]
+    pub lut_path: Option<String>,
 
     // Detail & Optics
     pub sharpness: f32,   // 0.0 to 100.0
@@ -90,6 +108,14 @@ pub struct Recipe {
     pub preset_name: Option<String>,
 }
 
+fn default_contrast_pivot() -> f32 {
+    0.435
+}
+
+fn default_lut_intensity() -> f32 {
+    1.0
+}
+
 fn default_crop_dimension() -> f32 {
     1.0
 }
@@ -109,6 +135,8 @@ impl Default for Recipe {
             shadows: 0.0,
             whites: 0.0,
             blacks: 0.0,
+            highlight_reconstruct: true,
+            filmic_agx: false,
             texture: 0.0,
             clarity: 0.0,
             dehaze: 0.0,
@@ -129,6 +157,12 @@ impl Default for Recipe {
             gain_luma: 0.0,
             offset: [0.0; 3],
             offset_luma: 0.0,
+            contrast_pivot: 0.435,
+            color_boost: 0.0,
+            midtone_detail: 0.0,
+            lut_name: None,
+            lut_intensity: 1.0,
+            lut_path: None,
             sharpness: 25.0, // Default subtle lens sharpening
             denoise_lum: 0.0,
             denoise_col: 10.0, // Default chromatic cleanup

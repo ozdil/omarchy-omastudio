@@ -1,13 +1,36 @@
 pub mod color_grading;
 pub mod detail;
 pub mod histogram;
+pub mod lut;
 pub mod presence;
 pub mod tone;
 pub mod white_balance;
 
 use crate::recipe::Recipe;
-use histogram::{compute_histogram, compute_histogram_16, HistogramData};
+use histogram::{compute_histogram_with_dimensions, compute_histogram_16_with_dimensions, HistogramData};
 use rayon::prelude::*;
+
+/// Resolves active 3D LUT (built-in cinematic profile or external .cube file)
+pub fn resolve_recipe_lut(recipe: &Recipe) -> Option<lut::Lut3D> {
+    if let Some(ref path) = recipe.lut_path {
+        if !path.is_empty() {
+            if let Ok(l) = lut::read_cube_file(path) {
+                return Some(l);
+            }
+        }
+    }
+    if let Some(ref name) = recipe.lut_name {
+        match name.as_str() {
+            "Kodak 2383" => Some(lut::Lut3D::kodak_2383()),
+            "Teal & Orange" => Some(lut::Lut3D::teal_and_orange()),
+            "Fuji Eterna" => Some(lut::Lut3D::fuji_eterna()),
+            "Silver Nitrate" => Some(lut::Lut3D::silver_nitrate()),
+            _ => None,
+        }
+    } else {
+        None
+    }
+}
 
 /// Processes an 8-bit linear RGB buffer according to the given Recipe using parallel multi-threading
 pub fn process_buffer(
@@ -28,10 +51,13 @@ pub fn process_buffer(
     );
     let exp_factor = 2.0f32.powf(recipe.exposure);
 
+    // Resolve active 3D LUT if requested
+    let maybe_lut = resolve_recipe_lut(recipe);
+
     // Intermediate float buffer for multi-stage 16-bit precision processing
     let mut f32_buf = vec![0.0f32; num_pixels * 3];
 
-    // PASS 1: Point Operations (White Balance, Exposure, Tone, Color Wheels, HSL Mixer)
+    // PASS 1: Point Operations (White Balance, Exposure, Tone, Color Wheels, HSL Mixer, 3D LUT)
     f32_buf
         .par_chunks_mut(w * 3)
         .enumerate()
@@ -55,20 +81,28 @@ pub fn process_buffer(
                 // 3. 8-Band HSL Color Mixer (Perceptual Luminance Anchor)
                 let (r3, g3, b3) = color_grading::apply_hsl_mixer(r2, g2, b2, recipe);
 
-                row_f32[px_out] = r3;
-                row_f32[px_out + 1] = g3;
-                row_f32[px_out + 2] = b3;
+                // 4. DaVinci 3D LUT
+                let (r4, g4, b4) = if let Some(ref active_lut) = maybe_lut {
+                    lut::apply_lut_pixel(r3, g3, b3, active_lut, recipe.lut_intensity)
+                } else {
+                    (r3, g3, b3)
+                };
+
+                row_f32[px_out] = r4;
+                row_f32[px_out + 1] = g4;
+                row_f32[px_out + 2] = b4;
             }
         });
 
-    // PASS 2: Presence Engine (Texture, Clarity, Dehaze)
-    presence::apply_presence(
+    // PASS 2: Presence Engine (Texture, Clarity, Dehaze, DaVinci Midtone Detail)
+    presence::apply_presence_ex(
         &mut f32_buf,
         w,
         h,
         recipe.clarity,
         recipe.texture,
         recipe.dehaze,
+        recipe.midtone_detail,
     );
 
     // PASS 3: Detail & Optics Engine (Sharpness, Luma Denoise, Chroma Denoise)
@@ -128,7 +162,7 @@ pub fn process_buffer(
             }
         });
 
-    let hist = compute_histogram(&output, ch);
+    let hist = compute_histogram_with_dimensions(&output, w, h, ch);
     (output, hist)
 }
 
@@ -164,10 +198,13 @@ pub fn process_buffer_16_to_8_ex(
     );
     let exp_factor = 2.0f32.powf(recipe.exposure);
 
+    // Resolve active 3D LUT if requested
+    let maybe_lut = resolve_recipe_lut(recipe);
+
     // Intermediate float buffer for multi-stage 16-bit precision processing
     let mut f32_buf = vec![0.0f32; num_pixels * 3];
 
-    // PASS 1: Point Operations (White Balance, Exposure, Tone, Color Wheels, HSL Mixer)
+    // PASS 1: Point Operations (White Balance, Exposure, Tone, Color Wheels, HSL Mixer, 3D LUT)
     f32_buf
         .par_chunks_mut(w * 3)
         .enumerate()
@@ -191,20 +228,28 @@ pub fn process_buffer_16_to_8_ex(
                 // 3. 8-Band HSL Color Mixer
                 let (r3, g3, b3) = color_grading::apply_hsl_mixer(r2, g2, b2, recipe);
 
-                row_f32[px_out] = r3;
-                row_f32[px_out + 1] = g3;
-                row_f32[px_out + 2] = b3;
+                // 4. DaVinci 3D LUT
+                let (r4, g4, b4) = if let Some(ref active_lut) = maybe_lut {
+                    lut::apply_lut_pixel(r3, g3, b3, active_lut, recipe.lut_intensity)
+                } else {
+                    (r3, g3, b3)
+                };
+
+                row_f32[px_out] = r4;
+                row_f32[px_out + 1] = g4;
+                row_f32[px_out + 2] = b4;
             }
         });
 
-    // PASS 2: Presence Engine (Texture, Clarity, Dehaze)
-    presence::apply_presence(
+    // PASS 2: Presence Engine (Texture, Clarity, Dehaze, DaVinci Midtone Detail)
+    presence::apply_presence_ex(
         &mut f32_buf,
         w,
         h,
         recipe.clarity,
         recipe.texture,
         recipe.dehaze,
+        recipe.midtone_detail,
     );
 
     // PASS 3: Detail & Optics Engine (Sharpness, Luma Denoise, Chroma Denoise)
@@ -264,7 +309,7 @@ pub fn process_buffer_16_to_8_ex(
             }
         });
 
-    let hist = compute_histogram(&output, ch);
+    let hist = compute_histogram_with_dimensions(&output, w, h, ch);
 
     // Visual clipping overlay: Red for highlights (>= 254), Blue for shadows (<= 1)
     if highlight_mask || shadow_mask {
@@ -308,10 +353,13 @@ pub fn process_buffer_16_to_16(
     );
     let exp_factor = 2.0f32.powf(recipe.exposure);
 
+    // Resolve active 3D LUT if requested
+    let maybe_lut = resolve_recipe_lut(recipe);
+
     // Intermediate float buffer for multi-stage 16-bit precision processing
     let mut f32_buf = vec![0.0f32; num_pixels * 3];
 
-    // PASS 1: Point Operations (White Balance, Exposure, Tone, Color Wheels, HSL Mixer)
+    // PASS 1: Point Operations (White Balance, Exposure, Tone, Color Wheels, HSL Mixer, 3D LUT)
     f32_buf
         .par_chunks_mut(w * 3)
         .enumerate()
@@ -335,20 +383,28 @@ pub fn process_buffer_16_to_16(
                 // 3. 8-Band HSL Color Mixer
                 let (r3, g3, b3) = color_grading::apply_hsl_mixer(r2, g2, b2, recipe);
 
-                row_f32[px_out] = r3;
-                row_f32[px_out + 1] = g3;
-                row_f32[px_out + 2] = b3;
+                // 4. DaVinci 3D LUT
+                let (r4, g4, b4) = if let Some(ref active_lut) = maybe_lut {
+                    lut::apply_lut_pixel(r3, g3, b3, active_lut, recipe.lut_intensity)
+                } else {
+                    (r3, g3, b3)
+                };
+
+                row_f32[px_out] = r4;
+                row_f32[px_out + 1] = g4;
+                row_f32[px_out + 2] = b4;
             }
         });
 
-    // PASS 2: Presence Engine (Texture, Clarity, Dehaze)
-    presence::apply_presence(
+    // PASS 2: Presence Engine (Texture, Clarity, Dehaze, DaVinci Midtone Detail)
+    presence::apply_presence_ex(
         &mut f32_buf,
         w,
         h,
         recipe.clarity,
         recipe.texture,
         recipe.dehaze,
+        recipe.midtone_detail,
     );
 
     // PASS 3: Detail & Optics Engine (Sharpness, Luma Denoise, Chroma Denoise)
@@ -407,7 +463,7 @@ pub fn process_buffer_16_to_16(
             }
         });
 
-    let hist = compute_histogram_16(&output, ch);
+    let hist = compute_histogram_16_with_dimensions(&output, w, h, ch);
     (output, hist)
 }
 

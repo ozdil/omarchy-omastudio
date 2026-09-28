@@ -231,8 +231,8 @@ Rectangle {
             implicitWidth: 70
             implicitHeight: 28
             radius: Theme.radiusSm
-            color: root.isSplitView ? Qt.rgba(Theme.accentCyan.r, Theme.accentCyan.g, Theme.accentCyan.b, 0.25) : Theme.bgCard
-            border.color: root.isSplitView ? Theme.accentCyan : Theme.border
+            color: root.isSplitView ? Qt.rgba(Theme.accent.r, Theme.accent.g, Theme.accent.b, 0.25) : Theme.bgCard
+            border.color: root.isSplitView ? Theme.accent : Theme.border
 
             RowLayout {
                 anchors.centerIn: parent
@@ -241,14 +241,14 @@ Rectangle {
                     text: Theme.iconSplit
                     font.family: Theme.iconFont
                     font.pixelSize: 10
-                    color: root.isSplitView ? Theme.accentCyan : Theme.textMuted
+                    color: root.isSplitView ? Theme.accent : Theme.textMuted
                 }
                 Text {
                     text: "A | B"
                     textFormat: Text.PlainText
                     font.pixelSize: 10
                     font.weight: Font.DemiBold
-                    color: root.isSplitView ? Theme.accentCyan : Theme.textMain
+                    color: root.isSplitView ? Theme.accent : Theme.textMain
                 }
             }
 
@@ -264,8 +264,8 @@ Rectangle {
             implicitWidth: 68
             implicitHeight: 28
             radius: Theme.radiusSm
-            color: root.isCropMode ? Qt.rgba(Theme.accentYellow.r, Theme.accentYellow.g, Theme.accentYellow.b, 0.25) : Theme.bgCard
-            border.color: root.isCropMode ? Theme.accentYellow : Theme.border
+            color: root.isCropMode ? Qt.rgba(Theme.accent.r, Theme.accent.g, Theme.accent.b, 0.25) : Theme.bgCard
+            border.color: root.isCropMode ? Theme.accent : Theme.border
 
             RowLayout {
                 anchors.centerIn: parent
@@ -274,14 +274,14 @@ Rectangle {
                     text: Theme.iconCrop
                     font.family: Theme.iconFont
                     font.pixelSize: 10
-                    color: root.isCropMode ? Theme.accentYellow : Theme.textMuted
+                    color: root.isCropMode ? Theme.accent : Theme.textMuted
                 }
                 Text {
                     text: "Crop"
                     textFormat: Text.PlainText
                     font.pixelSize: 10
                     font.weight: Font.DemiBold
-                    color: root.isCropMode ? Theme.accentYellow : Theme.textMain
+                    color: root.isCropMode ? Theme.accent : Theme.textMain
                 }
             }
 

@@ -82,6 +82,21 @@ ShellRoot {
             return mainWin.toggleSplitView();
         }
 
+        function applyLut(lutName: string, intensity: real): string {
+            if (!lutName || lutName.length === 0) return "Error: empty lut name";
+            mainWin.activeLutName = lutName;
+            mainWin.activeLutIntensity = (intensity !== undefined && intensity >= 0) ? intensity : 1.0;
+            mainWin.activeLutPath = "";
+            mainWin.requestRender();
+            return "OK";
+        }
+
+        function switchGradeVersion(version: string): string {
+            if (!version || version.length === 0) return "Error: empty version";
+            mainWin.switchGradeVersion(version);
+            return "OK";
+        }
+
         function reloadTheme(): string {
             return Theme.reloadTheme();
         }

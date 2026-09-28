@@ -11,6 +11,7 @@
 [![Engine: Rust](https://img.shields.io/badge/Engine-Rust%202021%20%28Rayon%29-dea584.svg)](Cargo.toml)
 [![UI: Quickshell](https://img.shields.io/badge/UI-Quickshell%20%7C%20Qt%206-41cd52.svg)](qml/)
 [![Security: CONTRIBUTING.md Compliant](https://img.shields.io/badge/Security-CONTRIBUTING.md%20Mode%200600-brightgreen.svg)](CONTRIBUTING.md)
+[![Omarchy Onaylı Eklenti](https://img.shields.io/badge/Omarchy-Onaylı_Eklenti-22c55e?style=for-the-badge&logo=omarchy)](https://github.com/ozdil)
 [![Buy Me A Coffee](https://img.shields.io/badge/Buy_Me_A_Coffee-Destek_Ol-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/ozdil)
 
 ![OmaStudio Preview](preview.png)
@@ -122,6 +123,34 @@ Platforma özel çözünürlük, en boy oranı ve algoritma sıkıştırma kayı
 | **Facebook HD** | `1.91:1`| 2048 × 1072 | Yüksek çözünürlüklü albüm ve sayfa paylaşımı |
 | **YouTube Thumbnail** | `16:9` | 1280 × 720 | Yüksek tıklama oranı (CTR) için canlı renk doygunluğu |
 
+### 5. DaVinci Resolve Seviyesi Renk Bilimi & Gerçek Zamanlı Video Skoplari
+* **DaVinci Renk Bilimi Ton Kontrolleri:**
+  * **Contrast Pivot:** Kontrast eğrisinin pivot merkez noktasını (0.05 - 0.95, varsayılan 0.435 / %18 orta gri) ayarlayarak gölgeleri çökertmeden ve parlak alanları patlatmadan dinamik aralık açma.
+  * **DaVinci Color Boost:** Geleneksel satürasyonun aksine doymuş tonları koruyan, doygunluğu düşük alanları kademeli artıran ve cilt tonlarını aşırı doymadan koruyan akıllı algoritma.
+  * **Midtone Detail (MD):** Gauss bant-geçiren filtre frekans ayrışımı ile orta frekans lüminans dokusunu izole ederek cilt gözeneklerini yumuşatma (güzellik rötuşu) veya kumaş/mimari dokuları keskinleştirme.
+* **Hollywood Standardı 4 Gerçek Zamanlı Video Skobu (Tek Geçişli 60 FPS):**
+  * **Luma Waveform:** Yatay eksende 64x32 analog fosfor parlaklık dağılımı (IRE 0-100 ölçeği).
+  * **RGB Parade:** Kırmızı, Yeşil ve Mavi kanallarını 32x32 bağımsız ayrıştırarak beyaz dengesi ve renk sapmalarını hassas hizalama.
+  * **Vectorscope (Cb/Cr Polar Radar):** 48x48 renk tonu ve doygunluk radarı üzerinde kalibre edilmiş 123 derecelik **Skin Tone Line (I-Bar)** ten rengi referans çizgisi.
+  * **256 Seviyeli Histogram:** Gerçek zamanlı lüminans ve RGB ton dağılımı.
+* **3D LUT Motoru & Film Emülasyonu:**
+  * Standart `.cube` dosyalarını ayrıştıran yüksek başarımlı 3 boyutlu trilineer enterpolatör.
+  * Dahili Hollywood sinematik ön ayarları: Kodak 2383 Print Film, Teal & Orange Blockbuster, Fuji Eterna ve Silver Nitrate Monochrome.
+  * Değişken Karışım / Yoğunluk sürgüsü (%0 - %100) ve katı güvenlik doğrulaması (1 MiB sınır, symlink reddi).
+* **Grade Versions (Local Versions A/B/C/D):**
+  * Her fotoğraf için 4 bağımsız derecelendirme versiyon yuvası.
+  * Kısayolla hızlı geçiş (`Alt + 1` .. `Alt + 4`) ve tek tıkla kopyalama (`Copy to Other`) ile hızlı yaratıcı karşılaştırma.
+
+### 6. Yeni Nesil (SOTA) RAW İnovasyonları ve Sıfır Güven Motoru (v1.1.0)
+* **Lüminans Kılavuzlu Parlak Alan Onarımı (Highlight Reconstruction):**
+  * Aşırı pozlanmış veya patlamış sensör verilerinde bir veya iki renk kanalı doyuma ulaştığında (clipping), sağlam kalan kanallar ve parlaklık gradyanları kullanılarak patlak pikseller onarılır; sert gökyüzü veya stüdyo ışıklarındaki istenmeyen macenta/camgöbeği renk sapmaları tamamen engellenir.
+* **AgX & Filmic Sigmoidal Ton Haritalama (AgX Curve):**
+  * Fotokimyasal negatif film parlak alan geçiş eğrisini (roll-off) emüle eder. Beyaz sınırında pikselleri sertçe kesmek veya düz beyaza sıkıştırmak yerine, parlak tonları yumuşak bir desatürasyonla beyaz eğrisine bağlar; gelinlik, bulut ve doğrudan ışık kaynaklarındaki mikro dokuları korur.
+* **JEV System 1 YZ Fotoğraf Sezgisi (JEV-PHOTO-04 Kuralı):**
+  * Yüksek ISO akıllı tavan denetimi: Aşırı duyarlılıkta (ISO >= 3200) gölge açma miktarı sınırlandırılarak (`shadows.min(25.0)`) gürültü patlaması önlenir, kroma temizliği desteklenir ve lens optik vinyet telafisi uygulanır.
+* **Sıfır Sızıntılı Bellek Mimarisi (LibRaw C FFI):**
+  * Başarısızlık durumunda korumalı bellek tahsis denetimleri ve her kod çözme adımında garantili `libraw_dcraw_clear_mem` çağrısı ile toplu RAW işleme süreçlerinde bellek sızıntıları tamamen ortadan kaldırılmıştır.
+
 ---
 
 ## Karşılaştırma Matrisi
@@ -130,7 +159,10 @@ Platforma özel çözünürlük, en boy oranı ve algoritma sıkıştırma kayı
 | :--- | :---: | :---: | :---: | :---: |
 | **Lisans & Özgürlük** | **Açık Kaynak (MIT)** | Tescilli / Aylık Abonelik | GPLv3 | GPLv3 |
 | **Yerel Entegrasyon** | **Omarchy & Quickshell** | Yalnızca macOS/Windows | GTK | GTK |
-| **DaVinci 3-Way Tekerlekler**| **Yerleşik & Canlı** | Renk Derecelendirme (Klasik) | Karmaşık Modüller | RGB Eğrileri |
+| **DaVinci Renk Bilimi** | **Yerleşik (Pivot / Boost / MD)** | Kısmi | Karmaşık Modüller | Karmaşık Profiller |
+| **Gerçek Zamanlı Video Skoplari** | **Waveform, Parade, Vectorscope (I-Bar)** | Yalnızca Histogram | Ayrı Pencereler | Ayrı Sekmeler |
+| **3D LUT (.cube) & Karışım** | **Donanım Trilineer & Ön Ayarlar** | Profil Kütüphanesi | LUT Modülü | Yalnızca HaldCLUT |
+| **Yerel Versiyonlar (Versions)** | **A/B/C/D Anında Kısayollar** | Enstantaneler | Geçmiş Yığınları | Enstantaneler |
 | **JPEG XL / AVIF Çıktısı** | **Donanım İvmeli** | Kısıtlı | Eklenti ile | Kısmi |
 | **Sosyal Medya YZ Şablonları**| **Tek Tıkla Otomatik** | Manuel | Manuel | Manuel |
 | **Bulut Entegrasyonu** | **Google Drive (Rclone FFI)**| Adobe Cloud (Zorunlu) | Yok | Yok |
@@ -163,10 +195,11 @@ omastudio
 
 ---
 
-## ⌨ Klavye ve İş Akışı Kısayolları
+## Klavye ve İş Akışı Kısayolları
 
 * `Ctrl + O`: RAW fotoğraf açma diyaloğu
 * `Ctrl + S`: Düzenleme tarifini yan dosya olarak kaydetme (`.omaraw`, Mod 0600)
+* `Alt + 1..4`: Grade Versiyonları (Versiyon A, B, C, D) arasında anında geçiş
 * `C`: Kırpma ve Kompozisyon Modu (Üçler, Altın Oran, Fibonacci)
 * `Y`: Öncesi / Sonrası (Split A|B) karşılaştırma
 * `Ctrl + Shift + C`: Tüm renk ve tonlama tarifini panoya kopyalama

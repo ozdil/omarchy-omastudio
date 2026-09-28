@@ -111,14 +111,13 @@ pub fn fast_separable_blur(
     output
 }
 
-/// Applies Presence adjustments: Texture, Clarity, and Dehaze
+/// Applies Presence adjustments: Texture, Clarity, Dehaze, and DaVinci Midtone Detail
 ///
 /// - **Texture**: Dual-scale bandpass frequency separation (fine vs medium frequencies).
-///   Enhances or softens skin micro-texture without affecting broad edges or eyelashes.
 /// - **Clarity**: Midtone local contrast enhancement via guided local luminance average.
-///   Adds punch and dimensional pop to midtones without haloing or shadow/highlight clipping.
 /// - **Dehaze**: Atmospheric scattering correction via dark-channel transmission veil removal.
-///   Clears fog and recovers color richness and deep contrast in distant landscapes and skies.
+/// - **Midtone Detail (DaVinci MD)**: Targeted midtone frequency contrast boost or beauty skin softening
+///   isolated from shadows and specular highlights.
 pub fn apply_presence(
     rgb_buffer: &mut [f32],
     width: usize,
@@ -127,7 +126,19 @@ pub fn apply_presence(
     texture: f32,
     dehaze: f32,
 ) {
-    if clarity.abs() < 0.01 && texture.abs() < 0.01 && dehaze.abs() < 0.01 {
+    apply_presence_ex(rgb_buffer, width, height, clarity, texture, dehaze, 0.0);
+}
+
+pub fn apply_presence_ex(
+    rgb_buffer: &mut [f32],
+    width: usize,
+    height: usize,
+    clarity: f32,
+    texture: f32,
+    dehaze: f32,
+    midtone_detail: f32,
+) {
+    if clarity.abs() < 0.01 && texture.abs() < 0.01 && dehaze.abs() < 0.01 && midtone_detail.abs() < 0.01 {
         return;
     }
 
@@ -174,6 +185,15 @@ pub fn apply_presence(
         (0.0, None)
     };
 
+    // --- 4. DAVINCI MIDTONE DETAIL ENGINE ---
+    let (md_factor, blur_md_fine, blur_md_broad) = if midtone_detail.abs() >= 0.5 {
+        let fine = fast_separable_blur(&luma, width, height, 3);
+        let broad = fast_separable_blur(&luma, width, height, 9);
+        ((midtone_detail / 100.0) * 1.25, Some(fine), Some(broad))
+    } else {
+        (0.0, None, None)
+    };
+
     // Combine deltas and apply to RGB buffer in parallel
     rgb_buffer
         .par_chunks_mut(3)
@@ -195,6 +215,13 @@ pub fn apply_presence(
                 let midtone_mask = (4.0 * cur_luma * (1.0 - cur_luma)).clamp(0.0, 1.0);
                 let local_contrast = cur_luma - broad[i];
                 luma_shift += local_contrast * c_factor * midtone_mask;
+            }
+
+            if let (Some(ref fine), Some(ref broad)) = (&blur_md_fine, &blur_md_broad) {
+                let md_detail = fine[i] - broad[i];
+                let dist = cur_luma.clamp(0.0, 1.0) - 0.5;
+                let midtone_bell = (-dist * dist / 0.06).exp();
+                luma_shift += md_detail * md_factor * midtone_bell;
             }
 
             // Apply Dehaze atmospheric contrast recovery

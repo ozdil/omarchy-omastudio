@@ -67,12 +67,12 @@ ColumnLayout {
         columnSpacing: 6
 
         property var platforms: [
-            { id: "ig", name: "Instagram Feed", aspect: "4:5 / 1080x1350", tag: "Max Screen", col: Theme.accentMagenta },
-            { id: "story", name: "Stories / Reels", aspect: "9:16 / 1080x1920", tag: "Full Mobile", col: Theme.accentOrange },
-            { id: "x", name: "X / Twitter", aspect: "16:9 / 1200x675", tag: "Crisp Feed", col: Theme.accent },
-            { id: "ig_square", name: "Classic Square", aspect: "1:1 / 1080x1080", tag: "Grid Post", col: Theme.accentYellow },
-            { id: "fb", name: "Facebook HD", aspect: "1.91:1 / 2048px", tag: "High Res", col: Theme.accentCyan },
-            { id: "yt", name: "YouTube Thumb", aspect: "16:9 / 1280x720", tag: "High CTR", col: Theme.accentGreen }
+            { id: "ig", name: "Instagram Feed", aspect: "4:5 / 1080x1350", tag: "Max Screen" },
+            { id: "story", name: "Stories / Reels", aspect: "9:16 / 1080x1920", tag: "Full Mobile" },
+            { id: "x", name: "X / Twitter", aspect: "16:9 / 1200x675", tag: "Crisp Feed" },
+            { id: "ig_square", name: "Classic Square", aspect: "1:1 / 1080x1080", tag: "Grid Post" },
+            { id: "fb", name: "Facebook HD", aspect: "1.91:1 / 2048px", tag: "High Res" },
+            { id: "yt", name: "YouTube Thumb", aspect: "16:9 / 1280x720", tag: "High CTR" }
         ]
 
         Repeater {
@@ -82,11 +82,11 @@ ColumnLayout {
                 implicitHeight: 46
                 radius: Theme.radiusSm
                 color: root.activePlatform === modelData.id
-                       ? Qt.rgba(modelData.col.r, modelData.col.g, modelData.col.b, 0.22)
+                       ? Qt.rgba(Theme.accent.r, Theme.accent.g, Theme.accent.b, 0.22)
                        : (optMouse.containsMouse ? Theme.bgCardHover : Theme.bgCard)
                 border.color: root.activePlatform === modelData.id
-                              ? modelData.col
-                              : (optMouse.containsMouse ? modelData.col : Theme.border)
+                              ? Theme.accent
+                              : (optMouse.containsMouse ? Theme.borderLight : Theme.border)
                 border.width: 1
 
                 ColumnLayout {
@@ -102,7 +102,7 @@ ColumnLayout {
                             textFormat: Text.PlainText
                             font.pixelSize: 10
                             font.weight: Font.Bold
-                            color: root.activePlatform === modelData.id ? modelData.col : Theme.textMain
+                            color: root.activePlatform === modelData.id ? Theme.accent : Theme.textMain
                             Layout.fillWidth: true
                             elide: Text.ElideRight
                         }
@@ -110,7 +110,9 @@ ColumnLayout {
                             implicitWidth: tagText.implicitWidth + 6
                             implicitHeight: 14
                             radius: 3
-                            color: Qt.rgba(modelData.col.r, modelData.col.g, modelData.col.b, 0.2)
+                            color: root.activePlatform === modelData.id ? Qt.rgba(Theme.accent.r, Theme.accent.g, Theme.accent.b, 0.25) : Theme.bgDark
+                            border.color: root.activePlatform === modelData.id ? Theme.accent : Theme.border
+                            border.width: 1
                             Text {
                                 id: tagText
                                 anchors.centerIn: parent
@@ -118,7 +120,7 @@ ColumnLayout {
                                 textFormat: Text.PlainText
                                 font.pixelSize: 8
                                 font.weight: Font.Bold
-                                color: modelData.col
+                                color: root.activePlatform === modelData.id ? Theme.accent : Theme.textDim
                             }
                         }
                     }

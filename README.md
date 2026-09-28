@@ -13,6 +13,7 @@
 [![Engine: Rust](https://img.shields.io/badge/Engine-Rust%202021%20%28Rayon%29-dea584.svg)](Cargo.toml)
 [![UI: Quickshell](https://img.shields.io/badge/UI-Quickshell%20%7C%20Qt%206-41cd52.svg)](qml/)
 [![Security: CONTRIBUTING.md Compliant](https://img.shields.io/badge/Security-CONTRIBUTING.md%20Mode%200600-brightgreen.svg)](CONTRIBUTING.md)
+[![Omarchy Verified Plugin](https://img.shields.io/badge/Omarchy-Verified_Plugin-22c55e?style=for-the-badge&logo=omarchy)](https://github.com/ozdil)
 [![Buy Me A Coffee](https://img.shields.io/badge/Buy_Me_A_Coffee-Support_Development-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/ozdil)
 
 ![OmaStudio Preview](preview.png)
@@ -124,6 +125,34 @@ Platform-tailored resolution, aspect ratios, and micro-contrast presets engineer
 | **Facebook HD** | `1.91:1`| 2048 × 1072 | High-resolution album and page publishing |
 | **YouTube Thumbnail** | `16:9` | 1280 × 720 | High click-through rate (CTR) vivid color saturation |
 
+### 5. DaVinci Resolve-Grade Color Science & Real-Time Video Scopes
+* **DaVinci Color Science Tone Controls:**
+  * **Contrast Pivot:** Adjustable S-curve midpoint (0.05 to 0.95, default 0.435 / 18% middle gray) enabling contrast expansion without crushing shadow detail or blowing out highlights.
+  * **DaVinci Color Boost:** Intelligent non-linear chroma enhancement that amplifies low-saturation tones while protecting naturally saturated skin and sky colors from clipping.
+  * **Midtone Detail (MD):** Frequency-separated luminance band-pass filter isolating mid-frequencies to enhance micro-texture or soften skin tones for beauty retouching.
+* **Hollywood Real-Time Video Scopes (Single-Pass 60 FPS):**
+  * **Luma Waveform:** 64x32 phosphor-response luminance distribution showing dynamic exposure across horizontal image span (IRE 0-100 scale).
+  * **RGB Parade:** 32x32 isolated Red, Green, and Blue channels for rapid color balance and tint neutralization.
+  * **Vectorscope (Cb/Cr Polar Radar):** 48x48 chromaticity plot featuring the calibrated 123-degree **Skin Tone Line (I-Bar)** for precise facial hue alignment.
+  * **256-Level Histogram:** Real-time luminance and RGB channel distribution.
+* **3D LUT Engine & Film Looks:**
+  * High-performance 3D trilinear interpolation engine supporting standard `.cube` Look-Up Tables.
+  * Built-in cinematic presets: Kodak 2383 Print Film, Teal & Orange Blockbuster, Fuji Eterna, and Silver Nitrate Monochrome.
+  * Variable Mix / Intensity slider (0% to 100%) and strict security validation (1 MiB ceiling, symlink rejection).
+* **Grade Versions (Local Versions A/B/C/D):**
+  * Instant non-destructive recipe branching with 4 independent grade version slots per image.
+  * Hotkey-driven switching (`Alt + 1` through `Alt + 4`) and one-click grade cloning (`Copy to Other`) for rapid side-by-side creative decisions.
+
+### 6. State-of-the-Art (SOTA) RAW Innovations & Zero-Trust Engine (v1.1.0)
+* **Luma-Guided Highlight Reconstruction:**
+  * When one or two color channels clip due to sensor saturation, unclipped channels and luminance gradients are used to inpaint blown highlights, completely eliminating unnatural magenta/cyan casts in harsh skies or studio lights.
+* **AgX & Filmic Sigmoidal Tonemapping:**
+  * Emulates photochemical negative film highlight roll-off. Rather than hard-clipping or abruptly clamping values at pure white, bright tones roll off smoothly into highlight desaturation, preserving delicate texture in wedding dresses, clouds, and direct specular reflections.
+* **JEV System 1 AI Photographic Heuristics (JEV-PHOTO-04):**
+  * High-ISO intelligent ceiling: Automatically clamps shadow expansion at extreme sensitivities (ISO >= 3200) to prevent aggressive noise amplification while boosting chrominance denoising and applying optical vignette compensation.
+* **Zero-Leak Memory Architecture (LibRaw C FFI):**
+  * Hardened FFI layer with fail-closed memory allocations and guaranteed `libraw_dcraw_clear_mem` deallocation on all decode paths, completely preventing memory leaks during batch or multi-RAW workflows.
+
 ---
 
 ## Feature Comparison
@@ -132,7 +161,10 @@ Platform-tailored resolution, aspect ratios, and micro-contrast presets engineer
 | :--- | :---: | :---: | :---: | :---: |
 | **License & Freedom** | **Open Source (MIT)** | Proprietary / Monthly Subscription | GPLv3 | GPLv3 |
 | **Native Integration** | **Omarchy & Quickshell** | macOS / Windows Only | GTK | GTK |
-| **DaVinci 3-Way Wheels**| **Native & Real-Time** | Classic Color Grading | Complex Modules | RGB Curves |
+| **DaVinci Color Science**| **Native (Pivot / Boost / MD)** | Partial | Complex Modules | Complex Profiles |
+| **Real-Time Video Scopes**| **Waveform, Parade, Vectorscope (I-Bar)** | Histogram Only | Separate Windows | Separate Tabs |
+| **3D LUT (.cube) & Mix** | **Hardware Trilinear & Presets** | Profile Library | LUT Module | HaldCLUT Only |
+| **Local Grade Versions** | **A/B/C/D Instant Hotkeys** | Snapshots | History Stacks | Snapshots |
 | **JPEG XL / AVIF Export** | **Hardware Accelerated** | Limited | Via Plugins | Partial |
 | **Social Media AI Presets**| **One-Click Automated** | Manual | Manual | Manual |
 | **Cloud Integration** | **Google Drive (Rclone FFI)**| Adobe Cloud (Enforced) | None | None |
@@ -165,10 +197,11 @@ omastudio
 
 ---
 
-## ⌨ Keyboard Shortcuts & Workflow
+## Keyboard Shortcuts & Workflow
 
 * `Ctrl + O`: Open RAW image dialog
 * `Ctrl + S`: Save adjustment recipe sidecar (`.omaraw`, Mode 0600)
+* `Alt + 1..4`: Switch between Grade Versions (Version A, B, C, D)
 * `C`: Toggle Crop & Composition mode (Rule of Thirds, Golden Ratio, Fibonacci)
 * `Y`: Toggle Split Before / After (A|B) comparison
 * `Ctrl + Shift + C`: Copy color & tone adjustments to clipboard

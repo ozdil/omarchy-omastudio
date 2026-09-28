@@ -1,5 +1,55 @@
 use crate::recipe::Recipe;
 
+/// Luma-guided Highlight Reconstruction (Inpainting):
+/// Repairs clipped color channels (e.g. green or blue clipping ahead of red)
+/// using chromatic gradient preservation from unclipped channels.
+#[inline(always)]
+pub fn reconstruct_clipped_highlights(r: f32, g: f32, b: f32) -> (f32, f32, f32) {
+    let clip_thresh = 0.94;
+    let r_clip = r > clip_thresh;
+    let g_clip = g > clip_thresh;
+    let b_clip = b > clip_thresh;
+
+    if !r_clip && !g_clip && !b_clip {
+        return (r, g, b);
+    }
+
+    // If 1 or 2 channels clip, estimate the missing energy from the unclipped channel(s)
+    let max_val = r.max(g).max(b);
+    let min_val = r.min(g).min(b);
+    let unclipped_luma = 0.2126 * (if r_clip { min_val } else { r })
+                       + 0.7152 * (if g_clip { min_val } else { g })
+                       + 0.0722 * (if b_clip { min_val } else { b });
+
+    let blend_weight = ((max_val - clip_thresh) / (1.20 - clip_thresh)).clamp(0.0, 1.0);
+    let desat = blend_weight * 0.45;
+
+    let target_energy = max_val.max(unclipped_luma * 1.15);
+
+    let r_out = if r_clip { r.max(target_energy) * (1.0 - desat) + target_energy * desat } else { r };
+    let g_out = if g_clip { g.max(target_energy) * (1.0 - desat) + target_energy * desat } else { g };
+    let b_out = if b_clip { b.max(target_energy) * (1.0 - desat) + target_energy * desat } else { b };
+
+    (r_out, g_out, b_out)
+}
+
+/// AgX / Filmic Sigmoidal Dynamic Range Tone Curve
+/// Provides smooth photochemical highlight shoulder and deep shadow toe without hue shifts
+#[inline(always)]
+pub fn apply_agx_filmic_curve(val: f32) -> f32 {
+    if val <= 0.0 {
+        return 0.0;
+    }
+    // Logarithmic encoding
+    let min_ev = -10.0f32;
+    let max_ev = 4.0f32;
+    let log_val = (val.log2().clamp(min_ev, max_ev) - min_ev) / (max_ev - min_ev);
+
+    // Sigmoidal S-Curve: f(x) = x^2 * (3 - 2x) with filmic shoulder extension
+    let s = log_val * log_val * (3.0 - 2.0 * log_val);
+    s.clamp(0.0, 1.0)
+}
+
 /// Applies photometric exposure, dynamic range tone adjustments, and presence
 #[inline(always)]
 pub fn apply_tone_pixel(
@@ -9,6 +59,14 @@ pub fn apply_tone_pixel(
     recipe: &Recipe,
     exp_factor: f32,
 ) -> (f32, f32, f32) {
+    // 0. SOTA Highlight Reconstruction (Clipped channel inpainting)
+    if recipe.highlight_reconstruct {
+        let (rc, gc, bc) = reconstruct_clipped_highlights(r, g, b);
+        r = rc;
+        g = gc;
+        b = bc;
+    }
+
     // 1. Photometric Exposure: I_out = I_in * 2^EV
     r *= exp_factor;
     g *= exp_factor;
@@ -57,11 +115,12 @@ pub fn apply_tone_pixel(
         luma_adj += (recipe.blacks / 100.0) * b_weight * 0.20;
     }
 
-    // 5. Contrast (S-curve centered around midtone 0.18)
+    // 5. Contrast (S-curve centered around DaVinci Pivot point)
     if recipe.contrast != 0.0 {
         let c = recipe.contrast / 100.0;
-        let diff = luma_adj - 0.18;
-        luma_adj = 0.18 + diff * (1.0 + c * 0.5) + (diff * diff * diff) * c * 0.3;
+        let pivot = recipe.contrast_pivot.clamp(0.05, 0.95);
+        let diff = luma_adj - pivot;
+        luma_adj = pivot + diff * (1.0 + c * 0.5) + (diff * diff * diff) * c * 0.3;
     }
 
     // Tone Curve 4-zone parametric offsets
@@ -74,6 +133,11 @@ pub fn apply_tone_pixel(
     }
 
     luma_adj = luma_adj.clamp(0.0, 1.5);
+
+    // Apply AgX Filmic Tone Curve if requested
+    if recipe.filmic_agx {
+        luma_adj = apply_agx_filmic_curve(luma_adj);
+    }
 
     // =========================================================================
     // COLOR-PRESERVING LUMINANCE ADJUSTMENT (Stevens / Hunt Perceptual Constancy)
@@ -111,7 +175,7 @@ pub fn apply_tone_pixel(
         b_adj = b_adj * (1.0 - desat) + luma_adj * desat;
     }
 
-    // 6. Presence: Vibrance and Saturation
+    // 6. Presence: Vibrance, DaVinci Color Boost and Saturation
     let max_c = r_adj.max(g_adj).max(b_adj);
     let min_c = r_adj.min(g_adj).min(b_adj);
     let current_sat = if max_c > 0.0001 { (max_c - min_c) / max_c } else { 0.0 };
@@ -122,6 +186,13 @@ pub fn apply_tone_pixel(
     if recipe.vibrance != 0.0 {
         let vib_factor = (1.0 - current_sat) * (recipe.vibrance / 100.0);
         sat_delta += vib_factor;
+    }
+
+    // DaVinci Resolve Color Boost: Natural perceptual boost prioritizing desaturated tones
+    if recipe.color_boost != 0.0 {
+        let boost_weight = (1.0 - current_sat).powf(1.4);
+        let boost_delta = (recipe.color_boost / 100.0) * boost_weight;
+        sat_delta += boost_delta;
     }
 
     if sat_delta != 0.0 {
