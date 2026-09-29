@@ -59,55 +59,50 @@ ColumnLayout {
         }
     }
 
-    // AI Auto Card (Special Highlight)
+    // AI Auto Quick Action
     Rectangle {
         Layout.fillWidth: true
-        implicitHeight: 38
+        implicitHeight: 32
         radius: Theme.radiusSm
-        color: Qt.rgba(Theme.accent.r, Theme.accent.g, Theme.accent.b, 0.15)
-        border.color: Theme.accent
+        color: aiAutoMouse.containsMouse ? Qt.rgba(Theme.accent.r, Theme.accent.g, Theme.accent.b, 0.18) : Qt.rgba(Theme.accent.r, Theme.accent.g, Theme.accent.b, 0.08)
+        border.color: aiAutoMouse.containsMouse ? Theme.accent : Qt.rgba(Theme.accent.r, Theme.accent.g, Theme.accent.b, 0.3)
         border.width: 1
 
         RowLayout {
             anchors.fill: parent
-            anchors.margins: 8
+            anchors.leftMargin: 10
+            anchors.rightMargin: 10
             spacing: 8
 
             Text {
                 text: Theme.iconAi
                 font.family: Theme.iconFont
-                font.pixelSize: 12
+                font.pixelSize: 11
                 color: Theme.accent
             }
 
-            ColumnLayout {
-                spacing: 0
+            Text {
+                text: "AI Auto Enhance"
+                textFormat: Text.PlainText
+                font.family: Theme.fontFamily
+                font.pixelSize: 11
+                font.weight: Font.DemiBold
+                color: Theme.textMain
                 Layout.fillWidth: true
-                Text {
-                    text: "AI Magic Auto Enhance"
-                    textFormat: Text.PlainText
-                    font.pixelSize: 12
-                    font.weight: Font.Bold
-                    color: Theme.textMain
-                }
-                Text {
-                    text: "Auto Exposure, Dynamic Range & WB"
-                    textFormat: Text.PlainText
-                    font.pixelSize: 9
-                    color: Theme.textMuted
-                }
             }
 
             Text {
                 text: "RUN"
                 textFormat: Text.PlainText
-                font.pixelSize: 10
+                font.family: Theme.fontFamily
+                font.pixelSize: 9
                 font.weight: Font.Bold
                 color: Theme.accent
             }
         }
 
         MouseArea {
+            id: aiAutoMouse
             anchors.fill: parent
             cursorShape: Qt.PointingHandCursor
             hoverEnabled: true
@@ -117,12 +112,12 @@ ColumnLayout {
         }
     }
 
-    // Grid of visual film simulations
+    // Grid of visual film simulations (Clean Omabeats style)
     GridLayout {
         Layout.fillWidth: true
         columns: 2
-        rowSpacing: 6
-        columnSpacing: 6
+        rowSpacing: 5
+        columnSpacing: 5
 
         property var presets: [
             { name: "Fuji Classic Chrome", sub: "Documentary Muted" },
@@ -136,23 +131,31 @@ ColumnLayout {
             model: parent.presets
             delegate: Rectangle {
                 Layout.fillWidth: true
-                implicitHeight: 38
+                implicitHeight: 34
                 radius: Theme.radiusSm
-                color: root.activePreset === modelData.name ? Qt.rgba(Theme.accent.r, Theme.accent.g, Theme.accent.b, 0.22) : (presetMouse.containsMouse ? Theme.bgCardHover : Theme.bgCard)
-                border.color: root.activePreset === modelData.name ? Theme.accent : (presetMouse.containsMouse ? Theme.borderLight : Theme.border)
+                color: root.activePreset === modelData.name
+                       ? Qt.rgba(Theme.accent.r, Theme.accent.g, Theme.accent.b, 0.20)
+                       : (presetMouse.containsMouse ? Qt.rgba(Theme.textMain.r, Theme.textMain.g, Theme.textMain.b, 0.08) : Qt.rgba(Theme.textMain.r, Theme.textMain.g, Theme.textMain.b, 0.03))
+                border.color: root.activePreset === modelData.name
+                              ? Theme.accent
+                              : (presetMouse.containsMouse ? Theme.borderLight : Theme.border)
                 border.width: 1
 
                 ColumnLayout {
                     anchors.fill: parent
-                    anchors.margins: 6
-                    spacing: 1
+                    anchors.leftMargin: 8
+                    anchors.rightMargin: 8
+                    anchors.topMargin: 4
+                    anchors.bottomMargin: 4
+                    spacing: 0
 
                     Text {
                         text: modelData.name
                         textFormat: Text.PlainText
-                        font.pixelSize: 11
-                        font.weight: Font.DemiBold
-                        color: root.activePreset === modelData.name ? modelData.col : Theme.textMain
+                        font.family: Theme.fontFamily
+                        font.pixelSize: 10
+                        font.weight: root.activePreset === modelData.name ? Font.Bold : Font.DemiBold
+                        color: root.activePreset === modelData.name ? Theme.accent : Theme.textMain
                         elide: Text.ElideRight
                         Layout.fillWidth: true
                     }
@@ -160,14 +163,16 @@ ColumnLayout {
                     Text {
                         text: modelData.sub
                         textFormat: Text.PlainText
-                        font.pixelSize: 9
-                        color: Theme.textMuted
+                        font.family: Theme.fontFamily
+                        font.pixelSize: 8
+                        color: Theme.textDim
                         elide: Text.ElideRight
                         Layout.fillWidth: true
                     }
                 }
 
                 MouseArea {
+                    id: presetMouse
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
                     hoverEnabled: true

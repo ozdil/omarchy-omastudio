@@ -92,10 +92,10 @@ ColumnLayout {
             }
 
             Rectangle {
-                implicitWidth: valText.implicitWidth + 12
-                implicitHeight: 20
-                radius: 4
-                color: root.effectiveValue !== root.defaultValue ? Qt.rgba(root.accentColor.r, root.accentColor.g, root.accentColor.b, 0.2) : Theme.bgCard
+                implicitWidth: valText.implicitWidth + 10
+                implicitHeight: 18
+                radius: Theme.radiusSm
+                color: root.effectiveValue !== root.defaultValue ? Qt.rgba(root.accentColor.r, root.accentColor.g, root.accentColor.b, 0.18) : Qt.rgba(Theme.textMain.r, Theme.textMain.g, Theme.textMain.b, 0.04)
                 border.color: root.effectiveValue !== root.defaultValue ? root.accentColor : Theme.border
                 border.width: 1
 
@@ -105,7 +105,7 @@ ColumnLayout {
                     text: (root.decimals === 0 ? Math.round(root.effectiveValue) : root.effectiveValue.toFixed(root.decimals)) + root.suffix
                     textFormat: Text.PlainText
                     color: root.effectiveValue !== root.defaultValue ? root.accentColor : Theme.textMuted
-                    font.pixelSize: 11
+                    font.pixelSize: 10
                     font.family: Theme.monoFont
                     font.weight: Font.DemiBold
                 }
@@ -135,11 +135,11 @@ ColumnLayout {
             x: slider.leftPadding
             y: slider.topPadding + slider.availableHeight / 2 - height / 2
             implicitWidth: 200
-            implicitHeight: 4
+            implicitHeight: 3
             width: slider.availableWidth
             height: implicitHeight
-            radius: 2
-            color: Theme.bgCard
+            radius: 1.5
+            color: Qt.rgba(Theme.textMain.r, Theme.textMain.g, Theme.textMain.b, 0.12)
 
             Rectangle {
                 // Fill from center if bidirectional, or from left
@@ -150,19 +150,19 @@ ColumnLayout {
                 width: Math.abs(curPos - zeroPos)
                 height: parent.height
                 color: root.accentColor
-                radius: 2
+                radius: 1.5
             }
         }
 
         handle: Rectangle {
             x: slider.leftPadding + slider.visualPosition * (slider.availableWidth - width)
             y: slider.topPadding + slider.availableHeight / 2 - height / 2
-            implicitWidth: 14
-            implicitHeight: 14
-            radius: 7
-            color: slider.pressed ? root.accentColor : Theme.textMain
+            implicitWidth: 12
+            implicitHeight: 12
+            radius: 6
+            color: slider.pressed ? root.accentColor : (slider.hovered ? Theme.accent : Theme.textMain)
             border.color: Theme.bgDark
-            border.width: 2
+            border.width: 1.5
 
             Behavior on color { ColorAnimation { duration: 100 } }
         }

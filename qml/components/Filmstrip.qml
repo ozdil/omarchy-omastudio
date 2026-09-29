@@ -342,17 +342,73 @@ Rectangle {
                             }
                         }
 
-                        // If Photo: Show Thumbnail
+                        // If Photo: Show Thumbnail or Cloud Placeholder
                         Item {
                             anchors.fill: parent
                             visible: !modelData.is_dir
 
+                            // Fallback / Placeholder when thumbnail is not yet cached locally
+                            Rectangle {
+                                anchors.fill: parent
+                                color: Theme.bgSurface
+                                visible: !modelData.thumbnail || modelData.thumbnail === ""
+
+                                ColumnLayout {
+                                    anchors.centerIn: parent
+                                    spacing: 4
+                                    Text {
+                                        text: root.isDownloadingRemote && root.activePhotoPath === modelData.path ? Theme.iconRefresh : Theme.iconImage
+                                        font.family: Theme.iconFont
+                                        font.pixelSize: 18
+                                        color: root.activePhotoPath === modelData.path ? Theme.accent : Theme.textDim
+                                        Layout.alignment: Qt.AlignHCenter
+                                    }
+                                    Text {
+                                        text: root.isDownloadingRemote && root.activePhotoPath === modelData.path ? "FETCHING" : "RAW CLOUD"
+                                        textFormat: Text.PlainText
+                                        font.pixelSize: 7
+                                        font.weight: Font.Bold
+                                        font.family: Theme.monoFont
+                                        color: Theme.textDim
+                                        Layout.alignment: Qt.AlignHCenter
+                                    }
+                                }
+                            }
+
                             Image {
                                 anchors.fill: parent
                                 fillMode: Image.PreserveAspectCrop
-                                source: modelData.thumbnail ? ("file://" + modelData.thumbnail) : ""
+                                source: (modelData.thumbnail && modelData.thumbnail !== "") ? ("file://" + modelData.thumbnail) : ""
                                 asynchronous: true
                                 cache: true
+                                visible: modelData.thumbnail && modelData.thumbnail !== ""
+                            }
+
+                            // Downloading Spinner Overlay on Active Remote Card
+                            Rectangle {
+                                anchors.fill: parent
+                                color: Qt.rgba(0, 0, 0, 0.65)
+                                visible: root.isDownloadingRemote && root.activePhotoPath === modelData.path
+
+                                ColumnLayout {
+                                    anchors.centerIn: parent
+                                    spacing: 2
+                                    Text {
+                                        text: Theme.iconRefresh
+                                        font.family: Theme.iconFont
+                                        font.pixelSize: 14
+                                        color: Theme.accentCyan
+                                        Layout.alignment: Qt.AlignHCenter
+                                    }
+                                    Text {
+                                        text: "Loading..."
+                                        textFormat: Text.PlainText
+                                        font.pixelSize: 8
+                                        font.family: Theme.monoFont
+                                        color: Theme.accentCyan
+                                        Layout.alignment: Qt.AlignHCenter
+                                    }
+                                }
                             }
 
                             // Format Badge (RAF, NEF, CR3, etc.)
@@ -386,6 +442,7 @@ Rectangle {
                         text: modelData.name || ""
                         textFormat: Text.PlainText
                         font.pixelSize: 9
+                        font.family: Theme.monoFont
                         color: root.activePhotoPath === modelData.path ? Theme.accent : (modelData.is_dir ? Theme.accentCyan : Theme.textMuted)
                         elide: Text.ElideRight
                         Layout.fillWidth: true

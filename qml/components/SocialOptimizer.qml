@@ -79,11 +79,11 @@ ColumnLayout {
             model: parent.platforms
             delegate: Rectangle {
                 Layout.fillWidth: true
-                implicitHeight: 46
+                implicitHeight: 38
                 radius: Theme.radiusSm
                 color: root.activePlatform === modelData.id
-                       ? Qt.rgba(Theme.accent.r, Theme.accent.g, Theme.accent.b, 0.22)
-                       : (optMouse.containsMouse ? Theme.bgCardHover : Theme.bgCard)
+                       ? Qt.rgba(Theme.accent.r, Theme.accent.g, Theme.accent.b, 0.20)
+                       : (optMouse.containsMouse ? Qt.rgba(Theme.textMain.r, Theme.textMain.g, Theme.textMain.b, 0.08) : Qt.rgba(Theme.textMain.r, Theme.textMain.g, Theme.textMain.b, 0.03))
                 border.color: root.activePlatform === modelData.id
                               ? Theme.accent
                               : (optMouse.containsMouse ? Theme.borderLight : Theme.border)
@@ -91,8 +91,11 @@ ColumnLayout {
 
                 ColumnLayout {
                     anchors.fill: parent
-                    anchors.margins: 6
-                    spacing: 2
+                    anchors.leftMargin: 8
+                    anchors.rightMargin: 8
+                    anchors.topMargin: 4
+                    anchors.bottomMargin: 4
+                    spacing: 1
 
                     RowLayout {
                         Layout.fillWidth: true
@@ -100,8 +103,9 @@ ColumnLayout {
                         Text {
                             text: modelData.name
                             textFormat: Text.PlainText
+                            font.family: Theme.fontFamily
                             font.pixelSize: 10
-                            font.weight: Font.Bold
+                            font.weight: root.activePlatform === modelData.id ? Font.Bold : Font.DemiBold
                             color: root.activePlatform === modelData.id ? Theme.accent : Theme.textMain
                             Layout.fillWidth: true
                             elide: Text.ElideRight
@@ -110,7 +114,7 @@ ColumnLayout {
                             implicitWidth: tagText.implicitWidth + 6
                             implicitHeight: 14
                             radius: 3
-                            color: root.activePlatform === modelData.id ? Qt.rgba(Theme.accent.r, Theme.accent.g, Theme.accent.b, 0.25) : Theme.bgDark
+                            color: root.activePlatform === modelData.id ? Qt.rgba(Theme.accent.r, Theme.accent.g, Theme.accent.b, 0.25) : Qt.rgba(Theme.textMain.r, Theme.textMain.g, Theme.textMain.b, 0.06)
                             border.color: root.activePlatform === modelData.id ? Theme.accent : Theme.border
                             border.width: 1
                             Text {
@@ -118,8 +122,9 @@ ColumnLayout {
                                 anchors.centerIn: parent
                                 text: modelData.tag
                                 textFormat: Text.PlainText
+                                font.family: Theme.fontFamily
                                 font.pixelSize: 8
-                                font.weight: Font.Bold
+                                font.weight: Font.DemiBold
                                 color: root.activePlatform === modelData.id ? Theme.accent : Theme.textDim
                             }
                         }
@@ -128,9 +133,9 @@ ColumnLayout {
                     Text {
                         text: modelData.aspect
                         textFormat: Text.PlainText
-                        font.pixelSize: 9
+                        font.pixelSize: 8
                         font.family: Theme.monoFont
-                        color: Theme.textMuted
+                        color: Theme.textDim
                         elide: Text.ElideRight
                         Layout.fillWidth: true
                     }

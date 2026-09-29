@@ -106,24 +106,24 @@ QtObject {
 
         if (root.isDarkTheme) {
             root.bgDark = dict["dark_background"] || dict["darker_background"] || dict["color0"] || Qt.darker(base, 1.3);
-            root.bgSurface = dict["lighter_background"] || (sel ? sel : Qt.lighter(base, 1.4));
-            root.bgCard = (sel && sel !== base) ? sel : Qt.lighter(base, 1.7);
-            root.bgCardHover = Qt.lighter(root.bgCard, 1.25);
-            root.border = mut ? mut : Qt.rgba(fg.r, fg.g, fg.b, 0.18);
-            root.borderLight = acc ? Qt.rgba(acc.r, acc.g, acc.b, 0.4) : Qt.rgba(fg.r, fg.g, fg.b, 0.28);
+            root.bgSurface = dict["lighter_background"] || Qt.lighter(base, 1.15);
+            root.bgCard = (sel && sel !== base) ? sel : Qt.lighter(base, 1.3);
+            root.bgCardHover = Qt.lighter(root.bgCard, 1.15);
+            root.border = mut ? mut : Qt.rgba(fg.r, fg.g, fg.b, 0.14);
+            root.borderLight = acc ? Qt.rgba(acc.r, acc.g, acc.b, 0.35) : Qt.rgba(fg.r, fg.g, fg.b, 0.22);
             root.textMain = dict["bright_foreground"] || fg;
-            root.textMuted = dict["light_foreground"] || mut || Qt.rgba(fg.r, fg.g, fg.b, 0.7);
-            root.textDim = dict["dark_foreground"] || dict["color8"] || Qt.rgba(fg.r, fg.g, fg.b, 0.45);
+            root.textMuted = dict["light_foreground"] || mut || Qt.rgba(fg.r, fg.g, fg.b, 0.65);
+            root.textDim = dict["dark_foreground"] || dict["color8"] || Qt.rgba(fg.r, fg.g, fg.b, 0.40);
         } else {
             root.bgDark = dict["dark_background"] || Qt.darker(base, 1.08);
-            root.bgSurface = dict["lighter_background"] || Qt.lighter(base, 1.03);
-            root.bgCard = (sel && sel !== base) ? sel : Qt.darker(base, 1.05);
+            root.bgSurface = dict["lighter_background"] || Qt.lighter(base, 1.02);
+            root.bgCard = (sel && sel !== base) ? sel : Qt.darker(base, 1.04);
             root.bgCardHover = Qt.darker(root.bgCard, 1.06);
-            root.border = mut ? mut : Qt.rgba(fg.r, fg.g, fg.b, 0.18);
-            root.borderLight = acc ? Qt.rgba(acc.r, acc.g, acc.b, 0.4) : Qt.rgba(fg.r, fg.g, fg.b, 0.3);
+            root.border = mut ? mut : Qt.rgba(fg.r, fg.g, fg.b, 0.14);
+            root.borderLight = acc ? Qt.rgba(acc.r, acc.g, acc.b, 0.35) : Qt.rgba(fg.r, fg.g, fg.b, 0.22);
             root.textMain = dict["bright_foreground"] || fg;
-            root.textMuted = dict["light_foreground"] || mut || Qt.rgba(fg.r, fg.g, fg.b, 0.7);
-            root.textDim = dict["dark_foreground"] || dict["color8"] || Qt.rgba(fg.r, fg.g, fg.b, 0.45);
+            root.textMuted = dict["light_foreground"] || mut || Qt.rgba(fg.r, fg.g, fg.b, 0.65);
+            root.textDim = dict["dark_foreground"] || dict["color8"] || Qt.rgba(fg.r, fg.g, fg.b, 0.40);
         }
 
         root.accent = acc;

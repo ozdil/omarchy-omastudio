@@ -600,9 +600,23 @@ Rectangle {
                 try {
                     var resp = JSON.parse(text);
                     if (resp.success && resp.data) {
-                        root.loadPhoto(resp.data);
-                        var fName = resp.data.split("/").pop();
-                        root.showToast("[OK] Downloaded cloud RAW: " + fName, Theme.accentCyan);
+                        var localPath = resp.data;
+                        var fName = localPath.split("/").pop();
+                        var stem = fName.lastIndexOf(".") !== -1 ? fName.substring(0, fName.lastIndexOf(".")) : fName;
+                        var expectedThumb = Quickshell.env("HOME") + "/.cache/omastudio/thumbnails/" + stem + ".jpg";
+
+                        // Update photoList model in-place so Filmstrip thumbnail appears immediately
+                        var listCopy = root.photoList.slice();
+                        for (var i = 0; i < listCopy.length; i++) {
+                            if (listCopy[i].name === fName || listCopy[i].path.indexOf(fName) !== -1) {
+                                listCopy[i].thumbnail = expectedThumb;
+                                break;
+                            }
+                        }
+                        root.photoList = listCopy;
+
+                        root.loadPhoto(localPath);
+                        root.showToast("[OK] Loaded cloud RAW: " + fName, Theme.accentCyan);
                     } else {
                         root.showToast("[ERR] Cloud fetch failed: " + (resp.error || "Unknown"), Theme.accentMagenta);
                     }
