@@ -106,6 +106,12 @@ pub struct Recipe {
 
     // Preset identifier if applied
     pub preset_name: Option<String>,
+
+    // Lightroom Studio Culling & Rating
+    #[serde(default)]
+    pub rating: u8, // 0 to 5 stars
+    #[serde(default)]
+    pub flag: String, // "none", "pick", "reject"
 }
 
 fn default_contrast_pivot() -> f32 {
@@ -178,6 +184,8 @@ impl Default for Recipe {
             crop_h: 1.0,
             crop_aspect: "Original".to_string(),
             preset_name: None,
+            rating: 0,
+            flag: "none".to_string(),
         }
     }
 }

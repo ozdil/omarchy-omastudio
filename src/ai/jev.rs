@@ -130,12 +130,11 @@ impl JevClient {
                     if crate::security::verify_secure_open_file(&file, MAX_CONFIG_BYTES).is_ok() {
                         let mut content = String::new();
                         // HANCORE: take(MAX + 1) to prevent silent truncation
-                        if file.by_ref().take((MAX_CONFIG_BYTES as u64) + 1).read_to_string(&mut content).is_ok() {
-                            if content.len() <= MAX_CONFIG_BYTES {
+                        if file.by_ref().take((MAX_CONFIG_BYTES as u64) + 1).read_to_string(&mut content).is_ok()
+                            && content.len() <= MAX_CONFIG_BYTES {
                                 if let Ok(parsed) = serde_json::from_str::<JevConfig>(&content) {
                                     config = parsed;
                                 }
-                            }
                         }
                     }
                 }

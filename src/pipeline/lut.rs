@@ -237,7 +237,7 @@ pub fn read_cube_file<P: AsRef<Path>>(path: P) -> Result<Lut3D, String> {
 
         if parts[0] == "LUT_3D_SIZE" && parts.len() >= 2 {
             let s: usize = parts[1].parse().map_err(|_| "Invalid LUT_3D_SIZE".to_string())?;
-            if s < 2 || s > 65 {
+            if !(2..=65).contains(&s) {
                 return Err("LUT_3D_SIZE must be between 2 and 65".to_string());
             }
             size = Some(s);

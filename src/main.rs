@@ -20,6 +20,7 @@ use pipeline::{
     process_split_comparison_16_to_8_ex,
 };
 use raw::RawImage;
+use rayon::prelude::*;
 use recipe::{Catalog, CatalogItem, Recipe};
 use serde::{Deserialize, Serialize};
 use std::env;
@@ -109,6 +110,29 @@ struct RenderResult {
 #[derive(Serialize)]
 struct ExportResult {
     exported_path: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+struct BatchExportItem {
+    path: String,
+    #[serde(default)]
+    recipe: Option<Recipe>,
+}
+
+#[derive(Serialize)]
+struct BatchExportItemResult {
+    path: String,
+    success: bool,
+    exported_path: Option<String>,
+    error: Option<String>,
+}
+
+#[derive(Serialize)]
+struct BatchExportResult {
+    total: usize,
+    succeeded: usize,
+    failed: usize,
+    results: Vec<BatchExportItemResult>,
 }
 
 struct DaemonCache {
@@ -690,6 +714,8 @@ struct DaemonCommand {
     highlight_mask: Option<bool>,
     #[serde(default)]
     shadow_mask: Option<bool>,
+    #[serde(default)]
+    items: Option<Vec<BatchExportItem>>,
 }
 
 fn run_daemon() {
@@ -970,6 +996,48 @@ fn run_daemon() {
                     })),
                     Err(e) => print_json::<()>(&ResponseWrapper::err_action("export", e)),
                 }
+            }
+            "batch_export" => {
+                let items = match cmd_obj.items {
+                    Some(its) if !its.is_empty() => its,
+                    _ => {
+                        print_json::<()>(&ResponseWrapper::err_action("batch_export", "No items provided for batch export"));
+                        continue;
+                    }
+                };
+                let options = cmd_obj.options.unwrap_or_default();
+
+                // Multi-threaded parallel batch export using Rayon
+                let results: Vec<BatchExportItemResult> = items
+                    .par_iter()
+                    .map(|item| {
+                        let recipe = item.recipe.clone().or_else(|| Recipe::load_sidecar(&item.path)).unwrap_or_default();
+                        match export_photo(&item.path, &recipe, &options) {
+                            Ok(dest) => BatchExportItemResult {
+                                path: item.path.clone(),
+                                success: true,
+                                exported_path: Some(dest.to_string_lossy().to_string()),
+                                error: None,
+                            },
+                            Err(e) => BatchExportItemResult {
+                                path: item.path.clone(),
+                                success: false,
+                                exported_path: None,
+                                error: Some(e),
+                            },
+                        }
+                    })
+                    .collect();
+
+                let succeeded = results.iter().filter(|r| r.success).count();
+                let failed = results.len() - succeeded;
+
+                print_json(&ResponseWrapper::ok_action("batch_export", BatchExportResult {
+                    total: results.len(),
+                    succeeded,
+                    failed,
+                    results,
+                }));
             }
             "exit" => {
                 print_json(&ResponseWrapper::ok_action("exit", "Daemon exiting"));

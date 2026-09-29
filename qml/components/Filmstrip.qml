@@ -12,6 +12,7 @@ Rectangle {
 
     property var photoList: []
     property string activePhotoPath: ""
+    property var selectedPaths: []
     property bool isGdriveMode: false
     property string currentFolder: "~/Downloads/yurt"
     property bool isDownloadingRemote: false
@@ -22,6 +23,7 @@ Rectangle {
     signal parentFolderRequested()
     signal refreshRequested()
     signal switchSource(bool gdrive)
+    signal batchExportRequested()
 
     ColumnLayout {
         anchors.fill: parent
@@ -215,6 +217,41 @@ Rectangle {
                 }
             }
 
+            // Batch Export Button
+            Rectangle {
+                visible: root.selectedPaths.length > 1
+                implicitWidth: batchExportRow.implicitWidth + 14
+                implicitHeight: 22
+                radius: 4
+                color: Theme.accent
+                border.color: Theme.accent
+
+                RowLayout {
+                    id: batchExportRow
+                    anchors.centerIn: parent
+                    spacing: 5
+                    Text {
+                        text: Theme.iconExport
+                        font.family: Theme.iconFont
+                        font.pixelSize: 10
+                        color: Theme.bgBase
+                    }
+                    Text {
+                        text: "Batch (" + root.selectedPaths.length + ")"
+                        textFormat: Text.PlainText
+                        font.pixelSize: 9
+                        font.weight: Font.Bold
+                        color: Theme.bgBase
+                    }
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: root.batchExportRequested()
+                }
+            }
+
             Rectangle {
                 width: 22
                 height: 22
@@ -285,12 +322,13 @@ Rectangle {
             }
 
             delegate: Rectangle {
+                readonly property bool isSelected: root.selectedPaths.indexOf(modelData.path) !== -1 || root.activePhotoPath === modelData.path
                 width: 90
                 height: listView.height
                 radius: Theme.radiusSm
-                color: root.activePhotoPath === modelData.path ? Qt.rgba(Theme.accent.r, Theme.accent.g, Theme.accent.b, 0.25) : Theme.bgCard
-                border.color: root.activePhotoPath === modelData.path ? Theme.accent : Theme.border
-                border.width: root.activePhotoPath === modelData.path ? 2 : 1
+                color: isSelected ? Qt.rgba(Theme.accent.r, Theme.accent.g, Theme.accent.b, 0.25) : Theme.bgCard
+                border.color: isSelected ? Theme.accent : Theme.border
+                border.width: isSelected ? 2 : 1
 
                 ColumnLayout {
                     anchors.fill: parent
@@ -454,12 +492,28 @@ Rectangle {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
                     hoverEnabled: true
-                    onClicked: {
+                    onClicked: function(mouse) {
                         if (modelData.is_dir) {
-                            root.navigateFolder(modelData.path)
+                            root.navigateFolder(modelData.path);
                         } else {
-                            root.activePhotoPath = modelData.path
-                            root.selectPhoto(modelData.path, modelData.is_remote || false)
+                            if (mouse.modifiers & Qt.ControlModifier) {
+                                var sList = root.selectedPaths.slice();
+                                var idx = sList.indexOf(modelData.path);
+                                if (idx !== -1) {
+                                    sList.splice(idx, 1);
+                                } else {
+                                    sList.push(modelData.path);
+                                }
+                                root.selectedPaths = sList;
+                            } else if (mouse.modifiers & Qt.ShiftModifier) {
+                                var sel = [root.activePhotoPath];
+                                if (sel.indexOf(modelData.path) === -1) sel.push(modelData.path);
+                                root.selectedPaths = sel;
+                            } else {
+                                root.selectedPaths = [modelData.path];
+                                root.activePhotoPath = modelData.path;
+                                root.selectPhoto(modelData.path, modelData.is_remote || false);
+                            }
                         }
                     }
                 }

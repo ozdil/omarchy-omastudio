@@ -24,6 +24,8 @@ Rectangle {
     property string gdriveFolder: "Photos/Exports"
     property bool isExporting: false
     property string exportStatusText: ""
+    property bool isBatchMode: false
+    property int batchCount: 0
 
     signal closeRequested()
     signal doExport(var options)
@@ -46,7 +48,7 @@ Rectangle {
                     color: Theme.accent
                 }
                 Text {
-                    text: "Export Master Photo"
+                    text: root.isBatchMode ? ("Batch Export (" + root.batchCount + " Photos)") : "Export Master Photo"
                     textFormat: Text.PlainText
                     font.pixelSize: 15
                     font.weight: Font.Bold
@@ -401,7 +403,7 @@ Rectangle {
                     color: root.isExporting ? Theme.textMuted : Theme.bgBase
                 }
                 Text {
-                    text: root.isExporting ? "Exporting Full Resolution..." : "Start Export (" + root.selectedFormat.toUpperCase() + " / " + root.selectedIcc + ")"
+                    text: root.isExporting ? (root.isBatchMode ? "Exporting Batch..." : "Exporting Full Resolution...") : (root.isBatchMode ? ("Start Parallel Batch Export (" + root.batchCount + " Photos)") : ("Start Export (" + root.selectedFormat.toUpperCase() + " / " + root.selectedIcc + ")"))
                     textFormat: Text.PlainText
                     font.pixelSize: 13
                     font.weight: Font.Bold

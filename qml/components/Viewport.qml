@@ -38,6 +38,8 @@ Rectangle {
     signal splitRatioChangedByUser(real ratio)
     signal rotationChangedByUser(real angle)
     signal cropChangedByUser(real cx, real cy, real cw, real ch, string aspect)
+    signal fileDropped(string filePath)
+    signal folderDropped(string folderPath)
 
     function resetCrop() {
         root.cropX = 0.0;
@@ -1168,6 +1170,90 @@ Rectangle {
             anchors.fill: parent
             cursorShape: Qt.PointingHandCursor
             onClicked: root.resetZoomFit()
+        }
+    }
+
+    // Wayland & Linux Native Drag and Drop Area
+    DropArea {
+        id: dropArea
+        anchors.fill: parent
+        z: 50
+
+        onEntered: function(drag) {
+            if (drag.hasUrls) {
+                drag.acceptProposedAction();
+            }
+        }
+
+        onDropped: function(drop) {
+            if (!drop.hasUrls || drop.urls.length === 0) return;
+            var urlStr = String(drop.urls[0]);
+            var path = urlStr;
+            if (path.indexOf("file://") === 0) {
+                path = decodeURIComponent(path.substring(7));
+            }
+            if (!path || path.trim() === "") return;
+
+            var lower = path.toLowerCase();
+            var rawExts = [".nef", ".nrw", ".raf", ".cr2", ".cr3", ".arw", ".dng", ".rwl", ".orf", ".rw2", ".jpg", ".jpeg", ".png", ".webp", ".tiff", ".tif"];
+            var isFile = false;
+            for (var i = 0; i < rawExts.length; i++) {
+                if (lower.endsWith(rawExts[i])) {
+                    isFile = true;
+                    break;
+                }
+            }
+
+            if (isFile) {
+                root.fileDropped(path);
+            } else {
+                root.folderDropped(path);
+            }
+            drop.acceptProposedAction();
+        }
+    }
+
+    // Visual Drop Highlight Overlay
+    Rectangle {
+        anchors.fill: parent
+        color: Qt.rgba(Theme.accent.r, Theme.accent.g, Theme.accent.b, 0.15)
+        border.color: Theme.accent
+        border.width: 3
+        radius: 8
+        visible: dropArea.containsDrag
+        z: 60
+
+        ColumnLayout {
+            anchors.centerIn: parent
+            spacing: 12
+
+            Rectangle {
+                Layout.alignment: Qt.AlignHCenter
+                width: 64
+                height: 64
+                radius: 32
+                color: Qt.rgba(0, 0, 0, 0.6)
+                border.color: Theme.accent
+                border.width: 2
+
+                Text {
+                    anchors.centerIn: parent
+                    text: Theme.iconFolder
+                    font.family: Theme.iconFont
+                    font.pixelSize: 28
+                    color: Theme.accent
+                }
+            }
+
+            Text {
+                text: "Drop RAW Photo or Folder to Open"
+                textFormat: Text.PlainText
+                font.pixelSize: 14
+                font.weight: Font.Bold
+                font.family: Theme.monoFont
+                color: Theme.textMain
+                Layout.alignment: Qt.AlignHCenter
+            }
         }
     }
 

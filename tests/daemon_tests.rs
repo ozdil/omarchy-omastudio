@@ -91,3 +91,34 @@ fn test_daemon_ai_jev_without_load_returns_error() {
     let status = child.wait().expect("Failed to wait on daemon");
     assert!(status.success(), "Daemon must exit successfully");
 }
+
+#[test]
+fn test_daemon_batch_export_empty_or_valid() {
+    let mut child = Command::new(env!("CARGO_BIN_EXE_omastudio-engine"))
+        .arg("daemon")
+        .stdin(Stdio::piped())
+        .stdout(Stdio::piped())
+        .spawn()
+        .expect("Failed to start omastudio-engine daemon");
+
+    let mut stdin = child.stdin.take().expect("Failed to open stdin");
+    let stdout = child.stdout.take().expect("Failed to open stdout");
+    let mut reader = BufReader::new(stdout);
+
+    // Send batch_export without items
+    writeln!(stdin, "{{\"cmd\": \"batch_export\", \"items\": []}}").expect("Failed to write batch_export");
+    stdin.flush().expect("Failed to flush stdin");
+
+    let mut line = String::new();
+    reader.read_line(&mut line).expect("Failed to read batch_export response");
+    assert!(line.contains("\"success\":false"), "Empty items must return success:false: {}", line);
+    assert!(line.contains("\"action\":\"batch_export\""), "Action must be batch_export: {}", line);
+
+    // Send exit
+    writeln!(stdin, "{{\"cmd\": \"exit\"}}").expect("Failed to write exit");
+    stdin.flush().expect("Failed to flush stdin");
+
+    let status = child.wait().expect("Failed to wait on daemon");
+    assert!(status.success(), "Daemon must exit successfully");
+}
+

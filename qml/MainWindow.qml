@@ -24,6 +24,10 @@ Rectangle {
     property bool isSplitView: false
     property real splitRatio: 0.5
     property bool showExportModal: false
+    property bool showLeftPanel: true
+    property bool showRightPanel: true
+    property int photoRating: 0
+    property string photoFlag: "none"
 
     // Lightroom-grade Recipe State
     property real wbTemp: 5500.0
@@ -340,6 +344,8 @@ Rectangle {
             "crop_w": root.cropW,
             "crop_h": root.cropH,
             "crop_aspect": root.cropAspect,
+            "rating": root.photoRating,
+            "flag": root.photoFlag,
             "preset_name": null
         };
     }
@@ -410,6 +416,9 @@ Rectangle {
             viewport.cropAspect = root.cropAspect;
         }
 
+        if (r.rating !== undefined) root.photoRating = Number(r.rating) || 0;
+        if (r.flag !== undefined) root.photoFlag = r.flag || "none";
+
         requestRender();
     }
 
@@ -476,6 +485,12 @@ Rectangle {
                 }
             } else if (act === "save_recipe") {
                 root.showToast("[OK] Recipe sidecar saved", Theme.accentGreen);
+            } else if (act === "batch_export") {
+                exportDialog.isExporting = false;
+                if (data) {
+                    exportDialog.exportStatusText = "[OK] Batch Finished: " + data.succeeded + "/" + data.total + " photos exported";
+                    root.showToast("[OK] Batch Export: " + data.succeeded + " succeeded, " + data.failed + " failed", Theme.accentGreen);
+                }
             }
         } catch(e) {
             console.error("Error parsing daemon message:", e, line);
@@ -704,6 +719,57 @@ Rectangle {
         onActivated: root.switchGradeVersion("D")
     }
 
+    // Lightroom Studio Culling & Ergonomics (1-5 Stars, Flags, Cinematic View)
+    Shortcut {
+        sequence: "1"
+        onActivated: { root.photoRating = 1; root.showToast("Rating: [ * ] 1 Star (1)", Theme.accentYellow); root.saveSidecar(); }
+    }
+    Shortcut {
+        sequence: "2"
+        onActivated: { root.photoRating = 2; root.showToast("Rating: [ * * ] 2 Stars (2)", Theme.accentYellow); root.saveSidecar(); }
+    }
+    Shortcut {
+        sequence: "3"
+        onActivated: { root.photoRating = 3; root.showToast("Rating: [ * * * ] 3 Stars (3)", Theme.accentYellow); root.saveSidecar(); }
+    }
+    Shortcut {
+        sequence: "4"
+        onActivated: { root.photoRating = 4; root.showToast("Rating: [ * * * * ] 4 Stars (4)", Theme.accentYellow); root.saveSidecar(); }
+    }
+    Shortcut {
+        sequence: "5"
+        onActivated: { root.photoRating = 5; root.showToast("Rating: [ * * * * * ] 5 Stars (5)", Theme.accentYellow); root.saveSidecar(); }
+    }
+    Shortcut {
+        sequence: "0"
+        onActivated: { root.photoRating = 0; root.showToast("Rating Cleared (0)", Theme.textDim); root.saveSidecar(); }
+    }
+    Shortcut {
+        sequence: "X"
+        onActivated: { root.photoFlag = (root.photoFlag === "reject" ? "none" : "reject"); root.showToast(root.photoFlag === "reject" ? "Flag: REJECT (X)" : "Flag: NONE", Theme.highlightClip); root.saveSidecar(); }
+    }
+    Shortcut {
+        sequence: "P"
+        onActivated: { root.photoFlag = (root.photoFlag === "pick" ? "none" : "pick"); root.showToast(root.photoFlag === "pick" ? "Flag: PICK (P)" : "Flag: NONE", Theme.accentGreen); root.saveSidecar(); }
+    }
+    Shortcut {
+        sequence: "U"
+        onActivated: { root.photoFlag = "none"; root.showToast("Flag: UNFLAGGED (U)", Theme.textDim); root.saveSidecar(); }
+    }
+    Shortcut {
+        sequence: "E"
+        onActivated: { root.showExportModal = !root.showExportModal; }
+    }
+    Shortcut {
+        sequence: "Tab"
+        onActivated: {
+            var bothOpen = root.showLeftPanel || root.showRightPanel;
+            root.showLeftPanel = !bothOpen;
+            root.showRightPanel = !bothOpen;
+            root.showToast(bothOpen ? "Cinematic Full Canvas (Tab)" : "Panels Restored (Tab)", Theme.accentCyan);
+        }
+    }
+
     function loadPhoto(path) {
         root.activePhotoPath = path;
         root.sendDaemonCommand({
@@ -828,7 +894,12 @@ Rectangle {
             onZoomFit: viewport.resetZoomFit()
             onZoom100: viewport.setZoomAbsolute(1.0)
             onZoom200: viewport.setZoomAbsolute(2.0)
-            onExportClicked: root.showExportModal = true
+            onExportClicked: {
+                exportDialog.isBatchMode = false;
+                exportDialog.batchCount = 0;
+                exportDialog.exportStatusText = "";
+                root.showExportModal = true;
+            }
         }
 
         // WORKSPACE CENTER (LEFT: NAVIGATOR + HISTOGRAM + EXIF, CENTER: CANVAS, RIGHT: ADJUSTMENTS)
@@ -839,11 +910,12 @@ Rectangle {
 
             // LEFT PANEL: NAVIGATOR & HISTOGRAM & METADATA (Lightroom Studio Layout)
             Rectangle {
-                implicitWidth: 280
+                visible: root.showLeftPanel
+                implicitWidth: root.showLeftPanel ? 280 : 0
                 Layout.fillHeight: true
                 color: Theme.bgBase
                 border.color: Theme.border
-                border.width: 1
+                border.width: root.showLeftPanel ? 1 : 0
 
                 ScrollView {
                     anchors.fill: parent
@@ -1022,16 +1094,26 @@ Rectangle {
                         root.cropH = ch;
                         root.cropAspect = aspect;
                     }
+                    onFileDropped: function(filePath) {
+                        root.loadPhoto(filePath);
+                        root.showToast("[OK] Opened dropped RAW: " + filePath.split("/").pop(), Theme.accentCyan);
+                    }
+                    onFolderDropped: function(folderPath) {
+                        filmstrip.currentFolder = folderPath;
+                        root.scanLocalFolder(folderPath);
+                        root.showToast("[OK] Scanning dropped folder: " + folderPath.split("/").pop(), Theme.accentCyan);
+                    }
                 }
             }
 
             // RIGHT ADJUSTMENT INSPECTOR (Dedicated Pure Tone & Color Controls)
             Rectangle {
-                implicitWidth: 320
+                visible: root.showRightPanel
+                implicitWidth: root.showRightPanel ? 320 : 0
                 Layout.fillHeight: true
                 color: Theme.bgSurface
                 border.color: Theme.border
-                border.width: 1
+                border.width: root.showRightPanel ? 1 : 0
 
                 ScrollView {
                     anchors.fill: parent
@@ -1917,6 +1999,12 @@ Rectangle {
                     root.scanLocalFolder(filmstrip.currentFolder || "~/Pictures");
                 }
             }
+            onBatchExportRequested: {
+                exportDialog.isBatchMode = true;
+                exportDialog.batchCount = filmstrip.selectedPaths.length;
+                exportDialog.exportStatusText = "";
+                root.showExportModal = true;
+            }
         }
     }
 
@@ -1967,17 +2055,34 @@ Rectangle {
             onCloseRequested: root.showExportModal = false
             onDoExport: function(opts) {
                 exportDialog.isExporting = true;
-                exportDialog.exportStatusText = "Demosaicing full resolution sensor & encoding...";
-                var recipeJson = JSON.stringify(root.buildRecipeObject());
-                var optsJson = JSON.stringify(opts);
-                exportProc.command = [
-                    root.resolveEnginePath(),
-                    "export",
-                    root.activePhotoPath,
-                    "--recipe", recipeJson,
-                    "--options", optsJson
-                ];
-                exportProc.running = true;
+                if (exportDialog.isBatchMode && filmstrip.selectedPaths.length > 0) {
+                    exportDialog.exportStatusText = "Dispatching " + filmstrip.selectedPaths.length + " photos to multi-core Rayon pool...";
+                    var batchItems = [];
+                    for (var i = 0; i < filmstrip.selectedPaths.length; i++) {
+                        var p = filmstrip.selectedPaths[i];
+                        batchItems.push({
+                            "path": p,
+                            "recipe": (p === root.activePhotoPath ? root.buildRecipeObject() : null)
+                        });
+                    }
+                    root.sendDaemonCommand({
+                        cmd: "batch_export",
+                        items: batchItems,
+                        options: opts
+                    });
+                } else {
+                    exportDialog.exportStatusText = "Demosaicing full resolution sensor & encoding...";
+                    var recipeJson = JSON.stringify(root.buildRecipeObject());
+                    var optsJson = JSON.stringify(opts);
+                    exportProc.command = [
+                        root.resolveEnginePath(),
+                        "export",
+                        root.activePhotoPath,
+                        "--recipe", recipeJson,
+                        "--options", optsJson
+                    ];
+                    exportProc.running = true;
+                }
             }
         }
     }
