@@ -15,6 +15,7 @@ Rectangle {
     property bool isGdriveMode: false
     property string currentFolder: "~/Downloads/yurt"
     property bool isDownloadingRemote: false
+    property bool isListingFolder: false
 
     signal selectPhoto(string path, bool isRemote)
     signal navigateFolder(string remotePath)
@@ -154,6 +155,36 @@ Rectangle {
                 Layout.fillWidth: true
             }
 
+            // Scanning / Listing Folder Spinner / Badge
+            Rectangle {
+                visible: root.isListingFolder
+                implicitWidth: listRow.implicitWidth + 12
+                implicitHeight: 22
+                radius: 4
+                color: Qt.rgba(Theme.accentYellow.r, Theme.accentYellow.g, Theme.accentYellow.b, 0.2)
+                border.color: Theme.accentYellow
+                border.width: 1
+
+                RowLayout {
+                    id: listRow
+                    anchors.centerIn: parent
+                    spacing: 6
+                    Text {
+                        text: Theme.iconRefresh
+                        font.family: Theme.iconFont
+                        font.pixelSize: 10
+                        color: Theme.accentYellow
+                    }
+                    Text {
+                        text: root.isGdriveMode ? "Scanning Cloud..." : "Scanning Folder..."
+                        textFormat: Text.PlainText
+                        font.pixelSize: 9
+                        font.weight: Font.Bold
+                        color: Theme.accentYellow
+                    }
+                }
+            }
+
             // Downloading Spinner / Badge
             Rectangle {
                 visible: root.isDownloadingRemote
@@ -205,15 +236,43 @@ Rectangle {
             }
         }
 
-        // Horizontal Thumbnail Strip
-        ListView {
-            id: listView
+        // Horizontal Thumbnail Strip or Empty State
+        Item {
             Layout.fillWidth: true
             Layout.fillHeight: true
-            orientation: ListView.Horizontal
-            spacing: 8
-            clip: true
-            model: root.photoList
+
+            // Empty state notice
+            Rectangle {
+                anchors.fill: parent
+                visible: (!root.photoList || root.photoList.length === 0) && !root.isListingFolder
+                color: "transparent"
+
+                RowLayout {
+                    anchors.centerIn: parent
+                    spacing: 8
+                    Text {
+                        text: root.isGdriveMode ? Theme.iconCloud : Theme.iconFolder
+                        font.family: Theme.iconFont
+                        font.pixelSize: 14
+                        color: Theme.textDim
+                    }
+                    Text {
+                        text: root.isGdriveMode ? "No RAW photos found in this Google Drive folder." : "No RAW photos found in this directory."
+                        textFormat: Text.PlainText
+                        font.pixelSize: 10
+                        font.family: Theme.monoFont
+                        color: Theme.textDim
+                    }
+                }
+            }
+
+            ListView {
+                id: listView
+                anchors.fill: parent
+                orientation: ListView.Horizontal
+                spacing: 8
+                clip: true
+                model: root.photoList
 
             WheelHandler {
                 id: filmstripWheel
@@ -350,4 +409,5 @@ Rectangle {
             }
         }
     }
+}
 }

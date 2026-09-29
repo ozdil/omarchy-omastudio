@@ -17,10 +17,15 @@ pub const WHITELISTED_ENV_VARS: &[&str] = &[
     "XDG_CONFIG_HOME",
     "XDG_DATA_HOME",
     "XDG_CACHE_HOME",
+    "SSL_CERT_FILE",
+    "SSL_CERT_DIR",
+    "HTTP_PROXY",
+    "HTTPS_PROXY",
+    "NO_PROXY",
 ];
 
-/// Maximum buffer size for command output to prevent memory overrun (64 KiB)
-pub const MAX_COMMAND_OUTPUT_BYTES: usize = 64 * 1024;
+/// Maximum buffer size for command output to prevent memory overrun (1 MiB ceiling for large directory listings)
+pub const MAX_COMMAND_OUTPUT_BYTES: usize = 1024 * 1024;
 
 /// Cleans and configures a Command according to Omarchy security standards:
 /// - Isolated process group (cmd.process_group(0))
@@ -180,6 +185,45 @@ pub fn run_bounded_command(
         }
 
         if child_exited {
+            // Drain any remaining buffered data from stdout
+            if let Some(ref mut pipe) = guard.child.stdout {
+                loop {
+                    match pipe.read(&mut temp_chunk) {
+                        Ok(0) => break,
+                        Ok(n) => {
+                            if stdout_buf.len() + n > MAX_COMMAND_OUTPUT_BYTES {
+                                return Err(io::Error::new(
+                                    io::ErrorKind::OutOfMemory,
+                                    "Command stdout exceeded buffer cap",
+                                ));
+                            }
+                            stdout_buf.extend_from_slice(&temp_chunk[..n]);
+                        }
+                        Err(ref e) if e.kind() == io::ErrorKind::WouldBlock => break,
+                        Err(e) => return Err(e),
+                    }
+                }
+            }
+
+            // Drain any remaining buffered data from stderr
+            if let Some(ref mut pipe) = guard.child.stderr {
+                loop {
+                    match pipe.read(&mut temp_chunk) {
+                        Ok(0) => break,
+                        Ok(n) => {
+                            if stderr_buf.len() + n > MAX_COMMAND_OUTPUT_BYTES {
+                                return Err(io::Error::new(
+                                    io::ErrorKind::OutOfMemory,
+                                    "Command stderr exceeded buffer cap",
+                                ));
+                            }
+                            stderr_buf.extend_from_slice(&temp_chunk[..n]);
+                        }
+                        Err(ref e) if e.kind() == io::ErrorKind::WouldBlock => break,
+                        Err(e) => return Err(e),
+                    }
+                }
+            }
             break;
         }
 

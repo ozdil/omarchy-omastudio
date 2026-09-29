@@ -120,6 +120,7 @@ Rectangle {
     property color toastColor: Theme.accent
     property string currentGdrivePath: "Photos"
     property bool isDownloadingRemote: false
+    property bool isListingFolder: false
     property bool daemonReady: false
     property var daemonQueue: []
 
@@ -618,12 +619,17 @@ Rectangle {
         stdout: StdioCollector {
             waitForEnd: true
             onStreamFinished: {
+                root.isListingFolder = false;
                 try {
                     var resp = JSON.parse(text);
                     if (resp.success && resp.data) {
                         root.photoList = resp.data;
+                    } else if (resp.error) {
+                        root.showToast("[ERR] List failed: " + resp.error, Theme.accentMagenta);
                     }
-                } catch(e) {}
+                } catch(e) {
+                    root.showToast("[ERR] Folder scan response error", Theme.accentMagenta);
+                }
             }
         }
     }
@@ -693,6 +699,7 @@ Rectangle {
     }
 
     function scanLocalFolder(dir) {
+        root.isListingFolder = true;
         listProc.command = [root.resolveEnginePath(), "scan", dir];
         listProc.running = true;
     }
@@ -1842,6 +1849,7 @@ Rectangle {
             photoList: root.photoList
             activePhotoPath: root.activePhotoPath
             isDownloadingRemote: root.isDownloadingRemote
+            isListingFolder: root.isListingFolder
             onSelectPhoto: function(path, isRemote) {
                 if (isRemote) {
                     root.isDownloadingRemote = true;
@@ -1857,6 +1865,7 @@ Rectangle {
                 root.currentGdrivePath = remotePath;
                 filmstrip.currentFolder = remotePath;
                 root.showToast("[Folder] Navigating: " + remotePath, Theme.accent);
+                root.isListingFolder = true;
                 listProc.command = [root.resolveEnginePath(), "gdrive", "list", remotePath];
                 listProc.running = true;
             }
@@ -1870,12 +1879,14 @@ Rectangle {
                 }
                 filmstrip.currentFolder = root.currentGdrivePath;
                 root.showToast("[Folder] Navigating: " + root.currentGdrivePath, Theme.accent);
+                root.isListingFolder = true;
                 listProc.command = [root.resolveEnginePath(), "gdrive", "list", root.currentGdrivePath];
                 listProc.running = true;
             }
             onSwitchSource: function(isGdrive) {
                 if (isGdrive) {
                     filmstrip.currentFolder = root.currentGdrivePath;
+                    root.isListingFolder = true;
                     listProc.command = [root.resolveEnginePath(), "gdrive", "list", root.currentGdrivePath];
                     listProc.running = true;
                 } else {
@@ -1885,6 +1896,7 @@ Rectangle {
             }
             onRefreshRequested: {
                 if (filmstrip.isGdriveMode) {
+                    root.isListingFolder = true;
                     listProc.command = [root.resolveEnginePath(), "gdrive", "list", root.currentGdrivePath];
                     listProc.running = true;
                 } else {
