@@ -122,3 +122,72 @@ fn test_daemon_batch_export_empty_or_valid() {
     assert!(status.success(), "Daemon must exit successfully");
 }
 
+#[test]
+fn test_daemon_anti_echo_loop_resilience() {
+    let mut child = Command::new(env!("CARGO_BIN_EXE_omastudio-engine"))
+        .arg("daemon")
+        .stdin(Stdio::piped())
+        .stdout(Stdio::piped())
+        .spawn()
+        .expect("Failed to start omastudio-engine daemon");
+
+    let mut stdin = child.stdin.take().expect("Failed to open stdin");
+    let stdout = child.stdout.take().expect("Failed to open stdout");
+    let mut reader = BufReader::new(stdout);
+
+    // 1. Send empty lines and whitespaces (should be ignored without emitting errors)
+    writeln!(stdin, "").expect("Write newline");
+    writeln!(stdin, "   \t  ").expect("Write whitespace");
+    stdin.flush().expect("Flush stdin");
+
+    // 2. Send malformed JSON
+    writeln!(stdin, "{{ invalid json").expect("Write malformed json");
+    stdin.flush().expect("Flush stdin");
+
+    let mut line = String::new();
+    reader.read_line(&mut line).expect("Read error line");
+    assert!(line.contains("\"success\":false"), "Must return failure on invalid json");
+    assert!(line.contains("\"action\":\"error\""), "Action should be error");
+
+    // 3. Send unknown command
+    writeln!(stdin, "{{\"cmd\": \"nonexistent_action_loop_test\"}}").expect("Write unknown cmd");
+    stdin.flush().expect("Flush stdin");
+
+    let mut line2 = String::new();
+    reader.read_line(&mut line2).expect("Read unknown response");
+    assert!(line2.contains("\"success\":false"), "Must return failure on unknown action");
+    assert!(line2.contains("Unknown daemon command"), "Should state unknown daemon command");
+
+    // 4. Send ping to ensure daemon is still fully responsive and unblocked
+    writeln!(stdin, "{{\"cmd\": \"ping\"}}").expect("Write ping");
+    stdin.flush().expect("Flush stdin");
+
+    let mut line3 = String::new();
+    reader.read_line(&mut line3).expect("Read ping");
+    assert!(line3.contains("\"success\":true"), "Daemon must remain responsive");
+
+    // 5. Clean exit
+    writeln!(stdin, "{{\"cmd\": \"exit\"}}").expect("Write exit");
+    stdin.flush().expect("Flush stdin");
+
+    let status = child.wait().expect("Wait daemon");
+    assert!(status.success(), "Daemon must exit cleanly");
+}
+
+#[test]
+fn test_daemon_stdin_eof_graceful_termination() {
+    let mut child = Command::new(env!("CARGO_BIN_EXE_omastudio-engine"))
+        .arg("daemon")
+        .stdin(Stdio::piped())
+        .stdout(Stdio::piped())
+        .spawn()
+        .expect("Failed to start omastudio-engine daemon");
+
+    let stdin = child.stdin.take().expect("Failed to open stdin");
+    // Explicitly drop stdin to simulate EOF
+    drop(stdin);
+
+    let status = child.wait().expect("Daemon should terminate on stdin EOF");
+    assert!(status.success(), "Daemon must exit cleanly on EOF without hanging");
+}
+
