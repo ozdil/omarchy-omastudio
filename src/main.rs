@@ -590,6 +590,12 @@ fn main() {
                     "epoch_salted_rendezvous".into(),
                     "constant_time_verification".into(),
                     "adaptive_rate_control".into(),
+                    "aces_1_3_color_management".into(),
+                    "aces_gamut_compression".into(),
+                    "fujifilm_film_simulations".into(),
+                    "hasselblad_hncs_and_xpan".into(),
+                    "watermark_and_branding_engine".into(),
+                    "offline_jev_decision_engine".into(),
                 ],
             };
             print_json(&ResponseWrapper::ok(status));
@@ -843,9 +849,16 @@ fn run_ai_jev(raw_path: &str) -> Result<JevInspectResult, String> {
     let preview = raw.process_preview(true)?;
 
     let mut auto_recipe = ai_auto_enhance(preview.as_slice(), preview.width, preview.height, preview.channels, &meta);
-    let (scene, jev_opt) = ai_classify_scene_with_jev(preview.as_slice(), preview.width, preview.height, preview.channels, &meta);
+    let (mut scene, mut jev_opt) = ai_classify_scene_with_jev(preview.as_slice(), preview.width, preview.height, preview.channels, &meta);
 
-    if let Some(ref jev) = jev_opt {
+    if jev_opt.is_none() {
+        let state = ai::jev::extract_photographic_state(preview.as_slice(), preview.width, preview.height, preview.channels, &meta);
+        let offline_jev = ai::jev::generate_offline_jev_decisions(&state, &meta);
+        apply_jev_decisions_to_recipe(&mut auto_recipe, &offline_jev);
+        scene.recommended_preset = offline_jev.recommended_preset.clone();
+        scene.description = format!("Jev Offline Expert [Score: {:.1}/10, Contrast: {}]", offline_jev.aesthetic_score, offline_jev.recommended_contrast);
+        jev_opt = Some(offline_jev);
+    } else if let Some(ref jev) = jev_opt {
         apply_jev_decisions_to_recipe(&mut auto_recipe, jev);
     }
 
@@ -1141,8 +1154,15 @@ fn run_daemon() {
                 let c = cache.lock().unwrap();
                 if let (Some(ref buffer), Some(ref meta)) = (&c.raw_buffer_8, &c.metadata) {
                     let mut auto_recipe = ai_auto_enhance(buffer, c.width, c.height, c.channels, meta);
-                    let (scene, jev_opt) = ai_classify_scene_with_jev(buffer, c.width, c.height, c.channels, meta);
-                    if let Some(ref jev) = jev_opt {
+                    let (mut scene, mut jev_opt) = ai_classify_scene_with_jev(buffer, c.width, c.height, c.channels, meta);
+                    if jev_opt.is_none() {
+                        let state = ai::jev::extract_photographic_state(buffer, c.width, c.height, c.channels, meta);
+                        let offline_jev = ai::jev::generate_offline_jev_decisions(&state, meta);
+                        apply_jev_decisions_to_recipe(&mut auto_recipe, &offline_jev);
+                        scene.recommended_preset = offline_jev.recommended_preset.clone();
+                        scene.description = format!("Jev Offline Expert [Score: {:.1}/10, Contrast: {}]", offline_jev.aesthetic_score, offline_jev.recommended_contrast);
+                        jev_opt = Some(offline_jev);
+                    } else if let Some(ref jev) = jev_opt {
                         apply_jev_decisions_to_recipe(&mut auto_recipe, jev);
                     }
                     let path_str = c.current_path.clone().unwrap_or_default();

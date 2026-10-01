@@ -514,6 +514,70 @@ pub fn apply_jev_decisions_to_recipe(recipe: &mut Recipe, jev: &JevDecisions) {
     }
 }
 
+/// Deterministic offline photographic intelligence engine (Jev Offline Expert Mode)
+pub fn generate_offline_jev_decisions(state: &JevStateInput, meta: &RawMetadata) -> JevDecisions {
+    // 1. Photographic scene analysis via Bayesian evaluation of EXIF + Luma + Chroma
+    let is_wide_aperture = meta.aperture > 0.0 && meta.aperture <= 2.8;
+    let is_telephoto = meta.focal_length >= 50.0;
+    let is_high_iso = meta.iso >= 1600.0;
+    let is_wide_angle = meta.focal_length > 0.0 && meta.focal_length <= 35.0;
+
+    let (scene_type, preset, confidence) = if is_high_iso || state.dark_ratio > 0.40 {
+        ("Night / Low-Light".to_string(), "Cinematic Moody".to_string(), 0.90)
+    } else if (is_wide_aperture && is_telephoto && state.warm_ratio > 0.10) || state.warm_ratio > 0.28 {
+        ("Portrait".to_string(), "Kodak Portra 400".to_string(), 0.92)
+    } else if state.warm_ratio > 0.22 && state.blue_ratio < 0.20 {
+        ("Golden Hour / Sunset".to_string(), "Kodak Portra 400".to_string(), 0.94)
+    } else if state.green_ratio > 0.18 || (is_wide_angle && state.blue_ratio > 0.15) {
+        ("Landscape / Nature".to_string(), "Fuji Velvia 50".to_string(), 0.95)
+    } else {
+        ("Street & Architecture".to_string(), "Fuji Classic Chrome".to_string(), 0.86)
+    };
+
+    // 2. Highlight and Shadow evaluation
+    let needs_highlight_recovery = state.p95_luma >= 238;
+    let highlight_probability = if state.p95_luma >= 238 {
+        ((state.p95_luma as f32 - 235.0) / 20.0).clamp(0.65, 0.98)
+    } else {
+        0.10
+    };
+
+    let needs_shadow_lift = state.p5_luma <= 18 && !is_high_iso;
+    let shadow_probability = if state.p5_luma <= 18 {
+        ((20.0 - state.p5_luma as f32) / 20.0).clamp(0.55, 0.95)
+    } else {
+        0.12
+    };
+
+    // 3. Recommended contrast
+    let recommended_contrast = if state.dynamic_range < 140.0 {
+        "Punchy / High Contrast".to_string()
+    } else if state.dynamic_range > 220.0 {
+        "Soft / Low Contrast".to_string()
+    } else {
+        "Standard / Natural".to_string()
+    };
+
+    // 4. Mathematical aesthetic score [1.0 to 10.0]
+    let clip_penalty = if state.p95_luma >= 250 { 1.5 } else { 0.0 };
+    let crush_penalty = if state.p5_luma <= 5 { 1.0 } else { 0.0 };
+    let dr_bonus = (state.dynamic_range / 255.0) * 1.5;
+    let aesthetic_score = (8.0 + dr_bonus - clip_penalty - crush_penalty).clamp(5.0, 9.8);
+
+    JevDecisions {
+        scene_type,
+        confidence,
+        recommended_preset: preset,
+        needs_highlight_recovery,
+        highlight_probability,
+        needs_shadow_lift,
+        shadow_probability,
+        recommended_contrast,
+        aesthetic_score: (aesthetic_score * 10.0).round() / 10.0,
+        source: "jev-offline-expert".to_string(),
+    }
+}
+
 /// Hybrid scene classification: attempts Jev System 1 first; falls back transparently to local heuristics
 pub fn ai_classify_scene_with_jev(
     buffer: &[u8],

@@ -575,7 +575,7 @@ pub fn luhn_verify(all_16_digits: &[u8]) -> bool {
         }
         sum += val;
     }
-    sum % 10 == 0
+    sum.is_multiple_of(10)
 }
 
 /// Normalizes an OmaID string by extracting only ASCII decimal digits.
@@ -630,6 +630,7 @@ pub fn generate_raw_oma_id() -> String {
 }
 
 /// Generates a valid, self-contained SVG QR code matrix for OmaID identity payloads.
+#[allow(clippy::needless_range_loop, clippy::manual_range_contains)]
 pub fn generate_fallback_qr_svg(content: &str) -> String {
     let size = 256;
     let grid_size = 25;

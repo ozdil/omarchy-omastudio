@@ -1,8 +1,8 @@
 use crate::recipe::Recipe;
 
-/// Luma-guided Highlight Reconstruction (Inpainting):
+/// Guided Perceptual Highlight Reconstruction (Inpainting):
 /// Repairs clipped color channels (e.g. green or blue clipping ahead of red)
-/// using chromatic gradient preservation from unclipped channels.
+/// using chromatic gradient preservation from unclipped channels and smooth energy roll-off.
 #[inline(always)]
 pub fn reconstruct_clipped_highlights(r: f32, g: f32, b: f32) -> (f32, f32, f32) {
     let clip_thresh = 0.94f32;
@@ -15,13 +15,14 @@ pub fn reconstruct_clipped_highlights(r: f32, g: f32, b: f32) -> (f32, f32, f32)
     }
 
     let max_val = r.max(g).max(b);
-    let blend_weight = ((max_val - clip_thresh) / (1.20 - clip_thresh)).clamp(0.0, 1.0);
-    let desat = blend_weight * 0.50;
+    let excess = ((max_val - clip_thresh) / (1.25 - clip_thresh)).clamp(0.0, 1.0);
+    // Smoothstep weighting
+    let desat = excess * excess * (3.0 - 2.0 * excess) * 0.65;
 
     let target_energy = max_val;
-    let r_out = if r_clip { r.max(target_energy) } else { r + (target_energy - r) * desat };
-    let g_out = if g_clip { g.max(target_energy) } else { g + (target_energy - g) * desat };
-    let b_out = if b_clip { b.max(target_energy) } else { b + (target_energy - b) * desat };
+    let r_out = if r_clip { target_energy } else { r + (target_energy - r) * desat * 0.5 };
+    let g_out = if g_clip { target_energy } else { g + (target_energy - g) * desat * 0.5 };
+    let b_out = if b_clip { target_energy } else { b + (target_energy - b) * desat * 0.5 };
 
     let luma = 0.2126 * r_out + 0.7152 * g_out + 0.0722 * b_out;
     (
@@ -130,9 +131,11 @@ pub fn apply_tone_pixel(
         luma_adj += (ch + cl + cd + cs) * 0.25;
     }
 
-    // Apply AgX Filmic Tone Curve if requested
+    // Apply AgX Filmic Tone Curve or ACES 1.3 Tonemapper if requested
     if recipe.filmic_agx {
         luma_adj = apply_agx_filmic_curve(luma_adj.max(0.0));
+    } else if recipe.aces_tonemap {
+        luma_adj = crate::pipeline::aces::apply_aces_tonemap(luma_adj.max(0.0));
     } else {
         luma_adj = luma_adj.clamp(0.0, 1.5);
     }

@@ -1,3 +1,5 @@
+pub mod watermark;
+
 use crate::gdrive::upload_export_to_gdrive;
 use crate::pipeline::process_buffer_16_to_16;
 use crate::raw::RawImage;
@@ -23,6 +25,7 @@ pub struct ExportOptions {
     pub output_dir: String,
     pub upload_to_gdrive: bool,
     pub gdrive_folder: Option<String>,
+    pub watermark: Option<watermark::WatermarkOptions>,
 }
 
 impl Default for ExportOptions {
@@ -39,6 +42,7 @@ impl Default for ExportOptions {
             output_dir: "~/Pictures/OmaStudio_Exports".to_string(),
             upload_to_gdrive: false,
             gdrive_folder: Some("Photos/Exports".to_string()),
+            watermark: None,
         }
     }
 }
@@ -109,6 +113,12 @@ pub fn export_photo<P: AsRef<Path>>(
         let new_w = (cur_w * options.scale_percent) / 100;
         let new_h = (cur_h * options.scale_percent) / 100;
         dyn_img = dyn_img.resize_exact(new_w, new_h, image::imageops::FilterType::Lanczos3);
+    }
+
+    // Apply Watermark if enabled
+    if let Some(ref wm) = options.watermark {
+        let meta_opt = raw.get_metadata().ok();
+        watermark::apply_watermark(&mut dyn_img, wm, meta_opt.as_ref());
     }
 
     // Resolve output directory

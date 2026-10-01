@@ -54,6 +54,19 @@ Rectangle {
     property string cropAspect: "Original"
     property int guideMode: 1 // 1: Rule of Thirds, 2: Golden Ratio, 3: Golden Spiral, 0: Off
 
+    // Live Watermark Preview Properties
+    property bool watermarkEnabled: false
+    property string watermarkType: "text"
+    property string watermarkText: "OmaStudio Photography"
+    property string watermarkLogoPath: ""
+    property int watermarkPositionIndex: 8
+    property real watermarkOpacity: 0.85
+    property int watermarkSize: 14
+    property int watermarkMargin: 24
+    property string watermarkColorHex: "#ffffff"
+    property bool watermarkDropShadow: true
+    property var exifMetadata: null
+
     signal splitRatioChangedByUser(real ratio)
     signal rotationChangedByUser(real angle)
     signal cropChangedByUser(real cx, real cy, real cw, real ch, string aspect)
@@ -347,6 +360,24 @@ Rectangle {
                             }
                         }
                     }
+                }
+
+                // Live Watermark Preview Overlay
+                WatermarkOverlay {
+                    id: liveWatermarkOverlay
+                    anchors.fill: parent
+                    enabled: root.watermarkEnabled
+                    watermarkType: root.watermarkType
+                    text: root.watermarkText
+                    logoPath: root.watermarkLogoPath
+                    positionIndex: root.watermarkPositionIndex
+                    opacity: root.watermarkOpacity
+                    size: root.watermarkSize
+                    margin: root.watermarkMargin
+                    colorHex: root.watermarkColorHex
+                    dropShadow: root.watermarkDropShadow
+                    exifMetadata: root.exifMetadata
+                    z: 5
                 }
 
                 // Interactive Split Comparison Curtain

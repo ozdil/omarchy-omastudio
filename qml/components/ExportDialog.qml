@@ -26,6 +26,8 @@ Rectangle {
     property string exportStatusText: ""
     property bool isBatchMode: false
     property int batchCount: 0
+    property bool watermarkEnabled: false
+    property var watermarkOptions: null
 
     signal closeRequested()
     signal doExport(var options)
@@ -238,6 +240,8 @@ Rectangle {
                 property var profiles: [
                     { id: "sRGB", name: "sRGB", desc: "Universal Web / Social" },
                     { id: "DisplayP3", name: "Display P3", desc: "Apple / Wide OLED" },
+                    { id: "Rec2020", name: "Rec.2020", desc: "Ultra-Wide Gamut HDR" },
+                    { id: "ACEScg", name: "ACEScg (AP1)", desc: "Academy Color Standard" },
                     { id: "AdobeRGB1998", name: "Adobe RGB 1998", desc: "Pro Photography / Print" },
                     { id: "ProPhotoRGB", name: "ProPhoto RGB", desc: "16-Bit Master Archival" }
                 ]
@@ -353,6 +357,38 @@ Rectangle {
             }
         }
 
+        // Watermark Selection Card
+        Rectangle {
+            Layout.fillWidth: true
+            implicitHeight: 34
+            radius: Theme.radiusSm
+            color: Theme.bgCard
+            border.color: root.watermarkEnabled ? Theme.accent : Theme.border
+
+            RowLayout {
+                anchors.fill: parent
+                anchors.margins: 8
+                spacing: 8
+                Text {
+                    text: Theme.iconImage
+                    font.family: Theme.iconFont
+                    font.pixelSize: 12
+                    color: root.watermarkEnabled ? Theme.accent : Theme.textDim
+                }
+                Text {
+                    text: "Apply Photography Watermark / EXIF Signature"
+                    textFormat: Text.PlainText
+                    font.pixelSize: 11
+                    color: Theme.textMain
+                    Layout.fillWidth: true
+                }
+                CheckBox {
+                    checked: root.watermarkEnabled
+                    onToggled: root.watermarkEnabled = checked
+                }
+            }
+        }
+
         // Google Drive Direct Upload Row
         Rectangle {
             Layout.fillWidth: true
@@ -426,7 +462,8 @@ Rectangle {
                         "icc_profile": root.selectedIcc,
                         "output_dir": root.localOutputDir,
                         "upload_to_gdrive": root.uploadToGdrive,
-                        "gdrive_folder": root.gdriveFolder
+                        "gdrive_folder": root.gdriveFolder,
+                        "watermark": root.watermarkEnabled ? root.watermarkOptions : null
                     };
                     root.doExport(opts);
                 }

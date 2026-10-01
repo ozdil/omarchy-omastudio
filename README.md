@@ -2,9 +2,9 @@
 
 [![Omarchy Verified Plugin](https://img.shields.io/badge/Omarchy-Verified_Plugin-22c55e?style=for-the-badge&logo=omarchy)](https://github.com/ozdil)
 
-**Quickshell & Rust-Powered Professional RAW Photo Studio for Omarchy Linux**
+**Quickshell & Rust-Powered Premier Photo RAW Studio for Omarchy Linux**
 
-*Lightroom-grade parametric non-destructive RAW editing, Hollywood-standard DaVinci 3-Way color wheels, AI-powered social media optimization, dual storage (Local + Google Drive), and modern open-source multi-format export engine.*
+*Parametric non-destructive RAW editing, ACES 1.3 color management & Reference Gamut Compression, authentic Fujifilm & Hasselblad film simulations, Hollywood-standard DaVinci 3-Way color wheels, customizable photography watermarking, offline AI Jev decision engine, dual storage (Local + Google Drive), and modern multi-format export pipeline.*
 
 [English](README.md) • [Türkçe](README.tr.md)
 
@@ -22,14 +22,14 @@
 
 ## Architecture & Principles
 
-OmaStudio employs a high-performance hybrid architecture designed specifically for the modern Linux desktop: The graphical user interface runs at 60+ FPS powered by GPU-accelerated **Quickshell (Qt 6 / QML)**, while the image processing and RAW decoding pipeline is driven by a multi-threaded **Rust (Rayon + LibRaw FFI)** engine.
+OmaStudio employs a high-performance hybrid architecture designed specifically for the modern Wayland and Hyprland Linux desktop: The graphical user interface runs at 120/144 FPS powered by GPU-accelerated **Quickshell (Qt 6 / QML)**, while the mathematical image processing and RAW decoding pipeline is driven by a multi-threaded **Rust (Rayon + LibRaw FFI)** engine.
 
 ```mermaid
 graph TD
     subgraph UI [" User Experience (Quickshell / Qt 6 QML)"]
-        Viewport["Canvas Viewport<br/>(Pinch-Zoom / Pan / Rotation)"]
-        Inspector["Pro Studio & Simple Modes<br/>(Per-Module Independent Reset)"]
-        Wheels["DaVinci 3-Way Wheels<br/>(Lift / Gamma / Gain / Offset)"]
+        Viewport["Canvas Viewport<br/>(Pinch-Zoom / Pan / Rotation / Watermark Overlay)"]
+        Inspector["Pro Studio & Simple Modes<br/>(Film Simulations / ACES / Watermark)"]
+        Wheels["DaVinci 3-Way Wheels<br/>(Lift / Gamma / Gain / Offset / Pivot)"]
         CropTool["Composition Overlays<br/>(Rule of Thirds / Golden Ratio / Fibonacci)"]
     end
 
@@ -40,11 +40,13 @@ graph TD
 
     subgraph Engine [" Background Engine (Rust / Rayon Core)"]
         Decoders["LibRaw FFI Decoder<br/>(Sony ARW, Fuji RAF, Nikon NEF, Canon CR3, DNG)"]
-        RAMCache["Hot RAW Buffer in RAM<br/>(Zero Disk Re-Decoding)"]
+        RAMCache["Hot RAW Buffer in RAM<br/>(Strict Non-Destructive Sidecar Architecture)"]
         Pipeline["Multi-Core Processing Pipeline<br/>(Parallel Pixel Matrix / Rayon)"]
+        ACES["ACES 1.3 Color Science<br/>(ACEScg, ACEScc, RGC, RRT/ODT Tonemapper)"]
+        FilmSim["Film Simulations<br/>(Fujifilm Provia, Velvia, Astia, Acros / Hasselblad HNCS)"]
+        WatermarkEngine["Watermark & Branding Engine<br/>(9-Point Grid / EXIF Interpolation / Lanczos3 Logo)"]
         ShmPingPong["Double-Buffered Ping-Pong Shared Memory<br/>(/dev/shm Zero-Flicker Viewport)"]
-        ColorEngine["ICC Color Management<br/>(sRGB / AdobeRGB / ProPhoto / Display P3)"]
-        AIEngine["AI Scene & Social Media Engine<br/>(Smart Framing / Auto Tone)"]
+        AIEngine["Deterministic Computer Vision & JEV<br/>(Ansel Adams EV / 123 deg Skin Vectorscope)"]
         Storage["Secure Storage<br/>(Atomic 0600 / GDrive Rclone)"]
     end
 
@@ -53,10 +55,13 @@ graph TD
     Sock <--> RAMCache
     Decoders --> RAMCache
     RAMCache --> Pipeline
-    Pipeline --> ShmPingPong
+    Pipeline --> ACES
+    ACES --> FilmSim
+    FilmSim --> ShmPingPong
     ShmPingPong --> Viewport
-    Pipeline --> ColorEngine
     AIEngine --> Pipeline
+    Pipeline --> WatermarkEngine
+    WatermarkEngine --> Storage
     Storage <--> Engine
 ```
 
@@ -69,89 +74,77 @@ Every RAW pixel undergoes lossless, mathematically precise transformations to pr
 ```mermaid
 flowchart LR
     A[" RAW Input<br/>(Bayer / X-Trans)"] --> B[" LibRaw<br/>Demosaicing"]
-    B --> C[" White Balance<br/>(Kelvin & Tint)"]
-    C --> D[" Exposure<br/>(EV Logarithmic)"]
-    D --> E[" Light & Dynamic Range<br/>(Whites/Blacks/Highlights/Shadows)"]
-    E --> F[" 8-Band HSL<br/>Color Mixer"]
-    F --> G[" DaVinci 3-Way<br/>Color Wheels"]
-    G --> H[" Detail & Optics<br/>(Sharpening / Denoise / Defringe)"]
-    H --> I[" ICC Profile Output<br/>(sRGB / AdobeRGB / P3)"]
-    I --> J[" Multi-Format Export<br/>(JPEG XL / AVIF / WebP / TIFF / JPEG)"]
+    B --> C[" White Balance<br/>(Planckian AWB)"]
+    C --> D[" Linear Exposure<br/>(Zone System EV)"]
+    D --> E[" ACES 1.3 RGC<br/>(Gamut Compression)"]
+    E --> F[" Film Simulation<br/>(Fuji / Hasselblad)"]
+    F --> G[" DaVinci Wheels<br/>(Pivot & Boost)"]
+    G --> H[" Detail & Optics<br/>(Sharpness / Denoise)"]
+    H --> I[" Watermark Engine<br/>(9-Point Grid / EXIF)"]
+    I --> J[" Multi-Format Export<br/>(JXL / AVIF / TIFF 16-Bit)"]
 ```
 
 ---
 
 ## Key Features
 
-### 1. Comprehensive RAW & 16-Bit Medium Format Support
-* **Medium Format:** Fujifilm GFX series (GFX 100 II, GFX 100S, GFX 50S, etc.), Hasselblad (`.3FR`, `.DNG`), and Phase One 16-bit 100+ MP massive sensors.
-* **16-Bit Lossless Color Pipeline (48-bit RGB):** Full 16-bit computational pipeline that eliminates 8-bit quantization banding during extreme shadow recovery (+4 EV, +100 Shadows) and highlight rolloff.
-* **Master 16-Bit Export:** Genuine 16-bit TIFF and 16-bit PNG (48-bit RGB) master files, plus high dynamic range wide-gamut JXL and AVIF output.
-* **Nikon:** `.NEF`, `.NRW` (including Z8 / Z9 High-Efficiency HE/HE*)
-* **Fujifilm:** `.RAF` (X-Trans II/III/IV/V 6x6 matrix sensors & Bayer)
-* **Canon:** `.CR2`, `.CR3` (ISOBMFF-based)
-* **Sony:** `.ARW`, `.SR2` (Alpha 7/9/1 series)
-* **Leica & Universal DNG:** `.DNG`, `.RWL` (M, SL, Q series, drones, and smartphones)
-* **Others:** Olympus (`.ORF`), Panasonic (`.RW2`)
+### 1. ACES 1.3 Color Management & Reference Gamut Compression (RGC)
+* **ACEScg & ACEScc Color Spaces:** Scene-referred AP1 linear working space with high-precision Bradford chromatic adaptation matrices for sRGB, Display P3, and Rec.2020.
+* **ACES 1.3 Reference Gamut Compression (RGC):** Smoothly compresses out-of-gamut and highly saturated specular highlights toward the achromatic axis, eliminating ugly color clipping and neon-edge distortion.
+* **ACES 1.3 Fitted RRT/ODT Tonemapping:** Rational polynomial approximation (Stephen Hill / Krzysztof Narkowicz) delivering cinematic shoulder roll-off and rich shadow gradation.
 
-### 2. 1:1 macOS Touchpad & Mouse Ergonomics
-Linux desktops have historically suffered from jittery or uncontrolled touch gestures. OmaStudio resolves this completely by matching **Apple Magic Trackpad and macOS canvas ergonomics 1:1**:
-* **Two-Finger Pinch-to-Zoom:** Smooth, continuous, logarithmic zoom anchored directly to the cursor or pinch focal point without jumps.
-* **Smart Rotation & 3.5° Deadzone:** Intelligent deadzone filtering prevents accidental rotation while pinching to zoom, with 360° free canvas rotation when intentional.
-* **Two-Finger Kinetic Pan:** Effortless, frictionless gliding across zoomed images with damped kinetic friction (`0.75`).
-* **Double-Tap / Double-Click Toggle:** Instantly toggle between 100% Fit-to-Screen and 200% 1:1 pixel inspection with angle reset.
-* **Precise Mouse vs. Touchpad Discrimination (`WheelHandler`):** Mouse wheels zoom smoothly around cursor position; trackpads pan smoothly with two fingers; `Alt + Wheel` provides micro-angle corrections with 1.5° precision.
-* **Boundary Clamping (`clampPan`):** Smart edge anchors prevent the image from flying off-screen during rapid navigation.
+### 2. Authentic Film Simulations (Fujifilm & Hasselblad HNCS)
+* **Fujifilm Daylight & Landscape:**
+  * **Provia 100F:** Standard daylight color rendition with natural skin tones and neutral contrast.
+  * **Velvia 50:** High-saturation, vibrant landscape film simulation with rich skies and foliage separation.
+  * **Astia 100F:** Soft contrast and delicate gradations tailored for portrait photography.
+* **Fujifilm Documentary & Cinematic:**
+  * **Classic Chrome:** Muted saturation with deep, hard shadow contrast for documentary realism.
+  * **Classic Neg:** Warm nostalgic tones with punchy midtone contrast inspired by Superia color negative film.
+  * **Eterna Cinema:** Flat gamma and subdued color saturation delivering modern cinema highlight roll-off.
+* **Fujifilm Acros Monochrome:**
+  * **Acros Standard:** Legendary monochrome film with ultra-fine grain and rich tonal transitions.
+  * **Acros (+Ye) Yellow Filter:** Moderate contrast lift, accentuating blue skies and portraits.
+  * **Acros (+R) Red Filter:** Dramatic contrast with deep black skies and high micro-contrast.
+  * **Acros (+G) Green Filter:** Emphasizes green foliage while softening lips and skin tones.
+* **Hasselblad Medium Format Profiles:**
+  * **Hasselblad Natural Colour Solution (HNCS):** 4th-root chroma scaling calibrated for medium-format studio photography, preserving neutral gray stability.
+  * **Hasselblad XPan:** 35mm panoramic cinematic contrast with deep shadow compression.
 
-### 3. Modular Independent Reset & Dual UI Modes
-* **Simple Mode (Rapid Workflow):** One-click AI Auto-Enhance and 4 fundamental sliders (Exposure, Temperature, Vibrance, Contrast).
-* **Pro Studio Mode:** Dedicated **RESET** button on every module header:
-  * **White Balance:** Reset 2,000K – 12,000K Kelvin and Green/Magenta Tint.
-  * **Light & Dynamic Range:** Reset Exposure, Contrast, Highlights, Shadows, Whites, and Blacks independently.
-  * **Presence & Texture:** Reset Texture, Clarity, Dehaze, Vibrance, and Saturation.
-  * **Color Mixer (8-Band HSL):** One-click batch reset for Red, Orange, Yellow, Green, Aqua, Blue, Purple, and Magenta channels.
-  * **Detail & Optics:** Reset Sharpening, Noise Reduction (NR), Vignette, Defringe, and Lens Distortion.
-  * **DaVinci 3-Way Wheels:** Neutralize Lift, Gamma, Gain, and Offset wheels with a single click.
+### 3. Customizable Photography Watermark & Branding Engine
+* **9-Point Anchor Grid:** Selectable alignment across 9 grid locations (Top-Left, Top-Center, Top-Right, Middle-Left, Center, Middle-Right, Bottom-Left, Bottom-Center, Bottom-Right).
+* **EXIF Tag Interpolation:** Automatic token expansion for camera metadata: `{camera}`, `{lens}`, `{aperture}`, `{shutter}`, `{iso}`, and `{focal}`.
+* **Custom Logo Overlay:** High-quality PNG logo blending with Lanczos3 resampling and alpha transparency.
+* **Live Viewport Preview:** Non-destructive live preview directly inside the Viewport without requiring re-render.
+* **Export Integration:** Embedded directly into final output files across JPEG XL, AVIF, WebP, TIFF 16-bit, PNG, and JPEG.
 
-### 4. AI-Powered Social Media Optimizer
-Platform-tailored resolution, aspect ratios, and micro-contrast presets engineered to counter aggressive compression algorithms:
+### 4. Strict Non-Destructive RAW Workflow
+* **Original RAW Files Never Mutated:** Sensor RAW files are opened read-only; no bytes of the source file are ever modified.
+* **Parametric Sidecar Architecture:** All recipes, grades, crops, and metadata adjustments reside strictly in `.omastudio` JSON sidecars with atomic write operations and Mode 0600 file permissions.
 
-| Platform | Aspect Ratio | Resolution | Profile Target |
-| :--- | :---: | :---: | :--- |
-| **Instagram Feed** | `4:5` | 1080 × 1350 | Vertical maximum screen real estate, anti-compression edge sharpness |
-| **Reels / Stories / TikTok** | `9:16` | 1080 × 1920 | Full-screen mobile vertical framing, OLED vibrance boost |
-| **X (Twitter)** | `16:9` | 1200 × 675 | Desktop & mobile feed optimization with crisp micro-contrast |
-| **Square Portrait** | `1:1` | 1080 × 1080 | Classic grid balance and profile portfolio display |
-| **Facebook HD** | `1.91:1`| 2048 × 1072 | High-resolution album and page publishing |
-| **YouTube Thumbnail** | `16:9` | 1280 × 720 | High click-through rate (CTR) vivid color saturation |
+### 5. High-Depth 16-Bit / 26-Bit Medium Format Pipeline
+* **Medium Format Sensors:** Fujifilm GFX series (GFX 100 II, GFX 100S, GFX 50S), Hasselblad (`.3FR`, `.DNG`), and Phase One 16-bit 100+ MP sensors.
+* **16-Bit Processing Matrix:** Eliminates quantization banding during extreme shadow recovery (+4 EV, +100 Shadows).
+* **Master 16-Bit Output:** Genuine 16-bit TIFF and 16-bit PNG (48-bit RGB) files for archival and gallery-grade print production.
 
-### 5. DaVinci Resolve-Grade Color Science & Real-Time Video Scopes
-* **DaVinci Color Science Tone Controls:**
-  * **Contrast Pivot:** Adjustable S-curve midpoint (0.05 to 0.95, default 0.435 / 18% middle gray) enabling contrast expansion without crushing shadow detail or blowing out highlights.
-  * **DaVinci Color Boost:** Intelligent non-linear chroma enhancement that amplifies low-saturation tones while protecting naturally saturated skin and sky colors from clipping.
-  * **Midtone Detail (MD):** Frequency-separated luminance band-pass filter isolating mid-frequencies to enhance micro-texture or soften skin tones for beauty retouching.
-* **Hollywood Real-Time Video Scopes (Single-Pass 60 FPS):**
-  * **Luma Waveform:** 64x32 phosphor-response luminance distribution showing dynamic exposure across horizontal image span (IRE 0-100 scale).
-  * **RGB Parade:** 32x32 isolated Red, Green, and Blue channels for rapid color balance and tint neutralization.
-  * **Vectorscope (Cb/Cr Polar Radar):** 48x48 chromaticity plot featuring the calibrated 123-degree **Skin Tone Line (I-Bar)** for precise facial hue alignment.
-  * **256-Level Histogram:** Real-time luminance and RGB channel distribution.
-* **3D LUT Engine & Film Looks:**
-  * High-performance 3D trilinear interpolation engine supporting standard `.cube` Look-Up Tables.
-  * Built-in cinematic presets: Kodak 2383 Print Film, Teal & Orange Blockbuster, Fuji Eterna, and Silver Nitrate Monochrome.
-  * Variable Mix / Intensity slider (0% to 100%) and strict security validation (1 MiB ceiling, symlink rejection).
-* **Grade Versions (Local Versions A/B/C/D):**
-  * Instant non-destructive recipe branching with 4 independent grade version slots per image.
-  * Hotkey-driven switching (`Alt + 1` through `Alt + 4`) and one-click grade cloning (`Copy to Other`) for rapid side-by-side creative decisions.
+### 6. Deterministic Computer Vision & Offline JEV Decision Engine
+* **Linear Ansel Adams Zone System:** Computes exposure delta based on scene linear luminance rather than non-linear gamma values, protecting highlight headroom (ceiling check at 99th percentile).
+* **Planckian Blackbody AWB:** Continuous correlated color temperature (CCT) estimator mapping 2400K to 9500K.
+* **123-Degree Skin Tone Line Protection:** Vectorscope polar protection preserving facial hues regardless of scene saturation.
+* **Multi-Cue Saliency:** Gradient magnitude and Rule of Thirds alignment for automated cropping and composition.
+* **Offline JEV Intelligence:** Bayesian decision engine generating studio-grade presets even in air-gapped environments without external API connectivity.
 
-### 6. State-of-the-Art (SOTA) RAW Innovations & Zero-Trust Engine (v1.1.0)
-* **Luma-Guided Highlight Reconstruction:**
-  * When one or two color channels clip due to sensor saturation, unclipped channels and luminance gradients are used to inpaint blown highlights, completely eliminating unnatural magenta/cyan casts in harsh skies or studio lights.
-* **AgX & Filmic Sigmoidal Tonemapping:**
-  * Emulates photochemical negative film highlight roll-off. Rather than hard-clipping or abruptly clamping values at pure white, bright tones roll off smoothly into highlight desaturation, preserving delicate texture in wedding dresses, clouds, and direct specular reflections.
-* **JEV System 1 AI Photographic Heuristics (JEV-PHOTO-04):**
-  * High-ISO intelligent ceiling: Automatically clamps shadow expansion at extreme sensitivities (ISO >= 3200) to prevent aggressive noise amplification while boosting chrominance denoising and applying optical vignette compensation.
-* **Zero-Leak Memory Architecture (LibRaw C FFI):**
-  * Hardened FFI layer with fail-closed memory allocations and guaranteed `libraw_dcraw_clear_mem` deallocation on all decode paths, completely preventing memory leaks during batch or multi-RAW workflows.
+### 7. DaVinci Resolve-Grade Color Science & Real-Time Scopes
+* **Contrast Pivot:** Adjustable S-curve midpoint (0.05 to 0.95, default 0.435 / 18% middle gray) enabling contrast expansion without crushing shadows.
+* **DaVinci Color Boost:** Non-linear chroma enhancement amplifying low-saturation tones while protecting saturated colors.
+* **Midtone Detail (MD):** Frequency-separated band-pass filter isolating mid-frequencies to enhance micro-texture or soften skin tones.
+* **Real-Time Video Scopes (60+ FPS):** Luma Waveform, RGB Parade, and Vectorscope with calibrated 123-degree Skin Tone Line.
+* **3D LUT Engine (.cube):** Hardware-grade trilinear interpolation engine supporting standard `.cube` Look-Up Tables.
+* **Local Grade Versions (A/B/C/D):** Hotkey-driven (`Alt + 1..4`) non-destructive recipe branching with instant cloning.
+
+### 8. Wayland & Hyprland 120Hz/144Hz Zero-Tear Architecture
+* **Double-Buffered Shared Memory:** `/dev/shm` ping-pong frame buffers eliminate render flickering during slider adjustments.
+* **Mac-Calibrated Touchpad Ergonomics:** Continuous logarithmic pinch-to-zoom, 3.5-degree deadzone rotation guard, and kinetic panning.
 
 ---
 
@@ -161,12 +154,14 @@ Platform-tailored resolution, aspect ratios, and micro-contrast presets engineer
 | :--- | :---: | :---: | :---: | :---: |
 | **License & Freedom** | **Open Source (MIT)** | Proprietary / Monthly Subscription | GPLv3 | GPLv3 |
 | **Native Integration** | **Omarchy & Quickshell** | macOS / Windows Only | GTK | GTK |
+| **ACES 1.3 & RGC** | **Native ACEScg / ACEScc / RGC** | Partial / ACES OCIO Plugin | Complex Modules | Complex Profiles |
+| **Film Simulations** | **Authentic Fuji & Hasselblad** | Preset Packs | Curves | HaldCLUT |
+| **Watermark Engine** | **9-Point Grid & EXIF Tags** | Export Preset Only | Watermark Module | Watermark Module |
 | **DaVinci Color Science**| **Native (Pivot / Boost / MD)** | Partial | Complex Modules | Complex Profiles |
 | **Real-Time Video Scopes**| **Waveform, Parade, Vectorscope (I-Bar)** | Histogram Only | Separate Windows | Separate Tabs |
 | **3D LUT (.cube) & Mix** | **Hardware Trilinear & Presets** | Profile Library | LUT Module | HaldCLUT Only |
 | **Local Grade Versions** | **A/B/C/D Instant Hotkeys** | Snapshots | History Stacks | Snapshots |
 | **JPEG XL / AVIF Export** | **Hardware Accelerated** | Limited | Via Plugins | Partial |
-| **Social Media AI Presets**| **One-Click Automated** | Manual | Manual | Manual |
 | **Cloud Integration** | **Google Drive (Rclone FFI)**| Adobe Cloud (Enforced) | None | None |
 | **Resource Footprint** | **Lightweight (~35 MB RAM)** | Heavy (2+ GB RAM) | Moderate (~400 MB) | Moderate (~350 MB) |
 
@@ -179,6 +174,7 @@ Platform-tailored resolution, aspect ratios, and micro-contrast presets engineer
 * `quickshell` (Qt 6 QML desktop shell runtime)
 * `rclone` (Google Drive and cloud storage synchronization)
 * `libjxl` & `libavif` (Modern hardware-accelerated image codecs)
+* `exiftool` (Metadata and ICC profile embedding)
 * `zenity` (Native file selection dialogs)
 * `rust` (Toolchain for compiling the native engine)
 
@@ -200,7 +196,7 @@ omastudio
 ## Keyboard Shortcuts & Workflow
 
 * `Ctrl + O`: Open RAW image dialog
-* `Ctrl + S`: Save adjustment recipe sidecar (`.omaraw`, Mode 0600)
+* `Ctrl + S`: Save adjustment recipe sidecar (`.omastudio`, Mode 0600)
 * `Alt + 1..4`: Switch between Grade Versions (Version A, B, C, D)
 * `C`: Toggle Crop & Composition mode (Rule of Thirds, Golden Ratio, Fibonacci)
 * `Y`: Toggle Split Before / After (A|B) comparison
@@ -230,4 +226,4 @@ If you find OmaStudio valuable and want to fuel independent Linux software devel
 ---
 
 ## License
-MIT License © 2026 Ozan Özdil
+MIT License (c) 2026 Ozan Özdil

@@ -111,6 +111,26 @@ pub struct Recipe {
     pub rating: u8, // 0 to 5 stars
     #[serde(default)]
     pub flag: String, // "none", "pick", "reject"
+
+    // ACES 1.3 & Wide Gamut Color Spaces
+    #[serde(default = "default_color_space")]
+    pub color_space: String, // "sRGB", "DisplayP3", "Rec2020", "ACEScg"
+    #[serde(default)]
+    pub aces_tonemap: bool,
+
+    // Authentic Film Simulations & Medium Format Color Science
+    #[serde(default)]
+    pub film_simulation: String, // "fuji_velvia", "fuji_classic_chrome", "hasselblad_hncs", etc.
+    #[serde(default = "default_film_sim_intensity")]
+    pub film_sim_intensity: f32, // 0.0 to 1.0 (Default: 1.0)
+}
+
+fn default_color_space() -> String {
+    "sRGB".to_string()
+}
+
+fn default_film_sim_intensity() -> f32 {
+    1.0
 }
 
 fn default_contrast_pivot() -> f32 {
@@ -185,6 +205,10 @@ impl Default for Recipe {
             preset_name: None,
             rating: 0,
             flag: "none".to_string(),
+            color_space: "sRGB".to_string(),
+            aces_tonemap: false,
+            film_simulation: String::new(),
+            film_sim_intensity: 1.0,
         }
     }
 }

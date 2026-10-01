@@ -84,6 +84,41 @@ Rectangle {
     property string currentGradeVersion: "A"
     property var gradeVersions: ({ "A": null, "B": null, "C": null, "D": null })
 
+    // Film Simulation & Medium Format Sensor Profiles
+    property string activeFilmSimulation: "none"
+    property real activeFilmSimIntensity: 1.0
+
+    // ACES 1.3 & Color Space Management
+    property string activeColorSpace: "sRGB"
+    property bool activeAcesTonemap: false
+
+    // Watermark & Branding State
+    property bool watermarkEnabled: false
+    property string watermarkType: "text"
+    property string watermarkText: "OmaStudio Photography"
+    property string watermarkLogoPath: ""
+    property int watermarkPositionIndex: 8
+    property real watermarkOpacity: 0.85
+    property int watermarkSize: 14
+    property int watermarkMargin: 24
+    property string watermarkColorHex: "#ffffff"
+    property bool watermarkDropShadow: true
+
+    function buildWatermarkOptions() {
+        return {
+            "enabled": root.watermarkEnabled,
+            "watermark_type": root.watermarkType,
+            "text": root.watermarkText,
+            "logo_path": root.watermarkLogoPath ? root.watermarkLogoPath : null,
+            "position_index": root.watermarkPositionIndex,
+            "opacity": root.watermarkOpacity,
+            "size": root.watermarkSize,
+            "margin": root.watermarkMargin,
+            "color": root.watermarkColorHex,
+            "drop_shadow": root.watermarkDropShadow
+        };
+    }
+
     function switchGradeVersion(ver) {
         if (ver === root.currentGradeVersion) return;
         var cur = root.buildRecipeObject();
@@ -258,6 +293,10 @@ Rectangle {
         root.activeLutName = "";
         root.activeLutIntensity = 1.0;
         root.activeLutPath = "";
+        root.activeFilmSimulation = "none";
+        root.activeFilmSimIntensity = 1.0;
+        root.activeColorSpace = "sRGB";
+        root.activeAcesTonemap = false;
         root.defringeVal = 0.0;
         root.lensDistortionVal = 0.0;
         root.cropX = 0.0;
@@ -340,6 +379,10 @@ Rectangle {
             "lut_name": root.activeLutName !== "" ? root.activeLutName : null,
             "lut_intensity": root.activeLutIntensity,
             "lut_path": root.activeLutPath !== "" ? root.activeLutPath : null,
+            "color_space": root.activeColorSpace,
+            "aces_tonemap": root.activeAcesTonemap,
+            "film_simulation": root.activeFilmSimulation,
+            "film_sim_intensity": root.activeFilmSimIntensity,
             "defringe": root.defringeVal,
             "lens_distortion": root.lensDistortionVal,
             "crop_x": root.cropX,
@@ -400,6 +443,12 @@ Rectangle {
         if (r.lut_name !== undefined) root.activeLutName = r.lut_name || "";
         if (r.lut_intensity !== undefined) root.activeLutIntensity = Number(r.lut_intensity) || 1.0;
         if (r.lut_path !== undefined) root.activeLutPath = r.lut_path || "";
+
+        // ACES 1.3 & Film Simulations
+        if (r.color_space !== undefined) root.activeColorSpace = r.color_space || "sRGB";
+        if (r.aces_tonemap !== undefined) root.activeAcesTonemap = Boolean(r.aces_tonemap);
+        if (r.film_simulation !== undefined) root.activeFilmSimulation = r.film_simulation || "none";
+        if (r.film_sim_intensity !== undefined) root.activeFilmSimIntensity = Number(r.film_sim_intensity) || 1.0;
 
         // Optics
         if (r.defringe !== undefined) root.defringeVal = Number(r.defringe) || 0.0;
@@ -1117,6 +1166,17 @@ Rectangle {
                     Layout.fillHeight: true
                     isSplitView: root.isSplitView
                     splitRatio: root.splitRatio
+                    watermarkEnabled: root.watermarkEnabled
+                    watermarkType: root.watermarkType
+                    watermarkText: root.watermarkText
+                    watermarkLogoPath: root.watermarkLogoPath
+                    watermarkPositionIndex: root.watermarkPositionIndex
+                    watermarkOpacity: root.watermarkOpacity
+                    watermarkSize: root.watermarkSize
+                    watermarkMargin: root.watermarkMargin
+                    watermarkColorHex: root.watermarkColorHex
+                    watermarkDropShadow: root.watermarkDropShadow
+                    exifMetadata: root.currentMetadata
                     onSplitRatioChangedByUser: function(r) {
                         root.splitRatio = r;
                         requestRender();
@@ -1884,6 +1944,66 @@ Rectangle {
                                 accentColor: Theme.accentCyan
                                 onSliderMoved: function(v) { root.lensDistortionVal = v; root.requestRender() }
                             }
+
+                            // Film Simulation Panel (Fujifilm & Hasselblad)
+                            Rectangle { Layout.fillWidth: true; height: 1; color: Theme.border }
+                            FilmSimulationPanel {
+                                id: filmSimPanel
+                                Layout.fillWidth: true
+                                activeSimulation: root.activeFilmSimulation
+                                intensity: root.activeFilmSimIntensity
+                                onSimulationChanged: function(id, intensity) {
+                                    root.activeFilmSimulation = id;
+                                    root.activeFilmSimIntensity = intensity;
+                                    root.requestRender();
+                                }
+                            }
+
+                            // ACES 1.3 & Color Management Panel
+                            Rectangle { Layout.fillWidth: true; height: 1; color: Theme.border }
+                            ColorSpaceSelector {
+                                id: colorSpaceSelector
+                                Layout.fillWidth: true
+                                activeColorSpace: root.activeColorSpace
+                                acesTonemap: root.activeAcesTonemap
+                                onColorSpaceChanged: function(space) {
+                                    root.activeColorSpace = space;
+                                    root.requestRender();
+                                }
+                                onAcesTonemapChanged: function(enabled) {
+                                    root.activeAcesTonemap = enabled;
+                                    root.requestRender();
+                                }
+                            }
+
+                            // Watermark & Branding Config
+                            Rectangle { Layout.fillWidth: true; height: 1; color: Theme.border }
+                            WatermarkConfig {
+                                id: watermarkConfig
+                                Layout.fillWidth: true
+                                enabled: root.watermarkEnabled
+                                watermarkType: root.watermarkType
+                                text: root.watermarkText
+                                logoPath: root.watermarkLogoPath
+                                positionIndex: root.watermarkPositionIndex
+                                opacity: root.watermarkOpacity
+                                size: root.watermarkSize
+                                margin: root.watermarkMargin
+                                colorHex: root.watermarkColorHex
+                                dropShadow: root.watermarkDropShadow
+                                onWatermarkChanged: function(opts) {
+                                    root.watermarkEnabled = opts.enabled;
+                                    root.watermarkType = opts.watermark_type;
+                                    root.watermarkText = opts.text;
+                                    root.watermarkLogoPath = opts.logo_path || "";
+                                    root.watermarkPositionIndex = opts.position_index;
+                                    root.watermarkOpacity = opts.opacity;
+                                    root.watermarkSize = opts.size;
+                                    root.watermarkMargin = opts.margin;
+                                    root.watermarkColorHex = opts.color;
+                                    root.watermarkDropShadow = opts.drop_shadow;
+                                }
+                            }
                         }
 
                         // Persistent Lightroom Workflow Action Bar (Copy / Paste / Reset)
@@ -2077,6 +2197,8 @@ Rectangle {
         ExportDialog {
             id: exportDialog
             anchors.centerIn: parent
+            watermarkEnabled: root.watermarkEnabled
+            watermarkOptions: root.buildWatermarkOptions()
             onCloseRequested: root.showExportModal = false
             onDoExport: function(opts) {
                 exportDialog.isExporting = true;

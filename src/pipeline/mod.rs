@@ -1,5 +1,7 @@
+pub mod aces;
 pub mod color_grading;
 pub mod detail;
+pub mod film_sim;
 pub mod histogram;
 pub mod lut;
 pub mod presence;
@@ -53,11 +55,13 @@ pub fn process_buffer(
 
     // Resolve active 3D LUT if requested
     let maybe_lut = resolve_recipe_lut(recipe);
+    let film_sim = film_sim::FilmSimulation::from_id(&recipe.film_simulation);
+    let working_space = aces::WorkingColorSpace::from_str_name(&recipe.color_space);
 
     // Intermediate float buffer for multi-stage 16-bit precision processing
     let mut f32_buf = vec![0.0f32; num_pixels * 3];
 
-    // PASS 1: Point Operations (White Balance, Exposure, Tone, Color Wheels, HSL Mixer, 3D LUT)
+    // PASS 1: Point Operations (White Balance, Exposure, Tone, Color Wheels, HSL Mixer, 3D LUT, Film Sim, ACES)
     f32_buf
         .par_chunks_mut(w * 3)
         .enumerate()
@@ -88,9 +92,23 @@ pub fn process_buffer(
                     (r3, g3, b3)
                 };
 
-                row_f32[px_out] = r4;
-                row_f32[px_out + 1] = g4;
-                row_f32[px_out + 2] = b4;
+                // 5. Authentic Film Simulations (Fujifilm X-Trans / GFX & Hasselblad HNCS / XPan)
+                let (r5, g5, b5) = if film_sim != film_sim::FilmSimulation::None {
+                    film_sim.apply_pixel(r4, g4, b4, recipe.film_sim_intensity)
+                } else {
+                    (r4, g4, b4)
+                };
+
+                // 6. ACES 1.3 Gamut Compression if ACEScg or wide-gamut mode active
+                let (r6, g6, b6) = if working_space == aces::WorkingColorSpace::AcesCg || recipe.aces_tonemap {
+                    aces::apply_aces_gamut_compression(r5, g5, b5)
+                } else {
+                    (r5, g5, b5)
+                };
+
+                row_f32[px_out] = r6;
+                row_f32[px_out + 1] = g6;
+                row_f32[px_out + 2] = b6;
             }
         });
 
@@ -200,11 +218,13 @@ pub fn process_buffer_16_to_8_ex(
 
     // Resolve active 3D LUT if requested
     let maybe_lut = resolve_recipe_lut(recipe);
+    let film_sim = film_sim::FilmSimulation::from_id(&recipe.film_simulation);
+    let working_space = aces::WorkingColorSpace::from_str_name(&recipe.color_space);
 
     // Intermediate float buffer for multi-stage 16-bit precision processing
     let mut f32_buf = vec![0.0f32; num_pixels * 3];
 
-    // PASS 1: Point Operations (White Balance, Exposure, Tone, Color Wheels, HSL Mixer, 3D LUT)
+    // PASS 1: Point Operations (White Balance, Exposure, Tone, Color Wheels, HSL Mixer, 3D LUT, Film Sim, ACES)
     f32_buf
         .par_chunks_mut(w * 3)
         .enumerate()
@@ -235,9 +255,23 @@ pub fn process_buffer_16_to_8_ex(
                     (r3, g3, b3)
                 };
 
-                row_f32[px_out] = r4;
-                row_f32[px_out + 1] = g4;
-                row_f32[px_out + 2] = b4;
+                // 5. Authentic Film Simulations (Fujifilm X-Trans / GFX & Hasselblad HNCS / XPan)
+                let (r5, g5, b5) = if film_sim != film_sim::FilmSimulation::None {
+                    film_sim.apply_pixel(r4, g4, b4, recipe.film_sim_intensity)
+                } else {
+                    (r4, g4, b4)
+                };
+
+                // 6. ACES 1.3 Gamut Compression if ACEScg or wide-gamut mode active
+                let (r6, g6, b6) = if working_space == aces::WorkingColorSpace::AcesCg || recipe.aces_tonemap {
+                    aces::apply_aces_gamut_compression(r5, g5, b5)
+                } else {
+                    (r5, g5, b5)
+                };
+
+                row_f32[px_out] = r6;
+                row_f32[px_out + 1] = g6;
+                row_f32[px_out + 2] = b6;
             }
         });
 
@@ -355,11 +389,13 @@ pub fn process_buffer_16_to_16(
 
     // Resolve active 3D LUT if requested
     let maybe_lut = resolve_recipe_lut(recipe);
+    let film_sim = film_sim::FilmSimulation::from_id(&recipe.film_simulation);
+    let working_space = aces::WorkingColorSpace::from_str_name(&recipe.color_space);
 
     // Intermediate float buffer for multi-stage 16-bit precision processing
     let mut f32_buf = vec![0.0f32; num_pixels * 3];
 
-    // PASS 1: Point Operations (White Balance, Exposure, Tone, Color Wheels, HSL Mixer, 3D LUT)
+    // PASS 1: Point Operations (White Balance, Exposure, Tone, Color Wheels, HSL Mixer, 3D LUT, Film Sim, ACES)
     f32_buf
         .par_chunks_mut(w * 3)
         .enumerate()
@@ -390,9 +426,23 @@ pub fn process_buffer_16_to_16(
                     (r3, g3, b3)
                 };
 
-                row_f32[px_out] = r4;
-                row_f32[px_out + 1] = g4;
-                row_f32[px_out + 2] = b4;
+                // 5. Authentic Film Simulations (Fujifilm X-Trans / GFX & Hasselblad HNCS / XPan)
+                let (r5, g5, b5) = if film_sim != film_sim::FilmSimulation::None {
+                    film_sim.apply_pixel(r4, g4, b4, recipe.film_sim_intensity)
+                } else {
+                    (r4, g4, b4)
+                };
+
+                // 6. ACES 1.3 Gamut Compression if ACEScg or wide-gamut mode active
+                let (r6, g6, b6) = if working_space == aces::WorkingColorSpace::AcesCg || recipe.aces_tonemap {
+                    aces::apply_aces_gamut_compression(r5, g5, b5)
+                } else {
+                    (r5, g5, b5)
+                };
+
+                row_f32[px_out] = r6;
+                row_f32[px_out + 1] = g6;
+                row_f32[px_out + 2] = b6;
             }
         });
 
