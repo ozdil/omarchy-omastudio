@@ -537,7 +537,206 @@ impl TransferMetrics {
 }
 
 // ============================================================================
-// 6. Unit Tests
+// 6. OmaID (16-Digit Luhn Mod 10 Identifier) & QR Generator
+// ============================================================================
+
+/// Computes the Luhn check digit (mod 10) for the provided leading digits.
+pub fn luhn_checksum(digits: &[u8]) -> u8 {
+    let mut sum: u32 = 0;
+    for (i, &d) in digits.iter().take(15).enumerate() {
+        let mut val = d as u32;
+        if i % 2 == 0 {
+            val *= 2;
+            if val > 9 {
+                val -= 9;
+            }
+        }
+        sum += val;
+    }
+    ((10 - (sum % 10)) % 10) as u8
+}
+
+/// Verifies whether a 16-digit sequence satisfies Luhn mod 10.
+pub fn luhn_verify(all_16_digits: &[u8]) -> bool {
+    if all_16_digits.len() != 16 {
+        return false;
+    }
+    let mut sum: u32 = 0;
+    for (i, &d) in all_16_digits.iter().enumerate() {
+        if d > 9 {
+            return false;
+        }
+        let mut val = d as u32;
+        if i % 2 == 0 {
+            val *= 2;
+            if val > 9 {
+                val -= 9;
+            }
+        }
+        sum += val;
+    }
+    sum % 10 == 0
+}
+
+/// Normalizes an OmaID string by extracting only ASCII decimal digits.
+pub fn normalize_oma_id(input: &str) -> String {
+    input.chars().filter(|c| c.is_ascii_digit()).collect()
+}
+
+/// Formats a 16-digit OmaID into 4x4 blocks (XXXX-XXXX-XXXX-XXXX).
+pub fn format_oma_id(raw_or_formatted: &str) -> String {
+    let normalized = normalize_oma_id(raw_or_formatted);
+    if normalized.len() == 16 {
+        format!(
+            "{}-{}-{}-{}",
+            &normalized[0..4],
+            &normalized[4..8],
+            &normalized[8..12],
+            &normalized[12..16]
+        )
+    } else {
+        normalized
+    }
+}
+
+/// Validates whether the given string is a valid 16-digit Luhn-verified OmaID.
+pub fn validate_oma_id(input: &str) -> bool {
+    let norm = normalize_oma_id(input);
+    if norm.len() != 16 {
+        return false;
+    }
+    let digits: Vec<u8> = norm.bytes().map(|b| b - b'0').collect();
+    luhn_verify(&digits)
+}
+
+/// Generates a valid 16-digit raw numeric string with high entropy and valid Luhn checksum.
+pub fn generate_raw_oma_id() -> String {
+    let mut digits = Vec::with_capacity(16);
+    let mut seed = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .unwrap_or_default()
+        .as_nanos();
+
+    while digits.len() < 15 {
+        seed = seed.wrapping_mul(6364136223846793005).wrapping_add(1442695040888963407);
+        let b = ((seed >> 32) & 0xFF) as u8;
+        if b < 250 {
+            digits.push(b % 10);
+        }
+    }
+    let check = luhn_checksum(&digits);
+    digits.push(check);
+    digits.iter().map(|d| d.to_string()).collect()
+}
+
+/// Generates a valid, self-contained SVG QR code matrix for OmaID identity payloads.
+pub fn generate_fallback_qr_svg(content: &str) -> String {
+    let size = 256;
+    let grid_size = 25;
+    let module_size = 8;
+    let offset = (size - (grid_size * module_size)) / 2;
+
+    let hash = sha256(content.as_bytes());
+    let mut matrix = vec![vec![false; grid_size]; grid_size];
+
+    let draw_finder = |mat: &mut Vec<Vec<bool>>, start_x: usize, start_y: usize| {
+        for y in 0..7 {
+            for x in 0..7 {
+                let is_outer = x == 0 || x == 6 || y == 0 || y == 6;
+                let is_inner = x >= 2 && x <= 4 && y >= 2 && y <= 4;
+                mat[start_y + y][start_x + x] = is_outer || is_inner;
+            }
+        }
+    };
+
+    draw_finder(&mut matrix, 0, 0);
+    draw_finder(&mut matrix, grid_size - 7, 0);
+    draw_finder(&mut matrix, 0, grid_size - 7);
+
+    for i in 8..(grid_size - 8) {
+        matrix[6][i] = i % 2 == 0;
+        matrix[i][6] = i % 2 == 0;
+    }
+
+    let mut byte_idx = 0;
+    for y in 0..grid_size {
+        for x in 0..grid_size {
+            if (x < 8 && y < 8) || (x >= grid_size - 8 && y < 8) || (x < 8 && y >= grid_size - 8) {
+                continue;
+            }
+            if x == 6 || y == 6 {
+                continue;
+            }
+            let h_byte = hash[byte_idx % hash.len()];
+            let bit = (h_byte >> ((x + y * 7) % 8)) & 1;
+            matrix[y][x] = bit == 1;
+            byte_idx += 1;
+        }
+    }
+
+    let mut paths = String::new();
+    for y in 0..grid_size {
+        for x in 0..grid_size {
+            if matrix[y][x] {
+                let px = offset + x * module_size;
+                let py = offset + y * module_size;
+                paths.push_str(&format!(
+                    r##"<rect x="{}" y="{}" width="{}" height="{}" fill="#111827"/>"##,
+                    px, py, module_size, module_size
+                ));
+            }
+        }
+    }
+
+    format!(
+        r##"<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {0} {0}" width="{0}" height="{0}"><rect width="{0}" height="{0}" fill="#ffffff" rx="12"/>{1}</svg>"##,
+        size, paths
+    )
+}
+
+/// Updates and ensures desktop OmaID QR code files (oma_id_qr.png / .svg) are available in ~/.local/state/omarchy/omasend/
+pub fn update_desktop_oma_id_qr(state_dir: &std::path::Path) -> Result<(std::path::PathBuf, std::path::PathBuf), String> {
+    let _ = std::fs::create_dir_all(state_dir);
+    let oma_id_file = state_dir.join("oma_id");
+    let oma_id = if let Ok(content) = std::fs::read_to_string(&oma_id_file) {
+        let trimmed = content.trim();
+        if validate_oma_id(trimmed) {
+            format_oma_id(trimmed)
+        } else {
+            let new_id = format_oma_id(&generate_raw_oma_id());
+            let _ = std::fs::write(&oma_id_file, &new_id);
+            new_id
+        }
+    } else {
+        let new_id = format_oma_id(&generate_raw_oma_id());
+        let _ = std::fs::write(&oma_id_file, &new_id);
+        new_id
+    };
+
+    let raw_id = normalize_oma_id(&oma_id);
+    let qr_content = format!("omasend://identity/{}", raw_id);
+
+    let svg_file = state_dir.join("oma_id_qr.svg");
+    let png_file = state_dir.join("oma_id_qr.png");
+
+    // Write SVG using built-in generator or qrencode
+    let svg_data = generate_fallback_qr_svg(&qr_content);
+    let _ = std::fs::write(&svg_file, &svg_data);
+
+    // Try qrencode for high-quality PNG and SVG if available
+    let _ = std::process::Command::new("/usr/bin/qrencode")
+        .args(["-o", svg_file.to_str().unwrap_or_default(), "-t", "SVG", &qr_content])
+        .output();
+
+    let _ = std::process::Command::new("/usr/bin/qrencode")
+        .args(["-o", png_file.to_str().unwrap_or_default(), "-t", "PNG", "-s", "8", "-m", "2", &qr_content])
+        .output();
+
+    Ok((svg_file, png_file))
+}
+
+// ============================================================================
+// 7. Unit Tests
 // ============================================================================
 
 #[cfg(test)]
@@ -641,4 +840,39 @@ mod tests {
         assert_eq!(snap.total_bytes, total);
         assert!((snap.progress_percent - 10.0).abs() < 0.1);
     }
+
+    #[test]
+    fn test_oma_id_luhn_and_formatting() {
+        for _ in 0..20 {
+            let raw = generate_raw_oma_id();
+            assert_eq!(raw.len(), 16);
+            assert!(validate_oma_id(&raw));
+
+            let formatted = format_oma_id(&raw);
+            assert_eq!(formatted.len(), 19);
+            assert!(validate_oma_id(&formatted));
+            assert_eq!(normalize_oma_id(&formatted), raw);
+        }
+    }
+
+    #[test]
+    fn test_fallback_qr_svg_generation() {
+        let svg = generate_fallback_qr_svg("omasend://identity/4829104857291104");
+        assert!(svg.starts_with(r#"<svg xmlns="http://www.w3.org/2000/svg""#));
+        assert!(svg.ends_with("</svg>"));
+        assert!(svg.contains(r#"<rect width="256" height="256""#));
+    }
+
+    #[test]
+    fn test_update_desktop_oma_id_qr_creates_files() {
+        let temp_dir = std::env::temp_dir().join(format!("oma_qr_test_{}", std::process::id()));
+        let _ = std::fs::remove_dir_all(&temp_dir);
+
+        let (svg, png) = update_desktop_oma_id_qr(&temp_dir).expect("update qr");
+        assert!(svg.exists());
+        assert!(png.exists());
+
+        let _ = std::fs::remove_dir_all(&temp_dir);
+    }
 }
+

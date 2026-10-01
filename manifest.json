@@ -3,9 +3,9 @@
   "id": "ozdil.omastudio",
   "name": "OmaStudio",
   "version": "1.3.0",
-  "author": "Ozan \u00d6zdil (ozdil)",
+  "author": "Ozan Özdil (ozdil)",
   "license": "MIT",
-  "description": "Lightroom-Grade Open-Source Photo RAW Editor for Omarchy Linux with Google Drive & AI",
+  "description": "Lightroom-grade RAW editor for Omarchy Linux with DaVinci color grading, AI scene presets, 16-bit master pipeline, and Google Drive cloud sync.",
   "kinds": [
     "bar-widget"
   ],
@@ -15,7 +15,7 @@
   },
   "barWidget": {
     "displayName": "OmaStudio",
-    "description": "Lightroom-grade RAW photo editor, DaVinci color grading, and AI export.",
+    "description": "Lightroom-grade RAW editor, DaVinci 3-Way wheels, 16-bit pipeline, AI presets, and Google Drive sync.",
     "category": "Media",
     "defaultSection": "right",
     "aliases": [

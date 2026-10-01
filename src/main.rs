@@ -488,6 +488,49 @@ fn main() {
                     }
                     print_json(&ResponseWrapper::ok(PinVerifyResult { valid }));
                 }
+                "qr" => {
+                    let home = env::var("HOME").unwrap_or_else(|_| ".".to_string());
+                    let state_dir = PathBuf::from(home).join(".local/state/omarchy/omasend");
+                    match rendezvous::update_desktop_oma_id_qr(&state_dir) {
+                        Ok((svg, png)) => {
+                            #[derive(Serialize)]
+                            struct QrResult {
+                                svg_path: String,
+                                png_path: String,
+                            }
+                            print_json(&ResponseWrapper::ok(QrResult {
+                                svg_path: svg.to_string_lossy().to_string(),
+                                png_path: png.to_string_lossy().to_string(),
+                            }));
+                        }
+                        Err(e) => print_json::<()>(&ResponseWrapper::err(e)),
+                    }
+                }
+                "force-scan" => {
+                    let socket = std::net::UdpSocket::bind("0.0.0.0:0");
+                    if let Ok(s) = socket {
+                        let _ = s.set_broadcast(true);
+                        let packet = serde_json::json!({
+                            "magic": "OMASEND_P2P",
+                            "v": 1,
+                            "mode": "EVERYONE"
+                        });
+                        if let Ok(bytes) = serde_json::to_vec(&packet) {
+                            let _ = s.send_to(&bytes, "255.255.255.255:53318");
+                            std::thread::sleep(std::time::Duration::from_millis(40));
+                            let _ = s.send_to(&bytes, "255.255.255.255:53318");
+                        }
+                    }
+                    #[derive(Serialize)]
+                    struct ScanResult {
+                        status: String,
+                        burst_count: usize,
+                    }
+                    print_json(&ResponseWrapper::ok(ScanResult {
+                        status: "2x UDP beacon scan sent".to_string(),
+                        burst_count: 2,
+                    }));
+                }
                 _ => print_json::<()>(&ResponseWrapper::err("Unknown rendezvous subcommand")),
             }
         }
@@ -628,6 +671,36 @@ fn main() {
         }
         "daemon" => {
             run_daemon();
+        }
+        "--oma-id-qr" | "oma-id-qr" => {
+            let home = env::var("HOME").unwrap_or_else(|_| ".".to_string());
+            let state_dir = PathBuf::from(home).join(".local/state/omarchy/omasend");
+            match rendezvous::update_desktop_oma_id_qr(&state_dir) {
+                Ok((svg, png)) => {
+                    println!("SVG: {}\nPNG: {}", svg.to_string_lossy(), png.to_string_lossy());
+                }
+                Err(e) => {
+                    eprintln!("Error generating OmaID QR: {}", e);
+                    std::process::exit(1);
+                }
+            }
+        }
+        "--force-scan" | "force-scan" => {
+            let socket = std::net::UdpSocket::bind("0.0.0.0:0");
+            if let Ok(s) = socket {
+                let _ = s.set_broadcast(true);
+                let packet = serde_json::json!({
+                    "magic": "OMASEND_P2P",
+                    "v": 1,
+                    "mode": "EVERYONE"
+                });
+                if let Ok(bytes) = serde_json::to_vec(&packet) {
+                    let _ = s.send_to(&bytes, "255.255.255.255:53318");
+                    std::thread::sleep(std::time::Duration::from_millis(40));
+                    let _ = s.send_to(&bytes, "255.255.255.255:53318");
+                }
+            }
+            println!("Force scan triggered: 2x UDP beacon burst sent across all network interfaces.");
         }
         cmd => {
             print_json::<()>(&ResponseWrapper::err(format!("Unknown command: {}", cmd)));

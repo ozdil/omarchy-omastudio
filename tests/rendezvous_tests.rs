@@ -167,3 +167,32 @@ fn test_atomic_throughput_metrics_and_eta_calculation() {
     assert_eq!(final_snap.progress_percent, 100.0);
     assert_eq!(final_snap.eta_seconds, Some(0.0));
 }
+
+#[test]
+fn test_oma_id_luhn_and_qr_generation() {
+    use omastudio_engine::rendezvous::{
+        format_oma_id, generate_fallback_qr_svg, generate_raw_oma_id, normalize_oma_id,
+        update_desktop_oma_id_qr, validate_oma_id,
+    };
+
+    let raw = generate_raw_oma_id();
+    assert_eq!(raw.len(), 16);
+    assert!(validate_oma_id(&raw));
+
+    let formatted = format_oma_id(&raw);
+    assert_eq!(formatted.len(), 19);
+    assert!(validate_oma_id(&formatted));
+    assert_eq!(normalize_oma_id(&formatted), raw);
+
+    let svg = generate_fallback_qr_svg("omasend://identity/1234567812345678");
+    assert!(svg.starts_with(r#"<svg xmlns="http://www.w3.org/2000/svg""#));
+    assert!(svg.ends_with("</svg>"));
+
+    let temp_dir = std::env::temp_dir().join(format!("oma_id_qr_integration_{}", std::process::id()));
+    let _ = std::fs::remove_dir_all(&temp_dir);
+    let (svg_p, png_p) = update_desktop_oma_id_qr(&temp_dir).expect("update desktop qr");
+    assert!(svg_p.exists());
+    assert!(png_p.exists());
+    let _ = std::fs::remove_dir_all(&temp_dir);
+}
+
