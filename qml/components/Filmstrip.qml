@@ -176,6 +176,14 @@ Rectangle {
                         font.family: Theme.iconFont
                         font.pixelSize: 10
                         color: Theme.accentYellow
+                        transformOrigin: Item.Center
+                        RotationAnimator on rotation {
+                            from: 0
+                            to: 360
+                            duration: 1000
+                            loops: Animation.Infinite
+                            running: root.isListingFolder
+                        }
                     }
                     Text {
                         text: root.isGdriveMode ? "Scanning Cloud..." : "Scanning Folder..."
@@ -202,10 +210,18 @@ Rectangle {
                     anchors.centerIn: parent
                     spacing: 6
                     Text {
-                        text: Theme.iconCloud
+                        text: Theme.iconRefresh
                         font.family: Theme.iconFont
                         font.pixelSize: 10
                         color: Theme.accentCyan
+                        transformOrigin: Item.Center
+                        RotationAnimator on rotation {
+                            from: 0
+                            to: 360
+                            duration: 1000
+                            loops: Animation.Infinite
+                            running: root.isDownloadingRemote
+                        }
                     }
                     Text {
                         text: "Downloading RAW..."

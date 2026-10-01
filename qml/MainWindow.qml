@@ -24,7 +24,9 @@ Rectangle {
     property bool isSplitView: false
     property real splitRatio: 0.5
     property bool showExportModal: false
+    property bool showAboutModal: false
     property bool showLeftPanel: true
+
     property bool showRightPanel: true
     property int photoRating: 0
     property string photoFlag: "none"
@@ -123,6 +125,7 @@ Rectangle {
     property string toastMessage: ""
     property color toastColor: Theme.accent
     property string currentGdrivePath: "Photos"
+    property var gdriveMemoryCache: ({})
     property bool isDownloadingRemote: false
     property bool isListingFolder: false
     property bool daemonReady: false
@@ -642,6 +645,22 @@ Rectangle {
         }
     }
 
+    function navigateGdriveFolder(path, forceRefresh) {
+        root.currentGdrivePath = path;
+        filmstrip.currentFolder = path;
+        if (!forceRefresh && root.gdriveMemoryCache && root.gdriveMemoryCache[path]) {
+            root.photoList = root.gdriveMemoryCache[path];
+        } else {
+            root.isListingFolder = true;
+        }
+        var cmd = [root.resolveEnginePath(), "gdrive", "list", path];
+        if (forceRefresh) {
+            cmd.push("--refresh");
+        }
+        listProc.command = cmd;
+        listProc.running = true;
+    }
+
     // Process: Folder scan
     Process {
         id: listProc
@@ -653,6 +672,11 @@ Rectangle {
                     var resp = JSON.parse(text);
                     if (resp.success && resp.data) {
                         root.photoList = resp.data;
+                        if (filmstrip.isGdriveMode) {
+                            var cache = Object.assign({}, root.gdriveMemoryCache);
+                            cache[root.currentGdrivePath] = resp.data;
+                            root.gdriveMemoryCache = cache;
+                        }
                     } else if (resp.error) {
                         root.showToast("[ERR] List failed: " + resp.error, Theme.accentMagenta);
                     }
@@ -718,6 +742,15 @@ Rectangle {
         sequence: "Alt+4"
         onActivated: root.switchGradeVersion("D")
     }
+    Shortcut {
+        sequence: "Escape"
+        onActivated: {
+            if (root.showAboutModal) root.showAboutModal = false;
+            else if (root.showExportModal) root.showExportModal = false;
+            else if (viewport.isCropMode) viewport.isCropMode = false;
+        }
+    }
+
 
     // Lightroom Studio Culling & Ergonomics (1-5 Stars, Flags, Cinematic View)
     Shortcut {
@@ -900,7 +933,11 @@ Rectangle {
                 exportDialog.exportStatusText = "";
                 root.showExportModal = true;
             }
+            onInfoClicked: {
+                root.showAboutModal = true;
+            }
         }
+
 
         // WORKSPACE CENTER (LEFT: NAVIGATOR + HISTOGRAM + EXIF, CENTER: CANVAS, RIGHT: ADJUSTMENTS)
         RowLayout {
@@ -1958,33 +1995,22 @@ Rectangle {
                 }
             }
             onNavigateFolder: function(remotePath) {
-                root.currentGdrivePath = remotePath;
-                filmstrip.currentFolder = remotePath;
                 root.showToast("[Folder] Navigating: " + remotePath, Theme.accent);
-                root.isListingFolder = true;
-                listProc.command = [root.resolveEnginePath(), "gdrive", "list", remotePath];
-                listProc.running = true;
+                root.navigateGdriveFolder(remotePath, false);
             }
             onParentFolderRequested: {
                 var parts = root.currentGdrivePath.split("/").filter(function(p) { return p.length > 0; });
+                var parentP = "Photos";
                 if (parts.length > 1) {
                     parts.pop();
-                    root.currentGdrivePath = parts.join("/");
-                } else {
-                    root.currentGdrivePath = "Photos";
+                    parentP = parts.join("/");
                 }
-                filmstrip.currentFolder = root.currentGdrivePath;
-                root.showToast("[Folder] Navigating: " + root.currentGdrivePath, Theme.accent);
-                root.isListingFolder = true;
-                listProc.command = [root.resolveEnginePath(), "gdrive", "list", root.currentGdrivePath];
-                listProc.running = true;
+                root.showToast("[Folder] Navigating: " + parentP, Theme.accent);
+                root.navigateGdriveFolder(parentP, false);
             }
             onSwitchSource: function(isGdrive) {
                 if (isGdrive) {
-                    filmstrip.currentFolder = root.currentGdrivePath;
-                    root.isListingFolder = true;
-                    listProc.command = [root.resolveEnginePath(), "gdrive", "list", root.currentGdrivePath];
-                    listProc.running = true;
+                    root.navigateGdriveFolder(root.currentGdrivePath, false);
                 } else {
                     filmstrip.currentFolder = "~/Pictures";
                     root.scanLocalFolder("~/Pictures");
@@ -1992,9 +2018,8 @@ Rectangle {
             }
             onRefreshRequested: {
                 if (filmstrip.isGdriveMode) {
-                    root.isListingFolder = true;
-                    listProc.command = [root.resolveEnginePath(), "gdrive", "list", root.currentGdrivePath];
-                    listProc.running = true;
+                    root.showToast("[Cloud] Refreshing Google Drive cache...", Theme.accentCyan);
+                    root.navigateGdriveFolder(root.currentGdrivePath, true);
                 } else {
                     root.scanLocalFolder(filmstrip.currentFolder || "~/Pictures");
                 }
@@ -2086,6 +2111,26 @@ Rectangle {
             }
         }
     }
+
+    // ABOUT / INFO MODAL OVERLAY
+    Rectangle {
+        visible: root.showAboutModal
+        anchors.fill: parent
+        color: Qt.rgba(0, 0, 0, 0.65)
+        z: 101
+
+        MouseArea {
+            anchors.fill: parent
+            onClicked: root.showAboutModal = false
+        }
+
+        AboutDialog {
+            id: aboutDialog
+            anchors.centerIn: parent
+            onCloseRequested: root.showAboutModal = false
+        }
+    }
+
 
     Component.onCompleted: {
         scanLocalFolder("~/Pictures");

@@ -15,7 +15,7 @@ use ai::{
     apply_jev_decisions_to_recipe, JevDecisions,
 };
 use export::{export_photo, ExportOptions};
-use gdrive::{fetch_remote_raw, is_gdrive_available, list_gdrive_folder};
+use gdrive::{fetch_remote_raw, is_gdrive_available, list_gdrive_folder_opt};
 use pipeline::{
     process_buffer_16_to_8, process_buffer_16_to_8_ex, process_split_comparison_16_to_8,
     process_split_comparison_16_to_8_ex,
@@ -350,8 +350,18 @@ fn main() {
                     print_json(&ResponseWrapper::ok(avail));
                 }
                 "list" => {
-                    let folder = if args.len() >= 4 { &args[3] } else { "" };
-                    match list_gdrive_folder(folder) {
+                    let mut folder = "";
+                    let mut force_refresh = false;
+                    if args.len() >= 4 {
+                        for arg in &args[3..] {
+                            if arg == "--refresh" || arg == "-f" || arg == "refresh" {
+                                force_refresh = true;
+                            } else if !arg.starts_with('-') && folder.is_empty() {
+                                folder = arg.as_str();
+                            }
+                        }
+                    }
+                    match list_gdrive_folder_opt(folder, force_refresh) {
                         Ok(items) => print_json(&ResponseWrapper::ok(items)),
                         Err(e) => print_json::<()>(&ResponseWrapper::err(e)),
                     }

@@ -25,6 +25,8 @@ Rectangle {
     signal undoClicked()
     signal redoClicked()
     signal exportClicked()
+    signal infoClicked()
+
 
     RowLayout {
         anchors.fill: parent
@@ -356,31 +358,32 @@ Rectangle {
 
         Item { Layout.fillWidth: true }
 
-        // Buy Me a Coffee / Sponsor Button
+        // Omarchy Studio Info & About Button
         Rectangle {
             implicitWidth: 32
             implicitHeight: 28
             radius: Theme.radiusSm
-            color: mouseCoffee.containsMouse ? Qt.rgba(1.0, 0.86, 0.0, 0.25) : Qt.rgba(1.0, 0.86, 0.0, 0.12)
-            border.color: mouseCoffee.containsMouse ? "#FFDD00" : Qt.rgba(1.0, 0.86, 0.0, 0.3)
+            color: mouseInfo.containsMouse ? Theme.bgCardHover : Theme.bgCard
+            border.color: mouseInfo.containsMouse ? Theme.accent : Theme.border
             border.width: 1
 
             Text {
                 anchors.centerIn: parent
-                text: Theme.iconCoffee
+                text: Theme.iconInfo
                 font.family: Theme.iconFont
                 font.pixelSize: 13
-                color: mouseCoffee.containsMouse ? "#FFDD00" : Theme.textMain
+                color: mouseInfo.containsMouse ? Theme.accent : Theme.textDim
             }
 
             MouseArea {
-                id: mouseCoffee
+                id: mouseInfo
                 anchors.fill: parent
                 hoverEnabled: true
                 cursorShape: Qt.PointingHandCursor
-                onClicked: Qt.openUrlExternally("https://buymeacoffee.com/ozdil")
+                onClicked: root.infoClicked()
             }
         }
+
 
         // Open Photo Button
         Rectangle {
