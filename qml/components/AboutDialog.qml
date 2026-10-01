@@ -283,10 +283,10 @@ Rectangle {
 
         Item { Layout.fillHeight: true }
 
-        // Action Buttons: GitHub & Close
+        // Action Buttons: GitHub, Buy Me a Coffee & Close
         RowLayout {
             Layout.fillWidth: true
-            spacing: 10
+            spacing: 8
 
             Rectangle {
                 Layout.fillWidth: true
@@ -296,18 +296,14 @@ Rectangle {
                 border.color: Theme.borderLight
                 border.width: 1
 
-                RowLayout {
+                Text {
                     anchors.centerIn: parent
-                    spacing: 6
-
-                    Text {
-                        text: "GitHub Repository"
-                        textFormat: Text.PlainText
-                        font.family: Theme.monoFont
-                        font.pixelSize: 10
-                        font.weight: Font.Medium
-                        color: Theme.accent
-                    }
+                    text: "GitHub"
+                    textFormat: Text.PlainText
+                    font.family: Theme.monoFont
+                    font.pixelSize: 10
+                    font.weight: Font.Medium
+                    color: Theme.accent
                 }
 
                 MouseArea {
@@ -320,7 +316,43 @@ Rectangle {
             }
 
             Rectangle {
-                implicitWidth: 90
+                Layout.fillWidth: true
+                implicitHeight: 32
+                radius: Theme.radiusSm
+                color: bmacMouse.containsMouse ? "#FFE433" : "#FFDD00"
+                border.color: "#E6C700"
+                border.width: 1
+
+                RowLayout {
+                    anchors.centerIn: parent
+                    spacing: 5
+                    Text {
+                        text: "\uf0f4"
+                        font.family: Theme.iconFont
+                        font.pixelSize: 11
+                        color: "#000000"
+                    }
+                    Text {
+                        text: "Buy Me a Coffee"
+                        textFormat: Text.PlainText
+                        font.family: Theme.monoFont
+                        font.pixelSize: 10
+                        font.weight: Font.Bold
+                        color: "#000000"
+                    }
+                }
+
+                MouseArea {
+                    id: bmacMouse
+                    anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
+                    hoverEnabled: true
+                    onClicked: Qt.openUrlExternally("https://buymeacoffee.com/ozdil")
+                }
+            }
+
+            Rectangle {
+                implicitWidth: 70
                 implicitHeight: 32
                 radius: Theme.radiusSm
                 color: okMouse.containsMouse ? Theme.accentHover : Theme.accent
