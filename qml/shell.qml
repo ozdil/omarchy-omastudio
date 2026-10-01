@@ -9,17 +9,23 @@ ShellRoot {
     FloatingWindow {
         id: win
         title: "OmaStudio - Lightroom-Grade Photo RAW Editor"
-        width: 1440
-        height: 920
         implicitWidth: 1440
         implicitHeight: 920
         color: Theme.bgBase
+
+        // 100% Solid Opaque Studio Foundation (Impervious to compositor alpha blending)
+        Rectangle {
+            anchors.fill: parent
+            color: Theme.bgBase
+            z: -1000
+        }
 
         MainWindow {
             id: mainWin
             anchors.fill: parent
         }
     }
+
 
     // Omarchy Agent & CLI IPC Interface (Strict Type Safety & Sandboxed Execution)
     IpcHandler {

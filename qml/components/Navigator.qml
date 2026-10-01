@@ -13,7 +13,26 @@ Rectangle {
     clip: true
 
     property string imageSource: ""
+    onImageSourceChanged: {
+        if (!root.imageSource || root.imageSource.length === 0) {
+            miniImg0.source = "";
+            miniImg1.source = "";
+            miniImage.currentSource = "";
+            return;
+        }
+        var nextSrc = "file://" + root.imageSource;
+        if (nextSrc === miniImage.currentSource) return;
+
+        if (miniImg0.status !== Image.Ready && miniImg1.status !== Image.Ready) {
+            miniImg0.source = nextSrc;
+        } else if (miniImage.activeBuffer === 0) {
+            miniImg1.source = nextSrc;
+        } else {
+            miniImg0.source = nextSrc;
+        }
+    }
     property real zoomFactor: 1.0
+
     property real rotationAngle: 0.0
     property real normX: 0.0     // 0.0 to 1.0 (visible center X)
     property real normY: 0.0     // 0.0 to 1.0 (visible center Y)
@@ -90,16 +109,58 @@ Rectangle {
             color: Theme.bgDark
             clip: true
 
-            Image {
+            Item {
                 id: miniImage
                 anchors.fill: parent
                 anchors.margins: 4
-                source: root.imageSource ? ("file://" + root.imageSource) : ""
-                fillMode: Image.PreserveAspectFit
-                asynchronous: true
-                cache: false
-                smooth: true
                 rotation: root.rotationAngle
+
+                property int activeBuffer: 0
+                property string currentSource: ""
+                readonly property var currentActiveImage: activeBuffer === 0 ? miniImg0 : miniImg1
+                readonly property real paintedWidth: currentActiveImage && currentActiveImage.paintedWidth > 0 ? currentActiveImage.paintedWidth : width
+                readonly property real paintedHeight: currentActiveImage && currentActiveImage.paintedHeight > 0 ? currentActiveImage.paintedHeight : height
+
+                Image {
+                    id: miniImg0
+                    anchors.fill: parent
+                    fillMode: Image.PreserveAspectFit
+                    asynchronous: true
+                    cache: false
+                    smooth: true
+                    visible: opacity > 0.001
+                    opacity: miniImage.activeBuffer === 0 ? 1.0 : 0.0
+                    z: miniImage.activeBuffer === 0 ? 2 : 1
+                    onStatusChanged: {
+                        if (status === Image.Ready) {
+                            if (miniImage.activeBuffer === 1 || miniImage.currentSource === "") {
+                                miniImage.activeBuffer = 0;
+                                miniImage.currentSource = source;
+                            }
+                        }
+                    }
+                }
+
+                Image {
+                    id: miniImg1
+                    anchors.fill: parent
+                    fillMode: Image.PreserveAspectFit
+                    asynchronous: true
+                    cache: false
+                    smooth: true
+                    visible: opacity > 0.001
+                    opacity: miniImage.activeBuffer === 1 ? 1.0 : 0.0
+                    z: miniImage.activeBuffer === 1 ? 2 : 1
+                    onStatusChanged: {
+                        if (status === Image.Ready) {
+                            if (miniImage.activeBuffer === 0 || miniImage.currentSource === "") {
+                                miniImage.activeBuffer = 1;
+                                miniImage.currentSource = source;
+                            }
+                        }
+                    }
+                }
+
 
                 // Viewfinder highlight box representing visible viewport area
                 Rectangle {

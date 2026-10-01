@@ -8,6 +8,25 @@ Rectangle {
     clip: true
 
     property string imageSource: ""
+    onImageSourceChanged: {
+        if (!root.imageSource || root.imageSource.length === 0) {
+            imgBuffer0.source = "";
+            imgBuffer1.source = "";
+            mainImage.currentSource = "";
+            return;
+        }
+        var nextSrc = "file://" + root.imageSource;
+        if (nextSrc === mainImage.currentSource) return;
+
+        if (imgBuffer0.status !== Image.Ready && imgBuffer1.status !== Image.Ready) {
+            imgBuffer0.source = nextSrc;
+        } else if (mainImage.activeBuffer === 0) {
+            imgBuffer1.source = nextSrc;
+        } else {
+            imgBuffer0.source = nextSrc;
+        }
+    }
+
     property real zoomFactor: 1.0
     property real rotationAngle: 0.0
     property bool flipH: false
@@ -245,6 +264,13 @@ Rectangle {
         anchors.fill: parent
         clip: true
 
+        // Solid opaque studio canvas backdrop (Guarantees zero compositor leak)
+        Rectangle {
+            anchors.fill: parent
+            color: Theme.bgDark
+            z: -100
+        }
+
         // TRANSFORM CONTAINER (Target of scale, rotation, and pan)
         Item {
             id: transformContainer
@@ -256,15 +282,72 @@ Rectangle {
             rotation: root.rotationAngle
             transformOrigin: Item.Center
 
-            Image {
+            // 100% Solid Underlay directly under photo bounding box
+            Rectangle {
+                anchors.fill: parent
+                color: "#0a0a0d"
+                z: -10
+            }
+
+            // MAIN IMAGE CANVAS (Double-Buffered Zero-Flicker Architecture)
+            Item {
                 id: mainImage
                 anchors.fill: parent
-                source: root.imageSource ? ("file://" + root.imageSource) : ""
-                fillMode: Image.PreserveAspectFit
-                asynchronous: true
-                cache: false
-                smooth: true
-                mipmap: true
+
+                property int activeBuffer: 0
+                property string currentSource: ""
+                readonly property var currentActiveImage: activeBuffer === 0 ? imgBuffer0 : imgBuffer1
+                readonly property var pendingImage: activeBuffer === 0 ? imgBuffer1 : imgBuffer0
+                readonly property real implicitWidth: (currentActiveImage && currentActiveImage.implicitWidth > 0)
+                    ? currentActiveImage.implicitWidth
+                    : ((pendingImage && pendingImage.implicitWidth > 0) ? pendingImage.implicitWidth : 1)
+                readonly property real implicitHeight: (currentActiveImage && currentActiveImage.implicitHeight > 0)
+                    ? currentActiveImage.implicitHeight
+                    : ((pendingImage && pendingImage.implicitHeight > 0) ? pendingImage.implicitHeight : 1)
+
+                Image {
+                    id: imgBuffer0
+                    anchors.fill: parent
+                    fillMode: Image.PreserveAspectFit
+                    asynchronous: true
+                    cache: false
+                    smooth: true
+                    mipmap: true
+                    visible: opacity > 0.001
+                    opacity: mainImage.activeBuffer === 0 ? 1.0 : 0.0
+                    z: mainImage.activeBuffer === 0 ? 2 : 1
+
+                    onStatusChanged: {
+                        if (status === Image.Ready) {
+                            if (mainImage.activeBuffer === 1 || mainImage.currentSource === "") {
+                                mainImage.activeBuffer = 0;
+                                mainImage.currentSource = source;
+                            }
+                        }
+                    }
+                }
+
+                Image {
+                    id: imgBuffer1
+                    anchors.fill: parent
+                    fillMode: Image.PreserveAspectFit
+                    asynchronous: true
+                    cache: false
+                    smooth: true
+                    mipmap: true
+                    visible: opacity > 0.001
+                    opacity: mainImage.activeBuffer === 1 ? 1.0 : 0.0
+                    z: mainImage.activeBuffer === 1 ? 2 : 1
+
+                    onStatusChanged: {
+                        if (status === Image.Ready) {
+                            if (mainImage.activeBuffer === 0 || mainImage.currentSource === "") {
+                                mainImage.activeBuffer = 1;
+                                mainImage.currentSource = source;
+                            }
+                        }
+                    }
+                }
 
                 // Interactive Split Comparison Curtain
                 Rectangle {
