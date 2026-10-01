@@ -5,7 +5,7 @@ use crate::recipe::Recipe;
 /// using chromatic gradient preservation from unclipped channels.
 #[inline(always)]
 pub fn reconstruct_clipped_highlights(r: f32, g: f32, b: f32) -> (f32, f32, f32) {
-    let clip_thresh = 0.94;
+    let clip_thresh = 0.94f32;
     let r_clip = r > clip_thresh;
     let g_clip = g > clip_thresh;
     let b_clip = b > clip_thresh;
@@ -14,23 +14,21 @@ pub fn reconstruct_clipped_highlights(r: f32, g: f32, b: f32) -> (f32, f32, f32)
         return (r, g, b);
     }
 
-    // If 1 or 2 channels clip, estimate the missing energy from the unclipped channel(s)
     let max_val = r.max(g).max(b);
-    let min_val = r.min(g).min(b);
-    let unclipped_luma = 0.2126 * (if r_clip { min_val } else { r })
-                       + 0.7152 * (if g_clip { min_val } else { g })
-                       + 0.0722 * (if b_clip { min_val } else { b });
-
     let blend_weight = ((max_val - clip_thresh) / (1.20 - clip_thresh)).clamp(0.0, 1.0);
-    let desat = blend_weight * 0.45;
+    let desat = blend_weight * 0.50;
 
-    let target_energy = max_val.max(unclipped_luma * 1.15);
+    let target_energy = max_val;
+    let r_out = if r_clip { r.max(target_energy) } else { r + (target_energy - r) * desat };
+    let g_out = if g_clip { g.max(target_energy) } else { g + (target_energy - g) * desat };
+    let b_out = if b_clip { b.max(target_energy) } else { b + (target_energy - b) * desat };
 
-    let r_out = if r_clip { r.max(target_energy) * (1.0 - desat) + target_energy * desat } else { r };
-    let g_out = if g_clip { g.max(target_energy) * (1.0 - desat) + target_energy * desat } else { g };
-    let b_out = if b_clip { b.max(target_energy) * (1.0 - desat) + target_energy * desat } else { b };
-
-    (r_out, g_out, b_out)
+    let luma = 0.2126 * r_out + 0.7152 * g_out + 0.0722 * b_out;
+    (
+        r_out * (1.0 - desat) + luma * desat,
+        g_out * (1.0 - desat) + luma * desat,
+        b_out * (1.0 - desat) + luma * desat,
+    )
 }
 
 /// AgX / Filmic Sigmoidal Dynamic Range Tone Curve
@@ -132,11 +130,11 @@ pub fn apply_tone_pixel(
         luma_adj += (ch + cl + cd + cs) * 0.25;
     }
 
-    luma_adj = luma_adj.clamp(0.0, 1.5);
-
     // Apply AgX Filmic Tone Curve if requested
     if recipe.filmic_agx {
-        luma_adj = apply_agx_filmic_curve(luma_adj);
+        luma_adj = apply_agx_filmic_curve(luma_adj.max(0.0));
+    } else {
+        luma_adj = luma_adj.clamp(0.0, 1.5);
     }
 
     // =========================================================================
@@ -178,7 +176,11 @@ pub fn apply_tone_pixel(
     // 6. Presence: Vibrance, DaVinci Color Boost and Saturation
     let max_c = r_adj.max(g_adj).max(b_adj);
     let min_c = r_adj.min(g_adj).min(b_adj);
-    let current_sat = if max_c > 0.0001 { (max_c - min_c) / max_c } else { 0.0 };
+    let current_sat = if max_c > 0.0001 {
+        ((max_c - min_c.max(0.0)) / max_c).clamp(0.0, 1.0)
+    } else {
+        0.0
+    };
 
     let mut sat_delta = recipe.saturation / 100.0;
 
@@ -190,7 +192,8 @@ pub fn apply_tone_pixel(
 
     // DaVinci Resolve Color Boost: Natural perceptual boost prioritizing desaturated tones
     if recipe.color_boost != 0.0 {
-        let boost_weight = (1.0 - current_sat).powf(1.4);
+        let base = (1.0 - current_sat).clamp(0.0, 1.0);
+        let boost_weight = base.powf(1.4);
         let boost_delta = (recipe.color_boost / 100.0) * boost_weight;
         sat_delta += boost_delta;
     }

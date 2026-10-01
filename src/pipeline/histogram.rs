@@ -91,28 +91,28 @@ pub fn compute_histogram_with_dimensions(
 
         let x = px_idx % w_safe;
 
-        // Waveform Luma (64 cols x 32 rows)
+        // Waveform Luma (64 cols x 32 rows, 0 IRE at bottom, 100 IRE at top)
         let wx = (x * 64) / w_safe;
-        let wy = (y as usize * 31) / 255;
+        let wy = 31usize.saturating_sub((y as usize * 31) / 255);
         wf_counts[wy * 64 + wx.min(63)] += 1;
 
-        // RGB Parade (32 cols x 32 rows)
+        // RGB Parade (32 cols x 32 rows, 0 at bottom, 255 at top)
         let px = (x * 32) / w_safe;
-        let ry = (r as usize * 31) / 255;
-        let gy = (g as usize * 31) / 255;
-        let by = (b as usize * 31) / 255;
+        let ry = 31usize.saturating_sub((r as usize * 31) / 255);
+        let gy = 31usize.saturating_sub((g as usize * 31) / 255);
+        let by = 31usize.saturating_sub((b as usize * 31) / 255);
         par_r_counts[ry * 32 + px.min(31)] += 1;
         par_g_counts[gy * 32 + px.min(31)] += 1;
         par_b_counts[by * 32 + px.min(31)] += 1;
 
-        // Vectorscope (48 x 48 UV / CbCr grid)
+        // Vectorscope (48 x 48 UV / CbCr grid, +Cr Red at top)
         let rf = r as f32 / 255.0;
         let gf = g as f32 / 255.0;
         let bf = b as f32 / 255.0;
         let cb = -0.1146 * rf - 0.3854 * gf + 0.5000 * bf;
         let cr = 0.5000 * rf - 0.4542 * gf - 0.0458 * bf;
         let u = ((cb + 0.5) * 47.0).clamp(0.0, 47.0) as usize;
-        let v = ((cr + 0.5) * 47.0).clamp(0.0, 47.0) as usize;
+        let v = (47.0 - (cr + 0.5) * 47.0).clamp(0.0, 47.0) as usize;
         vec_counts[v * 48 + u] += 1;
     }
 
@@ -224,13 +224,13 @@ pub fn compute_histogram_16_with_dimensions(
         let x = px_idx % w_safe;
 
         let wx = (x * 64) / w_safe;
-        let wy = (y as usize * 31) / 255;
+        let wy = 31usize.saturating_sub((y as usize * 31) / 255);
         wf_counts[wy * 64 + wx.min(63)] += 1;
 
         let px = (x * 32) / w_safe;
-        let ry = (r as usize * 31) / 255;
-        let gy = (g as usize * 31) / 255;
-        let by = (b as usize * 31) / 255;
+        let ry = 31usize.saturating_sub((r as usize * 31) / 255);
+        let gy = 31usize.saturating_sub((g as usize * 31) / 255);
+        let by = 31usize.saturating_sub((b as usize * 31) / 255);
         par_r_counts[ry * 32 + px.min(31)] += 1;
         par_g_counts[gy * 32 + px.min(31)] += 1;
         par_b_counts[by * 32 + px.min(31)] += 1;
@@ -241,7 +241,7 @@ pub fn compute_histogram_16_with_dimensions(
         let cb = -0.1146 * rf - 0.3854 * gf + 0.5000 * bf;
         let cr = 0.5000 * rf - 0.4542 * gf - 0.0458 * bf;
         let u = ((cb + 0.5) * 47.0).clamp(0.0, 47.0) as usize;
-        let v = ((cr + 0.5) * 47.0).clamp(0.0, 47.0) as usize;
+        let v = (47.0 - (cr + 0.5) * 47.0).clamp(0.0, 47.0) as usize;
         vec_counts[v * 48 + u] += 1;
     }
 

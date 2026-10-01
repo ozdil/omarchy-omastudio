@@ -453,9 +453,9 @@ pub fn process_buffer_16_to_16(
                     recipe.vignette,
                 );
 
-                row[px_out] = (r5.clamp(0.0, 1.0) * 65535.0) as u16;
-                row[px_out + 1] = (g5.clamp(0.0, 1.0) * 65535.0) as u16;
-                row[px_out + 2] = (b5.clamp(0.0, 1.0) * 65535.0) as u16;
+                row[px_out] = (r5.clamp(0.0, 1.0) * 65535.0 + 0.5) as u16;
+                row[px_out + 1] = (g5.clamp(0.0, 1.0) * 65535.0 + 0.5) as u16;
+                row[px_out + 2] = (b5.clamp(0.0, 1.0) * 65535.0 + 0.5) as u16;
 
                 if ch == 4 {
                     row[px_out + 3] = input[y_idx * w * ch + px_out + 3];
@@ -548,13 +548,23 @@ pub fn process_split_comparison_16_to_8_ex(
             let orig_row = &input[y * w * ch..(y + 1) * w * ch];
             let proc_row = &processed[y * w * ch..(y + 1) * w * ch];
 
+            let to_srgb = |val16: u16| -> u8 {
+                let lin = val16 as f32 / 65535.0;
+                let srgb = if lin <= 0.0031308 {
+                    lin * 12.92
+                } else {
+                    1.055 * lin.powf(1.0 / 2.4) - 0.055
+                };
+                (srgb.clamp(0.0, 1.0) * 255.0 + 0.5) as u8
+            };
+
             for x in 0..w {
                 let px = x * ch;
                 if x < split_x {
-                    // BEFORE (Original unprocessed RAW converted to 8-bit)
-                    row[px] = (orig_row[px] >> 8) as u8;
-                    row[px + 1] = (orig_row[px + 1] >> 8) as u8;
-                    row[px + 2] = (orig_row[px + 2] >> 8) as u8;
+                    // BEFORE (Original unprocessed RAW with standard sRGB transfer curve)
+                    row[px] = to_srgb(orig_row[px]);
+                    row[px + 1] = to_srgb(orig_row[px + 1]);
+                    row[px + 2] = to_srgb(orig_row[px + 2]);
                     if ch == 4 {
                         row[px + 3] = (orig_row[px + 3] >> 8) as u8;
                     }

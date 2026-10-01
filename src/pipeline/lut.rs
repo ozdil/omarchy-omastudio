@@ -51,9 +51,9 @@ impl Lut3D {
         let gy = g_norm * n_sub_1;
         let bz = b_norm * n_sub_1;
 
-        let r0 = rx.floor() as usize;
-        let g0 = gy.floor() as usize;
-        let b0 = bz.floor() as usize;
+        let r0 = (rx.floor() as usize).min(n - 1);
+        let g0 = (gy.floor() as usize).min(n - 1);
+        let b0 = (bz.floor() as usize).min(n - 1);
 
         let r1 = (r0 + 1).min(n - 1);
         let g1 = (g0 + 1).min(n - 1);
@@ -205,8 +205,8 @@ pub fn read_cube_file<P: AsRef<Path>>(path: P) -> Result<Lut3D, String> {
         return Err("Security violation: symlink rejected for LUT file".to_string());
     }
 
-    // HANCORE Security: Max 1 MiB limit
-    const MAX_SIZE: u64 = 1024 * 1024;
+    // HANCORE Security: Max 12 MiB limit for up to 65^3 cinematic LUT tables
+    const MAX_SIZE: u64 = 12 * 1024 * 1024;
     let file = fs::File::open(p).map_err(|e| format!("Cannot open LUT file: {}", e))?;
     let limited = file.take(MAX_SIZE + 1);
     let reader = BufReader::new(limited);

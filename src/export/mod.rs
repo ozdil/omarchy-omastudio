@@ -140,12 +140,13 @@ pub fn export_photo<P: AsRef<Path>>(
 
             let mut cmd = secure_command("cjxl");
             let distance = ((100 - options.quality.clamp(1, 100)) as f32 / 10.0).to_string();
-            cmd.arg(&tmp_png)
-                .arg(&final_dest)
-                .arg("-d")
+            cmd.arg("-d")
                 .arg(&distance)
                 .arg("-e")
-                .arg("7");
+                .arg("7")
+                .arg("--")
+                .arg(&tmp_png)
+                .arg(&final_dest);
 
             let (code, _, stderr) = run_bounded_command(cmd, Duration::from_secs(60))
                 .map_err(|e| format!("Failed to execute cjxl: {}", e))?;
@@ -163,21 +164,26 @@ pub fn export_photo<P: AsRef<Path>>(
 
             let mut cmd = secure_command("avifenc");
             let speed = "4";
-            cmd.arg(&tmp_png)
-                .arg(&final_dest)
-                .arg("-s")
+            let cq = 63 - (options.quality * 63 / 100);
+            cmd.arg("-s")
                 .arg(speed)
                 .arg("-a")
-                .arg(format!("end-usage=q:cq-level={}", (63 - (options.quality * 63 / 100))));
+                .arg(format!("end-usage=q:cq-level={}", cq))
+                .arg("--")
+                .arg(&tmp_png)
+                .arg(&final_dest);
 
             let (code, _, _) = run_bounded_command(cmd, Duration::from_secs(60))
                 .map_err(|e| format!("Failed to execute avifenc: {}", e))?;
 
             if code != 0 {
                 let mut f_cmd = secure_command("ffmpeg");
+                let crf = (35 - (options.quality * 20 / 100)).to_string();
                 f_cmd.arg("-y")
                     .arg("-i").arg(&tmp_png)
                     .arg("-c:v").arg("libsvtav1")
+                    .arg("-crf").arg(&crf)
+                    .arg("--")
                     .arg(&final_dest);
                 let _ = run_bounded_command(f_cmd, Duration::from_secs(30));
             }
@@ -247,7 +253,7 @@ pub fn export_photo<P: AsRef<Path>>(
             }
         }
 
-        exif_cmd.arg(&final_dest);
+        exif_cmd.arg("--").arg(&final_dest);
 
         // Run exiftool with bounded timeout (safe failover if format doesn't support tags)
         let _ = run_bounded_command(exif_cmd, Duration::from_secs(20));

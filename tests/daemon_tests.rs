@@ -136,7 +136,7 @@ fn test_daemon_anti_echo_loop_resilience() {
     let mut reader = BufReader::new(stdout);
 
     // 1. Send empty lines and whitespaces (should be ignored without emitting errors)
-    writeln!(stdin, "").expect("Write newline");
+    writeln!(stdin).expect("Write newline");
     writeln!(stdin, "   \t  ").expect("Write whitespace");
     stdin.flush().expect("Flush stdin");
 

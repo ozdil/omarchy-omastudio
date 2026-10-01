@@ -2,7 +2,6 @@
 use crate::raw::RawMetadata;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
-use std::fs;
 use std::io;
 use std::path::{Path, PathBuf};
 // time
@@ -298,21 +297,17 @@ impl Recipe {
         
         // Check primary .omastudio sidecar first
         let studio_sidecar = path.with_extension(format!("{}.omastudio", ext));
-        if studio_sidecar.exists() {
-            if let Ok(data) = fs::read(&studio_sidecar) {
-                if let Ok(recipe) = serde_json::from_slice(&data) {
-                    return Some(recipe);
-                }
+        if let Ok(data) = crate::security::read_secure_file(&studio_sidecar, 1024 * 1024) {
+            if let Ok(recipe) = serde_json::from_slice(&data) {
+                return Some(recipe);
             }
         }
 
         // Fallback to legacy .omaraw sidecar
         let legacy_sidecar = path.with_extension(format!("{}.omaraw", ext));
-        if legacy_sidecar.exists() {
-            if let Ok(data) = fs::read(&legacy_sidecar) {
-                if let Ok(recipe) = serde_json::from_slice(&data) {
-                    return Some(recipe);
-                }
+        if let Ok(data) = crate::security::read_secure_file(&legacy_sidecar, 1024 * 1024) {
+            if let Ok(recipe) = serde_json::from_slice(&data) {
+                return Some(recipe);
             }
         }
         None
@@ -359,11 +354,9 @@ impl Catalog {
 
     pub fn load() -> Self {
         let path = Self::default_catalog_path();
-        if path.exists() {
-            if let Ok(bytes) = fs::read(&path) {
-                if let Ok(cat) = serde_json::from_slice::<Catalog>(&bytes) {
-                    return cat;
-                }
+        if let Ok(bytes) = crate::security::read_secure_file(&path, 16 * 1024 * 1024) {
+            if let Ok(cat) = serde_json::from_slice::<Catalog>(&bytes) {
+                return cat;
             }
         }
         Self {

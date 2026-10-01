@@ -1,7 +1,7 @@
 use crate::ai::SceneAnalysis;
 use crate::raw::RawMetadata;
 use crate::recipe::Recipe;
-use crate::security::{run_bounded_command, secure_command, SecureDir};
+use crate::security::{run_bounded_command_with_stdin, secure_command, SecureDir};
 use serde::{Deserialize, Serialize};
 use std::io::Read;
 use std::path::PathBuf;
@@ -247,7 +247,10 @@ impl JevClient {
         let payload_str = serde_json::to_string(&request_payload)
             .map_err(|e| format!("Failed to serialize Jev request: {}", e))?;
 
-        // Prepare bounded curl invocation according to HANCORE security rules
+        // Prepare bounded curl invocation according to HANCORE security rules.
+        // HANCORE Security: Never pass API keys via cmdline (-H "Authorization: Bearer <key>")
+        // because arguments are visible to all system users in /proc/<pid>/cmdline.
+        // Pass sensitive authorization headers securely via stdin config (-K -).
         let effective_timeout = self.config.timeout_secs.clamp(1, 30);
         let mut cmd = secure_command("curl");
         cmd.arg("-s")
@@ -256,8 +259,8 @@ impl JevClient {
             .arg(effective_timeout.to_string())
             .arg("-X")
             .arg("POST")
-            .arg("-H")
-            .arg(format!("Authorization: Bearer {}", self.config.api_key))
+            .arg("-K")
+            .arg("-")
             .arg("-H")
             .arg("Content-Type: application/json")
             .arg("--data-raw")
@@ -265,8 +268,9 @@ impl JevClient {
             .arg("--")
             .arg(&self.config.endpoint);
 
+        let curl_config = format!("header = \"Authorization: Bearer {}\"\n", self.config.api_key);
         let timeout = Duration::from_secs(effective_timeout + 2);
-        let (exit_code, stdout, stderr) = run_bounded_command(cmd, timeout)
+        let (exit_code, stdout, stderr) = run_bounded_command_with_stdin(cmd, timeout, Some(curl_config.as_bytes()))
             .map_err(|e| format!("Jev command execution failed: {}", e))?;
 
         if exit_code != 0 {

@@ -99,15 +99,35 @@ impl<'a> Drop for ProcessGroupGuard<'a> {
 
 /// Runs a command with a monotonic deadline, non-blocking I/O polling, and buffer limit
 pub fn run_bounded_command(
+    cmd: Command,
+    timeout: Duration,
+) -> io::Result<(i32, Vec<u8>, Vec<u8>)> {
+    run_bounded_command_with_stdin(cmd, timeout, None)
+}
+
+/// Runs a command with optional stdin data, a monotonic deadline, non-blocking I/O polling, and buffer limit
+pub fn run_bounded_command_with_stdin(
     mut cmd: Command,
     timeout: Duration,
+    stdin_data: Option<&[u8]>,
 ) -> io::Result<(i32, Vec<u8>, Vec<u8>)> {
     use std::os::unix::io::AsRawFd;
 
+    if stdin_data.is_some() {
+        cmd.stdin(std::process::Stdio::piped());
+    }
     cmd.stdout(std::process::Stdio::piped());
     cmd.stderr(std::process::Stdio::piped());
 
     let mut child = cmd.spawn()?;
+
+    if let Some(data) = stdin_data {
+        if let Some(mut stdin) = child.stdin.take() {
+            let _ = stdin.write_all(data);
+            let _ = stdin.flush();
+        }
+    }
+
     let guard = ProcessGroupGuard::new(&mut child);
 
     let deadline = Instant::now() + timeout;
@@ -493,6 +513,35 @@ pub fn verify_safe_file(path: &Path) -> io::Result<()> {
         ));
     }
     Ok(())
+}
+
+/// Reads a file securely, verifying it is a regular file, rejecting symlinks,
+/// and enforcing a hard byte limit (take(max + 1)) to prevent memory exhaustion / DoS.
+pub fn read_secure_file(path: &Path, max_bytes: usize) -> io::Result<Vec<u8>> {
+    let meta = fs::symlink_metadata(path)?;
+    if meta.file_type().is_symlink() {
+        return Err(io::Error::new(
+            io::ErrorKind::PermissionDenied,
+            "Symlink access is strictly prohibited",
+        ));
+    }
+    if !meta.file_type().is_file() {
+        return Err(io::Error::new(
+            io::ErrorKind::InvalidInput,
+            "Target is not a regular file",
+        ));
+    }
+
+    let file = fs::File::open(path)?;
+    let mut buf = Vec::new();
+    file.take((max_bytes as u64) + 1).read_to_end(&mut buf)?;
+    if buf.len() > max_bytes {
+        return Err(io::Error::new(
+            io::ErrorKind::OutOfMemory,
+            format!("File exceeded maximum allowed size of {} bytes", max_bytes),
+        ));
+    }
+    Ok(buf)
 }
 
 /// Atomically writes sensitive data to a file with Mode 0600 permissions using descriptor-bound staging
