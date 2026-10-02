@@ -180,19 +180,23 @@ fn scan_directory(dir_path: &str) -> Result<Vec<FolderScanItem>, String> {
             if path.is_file() {
                 if let Some(ext) = path.extension().and_then(|e| e.to_str()) {
                     let ext_lower = ext.to_lowercase();
-                    if ["nef", "nrw", "raf", "cr2", "cr3", "arw", "dng", "rwl", "orf", "rw2"].contains(&ext_lower.as_str()) {
+                    let is_supported = ["nef", "nrw", "raf", "cr2", "cr3", "arw", "dng", "rwl", "orf", "rw2", "3fr", "jpg", "jpeg", "png", "webp", "tif", "tiff", "heic"].contains(&ext_lower.as_str());
+                    if is_supported {
                         let stem = path.file_stem().and_then(|s| s.to_str()).unwrap_or("thumb");
                         let thumb_path = thumb_dir.join(format!("{}.jpg", stem));
                         if !thumb_path.exists() {
                             if let Ok(raw) = RawImage::open(&path) {
                                 let _ = raw.extract_thumbnail(&thumb_path);
+                            } else if ["jpg", "jpeg", "png", "webp"].contains(&ext_lower.as_str()) {
+                                // Direct copy or link for standard raster formats
+                                let _ = std::fs::copy(&path, &thumb_path);
                             }
                         }
 
                         items.push(FolderScanItem {
                             name: path.file_name().and_then(|s| s.to_str()).unwrap_or("").to_string(),
                             path: path.to_string_lossy().to_string(),
-                            thumbnail: thumb_path.to_string_lossy().to_string(),
+                            thumbnail: if thumb_path.exists() { thumb_path.to_string_lossy().to_string() } else { path.to_string_lossy().to_string() },
                             is_remote: false,
                         });
                     }

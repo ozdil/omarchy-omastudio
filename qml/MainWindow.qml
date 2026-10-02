@@ -727,10 +727,16 @@ Rectangle {
                             root.gdriveMemoryCache = cache;
                         }
                     } else if (resp.error) {
-                        root.showToast("[ERR] List failed: " + resp.error, Theme.accentMagenta);
+                        var errStr = String(resp.error || "");
+                        if (errStr.indexOf("rate limit") !== -1 || errStr.indexOf("403") !== -1 || errStr.indexOf("rateLimitExceeded") !== -1) {
+                            root.showToast("[Cloud] Google Drive kota siniri: Onbellekteki dosyalar gosteriliyor.", Theme.accentYellow);
+                        } else {
+                            var cleanMsg = errStr.split("\n")[0].substring(0, 80);
+                            root.showToast("[ERR] " + cleanMsg, Theme.accentMagenta);
+                        }
                     }
                 } catch(e) {
-                    root.showToast("[ERR] Folder scan response error", Theme.accentMagenta);
+                    root.showToast("[ERR] Klasor taramasi yanit veremedi.", Theme.accentMagenta);
                 }
             }
         }
@@ -2180,12 +2186,13 @@ Rectangle {
         anchors.top: parent.top
         anchors.topMargin: 52
         anchors.horizontalCenter: parent.horizontalCenter
-        implicitWidth: toastContent.implicitWidth + 28
+        implicitWidth: Math.min(root.width - 64, toastContent.implicitWidth + 28)
         implicitHeight: 32
         radius: 16
         color: Theme.bgDark
         border.color: root.toastColor
         border.width: 1
+        clip: true
         z: 300
 
         RowLayout {
@@ -2197,8 +2204,12 @@ Rectangle {
                 text: root.toastMessage
                 textFormat: Text.PlainText
                 font.pixelSize: 11
+                font.family: Theme.monoFont
                 font.weight: Font.DemiBold
                 color: root.toastColor
+                elide: Text.ElideRight
+                maximumLineCount: 1
+                Layout.maximumWidth: root.width - 96
             }
         }
     }

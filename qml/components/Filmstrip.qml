@@ -310,7 +310,7 @@ Rectangle {
                         color: Theme.textDim
                     }
                     Text {
-                        text: root.isGdriveMode ? "No RAW photos found in this Google Drive folder." : "No RAW photos found in this directory."
+                        text: root.isGdriveMode ? "No photos found in this Google Drive folder." : "No photos found in this directory."
                         textFormat: Text.PlainText
                         font.pixelSize: 10
                         font.family: Theme.monoFont

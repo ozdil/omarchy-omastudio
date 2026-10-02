@@ -200,9 +200,9 @@ pub fn list_gdrive_folder_opt(subfolder: &str, force_refresh: bool) -> Result<Ve
         .arg("--drive-skip-shortcuts")
         .arg("--drive-skip-dangling-shortcuts")
         .arg("--drive-pacer-min-sleep")
-        .arg("10ms")
+        .arg("100ms")
         .arg("--drive-pacer-burst")
-        .arg("200")
+        .arg("50")
         .arg("--drive-list-chunk")
         .arg("1000")
         .arg("--retries")
@@ -243,7 +243,7 @@ pub fn list_gdrive_folder_opt(subfolder: &str, force_refresh: bool) -> Result<Ve
                     format!("{}/{}", clean_sub, entry.path)
                 };
 
-                let is_raw = entry.is_dir || {
+                let is_supported = entry.is_dir || {
                     let lower = entry.name.to_lowercase();
                     lower.ends_with(".nef")
                         || lower.ends_with(".nrw")
@@ -255,9 +255,17 @@ pub fn list_gdrive_folder_opt(subfolder: &str, force_refresh: bool) -> Result<Ve
                         || lower.ends_with(".rwl")
                         || lower.ends_with(".orf")
                         || lower.ends_with(".rw2")
+                        || lower.ends_with(".3fr")
+                        || lower.ends_with(".jpg")
+                        || lower.ends_with(".jpeg")
+                        || lower.ends_with(".png")
+                        || lower.ends_with(".webp")
+                        || lower.ends_with(".heic")
+                        || lower.ends_with(".tif")
+                        || lower.ends_with(".tiff")
                 };
 
-                if is_raw {
+                if is_supported {
                     let thumb = if !entry.is_dir {
                         let stem = Path::new(&entry.name)
                             .file_stem()
@@ -305,11 +313,15 @@ pub fn list_gdrive_folder_opt(subfolder: &str, force_refresh: bool) -> Result<Ve
             }
 
             match err_case {
-                Ok((code, _, stderr)) => Err(format!(
-                    "rclone exited with code {}: {}",
-                    code,
-                    String::from_utf8_lossy(&stderr)
-                )),
+                Ok((_code, _, stderr)) => {
+                    let err_str = String::from_utf8_lossy(&stderr);
+                    if err_str.contains("rateLimitExceeded") || err_str.contains("403") || err_str.contains("quota") {
+                        Err("Google Drive API rate limit reached. Serving cached items or retry shortly.".to_string())
+                    } else {
+                        let first_line = err_str.lines().next().unwrap_or("Unknown rclone error");
+                        Err(first_line.to_string())
+                    }
+                }
                 Err(e) => Err(format!("Failed to execute rclone: {}", e)),
             }
         }
@@ -342,14 +354,29 @@ pub fn fetch_remote_raw(remote_path: &str) -> Result<PathBuf, String> {
     let c_dest_name = CString::new(filename.as_bytes())
         .map_err(|e| format!("Invalid filename string: {}", e))?;
 
+    let is_raw_format = {
+        let lower = filename.to_lowercase();
+        lower.ends_with(".nef")
+            || lower.ends_with(".nrw")
+            || lower.ends_with(".raf")
+            || lower.ends_with(".cr2")
+            || lower.ends_with(".cr3")
+            || lower.ends_with(".arw")
+            || lower.ends_with(".dng")
+            || lower.ends_with(".rwl")
+            || lower.ends_with(".orf")
+            || lower.ends_with(".rw2")
+            || lower.ends_with(".3fr")
+    };
+
     // Onceden indirilmis dosya dogrulamasi
     if let Ok(cached_file) = secure_dir.open_existing_file_ro(&c_dest_name) {
         let is_valid = (|| -> Option<()> {
             let len = crate::security::verify_secure_open_file(&cached_file, MAX_RAW_DOWNLOAD_BYTES).ok()?;
-            if len < 1024 {
+            if len < 256 {
                 return None;
             }
-            if crate::raw::RawImage::open_from_file(&cached_file).is_err() {
+            if is_raw_format && crate::raw::RawImage::open_from_file(&cached_file).is_err() {
                 return None;
             }
             Some(())
@@ -376,9 +403,9 @@ pub fn fetch_remote_raw(remote_path: &str) -> Result<PathBuf, String> {
     let mut cmd = secure_command("rclone");
     cmd.arg("cat")
         .arg("--drive-pacer-min-sleep")
-        .arg("10ms")
+        .arg("50ms")
         .arg("--drive-pacer-burst")
-        .arg("200")
+        .arg("50")
         .arg("--drive-skip-gdocs")
         .arg("--retries")
         .arg("3")
@@ -398,8 +425,10 @@ pub fn fetch_remote_raw(remote_path: &str) -> Result<PathBuf, String> {
     crate::security::verify_secure_open_file(&staging_file, MAX_RAW_DOWNLOAD_BYTES)
         .map_err(|e| format!("Staging file security verification failed: {}", e))?;
 
-    crate::raw::RawImage::open_from_file(&staging_file)
-        .map_err(|e| format!("Downloaded file is not a valid RAW image: {}", e))?;
+    if is_raw_format {
+        crate::raw::RawImage::open_from_file(&staging_file)
+            .map_err(|e| format!("Downloaded file is not a valid RAW image: {}", e))?;
+    }
 
     staging_file
         .sync_all()
@@ -421,8 +450,12 @@ pub fn fetch_remote_raw(remote_path: &str) -> Result<PathBuf, String> {
         .unwrap_or("thumb");
     let thumb_path = thumb_dir.join(format!("{}.jpg", stem));
     if !thumb_path.exists() {
-        if let Ok(raw) = crate::raw::RawImage::open(&local_dest) {
-            let _ = raw.extract_thumbnail(&thumb_path);
+        if is_raw_format {
+            if let Ok(raw) = crate::raw::RawImage::open(&local_dest) {
+                let _ = raw.extract_thumbnail(&thumb_path);
+            }
+        } else {
+            let _ = std::fs::copy(&local_dest, &thumb_path);
         }
     }
 
