@@ -155,3 +155,46 @@ fn test_shadow_lift_preserves_color_without_chroma_explosion() {
     assert!(r_out < 0.50, "Red channel ({:.3}) must not clip into saturated neon pink", r_out);
 }
 
+#[test]
+fn test_raster_image_loading_and_pipeline() {
+    let tmp_dir = std::env::temp_dir().join(format!("omastudio_raster_test_{}", std::process::id()));
+    let _ = std::fs::create_dir_all(&tmp_dir);
+
+    let png_path = tmp_dir.join("test_sample.png");
+    let img_buf: image::RgbImage = image::ImageBuffer::from_fn(100, 80, |x, y| {
+        image::Rgb([(x * 2) as u8, (y * 3) as u8, 128])
+    });
+    img_buf.save(&png_path).expect("Failed to save test png");
+
+    // Open via universal RawImage
+    let raw = RawImage::open(&png_path).expect("RawImage should open raster PNG seamlessly");
+    let meta = raw.get_metadata().expect("RawImage should extract metadata from PNG");
+    assert_eq!(meta.width, 100);
+    assert_eq!(meta.height, 80);
+    assert_eq!(meta.model, "PNG");
+
+    // Extract thumbnail
+    let thumb_path = tmp_dir.join("test_thumb.jpg");
+    raw.extract_thumbnail(&thumb_path).expect("Thumbnail extraction for PNG must succeed");
+    assert!(thumb_path.exists());
+
+    // Process preview 16-bit
+    let prev16 = raw.process_preview_16(true).expect("Preview 16-bit processing should succeed");
+    assert_eq!(prev16.width, 50);
+    assert_eq!(prev16.height, 40);
+    assert_eq!(prev16.channels, 3);
+    assert_eq!(prev16.bits_per_sample, 16);
+    assert_eq!(prev16.as_slice_u16().len(), 50 * 40 * 3);
+
+    // Process full 16-bit
+    let full16 = raw.process_full_16(0).expect("Full 16-bit processing should succeed");
+    assert_eq!(full16.width, 100);
+    assert_eq!(full16.height, 80);
+    assert_eq!(full16.as_slice_u16().len(), 100 * 80 * 3);
+
+    // Clean up
+    let _ = std::fs::remove_file(&png_path);
+    let _ = std::fs::remove_file(&thumb_path);
+    let _ = std::fs::remove_dir(&tmp_dir);
+}
+
