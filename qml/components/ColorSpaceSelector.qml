@@ -147,7 +147,7 @@ Rectangle {
         // ACES 1.3 Fitted Tonemapper Toggle
         Rectangle {
             Layout.fillWidth: true
-            implicitHeight: 36
+            implicitHeight: 38
             radius: Theme.radiusSm
             color: root.acesTonemap ? Theme.bgCardHover : Theme.bgCard
             border.color: root.acesTonemap ? Theme.accentYellow : Theme.border
@@ -155,7 +155,10 @@ Rectangle {
 
             RowLayout {
                 anchors.fill: parent
-                anchors.margins: 8
+                anchors.leftMargin: 8
+                anchors.rightMargin: 8
+                anchors.topMargin: 4
+                anchors.bottomMargin: 4
                 spacing: 8
 
                 Text {
@@ -163,10 +166,13 @@ Rectangle {
                     font.family: Theme.iconFont
                     font.pixelSize: 12
                     color: root.acesTonemap ? Theme.accentYellow : Theme.textDim
+                    Layout.alignment: Qt.AlignVCenter
                 }
 
                 ColumnLayout {
                     Layout.fillWidth: true
+                    Layout.minimumWidth: 0
+                    Layout.alignment: Qt.AlignVCenter
                     spacing: 1
 
                     Text {
@@ -176,6 +182,8 @@ Rectangle {
                         font.pixelSize: 10
                         font.weight: root.acesTonemap ? Font.Bold : Font.Normal
                         color: root.acesTonemap ? Theme.accentYellow : Theme.textMain
+                        Layout.fillWidth: true
+                        elide: Text.ElideRight
                     }
 
                     Text {
@@ -184,10 +192,15 @@ Rectangle {
                         font.family: Theme.fontFamily
                         font.pixelSize: 8
                         color: Theme.textDim
+                        Layout.fillWidth: true
+                        elide: Text.ElideRight
                     }
                 }
 
                 CustomSwitch {
+                    Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
+                    Layout.preferredWidth: 36
+                    Layout.preferredHeight: 20
                     checked: root.acesTonemap
                     activeColor: Theme.accentYellow
                     onToggled: function(isChecked) {

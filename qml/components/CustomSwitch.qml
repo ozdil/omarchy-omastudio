@@ -6,6 +6,10 @@ Item {
     id: root
     implicitWidth: 36
     implicitHeight: 20
+    Layout.preferredWidth: 36
+    Layout.preferredHeight: 20
+    Layout.minimumWidth: 36
+    Layout.alignment: Qt.AlignVCenter
 
     property bool checked: false
     property color activeColor: Theme.accent

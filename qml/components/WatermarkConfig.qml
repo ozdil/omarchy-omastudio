@@ -61,6 +61,8 @@ Rectangle {
                 font.letterSpacing: 1
                 color: Theme.textDim
                 Layout.fillWidth: true
+                Layout.minimumWidth: 0
+                elide: Text.ElideRight
             }
 
             CustomSwitch {
@@ -84,37 +86,66 @@ Rectangle {
                 Layout.fillWidth: true
                 spacing: 6
 
-                Repeater {
-                    model: [
-                        { "id": "text", "label": "Text / EXIF Tag" },
-                        { "id": "logo", "label": "Custom Logo PNG" }
-                    ]
+                Rectangle {
+                    Layout.fillWidth: true
+                    Layout.minimumWidth: 0
+                    implicitHeight: 28
+                    radius: Theme.radiusSm
+                    color: root.watermarkType === "text" ? Theme.accent : Theme.bgCard
+                    border.color: root.watermarkType === "text" ? Theme.accent : Theme.border
+                    border.width: 1
 
-                    Rectangle {
-                        Layout.fillWidth: true
-                        implicitHeight: 26
-                        radius: Theme.radiusSm
-                        color: root.watermarkType === modelData.id ? Theme.accent : Theme.bgCard
-                        border.color: root.watermarkType === modelData.id ? Theme.accent : Theme.border
-                        border.width: 1
+                    Text {
+                        anchors.centerIn: parent
+                        width: parent.width - 12
+                        horizontalAlignment: Text.AlignHCenter
+                        text: "Text / EXIF Tag"
+                        textFormat: Text.PlainText
+                        font.family: Theme.fontFamily
+                        font.pixelSize: 9
+                        font.weight: root.watermarkType === "text" ? Font.Bold : Font.Normal
+                        color: root.watermarkType === "text" ? Theme.bgBase : Theme.textMain
+                        elide: Text.ElideRight
+                    }
 
-                        Text {
-                            anchors.centerIn: parent
-                            text: modelData.label
-                            textFormat: Text.PlainText
-                            font.family: Theme.fontFamily
-                            font.pixelSize: 9
-                            font.weight: root.watermarkType === modelData.id ? Font.Bold : Font.Normal
-                            color: root.watermarkType === modelData.id ? Theme.bgBase : Theme.textMain
+                    MouseArea {
+                        anchors.fill: parent
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: {
+                            root.watermarkType = "text";
+                            root.notifyChanged();
                         }
+                    }
+                }
 
-                        MouseArea {
-                            anchors.fill: parent
-                            cursorShape: Qt.PointingHandCursor
-                            onClicked: {
-                                root.watermarkType = modelData.id;
-                                root.notifyChanged();
-                            }
+                Rectangle {
+                    Layout.fillWidth: true
+                    Layout.minimumWidth: 0
+                    implicitHeight: 28
+                    radius: Theme.radiusSm
+                    color: root.watermarkType === "logo" ? Theme.accent : Theme.bgCard
+                    border.color: root.watermarkType === "logo" ? Theme.accent : Theme.border
+                    border.width: 1
+
+                    Text {
+                        anchors.centerIn: parent
+                        width: parent.width - 12
+                        horizontalAlignment: Text.AlignHCenter
+                        text: "Custom Logo PNG"
+                        textFormat: Text.PlainText
+                        font.family: Theme.fontFamily
+                        font.pixelSize: 9
+                        font.weight: root.watermarkType === "logo" ? Font.Bold : Font.Normal
+                        color: root.watermarkType === "logo" ? Theme.bgBase : Theme.textMain
+                        elide: Text.ElideRight
+                    }
+
+                    MouseArea {
+                        anchors.fill: parent
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: {
+                            root.watermarkType = "logo";
+                            root.notifyChanged();
                         }
                     }
                 }
@@ -158,33 +189,39 @@ Rectangle {
                     }
                 }
 
-                // Quick EXIF Template Chips
-                RowLayout {
+                // Quick EXIF Template Chips (Multi-row Grid to prevent right boundary overflow)
+                GridLayout {
                     Layout.fillWidth: true
-                    spacing: 4
+                    columns: 2
+                    rowSpacing: 4
+                    columnSpacing: 4
 
                     Repeater {
                         model: [
                             "{camera} | {lens}",
                             "{aperture} {shutter} ISO {iso}",
-                            "(c) OmaStudio"
+                            "(c) OmaStudio",
+                            "{lens} @ {aperture}"
                         ]
 
                         Rectangle {
-                            implicitWidth: chipText.implicitWidth + 8
-                            implicitHeight: 18
+                            Layout.fillWidth: true
+                            Layout.minimumWidth: 0
+                            implicitHeight: 22
                             radius: 3
                             color: Theme.bgCard
                             border.color: Theme.border
 
                             Text {
-                                id: chipText
                                 anchors.centerIn: parent
+                                width: parent.width - 8
+                                horizontalAlignment: Text.AlignHCenter
                                 text: modelData
                                 textFormat: Text.PlainText
                                 font.family: Theme.fontFamily
                                 font.pixelSize: 8
                                 color: Theme.textMuted
+                                elide: Text.ElideRight
                             }
 
                             MouseArea {
@@ -294,10 +331,12 @@ Rectangle {
                 // Drop-Shadow & Color Hex
                 ColumnLayout {
                     Layout.fillWidth: true
+                    Layout.minimumWidth: 0
                     spacing: 6
 
                     RowLayout {
                         Layout.fillWidth: true
+                        spacing: 4
                         Text {
                             text: "Drop Shadow"
                             textFormat: Text.PlainText
@@ -305,8 +344,13 @@ Rectangle {
                             font.pixelSize: 9
                             color: Theme.textMain
                             Layout.fillWidth: true
+                            Layout.minimumWidth: 0
+                            elide: Text.ElideRight
                         }
                         CustomSwitch {
+                            Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
+                            Layout.preferredWidth: 36
+                            Layout.preferredHeight: 20
                             checked: root.dropShadow
                             activeColor: Theme.accent
                             onToggled: function(isChecked) {
@@ -318,6 +362,7 @@ Rectangle {
 
                     // Quick Color Palette
                     RowLayout {
+                        Layout.fillWidth: true
                         spacing: 6
                         Repeater {
                             model: ["#ffffff", "#c0caf5", "#e0af68", "#f7768e", "#16161e"]

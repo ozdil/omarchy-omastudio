@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OmaSend // Fluid AirBridge P2P Portal</title>
+  <!-- Google Fonts JetBrains Mono as fallback if Nerd Font is not locally installed -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="ambient-glow-1"></div>
+  <div class="ambient-glow-2"></div>
+
+  <!-- App Header -->
+  <header class="app-header">
+    <div class="brand-section">
+      <div class="brand-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"></path>
+          <path d="M12 12v9"></path>
+          <path d="m16 16-4-4-4 4"></path>
+        </svg>
+      </div>
+      <div class="brand-info">
+        <div class="brand-title">
+          <span>OMASEND</span>
+          <span class="brand-tag">AIRBRIDGE V2.4</span>
+        </div>
+        <div class="brand-subtitle">Zero-Trust P2P &amp; Local Network Transfer</div>
+      </div>
+    </div>
+
+    <div class="header-actions">
+      <!-- OmaID Badge -->
+      <div class="oma-id-badge" onclick="openOmaIdModal()" title="OmaID QR Kodunu Goster">
+        <span class="status-indicator"></span>
+        <span class="id-text" style="font-weight: 600; color: var(--accent-cyan-light);">OMA-8492-1048-5729</span>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="7" height="7"></rect>
+          <rect x="14" y="3" width="7" height="7"></rect>
+          <rect x="14" y="14" width="7" height="7"></rect>
+          <rect x="3" y="14" width="7" height="7"></rect>
+        </svg>
+      </div>
+
+      <!-- QR Scanner Button -->
+      <button class="header-btn" onclick="openQrScannerModal()" title="Kamera ile QR Tara">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 7V5a2 2 0 0 1 2-2h2"></path>
+          <path d="M17 3h2a2 2 0 0 1 2 2v2"></path>
+          <path d="M21 17v2a2 2 0 0 1-2 2h-2"></path>
+          <path d="M7 21H5a2 2 0 0 1-2-2v-2"></path>
+          <circle cx="12" cy="12" r="3"></circle>
+        </svg>
+      </button>
+
+      <!-- Info / About Button -->
+      <button class="header-btn" onclick="openAboutModal()" title="Omarchy Hakkinda">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="16" x2="12" y2="12"></line>
+          <line x1="12" y1="8" x2="12.01" y2="8"></line>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="app-container">
+    <!-- Left Column: Radar & Devices -->
+    <section class="sidebar-radar-column">
+      <div class="acrylic-card radar-card">
+        <div class="card-header-row">
+          <span class="card-title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z"></path>
+              <path d="M12 6a6 6 0 1 0 6 6 6 6 0 0 0-6-6zm0 10a4 4 0 1 1 4-4 4 4 0 0 1-4 4z"></path>
+            </svg>
+            AG RADARI
+          </span>
+          <span style="font-size: 0.7rem; color: var(--accent-green); display: flex; align-items: center; gap: 4px;">
+            <span class="status-indicator" style="width: 6px; height: 6px;"></span> Aktif Tarama
+          </span>
+        </div>
+
+        <!-- Animated Pulse Radar Area -->
+        <div class="radar-scope-container">
+          <div class="radar-circle radar-circle-1"></div>
+          <div class="radar-circle radar-circle-2"></div>
+          <div class="radar-circle radar-circle-3"></div>
+          <div class="radar-axis-x"></div>
+          <div class="radar-axis-y"></div>
+          <div class="radar-sweep"></div>
+          <div class="radar-center-blip" title="Bu Cihaz (Host)"></div>
+
+          <!-- Active Blips -->
+          <div class="device-blip" data-pos="1" title="omarchy-thinkpad [192.168.1.142]"></div>
+          <div class="device-blip" data-pos="2" title="kastamonu-node-01 [10.88.0.4]"></div>
+          <div class="device-blip" data-pos="3" title="pixel-9-pro [192.168.1.189]"></div>
+        </div>
+
+        <!-- Discovered Device Cards List -->
+        <div class="devices-list-section" id="deviceList">
+          <!-- Populated by JavaScript -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Right Column: Main Workspace -->
+    <section class="main-workspace-column">
+      <!-- Workspace Navigation Tabs -->
+      <nav class="workspace-nav-tabs">
+        <button class="tab-btn active" data-tab="files">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+          </svg>
+          Dosya Portali
+        </button>
+        <button class="tab-btn" data-tab="clipboard">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+            <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+          </svg>
+          Pano Kasasi (Sync)
+        </button>
+      </nav>
+
+      <!-- View 1: Files Portal -->
+      <div id="filesView">
+        <!-- Liquid Drop Zone -->
+        <div class="acrylic-card dropzone-portal-card" id="fileDropZone">
+          <input type="file" id="fileInput" multiple style="display: none;">
+          <div class="dropzone-icon-wrapper">
+            <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="17 8 12 3 7 8"></polyline>
+              <line x1="12" y1="3" x2="12" y2="15"></line>
+            </svg>
+          </div>
+          <h3 class="dropzone-headline">Dosyalari Buraya Surukleyin &amp; Birakin</h3>
+          <p class="dropzone-subline">
+            Secili cihaza dogrudan, sifreli ve sifir kayipli P2P aktarim baslatmak icin dosyalari birakin veya secin.
+          </p>
+          <button class="browse-files-btn" type="button">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+            </svg>
+            Dosyalari Secin
+          </button>
+        </div>
+
+        <!-- Active / Recent Transfers Section -->
+        <div class="acrylic-card transfers-section-card" style="margin-top: 1.5rem;">
+          <div class="card-header-row">
+            <span class="card-title">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+              </svg>
+              CANLI AKTARIM KUYRUGU
+            </span>
+            <span style="font-size: 0.72rem; color: var(--text-muted);">E2EE ChaCha20-Poly1305</span>
+          </div>
+
+          <div class="transfer-items-container" id="transferContainer">
+            <!-- Populated by JavaScript -->
+          </div>
+        </div>
+      </div>
+
+      <!-- View 2: Clipboard Vault -->
+      <div id="clipboardView" style="display: none;">
+        <div class="acrylic-card" style="padding: 1.5rem;">
+          <div class="card-header-row">
+            <span class="card-title">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+                <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+              </svg>
+              PANO KASASI (CLIPBOARD VAULT)
+            </span>
+            <span style="font-size: 0.72rem; color: var(--accent-cyan-light);">Otomatik Ag Senkronizasyonu</span>
+          </div>
+          <p style="font-size: 0.8rem; color: var(--text-secondary); line-height: 1.4;">
+            Eslesen cihazlar arasinda paylasilan metinler, kod bloklari ve tokenlar burada aninda goruntulenir.
+          </p>
+
+          <div class="clipboard-vault-grid" id="clipboardGrid">
+            <!-- Populated by JavaScript -->
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- MODALS -->
+
+  <!-- Modal 1: OmaID & QR Code -->
+  <div class="modal-overlay" id="omaIdModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <span class="modal-title">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="7" height="7"></rect>
+            <rect x="14" y="3" width="7" height="7"></rect>
+            <rect x="14" y="14" width="7" height="7"></rect>
+            <rect x="3" y="14" width="7" height="7"></rect>
+          </svg>
+          OmaID Kimligi &amp; QR
+        </span>
+        <button class="modal-close-btn" onclick="closeOmaIdModal()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <div class="qr-display-container">
+        <div class="qr-box" id="omaQrBox">
+          <!-- Stylized SVG Matrix rendered via app.js -->
+        </div>
+        <div class="id-badge-large">OMA-8492-1048-5729</div>
+        <p style="font-size: 0.78rem; color: var(--text-secondary); text-align: center; line-height: 1.4;">
+          OmaSend mobil uygulamasindan veya karsi cihazdan bu QR kodu tarayarak aninda sifreli P2P oturumu acabilirsiniz.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 2: QR Scanner Visor -->
+  <div class="modal-overlay" id="qrScannerModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <span class="modal-title">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 7V5a2 2 0 0 1 2-2h2"></path>
+            <path d="M17 3h2a2 2 0 0 1 2 2v2"></path>
+            <path d="M21 17v2a2 2 0 0 1-2 2h-2"></path>
+            <path d="M7 21H5a2 2 0 0 1-2-2v-2"></path>
+          </svg>
+          QR Kod Vizor Tarayici
+        </span>
+        <button class="modal-close-btn" onclick="closeQrScannerModal()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 1rem; align-items: center;">
+        <div class="camera-visor-frame">
+          <div class="visor-corners"></div>
+          <div class="scan-laser-line"></div>
+          <div style="color: var(--text-muted); font-size: 0.75rem; text-align: center;">
+            Kamera sensoru aktiflestiriliyor...<br>Hedef OmaID QR kodunu cerceveye hizalayin.
+          </div>
+        </div>
+        <p style="font-size: 0.76rem; color: var(--text-secondary); text-align: center;">
+          Yerel ag disindaki cihazlar icin Cloudflare Rendezvous tuneli uzerinden dogrudan eslesme saglanir.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 3: Corporate Info / About -->
+  <div class="modal-overlay" id="aboutModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <span class="modal-title">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="16" x2="12" y2="12"></line>
+            <line x1="12" y1="8" x2="12.01" y2="8"></line>
+          </svg>
+          Hakkinda // OmaSend
+        </span>
+        <button class="modal-close-btn" onclick="closeAboutModal()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <div class="info-spec-list">
+        <div class="info-spec-row">
+          <span class="info-spec-label">Uygulama:</span>
+          <span class="info-spec-val">OmaSend Web // AirBridge Portal</span>
+        </div>
+        <div class="info-spec-row">
+          <span class="info-spec-label">Surum:</span>
+          <span class="info-spec-val" style="color: var(--accent-green);">v2.4.0-verified</span>
+        </div>
+        <div class="info-spec-row">
+          <span class="info-spec-label">Sifreleme Standardi:</span>
+          <span class="info-spec-val">ChaCha20-Poly1305 / AES-256-GCM</span>
+        </div>
+        <div class="info-spec-row">
+          <span class="info-spec-label">Ag Protokolleri:</span>
+          <span class="info-spec-val">mDNS LAN + Cloudflare Rendezvous</span>
+        </div>
+        <div class="info-spec-row">
+          <span class="info-spec-label">Tipografi:</span>
+          <span class="info-spec-val">JetBrainsMono Nerd Font</span>
+        </div>
+        <div class="info-spec-row">
+          <span class="info-spec-label">Gelistirici &amp; Ekosistem:</span>
+          <span class="info-spec-val">Omarchy Linux Studio</span>
+        </div>
+        <div class="info-spec-row">
+          <span class="info-spec-label">Lisans:</span>
+          <span class="info-spec-val">GPL-3.0 / MIT</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
