@@ -1,6 +1,8 @@
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
+import Quickshell
+import Quickshell.Io
 import "../theme"
 
 Rectangle {
@@ -12,6 +14,52 @@ Rectangle {
     border.color: Theme.borderLight
     border.width: 1
     clip: true
+
+    readonly property string manifestPath: Qt.resolvedUrl("../../manifest.json").toString().replace(/^file:\/\//, "")
+    readonly property string manifestFallbackPath: (Quickshell.env("HOME") || "/home/ozdil") + "/.config/omarchy/plugins/ozdil.omastudio/manifest.json"
+
+    property string appName: "OmaStudio"
+    property string appVersion: "1.4.1"
+    property string appAuthor: "Ozan Özdil (ozdil)"
+    property string appLicense: "MIT"
+    property string appDescription: "Lightroom-grade RAW editor for Omarchy Linux with DaVinci color grading, AI scene presets, 16-bit master pipeline, and Google Drive cloud sync."
+    property bool isVerified: true
+
+    function loadManifest(rawJson) {
+        try {
+            if (!rawJson || String(rawJson).trim() === "") return
+            var parsed = JSON.parse(rawJson)
+            if (parsed.name) root.appName = parsed.name
+            if (parsed.version) root.appVersion = parsed.version
+            if (parsed.description) root.appDescription = parsed.description
+            if (parsed.author) root.appAuthor = parsed.author
+            if (parsed.license) root.appLicense = parsed.license
+            if (parsed.verified !== undefined) root.isVerified = Boolean(parsed.verified)
+        } catch(e) {}
+    }
+
+    FileView {
+        id: manifestWatcher
+        path: root.manifestPath
+        watchChanges: true
+        atomicWrites: true
+        printErrors: false
+        onLoaded: root.loadManifest(text())
+        onLoadFailed: {
+            manifestFallbackWatcher.reload()
+        }
+        onFileChanged: reload()
+    }
+
+    FileView {
+        id: manifestFallbackWatcher
+        path: root.manifestFallbackPath
+        watchChanges: true
+        atomicWrites: true
+        printErrors: false
+        onLoaded: root.loadManifest(text())
+        onFileChanged: reload()
+    }
 
     signal closeRequested()
 
@@ -49,7 +97,7 @@ Rectangle {
                 RowLayout {
                     spacing: 8
                     Text {
-                        text: "OmaStudio"
+                        text: root.appName
                         textFormat: Text.PlainText
                         font.family: Theme.fontFamily
                         font.pixelSize: 16
@@ -68,7 +116,7 @@ Rectangle {
                         Text {
                             id: verText
                             anchors.centerIn: parent
-                            text: "v1.4.0"
+                            text: "v" + root.appVersion
                             textFormat: Text.PlainText
                             font.family: Theme.monoFont
                             font.pixelSize: 9
@@ -78,6 +126,7 @@ Rectangle {
                     }
 
                     Rectangle {
+                        visible: root.isVerified
                         implicitWidth: verifText.implicitWidth + 8
                         implicitHeight: 18
                         radius: 4
@@ -235,7 +284,7 @@ Rectangle {
                     color: Theme.textDim
                 }
                 Text {
-                    text: "Ozan Ozdil (@ozdil)"
+                    text: root.appAuthor
                     textFormat: Text.PlainText
                     font.family: Theme.monoFont
                     font.pixelSize: 10
@@ -254,7 +303,7 @@ Rectangle {
                     color: Theme.textDim
                 }
                 Text {
-                    text: "MIT Open Source License"
+                    text: root.appLicense
                     textFormat: Text.PlainText
                     font.family: Theme.monoFont
                     font.pixelSize: 10
