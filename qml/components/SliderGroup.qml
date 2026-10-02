@@ -42,6 +42,7 @@ ColumnLayout {
         Text {
             text: root.title
             textFormat: Text.PlainText
+            font.family: Theme.fontFamily
             color: root.effectiveValue !== root.defaultValue ? Theme.textMain : Theme.textMuted
             font.pixelSize: 12
             font.weight: root.effectiveValue !== root.defaultValue ? Font.DemiBold : Font.Medium

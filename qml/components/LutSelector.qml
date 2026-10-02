@@ -186,6 +186,37 @@ Rectangle {
                 to: 1.0
                 stepSize: 0.02
                 value: root.lutIntensity
+
+                background: Rectangle {
+                    x: intensitySlider.leftPadding
+                    y: intensitySlider.topPadding + intensitySlider.availableHeight / 2 - height / 2
+                    implicitWidth: 200
+                    implicitHeight: 3
+                    width: intensitySlider.availableWidth
+                    height: implicitHeight
+                    radius: 1.5
+                    color: Qt.rgba(Theme.textMain.r, Theme.textMain.g, Theme.textMain.b, 0.12)
+
+                    Rectangle {
+                        width: intensitySlider.visualPosition * parent.width
+                        height: parent.height
+                        color: Theme.accentCyan
+                        radius: 1.5
+                    }
+                }
+
+                handle: Rectangle {
+                    x: intensitySlider.leftPadding + intensitySlider.visualPosition * (intensitySlider.availableWidth - width)
+                    y: intensitySlider.topPadding + intensitySlider.availableHeight / 2 - height / 2
+                    implicitWidth: 12
+                    implicitHeight: 12
+                    radius: 6
+                    color: intensitySlider.pressed ? Theme.accentCyan : (intensitySlider.hovered ? Theme.accent : Theme.textMain)
+                    border.color: Theme.bgDark
+                    border.width: 1.5
+                    Behavior on color { ColorAnimation { duration: 100 } }
+                }
+
                 onMoved: {
                     root.lutIntensity = value;
                     root.lutChanged(root.activeLut, root.lutIntensity, root.customLutPath);

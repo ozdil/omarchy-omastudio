@@ -317,9 +317,10 @@ Rectangle {
                         color: Theme.textMain
                         Layout.fillWidth: true
                     }
-                    CheckBox {
+                    CustomSwitch {
                         checked: root.preserveExif
-                        onToggled: root.preserveExif = checked
+                        activeColor: Theme.accent
+                        onToggled: function(c) { root.preserveExif = c }
                     }
                 }
             }
@@ -349,9 +350,10 @@ Rectangle {
                         color: Theme.textMain
                         Layout.fillWidth: true
                     }
-                    CheckBox {
+                    CustomSwitch {
                         checked: root.stripGps
-                        onToggled: root.stripGps = checked
+                        activeColor: Theme.accentGreen
+                        onToggled: function(c) { root.stripGps = c }
                     }
                 }
             }
@@ -382,9 +384,10 @@ Rectangle {
                     color: Theme.textMain
                     Layout.fillWidth: true
                 }
-                CheckBox {
+                CustomSwitch {
                     checked: root.watermarkEnabled
-                    onToggled: root.watermarkEnabled = checked
+                    activeColor: Theme.accent
+                    onToggled: function(c) { root.watermarkEnabled = c }
                 }
             }
         }
@@ -414,9 +417,10 @@ Rectangle {
                     color: Theme.textMain
                     Layout.fillWidth: true
                 }
-                CheckBox {
+                CustomSwitch {
                     checked: root.uploadToGdrive
-                    onToggled: root.uploadToGdrive = checked
+                    activeColor: Theme.accentCyan
+                    onToggled: function(c) { root.uploadToGdrive = c }
                 }
             }
         }

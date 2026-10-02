@@ -63,10 +63,11 @@ Rectangle {
                 Layout.fillWidth: true
             }
 
-            CheckBox {
+            CustomSwitch {
                 checked: root.watermarkEnabled
-                onToggled: {
-                    root.watermarkEnabled = checked;
+                activeColor: Theme.accent
+                onToggled: function(isChecked) {
+                    root.watermarkEnabled = isChecked;
                     root.notifyChanged();
                 }
             }
@@ -305,10 +306,11 @@ Rectangle {
                             color: Theme.textMain
                             Layout.fillWidth: true
                         }
-                        CheckBox {
+                        CustomSwitch {
                             checked: root.dropShadow
-                            onToggled: {
-                                root.dropShadow = checked;
+                            activeColor: Theme.accent
+                            onToggled: function(isChecked) {
+                                root.dropShadow = isChecked;
                                 root.notifyChanged();
                             }
                         }
@@ -368,11 +370,43 @@ Rectangle {
                 }
 
                 Slider {
+                    id: opSlider
                     Layout.fillWidth: true
                     from: 0.1
                     to: 1.0
                     value: root.watermarkOpacity
                     stepSize: 0.05
+
+                    background: Rectangle {
+                        x: opSlider.leftPadding
+                        y: opSlider.topPadding + opSlider.availableHeight / 2 - height / 2
+                        implicitWidth: 200
+                        implicitHeight: 3
+                        width: opSlider.availableWidth
+                        height: implicitHeight
+                        radius: 1.5
+                        color: Qt.rgba(Theme.textMain.r, Theme.textMain.g, Theme.textMain.b, 0.12)
+
+                        Rectangle {
+                            width: opSlider.visualPosition * parent.width
+                            height: parent.height
+                            color: Theme.accent
+                            radius: 1.5
+                        }
+                    }
+
+                    handle: Rectangle {
+                        x: opSlider.leftPadding + opSlider.visualPosition * (opSlider.availableWidth - width)
+                        y: opSlider.topPadding + opSlider.availableHeight / 2 - height / 2
+                        implicitWidth: 12
+                        implicitHeight: 12
+                        radius: 6
+                        color: opSlider.pressed ? Theme.accent : (opSlider.hovered ? Theme.accentHover : Theme.textMain)
+                        border.color: Theme.bgDark
+                        border.width: 1.5
+                        Behavior on color { ColorAnimation { duration: 100 } }
+                    }
+
                     onMoved: {
                         root.watermarkOpacity = value;
                         root.notifyChanged();
@@ -401,11 +435,43 @@ Rectangle {
                 }
 
                 Slider {
+                    id: szSlider
                     Layout.fillWidth: true
                     from: 8
                     to: 32
                     value: root.size
                     stepSize: 1
+
+                    background: Rectangle {
+                        x: szSlider.leftPadding
+                        y: szSlider.topPadding + szSlider.availableHeight / 2 - height / 2
+                        implicitWidth: 200
+                        implicitHeight: 3
+                        width: szSlider.availableWidth
+                        height: implicitHeight
+                        radius: 1.5
+                        color: Qt.rgba(Theme.textMain.r, Theme.textMain.g, Theme.textMain.b, 0.12)
+
+                        Rectangle {
+                            width: szSlider.visualPosition * parent.width
+                            height: parent.height
+                            color: Theme.accent
+                            radius: 1.5
+                        }
+                    }
+
+                    handle: Rectangle {
+                        x: szSlider.leftPadding + szSlider.visualPosition * (szSlider.availableWidth - width)
+                        y: szSlider.topPadding + szSlider.availableHeight / 2 - height / 2
+                        implicitWidth: 12
+                        implicitHeight: 12
+                        radius: 6
+                        color: szSlider.pressed ? Theme.accent : (szSlider.hovered ? Theme.accentHover : Theme.textMain)
+                        border.color: Theme.bgDark
+                        border.width: 1.5
+                        Behavior on color { ColorAnimation { duration: 100 } }
+                    }
+
                     onMoved: {
                         root.size = Math.round(value);
                         root.notifyChanged();

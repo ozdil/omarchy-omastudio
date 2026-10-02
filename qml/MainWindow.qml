@@ -1079,6 +1079,7 @@ Rectangle {
                                     Text {
                                         text: "AI SCENE INSIGHT"
                                         textFormat: Text.PlainText
+                                        font.family: Theme.fontFamily
                                         font.pixelSize: 9
                                         font.weight: Font.Bold
                                         color: Theme.accentPurple
@@ -1087,6 +1088,7 @@ Rectangle {
                                     Text {
                                         text: root.activeScene ? Math.round(root.activeScene.confidence * 100) + "%" : ""
                                         textFormat: Text.PlainText
+                                        font.family: Theme.monoFont
                                         font.pixelSize: 9
                                         color: Theme.textDim
                                     }
@@ -1095,6 +1097,7 @@ Rectangle {
                                 Text {
                                     text: root.activeScene ? root.activeScene.scene_type : "Analyzing..."
                                     textFormat: Text.PlainText
+                                    font.family: Theme.fontFamily
                                     font.pixelSize: 11
                                     font.weight: Font.Bold
                                     color: Theme.textMain
@@ -1103,6 +1106,7 @@ Rectangle {
                                 Text {
                                     text: root.activeScene ? root.activeScene.description : "Extracting dynamic range..."
                                     textFormat: Text.PlainText
+                                    font.family: Theme.fontFamily
                                     font.pixelSize: 9
                                     color: Theme.textMuted
                                     elide: Text.ElideRight
@@ -1266,6 +1270,7 @@ Rectangle {
                                 Text {
                                     text: "ESSENTIAL ADJUSTMENTS"
                                     textFormat: Text.PlainText
+                                    font.family: Theme.fontFamily
                                     font.pixelSize: 10
                                     font.weight: Font.DemiBold
                                     font.letterSpacing: 1
@@ -1286,6 +1291,7 @@ Rectangle {
                                         anchors.centerIn: parent
                                         text: "RESET"
                                         textFormat: Text.PlainText
+                                        font.family: Theme.monoFont
                                         font.pixelSize: 8
                                         font.weight: Font.Bold
                                         color: Theme.textDim
@@ -1367,6 +1373,7 @@ Rectangle {
                                 Text {
                                     text: "WHITE BALANCE"
                                     textFormat: Text.PlainText
+                                    font.family: Theme.fontFamily
                                     font.pixelSize: 10
                                     font.weight: Font.DemiBold
                                     font.letterSpacing: 1
@@ -1387,6 +1394,7 @@ Rectangle {
                                         anchors.centerIn: parent
                                         text: "RESET"
                                         textFormat: Text.PlainText
+                                        font.family: Theme.monoFont
                                         font.pixelSize: 8
                                         font.weight: Font.Bold
                                         color: Theme.textDim
@@ -1437,6 +1445,7 @@ Rectangle {
                                 Text {
                                     text: "LIGHT & DYNAMIC RANGE"
                                     textFormat: Text.PlainText
+                                    font.family: Theme.fontFamily
                                     font.pixelSize: 10
                                     font.weight: Font.DemiBold
                                     font.letterSpacing: 1
@@ -1457,6 +1466,7 @@ Rectangle {
                                         anchors.centerIn: parent
                                         text: "RESET"
                                         textFormat: Text.PlainText
+                                        font.family: Theme.monoFont
                                         font.pixelSize: 8
                                         font.weight: Font.Bold
                                         color: Theme.textDim
@@ -1546,6 +1556,7 @@ Rectangle {
                                 Text {
                                     text: "TONE CURVE (PARAMETRIC)"
                                     textFormat: Text.PlainText
+                                    font.family: Theme.fontFamily
                                     font.pixelSize: 10
                                     font.weight: Font.DemiBold
                                     font.letterSpacing: 1
@@ -1566,6 +1577,7 @@ Rectangle {
                                         anchors.centerIn: parent
                                         text: "RESET"
                                         textFormat: Text.PlainText
+                                        font.family: Theme.monoFont
                                         font.pixelSize: 8
                                         font.weight: Font.Bold
                                         color: Theme.textDim
@@ -1637,6 +1649,7 @@ Rectangle {
                                 Text {
                                     text: "PRESENCE & TEXTURE"
                                     textFormat: Text.PlainText
+                                    font.family: Theme.fontFamily
                                     font.pixelSize: 10
                                     font.weight: Font.DemiBold
                                     font.letterSpacing: 1
@@ -1657,6 +1670,7 @@ Rectangle {
                                         anchors.centerIn: parent
                                         text: "RESET"
                                         textFormat: Text.PlainText
+                                        font.family: Theme.monoFont
                                         font.pixelSize: 8
                                         font.weight: Font.Bold
                                         color: Theme.textDim
@@ -1733,6 +1747,7 @@ Rectangle {
                                 Text {
                                     text: "COLOR MIXER (8-BAND HSL)"
                                     textFormat: Text.PlainText
+                                    font.family: Theme.fontFamily
                                     font.pixelSize: 10
                                     font.weight: Font.DemiBold
                                     font.letterSpacing: 1
@@ -1753,6 +1768,7 @@ Rectangle {
                                         anchors.centerIn: parent
                                         text: "RESET"
                                         textFormat: Text.PlainText
+                                        font.family: Theme.monoFont
                                         font.pixelSize: 8
                                         font.weight: Font.Bold
                                         color: Theme.textDim
@@ -1845,6 +1861,7 @@ Rectangle {
                                 Text {
                                     text: "DETAIL & OPTICS"
                                     textFormat: Text.PlainText
+                                    font.family: Theme.fontFamily
                                     font.pixelSize: 10
                                     font.weight: Font.DemiBold
                                     font.letterSpacing: 1
@@ -1865,6 +1882,7 @@ Rectangle {
                                         anchors.centerIn: parent
                                         text: "RESET"
                                         textFormat: Text.PlainText
+                                        font.family: Theme.monoFont
                                         font.pixelSize: 8
                                         font.weight: Font.Bold
                                         color: Theme.textDim
@@ -2025,6 +2043,7 @@ Rectangle {
                                     Text {
                                         text: "Copy"
                                         textFormat: Text.PlainText
+                                        font.family: Theme.monoFont
                                         font.pixelSize: 10
                                         font.weight: Font.Medium
                                         color: Theme.textMain
@@ -2052,6 +2071,7 @@ Rectangle {
                                     Text {
                                         text: "Paste"
                                         textFormat: Text.PlainText
+                                        font.family: Theme.monoFont
                                         font.pixelSize: 10
                                         font.weight: Font.Medium
                                         color: Theme.textMain
@@ -2077,6 +2097,7 @@ Rectangle {
                                     anchors.centerIn: parent
                                     text: "Reset"
                                     textFormat: Text.PlainText
+                                    font.family: Theme.monoFont
                                     font.pixelSize: 10
                                     font.weight: Font.Bold
                                     color: Theme.highlightClip

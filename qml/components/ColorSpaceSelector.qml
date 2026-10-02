@@ -187,10 +187,11 @@ Rectangle {
                     }
                 }
 
-                CheckBox {
+                CustomSwitch {
                     checked: root.acesTonemap
-                    onToggled: {
-                        root.acesTonemap = checked;
+                    activeColor: Theme.accentYellow
+                    onToggled: function(isChecked) {
+                        root.acesTonemap = isChecked;
                         root.acesTonemapToggled(root.acesTonemap);
                     }
                 }
