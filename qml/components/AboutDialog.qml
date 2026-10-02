@@ -68,7 +68,7 @@ Rectangle {
                         Text {
                             id: verText
                             anchors.centerIn: parent
-                            text: "v1.3.1"
+                            text: "v1.4.0"
                             textFormat: Text.PlainText
                             font.family: Theme.monoFont
                             font.pixelSize: 9

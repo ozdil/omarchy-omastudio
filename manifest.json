@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "ozdil.omastudio",
   "name": "OmaStudio",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "author": "Ozan Özdil (ozdil)",
   "license": "MIT",
   "description": "Lightroom-grade RAW editor for Omarchy Linux with DaVinci color grading, AI scene presets, 16-bit master pipeline, and Google Drive cloud sync.",
