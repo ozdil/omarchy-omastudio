@@ -697,20 +697,21 @@ pub fn generate_fallback_qr_svg(content: &str) -> String {
 
 /// Updates and ensures desktop OmaID QR code files (oma_id_qr.png / .svg) are available in ~/.local/state/omarchy/omasend/
 pub fn update_desktop_oma_id_qr(state_dir: &std::path::Path) -> Result<(std::path::PathBuf, std::path::PathBuf), String> {
-    let _ = std::fs::create_dir_all(state_dir);
+    let _ = crate::security::ensure_secure_dir(state_dir);
     let oma_id_file = state_dir.join("oma_id");
-    let oma_id = if let Ok(content) = std::fs::read_to_string(&oma_id_file) {
+    let oma_id = if let Ok(bytes) = crate::security::read_secure_file(&oma_id_file, 1024) {
+        let content = String::from_utf8_lossy(&bytes);
         let trimmed = content.trim();
         if validate_oma_id(trimmed) {
             format_oma_id(trimmed)
         } else {
             let new_id = format_oma_id(&generate_raw_oma_id());
-            let _ = std::fs::write(&oma_id_file, &new_id);
+            let _ = crate::security::atomic_write_secure(&oma_id_file, new_id.as_bytes());
             new_id
         }
     } else {
         let new_id = format_oma_id(&generate_raw_oma_id());
-        let _ = std::fs::write(&oma_id_file, &new_id);
+        let _ = crate::security::atomic_write_secure(&oma_id_file, new_id.as_bytes());
         new_id
     };
 
@@ -725,13 +726,13 @@ pub fn update_desktop_oma_id_qr(state_dir: &std::path::Path) -> Result<(std::pat
     let _ = std::fs::write(&svg_file, &svg_data);
 
     // Try qrencode for high-quality PNG and SVG if available
-    let _ = std::process::Command::new("/usr/bin/qrencode")
-        .args(["-o", svg_file.to_str().unwrap_or_default(), "-t", "SVG", &qr_content])
-        .output();
+    let mut cmd_svg = crate::security::secure_command("qrencode");
+    cmd_svg.args(["-o", svg_file.to_str().unwrap_or_default(), "-t", "SVG", "--", &qr_content]);
+    let _ = crate::security::run_bounded_command(cmd_svg, std::time::Duration::from_secs(5));
 
-    let _ = std::process::Command::new("/usr/bin/qrencode")
-        .args(["-o", png_file.to_str().unwrap_or_default(), "-t", "PNG", "-s", "8", "-m", "2", &qr_content])
-        .output();
+    let mut cmd_png = crate::security::secure_command("qrencode");
+    cmd_png.args(["-o", png_file.to_str().unwrap_or_default(), "-t", "PNG", "-s", "8", "-m", "2", "--", &qr_content]);
+    let _ = crate::security::run_bounded_command(cmd_png, std::time::Duration::from_secs(5));
 
     Ok((svg_file, png_file))
 }

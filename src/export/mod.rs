@@ -9,7 +9,7 @@ use image::{DynamicImage, ImageBuffer, Rgb};
 use serde::{Deserialize, Serialize};
 use std::fs;
 use std::path::{Path, PathBuf};
-use std::time::Duration;
+use std::time::{Duration, SystemTime, UNIX_EPOCH};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(default)]
@@ -144,7 +144,12 @@ pub fn export_photo<P: AsRef<Path>>(
 
     match fmt.as_str() {
         "jxl" => {
-            let tmp_png = expanded_dir.join(format!(".tmp_{}.png", stem));
+            let pid = std::process::id();
+            let rand_suffix = SystemTime::now()
+                .duration_since(UNIX_EPOCH)
+                .unwrap_or_default()
+                .as_nanos();
+            let tmp_png = expanded_dir.join(format!(".tmp_{}_{}_{}.png", stem, pid, rand_suffix));
             dyn_img.save(&tmp_png)
                 .map_err(|e| format!("Failed to save temporary PNG for JXL: {}", e))?;
 
@@ -168,7 +173,12 @@ pub fn export_photo<P: AsRef<Path>>(
             }
         }
         "avif" => {
-            let tmp_png = expanded_dir.join(format!(".tmp_{}.png", stem));
+            let pid = std::process::id();
+            let rand_suffix = SystemTime::now()
+                .duration_since(UNIX_EPOCH)
+                .unwrap_or_default()
+                .as_nanos();
+            let tmp_png = expanded_dir.join(format!(".tmp_{}_{}_{}.png", stem, pid, rand_suffix));
             dyn_img.save(&tmp_png)
                 .map_err(|e| format!("Failed to save temporary PNG for AVIF: {}", e))?;
 

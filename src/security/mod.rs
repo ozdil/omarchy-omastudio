@@ -515,24 +515,34 @@ pub fn verify_safe_file(path: &Path) -> io::Result<()> {
     Ok(())
 }
 
-/// Reads a file securely, verifying it is a regular file, rejecting symlinks,
+/// Reads a file securely, verifying it is a regular file, rejecting symlinks via O_NOFOLLOW and descriptor verification,
 /// and enforcing a hard byte limit (take(max + 1)) to prevent memory exhaustion / DoS.
 pub fn read_secure_file(path: &Path, max_bytes: usize) -> io::Result<Vec<u8>> {
-    let meta = fs::symlink_metadata(path)?;
-    if meta.file_type().is_symlink() {
-        return Err(io::Error::new(
-            io::ErrorKind::PermissionDenied,
-            "Symlink access is strictly prohibited",
-        ));
+    use std::ffi::CString;
+    use std::os::unix::ffi::OsStrExt;
+    use std::os::unix::io::{AsRawFd, FromRawFd};
+
+    let c_path = CString::new(path.as_os_str().as_bytes())
+        .map_err(|e| io::Error::new(io::ErrorKind::InvalidInput, e))?;
+
+    let fd = unsafe { libc::open(c_path.as_ptr(), libc::O_RDONLY | libc::O_NOFOLLOW | libc::O_CLOEXEC) };
+    if fd < 0 {
+        return Err(io::Error::last_os_error());
     }
-    if !meta.file_type().is_file() {
+    let file = unsafe { fs::File::from_raw_fd(fd) };
+
+    let mut stat: libc::stat = unsafe { std::mem::zeroed() };
+    if unsafe { libc::fstat(file.as_raw_fd(), &mut stat) } != 0 {
+        return Err(io::Error::last_os_error());
+    }
+
+    if (stat.st_mode & libc::S_IFMT) != libc::S_IFREG {
         return Err(io::Error::new(
             io::ErrorKind::InvalidInput,
             "Target is not a regular file",
         ));
     }
 
-    let file = fs::File::open(path)?;
     let mut buf = Vec::new();
     file.take((max_bytes as u64) + 1).read_to_end(&mut buf)?;
     if buf.len() > max_bytes {

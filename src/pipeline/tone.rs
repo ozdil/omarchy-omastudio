@@ -36,7 +36,7 @@ pub fn reconstruct_clipped_highlights(r: f32, g: f32, b: f32) -> (f32, f32, f32)
 /// Provides smooth photochemical highlight shoulder and deep shadow toe without hue shifts
 #[inline(always)]
 pub fn apply_agx_filmic_curve(val: f32) -> f32 {
-    if val <= 0.0 {
+    if !val.is_finite() || val <= 0.0 {
         return 0.0;
     }
     // Logarithmic encoding
@@ -169,7 +169,7 @@ pub fn apply_tone_pixel(
     // preventing hard single-channel clipping from causing harsh neon hue shifts.
     let max_comp = r_adj.max(g_adj).max(b_adj);
     if max_comp > 0.88 && luma_adj > 0.65 {
-        let excess = ((max_comp - 0.88) / 0.30).min(1.0);
+        let excess = ((max_comp - 0.88) / 0.30).clamp(0.0, 1.0);
         let desat = excess * 0.35;
         r_adj = r_adj * (1.0 - desat) + luma_adj * desat;
         g_adj = g_adj * (1.0 - desat) + luma_adj * desat;

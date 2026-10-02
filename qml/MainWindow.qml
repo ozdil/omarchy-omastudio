@@ -1176,7 +1176,7 @@ Rectangle {
                     watermarkMargin: root.watermarkMargin
                     watermarkColorHex: root.watermarkColorHex
                     watermarkDropShadow: root.watermarkDropShadow
-                    exifMetadata: root.currentMetadata
+                    exifMetadata: root.activeMetadata
                     onSplitRatioChangedByUser: function(r) {
                         root.splitRatio = r;
                         requestRender();

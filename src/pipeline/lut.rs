@@ -271,6 +271,13 @@ pub fn read_cube_file<P: AsRef<Path>>(path: P) -> Result<Lut3D, String> {
         ));
     }
 
+    // Mathematical stability: ensure non-degenerate domain intervals
+    for i in 0..3 {
+        if domain_max[i] <= domain_min[i] {
+            return Err(format!("Invalid LUT domain range: max ({}) must be greater than min ({})", domain_max[i], domain_min[i]));
+        }
+    }
+
     Ok(Lut3D {
         size: lut_size,
         domain_min,

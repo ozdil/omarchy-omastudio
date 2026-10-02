@@ -8,6 +8,7 @@ Rectangle {
     clip: true
 
     property string imageSource: ""
+    property int revisionCounter: 0
     onImageSourceChanged: {
         if (!root.imageSource || root.imageSource.length === 0) {
             imgBuffer0.source = "";
@@ -15,8 +16,8 @@ Rectangle {
             mainImage.currentSource = "";
             return;
         }
-        var nextSrc = "file://" + root.imageSource;
-        if (nextSrc === mainImage.currentSource) return;
+        root.revisionCounter++;
+        var nextSrc = "file://" + root.imageSource + "?v=" + root.revisionCounter;
 
         if (imgBuffer0.status !== Image.Ready && imgBuffer1.status !== Image.Ready) {
             imgBuffer0.source = nextSrc;

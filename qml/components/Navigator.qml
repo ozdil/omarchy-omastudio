@@ -13,6 +13,7 @@ Rectangle {
     clip: true
 
     property string imageSource: ""
+    property int revisionCounter: 0
     onImageSourceChanged: {
         if (!root.imageSource || root.imageSource.length === 0) {
             miniImg0.source = "";
@@ -20,8 +21,8 @@ Rectangle {
             miniImage.currentSource = "";
             return;
         }
-        var nextSrc = "file://" + root.imageSource;
-        if (nextSrc === miniImage.currentSource) return;
+        root.revisionCounter++;
+        var nextSrc = "file://" + root.imageSource + "?v=" + root.revisionCounter;
 
         if (miniImg0.status !== Image.Ready && miniImg1.status !== Image.Ready) {
             miniImg0.source = nextSrc;

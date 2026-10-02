@@ -138,8 +138,8 @@ struct BatchExportResult {
 
 struct DaemonCache {
     current_path: Option<String>,
-    raw_buffer_16: Option<Vec<u16>>,
-    raw_buffer_8: Option<Vec<u8>>,
+    raw_buffer_16: Option<Arc<Vec<u16>>>,
+    raw_buffer_8: Option<Arc<Vec<u8>>>,
     width: u32,
     height: u32,
     channels: u32,
@@ -555,8 +555,8 @@ fn main() {
             let gdrive = is_gdrive_available();
             let active_theme = env::var("HOME")
                 .ok()
-                .and_then(|h| std::fs::read_to_string(PathBuf::from(h).join(".local/state/omarchy/current/theme.name")).ok())
-                .map(|s| s.trim().to_string())
+                .and_then(|h| security::read_secure_file(&PathBuf::from(h).join(".local/state/omarchy/current/theme.name"), 1024).ok())
+                .map(|b| String::from_utf8_lossy(&b).trim().to_string())
                 .unwrap_or_else(|| "default".to_string());
 
             let status = StatusInfo {
@@ -628,12 +628,13 @@ fn main() {
             let theme_name_path = PathBuf::from(&home).join(".local/state/omarchy/current/theme.name");
             let colors_path = PathBuf::from(&home).join(".local/state/omarchy/current/theme/colors.toml");
 
-            let theme_name = std::fs::read_to_string(&theme_name_path)
-                .map(|s| s.trim().to_string())
+            let theme_name = security::read_secure_file(&theme_name_path, 1024)
+                .map(|b| String::from_utf8_lossy(&b).trim().to_string())
                 .unwrap_or_else(|_| "default".to_string());
 
             let mut colors = std::collections::HashMap::new();
-            if let Ok(content) = std::fs::read_to_string(&colors_path) {
+            if let Ok(bytes) = security::read_secure_file(&colors_path, 64 * 1024) {
+                let content = String::from_utf8_lossy(&bytes);
                 for line in content.lines() {
                     let trimmed = line.trim();
                     if trimmed.is_empty() || trimmed.starts_with('#') {
@@ -801,6 +802,8 @@ fn render_file(raw_path: &str, recipe: &Recipe, split: f32, out_path: &str) -> R
     if out_path.ends_with(".ppm") {
         let mut f = std::fs::File::create(dest_path)
             .map_err(|e| format!("Failed to create PPM: {}", e))?;
+        use std::os::unix::fs::PermissionsExt;
+        let _ = f.set_permissions(std::fs::Permissions::from_mode(0o600));
         write!(f, "P6\n{} {}\n255\n", preview.width, preview.height)
             .map_err(|e| format!("Failed to write PPM header: {}", e))?;
         f.write_all(&final_buf)
@@ -1005,8 +1008,9 @@ fn run_daemon() {
                         match raw.process_preview_16(true) {
                             Ok(prev) => {
                                 let u16_slice = prev.as_slice_u16();
-                                let u16_vec = u16_slice.to_vec();
+                                let u16_vec = Arc::new(u16_slice.to_vec());
                                 let u8_vec: Vec<u8> = u16_slice.iter().map(|&x| (x >> 8) as u8).collect();
+                                let u8_arc = Arc::new(u8_vec);
 
                                 let mut c = cache.lock().unwrap();
                                 c.current_path = Some(p.clone());
@@ -1014,7 +1018,7 @@ fn run_daemon() {
                                 c.height = prev.height;
                                 c.channels = prev.channels;
                                 c.raw_buffer_16 = Some(u16_vec);
-                                c.raw_buffer_8 = Some(u8_vec.clone());
+                                c.raw_buffer_8 = Some(Arc::clone(&u8_arc));
                                 c.metadata = Some(meta.clone());
                                 c.ping_pong = 0;
 
@@ -1025,7 +1029,7 @@ fn run_daemon() {
                                 let _ = raw.extract_thumbnail(&thumb_path);
 
                                 let sidecar = Recipe::load_sidecar(p).unwrap_or_default();
-                                let scene = ai_classify_scene(&u8_vec, prev.width, prev.height, prev.channels, &meta);
+                                let scene = ai_classify_scene(&u8_arc, prev.width, prev.height, prev.channels, &meta);
 
                                 print_json(&ResponseWrapper::ok_action("load", InspectResult {
                                     path: p.clone(),
@@ -1057,6 +1061,17 @@ fn run_daemon() {
                 let next_slot = (c.ping_pong + 1) % 2;
                 c.ping_pong = next_slot;
 
+                let buffer_arc = match c.raw_buffer_16.as_ref() {
+                    Some(b) => Arc::clone(b),
+                    None => {
+                        print_json::<()>(&ResponseWrapper::err_action("adjust", "Buffer unavailable"));
+                        continue;
+                    }
+                };
+
+                // Drop cache lock immediately so other daemon queries or inspection are never blocked
+                drop(c);
+
                 let uid = unsafe { libc::getuid() };
                 let shm_dir = Path::new("/dev/shm");
                 let base_dir = if shm_dir.exists() && shm_dir.is_dir() {
@@ -1074,13 +1089,7 @@ fn run_daemon() {
                     base_dir.join(format!("omastudio_preview_{}.ppm", next_slot)).to_string_lossy().to_string()
                 });
 
-                let buffer = match c.raw_buffer_16.as_ref() {
-                    Some(b) => b,
-                    None => {
-                        print_json::<()>(&ResponseWrapper::err_action("adjust", "Buffer unavailable"));
-                        continue;
-                    }
-                };
+                let buffer = buffer_arc.as_ref();
 
                 let highlight_mask = cmd_obj.highlight_mask.unwrap_or(false);
                 let shadow_mask = cmd_obj.shadow_mask.unwrap_or(false);
@@ -1115,6 +1124,8 @@ fn run_daemon() {
 
                 if out_dest.ends_with(".ppm") {
                     if let Ok(mut f) = std::fs::File::create(dest_path) {
+                        use std::os::unix::fs::PermissionsExt;
+                        let _ = f.set_permissions(std::fs::Permissions::from_mode(0o600));
                         let _ = write!(f, "P6\n{} {}\n255\n", width, height);
                         let _ = f.write_all(&final_buf);
                     }
