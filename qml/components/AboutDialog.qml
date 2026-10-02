@@ -15,27 +15,34 @@ Rectangle {
     border.width: 1
     clip: true
 
+
+    signal closeRequested()
+
+    property string pluginName: "OmaStudio"
+    property string pluginVersion: "v2.0.0"
+    property string pluginDescription: "Lightroom & DaVinci Resolve-Grade RAW Studio"
+    property string pluginAuthor: "Ozan Özdil (@ozdil)"
+    property string pluginLicense: "MIT Open Source License"
+    property bool isVerified: true
+
     readonly property string manifestPath: Qt.resolvedUrl("../../manifest.json").toString().replace(/^file:\/\//, "")
     readonly property string manifestFallbackPath: (Quickshell.env("HOME") || "/home/ozdil") + "/.config/omarchy/plugins/ozdil.omastudio/manifest.json"
 
-    property string appName: "OmaStudio"
-    property string appVersion: "1.4.1"
-    property string appAuthor: "Ozan Özdil (ozdil)"
-    property string appLicense: "MIT"
-    property string appDescription: "Lightroom-grade RAW editor for Omarchy Linux with DaVinci color grading, AI scene presets, 16-bit master pipeline, and Google Drive cloud sync."
-    property bool isVerified: true
-
-    function loadManifest(rawJson) {
+    function loadManifest(raw) {
+        if (!raw || typeof raw !== "string") return;
+        // HANCORE DoS / Memory Guard: limit size to 64 KiB
+        if (raw.length > 65536) return;
         try {
-            if (!rawJson || String(rawJson).trim() === "") return
-            var parsed = JSON.parse(rawJson)
-            if (parsed.name) root.appName = parsed.name
-            if (parsed.version) root.appVersion = parsed.version
-            if (parsed.description) root.appDescription = parsed.description
-            if (parsed.author) root.appAuthor = parsed.author
-            if (parsed.license) root.appLicense = parsed.license
-            if (parsed.verified !== undefined) root.isVerified = Boolean(parsed.verified)
-        } catch(e) {}
+            var parsed = JSON.parse(raw);
+            if (parsed.name && typeof parsed.name === "string") root.pluginName = parsed.name.slice(0, 64);
+            if (parsed.version && typeof parsed.version === "string") root.pluginVersion = "v" + parsed.version.slice(0, 16);
+            if (parsed.description && typeof parsed.description === "string") root.pluginDescription = parsed.description.slice(0, 256);
+            if (parsed.author && typeof parsed.author === "string") root.pluginAuthor = parsed.author.slice(0, 64);
+            if (parsed.license && typeof parsed.license === "string") root.pluginLicense = parsed.license.slice(0, 32) + " Open Source License";
+            if (typeof parsed.verified === "boolean") root.isVerified = parsed.verified;
+        } catch (e) {
+            // Safe fallback to default values on malformed JSON
+        }
     }
 
     FileView {
@@ -46,7 +53,7 @@ Rectangle {
         printErrors: false
         onLoaded: root.loadManifest(text())
         onLoadFailed: {
-            manifestFallbackWatcher.reload()
+            manifestFallbackWatcher.reload();
         }
         onFileChanged: reload()
     }
@@ -60,8 +67,6 @@ Rectangle {
         onLoaded: root.loadManifest(text())
         onFileChanged: reload()
     }
-
-    signal closeRequested()
 
     ColumnLayout {
         anchors.fill: parent
@@ -97,7 +102,7 @@ Rectangle {
                 RowLayout {
                     spacing: 8
                     Text {
-                        text: root.appName
+                        text: root.pluginName
                         textFormat: Text.PlainText
                         font.family: Theme.fontFamily
                         font.pixelSize: 16
@@ -116,7 +121,7 @@ Rectangle {
                         Text {
                             id: verText
                             anchors.centerIn: parent
-                            text: "v" + root.appVersion
+                            text: root.pluginVersion
                             textFormat: Text.PlainText
                             font.family: Theme.monoFont
                             font.pixelSize: 9
@@ -148,11 +153,13 @@ Rectangle {
                 }
 
                 Text {
-                    text: "Lightroom & DaVinci Resolve-Grade RAW Studio"
+                    text: root.pluginDescription
                     textFormat: Text.PlainText
                     font.family: Theme.fontFamily
                     font.pixelSize: 10
                     color: Theme.textMuted
+                    Layout.maximumWidth: 360
+                    wrapMode: Text.WordWrap
                 }
             }
 
@@ -284,7 +291,7 @@ Rectangle {
                     color: Theme.textDim
                 }
                 Text {
-                    text: root.appAuthor
+                    text: root.pluginAuthor
                     textFormat: Text.PlainText
                     font.family: Theme.monoFont
                     font.pixelSize: 10
@@ -303,7 +310,7 @@ Rectangle {
                     color: Theme.textDim
                 }
                 Text {
-                    text: root.appLicense
+                    text: root.pluginLicense
                     textFormat: Text.PlainText
                     font.family: Theme.monoFont
                     font.pixelSize: 10

@@ -22,7 +22,7 @@
 
 ## Architecture & Principles
 
-OmaStudio employs a high-performance hybrid architecture designed specifically for the modern Wayland and Hyprland Linux desktop: The graphical user interface runs at 120/144 FPS powered by GPU-accelerated **Quickshell (Qt 6 / QML)**, while the mathematical image processing and RAW decoding pipeline is driven by a multi-threaded **Rust (Rayon + LibRaw FFI)** engine.
+OmaStudio employs an industry-leading hybrid architecture designed for extreme performance on modern Wayland and Hyprland Linux desktops: The graphical user interface runs at 120/144 FPS powered by GPU-accelerated **Quickshell (Qt 6 / QML)**, while the mathematical image processing and RAW decoding pipeline is driven by a **Directed Acyclic Graph (DAG) Engine, Tiled Region-of-Interest (ROI) Execution, and Rust + Vulkan/Slang GPU Compute**.
 
 ```mermaid
 graph TD
@@ -38,31 +38,27 @@ graph TD
         Sock["Persistent Daemon IPC (stdin/stdout JSON lines)<br/>& Quickshell IPC Protocol"]
     end
 
-    subgraph Engine [" Background Engine (Rust / Rayon Core)"]
-        Decoders["LibRaw FFI Decoder<br/>(Sony ARW, Fuji RAF, Nikon NEF, Canon CR3, DNG)"]
-        RAMCache["Hot RAW Buffer in RAM<br/>(Strict Non-Destructive Sidecar Architecture)"]
-        Pipeline["Multi-Core Processing Pipeline<br/>(Parallel Pixel Matrix / Rayon)"]
+    subgraph Engine [" DaVinci & Nuke-Grade Engine (DAG + GPU Slang / Vulkan)"]
+        DAGEngine["Demand-Driven DAG Engine<br/>(Directed Acyclic Graph / Invalidation Tree)"]
+        TiledEngine["Tiled ROI Execution<br/>(512x512 Tile Grid / Memory Isolation)"]
+        GPUCompute["Slang / Vulkan SPIR-V Compute<br/>(NVIDIA / AMD / Intel Arc GPU Kernels)"]
+        Decoders["LibRaw FFI Hardware Matrix<br/>(Sony ARW, Fuji RAF, Nikon NEF, Canon CR3, DNG)"]
         ACES["ACES 1.3 Color Science<br/>(ACEScg, ACEScc, RGC, RRT/ODT Tonemapper)"]
         FilmSim["Film Simulations<br/>(Fujifilm Provia, Velvia, Astia, Acros / Hasselblad HNCS)"]
         WatermarkEngine["Watermark & Branding Engine<br/>(9-Point Grid / EXIF Interpolation / Lanczos3 Logo)"]
         ShmPingPong["Double-Buffered Ping-Pong Shared Memory<br/>(/dev/shm Zero-Flicker Viewport)"]
-        AIEngine["Deterministic Computer Vision & JEV<br/>(Ansel Adams EV / 123 deg Skin Vectorscope)"]
-        Storage["Secure Storage<br/>(Atomic 0600 / GDrive Rclone)"]
     end
 
     UI <--> Sock
-    CLI --> Pipeline
-    Sock <--> RAMCache
-    Decoders --> RAMCache
-    RAMCache --> Pipeline
-    Pipeline --> ACES
+    CLI --> DAGEngine
+    Sock <--> DAGEngine
+    DAGEngine --> TiledEngine
+    TiledEngine --> GPUCompute
+    Decoders --> DAGEngine
+    GPUCompute --> ACES
     ACES --> FilmSim
     FilmSim --> ShmPingPong
     ShmPingPong --> Viewport
-    AIEngine --> Pipeline
-    Pipeline --> WatermarkEngine
-    WatermarkEngine --> Storage
-    Storage <--> Engine
 ```
 
 ---

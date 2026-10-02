@@ -1,0 +1,160 @@
+{
+  "$schema": "./brand_identity.schema.json",
+  "brand": {
+    "name": "Omarchy",
+    "ecosystem": "OmaSend / OmaStudio",
+    "tagline": "Sovereign High-Performance Linux Desktop & Distributed Tooling",
+    "version": "1.0.0"
+  },
+  "symbols": {
+    "primary_glyph": "Paper Airplane (Aerodynamic Falcon Vector)",
+    "nerd_font_codepoint": "\\uf1d8",
+    "nerd_font_char": "",
+    "design_rationale": "Quickshell Bar uzerindeki minimalist ucak ikonunun () altin oran ve coklu yuzeyli (faceted) aerodinamik vektor cizgileriyle kurumsallastirilmis modern formu. Hizi, bagimsizligi ve kesintisiz veri aktarimini temsil eder.",
+    "vector_geometry": {
+      "viewBox": "0 0 512 512",
+      "paths": [
+        {
+          "id": "fuselage-left-facet",
+          "d": "M460 52L52 248l172 48 48 164 68-100 120 92L460 52z",
+          "fill": "url(#omarchy-brand-grad)",
+          "opacity": 1.0
+        },
+        {
+          "id": "inner-crease-shadow",
+          "d": "M460 52L224 296l48 164 44-72L460 52z",
+          "fill": "#0284c7",
+          "opacity": 0.85
+        },
+        {
+          "id": "center-spine-highlight",
+          "d": "M460 52L224 296l92-12L460 52z",
+          "fill": "#38bdf8",
+          "opacity": 0.95
+        }
+      ]
+    }
+  },
+  "color_palette": {
+    "primary": {
+      "sky_blue": "#0284c7",
+      "cyan_neon": "#38bdf8",
+      "gradient": "linear-gradient(135deg, #0284c7 0%, #38bdf8 100%)"
+    },
+    "secondary": {
+      "deep_blue": "#0369a1",
+      "sky_light": "#7dd3fc"
+    },
+    "background": {
+      "deep_void": "#0b0f17",
+      "slate_dark": "#0f172a",
+      "surface_base": "#1e293b"
+    },
+    "acrylic": {
+      "surface_glass": "rgba(30, 41, 59, 0.70)",
+      "border_glass": "rgba(56, 189, 248, 0.20)",
+      "backdrop_blur": "blur(16px) saturate(180%)"
+    },
+    "accent": {
+      "verified_green": "#22c55e",
+      "energy_indigo": "#6366f1",
+      "alert_amber": "#f59e0b",
+      "critical_rose": "#f43f5e"
+    },
+    "text": {
+      "primary": "#f8fafc",
+      "secondary": "#94a3b8",
+      "muted": "#64748b"
+    }
+  },
+  "typography": {
+    "default_family": "JetBrainsMono Nerd Font",
+    "fallback_chain": "JetBrainsMono Nerd Font, JetBrains Mono, monospace",
+    "monospace_family": "JetBrainsMono Nerd Font, JetBrains Mono, monospace",
+    "font_weights": {
+      "regular": "400",
+      "medium": "500",
+      "bold": "700"
+    }
+  },
+  "asset_hierarchy": {
+    "logos": "~/Pictures/logos/omarchy/",
+    "banners": "~/Pictures/banners/<platform>/",
+    "avatars": "~/Pictures/avatars/<kategori>/",
+    "exports": "~/Pictures/OmaStudio_Exports/",
+    "projects": "~/Projects/omarchy/",
+    "projects_web": "~/Projects/web/",
+    "projects_mobile": "~/Projects/mobile/",
+    "projects_dist": "~/Projects/dist/",
+    "documents": "~/Documents/"
+  },
+  "platform_contracts": {
+    "desktop_linux": {
+      "quickshell_bar": {
+        "component": "Panel.qml",
+        "icon_type": "NerdFontGlyph",
+        "codepoint": "\\uf1d8",
+        "font_family": "JetBrainsMono Nerd Font, JetBrains Mono, monospace",
+        "default_color": "#f8fafc",
+        "hover_color": "#38bdf8",
+        "active_background": "rgba(30, 41, 59, 0.70)"
+      },
+      "desktop_launcher": {
+        "file_name": "omastudio.desktop",
+        "location": "~/.local/share/applications/omastudio.desktop",
+        "icon_name": "omarchy-logo",
+        "icon_path": "/home/ozdil/Pictures/logos/omarchy/omarchy-logo.svg"
+      },
+      "system_tray": {
+        "icon_format": "SVG / PNG 24x24 & 48x48",
+        "monochrome_fallback": true
+      }
+    },
+    "mobile_android": {
+      "adaptive_icon": {
+        "foreground": "res/drawable/ic_launcher_foreground.xml",
+        "background": "#0b0f17",
+        "monochrome": "res/drawable/ic_launcher_monochrome.xml"
+      },
+      "notification_icon": {
+        "drawable": "res/drawable/ic_stat_omasend.xml",
+        "tint": "#38bdf8"
+      },
+      "brand_theme": {
+        "primary": "#0284c7",
+        "surface": "#0f172a",
+        "onSurface": "#f8fafc"
+      }
+    },
+    "web_pwa": {
+      "favicon_svg": "/assets/logos/omarchy-icon.svg",
+      "apple_touch_icon": "/assets/logos/apple-touch-icon-180x180.png",
+      "manifest_icons": [
+        {
+          "src": "/assets/logos/icon-192x192.png",
+          "sizes": "192x192",
+          "type": "image/png",
+          "purpose": "any maskable"
+        },
+        {
+          "src": "/assets/logos/icon-512x512.png",
+          "sizes": "512x512",
+          "type": "image/png",
+          "purpose": "any maskable"
+        }
+      ],
+      "opengraph": {
+        "image": "/assets/logos/og-omarchy-banner.png",
+        "image_width": "1200",
+        "image_height": "630"
+      }
+    },
+    "cli_terminal": {
+      "glyph": "\uf1d8",
+      "nerd_char": "",
+      "ansi_banner": "OMARCHY // OMASEND",
+      "color_support": "Truecolor 24-bit ANSI (#0284c7, #38bdf8)",
+      "badge": "[OMARCHY::VERIFIED]"
+    }
+  }
+}

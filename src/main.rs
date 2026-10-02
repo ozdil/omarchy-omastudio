@@ -596,6 +596,10 @@ fn main() {
                     "hasselblad_hncs_and_xpan".into(),
                     "watermark_and_branding_engine".into(),
                     "offline_jev_decision_engine".into(),
+                    "dag_demand_driven_pipeline_engine".into(),
+                    "tiled_region_of_interest_execution".into(),
+                    "vulkan_slang_gpu_compute_architecture".into(),
+                    "linux_wayland_color_management_v1".into(),
                 ],
             };
             print_json(&ResponseWrapper::ok(status));

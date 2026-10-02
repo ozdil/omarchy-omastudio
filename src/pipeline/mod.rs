@@ -2,6 +2,7 @@ pub mod aces;
 pub mod color_grading;
 pub mod detail;
 pub mod film_sim;
+pub mod gpu;
 pub mod histogram;
 pub mod lut;
 pub mod presence;

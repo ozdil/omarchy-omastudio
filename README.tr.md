@@ -22,7 +22,7 @@
 
 ## Mimari ve Tasarım İlkeleri
 
-OmaStudio, modern Wayland ve Hyprland Linux masaüstü ortamları için özel olarak tasarlanmış hibrit bir mimari kullanır: Kullanıcı arayüzü GPU ivmeli **Quickshell (Qt 6 / QML)** üzerinde 120/144 FPS akıcılıkla çalışırken, görüntü işleme ve RAW kod çözme boru hattı çok çekirdekli **Rust (Rayon + LibRaw FFI)** motoru tarafından yürütülür.
+OmaStudio, modern Wayland ve Hyprland Linux masaüstü ortamları için tasarlanmış sektör standardı hibrit bir mimari kullanır: Kullanıcı arayüzü GPU ivmeli **Quickshell (Qt 6 / QML)** üzerinde 120/144 FPS akıcılıkla çalışırken, görüntü işleme ve RAW kod çözme boru hattı **Yönlendirilmiş Çevrimsiz Çizge (DAG) Motoru, Parçalı (Tiled) Talep Odaklı Bölgeleme ve Rust + Slang/Vulkan GPU Hesaplama** çekirdekleri tarafından yürütülür.
 
 ```mermaid
 graph TD
@@ -38,31 +38,27 @@ graph TD
         Sock["Kalıcı Daemon IPC (stdin/stdout JSON satırları)<br/>& Quickshell IPC Protokolü"]
     end
 
-    subgraph Engine [" Arka Plan Motoru (Rust / Rayon Core)"]
-        Decoders["LibRaw FFI Kod Çözücü<br/>(Sony ARW, Fuji RAF, Nikon NEF, Canon CR3, DNG)"]
-        RAMCache["Bellekte Sıcak RAW Matrisi<br/>(Kesinlikle Tahribatsız Sidecar Mimarisi)"]
-        Pipeline["Çok Çekirdekli İşleme Boru Hattı<br/>(Paralel Piksel Matrisi / Rayon)"]
+    subgraph Engine [" DaVinci & Nuke Sınıfı Motor (DAG + GPU Slang / Vulkan)"]
+        DAGEngine["Talep Odaklı DAG Motoru<br/>(Yönlendirilmiş Çizge / Geçersiz Kılma Ağacı)"]
+        TiledEngine["Parçalı (Tiled) ROI Yürütme<br/>(512x512 Karo Izgarası / Bellek İzolasyonu)"]
+        GPUCompute["Slang / Vulkan SPIR-V Hesaplama<br/>(NVIDIA / AMD / Intel Arc GPU Çekirdekleri)"]
+        Decoders["LibRaw FFI Donanım Matrisi<br/>(Sony ARW, Fuji RAF, Nikon NEF, Canon CR3, DNG)"]
         ACES["ACES 1.3 Renk Bilimi<br/>(ACEScg, ACEScc, RGC, RRT/ODT Ton Eşleyici)"]
         FilmSim["Film Benzetimleri<br/>(Fujifilm Provia, Velvia, Astia, Acros / Hasselblad HNCS)"]
         WatermarkEngine["Filigran ve İmza Motoru<br/>(9 Nokta Izgara / EXIF Entegrasyonu / Logo PNG)"]
         ShmPingPong["Çift Tamponlu Paylaşımlı Bellek<br/>(/dev/shm Sıfır Titreme Önizleme)"]
-        AIEngine["Deterministik Bilgisayarlı Görü & JEV<br/>(Ansel Adams EV / 123 deg Ten Çizgisi)"]
-        Storage["Güvenli Depolama<br/>(Atomik 0600 / GDrive Rclone)"]
     end
 
     UI <--> Sock
-    CLI --> Pipeline
-    Sock <--> RAMCache
-    Decoders --> RAMCache
-    RAMCache --> Pipeline
-    Pipeline --> ACES
+    CLI --> DAGEngine
+    Sock <--> DAGEngine
+    DAGEngine --> TiledEngine
+    TiledEngine --> GPUCompute
+    Decoders --> DAGEngine
+    GPUCompute --> ACES
     ACES --> FilmSim
     FilmSim --> ShmPingPong
     ShmPingPong --> Viewport
-    AIEngine --> Pipeline
-    Pipeline --> WatermarkEngine
-    WatermarkEngine --> Storage
-    Storage <--> Engine
 ```
 
 ---

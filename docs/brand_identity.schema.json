@@ -1,0 +1,132 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "OmarchyBrandIdentitySchema",
+  "description": "Omarchy ve OmaSend kurumsal marka kimligi, logo veri semasi ve coklu platform entegrasyon spesifikasyonu.",
+  "type": "object",
+  "required": [
+    "brand",
+    "symbols",
+    "color_palette",
+    "typography",
+    "asset_hierarchy",
+    "platform_contracts"
+  ],
+  "properties": {
+    "brand": {
+      "type": "object",
+      "required": ["name", "ecosystem", "tagline", "version"],
+      "properties": {
+        "name": { "type": "string" },
+        "ecosystem": { "type": "string" },
+        "tagline": { "type": "string" },
+        "version": { "type": "string" }
+      }
+    },
+    "symbols": {
+      "type": "object",
+      "required": ["primary_glyph", "nerd_font_codepoint", "vector_geometry"],
+      "properties": {
+        "primary_glyph": { "type": "string" },
+        "nerd_font_codepoint": { "type": "string" },
+        "vector_geometry": {
+          "type": "object",
+          "required": ["viewBox", "paths"],
+          "properties": {
+            "viewBox": { "type": "string" },
+            "paths": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["id", "d", "fill"],
+                "properties": {
+                  "id": { "type": "string" },
+                  "d": { "type": "string" },
+                  "fill": { "type": "string" },
+                  "opacity": { "type": "number" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "color_palette": {
+      "type": "object",
+      "required": ["primary", "secondary", "background", "acrylic", "accent", "text"],
+      "properties": {
+        "primary": {
+          "type": "object",
+          "required": ["sky_blue", "cyan_neon"],
+          "properties": {
+            "sky_blue": { "type": "string" },
+            "cyan_neon": { "type": "string" }
+          }
+        },
+        "secondary": { "type": "object" },
+        "background": {
+          "type": "object",
+          "required": ["deep_void", "slate_dark"],
+          "properties": {
+            "deep_void": { "type": "string" },
+            "slate_dark": { "type": "string" }
+          }
+        },
+        "acrylic": {
+          "type": "object",
+          "required": ["surface_glass", "border_glass"],
+          "properties": {
+            "surface_glass": { "type": "string" },
+            "border_glass": { "type": "string" }
+          }
+        },
+        "accent": {
+          "type": "object",
+          "required": ["verified_green", "energy_indigo"],
+          "properties": {
+            "verified_green": { "type": "string" },
+            "energy_indigo": { "type": "string" }
+          }
+        },
+        "text": {
+          "type": "object",
+          "required": ["primary", "secondary", "muted"],
+          "properties": {
+            "primary": { "type": "string" },
+            "secondary": { "type": "string" },
+            "muted": { "type": "string" }
+          }
+        }
+      }
+    },
+    "typography": {
+      "type": "object",
+      "required": ["default_family", "fallback_chain", "monospace_family"],
+      "properties": {
+        "default_family": { "type": "string" },
+        "fallback_chain": { "type": "string" },
+        "monospace_family": { "type": "string" }
+      }
+    },
+    "asset_hierarchy": {
+      "type": "object",
+      "required": ["logos", "banners", "avatars", "projects", "documents"],
+      "properties": {
+        "logos": { "type": "string" },
+        "banners": { "type": "string" },
+        "avatars": { "type": "string" },
+        "projects": { "type": "string" },
+        "documents": { "type": "string" }
+      }
+    },
+    "platform_contracts": {
+      "type": "object",
+      "required": ["desktop_linux", "mobile_android", "web_pwa", "cli_terminal"],
+      "properties": {
+        "desktop_linux": { "type": "object" },
+        "mobile_android": { "type": "object" },
+        "web_pwa": { "type": "object" },
+        "cli_terminal": { "type": "object" }
+      }
+    }
+  }
+}
