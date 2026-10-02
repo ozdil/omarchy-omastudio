@@ -1,6 +1,7 @@
 #![allow(clippy::excessive_precision, clippy::too_many_arguments)]
 
 pub mod ai;
+pub mod dag;
 pub mod export;
 pub mod gdrive;
 pub mod icc;
@@ -538,6 +539,37 @@ fn main() {
             let cat = Catalog::load();
             print_json(&ResponseWrapper::ok(cat));
         }
+        "dag" => {
+            #[derive(Serialize)]
+            struct DagStatus {
+                engine: String,
+                status: String,
+                architecture: String,
+                tiling_default_tile_size: u32,
+                nodes_supported: Vec<String>,
+            }
+            let dag_info = DagStatus {
+                engine: "Demand-Driven Tiled DAG Engine".to_string(),
+                status: "active".to_string(),
+                architecture: "Rust + Slang/Vulkan SPIR-V Compute".to_string(),
+                tiling_default_tile_size: dag::tiling::DEFAULT_TILE_SIZE,
+                nodes_supported: vec![
+                    "RawSource".into(),
+                    "Demosaic".into(),
+                    "WhiteBalance".into(),
+                    "Exposure".into(),
+                    "ToneCurve".into(),
+                    "ColorWheels".into(),
+                    "FilmSimulation".into(),
+                    "AcesColorManagement".into(),
+                    "Lut3D".into(),
+                    "Denoise".into(),
+                    "Watermark".into(),
+                    "DisplaySink".into(),
+                ],
+            };
+            print_json(&ResponseWrapper::ok(dag_info));
+        }
         "status" | "--status" => {
             #[derive(Serialize)]
             struct StatusInfo {
@@ -622,6 +654,7 @@ fn main() {
             println!("  gdrive [check|list <dir>|fetch <f>]   Google Drive cloud RAW operations");
             println!("  scan [dir]                            Scan local folder for supported RAW photos");
             println!("  catalog                               Retrieve persistent photo catalog database");
+            println!("  dag                                   Inspect Demand-Driven Tiled DAG Engine status");
             println!("  daemon                                Start persistent JSON-over-stdin processing daemon");
             println!("  theme                                 Display current Omarchy system theme and colors");
             println!("  version                               Print engine version");

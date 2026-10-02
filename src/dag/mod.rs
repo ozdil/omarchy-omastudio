@@ -434,6 +434,94 @@ impl DagEngine {
                 }
                 Ok(out_buf)
             }
+            NodeType::FilmSimulation { id, intensity } => {
+                let in_buf = inputs.first().ok_or("FilmSimulation node requires 1 input")?;
+                let mut out_buf = in_buf.as_ref().clone();
+                let sim = crate::pipeline::film_sim::FilmSimulation::from_id(id);
+                for chunk in out_buf.data.chunks_exact_mut(3) {
+                    let (r, g, b) = (chunk[0], chunk[1], chunk[2]);
+                    let (sr, sg, sb) = sim.apply_pixel(r, g, b, *intensity);
+                    chunk[0] = sr;
+                    chunk[1] = sg;
+                    chunk[2] = sb;
+                }
+                Ok(out_buf)
+            }
+            NodeType::ColorWheels {
+                lift,
+                lift_luma,
+                gamma,
+                gamma_luma,
+                gain,
+                gain_luma,
+                offset,
+                offset_luma,
+                contrast_pivot,
+                color_boost,
+                ..
+            } => {
+                let in_buf = inputs.first().ok_or("ColorWheels node requires 1 input")?;
+                let mut out_buf = in_buf.as_ref().clone();
+                for chunk in out_buf.data.chunks_exact_mut(3) {
+                    let (mut r, mut g, mut b) = (chunk[0], chunk[1], chunk[2]);
+                    // Lift (Shadows)
+                    let luma = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+                    let lift_w = (1.0 - luma).max(0.0);
+                    r += (lift[0] + lift_luma) * lift_w * 0.2;
+                    g += (lift[1] + lift_luma) * lift_w * 0.2;
+                    b += (lift[2] + lift_luma) * lift_w * 0.2;
+
+                    // Gamma (Midtones)
+                    let gamma_w = 1.0 - (2.0 * luma - 1.0).abs().clamp(0.0, 1.0);
+                    let gam_r = (gamma[0] + gamma_luma) * 0.2;
+                    let gam_g = (gamma[1] + gamma_luma) * 0.2;
+                    let gam_b = (gamma[2] + gamma_luma) * 0.2;
+                    r += gam_r * gamma_w;
+                    g += gam_g * gamma_w;
+                    b += gam_b * gamma_w;
+
+                    // Gain (Highlights)
+                    let gain_w = luma.max(0.0);
+                    let gr = 1.0 + (gain[0] + gain_luma) * 0.5;
+                    let gg = 1.0 + (gain[1] + gain_luma) * 0.5;
+                    let gb = 1.0 + (gain[2] + gain_luma) * 0.5;
+                    r = r * (1.0 - gain_w) + (r * gr) * gain_w;
+                    g = g * (1.0 - gain_w) + (g * gg) * gain_w;
+                    b = b * (1.0 - gain_w) + (b * gb) * gain_w;
+
+                    // Offset
+                    r += (offset[0] + offset_luma) * 0.1;
+                    g += (offset[1] + offset_luma) * 0.1;
+                    b += (offset[2] + offset_luma) * 0.1;
+
+                    // Contrast Pivot (around 18% middle gray)
+                    if (contrast_pivot.abs() - 0.0).abs() > 0.001 {
+                        let pivot = 0.18f32;
+                        let c = 1.0 + *contrast_pivot;
+                        r = (pivot + (r - pivot) * c).max(0.0);
+                        g = (pivot + (g - pivot) * c).max(0.0);
+                        b = (pivot + (b - pivot) * c).max(0.0);
+                    }
+
+                    // Color Boost
+                    if color_boost.abs() > 0.001 {
+                        let max_c = r.max(g).max(b);
+                        let min_c = r.min(g).min(b);
+                        let sat = if max_c > 1e-5 { (max_c - min_c) / max_c } else { 0.0 };
+                        let boost_weight = (1.0 - sat).max(0.0);
+                        let lum = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+                        let factor = 1.0 + (*color_boost / 100.0) * boost_weight;
+                        r = lum + (r - lum) * factor;
+                        g = lum + (g - lum) * factor;
+                        b = lum + (b - lum) * factor;
+                    }
+
+                    chunk[0] = r;
+                    chunk[1] = g;
+                    chunk[2] = b;
+                }
+                Ok(out_buf)
+            }
             NodeType::DisplaySink => {
                 let in_buf = inputs.first().ok_or("Sink node requires 1 input")?;
                 Ok(in_buf.as_ref().clone())
