@@ -371,7 +371,7 @@ Rectangle {
                     text: root.watermarkText
                     logoPath: root.watermarkLogoPath
                     positionIndex: root.watermarkPositionIndex
-                    opacity: root.watermarkOpacity
+                    watermarkOpacity: root.watermarkOpacity
                     size: root.watermarkSize
                     margin: root.watermarkMargin
                     colorHex: root.watermarkColorHex

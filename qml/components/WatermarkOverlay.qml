@@ -11,7 +11,7 @@ Item {
     property string text: "OmaStudio Photography"
     property string logoPath: ""
     property int positionIndex: 8 // 0..8
-    property real opacity: 0.85
+    property real watermarkOpacity: 0.85
     property int size: 14
     property int margin: 24
     property string colorHex: "#ffffff"
@@ -38,7 +38,7 @@ Item {
     Item {
         id: watermarkItem
         visible: root.enabled && (root.watermarkType === "text" ? root.text.length > 0 : root.logoPath.length > 0)
-        opacity: root.opacity
+        opacity: root.watermarkOpacity
 
         // 9-Point Anchor Placement
         anchors.left: (root.positionIndex === 0 || root.positionIndex === 3 || root.positionIndex === 6) ? parent.left : undefined

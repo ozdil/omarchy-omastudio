@@ -15,8 +15,8 @@ Rectangle {
     property string activeColorSpace: "sRGB"
     property bool acesTonemap: false
 
-    signal colorSpaceChanged(string space)
-    signal acesTonemapChanged(bool enabled)
+    signal colorSpaceSelected(string space)
+    signal acesTonemapToggled(bool enabled)
 
     readonly property var spaces: [
         { "id": "sRGB", "name": "sRGB (D65)", "desc": "Standard SDR Web gamut", "coverage": "100% sRGB", "badgeColor": "#7aa2f7" },
@@ -137,7 +137,7 @@ Rectangle {
                         cursorShape: Qt.PointingHandCursor
                         onClicked: {
                             root.activeColorSpace = modelData.id;
-                            root.colorSpaceChanged(root.activeColorSpace);
+                            root.colorSpaceSelected(root.activeColorSpace);
                         }
                     }
                 }
@@ -191,7 +191,7 @@ Rectangle {
                     checked: root.acesTonemap
                     onToggled: {
                         root.acesTonemap = checked;
-                        root.acesTonemapChanged(root.acesTonemap);
+                        root.acesTonemapToggled(root.acesTonemap);
                     }
                 }
             }

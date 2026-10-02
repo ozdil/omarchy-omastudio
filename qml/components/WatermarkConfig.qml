@@ -12,12 +12,12 @@ Rectangle {
     border.color: Theme.border
     border.width: 1
 
-    property bool enabled: false
+    property bool watermarkEnabled: false
     property string watermarkType: "text" // "text" or "logo"
     property string text: "OmaStudio Photography"
     property string logoPath: ""
     property int positionIndex: 8 // 0..8 (bottom-right default)
-    property real opacity: 0.85
+    property real watermarkOpacity: 0.85
     property int size: 14
     property int margin: 24
     property string colorHex: "#ffffff"
@@ -27,12 +27,12 @@ Rectangle {
 
     function notifyChanged() {
         var opts = {
-            "enabled": root.enabled,
+            "enabled": root.watermarkEnabled,
             "watermark_type": root.watermarkType,
             "text": root.text,
             "logo_path": root.logoPath ? root.logoPath : null,
             "position_index": root.positionIndex,
-            "opacity": root.opacity,
+            "opacity": root.watermarkOpacity,
             "size": root.size,
             "margin": root.margin,
             "color": root.colorHex,
@@ -64,9 +64,9 @@ Rectangle {
             }
 
             CheckBox {
-                checked: root.enabled
+                checked: root.watermarkEnabled
                 onToggled: {
-                    root.enabled = checked;
+                    root.watermarkEnabled = checked;
                     root.notifyChanged();
                 }
             }
@@ -76,7 +76,7 @@ Rectangle {
         ColumnLayout {
             Layout.fillWidth: true
             spacing: 10
-            visible: root.enabled
+            visible: root.watermarkEnabled
 
             // Mode Selector: Text vs Logo
             RowLayout {
@@ -358,7 +358,7 @@ Rectangle {
                         Layout.fillWidth: true
                     }
                     Text {
-                        text: Math.round(root.opacity * 100) + "%"
+                        text: Math.round(root.watermarkOpacity * 100) + "%"
                         textFormat: Text.PlainText
                         font.family: Theme.fontFamily
                         font.pixelSize: 9
@@ -371,10 +371,10 @@ Rectangle {
                     Layout.fillWidth: true
                     from: 0.1
                     to: 1.0
-                    value: root.opacity
+                    value: root.watermarkOpacity
                     stepSize: 0.05
                     onMoved: {
-                        root.opacity = value;
+                        root.watermarkOpacity = value;
                         root.notifyChanged();
                     }
                 }

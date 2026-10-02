@@ -1966,11 +1966,11 @@ Rectangle {
                                 Layout.fillWidth: true
                                 activeColorSpace: root.activeColorSpace
                                 acesTonemap: root.activeAcesTonemap
-                                onColorSpaceChanged: function(space) {
+                                onColorSpaceSelected: function(space) {
                                     root.activeColorSpace = space;
                                     root.requestRender();
                                 }
-                                onAcesTonemapChanged: function(enabled) {
+                                onAcesTonemapToggled: function(enabled) {
                                     root.activeAcesTonemap = enabled;
                                     root.requestRender();
                                 }
@@ -1981,12 +1981,12 @@ Rectangle {
                             WatermarkConfig {
                                 id: watermarkConfig
                                 Layout.fillWidth: true
-                                enabled: root.watermarkEnabled
+                                watermarkEnabled: root.watermarkEnabled
                                 watermarkType: root.watermarkType
                                 text: root.watermarkText
                                 logoPath: root.watermarkLogoPath
                                 positionIndex: root.watermarkPositionIndex
-                                opacity: root.watermarkOpacity
+                                watermarkOpacity: root.watermarkOpacity
                                 size: root.watermarkSize
                                 margin: root.watermarkMargin
                                 colorHex: root.watermarkColorHex
