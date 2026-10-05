@@ -14,6 +14,11 @@ Rectangle {
     property bool isCropMode: false
     property real currentZoom: 1.0
     property string activePhotoName: ""
+    property int photoRating: 0
+    property string photoFlag: "none"
+
+    signal ratingChanged(int rating)
+    signal flagChanged(string flag)
 
     signal toggleMode()
     signal openFileClicked()
@@ -94,6 +99,89 @@ Rectangle {
                 font.pixelSize: 10
                 font.family: Theme.monoFont
                 color: Theme.textMain
+            }
+        }
+
+        // Lightroom Studio Culling & Rating Widget (P / X Flags & 1-5 Stars)
+        RowLayout {
+            visible: root.activePhotoName !== ""
+            spacing: 3
+
+            // Pick Flag (P)
+            Rectangle {
+                implicitWidth: 20
+                implicitHeight: 20
+                radius: 3
+                color: root.photoFlag === "pick" ? Theme.accentGreen : Theme.bgCard
+                border.color: root.photoFlag === "pick" ? Theme.accentGreen : Theme.border
+                Text {
+                    anchors.centerIn: parent
+                    text: "P"
+                    textFormat: Text.PlainText
+                    font.family: Theme.monoFont
+                    font.pixelSize: 9
+                    font.weight: Font.Bold
+                    color: root.photoFlag === "pick" ? Theme.bgBase : Theme.accentGreen
+                }
+                MouseArea {
+                    anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: root.flagChanged(root.photoFlag === "pick" ? "none" : "pick")
+                }
+            }
+
+            // Reject Flag (X)
+            Rectangle {
+                implicitWidth: 20
+                implicitHeight: 20
+                radius: 3
+                color: root.photoFlag === "reject" ? Theme.highlightClip : Theme.bgCard
+                border.color: root.photoFlag === "reject" ? Theme.highlightClip : Theme.border
+                Text {
+                    anchors.centerIn: parent
+                    text: "X"
+                    textFormat: Text.PlainText
+                    font.family: Theme.monoFont
+                    font.pixelSize: 9
+                    font.weight: Font.Bold
+                    color: root.photoFlag === "reject" ? "#ffffff" : Theme.highlightClip
+                }
+                MouseArea {
+                    anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: root.flagChanged(root.photoFlag === "reject" ? "none" : "reject")
+                }
+            }
+
+            // Star Rating (1..5)
+            RowLayout {
+                spacing: 2
+                Repeater {
+                    model: 5
+                    Rectangle {
+                        implicitWidth: 16
+                        implicitHeight: 20
+                        radius: 2
+                        color: "transparent"
+                        Text {
+                            anchors.centerIn: parent
+                            text: (index + 1) <= root.photoRating ? "*" : "-"
+                            textFormat: Text.PlainText
+                            font.family: Theme.monoFont
+                            font.pixelSize: 11
+                            font.weight: Font.Bold
+                            color: (index + 1) <= root.photoRating ? Theme.accentYellow : Theme.textDim
+                        }
+                        MouseArea {
+                            anchors.fill: parent
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: {
+                                var newR = (root.photoRating === (index + 1)) ? 0 : (index + 1);
+                                root.ratingChanged(newR);
+                            }
+                        }
+                    }
+                }
             }
         }
 

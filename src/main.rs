@@ -631,11 +631,15 @@ fn main() {
                     "fujifilm_film_simulations".into(),
                     "hasselblad_hncs_and_xpan".into(),
                     "watermark_and_branding_engine".into(),
-                    "offline_jev_decision_engine".into(),
                     "dag_demand_driven_pipeline_engine".into(),
                     "tiled_region_of_interest_execution".into(),
                     "vulkan_slang_gpu_compute_architecture".into(),
                     "linux_wayland_color_management_v1".into(),
+                    "capture_one_skin_tone_uniformity".into(),
+                    "davinci_rgb_primary_matrix_mixer".into(),
+                    "silver_halide_photochemical_film_grain".into(),
+                    "local_layered_mask_adjustments".into(),
+                    "studio_culling_and_fast_rating".into(),
                 ],
             };
             print_json(&ResponseWrapper::ok(status));

@@ -1,11 +1,15 @@
 pub mod aces;
 pub mod color_grading;
 pub mod detail;
+pub mod film_grain;
 pub mod film_sim;
 pub mod gpu;
 pub mod histogram;
+pub mod layers;
 pub mod lut;
 pub mod presence;
+pub mod rgb_mixer;
+pub mod skin_tone;
 pub mod tone;
 pub mod white_balance;
 
@@ -80,27 +84,33 @@ pub fn process_buffer(
                 // 1. Tone & Dynamic range (Chroma-preserving, smooth highlight knee & shadow toe)
                 let (r1, g1, b1) = tone::apply_tone_pixel(r_norm, g_norm, b_norm, recipe, exp_factor);
 
-                // 2. DaVinci Resolve 3-Way Color Wheels
-                let (r2, g2, b2) = color_grading::apply_color_wheels(r1, g1, b1, recipe);
+                // 2. DaVinci Resolve RGB Primary Matrix Mixer
+                let (r1_mix, g1_mix, b1_mix) = rgb_mixer::apply_rgb_mixer(r1, g1, b1, recipe);
 
-                // 3. 8-Band HSL Color Mixer (Perceptual Luminance Anchor)
+                // 3. Capture One Pro Style Skin Tone Uniformity Engine
+                let (r1_skin, g1_skin, b1_skin) = skin_tone::apply_skin_tone_uniformity(r1_mix, g1_mix, b1_mix, recipe);
+
+                // 4. DaVinci Resolve 3-Way Color Wheels
+                let (r2, g2, b2) = color_grading::apply_color_wheels(r1_skin, g1_skin, b1_skin, recipe);
+
+                // 5. 8-Band HSL Color Mixer (Perceptual Luminance Anchor)
                 let (r3, g3, b3) = color_grading::apply_hsl_mixer(r2, g2, b2, recipe);
 
-                // 4. DaVinci 3D LUT
+                // 6. DaVinci 3D LUT
                 let (r4, g4, b4) = if let Some(ref active_lut) = maybe_lut {
                     lut::apply_lut_pixel(r3, g3, b3, active_lut, recipe.lut_intensity)
                 } else {
                     (r3, g3, b3)
                 };
 
-                // 5. Authentic Film Simulations (Fujifilm X-Trans / GFX & Hasselblad HNCS / XPan)
+                // 7. Authentic Film Simulations (Fujifilm X-Trans / GFX & Hasselblad HNCS / XPan)
                 let (r5, g5, b5) = if film_sim != film_sim::FilmSimulation::None {
                     film_sim.apply_pixel(r4, g4, b4, recipe.film_sim_intensity)
                 } else {
                     (r4, g4, b4)
                 };
 
-                // 6. ACES 1.3 Gamut Compression if ACEScg or wide-gamut mode active
+                // 8. ACES 1.3 Gamut Compression if ACEScg or wide-gamut mode active
                 let (r6, g6, b6) = if working_space == aces::WorkingColorSpace::AcesCg || recipe.aces_tonemap {
                     aces::apply_aces_gamut_compression(r5, g5, b5)
                 } else {
@@ -112,6 +122,33 @@ pub fn process_buffer(
                 row_f32[px_out + 2] = b6;
             }
         });
+
+    // PASS 1.5: Local Layered Mask Adjustments (Linear, Radial, Luma Range)
+    if !recipe.layers.is_empty() {
+        let inv_w = 1.0 / (w as f32).max(1.0);
+        let inv_h = 1.0 / (h as f32).max(1.0);
+        f32_buf
+            .par_chunks_mut(w * 3)
+            .enumerate()
+            .for_each(|(y_idx, row_f32)| {
+                let v = (y_idx as f32 + 0.5) * inv_h;
+                for x in 0..w {
+                    let u = (x as f32 + 0.5) * inv_w;
+                    let px = x * 3;
+                    let (lr, lg, lb) = layers::apply_layers_pixel(
+                        row_f32[px],
+                        row_f32[px + 1],
+                        row_f32[px + 2],
+                        &recipe.layers,
+                        u,
+                        v,
+                    );
+                    row_f32[px] = lr;
+                    row_f32[px + 1] = lg;
+                    row_f32[px + 2] = lb;
+                }
+            });
+    }
 
     // PASS 2: Presence Engine (Texture, Clarity, Dehaze, DaVinci Midtone Detail)
     presence::apply_presence_ex(
@@ -134,12 +171,24 @@ pub fn process_buffer(
         recipe.denoise_col,
     );
 
-    // PASS 4: Lens Distortion Correction (if enabled)
+    // PASS 4: Photochemical Silver-Halide Film Grain
+    if recipe.grain_amount > 0.001 {
+        film_grain::apply_film_grain(
+            &mut f32_buf,
+            width,
+            height,
+            recipe.grain_amount,
+            recipe.grain_size,
+            recipe.grain_roughness,
+        );
+    }
+
+    // PASS 5: Lens Distortion Correction (if enabled)
     if recipe.lens_distortion.abs() >= 0.1 {
         f32_buf = detail::apply_lens_distortion(&f32_buf, w, h, 3, recipe.lens_distortion);
     }
 
-    // PASS 5: Defringe, Vignette & Final Quantization to 8-bit output
+    // PASS 6: Defringe, Vignette & Final Quantization to 8-bit output
     let mut output = vec![0u8; num_pixels * ch];
     output
         .par_chunks_mut(w * ch)
@@ -243,27 +292,33 @@ pub fn process_buffer_16_to_8_ex(
                 // 1. Tone & Dynamic range
                 let (r1, g1, b1) = tone::apply_tone_pixel(r_norm, g_norm, b_norm, recipe, exp_factor);
 
-                // 2. DaVinci Resolve 3-Way Color Wheels
-                let (r2, g2, b2) = color_grading::apply_color_wheels(r1, g1, b1, recipe);
+                // 2. DaVinci Resolve RGB Primary Matrix Mixer
+                let (r1_mix, g1_mix, b1_mix) = rgb_mixer::apply_rgb_mixer(r1, g1, b1, recipe);
 
-                // 3. 8-Band HSL Color Mixer
+                // 3. Capture One Pro Style Skin Tone Uniformity Engine
+                let (r1_skin, g1_skin, b1_skin) = skin_tone::apply_skin_tone_uniformity(r1_mix, g1_mix, b1_mix, recipe);
+
+                // 4. DaVinci Resolve 3-Way Color Wheels
+                let (r2, g2, b2) = color_grading::apply_color_wheels(r1_skin, g1_skin, b1_skin, recipe);
+
+                // 5. 8-Band HSL Color Mixer
                 let (r3, g3, b3) = color_grading::apply_hsl_mixer(r2, g2, b2, recipe);
 
-                // 4. DaVinci 3D LUT
+                // 6. DaVinci 3D LUT
                 let (r4, g4, b4) = if let Some(ref active_lut) = maybe_lut {
                     lut::apply_lut_pixel(r3, g3, b3, active_lut, recipe.lut_intensity)
                 } else {
                     (r3, g3, b3)
                 };
 
-                // 5. Authentic Film Simulations (Fujifilm X-Trans / GFX & Hasselblad HNCS / XPan)
+                // 7. Authentic Film Simulations (Fujifilm X-Trans / GFX & Hasselblad HNCS / XPan)
                 let (r5, g5, b5) = if film_sim != film_sim::FilmSimulation::None {
                     film_sim.apply_pixel(r4, g4, b4, recipe.film_sim_intensity)
                 } else {
                     (r4, g4, b4)
                 };
 
-                // 6. ACES 1.3 Gamut Compression if ACEScg or wide-gamut mode active
+                // 8. ACES 1.3 Gamut Compression if ACEScg or wide-gamut mode active
                 let (r6, g6, b6) = if working_space == aces::WorkingColorSpace::AcesCg || recipe.aces_tonemap {
                     aces::apply_aces_gamut_compression(r5, g5, b5)
                 } else {
@@ -275,6 +330,33 @@ pub fn process_buffer_16_to_8_ex(
                 row_f32[px_out + 2] = b6;
             }
         });
+
+    // PASS 1.5: Local Layered Mask Adjustments (Linear, Radial, Luma Range)
+    if !recipe.layers.is_empty() {
+        let inv_w = 1.0 / (w as f32).max(1.0);
+        let inv_h = 1.0 / (h as f32).max(1.0);
+        f32_buf
+            .par_chunks_mut(w * 3)
+            .enumerate()
+            .for_each(|(y_idx, row_f32)| {
+                let v = (y_idx as f32 + 0.5) * inv_h;
+                for x in 0..w {
+                    let u = (x as f32 + 0.5) * inv_w;
+                    let px = x * 3;
+                    let (lr, lg, lb) = layers::apply_layers_pixel(
+                        row_f32[px],
+                        row_f32[px + 1],
+                        row_f32[px + 2],
+                        &recipe.layers,
+                        u,
+                        v,
+                    );
+                    row_f32[px] = lr;
+                    row_f32[px + 1] = lg;
+                    row_f32[px + 2] = lb;
+                }
+            });
+    }
 
     // PASS 2: Presence Engine (Texture, Clarity, Dehaze, DaVinci Midtone Detail)
     presence::apply_presence_ex(
@@ -297,12 +379,24 @@ pub fn process_buffer_16_to_8_ex(
         recipe.denoise_col,
     );
 
-    // PASS 4: Lens Distortion Correction (if enabled)
+    // PASS 4: Photochemical Silver-Halide Film Grain
+    if recipe.grain_amount > 0.001 {
+        film_grain::apply_film_grain(
+            &mut f32_buf,
+            width,
+            height,
+            recipe.grain_amount,
+            recipe.grain_size,
+            recipe.grain_roughness,
+        );
+    }
+
+    // PASS 5: Lens Distortion Correction (if enabled)
     if recipe.lens_distortion.abs() >= 0.1 {
         f32_buf = detail::apply_lens_distortion(&f32_buf, w, h, 3, recipe.lens_distortion);
     }
 
-    // PASS 5: Defringe, Vignette & Final Quantization to 8-bit viewport output
+    // PASS 6: Defringe, Vignette & Final Quantization to 8-bit viewport output
     let mut output = vec![0u8; num_pixels * ch];
     output
         .par_chunks_mut(w * ch)
@@ -414,27 +508,33 @@ pub fn process_buffer_16_to_16(
                 // 1. Tone & Dynamic range
                 let (r1, g1, b1) = tone::apply_tone_pixel(r_norm, g_norm, b_norm, recipe, exp_factor);
 
-                // 2. DaVinci Resolve 3-Way Color Wheels
-                let (r2, g2, b2) = color_grading::apply_color_wheels(r1, g1, b1, recipe);
+                // 2. DaVinci Resolve RGB Primary Matrix Mixer
+                let (r1_mix, g1_mix, b1_mix) = rgb_mixer::apply_rgb_mixer(r1, g1, b1, recipe);
 
-                // 3. 8-Band HSL Color Mixer
+                // 3. Capture One Pro Style Skin Tone Uniformity Engine
+                let (r1_skin, g1_skin, b1_skin) = skin_tone::apply_skin_tone_uniformity(r1_mix, g1_mix, b1_mix, recipe);
+
+                // 4. DaVinci Resolve 3-Way Color Wheels
+                let (r2, g2, b2) = color_grading::apply_color_wheels(r1_skin, g1_skin, b1_skin, recipe);
+
+                // 5. 8-Band HSL Color Mixer
                 let (r3, g3, b3) = color_grading::apply_hsl_mixer(r2, g2, b2, recipe);
 
-                // 4. DaVinci 3D LUT
+                // 6. DaVinci 3D LUT
                 let (r4, g4, b4) = if let Some(ref active_lut) = maybe_lut {
                     lut::apply_lut_pixel(r3, g3, b3, active_lut, recipe.lut_intensity)
                 } else {
                     (r3, g3, b3)
                 };
 
-                // 5. Authentic Film Simulations (Fujifilm X-Trans / GFX & Hasselblad HNCS / XPan)
+                // 7. Authentic Film Simulations (Fujifilm X-Trans / GFX & Hasselblad HNCS / XPan)
                 let (r5, g5, b5) = if film_sim != film_sim::FilmSimulation::None {
                     film_sim.apply_pixel(r4, g4, b4, recipe.film_sim_intensity)
                 } else {
                     (r4, g4, b4)
                 };
 
-                // 6. ACES 1.3 Gamut Compression if ACEScg or wide-gamut mode active
+                // 8. ACES 1.3 Gamut Compression if ACEScg or wide-gamut mode active
                 let (r6, g6, b6) = if working_space == aces::WorkingColorSpace::AcesCg || recipe.aces_tonemap {
                     aces::apply_aces_gamut_compression(r5, g5, b5)
                 } else {
@@ -446,6 +546,33 @@ pub fn process_buffer_16_to_16(
                 row_f32[px_out + 2] = b6;
             }
         });
+
+    // PASS 1.5: Local Layered Mask Adjustments (Linear, Radial, Luma Range)
+    if !recipe.layers.is_empty() {
+        let inv_w = 1.0 / (w as f32).max(1.0);
+        let inv_h = 1.0 / (h as f32).max(1.0);
+        f32_buf
+            .par_chunks_mut(w * 3)
+            .enumerate()
+            .for_each(|(y_idx, row_f32)| {
+                let v = (y_idx as f32 + 0.5) * inv_h;
+                for x in 0..w {
+                    let u = (x as f32 + 0.5) * inv_w;
+                    let px = x * 3;
+                    let (lr, lg, lb) = layers::apply_layers_pixel(
+                        row_f32[px],
+                        row_f32[px + 1],
+                        row_f32[px + 2],
+                        &recipe.layers,
+                        u,
+                        v,
+                    );
+                    row_f32[px] = lr;
+                    row_f32[px + 1] = lg;
+                    row_f32[px + 2] = lb;
+                }
+            });
+    }
 
     // PASS 2: Presence Engine (Texture, Clarity, Dehaze, DaVinci Midtone Detail)
     presence::apply_presence_ex(
@@ -468,12 +595,24 @@ pub fn process_buffer_16_to_16(
         recipe.denoise_col,
     );
 
-    // PASS 4: Lens Distortion Correction (if enabled)
+    // PASS 4: Photochemical Silver-Halide Film Grain
+    if recipe.grain_amount > 0.001 {
+        film_grain::apply_film_grain(
+            &mut f32_buf,
+            width,
+            height,
+            recipe.grain_amount,
+            recipe.grain_size,
+            recipe.grain_roughness,
+        );
+    }
+
+    // PASS 5: Lens Distortion Correction (if enabled)
     if recipe.lens_distortion.abs() >= 0.1 {
         f32_buf = detail::apply_lens_distortion(&f32_buf, w, h, 3, recipe.lens_distortion);
     }
 
-    // PASS 5: Defringe, Vignette & Final Quantization to 16-bit master output
+    // PASS 6: Defringe, Vignette & Final Quantization to 16-bit master output
     let mut output = vec![0u16; num_pixels * ch];
     output
         .par_chunks_mut(w * ch)

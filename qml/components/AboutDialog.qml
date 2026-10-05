@@ -19,7 +19,7 @@ Rectangle {
     signal closeRequested()
 
     property string pluginName: "OmaStudio"
-    property string pluginVersion: "v2.0.0"
+    property string pluginVersion: "v2.1.0"
     property string pluginDescription: "Lightroom & DaVinci Resolve-Grade RAW Studio"
     property string pluginAuthor: "Ozan Özdil (@ozdil)"
     property string pluginLicense: "MIT Open Source License"

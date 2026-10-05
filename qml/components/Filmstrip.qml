@@ -17,6 +17,8 @@ Rectangle {
     property string currentFolder: "~/Downloads/yurt"
     property bool isDownloadingRemote: false
     property bool isListingFolder: false
+    property int activeRating: 0
+    property string activeFlag: "none"
 
     signal selectPhoto(string path, bool isRemote)
     signal navigateFolder(string remotePath)
@@ -486,6 +488,64 @@ Rectangle {
                                     font.pixelSize: 8
                                     font.weight: Font.Bold
                                     color: Theme.accentYellow
+                                }
+                            }
+
+                            // Rating Stars & Pick/Reject Flag Badges (Lightroom Culling Overlay)
+                            RowLayout {
+                                anchors.bottom: parent.bottom
+                                anchors.left: parent.left
+                                anchors.margins: 3
+                                spacing: 2
+                                visible: (root.activePhotoPath === modelData.path && (root.activeRating > 0 || root.activeFlag !== "none"))
+
+                                Rectangle {
+                                    visible: root.activeFlag === "pick"
+                                    implicitWidth: 14
+                                    implicitHeight: 14
+                                    radius: 2
+                                    color: Theme.accentGreen
+                                    Text {
+                                        anchors.centerIn: parent
+                                        text: "P"
+                                        textFormat: Text.PlainText
+                                        font.pixelSize: 8
+                                        font.weight: Font.Bold
+                                        color: Theme.bgBase
+                                    }
+                                }
+
+                                Rectangle {
+                                    visible: root.activeFlag === "reject"
+                                    implicitWidth: 14
+                                    implicitHeight: 14
+                                    radius: 2
+                                    color: Theme.highlightClip
+                                    Text {
+                                        anchors.centerIn: parent
+                                        text: "X"
+                                        textFormat: Text.PlainText
+                                        font.pixelSize: 8
+                                        font.weight: Font.Bold
+                                        color: "#ffffff"
+                                    }
+                                }
+
+                                Rectangle {
+                                    visible: root.activeRating > 0
+                                    implicitWidth: starsText.implicitWidth + 4
+                                    implicitHeight: 14
+                                    radius: 2
+                                    color: Qt.rgba(0, 0, 0, 0.75)
+                                    Text {
+                                        id: starsText
+                                        anchors.centerIn: parent
+                                        text: "*".repeat(root.activeRating)
+                                        textFormat: Text.PlainText
+                                        font.pixelSize: 9
+                                        font.weight: Font.Bold
+                                        color: Theme.accentYellow
+                                    }
                                 }
                             }
                         }

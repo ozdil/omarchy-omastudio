@@ -92,6 +92,36 @@ Rectangle {
     property string activeColorSpace: "sRGB"
     property bool activeAcesTonemap: false
 
+    // Capture One Pro Skin Tone Uniformity Engine
+    property bool skinToneEnabled: false
+    property real skinTargetHue: 50.0
+    property real skinHueRange: 32.0
+    property real skinUniformityHue: 0.0
+    property real skinUniformitySat: 0.0
+    property real skinAmountHue: 0.0
+    property real skinAmountSat: 0.0
+
+    // DaVinci Resolve RGB Primary Matrix Mixer
+    property bool rgbMixerEnabled: false
+    property bool rgbMixerMonochrome: false
+    property real mixerRedInR: 1.0
+    property real mixerGreenInR: 0.0
+    property real mixerBlueInR: 0.0
+    property real mixerRedInG: 0.0
+    property real mixerGreenInG: 1.0
+    property real mixerBlueInG: 0.0
+    property real mixerRedInB: 0.0
+    property real mixerGreenInB: 0.0
+    property real mixerBlueInB: 1.0
+
+    // Photochemical Silver-Halide Film Grain
+    property real grainAmount: 0.0
+    property real grainSize: 1.0
+    property real grainRoughness: 50.0
+
+    // Local Layered Adjustments & Masks
+    property var adjustmentLayers: []
+
     // Watermark & Branding State
     property bool watermarkEnabled: false
     property string watermarkType: "text"
@@ -297,6 +327,28 @@ Rectangle {
         root.activeFilmSimIntensity = 1.0;
         root.activeColorSpace = "sRGB";
         root.activeAcesTonemap = false;
+        root.skinToneEnabled = false;
+        root.skinTargetHue = 50.0;
+        root.skinHueRange = 32.0;
+        root.skinUniformityHue = 0.0;
+        root.skinUniformitySat = 0.0;
+        root.skinAmountHue = 0.0;
+        root.skinAmountSat = 0.0;
+        root.rgbMixerEnabled = false;
+        root.rgbMixerMonochrome = false;
+        root.mixerRedInR = 1.0;
+        root.mixerGreenInR = 0.0;
+        root.mixerBlueInR = 0.0;
+        root.mixerRedInG = 0.0;
+        root.mixerGreenInG = 1.0;
+        root.mixerBlueInG = 0.0;
+        root.mixerRedInB = 0.0;
+        root.mixerGreenInB = 0.0;
+        root.mixerBlueInB = 1.0;
+        root.grainAmount = 0.0;
+        root.grainSize = 1.0;
+        root.grainRoughness = 50.0;
+        root.adjustmentLayers = [];
         root.defringeVal = 0.0;
         root.lensDistortionVal = 0.0;
         root.cropX = 0.0;
@@ -383,6 +435,28 @@ Rectangle {
             "aces_tonemap": root.activeAcesTonemap,
             "film_simulation": root.activeFilmSimulation,
             "film_sim_intensity": root.activeFilmSimIntensity,
+            "skin_tone_enabled": root.skinToneEnabled,
+            "skin_target_hue": root.skinTargetHue,
+            "skin_hue_range": root.skinHueRange,
+            "skin_uniformity_hue": root.skinUniformityHue,
+            "skin_uniformity_sat": root.skinUniformitySat,
+            "skin_amount_hue": root.skinAmountHue,
+            "skin_amount_sat": root.skinAmountSat,
+            "rgb_mixer_enabled": root.rgbMixerEnabled,
+            "rgb_mixer_monochrome": root.rgbMixerMonochrome,
+            "mixer_red_in_r": root.mixerRedInR,
+            "mixer_green_in_r": root.mixerGreenInR,
+            "mixer_blue_in_r": root.mixerBlueInR,
+            "mixer_red_in_g": root.mixerRedInG,
+            "mixer_green_in_g": root.mixerGreenInG,
+            "mixer_blue_in_g": root.mixerBlueInG,
+            "mixer_red_in_b": root.mixerRedInB,
+            "mixer_green_in_b": root.mixerGreenInB,
+            "mixer_blue_in_b": root.mixerBlueInB,
+            "grain_amount": root.grainAmount,
+            "grain_size": root.grainSize,
+            "grain_roughness": root.grainRoughness,
+            "layers": root.adjustmentLayers,
             "defringe": root.defringeVal,
             "lens_distortion": root.lensDistortionVal,
             "crop_x": root.cropX,
@@ -449,6 +523,38 @@ Rectangle {
         if (r.aces_tonemap !== undefined) root.activeAcesTonemap = Boolean(r.aces_tonemap);
         if (r.film_simulation !== undefined) root.activeFilmSimulation = r.film_simulation || "none";
         if (r.film_sim_intensity !== undefined) root.activeFilmSimIntensity = Number(r.film_sim_intensity) || 1.0;
+
+        // Capture One Skin Tone Uniformity
+        if (r.skin_tone_enabled !== undefined) root.skinToneEnabled = Boolean(r.skin_tone_enabled);
+        if (r.skin_target_hue !== undefined) root.skinTargetHue = Number(r.skin_target_hue) || 50.0;
+        if (r.skin_hue_range !== undefined) root.skinHueRange = Number(r.skin_hue_range) || 32.0;
+        if (r.skin_uniformity_hue !== undefined) root.skinUniformityHue = Number(r.skin_uniformity_hue) || 0.0;
+        if (r.skin_uniformity_sat !== undefined) root.skinUniformitySat = Number(r.skin_uniformity_sat) || 0.0;
+        if (r.skin_amount_hue !== undefined) root.skinAmountHue = Number(r.skin_amount_hue) || 0.0;
+        if (r.skin_amount_sat !== undefined) root.skinAmountSat = Number(r.skin_amount_sat) || 0.0;
+
+        // DaVinci RGB Primary Mixer
+        if (r.rgb_mixer_enabled !== undefined) root.rgbMixerEnabled = Boolean(r.rgb_mixer_enabled);
+        if (r.rgb_mixer_monochrome !== undefined) root.rgbMixerMonochrome = Boolean(r.rgb_mixer_monochrome);
+        if (r.mixer_red_in_r !== undefined) root.mixerRedInR = Number(r.mixer_red_in_r) || 1.0;
+        if (r.mixer_green_in_r !== undefined) root.mixerGreenInR = Number(r.mixer_green_in_r) || 0.0;
+        if (r.mixer_blue_in_r !== undefined) root.mixerBlueInR = Number(r.mixer_blue_in_r) || 0.0;
+        if (r.mixer_red_in_g !== undefined) root.mixerRedInG = Number(r.mixer_red_in_g) || 0.0;
+        if (r.mixer_green_in_g !== undefined) root.mixerGreenInG = Number(r.mixer_green_in_g) || 1.0;
+        if (r.mixer_blue_in_g !== undefined) root.mixerBlueInG = Number(r.mixer_blue_in_g) || 0.0;
+        if (r.mixer_red_in_b !== undefined) root.mixerRedInB = Number(r.mixer_red_in_b) || 0.0;
+        if (r.mixer_green_in_b !== undefined) root.mixerGreenInB = Number(r.mixer_green_in_b) || 0.0;
+        if (r.mixer_blue_in_b !== undefined) root.mixerBlueInB = Number(r.mixer_blue_in_b) || 1.0;
+
+        // Silver-Halide Film Grain
+        if (r.grain_amount !== undefined) root.grainAmount = Number(r.grain_amount) || 0.0;
+        if (r.grain_size !== undefined) root.grainSize = Number(r.grain_size) || 1.0;
+        if (r.grain_roughness !== undefined) root.grainRoughness = Number(r.grain_roughness) || 50.0;
+
+        // Local Adjustment Layers
+        if (r.layers !== undefined && Array.isArray(r.layers)) {
+            root.adjustmentLayers = r.layers;
+        }
 
         // Optics
         if (r.defringe !== undefined) root.defringeVal = Number(r.defringe) || 0.0;
@@ -963,9 +1069,21 @@ Rectangle {
             isProMode: root.isProMode
             isSplitView: root.isSplitView
             isCropMode: viewport.isCropMode
+            photoRating: root.photoRating
+            photoFlag: root.photoFlag
             activePhotoName: {
                 var p = root.activePhotoPath.split("/");
                 return p[p.length - 1];
+            }
+            onRatingChanged: function(r) {
+                root.photoRating = r;
+                root.showToast("Rating: " + (r > 0 ? (r + " Stars") : "Cleared"), Theme.accentYellow);
+                root.saveSidecar();
+            }
+            onFlagChanged: function(f) {
+                root.photoFlag = f;
+                root.showToast("Flag: " + f.toUpperCase(), f === "pick" ? Theme.accentGreen : (f === "reject" ? Theme.highlightClip : Theme.textDim));
+                root.saveSidecar();
             }
             onToggleMode: root.isProMode = !root.isProMode
             onUndoClicked: root.undo()
@@ -1969,6 +2087,62 @@ Rectangle {
                                 onSliderMoved: function(v) { root.lensDistortionVal = v; root.requestRender() }
                             }
 
+                            // DaVinci Resolve RGB Primary Matrix Mixer
+                            Rectangle { Layout.fillWidth: true; height: 1; color: Theme.border }
+                            RgbMixerPanel {
+                                id: rgbMixerPanel
+                                Layout.fillWidth: true
+                                mixerEnabled: root.rgbMixerEnabled
+                                monochrome: root.rgbMixerMonochrome
+                                redInR: root.mixerRedInR
+                                greenInR: root.mixerGreenInR
+                                blueInR: root.mixerBlueInR
+                                redInG: root.mixerRedInG
+                                greenInG: root.mixerGreenInG
+                                blueInG: root.mixerBlueInG
+                                redInB: root.mixerRedInB
+                                greenInB: root.mixerGreenInB
+                                blueInB: root.mixerBlueInB
+                                onMixerChanged: {
+                                    root.rgbMixerEnabled = rgbMixerPanel.mixerEnabled;
+                                    root.rgbMixerMonochrome = rgbMixerPanel.monochrome;
+                                    root.mixerRedInR = rgbMixerPanel.redInR;
+                                    root.mixerGreenInR = rgbMixerPanel.greenInR;
+                                    root.mixerBlueInR = rgbMixerPanel.blueInR;
+                                    root.mixerRedInG = rgbMixerPanel.redInG;
+                                    root.mixerGreenInG = rgbMixerPanel.greenInG;
+                                    root.mixerBlueInG = rgbMixerPanel.blueInG;
+                                    root.mixerRedInB = rgbMixerPanel.redInB;
+                                    root.mixerGreenInB = rgbMixerPanel.greenInB;
+                                    root.mixerBlueInB = rgbMixerPanel.blueInB;
+                                    root.requestRender();
+                                }
+                            }
+
+                            // Capture One Skin Tone Uniformity Engine
+                            Rectangle { Layout.fillWidth: true; height: 1; color: Theme.border }
+                            SkinTonePanel {
+                                id: skinTonePanel
+                                Layout.fillWidth: true
+                                skinToneEnabled: root.skinToneEnabled
+                                skinTargetHue: root.skinTargetHue
+                                skinHueRange: root.skinHueRange
+                                skinUniformityHue: root.skinUniformityHue
+                                skinUniformitySat: root.skinUniformitySat
+                                skinAmountHue: root.skinAmountHue
+                                skinAmountSat: root.skinAmountSat
+                                onSkinToneChanged: {
+                                    root.skinToneEnabled = skinTonePanel.skinToneEnabled;
+                                    root.skinTargetHue = skinTonePanel.skinTargetHue;
+                                    root.skinHueRange = skinTonePanel.skinHueRange;
+                                    root.skinUniformityHue = skinTonePanel.skinUniformityHue;
+                                    root.skinUniformitySat = skinTonePanel.skinUniformitySat;
+                                    root.skinAmountHue = skinTonePanel.skinAmountHue;
+                                    root.skinAmountSat = skinTonePanel.skinAmountSat;
+                                    root.requestRender();
+                                }
+                            }
+
                             // Film Simulation Panel (Fujifilm & Hasselblad)
                             Rectangle { Layout.fillWidth: true; height: 1; color: Theme.border }
                             FilmSimulationPanel {
@@ -1979,6 +2153,34 @@ Rectangle {
                                 onSimulationChanged: function(id, intensity) {
                                     root.activeFilmSimulation = id;
                                     root.activeFilmSimIntensity = intensity;
+                                    root.requestRender();
+                                }
+                            }
+
+                            // Photochemical Silver-Halide Film Grain
+                            Rectangle { Layout.fillWidth: true; height: 1; color: Theme.border }
+                            FilmGrainPanel {
+                                id: filmGrainPanel
+                                Layout.fillWidth: true
+                                grainAmount: root.grainAmount
+                                grainSize: root.grainSize
+                                grainRoughness: root.grainRoughness
+                                onGrainChanged: {
+                                    root.grainAmount = filmGrainPanel.grainAmount;
+                                    root.grainSize = filmGrainPanel.grainSize;
+                                    root.grainRoughness = filmGrainPanel.grainRoughness;
+                                    root.requestRender();
+                                }
+                            }
+
+                            // Local Layered Adjustments (Linear / Radial / Luma Range Masks)
+                            Rectangle { Layout.fillWidth: true; height: 1; color: Theme.border }
+                            LayersPanel {
+                                id: layersPanel
+                                Layout.fillWidth: true
+                                layersList: root.adjustmentLayers
+                                onLayersChanged: {
+                                    root.adjustmentLayers = layersPanel.layersList;
                                     root.requestRender();
                                 }
                             }
@@ -2128,6 +2330,8 @@ Rectangle {
             Layout.fillWidth: true
             photoList: root.photoList
             activePhotoPath: root.activePhotoPath
+            activeRating: root.photoRating
+            activeFlag: root.photoFlag
             isDownloadingRemote: root.isDownloadingRemote
             isListingFolder: root.isListingFolder
             onSelectPhoto: function(path, isRemote) {

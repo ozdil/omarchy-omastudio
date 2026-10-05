@@ -123,6 +123,74 @@ pub struct Recipe {
     pub film_simulation: String, // "fuji_velvia", "fuji_classic_chrome", "hasselblad_hncs", etc.
     #[serde(default = "default_film_sim_intensity")]
     pub film_sim_intensity: f32, // 0.0 to 1.0 (Default: 1.0)
+
+    // Capture One Pro Skin Tone Uniformity Engine
+    #[serde(default)]
+    pub skin_tone_enabled: bool,
+    #[serde(default = "default_skin_target_hue")]
+    pub skin_target_hue: f32, // Oklch target hue (Default: 50.0 deg)
+    #[serde(default = "default_skin_hue_range")]
+    pub skin_hue_range: f32, // Tolerance width (Default: 32.0 deg)
+    #[serde(default)]
+    pub skin_uniformity_hue: f32, // 0.0 to 100.0
+    #[serde(default)]
+    pub skin_uniformity_sat: f32, // 0.0 to 100.0
+    #[serde(default)]
+    pub skin_amount_hue: f32, // -100.0 to +100.0
+    #[serde(default)]
+    pub skin_amount_sat: f32, // -100.0 to +100.0
+
+    // DaVinci Resolve RGB Primary Matrix Mixer
+    #[serde(default)]
+    pub rgb_mixer_enabled: bool,
+    #[serde(default)]
+    pub rgb_mixer_monochrome: bool,
+    #[serde(default = "default_one")]
+    pub mixer_red_in_r: f32,
+    #[serde(default)]
+    pub mixer_green_in_r: f32,
+    #[serde(default)]
+    pub mixer_blue_in_r: f32,
+    #[serde(default)]
+    pub mixer_red_in_g: f32,
+    #[serde(default = "default_one")]
+    pub mixer_green_in_g: f32,
+    #[serde(default)]
+    pub mixer_blue_in_g: f32,
+    #[serde(default)]
+    pub mixer_red_in_b: f32,
+    #[serde(default)]
+    pub mixer_green_in_b: f32,
+    #[serde(default = "default_one")]
+    pub mixer_blue_in_b: f32,
+
+    // Photochemical Silver-Halide Film Grain
+    #[serde(default)]
+    pub grain_amount: f32, // 0.0 to 100.0 (Default: 0.0)
+    #[serde(default = "default_one")]
+    pub grain_size: f32, // 1.0 to 3.0 (Default: 1.0)
+    #[serde(default = "default_fifty")]
+    pub grain_roughness: f32, // 0.0 to 100.0 (Default: 50.0)
+
+    // Local Adjustment Layers (Linear, Radial, Luma Range Masks)
+    #[serde(default)]
+    pub layers: Vec<crate::pipeline::layers::AdjustmentLayer>,
+}
+
+fn default_skin_target_hue() -> f32 {
+    50.0
+}
+
+fn default_skin_hue_range() -> f32 {
+    32.0
+}
+
+fn default_one() -> f32 {
+    1.0
+}
+
+fn default_fifty() -> f32 {
+    50.0
 }
 
 fn default_color_space() -> String {
@@ -209,6 +277,28 @@ impl Default for Recipe {
             aces_tonemap: false,
             film_simulation: String::new(),
             film_sim_intensity: 1.0,
+            skin_tone_enabled: false,
+            skin_target_hue: 50.0,
+            skin_hue_range: 32.0,
+            skin_uniformity_hue: 0.0,
+            skin_uniformity_sat: 0.0,
+            skin_amount_hue: 0.0,
+            skin_amount_sat: 0.0,
+            rgb_mixer_enabled: false,
+            rgb_mixer_monochrome: false,
+            mixer_red_in_r: 1.0,
+            mixer_green_in_r: 0.0,
+            mixer_blue_in_r: 0.0,
+            mixer_red_in_g: 0.0,
+            mixer_green_in_g: 1.0,
+            mixer_blue_in_g: 0.0,
+            mixer_red_in_b: 0.0,
+            mixer_green_in_b: 0.0,
+            mixer_blue_in_b: 1.0,
+            grain_amount: 0.0,
+            grain_size: 1.0,
+            grain_roughness: 50.0,
+            layers: Vec::new(),
         }
     }
 }
