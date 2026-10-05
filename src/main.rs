@@ -247,7 +247,7 @@ fn main() {
             let raw_path = &args[2];
             let mut recipe = Recipe::default();
             let mut split = 0.0f32;
-            let mut out_path = "/dev/shm/omastudio_preview.ppm".to_string();
+            let mut out_path = security::get_secure_preview_dir().join("omastudio_preview.ppm").to_string_lossy().to_string();
 
             let mut idx = 3;
             while idx < args.len() {
@@ -836,26 +836,26 @@ fn render_file(raw_path: &str, recipe: &Recipe, split: f32, out_path: &str) -> R
 
     // Write output image (PPM or PNG/JPG)
     let dest_path = Path::new(out_path);
-    if let Some(parent) = dest_path.parent() {
-        let _ = security::ensure_secure_dir(parent);
-    }
-
     if out_path.ends_with(".ppm") {
-        let mut f = std::fs::File::create(dest_path)
-            .map_err(|e| format!("Failed to create PPM: {}", e))?;
-        use std::os::unix::fs::PermissionsExt;
-        let _ = f.set_permissions(std::fs::Permissions::from_mode(0o600));
-        write!(f, "P6\n{} {}\n255\n", preview.width, preview.height)
-            .map_err(|e| format!("Failed to write PPM header: {}", e))?;
-        f.write_all(&final_buf)
-            .map_err(|e| format!("Failed to write PPM body: {}", e))?;
+        let mut ppm_bytes = format!("P6\n{} {}\n255\n", preview.width, preview.height).into_bytes();
+        ppm_bytes.extend_from_slice(&final_buf);
+        security::atomic_write_secure(dest_path, &ppm_bytes)
+            .map_err(|e| format!("Failed to write PPM: {}", e))?;
     } else {
         let img: image::ImageBuffer<image::Rgb<u8>, Vec<u8>> = image::ImageBuffer::from_raw(
             preview.width,
             preview.height,
             final_buf,
         ).ok_or_else(|| "Failed to create ImageBuffer".to_string())?;
-        img.save(dest_path)
+        let mut encoded = Vec::new();
+        let fmt = if out_path.ends_with(".png") {
+            image::ImageFormat::Png
+        } else {
+            image::ImageFormat::Jpeg
+        };
+        img.write_to(&mut std::io::Cursor::new(&mut encoded), fmt)
+            .map_err(|e| format!("Failed to encode preview: {}", e))?;
+        security::atomic_write_secure(dest_path, &encoded)
             .map_err(|e| format!("Failed to save preview: {}", e))?;
     }
 
@@ -1113,18 +1113,7 @@ fn run_daemon() {
                 // Drop cache lock immediately so other daemon queries or inspection are never blocked
                 drop(c);
 
-                let uid = unsafe { libc::getuid() };
-                let shm_dir = Path::new("/dev/shm");
-                let base_dir = if shm_dir.exists() && shm_dir.is_dir() {
-                    let user_shm = PathBuf::from(format!("/dev/shm/omastudio-{}", uid));
-                    let _ = security::ensure_secure_dir(&user_shm);
-                    user_shm
-                } else {
-                    let home = env::var("HOME").unwrap_or_else(|_| ".".to_string());
-                    let cache_dir = PathBuf::from(home).join(".cache/omastudio");
-                    let _ = security::ensure_secure_dir(&cache_dir);
-                    cache_dir
-                };
+                let base_dir = security::get_secure_preview_dir();
 
                 let out_dest = cmd_obj.out.unwrap_or_else(|| {
                     base_dir.join(format!("omastudio_preview_{}.ppm", next_slot)).to_string_lossy().to_string()
@@ -1159,24 +1148,25 @@ fn run_daemon() {
                 };
 
                 let dest_path = Path::new(&out_dest);
-                if let Some(parent) = dest_path.parent() {
-                    let _ = security::ensure_secure_dir(parent);
-                }
-
                 if out_dest.ends_with(".ppm") {
-                    if let Ok(mut f) = std::fs::File::create(dest_path) {
-                        use std::os::unix::fs::PermissionsExt;
-                        let _ = f.set_permissions(std::fs::Permissions::from_mode(0o600));
-                        let _ = write!(f, "P6\n{} {}\n255\n", width, height);
-                        let _ = f.write_all(&final_buf);
-                    }
+                    let mut ppm_bytes = format!("P6\n{} {}\n255\n", width, height).into_bytes();
+                    ppm_bytes.extend_from_slice(&final_buf);
+                    let _ = security::atomic_write_secure(dest_path, &ppm_bytes);
                 } else {
                     if let Some(img) = image::ImageBuffer::<image::Rgb<u8>, Vec<u8>>::from_raw(
                         width,
                         height,
                         final_buf,
                     ) {
-                        let _ = img.save(dest_path);
+                        let mut encoded = Vec::new();
+                        let fmt = if out_dest.ends_with(".png") {
+                            image::ImageFormat::Png
+                        } else {
+                            image::ImageFormat::Jpeg
+                        };
+                        if img.write_to(&mut std::io::Cursor::new(&mut encoded), fmt).is_ok() {
+                            let _ = security::atomic_write_secure(dest_path, &encoded);
+                        }
                     }
                 }
 

@@ -392,6 +392,18 @@ impl SecureDir {
                         ));
                     }
 
+                    // Reject any component owned by a foreign non-root user
+                    if stat.st_uid != current_uid && stat.st_uid != 0 {
+                        unsafe {
+                            libc::close(next_fd);
+                            libc::close(cur_fd);
+                        }
+                        return Err(io::Error::new(
+                            io::ErrorKind::PermissionDenied,
+                            "Path component is owned by a foreign user",
+                        ));
+                    }
+
                     // If owned by current user, enforce strict 0700 permissions descriptor-bound
                     if stat.st_uid == current_uid && (stat.st_mode & 0o777) != 0o700 {
                         let _ = unsafe { libc::fchmod(next_fd, 0o700) };
@@ -756,5 +768,27 @@ pub fn verify_secure_open_file(file: &fs::File, max_bytes: usize) -> io::Result<
     }
 
     Ok(size as u64)
+}
+
+/// Returns a secure user preview directory with strict 0700 permissions and UID ownership verification.
+/// Prefers /dev/shm/omastudio-<uid> if safe, falling back to ~/.cache/omastudio.
+pub fn get_secure_preview_dir() -> std::path::PathBuf {
+    use std::os::unix::fs::MetadataExt;
+    let uid = unsafe { libc::getuid() };
+    let shm_dir = Path::new("/dev/shm");
+    if shm_dir.exists() && shm_dir.is_dir() {
+        let user_shm = std::path::PathBuf::from(format!("/dev/shm/omastudio-{}", uid));
+        if ensure_secure_dir(&user_shm).is_ok() {
+            if let Ok(meta) = fs::symlink_metadata(&user_shm) {
+                if meta.file_type().is_dir() && !meta.file_type().is_symlink() && meta.uid() == uid {
+                    return user_shm;
+                }
+            }
+        }
+    }
+    let home = std::env::var("HOME").unwrap_or_else(|_| ".".to_string());
+    let cache_dir = std::path::PathBuf::from(home).join(".cache/omastudio");
+    let _ = ensure_secure_dir(&cache_dir);
+    cache_dir
 }
 

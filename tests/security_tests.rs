@@ -284,3 +284,24 @@ fn test_secure_dir_hierarchy_rejects_symlinks() {
     let _ = fs::remove_dir_all(&base_dir);
 }
 
+#[test]
+fn test_preview_dir_ownership_and_atomic_write() {
+    let preview_dir = get_secure_preview_dir();
+    assert!(preview_dir.exists(), "Preview directory must exist");
+    let meta = fs::symlink_metadata(&preview_dir).expect("Preview dir metadata");
+    assert!(!meta.file_type().is_symlink(), "Preview dir must not be a symlink");
+    let current_uid = unsafe { libc::getuid() };
+    assert_eq!(std::os::unix::fs::MetadataExt::uid(&meta), current_uid, "Preview dir must be owned by current user");
+
+    let test_ppm = preview_dir.join("test_secure_preview.ppm");
+    let dummy_ppm = b"P6\n2 2\n255\n\xff\x00\x00\x00\xff\x00\x00\x00\xff\xff\xff\xff";
+    atomic_write_secure(&test_ppm, dummy_ppm).expect("Write secure preview PPM");
+
+    let file_meta = fs::symlink_metadata(&test_ppm).expect("PPM metadata");
+    assert!(!file_meta.file_type().is_symlink(), "Preview file must not be a symlink");
+    let file_mode = file_meta.permissions().mode() & 0o777;
+    assert_eq!(file_mode, 0o600, "Preview file must have mode 0600");
+
+    let _ = fs::remove_file(test_ppm);
+}
+
