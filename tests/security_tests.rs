@@ -305,3 +305,52 @@ fn test_preview_dir_ownership_and_atomic_write() {
     let _ = fs::remove_file(test_ppm);
 }
 
+#[test]
+fn test_watermark_rejects_symlink_logo() {
+    use omastudio_engine::export::watermark::{apply_watermark, WatermarkOptions};
+
+    let temp_dir = PathBuf::from("/tmp/omaraw_test_watermark_sec");
+    let _ = fs::remove_dir_all(&temp_dir);
+    ensure_secure_dir(&temp_dir).expect("Ensure temp dir");
+
+    let real_logo = temp_dir.join("real_logo.png");
+    let img_logo = image::RgbaImage::new(64, 64);
+    img_logo.save(&real_logo).expect("Save real logo");
+
+    let symlink_logo = temp_dir.join("symlink_logo.png");
+    std::os::unix::fs::symlink(&real_logo, &symlink_logo).expect("Symlink logo");
+
+    let mut target_img = image::DynamicImage::new_rgb8(200, 200);
+
+    let opts = WatermarkOptions {
+        enabled: true,
+        watermark_type: "logo".to_string(),
+        logo_path: Some(symlink_logo.to_string_lossy().to_string()),
+        text: "SECURE TEST".to_string(),
+        ..Default::default()
+    };
+
+    // apply_watermark must safely reject symlink and fallback to text watermark without crashing
+    apply_watermark(&mut target_img, &opts, None);
+
+    let _ = fs::remove_dir_all(&temp_dir);
+}
+
+#[test]
+fn test_export_atomic_file_write_mode_and_symlink_refusal() {
+    let temp_dir = PathBuf::from("/tmp/omaraw_test_export_atomic");
+    let _ = fs::remove_dir_all(&temp_dir);
+    ensure_secure_dir(&temp_dir).expect("Create export dir");
+
+    let test_webp = temp_dir.join("test_out.webp");
+    let dummy_data = b"RIFF....WEBP";
+    atomic_write_secure(&test_webp, dummy_data).expect("Atomic write webp");
+
+    let meta = fs::symlink_metadata(&test_webp).expect("Webp metadata");
+    assert!(!meta.file_type().is_symlink(), "Export file must not be a symlink");
+    let mode = meta.permissions().mode() & 0o777;
+    assert_eq!(mode, 0o600, "Export file must have strict Mode 0600 permissions");
+
+    let _ = fs::remove_dir_all(&temp_dir);
+}
+

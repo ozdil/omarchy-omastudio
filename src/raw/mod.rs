@@ -322,9 +322,22 @@ impl RawImage {
         match &self.backend {
             RawBackend::Raster { img } => {
                 let thumb = img.thumbnail(400, 400);
+                let mut buf = std::io::Cursor::new(Vec::new());
+                let ext = dest
+                    .extension()
+                    .and_then(|s| s.to_str())
+                    .unwrap_or("jpg")
+                    .to_lowercase();
+                let fmt = match ext.as_str() {
+                    "png" => image::ImageFormat::Png,
+                    "webp" => image::ImageFormat::WebP,
+                    _ => image::ImageFormat::Jpeg,
+                };
                 thumb
-                    .save(dest)
-                    .map_err(|e| format!("Failed to save raster thumbnail: {}", e))?;
+                    .write_to(&mut buf, fmt)
+                    .map_err(|e| format!("Failed to encode raster thumbnail: {}", e))?;
+                crate::security::atomic_write_secure(dest, &buf.into_inner())
+                    .map_err(|e| format!("Failed to securely save raster thumbnail: {}", e))?;
                 Ok(())
             }
             RawBackend::LibRaw(handle) => {

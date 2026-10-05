@@ -153,6 +153,14 @@ pub fn export_photo<P: AsRef<Path>>(
             dyn_img.save(&tmp_png)
                 .map_err(|e| format!("Failed to save temporary PNG for JXL: {}", e))?;
 
+            struct TmpPngGuard(PathBuf);
+            impl Drop for TmpPngGuard {
+                fn drop(&mut self) {
+                    let _ = fs::remove_file(&self.0);
+                }
+            }
+            let _guard = TmpPngGuard(tmp_png.clone());
+
             let mut cmd = secure_command("cjxl");
             let distance = ((100 - options.quality.clamp(1, 100)) as f32 / 10.0).to_string();
             cmd.arg("-d")
@@ -165,8 +173,6 @@ pub fn export_photo<P: AsRef<Path>>(
 
             let (code, _, stderr) = run_bounded_command(cmd, Duration::from_secs(60))
                 .map_err(|e| format!("Failed to execute cjxl: {}", e))?;
-
-            let _ = fs::remove_file(&tmp_png);
 
             if code != 0 {
                 return Err(format!("cjxl failed: {}", String::from_utf8_lossy(&stderr)));
@@ -181,6 +187,14 @@ pub fn export_photo<P: AsRef<Path>>(
             let tmp_png = expanded_dir.join(format!(".tmp_{}_{}_{}.png", stem, pid, rand_suffix));
             dyn_img.save(&tmp_png)
                 .map_err(|e| format!("Failed to save temporary PNG for AVIF: {}", e))?;
+
+            struct TmpPngGuard(PathBuf);
+            impl Drop for TmpPngGuard {
+                fn drop(&mut self) {
+                    let _ = fs::remove_file(&self.0);
+                }
+            }
+            let _guard = TmpPngGuard(tmp_png.clone());
 
             let mut cmd = secure_command("avifenc");
             let speed = "4";
@@ -207,39 +221,42 @@ pub fn export_photo<P: AsRef<Path>>(
                     .arg(&final_dest);
                 let _ = run_bounded_command(f_cmd, Duration::from_secs(30));
             }
-
-            let _ = fs::remove_file(&tmp_png);
         }
         "webp" => {
-            let file = fs::File::create(&final_dest)
-                .map_err(|e| format!("Failed to create WebP file: {}", e))?;
+            let mut buf = std::io::Cursor::new(Vec::new());
             let dyn_rgb8 = DynamicImage::ImageRgb8(dyn_img.to_rgb8());
-            dyn_rgb8.write_to(&mut std::io::BufWriter::new(file), image::ImageFormat::WebP)
+            dyn_rgb8.write_to(&mut buf, image::ImageFormat::WebP)
                 .map_err(|e| format!("Failed to encode WebP: {}", e))?;
+            crate::security::atomic_write_secure(&final_dest, &buf.into_inner())
+                .map_err(|e| format!("Failed to securely write WebP file: {}", e))?;
         }
         "tiff" | "tif" => {
-            let file = fs::File::create(&final_dest)
-                .map_err(|e| format!("Failed to create TIFF file: {}", e))?;
-            dyn_img.write_to(&mut std::io::BufWriter::new(file), image::ImageFormat::Tiff)
+            let mut buf = std::io::Cursor::new(Vec::new());
+            dyn_img.write_to(&mut buf, image::ImageFormat::Tiff)
                 .map_err(|e| format!("Failed to encode 16-bit TIFF: {}", e))?;
+            crate::security::atomic_write_secure(&final_dest, &buf.into_inner())
+                .map_err(|e| format!("Failed to securely write TIFF file: {}", e))?;
         }
         "png" => {
-            let file = fs::File::create(&final_dest)
-                .map_err(|e| format!("Failed to create PNG file: {}", e))?;
-            dyn_img.write_to(&mut std::io::BufWriter::new(file), image::ImageFormat::Png)
+            let mut buf = std::io::Cursor::new(Vec::new());
+            dyn_img.write_to(&mut buf, image::ImageFormat::Png)
                 .map_err(|e| format!("Failed to encode 16-bit PNG: {}", e))?;
+            crate::security::atomic_write_secure(&final_dest, &buf.into_inner())
+                .map_err(|e| format!("Failed to securely write PNG file: {}", e))?;
         }
         "jpeg" | "jpg" => {
-            let file = fs::File::create(&final_dest)
-                .map_err(|e| format!("Failed to create JPEG file: {}", e))?;
-            let mut writer = std::io::BufWriter::new(file);
-            let encoder = image::codecs::jpeg::JpegEncoder::new_with_quality(
-                &mut writer,
-                options.quality.clamp(1, 100) as u8,
-            );
-            let dyn_rgb8 = DynamicImage::ImageRgb8(dyn_img.to_rgb8());
-            dyn_rgb8.write_with_encoder(encoder)
-                .map_err(|e| format!("Failed to encode JPEG: {}", e))?;
+            let mut buf = std::io::Cursor::new(Vec::new());
+            {
+                let encoder = image::codecs::jpeg::JpegEncoder::new_with_quality(
+                    &mut buf,
+                    options.quality.clamp(1, 100) as u8,
+                );
+                let dyn_rgb8 = DynamicImage::ImageRgb8(dyn_img.to_rgb8());
+                dyn_rgb8.write_with_encoder(encoder)
+                    .map_err(|e| format!("Failed to encode JPEG: {}", e))?;
+            }
+            crate::security::atomic_write_secure(&final_dest, &buf.into_inner())
+                .map_err(|e| format!("Failed to securely write JPEG file: {}", e))?;
         }
         _ => return Err(format!("Unsupported export format: {}", fmt)),
     }

@@ -723,7 +723,7 @@ pub fn update_desktop_oma_id_qr(state_dir: &std::path::Path) -> Result<(std::pat
 
     // Write SVG using built-in generator or qrencode
     let svg_data = generate_fallback_qr_svg(&qr_content);
-    let _ = std::fs::write(&svg_file, &svg_data);
+    let _ = crate::security::atomic_write_secure(&svg_file, svg_data.as_bytes());
 
     // Try qrencode for high-quality PNG and SVG if available
     let mut cmd_svg = crate::security::secure_command("qrencode");

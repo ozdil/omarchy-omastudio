@@ -246,13 +246,26 @@ pub fn apply_watermark(
     // Determine watermark graphic (RGBA buffer)
     let (wm_buf, wm_w, wm_h) = if opts.watermark_type == "logo" {
         if let Some(ref path) = opts.logo_path {
-            if let Ok(logo_img) = image::open(path) {
-                let target_w = (img_w as f32 * 0.15 * (opts.size as f32 / 14.0)).round() as u32;
-                let resized = logo_img.resize(target_w.max(32), target_w.max(32), image::imageops::FilterType::Lanczos3);
-                let rgba = resized.to_rgba8();
-                let w = rgba.width();
-                let h = rgba.height();
-                (rgba.into_raw(), w, h)
+            let p = std::path::Path::new(path);
+            let safe_logo = crate::security::verify_safe_file(p).is_ok()
+                && std::fs::symlink_metadata(p)
+                    .map(|m| m.len() <= 50 * 1024 * 1024)
+                    .unwrap_or(false);
+
+            if safe_logo {
+                if let Ok(logo_img) = image::open(p) {
+                    let target_w = (img_w as f32 * 0.15 * (opts.size as f32 / 14.0)).round() as u32;
+                    let resized = logo_img.resize(target_w.max(32), target_w.max(32), image::imageops::FilterType::Lanczos3);
+                    let rgba = resized.to_rgba8();
+                    let w = rgba.width();
+                    let h = rgba.height();
+                    (rgba.into_raw(), w, h)
+                } else {
+                    let text = resolve_watermark_text(&opts.text, meta);
+                    let fg = parse_hex_color(&opts.color);
+                    let scale = ((img_w.max(img_h) as f32 / 1200.0) * (opts.size as f32 / 14.0)).round().max(1.0) as u32;
+                    render_text_to_rgba(&text, scale, fg, opts.drop_shadow)
+                }
             } else {
                 let text = resolve_watermark_text(&opts.text, meta);
                 let fg = parse_hex_color(&opts.color);
