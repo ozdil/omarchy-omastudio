@@ -138,7 +138,32 @@ flowchart LR
 * **3D LUT Engine (.cube):** Hardware-grade trilinear interpolation engine supporting standard `.cube` Look-Up Tables.
 * **Local Grade Versions (A/B/C/D):** Hotkey-driven (`Alt + 1..4`) non-destructive recipe branching with instant cloning.
 
-### 8. Wayland & Hyprland 120Hz/144Hz Zero-Tear Architecture
+### 8. Capture One-Grade Skin Tone Uniformity
+* **Perceptual Oklch Skin Line:** Calibrated around 50° hue angle with raised-cosine membership weighting to isolate natural human complexion without spilling into hair, lips, or background.
+* **Hue & Saturation Homogenization:** Smooths uneven skin tones, redness, and color shifts toward a target reference while preserving micro-tonal depth and organic texture.
+* **Non-Destructive Range & Falloff:** Full parametric control over skin hue target, hue uniformity amount, and saturation uniformity amount.
+
+### 9. DaVinci 3x3 RGB Primary Matrix Mixer
+* **Colorist Cross-Talk Matrix:** Full $3 \times 3$ primary channel mixing matrix allowing individual red, green, and blue output channels to blend proportions of input R, G, and B.
+* **Monochrome Density Simulation:** Preserves luminance consistency across channels while crafting stylized print looks, cross-process bleach-bypass, and classic orthochromatic/panchromatic renderings.
+* **Preset Profiles:** One-click presets for Panchromatic, Orthochromatic, Infrared, and Bleach Bypass workflows.
+
+### 10. Silver-Halide Photochemical Film Grain
+* **Luminance-Dependent Grain Response:** Photochemical parabolic curve ($4.0 \cdot Y \cdot (1 - Y)$) concentrating organic grain in the midtones while rolling off gracefully in deep shadows and specular highlights.
+* **Physical Grain Structure:** Parametric control over grain amount (0-100), grain size (0.5 to 3.0), and roughness (spectral high-frequency distribution) using deterministic hash distribution.
+
+### 11. Local Layered Mask Adjustments
+* **Linear Gradient Masks:** Parametric ramp masks with customizable position, rotation angle, and feather transition for sky darkening and horizon balance.
+* **Radial Gradient Masks:** Elliptical masks with independent center coordinates, horizontal/vertical radius, rotation, and feather falloff for subject pop and vignettes.
+* **Luma Range Masks:** Targeted tonal masks isolating highlights, shadows, or midtone ranges with smooth feather boundaries.
+* **Targeted Corrections:** Each layer applies localized exposure, contrast, saturation, and temperature tint adjustments.
+
+### 12. Lightroom Studio Culling, Rating & Batch Management
+* **Instant 1-5 Star Ratings & Pick/Reject Flags:** Keyboard-driven rating workflow (`1`-`5` for stars, `0` to clear, `P` for Pick, `X` for Reject, `U` to unflag).
+* **Filmstrip Visual Overlays:** Visual badge markers for flagged and rated images directly on filmstrip thumbnails.
+* **High-Speed Batch Sync:** Copy entire adjustment recipes with `Ctrl + Shift + C` and paste across single or multiple candidate photos with `Ctrl + Shift + V`.
+
+### 13. Wayland & Hyprland 120Hz/144Hz Zero-Tear Architecture
 * **Double-Buffered Shared Memory:** `/dev/shm` ping-pong frame buffers eliminate render flickering during slider adjustments.
 * **Mac-Calibrated Touchpad Ergonomics:** Continuous logarithmic pinch-to-zoom, 3.5-degree deadzone rotation guard, and kinetic panning.
 
@@ -194,6 +219,11 @@ omastudio
 * `Ctrl + O`: Open RAW image dialog
 * `Ctrl + S`: Save adjustment recipe sidecar (`.omastudio`, Mode 0600)
 * `Alt + 1..4`: Switch between Grade Versions (Version A, B, C, D)
+* `1` - `5`: Set Star Rating (1 to 5 Stars) on selected photo
+* `0`: Clear Star Rating
+* `P`: Flag photo as Pick
+* `X`: Flag photo as Reject
+* `U`: Clear Pick/Reject flag
 * `C`: Toggle Crop & Composition mode (Rule of Thirds, Golden Ratio, Fibonacci)
 * `Y`: Toggle Split Before / After (A|B) comparison
 * `Ctrl + Shift + C`: Copy color & tone adjustments to clipboard

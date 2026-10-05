@@ -138,7 +138,32 @@ flowchart LR
 * **3D LUT Motoru (.cube):** Donanım düzeyinde trilineer enterpolasyon ve yerleşik sinema profilleri.
 * **Yerel Derecelendirme Sürümleri (A/B/C/D):** `Alt + 1..4` kısayollarıyla anında sürüm dallanması ve klonlama.
 
-### 8. Wayland & Hyprland 120Hz/144Hz Sıfır Titreme Mimarisi
+### 8. Capture One Kalitesinde Ten Rengi Tekdüzeliği (Skin Tone Uniformity)
+* **Algısal Oklch Ten Çizgisi:** 50° renk açısı ve yükseltilmiş kosinüs (raised-cosine) üyelik fonksiyonu ile insan ten tonlarını saç, dudak veya arka plana taşmadan hassasiyetle izole eder.
+* **Ton ve Doygunluk Homojenleştirme:** Doğal dokuyu ve mikro geçişleri kaybetmeden ciltteki kızarıklık, leke ve renk dalgalanmalarını hedef referans renge pürüzsüzce yaklaştırır.
+* **Kayıpsız Ayar Aralığı:** Hedef ten açısı, ton homojenlik miktarı ve doygunluk homojenlik miktarı üzerinde tam parametrik denetim.
+
+### 9. DaVinci 3x3 RGB Birincil Matris Mikseri (RGB Mixer)
+* **Renk Uzmanı Çapraz Karışım Matrisi:** Kırmızı, yeşil ve mavi çıkış kanallarının giriş R, G ve B bileşenlerini istenen oranlarda harmanlamasını sağlayan tam $3 \times 3$ matris.
+* **Monokrom Yoğunluk Simülasyonu:** Kanallar arası parlaklık tutarlılığını koruyarak stilize baskı tonları, cross-process bleach-bypass ve klasik ortokromatik/pankromatik siyah-beyaz işlemeler üretir.
+* **Hazır Ayar Profilleri:** Pankromatik, Ortokromatik, Kızılötesi (Infrared) ve Bleach Bypass için tek tıkla uygulanan profiller.
+
+### 10. Gümüş Halojenür Fotokimyasal Film Greni (Film Grain)
+* **Parlaklığa Bağlı Gren Tepkisi:** Fotokimyasal parabolik eğri ($4.0 \cdot Y \cdot (1 - Y)$) sayesinde greni doğal olarak orta tonlarda yoğunlaştırır; derin gölgelerde ve parlak vurgularda organik biçimde sönümler.
+* **Fiziksel Gren Yapısı:** Deterministik karma algoritmasıyla gren miktarı (0-100), gren boyutu (0.5 - 3.0) ve pürüzlülük/sertlik üzerinde tam parametrik kontrol.
+
+### 11. Katmanlı Bölgesel Maske Ayarları (Local Layered Masks)
+* **Doğrusal Gradyan Maskeleri:** Gökyüzünü koyulaştırma ve ufuk dengesi için konumu, açısı ve yumuşak geçişi (feather) ayarlanabilir rampa maskeleri.
+* **Radyal Gradyan Maskeleri:** Konu vurgusu ve vinyet efektleri için bağımsız merkez koordinatları, yatay/dikey yarıçap, rotasyon ve geçiş payına sahip eliptik maskeler.
+* **Parlaklık (Luma) Aralığı Maskeleri:** Yalnızca vurguları, gölgeleri veya orta ton aralıklarını pürüzsüz geçiş sınırlarıyla hedefleyen ışık şiddeti maskeleri.
+* **Bölgesel Düzeltmeler:** Her katman bağımsız pozlama, kontrast, doygunluk ve renk sıcaklığı (tint) düzeltmeleri uygular.
+
+### 12. Lightroom Kalitesinde Stüdyo Ayıklama, Derecelendirme ve Toplu Yönetim
+* **Anında 1-5 Yıldız ve Seçildi/Reddedildi Bayrakları:** Klavye odaklı hızlı ayıklama iş akışı (yıldızlar için `1`-`5`, temizlemek için `0`, Seçildi için `P`, Reddedildi için `X`, kaldırmak için `U`).
+* **Film Şeridi Görsel Rozetleri:** Film şeridi küçük resimlerinde doğrudan bayrak ve yıldız durum göstergeleri.
+* **Yüksek Hızlı Toplu Senkronizasyon:** `Ctrl + Shift + C` ile tüm reçeteyi kopyalayıp `Ctrl + Shift + V` ile tek veya çoklu fotoğraflara anında yapıştırma.
+
+### 13. Wayland & Hyprland 120Hz/144Hz Sıfır Titreme Mimarisi
 * **Çift Tamponlu Paylaşımlı Bellek:** `/dev/shm` ping-pong çerçeve tamponlarıyla slider hareketlerinde sıfır titreme.
 * **Mac Kalitesinde Touchpad Ergonomisi:** Kesintisiz logaritmik yakınlaştırma, 3.5 derece ölü bölgeli akıllı rotasyon ve kinetik süzülme.
 
@@ -194,6 +219,11 @@ omastudio
 * `Ctrl + O`: RAW dosya açma penceresi
 * `Ctrl + S`: Ayar yan dosyasını kaydet (`.omastudio`, Mod 0600)
 * `Alt + 1..4`: Derecelendirme sürümleri arasında geçiş (A, B, C, D)
+* `1` - `5`: Seçili fotoğrafa yıldız derecelendirmesi ata (1 - 5 Yıldız)
+* `0`: Yıldız derecelendirmesini temizle
+* `P`: Fotoğrafı "Seçildi" (Pick) olarak işaretle
+* `X`: Fotoğrafı "Reddedildi" (Reject) olarak işaretle
+* `U`: Seçildi / Reddedildi işaretini kaldır
 * `C`: Kırpma ve kompozisyon kılavuzlarını aç/kapat (Üçler Kuralı, Altın Oran, Fibonacci)
 * `Y`: Önce / Sonra (A|B) bölünmüş karşılaştırma
 * `Ctrl + Shift + C`: Ayarları panoya kopyala
