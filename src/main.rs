@@ -212,7 +212,7 @@ fn scan_directory(dir_path: &str) -> Result<Vec<FolderScanItem>, String> {
 fn main() {
     let args: Vec<String> = env::args().collect();
     if args.len() < 2 {
-        eprintln!("OmaStudio Engine v0.1.0 - Lightroom-Grade Photo RAW Engine for Omarchy Linux");
+        eprintln!("OmaStudio Engine v{} - Lightroom-Grade Photo RAW Engine for Omarchy Linux", env!("CARGO_PKG_VERSION"));
         eprintln!("Usage: omastudio-engine <command> [arguments]");
         eprintln!("Commands:");
         eprintln!("  inspect <raw_file>");
