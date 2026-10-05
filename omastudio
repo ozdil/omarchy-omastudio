@@ -34,7 +34,10 @@ for var in LD_PRELOAD LD_LIBRARY_PATH RUSTC_WRAPPER CARGO_BUILD_RUSTC_WRAPPER RU
 done
 
 DIR="$(cd "$(/usr/bin/dirname "$(/usr/bin/realpath "${BASH_SOURCE[0]}")")" && /usr/bin/pwd)"
-BIN="${HOME}/.local/bin/omastudio-engine"
+BIN="${DIR}/omastudio-engine"
+if [[ ! -x "${BIN}" ]]; then
+    BIN="${HOME}/.local/bin/omastudio-engine"
+fi
 
 # Resolve trusted cargo binary
 CARGO_BIN=""
@@ -69,6 +72,8 @@ fi
 QML_SHELL=""
 if [[ -f "${DIR}/qml/shell.qml" ]]; then
     QML_SHELL="${DIR}/qml/shell.qml"
+elif [[ -f "${DIR}/../share/omastudio/qml/shell.qml" ]]; then
+    QML_SHELL="${DIR}/../share/omastudio/qml/shell.qml"
 elif [[ -f "${HOME}/.local/share/omastudio/qml/shell.qml" ]]; then
     QML_SHELL="${HOME}/.local/share/omastudio/qml/shell.qml"
 elif [[ -f "/usr/share/omastudio/qml/shell.qml" ]]; then
