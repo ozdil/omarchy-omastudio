@@ -1,0 +1,13 @@
+kind = "app"
+name = "OmaStudio"
+categories = ["Graphics", "Photography"]
+icon = "assets/icon.svg"
+screenshots = ["preview.png"]
+
+[linux.x86_64]
+asset = "omastudio-{version}-x86_64-linux.tar.gz"
+exec = "omastudio-{version}-x86_64-linux/bin/omastudio"
+
+[linux.aarch64]
+asset = "omastudio-{version}-aarch64-linux.tar.gz"
+exec = "omastudio-{version}-aarch64-linux/bin/omastudio"
