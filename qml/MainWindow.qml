@@ -189,9 +189,7 @@ Rectangle {
     property var copiedRecipe: null
     property string toastMessage: ""
     property color toastColor: Theme.accent
-    property string currentGdrivePath: "Photos"
-    property var gdriveMemoryCache: ({})
-    property bool isDownloadingRemote: false
+    property string currentCatalogFilter: ""
     property bool isListingFolder: false
     property bool daemonReady: false
     property var daemonQueue: []
@@ -763,60 +761,16 @@ Rectangle {
         }
     }
 
-    // Process: Fetch GDrive Remote RAW
-    Process {
-        id: fetchGdriveProc
-        stdout: StdioCollector {
-            waitForEnd: true
-            onStreamFinished: {
-                root.isDownloadingRemote = false;
-                try {
-                    var resp = JSON.parse(text);
-                    if (resp.success && resp.data) {
-                        var localPath = resp.data;
-                        var fName = localPath.split("/").pop();
-                        var stem = fName.lastIndexOf(".") !== -1 ? fName.substring(0, fName.lastIndexOf(".")) : fName;
-                        var expectedThumb = Quickshell.env("HOME") + "/.cache/omastudio/thumbnails/" + stem + ".jpg";
-
-                        // Update photoList model in-place so Filmstrip thumbnail appears immediately
-                        var listCopy = root.photoList.slice();
-                        for (var i = 0; i < listCopy.length; i++) {
-                            if (listCopy[i].name === fName || listCopy[i].path.indexOf(fName) !== -1) {
-                                listCopy[i].thumbnail = expectedThumb;
-                                break;
-                            }
-                        }
-                        root.photoList = listCopy;
-
-                        root.loadPhoto(localPath);
-                        root.showToast("[OK] Loaded cloud RAW: " + fName, Theme.accentCyan);
-                    } else {
-                        root.showToast("[ERR] Cloud fetch failed: " + (resp.error || "Unknown"), Theme.accentMagenta);
-                    }
-                } catch(e) {
-                    root.showToast("[ERR] Cloud fetch parse error", Theme.accentMagenta);
-                }
-            }
-        }
-    }
-
-    function navigateGdriveFolder(path, forceRefresh) {
-        root.currentGdrivePath = path;
-        filmstrip.currentFolder = path;
-        if (!forceRefresh && root.gdriveMemoryCache && root.gdriveMemoryCache[path]) {
-            root.photoList = root.gdriveMemoryCache[path];
-        } else {
-            root.isListingFolder = true;
-        }
-        var cmd = [root.resolveEnginePath(), "gdrive", "list", path];
-        if (forceRefresh) {
-            cmd.push("--refresh");
-        }
+    // Load Studio Catalog
+    function loadStudioCatalog(filterQuery) {
+        root.isListingFolder = true;
+        filmstrip.currentFolder = "Studio Catalog";
+        var cmd = [root.resolveEnginePath(), "catalog", "list"];
         listProc.command = cmd;
         listProc.running = true;
     }
 
-    // Process: Folder scan
+    // Process: Folder scan / Catalog list
     Process {
         id: listProc
         stdout: StdioCollector {
@@ -826,23 +780,29 @@ Rectangle {
                 try {
                     var resp = JSON.parse(text);
                     if (resp.success && resp.data) {
-                        root.photoList = resp.data;
-                        if (filmstrip.isGdriveMode) {
-                            var cache = Object.assign({}, root.gdriveMemoryCache);
-                            cache[root.currentGdrivePath] = resp.data;
-                            root.gdriveMemoryCache = cache;
+                        if (resp.data.items && typeof resp.data.items === "object") {
+                            // Converted catalog map into array
+                            var arr = [];
+                            var keys = Object.keys(resp.data.items);
+                            for (var i = 0; i < keys.length; i++) {
+                                var it = resp.data.items[keys[i]];
+                                arr.push({
+                                    name: it.path.split("/").pop(),
+                                    path: it.path,
+                                    thumbnail: it.thumbnail_path || it.path,
+                                    is_remote: false
+                                });
+                            }
+                            root.photoList = arr;
+                        } else if (Array.isArray(resp.data)) {
+                            root.photoList = resp.data;
                         }
                     } else if (resp.error) {
-                        var errStr = String(resp.error || "");
-                        if (errStr.indexOf("rate limit") !== -1 || errStr.indexOf("403") !== -1 || errStr.indexOf("rateLimitExceeded") !== -1) {
-                            root.showToast("[Cloud] Google Drive kota siniri: Onbellekteki dosyalar gosteriliyor.", Theme.accentYellow);
-                        } else {
-                            var cleanMsg = errStr.split("\n")[0].substring(0, 80);
-                            root.showToast("[ERR] " + cleanMsg, Theme.accentMagenta);
-                        }
+                        var cleanMsg = String(resp.error || "").split("\n")[0].substring(0, 80);
+                        root.showToast("[ERR] " + cleanMsg, Theme.accentMagenta);
                     }
                 } catch(e) {
-                    root.showToast("[ERR] Klasor taramasi yanit veremedi.", Theme.accentMagenta);
+                    root.showToast("[ERR] Tarama yanit veremedi.", Theme.accentMagenta);
                 }
             }
         }
@@ -2332,36 +2292,30 @@ Rectangle {
             activePhotoPath: root.activePhotoPath
             activeRating: root.photoRating
             activeFlag: root.photoFlag
-            isDownloadingRemote: root.isDownloadingRemote
             isListingFolder: root.isListingFolder
             onSelectPhoto: function(path, isRemote) {
-                if (isRemote) {
-                    root.isDownloadingRemote = true;
-                    var fName = path.split("/").pop();
-                    root.showToast("[Cloud] Fetching cloud RAW: " + fName + "...", Theme.accentCyan);
-                    fetchGdriveProc.command = [root.resolveEnginePath(), "gdrive", "fetch", path];
-                    fetchGdriveProc.running = true;
-                } else {
-                    root.loadPhoto(path);
-                }
+                root.loadPhoto(path);
             }
             onNavigateFolder: function(remotePath) {
                 root.showToast("[Folder] Navigating: " + remotePath, Theme.accent);
-                root.navigateGdriveFolder(remotePath, false);
+                root.scanLocalFolder(remotePath);
             }
             onParentFolderRequested: {
-                var parts = root.currentGdrivePath.split("/").filter(function(p) { return p.length > 0; });
-                var parentP = "Photos";
-                if (parts.length > 1) {
-                    parts.pop();
-                    parentP = parts.join("/");
+                var cur = filmstrip.currentFolder || "~/Pictures";
+                if (cur.indexOf("/") !== -1) {
+                    var parts = cur.split("/").filter(function(p) { return p.length > 0; });
+                    if (parts.length > 1) {
+                        parts.pop();
+                        var parentP = (cur.startsWith("/") ? "/" : "") + parts.join("/");
+                        filmstrip.currentFolder = parentP;
+                        root.scanLocalFolder(parentP);
+                    }
                 }
-                root.showToast("[Folder] Navigating: " + parentP, Theme.accent);
-                root.navigateGdriveFolder(parentP, false);
             }
-            onSwitchSource: function(isGdrive) {
-                if (isGdrive) {
-                    root.navigateGdriveFolder(root.currentGdrivePath, false);
+            onSwitchSource: function(isCatalog) {
+                if (isCatalog) {
+                    root.showToast("[Catalog] Loading Studio Local Catalog...", Theme.accentCyan);
+                    root.loadStudioCatalog("");
                 } else {
                     filmstrip.currentFolder = "~/Pictures";
                     root.scanLocalFolder("~/Pictures");
@@ -2369,8 +2323,8 @@ Rectangle {
             }
             onRefreshRequested: {
                 if (filmstrip.isGdriveMode) {
-                    root.showToast("[Cloud] Refreshing Google Drive cache...", Theme.accentCyan);
-                    root.navigateGdriveFolder(root.currentGdrivePath, true);
+                    root.showToast("[Catalog] Refreshing Studio Catalog...", Theme.accentCyan);
+                    root.loadStudioCatalog("");
                 } else {
                     root.scanLocalFolder(filmstrip.currentFolder || "~/Pictures");
                 }

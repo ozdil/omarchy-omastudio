@@ -3,7 +3,6 @@
 pub mod ai;
 pub mod dag;
 pub mod export;
-pub mod gdrive;
 pub mod icc;
 pub mod pipeline;
 pub mod raw;
@@ -16,7 +15,6 @@ use ai::{
     apply_jev_decisions_to_recipe, JevDecisions,
 };
 use export::{export_photo, ExportOptions};
-use gdrive::{fetch_remote_raw, is_gdrive_available, list_gdrive_folder_opt};
 use pipeline::{
     process_buffer_16_to_8, process_buffer_16_to_8_ex, process_split_comparison_16_to_8,
     process_split_comparison_16_to_8_ex,
@@ -220,9 +218,10 @@ fn main() {
         eprintln!("  ai-auto <raw_file>");
         eprintln!("  ai-jev <raw_file>");
         eprintln!("  export <raw_file> [--recipe <json>] [--options <json>]");
-        eprintln!("  gdrive list [folder]");
-        eprintln!("  gdrive fetch <remote_file>");
         eprintln!("  catalog list");
+        eprintln!("  catalog query [--rating <0-5>] [--flag <pick|reject>] [--search <str>]");
+        eprintln!("  catalog cull <path> [--rating <0-5>] [--flag <pick|reject>]");
+        eprintln!("  scan [folder]");
         eprintln!("  daemon");
         return;
     }
@@ -344,44 +343,73 @@ fn main() {
                 Err(e) => print_json::<()>(&ResponseWrapper::err(e)),
             }
         }
-        "gdrive" => {
-            if args.len() < 3 {
-                print_json::<()>(&ResponseWrapper::err("Missing gdrive subcommand"));
-                return;
-            }
-            match args[2].as_str() {
-                "check" => {
-                    let avail = is_gdrive_available();
-                    print_json(&ResponseWrapper::ok(avail));
-                }
-                "list" => {
-                    let mut folder = "";
-                    let mut force_refresh = false;
-                    if args.len() >= 4 {
-                        for arg in &args[3..] {
-                            if arg == "--refresh" || arg == "-f" || arg == "refresh" {
-                                force_refresh = true;
-                            } else if !arg.starts_with('-') && folder.is_empty() {
-                                folder = arg.as_str();
-                            }
+        "catalog" => {
+            if args.len() < 3 || args[2] == "list" {
+                let cat = Catalog::load();
+                print_json(&ResponseWrapper::ok(cat));
+            } else if args[2] == "query" {
+                let mut filter = recipe::CatalogFilter::default();
+                let mut idx = 3;
+                while idx < args.len() {
+                    match args[idx].as_str() {
+                        "--rating" if idx + 1 < args.len() => {
+                            filter.min_rating = args[idx + 1].parse().ok();
+                            idx += 2;
                         }
-                    }
-                    match list_gdrive_folder_opt(folder, force_refresh) {
-                        Ok(items) => print_json(&ResponseWrapper::ok(items)),
-                        Err(e) => print_json::<()>(&ResponseWrapper::err(e)),
+                        "--flag" if idx + 1 < args.len() => {
+                            filter.flag = Some(args[idx + 1].clone());
+                            idx += 2;
+                        }
+                        "--search" if idx + 1 < args.len() => {
+                            filter.search_query = Some(args[idx + 1].clone());
+                            idx += 2;
+                        }
+                        "--model" if idx + 1 < args.len() => {
+                            filter.camera_model = Some(args[idx + 1].clone());
+                            idx += 2;
+                        }
+                        _ => idx += 1,
                     }
                 }
-                "fetch" => {
-                    if args.len() < 4 {
-                        print_json::<()>(&ResponseWrapper::err("Missing remote path"));
-                        return;
-                    }
-                    match fetch_remote_raw(&args[3]) {
-                        Ok(p) => print_json(&ResponseWrapper::ok(p.to_string_lossy().to_string())),
-                        Err(e) => print_json::<()>(&ResponseWrapper::err(e)),
+                let cat = Catalog::load();
+                let results = cat.filter_items(&filter);
+                print_json(&ResponseWrapper::ok(results));
+            } else if args[2] == "cull" {
+                if args.len() < 4 {
+                    print_json::<()>(&ResponseWrapper::err("Usage: catalog cull <path> [--rating <0-5>] [--flag <pick|reject>] [--color <label>]"));
+                    return;
+                }
+                let path = &args[3];
+                let mut rating = None;
+                let mut flag = None;
+                let mut color = None;
+                let mut idx = 4;
+                while idx < args.len() {
+                    match args[idx].as_str() {
+                        "--rating" if idx + 1 < args.len() => {
+                            rating = args[idx + 1].parse().ok();
+                            idx += 2;
+                        }
+                        "--flag" if idx + 1 < args.len() => {
+                            flag = Some(args[idx + 1].as_str());
+                            idx += 2;
+                        }
+                        "--color" if idx + 1 < args.len() => {
+                            color = Some(args[idx + 1].as_str());
+                            idx += 2;
+                        }
+                        _ => idx += 1,
                     }
                 }
-                _ => print_json::<()>(&ResponseWrapper::err("Unknown gdrive subcommand")),
+                let mut cat = Catalog::load();
+                if cat.update_culling(path, rating, flag, color) {
+                    let _ = cat.save();
+                    print_json(&ResponseWrapper::ok("Culling metadata saved"));
+                } else {
+                    print_json::<()>(&ResponseWrapper::err("Item not found in catalog"));
+                }
+            } else {
+                print_json::<()>(&ResponseWrapper::err("Unknown catalog subcommand: list, query, cull"));
             }
         }
         "icc" => {
@@ -539,10 +567,6 @@ fn main() {
                 _ => print_json::<()>(&ResponseWrapper::err("Unknown rendezvous subcommand")),
             }
         }
-        "catalog" => {
-            let cat = Catalog::load();
-            print_json(&ResponseWrapper::ok(cat));
-        }
         "dag" => {
             #[derive(Serialize)]
             struct DagStatus {
@@ -584,11 +608,12 @@ fn main() {
                 active_theme: String,
                 supported_raw_formats: Vec<String>,
                 icc_profiles_count: usize,
-                gdrive_available: bool,
+                local_only_mode: bool,
+                gpu_capabilities: Option<pipeline::gpu::GpuComputeCapabilities>,
                 features: Vec<String>,
             }
             let icc_count = icc::list_icc_profiles().len();
-            let gdrive = is_gdrive_available();
+            let (_, gpu_caps) = pipeline::gpu::GpuEngineContext::detect_vulkan_capabilities();
             let active_theme = env::var("HOME")
                 .ok()
                 .and_then(|h| security::read_secure_file(&PathBuf::from(h).join(".local/state/omarchy/current/theme.name"), 1024).ok())
@@ -607,7 +632,8 @@ fn main() {
                     "RW2".into(), "3FR".into(),
                 ],
                 icc_profiles_count: icc_count,
-                gdrive_available: gdrive,
+                local_only_mode: true,
+                gpu_capabilities: gpu_caps,
                 features: vec![
                     "davinci_3way_color_wheels".into(),
                     "ai_social_media_optimizer".into(),
@@ -961,6 +987,14 @@ struct DaemonCommand {
     shadow_mask: Option<bool>,
     #[serde(default)]
     pub items: Option<Vec<BatchExportItem>>,
+    #[serde(default)]
+    pub rating: Option<u8>,
+    #[serde(default)]
+    pub flag: Option<String>,
+    #[serde(default)]
+    pub color_label: Option<String>,
+    #[serde(default)]
+    pub search_query: Option<String>,
     #[serde(default)]
     pub oma_id: Option<String>,
     #[serde(default)]
@@ -1416,6 +1450,51 @@ fn run_daemon() {
                     valid: bool,
                 }
                 print_json(&ResponseWrapper::ok_action("pin_verify", DaemonPinVerifyRes { valid }));
+            }
+            "catalog_query" => {
+                let cat = Catalog::load();
+                let filter = recipe::CatalogFilter {
+                    min_rating: cmd_obj.rating,
+                    flag: cmd_obj.flag.clone(),
+                    camera_make: None,
+                    camera_model: None,
+                    lens: None,
+                    min_iso: None,
+                    max_iso: None,
+                    search_query: cmd_obj.search_query.clone(),
+                };
+                let results = cat.filter_items(&filter);
+                print_json(&ResponseWrapper::ok_action("catalog_query", results));
+            }
+            "catalog_cull" => {
+                let target_path = match cmd_obj.path {
+                    Some(ref p) => p.clone(),
+                    None => {
+                        let c = cache.lock().unwrap();
+                        match c.current_path.as_ref() {
+                            Some(p) => p.clone(),
+                            None => {
+                                print_json::<()>(&ResponseWrapper::err_action("catalog_cull", "No path specified and no image loaded"));
+                                continue;
+                            }
+                        }
+                    }
+                };
+
+                let mut cat = Catalog::load();
+                let updated = cat.update_culling(
+                    &target_path,
+                    cmd_obj.rating,
+                    cmd_obj.flag.as_deref(),
+                    cmd_obj.color_label.as_deref(),
+                );
+
+                if updated {
+                    let _ = cat.save();
+                    print_json(&ResponseWrapper::ok_action("catalog_cull", "Culling metadata saved successfully"));
+                } else {
+                    print_json::<()>(&ResponseWrapper::err_action("catalog_cull", "Item not found in catalog"));
+                }
             }
             "exit" => {
                 print_json(&ResponseWrapper::ok_action("exit", "Daemon exiting"));

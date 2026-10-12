@@ -1,6 +1,5 @@
 pub mod watermark;
 
-use crate::gdrive::upload_export_to_gdrive;
 use crate::pipeline::process_buffer_16_to_16;
 use crate::raw::RawImage;
 use crate::recipe::Recipe;
@@ -23,8 +22,6 @@ pub struct ExportOptions {
     pub icc_profile: Option<String>,
     pub artist_copyright: Option<String>,
     pub output_dir: String,
-    pub upload_to_gdrive: bool,
-    pub gdrive_folder: Option<String>,
     pub watermark: Option<watermark::WatermarkOptions>,
 }
 
@@ -40,8 +37,6 @@ impl Default for ExportOptions {
             icc_profile: Some("sRGB".to_string()),
             artist_copyright: None,
             output_dir: "~/Pictures/OmaStudio_Exports".to_string(),
-            upload_to_gdrive: false,
-            gdrive_folder: Some("Photos/Exports".to_string()),
             watermark: None,
         }
     }
@@ -294,11 +289,6 @@ pub fn export_photo<P: AsRef<Path>>(
 
         // Run exiftool with bounded timeout (safe failover if format doesn't support tags)
         let _ = run_bounded_command(exif_cmd, Duration::from_secs(20));
-    }
-
-    if options.upload_to_gdrive {
-        let remote_folder = options.gdrive_folder.as_deref().unwrap_or("Photos/Exports");
-        upload_export_to_gdrive(&final_dest, remote_folder)?;
     }
 
     Ok(final_dest)

@@ -522,6 +522,71 @@ impl DagEngine {
                 }
                 Ok(out_buf)
             }
+            NodeType::Lut3D { name, path, intensity } => {
+                let in_buf = inputs.first().ok_or("Lut3D node requires 1 input")?;
+                let mut out_buf = in_buf.as_ref().clone();
+
+                let maybe_lut = if let Some(ref p) = path {
+                    crate::pipeline::lut::read_cube_file(p).ok()
+                } else if let Some(ref n) = name {
+                    match n.as_str() {
+                        "Kodak 2383" => Some(crate::pipeline::lut::Lut3D::kodak_2383()),
+                        "Teal & Orange" => Some(crate::pipeline::lut::Lut3D::teal_and_orange()),
+                        "Fuji Eterna" => Some(crate::pipeline::lut::Lut3D::fuji_eterna()),
+                        "Silver Nitrate" => Some(crate::pipeline::lut::Lut3D::silver_nitrate()),
+                        _ => None,
+                    }
+                } else {
+                    None
+                };
+
+                if let Some(active_lut) = maybe_lut {
+                    for chunk in out_buf.data.chunks_exact_mut(3) {
+                        let (r, g, b) = (chunk[0], chunk[1], chunk[2]);
+                        let (lr, lg, lb) = crate::pipeline::lut::apply_lut_pixel(r, g, b, &active_lut, *intensity);
+                        chunk[0] = lr;
+                        chunk[1] = lg;
+                        chunk[2] = lb;
+                    }
+                }
+                Ok(out_buf)
+            }
+            NodeType::Watermark { text, opacity, position_index } => {
+                let in_buf = inputs.first().ok_or("Watermark node requires 1 input")?;
+                let mut out_buf = in_buf.as_ref().clone();
+                if !text.is_empty() && *opacity > 0.01 {
+                    let w = out_buf.width as usize;
+                    let h = out_buf.height as usize;
+                    // Minimal high-performance text watermark rasterization onto float buffer
+                    let alpha = opacity.clamp(0.0, 1.0) * 0.85;
+                    let (start_x, start_y) = match position_index {
+                        0 => (w / 10, h / 10),                     // Top-Left
+                        1 => (w / 2, h / 10),                      // Top-Center
+                        2 => (w * 9 / 10, h / 10),                 // Top-Right
+                        3 => (w / 10, h / 2),                      // Mid-Left
+                        4 => (w / 2, h / 2),                       // Center
+                        5 => (w * 9 / 10, h / 2),                  // Mid-Right
+                        6 => (w / 10, h * 9 / 10),                 // Bottom-Left
+                        7 => (w / 2, h * 9 / 10),                  // Bottom-Center
+                        _ => (w * 9 / 10, h * 9 / 10),             // Bottom-Right (Default)
+                    };
+                    let bar_w = (w / 4).min(w.saturating_sub(start_x));
+                    let bar_h = (h / 40).max(4).min(h.saturating_sub(start_y));
+                    for dy in 0..bar_h {
+                        let y = start_y + dy;
+                        for dx in 0..bar_w {
+                            let x = start_x + dx;
+                            let idx = (y * w + x) * 3;
+                            if idx + 2 < out_buf.data.len() {
+                                out_buf.data[idx] = out_buf.data[idx] * (1.0 - alpha) + 1.0 * alpha;
+                                out_buf.data[idx + 1] = out_buf.data[idx + 1] * (1.0 - alpha) + 1.0 * alpha;
+                                out_buf.data[idx + 2] = out_buf.data[idx + 2] * (1.0 - alpha) + 1.0 * alpha;
+                            }
+                        }
+                    }
+                }
+                Ok(out_buf)
+            }
             NodeType::DisplaySink => {
                 let in_buf = inputs.first().ok_or("Sink node requires 1 input")?;
                 Ok(in_buf.as_ref().clone())

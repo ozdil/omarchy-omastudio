@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "id": "ozdil.omastudio",
   "name": "OmaStudio",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "author": "Ozan Özdil (ozdil)",
   "license": "MIT",
-  "description": "Lightroom-grade RAW editor for Omarchy Linux with DaVinci color grading, AI scene presets, 16-bit master pipeline, and Google Drive cloud sync.",
+  "description": "Lightroom-grade RAW editor for Omarchy Linux with DaVinci color grading, AI scene presets, 16-bit medium format pipeline, and local studio catalog DAM.",
   "kinds": [
     "bar-widget"
   ],
@@ -15,7 +15,7 @@
   },
   "barWidget": {
     "displayName": "OmaStudio",
-    "description": "Lightroom-grade RAW editor, DaVinci 3-Way wheels, 16-bit pipeline, AI presets, and Google Drive sync.",
+    "description": "Lightroom-grade RAW editor, DaVinci 3-Way wheels, 16-bit medium format pipeline, AI presets, and local studio catalog.",
     "category": "Media",
     "defaultSection": "right",
     "aliases": [

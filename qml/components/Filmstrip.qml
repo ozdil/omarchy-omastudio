@@ -75,25 +75,25 @@ Rectangle {
                 }
             }
 
-            // Google Drive Tab
+            // Library Catalog Tab
             Rectangle {
-                implicitWidth: gdriveRow.implicitWidth + 16
+                implicitWidth: catalogRow.implicitWidth + 16
                 implicitHeight: 22
                 radius: 4
                 color: root.isGdriveMode ? Theme.accentCyan : Theme.bgCard
 
                 RowLayout {
-                    id: gdriveRow
+                    id: catalogRow
                     anchors.centerIn: parent
                     spacing: 6
                     Text {
-                        text: Theme.iconCloud
+                        text: Theme.iconLayers || Theme.iconFolder
                         font.family: Theme.iconFont
                         font.pixelSize: 10
                         color: root.isGdriveMode ? Theme.bgBase : Theme.textMuted
                     }
                     Text {
-                        text: "Google Drive"
+                        text: "Studio Catalog"
                         textFormat: Text.PlainText
                         font.pixelSize: 10
                         font.weight: Font.DemiBold
@@ -113,14 +113,14 @@ Rectangle {
                 }
             }
 
-            // Parent folder button for Google Drive subfolders
+            // Up / Parent button
             Rectangle {
-                visible: root.isGdriveMode && root.currentFolder !== "Photos"
+                visible: !root.isGdriveMode && root.currentFolder !== "/"
                 implicitWidth: parentBtnRow.implicitWidth + 12
                 implicitHeight: 22
                 radius: 4
                 color: Theme.bgCard
-                border.color: Theme.accentCyan
+                border.color: Theme.border
                 border.width: 1
 
                 RowLayout {
@@ -131,14 +131,14 @@ Rectangle {
                         text: Theme.iconArrowUp
                         font.family: Theme.iconFont
                         font.pixelSize: 10
-                        color: Theme.accentCyan
+                        color: Theme.textMain
                     }
                     Text {
-                        text: "Up / Parent"
+                        text: "Up"
                         textFormat: Text.PlainText
                         font.pixelSize: 9
                         font.weight: Font.DemiBold
-                        color: Theme.accentCyan
+                        color: Theme.textMain
                     }
                 }
 

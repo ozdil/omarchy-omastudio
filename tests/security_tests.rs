@@ -128,34 +128,6 @@ fn test_verify_secure_open_file() {
 }
 
 #[test]
-fn test_gdrive_corrupted_cache_purging() {
-    let cache_dir = omastudio_engine::gdrive::default_gdrive_cache_dir();
-    let _ = ensure_secure_dir(&cache_dir);
-
-    let corrupt_file = cache_dir.join("corrupt_test_image.nef");
-    // Write 2000 bytes of non-RAW garbage to simulate partial download
-    let garbage = vec![0x41u8; 2000];
-    let mut f = OpenOptions::new()
-        .create(true)
-        .write(true)
-        .truncate(true)
-        .mode(0o600)
-        .open(&corrupt_file)
-        .expect("Create corrupt cache file");
-    std::io::Write::write_all(&mut f, &garbage).expect("Write garbage");
-    f.sync_all().expect("Sync");
-    drop(f);
-
-    assert!(corrupt_file.exists());
-
-    // Calling fetch_remote_raw should detect that LibRaw cannot open this file,
-    // purge it, and proceed to download (which will fail due to rclone gdrive remote not configured or nonexistent file, but crucial point is corrupt cache file is deleted)
-    let res = omastudio_engine::gdrive::fetch_remote_raw("corrupt_test_image.nef");
-    assert!(res.is_err(), "Fetching nonexistent remote file should fail");
-    assert!(!corrupt_file.exists(), "Corrupted/partial cache file must be purged");
-}
-
-#[test]
 fn test_recipe_roundtrip() {
     let r = Recipe::fuji_classic_chrome();
     let json = serde_json::to_string(&r).expect("Serialize");

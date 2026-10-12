@@ -392,39 +392,6 @@ Rectangle {
             }
         }
 
-        // Google Drive Direct Upload Row
-        Rectangle {
-            Layout.fillWidth: true
-            implicitHeight: 34
-            radius: Theme.radiusSm
-            color: Theme.bgCard
-            border.color: root.uploadToGdrive ? Theme.accentCyan : Theme.border
-
-            RowLayout {
-                anchors.fill: parent
-                anchors.margins: 8
-                spacing: 8
-                Text {
-                    text: Theme.iconCloud
-                    font.family: Theme.iconFont
-                    font.pixelSize: 12
-                    color: Theme.accentCyan
-                }
-                Text {
-                    text: "Auto-Upload to Google Drive (Photos/Exports)"
-                    textFormat: Text.PlainText
-                    font.pixelSize: 11
-                    color: Theme.textMain
-                    Layout.fillWidth: true
-                }
-                CustomSwitch {
-                    checked: root.uploadToGdrive
-                    activeColor: Theme.accentCyan
-                    onToggled: function(c) { root.uploadToGdrive = c }
-                }
-            }
-        }
-
         // Export Button
         Rectangle {
             Layout.fillWidth: true
@@ -465,8 +432,6 @@ Rectangle {
                         "preserve_exif": root.preserveExif,
                         "icc_profile": root.selectedIcc,
                         "output_dir": root.localOutputDir,
-                        "upload_to_gdrive": root.uploadToGdrive,
-                        "gdrive_folder": root.gdriveFolder,
                         "watermark": root.watermarkEnabled ? root.watermarkOptions : null
                     };
                     root.doExport(opts);

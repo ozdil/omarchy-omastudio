@@ -391,6 +391,24 @@ impl Recipe {
         r
     }
 
+    pub fn fuji_nostalgic_neg() -> Self {
+        let mut r = Self::default();
+        r.preset_name = Some("Fujifilm Nostalgic Neg".to_string());
+        r.film_simulation = "fuji_nostalgic_neg".to_string();
+        r.film_sim_intensity = 1.0;
+        r.contrast = 14.0;
+        r.highlights = -12.0;
+        r.shadows = 8.0;
+        r.clarity = 10.0;
+        r.vibrance = 12.0;
+        r.color_boost = 6.0;
+        // Warm amber highlights and rich cyan/magenta shadows
+        r.lift = [-0.02, 0.02, 0.04];
+        r.gain = [0.06, 0.03, -0.04];
+        r.contrast_pivot = 0.45;
+        r
+    }
+
     pub fn save_sidecar<P: AsRef<Path>>(&self, raw_path: P) -> io::Result<PathBuf> {
         let path = raw_path.as_ref();
         let sidecar_path = path.with_extension(format!(
@@ -448,6 +466,18 @@ pub struct Catalog {
     pub items: HashMap<String, CatalogItem>,
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
+pub struct CatalogFilter {
+    pub min_rating: Option<u8>,
+    pub flag: Option<String>, // "pick", "reject", "unflagged"
+    pub camera_make: Option<String>,
+    pub camera_model: Option<String>,
+    pub lens: Option<String>,
+    pub min_iso: Option<f32>,
+    pub max_iso: Option<f32>,
+    pub search_query: Option<String>,
+}
+
 impl Catalog {
     pub fn default_catalog_path() -> PathBuf {
         let home = std::env::var("HOME").unwrap_or_else(|_| ".".to_string());
@@ -492,5 +522,83 @@ impl Catalog {
 
     pub fn get(&self, path: &str) -> Option<&CatalogItem> {
         self.items.get(path)
+    }
+
+    pub fn update_culling(&mut self, path: &str, rating: Option<u8>, flag: Option<&str>, color_label: Option<&str>) -> bool {
+        if let Some(item) = self.items.get_mut(path) {
+            if let Some(r) = rating {
+                item.rating = r.min(5);
+                item.recipe.rating = r.min(5);
+            }
+            if let Some(f) = flag {
+                item.flag = f.to_string();
+                item.recipe.flag = f.to_string();
+            }
+            if let Some(cl) = color_label {
+                item.color_label = cl.to_string();
+            }
+            item.updated_at = std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap_or_default()
+                .as_secs();
+            true
+        } else {
+            false
+        }
+    }
+
+    pub fn filter_items(&self, filter: &CatalogFilter) -> Vec<&CatalogItem> {
+        let mut matched: Vec<&CatalogItem> = self.items.values().filter(|item| {
+            if let Some(min_r) = filter.min_rating {
+                if item.rating < min_r {
+                    return false;
+                }
+            }
+            if let Some(ref fl) = filter.flag {
+                if !fl.is_empty() && &item.flag != fl {
+                    return false;
+                }
+            }
+            if let Some(ref make) = filter.camera_make {
+                if !make.is_empty() && !item.metadata.make.to_lowercase().contains(&make.to_lowercase()) {
+                    return false;
+                }
+            }
+            if let Some(ref model) = filter.camera_model {
+                if !model.is_empty() && !item.metadata.model.to_lowercase().contains(&model.to_lowercase()) {
+                    return false;
+                }
+            }
+            if let Some(ref lens) = filter.lens {
+                if !lens.is_empty() && !item.metadata.lens.to_lowercase().contains(&lens.to_lowercase()) {
+                    return false;
+                }
+            }
+            if let Some(min_iso) = filter.min_iso {
+                if item.metadata.iso < min_iso {
+                    return false;
+                }
+            }
+            if let Some(max_iso) = filter.max_iso {
+                if item.metadata.iso > max_iso {
+                    return false;
+                }
+            }
+            if let Some(ref q) = filter.search_query {
+                if !q.is_empty() {
+                    let q_lower = q.to_lowercase();
+                    let matches_name = item.path.to_lowercase().contains(&q_lower);
+                    let matches_model = item.metadata.model.to_lowercase().contains(&q_lower);
+                    let matches_lens = item.metadata.lens.to_lowercase().contains(&q_lower);
+                    if !matches_name && !matches_model && !matches_lens {
+                        return false;
+                    }
+                }
+            }
+            true
+        }).collect();
+
+        matched.sort_by(|a, b| b.updated_at.cmp(&a.updated_at));
+        matched
     }
 }

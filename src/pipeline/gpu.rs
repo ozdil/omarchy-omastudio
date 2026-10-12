@@ -100,13 +100,40 @@ impl GpuEngineContext {
             || std::path::Path::new("/usr/lib64/libvulkan.so.1").exists();
 
         if has_vulkan_loader {
-            let vendor = if has_nvidia { "NVIDIA" } else { "Intel/AMD Mesa" };
-            let dev_name = if has_nvidia { "NVIDIA RTX Series (Vulkan Compute)" } else { "Vulkan Compute Accelerator" };
+            let mut vendor = if has_nvidia { "NVIDIA" } else { "Intel/AMD Mesa" }.to_string();
+            let mut dev_name = if has_nvidia {
+                "NVIDIA RTX Series (Vulkan Compute)"
+            } else {
+                "Vulkan Hardware Accelerator"
+            }.to_string();
+
+            // Check DRI devices for Intel Arc or AMD discrete GPU
+            if let Ok(entries) = std::fs::read_dir("/sys/class/drm") {
+                for entry in entries.flatten() {
+                    let name = entry.file_name().to_string_lossy().to_string();
+                    if name.starts_with("card") && !name.contains('-') {
+                        let vendor_path = entry.path().join("device/vendor");
+                        if let Ok(v_str) = std::fs::read_to_string(&vendor_path) {
+                            let v_trim = v_str.trim();
+                            if v_trim == "0x8086" {
+                                vendor = "Intel (Mesa Vulkan)".to_string();
+                                dev_name = "Intel Arc / Xe Graphics (Vulkan Compute)".to_string();
+                                break;
+                            } else if v_trim == "0x1002" {
+                                vendor = "AMD (RADV / Mesa)".to_string();
+                                dev_name = "AMD Radeon Graphics (Vulkan Compute)".to_string();
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
             (
                 true,
                 Some(GpuComputeCapabilities {
-                    device_name: dev_name.to_string(),
-                    vendor: vendor.to_string(),
+                    device_name: dev_name,
+                    vendor,
                     vulkan_version: "1.3/1.4".to_string(),
                     supports_fp16: true,
                     supports_subgroups: true,

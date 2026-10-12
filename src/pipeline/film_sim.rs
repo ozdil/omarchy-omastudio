@@ -20,6 +20,8 @@ pub enum FilmSimulation {
     FujiAstia,
     FujiClassicChrome,
     FujiClassicNeg,
+    FujiNostalgicNeg,
+    FujiProNegHi,
     FujiEterna,
     FujiAcrosStandard,
     FujiAcrosYellow,
@@ -38,6 +40,8 @@ impl FilmSimulation {
             "fuji_astia" | "astia" => Self::FujiAstia,
             "fuji_classic_chrome" | "classic_chrome" => Self::FujiClassicChrome,
             "fuji_classic_neg" | "classic_neg" => Self::FujiClassicNeg,
+            "fuji_nostalgic_neg" | "nostalgic_neg" => Self::FujiNostalgicNeg,
+            "fuji_pro_neg_hi" | "pro_neg_hi" | "proneghi" => Self::FujiProNegHi,
             "fuji_eterna" | "eterna" => Self::FujiEterna,
             "fuji_acros" | "acros" | "acros_standard" => Self::FujiAcrosStandard,
             "fuji_acros_yellow" | "acros_yellow" | "acros_ye" => Self::FujiAcrosYellow,
@@ -57,6 +61,8 @@ impl FilmSimulation {
             Self::FujiAstia => "fuji_astia",
             Self::FujiClassicChrome => "fuji_classic_chrome",
             Self::FujiClassicNeg => "fuji_classic_neg",
+            Self::FujiNostalgicNeg => "fuji_nostalgic_neg",
+            Self::FujiProNegHi => "fuji_pro_neg_hi",
             Self::FujiEterna => "fuji_eterna",
             Self::FujiAcrosStandard => "fuji_acros_standard",
             Self::FujiAcrosYellow => "fuji_acros_yellow",
@@ -75,6 +81,8 @@ impl FilmSimulation {
             Self::FujiAstia => "Fujifilm Astia 100F",
             Self::FujiClassicChrome => "Fujifilm Classic Chrome",
             Self::FujiClassicNeg => "Fujifilm Classic Neg",
+            Self::FujiNostalgicNeg => "Fujifilm Nostalgic Neg (GFX)",
+            Self::FujiProNegHi => "Fujifilm PRO Neg. Hi (Studio)",
             Self::FujiEterna => "Fujifilm Eterna Cinema",
             Self::FujiAcrosStandard => "Fujifilm Acros 100",
             Self::FujiAcrosYellow => "Fujifilm Acros 100 (+Ye)",
@@ -215,6 +223,47 @@ impl FilmSimulation {
                 (r_cn.clamp(0.0, 1.0), g_cn.clamp(0.0, 1.0), b_cn.clamp(0.0, 1.0))
             }
 
+            Self::FujiNostalgicNeg => {
+                // Nostalgic Neg (GFX 100S Debut): Warm amber highlights, rich deep magenta/cyan shadows,
+                // and distinct American New Color photography tones (William Eggleston / Stephen Shore).
+                let diff = luma - 0.45;
+                let s_curve = (0.45 + (diff * 1.22).tanh() * 0.48).clamp(0.0, 1.0);
+                let ratio = if luma > 1e-4 { s_curve / luma } else { 1.0 };
+
+                let mut r_nn = r * ratio;
+                let mut g_nn = g * ratio;
+                let mut b_nn = b * ratio;
+                let new_luma = 0.2126 * r_nn + 0.7152 * g_nn + 0.0722 * b_nn;
+
+                // Rich amber tone in midtones/highlights
+                let amber = (new_luma - 0.25).max(0.0) / 0.75;
+                r_nn += 0.045 * amber;
+                g_nn += 0.020 * amber;
+                b_nn -= 0.035 * amber;
+
+                // Cyan/magenta shadow richness
+                if new_luma < 0.40 {
+                    let s_fac = (0.40 - new_luma) / 0.40;
+                    b_nn += 0.025 * s_fac;
+                }
+
+                (r_nn.clamp(0.0, 1.0), g_nn.clamp(0.0, 1.0), b_nn.clamp(0.0, 1.0))
+            }
+
+            Self::FujiProNegHi => {
+                // PRO Neg. Hi: Professional studio portrait profile with slightly higher contrast,
+                // neutral skin tones, and rich controlled highlight roll-off.
+                let diff = luma - 0.50;
+                let contrast_luma = (0.50 + (diff * 1.15).tanh() * 0.48).clamp(0.0, 1.0);
+                let ratio = if luma > 1e-4 { contrast_luma / luma } else { 1.0 };
+
+                let r_pn = contrast_luma + (r * ratio - contrast_luma) * 1.02;
+                let g_pn = contrast_luma + (g * ratio - contrast_luma) * 0.98;
+                let b_pn = contrast_luma + (b * ratio - contrast_luma) * 0.98;
+
+                (r_pn.clamp(0.0, 1.0), g_pn.clamp(0.0, 1.0), b_pn.clamp(0.0, 1.0))
+            }
+
             Self::FujiEterna => {
                 // Eterna: Cinema film with wide dynamic range, flat gamma (-25 contrast), soft shadow toe
                 let diff = luma - 0.46;
@@ -330,6 +379,8 @@ mod tests {
             FilmSimulation::FujiAstia,
             FilmSimulation::FujiClassicChrome,
             FilmSimulation::FujiClassicNeg,
+            FilmSimulation::FujiNostalgicNeg,
+            FilmSimulation::FujiProNegHi,
             FilmSimulation::FujiEterna,
             FilmSimulation::FujiAcrosStandard,
             FilmSimulation::HasselbladHncs,
