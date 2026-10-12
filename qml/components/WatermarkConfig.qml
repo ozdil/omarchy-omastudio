@@ -173,16 +173,25 @@ Rectangle {
                     border.color: Theme.border
                     border.width: 1
 
-                    TextInput {
+                    // TextEdit-based bounded input: unlike TextInput it does not read the
+                    // full foreign clipboard text on every selection change; paste is
+                    // routed through a 4 KiB / 1 s bounded wl-paste process.
+                    BoundedTextInput {
                         id: textInput
                         anchors.fill: parent
                         anchors.margins: 6
+                        verticalAlignment: TextEdit.AlignVCenter
+                        maxLength: 512
                         text: root.text
                         font.family: Theme.fontFamily
                         font.pixelSize: 10
                         color: Theme.textMain
-                        selectByMouse: true
+                        placeholderTextColor: Theme.textDim
                         onEditingFinished: {
+                            root.text = text;
+                            root.notifyChanged();
+                        }
+                        onAccepted: {
                             root.text = text;
                             root.notifyChanged();
                         }
@@ -260,15 +269,24 @@ Rectangle {
                     border.color: Theme.border
                     border.width: 1
 
-                    TextInput {
+                    // TextEdit-based bounded input: unlike TextInput it does not read the
+                    // full foreign clipboard text on every selection change; paste is
+                    // routed through a 4 KiB / 1 s bounded wl-paste process.
+                    BoundedTextInput {
                         anchors.fill: parent
                         anchors.margins: 6
+                        verticalAlignment: TextEdit.AlignVCenter
+                        maxLength: 4096
                         text: root.logoPath
                         font.family: Theme.fontFamily
                         font.pixelSize: 10
                         color: Theme.textMain
-                        selectByMouse: true
+                        placeholderTextColor: Theme.textDim
                         onEditingFinished: {
+                            root.logoPath = text;
+                            root.notifyChanged();
+                        }
+                        onAccepted: {
                             root.logoPath = text;
                             root.notifyChanged();
                         }
