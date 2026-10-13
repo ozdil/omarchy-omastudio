@@ -19,14 +19,14 @@ Rectangle {
     signal closeRequested()
 
     property string pluginName: "OmaStudio"
-    property string pluginVersion: "v2.2.0"
-    property string pluginDescription: "Lightroom & DaVinci Resolve-Grade RAW Studio"
+    property string pluginVersion: "v2.3.1"
+    property string pluginDescription: "Lightroom-grade RAW Editor with DaVinci Color Wheels & Local Studio Catalog"
     property string pluginAuthor: "Ozan Özdil (@ozdil)"
     property string pluginLicense: "MIT Open Source License"
     property bool isVerified: true
 
     readonly property string manifestPath: Qt.resolvedUrl("../../manifest.json").toString().replace(/^file:\/\//, "")
-    readonly property string manifestFallbackPath: (Quickshell.env("HOME") || "/home/ozdil") + "/.config/omarchy/plugins/ozdil.omastudio/manifest.json"
+    readonly property string manifestFallbackPath: (Quickshell.env("HOME") || "/home/ozdil") + "/.local/share/omastudio/manifest.json"
 
     function loadManifest(raw) {
         if (!raw || typeof raw !== "string") return;
@@ -262,6 +262,23 @@ Rectangle {
                 }
                 Text {
                     text: "Jev AI Vision Engine & TypeSafe Photographic Decision Pipeline"
+                    textFormat: Text.PlainText
+                    font.family: Theme.fontFamily
+                    font.pixelSize: 10
+                    color: Theme.textMain
+                }
+            }
+
+            RowLayout {
+                spacing: 8
+                Text {
+                    text: "\u2022"
+                    font.family: Theme.monoFont
+                    font.pixelSize: 12
+                    color: Theme.accent
+                }
+                Text {
+                    text: "Studio Local Catalog DAM & Medium Format 16-Bit Processing"
                     textFormat: Text.PlainText
                     font.family: Theme.fontFamily
                     font.pixelSize: 10
