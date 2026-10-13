@@ -14,7 +14,7 @@ Rectangle {
     property string activePhotoPath: ""
     property var selectedPaths: []
     property bool isCatalogMode: false
-    property string currentFolder: "~/Downloads/yurt"
+    property string currentFolder: "~/Pictures"
     property bool isDownloadingRemote: false
     property bool isListingFolder: false
     property int activeRating: 0

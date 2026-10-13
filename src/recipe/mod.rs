@@ -481,25 +481,17 @@ pub struct CatalogFilter {
 impl Catalog {
     pub fn default_catalog_path() -> PathBuf {
         let home = std::env::var("HOME").unwrap_or_else(|_| ".".to_string());
-        let studio_path = PathBuf::from(&home)
+        PathBuf::from(&home)
             .join(".local/share/omastudio")
-            .join("catalog.json");
-        if studio_path.exists() {
-            return studio_path;
-        }
-        let legacy_path = PathBuf::from(&home)
-            .join(".local/share/omaraw")
-            .join("catalog.json");
-        if legacy_path.exists() {
-            return legacy_path;
-        }
-        studio_path
+            .join("catalog.json")
     }
 
     pub fn load() -> Self {
         let path = Self::default_catalog_path();
         if let Ok(bytes) = crate::security::read_secure_file(&path, 16 * 1024 * 1024) {
-            if let Ok(cat) = serde_json::from_slice::<Catalog>(&bytes) {
+            if let Ok(mut cat) = serde_json::from_slice::<Catalog>(&bytes) {
+                // Filter out ghost entries where RAW file no longer exists on disk
+                cat.items.retain(|file_path, _| std::path::Path::new(file_path).exists());
                 return cat;
             }
         }
