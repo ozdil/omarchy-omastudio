@@ -1,8 +1,6 @@
 [Desktop Entry]
 Name=OmaStudio
-GenericName=RAW Photo Editor
-Comment=Lightroom-Grade Open-Source RAW Photo Editor for Omarchy Linux with Google Drive & AI
-Exec=omastudio %F
+Comment=Premier Professional RAW Photo Editor for Omarchy Linux with Studio Catalog & AI Jev Engine
 Icon=camera-photo
 Terminal=false
 Type=Application

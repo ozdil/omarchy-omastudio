@@ -4,7 +4,7 @@
 
 **Quickshell & Rust-Powered Premier Photo RAW Studio for Omarchy Linux**
 
-*Parametric non-destructive RAW editing, ACES 1.3 color management & Reference Gamut Compression, authentic Fujifilm & Hasselblad film simulations, Hollywood-standard DaVinci 3-Way color wheels, customizable photography watermarking, offline AI Jev decision engine, dual storage (Local + Google Drive), and modern multi-format export pipeline.*
+*Parametric non-destructive RAW editing, ACES 1.3 color management & Reference Gamut Compression, authentic Fujifilm & Hasselblad film simulations, Hollywood-standard DaVinci 3-Way color wheels, customizable photography watermarking, offline AI Jev decision engine, persistent Studio Catalog DAM, and modern multi-format export pipeline.*
 
 [English](README.md) • [Türkçe](README.tr.md)
 
@@ -183,7 +183,7 @@ flowchart LR
 | **3D LUT (.cube) & Mix** | **Hardware Trilinear & Presets** | Profile Library | LUT Module | HaldCLUT Only |
 | **Local Grade Versions** | **A/B/C/D Instant Hotkeys** | Snapshots | History Stacks | Snapshots |
 | **JPEG XL / AVIF Export** | **Hardware Accelerated** | Limited | Via Plugins | Partial |
-| **Cloud Integration** | **Google Drive (Rclone FFI)**| Adobe Cloud (Enforced) | None | None |
+| **Catalog & DAM**       | **Studio Local DAM (.omastudio)**| Adobe Cloud (Enforced) | Proprietary DB | XML Sidecars |
 | **Resource Footprint** | **Lightweight (~35 MB RAM)** | Heavy (2+ GB RAM) | Moderate (~400 MB) | Moderate (~350 MB) |
 
 ---
@@ -193,7 +193,6 @@ flowchart LR
 ### System Requirements & Dependencies
 * `libraw` (RAW image decoding engine)
 * `quickshell` (Qt 6 QML desktop shell runtime)
-* `rclone` (Google Drive and cloud storage synchronization)
 * `libjxl` & `libavif` (Modern hardware-accelerated image codecs)
 * `exiftool` (Metadata and ICC profile embedding)
 * `zenity` (Native file selection dialogs)

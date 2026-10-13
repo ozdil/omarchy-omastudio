@@ -2322,7 +2322,7 @@ Rectangle {
                 }
             }
             onRefreshRequested: {
-                if (filmstrip.isGdriveMode) {
+                if (filmstrip.isCatalogMode) {
                     root.showToast("[Catalog] Refreshing Studio Catalog...", Theme.accentCyan);
                     root.loadStudioCatalog("");
                 } else {
@@ -2458,7 +2458,6 @@ Rectangle {
         }
         if (exportProc.running) exportProc.running = false;
         if (listProc.running) listProc.running = false;
-        if (fetchGdriveProc.running) fetchGdriveProc.running = false;
         if (openFileProc.running) openFileProc.running = false;
     }
 }

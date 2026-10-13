@@ -1,12 +1,12 @@
 # Maintainer: Ozan Özdil
 pkgname=omastudio
-pkgver=1.0.0
+pkgver=2.3.0
 pkgrel=1
-pkgdesc="Lightroom-grade Open-Source RAW Photo Editor for Omarchy Linux with Google Drive & AI"
+pkgdesc="Premier Professional RAW Photo Editor for Omarchy Linux with Studio Catalog & AI Jev Engine"
 arch=('x86_64')
 url="https://github.com/ozdil/omarchy-omastudio"
 license=('MIT')
-depends=('libraw' 'quickshell' 'rclone' 'libjxl' 'libavif' 'zenity')
+depends=('libraw' 'quickshell' 'libjxl' 'libavif' 'zenity')
 makedepends=('rust' 'cargo' 'pkgconf' 'clang')
 source=()
 sha256sums=()

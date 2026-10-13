@@ -243,7 +243,7 @@ fn test_secure_dir_hierarchy_rejects_symlinks() {
     fs::create_dir_all(&planted_target).expect("Create planted target");
 
     // Plant a symlink as intermediate component
-    let intermediate_symlink = base_dir.join("gdrive_symlink");
+    let intermediate_symlink = base_dir.join("test_symlink");
     std::os::unix::fs::symlink(&planted_target, &intermediate_symlink).expect("Create intermediate symlink");
 
     // Target path goes through intermediate symlink

@@ -13,7 +13,7 @@ Rectangle {
     property var photoList: []
     property string activePhotoPath: ""
     property var selectedPaths: []
-    property bool isGdriveMode: false
+    property bool isCatalogMode: false
     property string currentFolder: "~/Downloads/yurt"
     property bool isDownloadingRemote: false
     property bool isListingFolder: false
@@ -24,7 +24,7 @@ Rectangle {
     signal navigateFolder(string remotePath)
     signal parentFolderRequested()
     signal refreshRequested()
-    signal switchSource(bool gdrive)
+    signal switchSource(bool isCatalog)
     signal batchExportRequested()
 
     ColumnLayout {
@@ -42,7 +42,7 @@ Rectangle {
                 implicitWidth: localRow.implicitWidth + 16
                 implicitHeight: 22
                 radius: 4
-                color: !root.isGdriveMode ? Theme.accent : Theme.bgCard
+                color: !root.isCatalogMode ? Theme.accent : Theme.bgCard
 
                 RowLayout {
                     id: localRow
@@ -52,14 +52,14 @@ Rectangle {
                         text: Theme.iconFolder
                         font.family: Theme.iconFont
                         font.pixelSize: 10
-                        color: !root.isGdriveMode ? Theme.bgBase : Theme.textMuted
+                        color: !root.isCatalogMode ? Theme.bgBase : Theme.textMuted
                     }
                     Text {
                         text: "Local Photos"
                         textFormat: Text.PlainText
                         font.pixelSize: 10
                         font.weight: Font.DemiBold
-                        color: !root.isGdriveMode ? Theme.bgBase : Theme.textMuted
+                        color: !root.isCatalogMode ? Theme.bgBase : Theme.textMuted
                     }
                 }
 
@@ -67,8 +67,8 @@ Rectangle {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
                     onClicked: {
-                        if (root.isGdriveMode) {
-                            root.isGdriveMode = false
+                        if (root.isCatalogMode) {
+                            root.isCatalogMode = false
                             root.switchSource(false)
                         }
                     }
@@ -80,7 +80,7 @@ Rectangle {
                 implicitWidth: catalogRow.implicitWidth + 16
                 implicitHeight: 22
                 radius: 4
-                color: root.isGdriveMode ? Theme.accentCyan : Theme.bgCard
+                color: root.isCatalogMode ? Theme.accentCyan : Theme.bgCard
 
                 RowLayout {
                     id: catalogRow
@@ -90,14 +90,14 @@ Rectangle {
                         text: Theme.iconLayers || Theme.iconFolder
                         font.family: Theme.iconFont
                         font.pixelSize: 10
-                        color: root.isGdriveMode ? Theme.bgBase : Theme.textMuted
+                        color: root.isCatalogMode ? Theme.bgBase : Theme.textMuted
                     }
                     Text {
                         text: "Studio Catalog"
                         textFormat: Text.PlainText
                         font.pixelSize: 10
                         font.weight: Font.DemiBold
-                        color: root.isGdriveMode ? Theme.bgBase : Theme.textMuted
+                        color: root.isCatalogMode ? Theme.bgBase : Theme.textMuted
                     }
                 }
 
@@ -105,8 +105,8 @@ Rectangle {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
                     onClicked: {
-                        if (!root.isGdriveMode) {
-                            root.isGdriveMode = true
+                        if (!root.isCatalogMode) {
+                            root.isCatalogMode = true
                             root.switchSource(true)
                         }
                     }
@@ -115,7 +115,7 @@ Rectangle {
 
             // Up / Parent button
             Rectangle {
-                visible: !root.isGdriveMode && root.currentFolder !== "/"
+                visible: !root.isCatalogMode && root.currentFolder !== "/"
                 implicitWidth: parentBtnRow.implicitWidth + 12
                 implicitHeight: 22
                 radius: 4
@@ -188,7 +188,7 @@ Rectangle {
                         }
                     }
                     Text {
-                        text: root.isGdriveMode ? "Scanning Cloud..." : "Scanning Folder..."
+                        text: root.isCatalogMode ? "Scanning Catalog..." : "Scanning Folder..."
                         textFormat: Text.PlainText
                         font.pixelSize: 9
                         font.weight: Font.Bold
@@ -306,13 +306,13 @@ Rectangle {
                     anchors.centerIn: parent
                     spacing: 8
                     Text {
-                        text: root.isGdriveMode ? Theme.iconCloud : Theme.iconFolder
+                        text: root.isCatalogMode ? (Theme.iconLayers || Theme.iconFolder) : Theme.iconFolder
                         font.family: Theme.iconFont
                         font.pixelSize: 14
                         color: Theme.textDim
                     }
                     Text {
-                        text: root.isGdriveMode ? "No photos found in this Google Drive folder." : "No photos found in this directory."
+                        text: root.isCatalogMode ? "No photos found in Studio Catalog." : "No photos found in this directory."
                         textFormat: Text.PlainText
                         font.pixelSize: 10
                         font.family: Theme.monoFont

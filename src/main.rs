@@ -685,7 +685,6 @@ fn main() {
             println!("  render <raw_file> [options]           Process RAW image to preview PPM/PNG/JPG");
             println!("  export <raw_file> [options]           High-res demosaic & export (jxl, avif, webp, tiff, png, jpg)");
             println!("  icc list                              List all detected system and bundled ICC color profiles");
-            println!("  gdrive [check|list <dir>|fetch <f>]   Google Drive cloud RAW operations");
             println!("  scan [dir]                            Scan local folder for supported RAW photos");
             println!("  catalog                               Retrieve persistent photo catalog database");
             println!("  dag                                   Inspect Demand-Driven Tiled DAG Engine status");

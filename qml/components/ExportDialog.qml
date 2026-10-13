@@ -19,9 +19,7 @@ Rectangle {
     property bool stripGps: true
     property bool preserveExif: true
     property string selectedIcc: "sRGB"
-    property bool uploadToGdrive: false
     property string localOutputDir: "~/Pictures/OmaStudio_Exports"
-    property string gdriveFolder: "Photos/Exports"
     property bool isExporting: false
     property string exportStatusText: ""
     property bool isBatchMode: false

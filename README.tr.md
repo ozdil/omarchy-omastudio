@@ -4,7 +4,7 @@
 
 **Omarchy Linux için Quickshell & Rust Tabanlı 1 Numaralı Profesyonel RAW Fotoğraf Stüdyosu**
 
-*Kayıpsız parametrik RAW düzenleme, ACES 1.3 renk yönetimi ve Referans Gamut Sıkıştırma (RGC), aslına sadık Fujifilm ve Hasselblad film benzetimleri, Hollywood standardı DaVinci 3-Way renk tekerlekleri, seçmeli profesyonel filigran motoru, çevrimdışı YZ Jev karar motoru, çift depolama (Yerel + Google Drive) ve modern çoklu format dışa aktarma mimarisi.*
+*Kayıpsız parametrik RAW düzenleme, ACES 1.3 renk yönetimi ve Referans Gamut Sıkıştırma (RGC), aslına sadık Fujifilm ve Hasselblad film benzetimleri, Hollywood standardı DaVinci 3-Way renk tekerlekleri, seçmeli profesyonel filigran motoru, çevrimdışı YZ Jev karar motoru, kalıcı Studio Catalog DAM ve modern çoklu format dışa aktarma mimarisi.*
 
 [English](README.md) • [Türkçe](README.tr.md)
 
@@ -183,7 +183,7 @@ flowchart LR
 | **3D LUT (.cube) & Karışım**| **Donanım Trilineer & Hazır Ayar**| Profil Kütüphanesi | LUT Modülü | Yalnızca HaldCLUT |
 | **Yerel Sürümler (A/B/C/D)** | **Kısayol ile Anında Geçiş** | Anlık Görüntüler | Geçmiş Yığınları | Anlık Görüntüler |
 | **JPEG XL / AVIF Çıktısı** | **Donanım Hızlandırmalı** | Kısıtlı | Eklenti ile | Kısmi |
-| **Bulut Entegrasyonu** | **Google Drive (Rclone FFI)** | Adobe Cloud (Zorunlu) | Yok | Yok |
+| **Katalog & DAM**        | **Studio Yerel DAM (.omastudio)** | Adobe Cloud (Zorunlu) | Özel Veritabanı | XML Sidecar'lar |
 | **Bellek Tüketimi** | **Hafif (~35 MB RAM)** | Ağır (2+ GB RAM) | Orta (~400 MB) | Orta (~350 MB) |
 
 ---
@@ -193,7 +193,6 @@ flowchart LR
 ### Sistem Gereksinimleri
 * `libraw` (RAW kod çözme motoru)
 * `quickshell` (Qt 6 QML masaüstü kabuk çalışma zamanı)
-* `rclone` (Google Drive bulut depolama senkronizasyonu)
 * `libjxl` & `libavif` (Modern donanım ivmeli görsel kodekleri)
 * `exiftool` (Meta veri ve ICC profil gömme aracı)
 * `zenity` (Masaüstü dosya seçim pencereleri)
