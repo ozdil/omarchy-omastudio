@@ -392,6 +392,42 @@ Rectangle {
                 Layout.fillWidth: true
                 implicitHeight: 32
                 radius: Theme.radiusSm
+                color: sponsorMouse.containsMouse ? "#2d1627" : "#1f101b"
+                border.color: sponsorMouse.containsMouse ? "#ea4aaa" : "#592143"
+                border.width: 1
+
+                RowLayout {
+                    anchors.centerIn: parent
+                    spacing: 5
+                    Text {
+                        text: "\uf004"
+                        font.family: Theme.iconFont
+                        font.pixelSize: 11
+                        color: "#ea4aaa"
+                    }
+                    Text {
+                        text: "Sponsor"
+                        textFormat: Text.PlainText
+                        font.family: Theme.monoFont
+                        font.pixelSize: 10
+                        font.weight: Font.Bold
+                        color: "#ea4aaa"
+                    }
+                }
+
+                MouseArea {
+                    id: sponsorMouse
+                    anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
+                    hoverEnabled: true
+                    onClicked: Qt.openUrlExternally("https://github.com/sponsors/ozdil")
+                }
+            }
+
+            Rectangle {
+                Layout.fillWidth: true
+                implicitHeight: 32
+                radius: Theme.radiusSm
                 color: bmacMouse.containsMouse ? "#FFE433" : "#FFDD00"
                 border.color: "#E6C700"
                 border.width: 1
