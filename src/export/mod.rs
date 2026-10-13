@@ -3,7 +3,7 @@ pub mod watermark;
 use crate::pipeline::process_buffer_16_to_16;
 use crate::raw::RawImage;
 use crate::recipe::Recipe;
-use crate::security::{run_bounded_command, secure_command};
+use crate::security::{run_bounded_command, secure_command, secure_command_with_mem_limit};
 use image::{DynamicImage, ImageBuffer, Rgb};
 use serde::{Deserialize, Serialize};
 use std::fs;
@@ -258,7 +258,9 @@ pub fn export_photo<P: AsRef<Path>>(
 
     // Embed camera EXIF, GPS settings, and ICC color profile
     if options.preserve_exif || options.icc_profile.is_some() || options.artist_copyright.is_some() {
-        let mut exif_cmd = secure_command("exiftool");
+        // Enforce 512 MiB RLIMIT_AS ceiling on ExifTool helper to defend against
+        // unbounded pointer array allocations (e.g. unchecked APP11/JUMBF sequence numbers)
+        let mut exif_cmd = secure_command_with_mem_limit("exiftool", Some(512 * 1024 * 1024));
         exif_cmd.arg("-overwrite_original");
 
         if options.preserve_exif {

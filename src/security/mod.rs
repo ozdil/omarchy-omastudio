@@ -31,6 +31,14 @@ pub const MAX_COMMAND_OUTPUT_BYTES: usize = 1024 * 1024;
 /// - Isolated process group (cmd.process_group(0))
 /// - Cleared environment variables with whitelist only
 pub fn secure_command(program: &str) -> Command {
+    secure_command_with_mem_limit(program, None)
+}
+
+/// Cleans and configures a Command according to Omarchy security standards:
+/// - Isolated process group (cmd.process_group(0))
+/// - Cleared environment variables with whitelist only
+/// - Optional virtual memory limit (RLIMIT_AS / address space cap) via pre_exec
+pub fn secure_command_with_mem_limit(program: &str, max_memory_bytes: Option<u64>) -> Command {
     let mut cmd = Command::new(program);
     std::os::unix::process::CommandExt::process_group(&mut cmd, 0);
     cmd.env_clear();
@@ -42,6 +50,22 @@ pub fn secure_command(program: &str) -> Command {
     }
     cmd.env("LC_ALL", "C");
     cmd.env("GIT_TERMINAL_PROMPT", "0");
+
+    if let Some(mem_bytes) = max_memory_bytes {
+        unsafe {
+            std::os::unix::process::CommandExt::pre_exec(&mut cmd, move || {
+                let limit = libc::rlimit {
+                    rlim_cur: mem_bytes as libc::rlim_t,
+                    rlim_max: mem_bytes as libc::rlim_t,
+                };
+                if libc::setrlimit(libc::RLIMIT_AS, &limit) != 0 {
+                    return Err(io::Error::last_os_error());
+                }
+                Ok(())
+            });
+        }
+    }
+
     cmd
 }
 

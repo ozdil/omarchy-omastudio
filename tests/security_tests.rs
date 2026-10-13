@@ -326,3 +326,17 @@ fn test_export_atomic_file_write_mode_and_symlink_refusal() {
     let _ = fs::remove_dir_all(&temp_dir);
 }
 
+#[test]
+fn test_secure_command_memory_limit_enforcement() {
+    use omastudio_engine::security::secure_command_with_mem_limit;
+    use std::time::Duration;
+
+    // Allocate a command with a very tight memory ceiling (64 MiB)
+    let mut cmd = secure_command_with_mem_limit("sh", Some(64 * 1024 * 1024));
+    cmd.args(["-c", "exit 0"]);
+    let res = omastudio_engine::security::run_bounded_command(cmd, Duration::from_secs(5));
+    assert!(res.is_ok(), "Small memory process within limit should succeed");
+    let (code, _, _) = res.unwrap();
+    assert_eq!(code, 0);
+}
+
