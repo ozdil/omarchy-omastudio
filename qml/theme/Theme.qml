@@ -32,6 +32,9 @@ QtObject {
     property color accentCyan: "#7dcfff"
     property color accentYellow: "#e0af68"
 
+    property color accentRed: "#f7768e"
+    property color accentBlue: "#7aa2f7"
+
     property color highlightClip: "#f7768e"
     property color shadowClip: "#388bfd"
 

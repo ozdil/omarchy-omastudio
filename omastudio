@@ -123,9 +123,9 @@ elif [[ $# -gt 0 ]]; then
             ;;
         *)
             # If it's a file path and quickshell is already running, load via IPC
-            if [[ -f "${1:-}" && -n "${QUICKSHELL_BIN}" ]]; then
+            if [[ -f "${1:-}" && -n "${QUICKSHELL_BIN}" && -n "${QML_SHELL}" ]]; then
                 TARGET_PHOTO="$(/usr/bin/realpath "$1")"
-                if "${QUICKSHELL_BIN}" ipc call ozdil.omastudio openPhoto "${TARGET_PHOTO}" >/dev/null 2>&1; then
+                if "${QUICKSHELL_BIN}" ipc -p "${QML_SHELL}" call ozdil.omastudio openPhoto "${TARGET_PHOTO}" >/dev/null 2>&1; then
                     echo "Loaded photo in running OmaStudio instance: $1"
                     exit 0
                 fi
@@ -135,8 +135,8 @@ elif [[ $# -gt 0 ]]; then
 fi
 
 # Try quickshell IPC toggle if already running and no args passed
-if [[ $# -eq 0 && -n "${QUICKSHELL_BIN}" ]]; then
-    if "${QUICKSHELL_BIN}" ipc call ozdil.omastudio toggle >/dev/null 2>&1; then
+if [[ $# -eq 0 && -n "${QUICKSHELL_BIN}" && -n "${QML_SHELL}" ]]; then
+    if "${QUICKSHELL_BIN}" ipc -p "${QML_SHELL}" call ozdil.omastudio toggle >/dev/null 2>&1; then
         exit 0
     fi
 fi

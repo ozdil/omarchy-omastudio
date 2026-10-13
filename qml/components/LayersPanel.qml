@@ -14,6 +14,7 @@ Rectangle {
 
     property var layersList: []
     property int selectedLayerIndex: -1
+    readonly property var activeL: (selectedLayerIndex >= 0 && selectedLayerIndex < layersList.length) ? layersList[selectedLayerIndex] : null
 
     signal layersChanged()
 
@@ -349,8 +350,6 @@ Rectangle {
             Layout.fillWidth: true
             spacing: 8
             visible: root.selectedLayerIndex >= 0 && root.selectedLayerIndex < root.layersList.length
-
-            readonly property var activeL: (root.selectedLayerIndex >= 0 && root.selectedLayerIndex < root.layersList.length) ? root.layersList[root.selectedLayerIndex] : null
 
             Rectangle { Layout.fillWidth: true; height: 1; color: Theme.border }
 
