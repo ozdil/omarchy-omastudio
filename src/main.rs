@@ -147,13 +147,19 @@ struct DaemonCache {
 }
 
 
+/// Bumped when cached thumbnails must be regenerated. v2: earlier scans copied raster
+/// files that failed to decode into the cache unchanged, so those entries are not
+/// guaranteed to be engine-encoded and are no longer used.
+const THUMBNAIL_CACHE_VERSION: &str = "v2";
+
 /// Cache path of a photo's thumbnail. Keyed by a hash of the full path (not just the
 /// file stem) so DSC_0001.NEF / DSC_0001.JPG or same-named files from two cards don't
 /// share or overwrite each other's thumbnail.
 fn thumbnail_path_for(photo: &Path) -> PathBuf {
     let home = env::var("HOME").unwrap_or_else(|_| ".".to_string());
     let canonical = std::fs::canonicalize(photo).unwrap_or_else(|_| photo.to_path_buf());
-    let digest = rendezvous::sha256_hex(canonical.to_string_lossy().as_bytes());
+    let key = format!("{}:{}", THUMBNAIL_CACHE_VERSION, canonical.to_string_lossy());
+    let digest = rendezvous::sha256_hex(key.as_bytes());
     let stem = photo.file_stem().and_then(|s| s.to_str()).unwrap_or("thumb");
     PathBuf::from(home)
         .join(".cache/omastudio/thumbnails")
@@ -211,18 +217,19 @@ fn scan_directory(dir_path: &str) -> Result<Vec<FolderScanItem>, String> {
                     if is_supported {
                         let thumb_path = thumbnail_path_for(&path);
                         if !thumb_path.exists() {
+                            // Thumbnails are always re-encoded by the engine. A file that
+                            // fails to decode gets no thumbnail (the filmstrip shows a
+                            // placeholder): handing the original to Qt would let a crafted
+                            // image reach its decoders without the engine's limits.
                             if let Ok(raw) = RawImage::open(&path) {
                                 let _ = raw.extract_thumbnail(&thumb_path);
-                            } else if ["jpg", "jpeg", "png", "webp"].contains(&ext_lower.as_str()) {
-                                // Direct copy or link for standard raster formats
-                                let _ = std::fs::copy(&path, &thumb_path);
                             }
                         }
 
                         items.push(FolderScanItem {
                             name: path.file_name().and_then(|s| s.to_str()).unwrap_or("").to_string(),
                             path: path.to_string_lossy().to_string(),
-                            thumbnail: if thumb_path.exists() { thumb_path.to_string_lossy().to_string() } else { path.to_string_lossy().to_string() },
+                            thumbnail: if thumb_path.exists() { thumb_path.to_string_lossy().to_string() } else { String::new() },
                             is_remote: false,
                             is_dir: false,
                         });

@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+### Engine
+- Thumbnails are always re-encoded by the engine. A JPEG, PNG or WebP that fails to decode is no longer copied into the thumbnail cache unchanged or shown from its original file; the filmstrip shows a placeholder instead, so a crafted image cannot reach Qt's image decoders without the engine's limits. *(The thumbnail cache is rebuilt once.)*
+
 ## v2.4.0 — 2026-10-16
 
 A large stability and correctness release covering the engine, the UI, colour handling, export and CI.

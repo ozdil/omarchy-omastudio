@@ -920,7 +920,8 @@ Rectangle {
                                 arr.push({
                                     name: it.path.split("/").pop(),
                                     path: it.path,
-                                    thumbnail: it.thumbnail_path || it.path,
+                                    // Never the original file: only engine-encoded thumbnails reach Qt
+                                    thumbnail: it.thumbnail_path || "",
                                     is_remote: false
                                 });
                             }
