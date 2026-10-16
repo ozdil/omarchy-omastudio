@@ -314,9 +314,11 @@ impl FilmSimulation {
 
                 // Subtle medium format tone curve with natural highlight roll-off
                 let hncs_luma = if luma < 0.50 {
-                    0.50 * (luma / 0.50).powf(0.96) // Open clean shadows
+                    // .max(0.0) keeps powf off negative bases: luma outside [0, 1] (normal after
+                    // the tone stage) produced NaN and rendered highlights black
+                    0.50 * (luma.max(0.0) / 0.50).powf(0.96) // Open clean shadows
                 } else {
-                    1.0 - 0.50 * ((1.0 - luma) / 0.50).powf(1.08) // Film-like highlight preservation
+                    1.0 - 0.50 * ((1.0 - luma).max(0.0) / 0.50).powf(1.08) // Film-like highlight preservation
                 };
 
                 let scale = if luma > 1e-4 {

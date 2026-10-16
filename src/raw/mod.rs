@@ -70,6 +70,30 @@ impl ProcessedBuffer {
         self.as_slice().to_vec()
     }
 
+    /// Converts a 1-channel buffer into an owned interleaved 3-channel buffer.
+    fn expand_gray_to_rgb(self) -> ProcessedBuffer {
+        let pixels = (self.width as usize) * (self.height as usize);
+        let (storage, data_size) = if self.bits_per_sample == 16 {
+            let src = self.as_slice_u16();
+            let out: Vec<u16> = src.iter().take(pixels).flat_map(|&v| [v, v, v]).collect();
+            let len = out.len() * 2;
+            (BufferStorage::OwnedU16(out), len)
+        } else {
+            let src = self.as_slice();
+            let out: Vec<u8> = src.iter().take(pixels).flat_map(|&v| [v, v, v]).collect();
+            let len = out.len();
+            (BufferStorage::OwnedU8(out), len)
+        };
+        ProcessedBuffer {
+            storage,
+            width: self.width,
+            height: self.height,
+            channels: 3,
+            bits_per_sample: self.bits_per_sample,
+            data_size,
+        }
+    }
+
     pub fn as_slice_u16(&self) -> &[u16] {
         if self.data_size < 2 {
             &[]
@@ -421,14 +445,22 @@ impl RawImage {
                     return Err("Failed to process RAW image".to_string());
                 }
 
-                Ok(ProcessedBuffer {
+                let buf = ProcessedBuffer {
                     storage: BufferStorage::LibRaw(ptr),
                     width: out_w.max(0) as u32,
                     height: out_h.max(0) as u32,
                     channels: out_colors.max(0) as u32,
                     bits_per_sample: if bps == 16 { 16 } else { 8 },
                     data_size: out_size.max(0) as usize,
-                })
+                };
+
+                match buf.channels {
+                    3 => Ok(buf),
+                    // Monochrome sensors (Leica Monochrom, some DNGs) decode to 1 channel; the
+                    // whole pipeline assumes interleaved RGB, so replicate the sample.
+                    1 => Ok(buf.expand_gray_to_rgb()),
+                    n => Err(format!("Unsupported channel count from decoder: {}", n)),
+                }
             }
         }
     }

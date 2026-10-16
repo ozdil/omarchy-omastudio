@@ -20,6 +20,7 @@ serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 image = { version = "0.25", default-features = false, features = ["png", "jpeg", "webp", "tiff"] }
 libc = "0.2"
+qrcode = { version = "0.14", default-features = false }
 
 [build-dependencies]
 pkg-config = "0.3"

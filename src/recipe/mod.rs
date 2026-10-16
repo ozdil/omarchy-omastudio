@@ -20,7 +20,6 @@ pub struct Recipe {
     pub shadows: f32,    // -100.0 to +100.0 (Default: 0.0)
     pub whites: f32,     // -100.0 to +100.0 (Default: 0.0)
     pub blacks: f32,     // -100.0 to +100.0 (Default: 0.0)
-    #[serde(default)]
     pub highlight_reconstruct: bool, // Luma-guided clipped channel inpainting
     #[serde(default)]
     pub filmic_agx: bool,            // Sigmoidal AgX perceptual tone mapper
@@ -109,7 +108,6 @@ pub struct Recipe {
     // Lightroom Studio Culling & Rating
     #[serde(default)]
     pub rating: u8, // 0 to 5 stars
-    #[serde(default)]
     pub flag: String, // "none", "pick", "reject"
 
     // ACES 1.3 & Wide Gamut Color Spaces

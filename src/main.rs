@@ -470,7 +470,7 @@ fn main() {
                     let tolerance: u32 = args.get(5).and_then(|s| s.parse().ok()).unwrap_or(1);
 
                     let mut cand_bytes = [0u8; 32];
-                    if cand_hex.len() != 64 {
+                    if !cand_hex.is_ascii() || cand_hex.len() != 64 {
                         print_json::<()>(&ResponseWrapper::err("Invalid topic hex length (must be 64 characters)"));
                         return;
                     }
@@ -817,15 +817,17 @@ fn inspect_file(raw_path: &str) -> Result<InspectResult, String> {
         .unwrap_or_default()
         .as_secs();
 
+    // Preserve culling data (rating / flag / colour label) already stored for this photo
+    let prev = catalog.get(raw_path).cloned();
     catalog.upsert(CatalogItem {
         id: file_stem.to_string(),
         path: raw_path.to_string(),
-        remote_path: None,
+        remote_path: prev.as_ref().and_then(|p| p.remote_path.clone()),
         thumbnail_path: thumb_path.to_string_lossy().to_string(),
         metadata: meta.clone(),
-        rating: 0,
-        color_label: String::new(),
-        flag: "unflagged".to_string(),
+        rating: prev.as_ref().map_or(0, |p| p.rating),
+        color_label: prev.as_ref().map_or_else(String::new, |p| p.color_label.clone()),
+        flag: prev.as_ref().map_or_else(|| "unflagged".to_string(), |p| p.flag.clone()),
         recipe: recipe.clone(),
         updated_at: now,
     });
@@ -1020,24 +1022,50 @@ fn run_daemon() {
 
     let stdin = io::stdin();
     let mut stdin_lock = stdin.lock();
-    let mut line_buf = String::new();
+    let mut raw_buf: Vec<u8> = Vec::new();
     const MAX_LINE_BYTES: usize = 1024 * 1024; // 1 MiB JSON line limit
 
     loop {
-        line_buf.clear();
-        let bytes_read = match stdin_lock.read_line(&mut line_buf) {
+        raw_buf.clear();
+        // Bounded byte read: an oversized line never lands in memory whole, and a stray
+        // invalid UTF-8 byte yields an error response instead of silently ending the daemon.
+        let bytes_read = match io::Read::take(&mut stdin_lock, MAX_LINE_BYTES as u64 + 1)
+            .read_until(b'\n', &mut raw_buf)
+        {
             Ok(0) => break, // EOF
             Ok(n) => n,
+            Err(e) if e.kind() == io::ErrorKind::Interrupted => continue,
             Err(_) => break,
         };
 
         if bytes_read > MAX_LINE_BYTES {
+            // Discard the rest of the oversized line
+            if raw_buf.last() != Some(&b'\n') {
+                let mut sink = Vec::new();
+                loop {
+                    sink.clear();
+                    match io::Read::take(&mut stdin_lock, 64 * 1024).read_until(b'\n', &mut sink) {
+                        Ok(0) => break,
+                        Ok(_) if sink.last() == Some(&b'\n') => break,
+                        Ok(_) => continue,
+                        Err(_) => break,
+                    }
+                }
+            }
             print_json::<()>(&ResponseWrapper::err_action(
                 "error",
                 "JSON line exceeded maximum limit of 1 MiB",
             ));
             continue;
         }
+
+        let line_buf = match std::str::from_utf8(&raw_buf) {
+            Ok(s) => s,
+            Err(_) => {
+                print_json::<()>(&ResponseWrapper::err_action("error", "Command line is not valid UTF-8"));
+                continue;
+            }
+        };
 
         let trimmed = line_buf.trim();
         if trimmed.is_empty() {
@@ -1098,7 +1126,9 @@ fn run_daemon() {
                                 c.raw_buffer_16 = Some(u16_vec);
                                 c.raw_buffer_8 = Some(Arc::clone(&u8_arc));
                                 c.metadata = Some(meta.clone());
-                                c.ping_pong = 0;
+                                // Keep ping_pong running across loads: resetting it made the first
+                                // render of every photo reuse the same preview path, so the UI saw
+                                // no source change and kept showing the previous photo.
 
                                 let home = env::var("HOME").unwrap_or_else(|_| ".".to_string());
                                 let thumb_path = PathBuf::from(home)
@@ -1185,26 +1215,31 @@ fn run_daemon() {
                 };
 
                 let dest_path = Path::new(&out_dest);
-                if out_dest.ends_with(".ppm") {
+                let write_result: Result<(), String> = if out_dest.ends_with(".ppm") {
                     let mut ppm_bytes = format!("P6\n{} {}\n255\n", width, height).into_bytes();
                     ppm_bytes.extend_from_slice(&final_buf);
-                    let _ = security::atomic_write_secure(dest_path, &ppm_bytes);
+                    security::atomic_write_secure(dest_path, &ppm_bytes).map_err(|e| e.to_string())
                 } else {
-                    if let Some(img) = image::ImageBuffer::<image::Rgb<u8>, Vec<u8>>::from_raw(
-                        width,
-                        height,
-                        final_buf,
-                    ) {
-                        let mut encoded = Vec::new();
-                        let fmt = if out_dest.ends_with(".png") {
-                            image::ImageFormat::Png
-                        } else {
-                            image::ImageFormat::Jpeg
-                        };
-                        if img.write_to(&mut std::io::Cursor::new(&mut encoded), fmt).is_ok() {
-                            let _ = security::atomic_write_secure(dest_path, &encoded);
+                    match image::ImageBuffer::<image::Rgb<u8>, Vec<u8>>::from_raw(width, height, final_buf) {
+                        Some(img) => {
+                            let mut encoded = Vec::new();
+                            let fmt = if out_dest.ends_with(".png") {
+                                image::ImageFormat::Png
+                            } else {
+                                image::ImageFormat::Jpeg
+                            };
+                            img.write_to(&mut std::io::Cursor::new(&mut encoded), fmt)
+                                .map_err(|e| e.to_string())
+                                .and_then(|_| security::atomic_write_secure(dest_path, &encoded).map_err(|e| e.to_string()))
                         }
+                        None => Err("Rendered buffer size does not match image dimensions".to_string()),
                     }
+                };
+
+                // Report write failures instead of handing the UI a stale preview path
+                if let Err(e) = write_result {
+                    print_json::<()>(&ResponseWrapper::err_action("adjust", format!("Failed to write preview: {}", e)));
+                    continue;
                 }
 
                 print_json(&ResponseWrapper::ok_action("adjust", RenderResult {
@@ -1398,7 +1433,7 @@ fn run_daemon() {
                 let tolerance = cmd_obj.tolerance.unwrap_or(1);
 
                 let mut cand_bytes = [0u8; 32];
-                if cand_hex.len() != 64 {
+                if !cand_hex.is_ascii() || cand_hex.len() != 64 {
                     print_json::<()>(&ResponseWrapper::err_action("rendezvous_verify", "Invalid topic hex length"));
                     continue;
                 }

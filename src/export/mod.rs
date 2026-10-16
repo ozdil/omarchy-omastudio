@@ -193,7 +193,8 @@ pub fn export_photo<P: AsRef<Path>>(
 
             let mut cmd = secure_command("avifenc");
             let speed = "4";
-            let cq = 63 - (options.quality * 63 / 100);
+            let quality = options.quality.clamp(1, 100);
+            let cq = 63 - (quality * 63 / 100);
             cmd.arg("-s")
                 .arg(speed)
                 .arg("-a")
@@ -202,19 +203,26 @@ pub fn export_photo<P: AsRef<Path>>(
                 .arg(&tmp_png)
                 .arg(&final_dest);
 
-            let (code, _, _) = run_bounded_command(cmd, Duration::from_secs(60))
-                .map_err(|e| format!("Failed to execute avifenc: {}", e))?;
+            // A missing avifenc must fall through to ffmpeg, not abort the export
+            let avif_ok = run_bounded_command(cmd, Duration::from_secs(60))
+                .map(|(code, _, _)| code == 0)
+                .unwrap_or(false);
 
-            if code != 0 {
+            if !avif_ok {
                 let mut f_cmd = secure_command("ffmpeg");
-                let crf = (35 - (options.quality * 20 / 100)).to_string();
+                let crf = (35 - (quality * 20 / 100)).to_string();
                 f_cmd.arg("-y")
                     .arg("-i").arg(&tmp_png)
                     .arg("-c:v").arg("libsvtav1")
                     .arg("-crf").arg(&crf)
                     .arg("--")
                     .arg(&final_dest);
-                let _ = run_bounded_command(f_cmd, Duration::from_secs(30));
+                let ff_ok = run_bounded_command(f_cmd, Duration::from_secs(30))
+                    .map(|(code, _, _)| code == 0)
+                    .unwrap_or(false);
+                if !ff_ok || !final_dest.exists() {
+                    return Err("AVIF export failed: neither avifenc nor ffmpeg (libsvtav1) succeeded".to_string());
+                }
             }
         }
         "webp" => {
@@ -267,7 +275,10 @@ pub fn export_photo<P: AsRef<Path>>(
             exif_cmd.arg("-TagsFromFile")
                 .arg(raw_path.as_ref())
                 .arg("-all:all")
-                .arg("-unsafe");
+                .arg("-unsafe")
+                // Pixels are already rotated by the decoder; copying the source Orientation
+                // tag would make viewers rotate the export a second time.
+                .arg("-Orientation#=1");
 
             if options.strip_gps {
                 exif_cmd.arg("-gps:all=");

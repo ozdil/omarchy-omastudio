@@ -24,6 +24,7 @@ pub enum MaskShape {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[serde(default)]
 pub struct AdjustmentLayer {
     pub id: String,
     pub name: String,
