@@ -2,7 +2,6 @@
 
 use omastudio_engine::pipeline::film_sim::FilmSimulation;
 use omastudio_engine::recipe::Recipe;
-use omastudio_engine::rendezvous::generate_fallback_qr_svg;
 use omastudio_engine::security::{atomic_write_secure, ensure_secure_dir};
 use std::fs;
 use std::os::unix::fs::PermissionsExt;
@@ -28,13 +27,6 @@ fn hncs_film_sim_stays_finite_above_white() {
         let (r, g, b) = sim.apply_pixel(v, v, v, 1.0);
         assert!(r.is_finite() && g.is_finite() && b.is_finite(), "NaN for input {}", v);
     }
-}
-
-#[test]
-fn fallback_qr_svg_renders_modules() {
-    let svg = generate_fallback_qr_svg("omasend://identity/1234567812345678");
-    // A real QR symbol for this payload has hundreds of dark modules
-    assert!(svg.matches("<rect x=").count() > 200);
 }
 
 #[test]

@@ -200,7 +200,6 @@ flowchart LR
 İsteğe bağlı:
 * `exiftool` (`perl-image-exiftool`): Dışa aktarımda EXIF verisini korur ve ICC profilini gömer. Yoksa geniş gamlı dışa aktarımlar (Adobe RGB, ProPhoto) sRGB'ye düşer.
 * `ffmpeg`: Yerleşik kodlayıcı başarısız olursa AVIF dışa aktarımı için yedek.
-* `qrencode`: OmaID QR kodu için alternatif çizici (yoksa yerleşik kodlayıcı kullanılır).
 
 ### Yerel Derleme ve Kurulum
 ```bash

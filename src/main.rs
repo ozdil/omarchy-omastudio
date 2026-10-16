@@ -7,7 +7,7 @@ pub mod icc;
 pub mod pipeline;
 pub mod raw;
 pub mod recipe;
-pub mod rendezvous;
+pub mod hash;
 pub mod security;
 
 use ai::{
@@ -159,7 +159,7 @@ fn thumbnail_path_for(photo: &Path) -> PathBuf {
     let home = env::var("HOME").unwrap_or_else(|_| ".".to_string());
     let canonical = std::fs::canonicalize(photo).unwrap_or_else(|_| photo.to_path_buf());
     let key = format!("{}:{}", THUMBNAIL_CACHE_VERSION, canonical.to_string_lossy());
-    let digest = rendezvous::sha256_hex(key.as_bytes());
+    let digest = hash::sha256_hex(key.as_bytes());
     let stem = photo.file_stem().and_then(|s| s.to_str()).unwrap_or("thumb");
     PathBuf::from(home)
         .join(".cache/omastudio/thumbnails")
@@ -465,146 +465,6 @@ fn main() {
                 Err(e) => print_json::<()>(&ResponseWrapper::err(e)),
             }
         }
-        "rendezvous" => {
-            if args.len() < 3 {
-                print_json::<()>(&ResponseWrapper::err("Missing rendezvous subcommand: derive, verify, pin-verify"));
-                return;
-            }
-            match args[2].as_str() {
-                "derive" => {
-                    if args.len() < 4 {
-                        print_json::<()>(&ResponseWrapper::err("Missing OmaID for topic derivation"));
-                        return;
-                    }
-                    let oma_id = &args[3];
-                    let now = std::time::SystemTime::now()
-                        .duration_since(std::time::UNIX_EPOCH)
-                        .unwrap_or_default()
-                        .as_secs();
-                    let topic_hex = rendezvous::derive_epoch_topic_hex(oma_id, now);
-                    let bucket = rendezvous::epoch_bucket_for_timestamp(now);
-
-                    #[derive(Serialize)]
-                    struct DeriveResult {
-                        oma_id: String,
-                        topic: String,
-                        bucket: u64,
-                        timestamp: u64,
-                    }
-                    print_json(&ResponseWrapper::ok(DeriveResult {
-                        oma_id: oma_id.clone(),
-                        topic: topic_hex,
-                        bucket,
-                        timestamp: now,
-                    }));
-                }
-                "verify" => {
-                    if args.len() < 5 {
-                        print_json::<()>(&ResponseWrapper::err("Usage: rendezvous verify <oma_id> <candidate_topic_hex> [window_tolerance]"));
-                        return;
-                    }
-                    let oma_id = &args[3];
-                    let cand_hex = &args[4];
-                    let tolerance: u32 = args.get(5).and_then(|s| s.parse().ok()).unwrap_or(1);
-
-                    let mut cand_bytes = [0u8; 32];
-                    if !cand_hex.is_ascii() || cand_hex.len() != 64 {
-                        print_json::<()>(&ResponseWrapper::err("Invalid topic hex length (must be 64 characters)"));
-                        return;
-                    }
-                    let mut valid_hex = true;
-                    for i in 0..32 {
-                        if let Ok(b) = u8::from_str_radix(&cand_hex[i * 2..i * 2 + 2], 16) {
-                            cand_bytes[i] = b;
-                        } else {
-                            valid_hex = false;
-                            break;
-                        }
-                    }
-                    if !valid_hex {
-                        print_json::<()>(&ResponseWrapper::err("Invalid hex in candidate topic"));
-                        return;
-                    }
-
-                    let now = std::time::SystemTime::now()
-                        .duration_since(std::time::UNIX_EPOCH)
-                        .unwrap_or_default()
-                        .as_secs();
-                    let verified = rendezvous::verify_epoch_topic(oma_id, &cand_bytes, now, tolerance);
-
-                    #[derive(Serialize)]
-                    struct VerifyResult {
-                        oma_id: String,
-                        verified: bool,
-                        tolerance: u32,
-                    }
-                    print_json(&ResponseWrapper::ok(VerifyResult {
-                        oma_id: oma_id.clone(),
-                        verified,
-                        tolerance,
-                    }));
-                }
-                "pin-verify" => {
-                    if args.len() < 5 {
-                        print_json::<()>(&ResponseWrapper::err("Usage: rendezvous pin-verify <expected_pin> <candidate_pin>"));
-                        return;
-                    }
-                    let expected = &args[3];
-                    let candidate = &args[4];
-                    let valid = rendezvous::verify_pin_constant_time(expected, candidate);
-
-                    #[derive(Serialize)]
-                    struct PinVerifyResult {
-                        valid: bool,
-                    }
-                    print_json(&ResponseWrapper::ok(PinVerifyResult { valid }));
-                }
-                "qr" => {
-                    let home = env::var("HOME").unwrap_or_else(|_| ".".to_string());
-                    let state_dir = PathBuf::from(home).join(".local/state/omarchy/omasend");
-                    match rendezvous::update_desktop_oma_id_qr(&state_dir) {
-                        Ok((svg, png)) => {
-                            #[derive(Serialize)]
-                            struct QrResult {
-                                svg_path: String,
-                                png_path: String,
-                            }
-                            print_json(&ResponseWrapper::ok(QrResult {
-                                svg_path: svg.to_string_lossy().to_string(),
-                                png_path: png.to_string_lossy().to_string(),
-                            }));
-                        }
-                        Err(e) => print_json::<()>(&ResponseWrapper::err(e)),
-                    }
-                }
-                "force-scan" => {
-                    let socket = std::net::UdpSocket::bind("0.0.0.0:0");
-                    if let Ok(s) = socket {
-                        let _ = s.set_broadcast(true);
-                        let packet = serde_json::json!({
-                            "magic": "OMASEND_P2P",
-                            "v": 1,
-                            "mode": "EVERYONE"
-                        });
-                        if let Ok(bytes) = serde_json::to_vec(&packet) {
-                            let _ = s.send_to(&bytes, "255.255.255.255:53318");
-                            std::thread::sleep(std::time::Duration::from_millis(40));
-                            let _ = s.send_to(&bytes, "255.255.255.255:53318");
-                        }
-                    }
-                    #[derive(Serialize)]
-                    struct ScanResult {
-                        status: String,
-                        burst_count: usize,
-                    }
-                    print_json(&ResponseWrapper::ok(ScanResult {
-                        status: "2x UDP beacon scan sent".to_string(),
-                        burst_count: 2,
-                    }));
-                }
-                _ => print_json::<()>(&ResponseWrapper::err("Unknown rendezvous subcommand")),
-            }
-        }
         "dag" => {
             #[derive(Serialize)]
             struct DagStatus {
@@ -687,9 +547,6 @@ fn main() {
                     "medium_format_16bit_raw_pipeline".into(),
                     "perceptual_shadow_retinal_toe".into(),
                     "typesafe_ai_jev_decision_engine".into(),
-                    "epoch_salted_rendezvous".into(),
-                    "constant_time_verification".into(),
-                    "adaptive_rate_control".into(),
                     "aces_1_3_color_management".into(),
                     "aces_gamut_compression".into(),
                     "fujifilm_film_simulations".into(),
@@ -786,36 +643,6 @@ fn main() {
         }
         "daemon" => {
             run_daemon();
-        }
-        "--oma-id-qr" | "oma-id-qr" => {
-            let home = env::var("HOME").unwrap_or_else(|_| ".".to_string());
-            let state_dir = PathBuf::from(home).join(".local/state/omarchy/omasend");
-            match rendezvous::update_desktop_oma_id_qr(&state_dir) {
-                Ok((svg, png)) => {
-                    println!("SVG: {}\nPNG: {}", svg.to_string_lossy(), png.to_string_lossy());
-                }
-                Err(e) => {
-                    eprintln!("Error generating OmaID QR: {}", e);
-                    std::process::exit(1);
-                }
-            }
-        }
-        "--force-scan" | "force-scan" => {
-            let socket = std::net::UdpSocket::bind("0.0.0.0:0");
-            if let Ok(s) = socket {
-                let _ = s.set_broadcast(true);
-                let packet = serde_json::json!({
-                    "magic": "OMASEND_P2P",
-                    "v": 1,
-                    "mode": "EVERYONE"
-                });
-                if let Ok(bytes) = serde_json::to_vec(&packet) {
-                    let _ = s.send_to(&bytes, "255.255.255.255:53318");
-                    std::thread::sleep(std::time::Duration::from_millis(40));
-                    let _ = s.send_to(&bytes, "255.255.255.255:53318");
-                }
-            }
-            println!("Force scan triggered: 2x UDP beacon burst sent across all network interfaces.");
         }
         cmd => {
             print_json::<()>(&ResponseWrapper::err(format!("Unknown command: {}", cmd)));
@@ -1028,16 +855,6 @@ struct DaemonCommand {
     pub color_label: Option<String>,
     #[serde(default)]
     pub search_query: Option<String>,
-    #[serde(default)]
-    pub oma_id: Option<String>,
-    #[serde(default)]
-    pub topic: Option<String>,
-    #[serde(default)]
-    pub tolerance: Option<u32>,
-    #[serde(default)]
-    pub pin: Option<String>,
-    #[serde(default)]
-    pub candidate_pin: Option<String>,
 }
 
 fn run_daemon() {
@@ -1426,98 +1243,6 @@ fn run_daemon() {
                     failed,
                     results,
                 }));
-            }
-            "rendezvous_derive" => {
-                let oma_id = match cmd_obj.oma_id {
-                    Some(ref id) => id,
-                    None => {
-                        print_json::<()>(&ResponseWrapper::err_action("rendezvous_derive", "Missing oma_id"));
-                        continue;
-                    }
-                };
-                let now = std::time::SystemTime::now()
-                    .duration_since(std::time::UNIX_EPOCH)
-                    .unwrap_or_default()
-                    .as_secs();
-                let topic = rendezvous::derive_epoch_topic_hex(oma_id, now);
-                let bucket = rendezvous::epoch_bucket_for_timestamp(now);
-
-                #[derive(Serialize)]
-                struct DaemonDeriveRes {
-                    oma_id: String,
-                    topic: String,
-                    bucket: u64,
-                    timestamp: u64,
-                }
-                print_json(&ResponseWrapper::ok_action("rendezvous_derive", DaemonDeriveRes {
-                    oma_id: oma_id.clone(),
-                    topic,
-                    bucket,
-                    timestamp: now,
-                }));
-            }
-            "rendezvous_verify" => {
-                let (oma_id, cand_hex) = match (&cmd_obj.oma_id, &cmd_obj.topic) {
-                    (Some(id), Some(top)) => (id, top),
-                    _ => {
-                        print_json::<()>(&ResponseWrapper::err_action("rendezvous_verify", "Missing oma_id or topic"));
-                        continue;
-                    }
-                };
-                let tolerance = cmd_obj.tolerance.unwrap_or(1);
-
-                let mut cand_bytes = [0u8; 32];
-                if !cand_hex.is_ascii() || cand_hex.len() != 64 {
-                    print_json::<()>(&ResponseWrapper::err_action("rendezvous_verify", "Invalid topic hex length"));
-                    continue;
-                }
-                let mut valid_hex = true;
-                for i in 0..32 {
-                    if let Ok(b) = u8::from_str_radix(&cand_hex[i * 2..i * 2 + 2], 16) {
-                        cand_bytes[i] = b;
-                    } else {
-                        valid_hex = false;
-                        break;
-                    }
-                }
-                if !valid_hex {
-                    print_json::<()>(&ResponseWrapper::err_action("rendezvous_verify", "Invalid topic hex characters"));
-                    continue;
-                }
-
-                let now = std::time::SystemTime::now()
-                    .duration_since(std::time::UNIX_EPOCH)
-                    .unwrap_or_default()
-                    .as_secs();
-                let verified = rendezvous::verify_epoch_topic(oma_id, &cand_bytes, now, tolerance);
-
-                #[derive(Serialize)]
-                struct DaemonVerifyRes {
-                    oma_id: String,
-                    verified: bool,
-                    tolerance: u32,
-                }
-                print_json(&ResponseWrapper::ok_action("rendezvous_verify", DaemonVerifyRes {
-                    oma_id: oma_id.clone(),
-                    verified,
-                    tolerance,
-                }));
-            }
-            "pin_verify" => {
-                let (pin, candidate) = match (&cmd_obj.pin, &cmd_obj.candidate_pin) {
-                    (Some(p), Some(c)) => (p, c),
-                    _ => {
-                        print_json::<()>(&ResponseWrapper::err_action("pin_verify", "Missing pin or candidate_pin"));
-                        continue;
-                    }
-                };
-                let valid = rendezvous::verify_pin_constant_time(pin, candidate);
-
-                #[derive(Serialize)]
-                struct DaemonPinVerifyRes {
-                    valid: bool,
-                }
-                print_json(&ResponseWrapper::ok_action("pin_verify", DaemonPinVerifyRes { valid }));
             }
             "catalog_query" => {
                 let cat = Catalog::load();

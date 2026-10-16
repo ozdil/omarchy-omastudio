@@ -128,7 +128,7 @@ elif [[ "${1:-}" == "theme" ]]; then
 elif [[ $# -gt 0 ]]; then
     # Check if first arg is an engine subcommand
     case "${1:-}" in
-        inspect|render|export|ai-auto|ai-social|ai-jev|icc|scan|catalog|dag|daemon|rendezvous|oma-id-qr|force-scan)
+        inspect|render|export|ai-auto|ai-social|ai-jev|icc|scan|catalog|dag|daemon)
             exec "${BIN}" "$@"
             ;;
         *)
