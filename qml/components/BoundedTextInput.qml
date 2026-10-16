@@ -40,7 +40,10 @@ TextEdit {
             insert(start, clean);
             cursorPosition = start + clean.length;
         }
-        control.textEdited();
+        // TextEdit only has textEdited() from Qt 6.9 on; on older Qt the call would
+        // throw after the paste was inserted, so emit it only where it exists.
+        if (typeof control.textEdited === "function")
+            control.textEdited();
     }
 
     function startBoundedPaste() {
