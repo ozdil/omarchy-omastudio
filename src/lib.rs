@@ -7,5 +7,5 @@ pub mod icc;
 pub mod pipeline;
 pub mod raw;
 pub mod recipe;
-pub mod rendezvous;
+pub mod hash;
 pub mod security;
