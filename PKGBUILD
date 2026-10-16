@@ -1,6 +1,6 @@
 # Maintainer: Ozan Özdil
 pkgname=omastudio
-pkgver=2.3.1
+pkgver=2.4.0
 pkgrel=1
 pkgdesc="Premier Professional RAW Photo Editor for Omarchy Linux with Studio Catalog & AI Jev Engine"
 arch=('x86_64')
