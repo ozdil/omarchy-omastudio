@@ -24,7 +24,7 @@ Rectangle {
     }
 
     property string pluginName: "OmaStudio"
-    property string pluginVersion: "v2.3.1"
+    property string pluginVersion: "v2.4.0"
     property string pluginDescription: "Lightroom-grade RAW Editor with DaVinci Color Wheels & Local Studio Catalog"
     property string pluginAuthor: "Ozan Özdil (@ozdil)"
     property string pluginLicense: "MIT Open Source License"
