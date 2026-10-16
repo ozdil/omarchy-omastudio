@@ -118,7 +118,7 @@ elif [[ "${1:-}" == "theme" ]]; then
 elif [[ $# -gt 0 ]]; then
     # Check if first arg is an engine subcommand
     case "${1:-}" in
-        inspect|render|export|ai-auto|ai-social|icc|scan|catalog|dag|daemon|theme)
+        inspect|render|export|ai-auto|ai-social|ai-jev|icc|scan|catalog|dag|daemon|rendezvous|oma-id-qr|force-scan)
             exec "${BIN}" "$@"
             ;;
         *)
@@ -143,6 +143,13 @@ fi
 
 # Otherwise launch Quickshell Studio UI
 if [[ -n "${QUICKSHELL_BIN}" && -n "${QML_SHELL}" ]]; then
+    # Tell the UI which engine binary was resolved (e.g. /usr/bin for packaged installs)
+    export OMASTUDIO_ENGINE="${BIN}"
+    # Cold start with a file argument: hand the photo to the UI to open on startup
+    if [[ -f "${1:-}" ]]; then
+        OMASTUDIO_OPEN_PATH="$(/usr/bin/realpath "$1")"
+        export OMASTUDIO_OPEN_PATH
+    fi
     exec "${QUICKSHELL_BIN}" -p "${QML_SHELL}"
 else
     echo "Quickshell is not found on PATH or QML shell is missing. Falling back to omastudio-engine CLI."

@@ -1288,6 +1288,28 @@ Rectangle {
         }
     }
 
+    // Empty state: guide first-time users instead of showing a blank canvas
+    Column {
+        anchors.centerIn: parent
+        spacing: 8
+        visible: root.imageSource === ""
+        Text {
+            anchors.horizontalCenter: parent.horizontalCenter
+            text: Theme.iconCamera
+            font.family: Theme.iconFont
+            font.pixelSize: 34
+            color: Theme.textDim
+        }
+        Text {
+            anchors.horizontalCenter: parent.horizontalCenter
+            text: "Open a RAW (Ctrl+O) or drop a photo / folder here"
+            textFormat: Text.PlainText
+            font.family: Theme.monoFont
+            font.pixelSize: 12
+            color: Theme.textDim
+        }
+    }
+
     // Wayland & Linux Native Drag and Drop Area
     DropArea {
         id: dropArea

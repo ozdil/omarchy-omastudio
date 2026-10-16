@@ -30,6 +30,12 @@ Rectangle {
     signal closeRequested()
     signal doExport(var options)
 
+    // Swallow clicks on the dialog body so they don't reach the overlay's close handler
+    MouseArea {
+        anchors.fill: parent
+        z: -1
+    }
+
     ColumnLayout {
         id: col
         anchors.fill: parent
@@ -430,7 +436,9 @@ Rectangle {
                         "preserve_exif": root.preserveExif,
                         "icc_profile": root.selectedIcc,
                         "output_dir": root.localOutputDir,
-                        "watermark": root.watermarkEnabled ? root.watermarkOptions : null
+                        // The options object carries the global "enabled" flag; force it on so
+                        // this dialog's own switch actually takes effect.
+                        "watermark": root.watermarkEnabled ? Object.assign({}, root.watermarkOptions, { "enabled": true }) : null
                     };
                     root.doExport(opts);
                 }
@@ -441,9 +449,11 @@ Rectangle {
             text: root.exportStatusText
             textFormat: Text.PlainText
             font.pixelSize: 11
-            color: Theme.accentGreen
+            color: root.exportStatusText.indexOf("[ERR]") === 0 ? Theme.highlightClip : Theme.accentGreen
             visible: root.exportStatusText !== ""
-            Layout.alignment: Qt.AlignHCenter
+            wrapMode: Text.WrapAnywhere
+            horizontalAlignment: Text.AlignHCenter
+            Layout.fillWidth: true
         }
     }
 }

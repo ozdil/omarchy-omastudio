@@ -7,6 +7,7 @@ arch=('x86_64')
 url="https://github.com/ozdil/omarchy-omastudio"
 license=('MIT')
 depends=('libraw' 'quickshell' 'libjxl' 'libavif' 'zenity')
+optdepends=('qrencode: alternative QR renderer for OmaID' 'perl-image-exiftool: preserve EXIF metadata on export' 'ffmpeg: AVIF export fallback')
 makedepends=('rust' 'cargo' 'pkgconf' 'clang')
 source=()
 sha256sums=()
@@ -25,6 +26,8 @@ package() {
     cd "$startdir"
     install -Dm755 "target/release/omastudio-engine" "$pkgdir/usr/bin/omastudio-engine"
     install -Dm755 "omastudio" "$pkgdir/usr/bin/omastudio"
+    install -Dm755 "omastudio-dashboard" "$pkgdir/usr/bin/omastudio-dashboard"
+    install -Dm755 "omastudio-status" "$pkgdir/usr/bin/omastudio-status"
     ln -sf "omastudio-engine" "$pkgdir/usr/bin/omaraw-engine"
     ln -sf "omastudio" "$pkgdir/usr/bin/omaraw"
     

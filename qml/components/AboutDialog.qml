@@ -15,8 +15,13 @@ Rectangle {
     border.width: 1
     clip: true
 
-
     signal closeRequested()
+
+    // Swallow clicks on the dialog body so they don't reach the overlay's close handler
+    MouseArea {
+        anchors.fill: parent
+        z: -1
+    }
 
     property string pluginName: "OmaStudio"
     property string pluginVersion: "v2.3.1"
