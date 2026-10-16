@@ -450,6 +450,31 @@ impl SecureDir {
         Ok(Self { fd: cur_fd })
     }
 
+    /// Opens (creating if needed) a directory the *user* chose, such as an export
+    /// folder or the folder holding their photos. Unlike `open_or_create_hierarchy`
+    /// this follows symlinks and accepts directories owned by other uids (NAS / USB
+    /// mounts), and never changes permissions. Files are still staged with
+    /// O_EXCL | O_NOFOLLOW and renamed into place relative to the opened descriptor.
+    pub fn open_user_dir(path: &Path) -> io::Result<Self> {
+        use std::ffi::CString;
+        use std::os::unix::ffi::OsStrExt;
+
+        if path.components().any(|c| matches!(c, std::path::Component::ParentDir)) {
+            return Err(io::Error::new(
+                io::ErrorKind::InvalidInput,
+                "Parent directory traversal (..) is not permitted in output paths",
+            ));
+        }
+        fs::create_dir_all(path)?;
+        let c_path = CString::new(path.as_os_str().as_bytes())
+            .map_err(|e| io::Error::new(io::ErrorKind::InvalidInput, e))?;
+        let fd = unsafe { libc::open(c_path.as_ptr(), libc::O_RDONLY | libc::O_DIRECTORY | libc::O_CLOEXEC) };
+        if fd < 0 {
+            return Err(io::Error::last_os_error());
+        }
+        Ok(Self { fd })
+    }
+
     /// Creates an exclusive, no-follow temporary staging file with mode 0600 relative to this directory
     pub fn open_staging_file(&self, prefix: &str, suffix: &str) -> io::Result<(fs::File, std::ffi::CString)> {
         use std::ffi::CString;
@@ -609,10 +634,26 @@ pub fn read_secure_file(path: &Path, max_bytes: usize) -> io::Result<Vec<u8>> {
 
 /// Atomically writes sensitive data to a file with Mode 0600 permissions using descriptor-bound staging
 pub fn atomic_write_secure(target: &Path, data: &[u8]) -> io::Result<()> {
-    use std::ffi::CString;
-
     let parent = target.parent().unwrap_or_else(|| Path::new("."));
     let secure_dir = SecureDir::open_or_create_hierarchy(parent)?;
+    atomic_write_in(&secure_dir, target, data)
+}
+
+/// Atomic write into a user-chosen folder (exports, sidecars, render output).
+/// The folder may be a symlink or live on a mount owned by another uid; see
+/// [`SecureDir::open_user_dir`]. Engine-private state keeps using
+/// [`atomic_write_secure`].
+pub fn atomic_write_user(target: &Path, data: &[u8]) -> io::Result<()> {
+    let parent = match target.parent() {
+        Some(p) if !p.as_os_str().is_empty() => p,
+        _ => Path::new("."),
+    };
+    let dir = SecureDir::open_user_dir(parent)?;
+    atomic_write_in(&dir, target, data)
+}
+
+fn atomic_write_in(secure_dir: &SecureDir, target: &Path, data: &[u8]) -> io::Result<()> {
+    use std::ffi::CString;
 
     let filename = target
         .file_name()
@@ -624,7 +665,7 @@ pub fn atomic_write_secure(target: &Path, data: &[u8]) -> io::Result<()> {
 
     let (mut stage_file, c_stage_name) = secure_dir.open_staging_file(".tmp_atomic", filename)?;
     let mut guard = SecureDirCleanupGuard {
-        secure_dir: &secure_dir,
+        secure_dir,
         filename: c_stage_name.clone(),
         active: true,
     };

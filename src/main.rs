@@ -901,7 +901,7 @@ fn render_file(raw_path: &str, recipe: &Recipe, split: f32, out_path: &str) -> R
     if out_path.ends_with(".ppm") {
         let mut ppm_bytes = format!("P6\n{} {}\n255\n", preview.width, preview.height).into_bytes();
         ppm_bytes.extend_from_slice(&final_buf);
-        security::atomic_write_secure(dest_path, &ppm_bytes)
+        security::atomic_write_user(dest_path, &ppm_bytes)
             .map_err(|e| format!("Failed to write PPM: {}", e))?;
     } else {
         let img: image::ImageBuffer<image::Rgb<u8>, Vec<u8>> = image::ImageBuffer::from_raw(
@@ -917,7 +917,7 @@ fn render_file(raw_path: &str, recipe: &Recipe, split: f32, out_path: &str) -> R
         };
         img.write_to(&mut std::io::Cursor::new(&mut encoded), fmt)
             .map_err(|e| format!("Failed to encode preview: {}", e))?;
-        security::atomic_write_secure(dest_path, &encoded)
+        security::atomic_write_user(dest_path, &encoded)
             .map_err(|e| format!("Failed to save preview: {}", e))?;
     }
 
@@ -1382,13 +1382,18 @@ fn run_daemon() {
                     continue;
                 }
                 let options = cmd_obj.options.unwrap_or_default();
+                let item_paths: Vec<&str> = items.iter().map(|i| i.path.as_str()).collect();
+                let name_tags = export::batch_name_tags(&item_paths);
 
                 // Multi-threaded parallel batch export using Rayon
                 let results: Vec<BatchExportItemResult> = items
                     .par_iter()
-                    .map(|item| {
+                    .zip(name_tags.par_iter())
+                    .map(|(item, tag)| {
                         let recipe = item.recipe.clone().or_else(|| Recipe::load_sidecar(&item.path)).unwrap_or_default();
-                        match export_photo(&item.path, &recipe, &options) {
+                        let mut item_options = options.clone();
+                        item_options.name_tag = tag.clone();
+                        match export_photo(&item.path, &recipe, &item_options) {
                             Ok(dest) => BatchExportItemResult {
                                 path: item.path.clone(),
                                 success: true,

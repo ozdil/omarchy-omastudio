@@ -61,3 +61,68 @@ fn atomic_write_leaves_existing_parent_permissions_alone() {
 
     let _ = fs::remove_dir_all(&base);
 }
+
+#[test]
+fn user_writes_follow_symlinked_folders_but_secure_writes_do_not() {
+    use omastudio_engine::security::atomic_write_user;
+    let base = std::env::temp_dir().join(format!("oma_symlink_regress_{}", std::process::id()));
+    let _ = fs::remove_dir_all(&base);
+    let real = base.join("real_pictures");
+    fs::create_dir_all(&real).unwrap();
+    fs::set_permissions(&real, fs::Permissions::from_mode(0o755)).unwrap();
+    let link = base.join("Pictures");
+    std::os::unix::fs::symlink(&real, &link).unwrap();
+
+    // Exports / sidecars into a symlinked user folder (e.g. ~/Pictures -> /mnt/nas) work
+    atomic_write_user(&link.join("Exports/photo.jpg"), b"jpeg").expect("user write via symlink");
+    assert_eq!(fs::read(real.join("Exports/photo.jpg")).unwrap(), b"jpeg");
+    assert_eq!(fs::metadata(&real).unwrap().permissions().mode() & 0o777, 0o755);
+
+    // Engine-private writes keep refusing symlinked path components
+    assert!(atomic_write_secure(&link.join("state.json"), b"{}").is_err());
+
+    let _ = fs::remove_dir_all(&base);
+}
+
+#[test]
+fn batch_export_names_do_not_collide() {
+    use omastudio_engine::export::batch_name_tags;
+    let tags = batch_name_tags(&[
+        "/a/DSC_0001.NEF",
+        "/a/DSC_0001.JPG",
+        "/a/DSC_0002.NEF",
+        "/card1/IMG_1.CR3",
+        "/card2/IMG_1.CR3",
+    ]);
+    assert_eq!(
+        tags,
+        vec![
+            Some("nef".to_string()),
+            Some("jpg".to_string()),
+            None,
+            Some("cr31".to_string()),
+            Some("cr32".to_string()),
+        ]
+    );
+}
+
+#[test]
+fn split_before_half_is_not_gamma_encoded_twice() {
+    use omastudio_engine::pipeline::process_split_comparison_16_to_8;
+    let v = (0.2f32 * 65535.0) as u16;
+    let input = vec![v; 8 * 2 * 3];
+    let (out, _) = process_split_comparison_16_to_8(&input, 8, 2, 3, &Recipe::default(), 1.0);
+    // Pixel 0 lies in the BEFORE half: 0.2 must map to ~51, not ~124 (sRGB OETF again)
+    assert!((out[0] as i32 - 51).abs() <= 1, "before value {}", out[0]);
+}
+
+#[test]
+fn export_profile_names_map_to_decoder_spaces() {
+    use omastudio_engine::raw::OutputColorSpace as S;
+    assert_eq!(S::from_profile_name("AdobeRGB1998"), Some(S::AdobeRgb));
+    assert_eq!(S::from_profile_name("ProPhotoRGB"), Some(S::ProPhotoRgb));
+    assert_eq!(S::from_profile_name("DisplayP3"), Some(S::DisplayP3));
+    assert_eq!(S::from_profile_name("Rec2020"), Some(S::Rec2020));
+    assert_eq!(S::from_profile_name("sRGB"), Some(S::Srgb));
+    assert_eq!(S::from_profile_name("ACEScg"), None);
+}

@@ -417,7 +417,7 @@ impl Recipe {
         let json = serde_json::to_vec_pretty(self)
             .map_err(|e| io::Error::new(io::ErrorKind::InvalidData, e))?;
 
-        crate::security::atomic_write_secure(&sidecar_path, &json)?;
+        crate::security::atomic_write_user(&sidecar_path, &json)?;
         Ok(sidecar_path)
     }
 
