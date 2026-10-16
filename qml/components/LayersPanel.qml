@@ -14,6 +14,12 @@ Rectangle {
 
     property var layersList: []
     property int selectedLayerIndex: -1
+    // Deep copy: layer objects are shared with undo snapshots and grade versions,
+    // so editing them in place silently rewrote history
+    function cloneLayers() {
+        return JSON.parse(JSON.stringify(root.layersList || []));
+    }
+
     readonly property var activeL: (selectedLayerIndex >= 0 && selectedLayerIndex < layersList.length) ? layersList[selectedLayerIndex] : null
 
     signal layersChanged()
@@ -66,7 +72,7 @@ Rectangle {
                     cursorShape: Qt.PointingHandCursor
                     hoverEnabled: true
                     onClicked: {
-                        var list = root.layersList.slice();
+                        var list = root.cloneLayers();
                         var newL = {
                             "id": "layer_" + Date.now(),
                             "name": "Linear Gradient " + (list.length + 1),
@@ -126,7 +132,7 @@ Rectangle {
                     cursorShape: Qt.PointingHandCursor
                     hoverEnabled: true
                     onClicked: {
-                        var list = root.layersList.slice();
+                        var list = root.cloneLayers();
                         var newL = {
                             "id": "layer_" + Date.now(),
                             "name": "Radial Mask " + (list.length + 1),
@@ -187,7 +193,7 @@ Rectangle {
                     cursorShape: Qt.PointingHandCursor
                     hoverEnabled: true
                     onClicked: {
-                        var list = root.layersList.slice();
+                        var list = root.cloneLayers();
                         var newL = {
                             "id": "layer_" + Date.now(),
                             "name": "Luma Range " + (list.length + 1),
@@ -251,7 +257,7 @@ Rectangle {
                             checked: layerItem.curLayer ? layerItem.curLayer.enabled : false
                             activeColor: Theme.accent
                             onToggled: function(c) {
-                                var list = root.layersList.slice();
+                                var list = root.cloneLayers();
                                 list[index].enabled = c;
                                 root.layersList = list;
                                 root.layersChanged();
@@ -292,7 +298,7 @@ Rectangle {
                                 anchors.fill: parent
                                 cursorShape: Qt.PointingHandCursor
                                 onClicked: {
-                                    var list = root.layersList.slice();
+                                    var list = root.cloneLayers();
                                     list[index].invert = !list[index].invert;
                                     root.layersList = list;
                                     root.layersChanged();
@@ -321,10 +327,13 @@ Rectangle {
                                 anchors.fill: parent
                                 cursorShape: Qt.PointingHandCursor
                                 onClicked: {
-                                    var list = root.layersList.slice();
+                                    var list = root.cloneLayers();
                                     list.splice(index, 1);
                                     root.layersList = list;
-                                    if (root.selectedLayerIndex >= list.length) {
+                                    // Keep the same layer selected when one above it is removed
+                                    if (index < root.selectedLayerIndex) {
+                                        root.selectedLayerIndex--;
+                                    } else if (root.selectedLayerIndex >= list.length) {
                                         root.selectedLayerIndex = list.length - 1;
                                     }
                                     root.layersChanged();
@@ -373,7 +382,7 @@ Rectangle {
                 accentColor: Theme.accentCyan
                 onSliderMoved: function(v) {
                     if (!activeL) return;
-                    var list = root.layersList.slice();
+                    var list = root.cloneLayers();
                     list[root.selectedLayerIndex].opacity = v;
                     root.layersList = list;
                     root.layersChanged();
@@ -392,7 +401,7 @@ Rectangle {
                 accentColor: Theme.accentYellow
                 onSliderMoved: function(v) {
                     if (!activeL) return;
-                    var list = root.layersList.slice();
+                    var list = root.cloneLayers();
                     list[root.selectedLayerIndex].exposure = v;
                     root.layersList = list;
                     root.layersChanged();
@@ -409,7 +418,7 @@ Rectangle {
                 accentColor: Theme.accent
                 onSliderMoved: function(v) {
                     if (!activeL) return;
-                    var list = root.layersList.slice();
+                    var list = root.cloneLayers();
                     list[root.selectedLayerIndex].contrast = v;
                     root.layersList = list;
                     root.layersChanged();
@@ -426,7 +435,7 @@ Rectangle {
                 accentColor: Theme.accentGreen
                 onSliderMoved: function(v) {
                     if (!activeL) return;
-                    var list = root.layersList.slice();
+                    var list = root.cloneLayers();
                     list[root.selectedLayerIndex].saturation = v;
                     root.layersList = list;
                     root.layersChanged();

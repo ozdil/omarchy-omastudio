@@ -158,7 +158,8 @@ Rectangle {
         root.currentGradeVersion = ver;
         if (vMap[ver]) {
             root.gradeVersions = vMap;
-            root.applyRecipeObject(vMap[ver]);
+            // Grade versions hold the edit, not the photo's culling state
+            root.applyRecipeObject(Object.assign({}, vMap[ver], { "rating": root.photoRating, "flag": root.photoFlag }));
             root.showToast("[Grade] Switched to Version " + ver, Theme.accentCyan);
         } else {
             vMap[ver] = cur;
@@ -217,18 +218,59 @@ Rectangle {
     property var undoStack: []
     property var redoStack: []
     property bool isPerformingUndoRedo: false
+    // Engine-only tone flags with no UI control yet; kept so UI saves don't drop them
+    property bool highlightReconstruct: true
+    property bool filmicAgx: false
+    // Undo baseline: the recipe as of the last committed edit (see commitPendingUndo)
+    property string undoBaselineJson: ""
 
     function pushUndoState() {
         if (root.isPerformingUndoRedo) return;
+        root.commitPendingUndo();
         var r = root.buildRecipeObject();
+        var json = JSON.stringify(r);
         var stack = root.undoStack.slice();
-        if (stack.length >= 50) stack.shift();
-        stack.push(r);
-        root.undoStack = stack;
+        if (stack.length === 0 || JSON.stringify(stack[stack.length - 1]) !== json) {
+            if (stack.length >= 50) stack.shift();
+            stack.push(r);
+            root.undoStack = stack;
+            root.redoStack = [];
+        }
+        root.undoBaselineJson = json;
+    }
+
+    // Slider, wheel and panel edits never called pushUndoState, so Ctrl+Z skipped
+    // them. Every render request (re)starts undoCommitTimer; once edits settle, the
+    // pre-edit baseline is pushed as one undo step (a whole drag = one step).
+    function commitPendingUndo() {
+        undoCommitTimer.stop();
+        if (root.isPerformingUndoRedo || root.activePhotoPath === "") return;
+        var cur = JSON.stringify(root.buildRecipeObject());
+        var base = root.undoBaselineJson;
+        if (base === "" || cur === base) {
+            root.undoBaselineJson = cur;
+            return;
+        }
+        var stack = root.undoStack.slice();
+        var top = stack.length > 0 ? JSON.stringify(stack[stack.length - 1]) : "";
+        if (top !== base) {
+            if (stack.length >= 50) stack.shift();
+            stack.push(JSON.parse(base));
+            root.undoStack = stack;
+        }
         root.redoStack = [];
+        root.undoBaselineJson = cur;
+    }
+
+    Timer {
+        id: undoCommitTimer
+        interval: 600
+        repeat: false
+        onTriggered: root.commitPendingUndo()
     }
 
     function undo() {
+        root.commitPendingUndo();
         if (root.undoStack.length === 0) {
             root.showToast("[Undo] No previous actions", Theme.textDim);
             return;
@@ -243,12 +285,15 @@ Rectangle {
         var prev = uStack.pop();
         root.undoStack = uStack;
 
+        // Culling (stars / flag) is not part of the edit history
+        prev = Object.assign({}, prev, { "rating": root.photoRating, "flag": root.photoFlag });
         root.applyRecipeObject(prev);
         root.isPerformingUndoRedo = false;
         root.showToast("[OK] Undo (Ctrl+Z)", Theme.accentCyan);
     }
 
     function redo() {
+        root.commitPendingUndo();
         if (root.redoStack.length === 0) {
             root.showToast("[Redo] No actions to redo", Theme.textDim);
             return;
@@ -263,6 +308,8 @@ Rectangle {
         var next = rStack.pop();
         root.redoStack = rStack;
 
+        // Culling (stars / flag) is not part of the edit history
+        next = Object.assign({}, next, { "rating": root.photoRating, "flag": root.photoFlag });
         root.applyRecipeObject(next);
         root.isPerformingUndoRedo = false;
         root.showToast("[OK] Redo (Ctrl+Shift+Z)", Theme.accentCyan);
@@ -364,6 +411,9 @@ Rectangle {
         if (typeof socialOpt !== "undefined" && socialOpt) socialOpt.activePlatform = "";
         if (typeof hslMixer !== "undefined" && hslMixer) hslMixer.resetAll();
         if (typeof colorWheels !== "undefined" && colorWheels) colorWheels.resetAllWheels();
+        root.highlightReconstruct = true;
+        root.filmicAgx = false;
+        try { root.syncPanels(); } catch (e) { console.warn("syncPanels failed: " + e); }
         root.showToast("[OK] Reset to defaults (Ctrl+R)", Theme.textDim);
         root.requestRender();
     }
@@ -394,6 +444,8 @@ Rectangle {
             "wb_tint": root.wbTint,
             "exposure": root.expValue,
             "contrast": root.contrastValue,
+            "highlight_reconstruct": root.highlightReconstruct,
+            "filmic_agx": root.filmicAgx,
             "highlights": root.highlightsValue,
             "shadows": root.shadowsValue,
             "whites": root.whitesValue,
@@ -582,8 +634,72 @@ Rectangle {
 
         if (r.rating !== undefined) root.photoRating = Number(r.rating) || 0;
         if (r.flag !== undefined) root.photoFlag = r.flag || "none";
+        root.highlightReconstruct = r.highlight_reconstruct !== undefined ? Boolean(r.highlight_reconstruct) : true;
+        root.filmicAgx = Boolean(r.filmic_agx);
 
+        try { root.syncPanels(); } catch (e) { console.warn("syncPanels failed: " + e); }
+        // Programmatic recipe changes (load, undo, paste, AI) are not user edits
+        root.undoBaselineJson = JSON.stringify(root.buildRecipeObject());
         requestRender();
+    }
+
+    // Panels assign to their own properties while being edited, which replaces the
+    // binding to the main state. Re-establish the bindings so undo, paste, AI and
+    // photo switches are reflected in every panel (and stale panel values are not
+    // written back on the next touch).
+    function syncPanels() {
+        hslMixer.hslHue = Qt.binding(function() { return root.hslH; });
+        hslMixer.hslSat = Qt.binding(function() { return root.hslS; });
+        hslMixer.hslLum = Qt.binding(function() { return root.hslL; });
+
+        lutSelector.activeLut = Qt.binding(function() { return root.activeLutName; });
+        lutSelector.lutIntensity = Qt.binding(function() { return root.activeLutIntensity; });
+        lutSelector.customLutPath = Qt.binding(function() { return root.activeLutPath; });
+
+        colorWheels.liftRgb = Qt.binding(function() { return root.liftRgb; });
+        colorWheels.liftLuma = Qt.binding(function() { return root.liftLuma; });
+        colorWheels.gammaRgb = Qt.binding(function() { return root.gammaRgb; });
+        colorWheels.gammaLuma = Qt.binding(function() { return root.gammaLuma; });
+        colorWheels.gainRgb = Qt.binding(function() { return root.gainRgb; });
+        colorWheels.gainLuma = Qt.binding(function() { return root.gainLuma; });
+        colorWheels.offsetRgb = Qt.binding(function() { return root.offsetRgb; });
+        colorWheels.offsetLuma = Qt.binding(function() { return root.offsetLuma; });
+        colorWheels.colorBoost = Qt.binding(function() { return root.colorBoost; });
+        colorWheels.midtoneDetail = Qt.binding(function() { return root.midtoneDetail; });
+        colorWheels.contrastPivot = Qt.binding(function() { return root.contrastPivot; });
+        colorWheels.rebindWheels();
+
+        rgbMixerPanel.mixerEnabled = Qt.binding(function() { return root.rgbMixerEnabled; });
+        rgbMixerPanel.monochrome = Qt.binding(function() { return root.rgbMixerMonochrome; });
+        rgbMixerPanel.redInR = Qt.binding(function() { return root.mixerRedInR; });
+        rgbMixerPanel.greenInR = Qt.binding(function() { return root.mixerGreenInR; });
+        rgbMixerPanel.blueInR = Qt.binding(function() { return root.mixerBlueInR; });
+        rgbMixerPanel.redInG = Qt.binding(function() { return root.mixerRedInG; });
+        rgbMixerPanel.greenInG = Qt.binding(function() { return root.mixerGreenInG; });
+        rgbMixerPanel.blueInG = Qt.binding(function() { return root.mixerBlueInG; });
+        rgbMixerPanel.redInB = Qt.binding(function() { return root.mixerRedInB; });
+        rgbMixerPanel.greenInB = Qt.binding(function() { return root.mixerGreenInB; });
+        rgbMixerPanel.blueInB = Qt.binding(function() { return root.mixerBlueInB; });
+
+        skinTonePanel.skinToneEnabled = Qt.binding(function() { return root.skinToneEnabled; });
+        skinTonePanel.skinTargetHue = Qt.binding(function() { return root.skinTargetHue; });
+        skinTonePanel.skinHueRange = Qt.binding(function() { return root.skinHueRange; });
+        skinTonePanel.skinUniformityHue = Qt.binding(function() { return root.skinUniformityHue; });
+        skinTonePanel.skinUniformitySat = Qt.binding(function() { return root.skinUniformitySat; });
+        skinTonePanel.skinAmountHue = Qt.binding(function() { return root.skinAmountHue; });
+        skinTonePanel.skinAmountSat = Qt.binding(function() { return root.skinAmountSat; });
+
+        filmSimPanel.activeSimulation = Qt.binding(function() { return root.activeFilmSimulation; });
+        filmSimPanel.intensity = Qt.binding(function() { return root.activeFilmSimIntensity; });
+
+        filmGrainPanel.grainAmount = Qt.binding(function() { return root.grainAmount; });
+        filmGrainPanel.grainSize = Qt.binding(function() { return root.grainSize; });
+        filmGrainPanel.grainRoughness = Qt.binding(function() { return root.grainRoughness; });
+
+        layersPanel.layersList = Qt.binding(function() { return root.adjustmentLayers; });
+
+        colorSpaceSelector.activeColorSpace = Qt.binding(function() { return root.activeColorSpace; });
+        colorSpaceSelector.acesTonemap = Qt.binding(function() { return root.activeAcesTonemap; });
     }
 
     function sendDaemonCommand(obj) {
@@ -687,6 +803,7 @@ Rectangle {
     }
 
     function requestRender() {
+        if (!root.isPerformingUndoRedo) undoCommitTimer.restart();
         if (renderDebounce.running) {
             renderDebounce.restart();
         } else {
@@ -985,6 +1102,8 @@ Rectangle {
     function loadPhoto(path) {
         if (path !== root.activePhotoPath) {
             // Undo history and grade versions belong to the previous photo
+            undoCommitTimer.stop();
+            root.undoBaselineJson = "";
             root.undoStack = [];
             root.redoStack = [];
             root.gradeVersions = { "A": null, "B": null, "C": null, "D": null };
@@ -2363,6 +2482,7 @@ Rectangle {
             }
             onNavigateFolder: function(remotePath) {
                 root.showToast("[Folder] Navigating: " + remotePath, Theme.accent);
+                filmstrip.currentFolder = remotePath;
                 root.scanLocalFolder(remotePath);
             }
             onParentFolderRequested: {
