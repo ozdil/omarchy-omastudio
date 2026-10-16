@@ -422,7 +422,7 @@ Rectangle {
                                         Layout.alignment: Qt.AlignHCenter
                                     }
                                     Text {
-                                        text: root.isDownloadingRemote && root.activePhotoPath === modelData.path ? "FETCHING" : "RAW CLOUD"
+                                        text: root.isDownloadingRemote && root.activePhotoPath === modelData.path ? "FETCHING" : (modelData.is_remote ? "RAW CLOUD" : "NO PREVIEW")
                                         textFormat: Text.PlainText
                                         font.pixelSize: 7
                                         font.weight: Font.Bold
