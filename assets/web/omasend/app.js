@@ -144,7 +144,7 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
             <div class="file-name-meta">
               <span class="transfer-filename">${escapeHtml(tx.filename)}</span>
-              <span class="transfer-target-info">Hedef: ${escapeHtml(tx.target)} • ${tx.size}</span>
+              <span class="transfer-target-info">Hedef: ${escapeHtml(tx.target)} • ${escapeHtml(tx.size)}</span>
             </div>
           </div>
           <div class="transfer-telemetry">
@@ -178,7 +178,7 @@ document.addEventListener('DOMContentLoaded', () => {
             </svg>
             Uctan Uca Sifreli
           </span>
-          <button class="copy-btn" onclick="copyClipContent('${escapeJsString(item.content)}', this)">
+          <button type="button" class="copy-btn" data-clip-id="${escapeHtml(item.id)}">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
               <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
@@ -188,6 +188,15 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
       </div>
     `).join('');
+
+    // Bind copy buttons via the item id instead of inlining clip content into an
+    // onclick attribute (a double quote in the content broke out of the attribute).
+    clipboardGrid.querySelectorAll('.copy-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const item = state.clipboardItems.find(c => c.id === btn.getAttribute('data-clip-id'));
+        if (item) window.copyClipContent(item.content, btn);
+      });
+    });
   }
 
   // Drag and Drop Liquid Portal
@@ -347,8 +356,18 @@ document.addEventListener('DOMContentLoaded', () => {
   window.openAboutModal = () => aboutModal.classList.add('active');
   window.closeAboutModal = () => aboutModal.classList.remove('active');
 
+  // Close any open modal with Escape or by clicking its backdrop
+  const modals = [omaIdModal, qrScannerModal, aboutModal].filter(Boolean);
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') modals.forEach(m => m.classList.remove('active'));
+  });
+  modals.forEach(m => m.addEventListener('click', (e) => {
+    if (e.target === m) m.classList.remove('active');
+  }));
+
   // Copy helper
   window.copyClipContent = (text, btnElement) => {
+    if (!navigator.clipboard) return; // unavailable outside secure contexts
     navigator.clipboard.writeText(text).then(() => {
       const originalHtml = btnElement.innerHTML;
       btnElement.classList.add('copied');
@@ -362,7 +381,7 @@ document.addEventListener('DOMContentLoaded', () => {
         btnElement.classList.remove('copied');
         btnElement.innerHTML = originalHtml;
       }, 2000);
-    });
+    }).catch(() => {});
   };
 
   // Utilities
@@ -370,7 +389,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (bytes === 0) return '0 Bytes';
     const k = 1024;
     const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    const i = Math.min(sizes.length - 1, Math.floor(Math.log(bytes) / Math.log(k)));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   }
 
@@ -381,14 +400,5 @@ document.addEventListener('DOMContentLoaded', () => {
       .replace(/>/g, '&gt;')
       .replace(/"/g, '&quot;')
       .replace(/'/g, '&#039;');
-  }
-
-  function escapeJsString(str) {
-    return String(str)
-      .replace(/\\/g, '\\\\')
-      .replace(/'/g, "\\'")
-      .replace(/"/g, '\\"')
-      .replace(/\n/g, '\\n')
-      .replace(/\r/g, '\\r');
   }
 });

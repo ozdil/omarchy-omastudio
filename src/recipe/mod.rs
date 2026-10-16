@@ -20,7 +20,6 @@ pub struct Recipe {
     pub shadows: f32,    // -100.0 to +100.0 (Default: 0.0)
     pub whites: f32,     // -100.0 to +100.0 (Default: 0.0)
     pub blacks: f32,     // -100.0 to +100.0 (Default: 0.0)
-    #[serde(default)]
     pub highlight_reconstruct: bool, // Luma-guided clipped channel inpainting
     #[serde(default)]
     pub filmic_agx: bool,            // Sigmoidal AgX perceptual tone mapper
@@ -109,7 +108,6 @@ pub struct Recipe {
     // Lightroom Studio Culling & Rating
     #[serde(default)]
     pub rating: u8, // 0 to 5 stars
-    #[serde(default)]
     pub flag: String, // "none", "pick", "reject"
 
     // ACES 1.3 & Wide Gamut Color Spaces
@@ -419,7 +417,7 @@ impl Recipe {
         let json = serde_json::to_vec_pretty(self)
             .map_err(|e| io::Error::new(io::ErrorKind::InvalidData, e))?;
 
-        crate::security::atomic_write_secure(&sidecar_path, &json)?;
+        crate::security::atomic_write_user(&sidecar_path, &json)?;
         Ok(sidecar_path)
     }
 
@@ -590,7 +588,7 @@ impl Catalog {
             true
         }).collect();
 
-        matched.sort_by(|a, b| b.updated_at.cmp(&a.updated_at));
+        matched.sort_by_key(|m| std::cmp::Reverse(m.updated_at));
         matched
     }
 }

@@ -23,6 +23,9 @@ pub struct ExportOptions {
     pub artist_copyright: Option<String>,
     pub output_dir: String,
     pub watermark: Option<watermark::WatermarkOptions>,
+    /// Extra tag inserted into the output name (`<stem>_<tag>_omastudio.<fmt>`).
+    /// Batch export sets it to the source extension when two sources share a stem.
+    pub name_tag: Option<String>,
 }
 
 impl Default for ExportOptions {
@@ -38,6 +41,7 @@ impl Default for ExportOptions {
             artist_copyright: None,
             output_dir: "~/Pictures/OmaStudio_Exports".to_string(),
             watermark: None,
+            name_tag: None,
         }
     }
 }
@@ -49,6 +53,30 @@ pub fn export_photo<P: AsRef<Path>>(
 ) -> Result<PathBuf, String> {
     let raw = RawImage::open(&raw_path)
         .map_err(|e| format!("Could not open RAW for export: {}", e))?;
+
+    // Pick the ICC to embed and render the pixels in that same space. Embedding a
+    // wide-gamut profile on sRGB pixels made exports look oversaturated, so a
+    // non-sRGB profile is used only when its ICC file exists, exiftool can embed
+    // it and the decoder can render into it; otherwise the export stays sRGB.
+    let requested_space = options
+        .icc_profile
+        .as_deref()
+        .and_then(crate::raw::OutputColorSpace::from_profile_name);
+    let mut embed_icc: Option<PathBuf> = None;
+    let mut converted = false;
+    if let (Some(space), Some(name)) = (requested_space, options.icc_profile.as_deref()) {
+        if space != crate::raw::OutputColorSpace::Srgb {
+            if let Some(icc_path) = crate::icc::resolve_icc_path(name) {
+                if exiftool_available() && raw.set_output_space(space) {
+                    embed_icc = Some(icc_path);
+                    converted = true;
+                }
+            }
+        }
+    }
+    if embed_icc.is_none() && options.icc_profile.is_some() {
+        embed_icc = crate::icc::resolve_icc_path("sRGB");
+    }
 
     // Demosaic at high quality with full 16-bit depth (48-bit RGB)
     let processed = raw.process_full_16(3)
@@ -124,7 +152,8 @@ pub fn export_photo<P: AsRef<Path>>(
         PathBuf::from(&options.output_dir)
     };
 
-    crate::security::ensure_secure_dir(&expanded_dir)
+    // User-chosen folder: may be a symlink or an external mount; permissions untouched
+    crate::security::SecureDir::open_user_dir(&expanded_dir)
         .map_err(|e| format!("Failed to create export directory: {}", e))?;
 
     let stem = raw_path
@@ -134,7 +163,10 @@ pub fn export_photo<P: AsRef<Path>>(
         .unwrap_or("photo");
 
     let fmt = options.format.to_lowercase();
-    let out_filename = format!("{}_omastudio.{}", stem, fmt);
+    let out_filename = match options.name_tag.as_deref().map(sanitize_name_tag) {
+        Some(tag) if !tag.is_empty() => format!("{}_{}_omastudio.{}", stem, tag, fmt),
+        _ => format!("{}_omastudio.{}", stem, fmt),
+    };
     let final_dest = expanded_dir.join(&out_filename);
 
     match fmt.as_str() {
@@ -193,7 +225,8 @@ pub fn export_photo<P: AsRef<Path>>(
 
             let mut cmd = secure_command("avifenc");
             let speed = "4";
-            let cq = 63 - (options.quality * 63 / 100);
+            let quality = options.quality.clamp(1, 100);
+            let cq = 63 - (quality * 63 / 100);
             cmd.arg("-s")
                 .arg(speed)
                 .arg("-a")
@@ -202,19 +235,26 @@ pub fn export_photo<P: AsRef<Path>>(
                 .arg(&tmp_png)
                 .arg(&final_dest);
 
-            let (code, _, _) = run_bounded_command(cmd, Duration::from_secs(60))
-                .map_err(|e| format!("Failed to execute avifenc: {}", e))?;
+            // A missing avifenc must fall through to ffmpeg, not abort the export
+            let avif_ok = run_bounded_command(cmd, Duration::from_secs(60))
+                .map(|(code, _, _)| code == 0)
+                .unwrap_or(false);
 
-            if code != 0 {
+            if !avif_ok {
                 let mut f_cmd = secure_command("ffmpeg");
-                let crf = (35 - (options.quality * 20 / 100)).to_string();
+                let crf = (35 - (quality * 20 / 100)).to_string();
                 f_cmd.arg("-y")
                     .arg("-i").arg(&tmp_png)
                     .arg("-c:v").arg("libsvtav1")
                     .arg("-crf").arg(&crf)
                     .arg("--")
                     .arg(&final_dest);
-                let _ = run_bounded_command(f_cmd, Duration::from_secs(30));
+                let ff_ok = run_bounded_command(f_cmd, Duration::from_secs(30))
+                    .map(|(code, _, _)| code == 0)
+                    .unwrap_or(false);
+                if !ff_ok || !final_dest.exists() {
+                    return Err("AVIF export failed: neither avifenc nor ffmpeg (libsvtav1) succeeded".to_string());
+                }
             }
         }
         "webp" => {
@@ -222,21 +262,21 @@ pub fn export_photo<P: AsRef<Path>>(
             let dyn_rgb8 = DynamicImage::ImageRgb8(dyn_img.to_rgb8());
             dyn_rgb8.write_to(&mut buf, image::ImageFormat::WebP)
                 .map_err(|e| format!("Failed to encode WebP: {}", e))?;
-            crate::security::atomic_write_secure(&final_dest, &buf.into_inner())
+            crate::security::atomic_write_user(&final_dest, &buf.into_inner())
                 .map_err(|e| format!("Failed to securely write WebP file: {}", e))?;
         }
         "tiff" | "tif" => {
             let mut buf = std::io::Cursor::new(Vec::new());
             dyn_img.write_to(&mut buf, image::ImageFormat::Tiff)
                 .map_err(|e| format!("Failed to encode 16-bit TIFF: {}", e))?;
-            crate::security::atomic_write_secure(&final_dest, &buf.into_inner())
+            crate::security::atomic_write_user(&final_dest, &buf.into_inner())
                 .map_err(|e| format!("Failed to securely write TIFF file: {}", e))?;
         }
         "png" => {
             let mut buf = std::io::Cursor::new(Vec::new());
             dyn_img.write_to(&mut buf, image::ImageFormat::Png)
                 .map_err(|e| format!("Failed to encode 16-bit PNG: {}", e))?;
-            crate::security::atomic_write_secure(&final_dest, &buf.into_inner())
+            crate::security::atomic_write_user(&final_dest, &buf.into_inner())
                 .map_err(|e| format!("Failed to securely write PNG file: {}", e))?;
         }
         "jpeg" | "jpg" => {
@@ -250,7 +290,7 @@ pub fn export_photo<P: AsRef<Path>>(
                 dyn_rgb8.write_with_encoder(encoder)
                     .map_err(|e| format!("Failed to encode JPEG: {}", e))?;
             }
-            crate::security::atomic_write_secure(&final_dest, &buf.into_inner())
+            crate::security::atomic_write_user(&final_dest, &buf.into_inner())
                 .map_err(|e| format!("Failed to securely write JPEG file: {}", e))?;
         }
         _ => return Err(format!("Unsupported export format: {}", fmt)),
@@ -267,7 +307,10 @@ pub fn export_photo<P: AsRef<Path>>(
             exif_cmd.arg("-TagsFromFile")
                 .arg(raw_path.as_ref())
                 .arg("-all:all")
-                .arg("-unsafe");
+                .arg("-unsafe")
+                // Pixels are already rotated by the decoder; copying the source Orientation
+                // tag would make viewers rotate the export a second time.
+                .arg("-Orientation#=1");
 
             if options.strip_gps {
                 exif_cmd.arg("-gps:all=");
@@ -281,17 +324,78 @@ pub fn export_photo<P: AsRef<Path>>(
             }
         }
 
-        if let Some(ref prof_name) = options.icc_profile {
-            if let Some(icc_path) = crate::icc::resolve_icc_path(prof_name) {
-                exif_cmd.arg(format!("-icc_profile<={}", icc_path.display()));
-            }
+        if let Some(ref icc_path) = embed_icc {
+            exif_cmd.arg(format!("-icc_profile<={}", icc_path.display()));
         }
 
         exif_cmd.arg("--").arg(&final_dest);
 
         // Run exiftool with bounded timeout (safe failover if format doesn't support tags)
-        let _ = run_bounded_command(exif_cmd, Duration::from_secs(20));
+        let tagged = run_bounded_command(exif_cmd, Duration::from_secs(20))
+            .map(|(code, _, _)| code == 0)
+            .unwrap_or(false);
+
+        // Wide-gamut pixels without their profile would display with wrong colours
+        if converted && !tagged {
+            return Err(format!(
+                "Exported {} but could not embed the {} ICC profile",
+                final_dest.display(),
+                options.icc_profile.as_deref().unwrap_or("")
+            ));
+        }
     }
 
     Ok(final_dest)
+}
+
+/// True when the exiftool binary can be executed (needed to embed ICC profiles).
+fn exiftool_available() -> bool {
+    let mut cmd = secure_command("exiftool");
+    cmd.arg("-ver");
+    run_bounded_command(cmd, Duration::from_secs(5))
+        .map(|(code, _, _)| code == 0)
+        .unwrap_or(false)
+}
+
+/// Keeps only ASCII alphanumerics so a tag can never inject separators into the name.
+fn sanitize_name_tag(tag: &str) -> String {
+    tag.chars().filter(|c| c.is_ascii_alphanumeric()).take(16).collect::<String>().to_lowercase()
+}
+
+/// Name tags for a batch: sources sharing a file stem (DSC_0001.NEF + DSC_0001.JPG,
+/// or same-named files from two folders) would otherwise overwrite each other's
+/// export, so each of them is tagged with its extension, plus an index when even
+/// the extension repeats.
+pub fn batch_name_tags(paths: &[&str]) -> Vec<Option<String>> {
+    use std::collections::HashMap;
+    let key = |p: &str| -> (String, String) {
+        let path = Path::new(p);
+        let stem = path.file_stem().and_then(|s| s.to_str()).unwrap_or("photo").to_string();
+        let ext = path.extension().and_then(|s| s.to_str()).unwrap_or("").to_lowercase();
+        (stem, ext)
+    };
+    let mut stem_count: HashMap<String, usize> = HashMap::new();
+    let mut stem_ext_count: HashMap<(String, String), usize> = HashMap::new();
+    for p in paths {
+        let (stem, ext) = key(p);
+        *stem_count.entry(stem.clone()).or_default() += 1;
+        *stem_ext_count.entry((stem, ext)).or_default() += 1;
+    }
+    let mut seen: HashMap<(String, String), usize> = HashMap::new();
+    paths
+        .iter()
+        .map(|p| {
+            let (stem, ext) = key(p);
+            if stem_count[&stem] < 2 {
+                return None;
+            }
+            let k = (stem, ext.clone());
+            if stem_ext_count[&k] < 2 {
+                return Some(ext);
+            }
+            let n = seen.entry(k).or_default();
+            *n += 1;
+            Some(format!("{}{}", ext, n))
+        })
+        .collect()
 }

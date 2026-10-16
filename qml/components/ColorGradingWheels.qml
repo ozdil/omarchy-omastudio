@@ -30,6 +30,18 @@ ColumnLayout {
 
     signal gradingChanged()
 
+    // Restore wheel -> panel bindings that interactive edits replaced with plain values
+    function rebindWheels() {
+        liftWheel.rgbOffset = Qt.binding(function() { return root.liftRgb; });
+        liftWheel.lumaOffset = Qt.binding(function() { return root.liftLuma; });
+        gammaWheel.rgbOffset = Qt.binding(function() { return root.gammaRgb; });
+        gammaWheel.lumaOffset = Qt.binding(function() { return root.gammaLuma; });
+        gainWheel.rgbOffset = Qt.binding(function() { return root.gainRgb; });
+        gainWheel.lumaOffset = Qt.binding(function() { return root.gainLuma; });
+        offsetWheel.rgbOffset = Qt.binding(function() { return root.offsetRgb; });
+        offsetWheel.lumaOffset = Qt.binding(function() { return root.offsetLuma; });
+    }
+
     function resetAllWheels() {
         liftRgb = [0.0, 0.0, 0.0];
         liftLuma = 0.0;

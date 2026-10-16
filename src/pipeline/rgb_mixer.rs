@@ -50,12 +50,14 @@ mod tests {
 
     #[test]
     fn test_monochrome_rgb_mixer() {
-        let mut recipe = Recipe::default();
-        recipe.rgb_mixer_enabled = true;
-        recipe.rgb_mixer_monochrome = true;
-        recipe.mixer_red_in_r = 0.3;
-        recipe.mixer_green_in_r = 0.6;
-        recipe.mixer_blue_in_r = 0.1;
+        let recipe = Recipe {
+            rgb_mixer_enabled: true,
+            rgb_mixer_monochrome: true,
+            mixer_red_in_r: 0.3,
+            mixer_green_in_r: 0.6,
+            mixer_blue_in_r: 0.1,
+            ..Default::default()
+        };
 
         let (r, g, b) = apply_rgb_mixer(1.0, 0.5, 0.0, &recipe);
         assert!((r - g).abs() < 1e-5);

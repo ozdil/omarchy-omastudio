@@ -13,6 +13,8 @@ Rectangle {
     property var photoList: []
     property string activePhotoPath: ""
     property var selectedPaths: []
+    // Selections from a previous folder must not leak into batch export
+    onPhotoListChanged: selectedPaths = []
     property bool isCatalogMode: false
     property string currentFolder: "~/Pictures"
     property bool isDownloadingRemote: false
@@ -573,7 +575,10 @@ Rectangle {
                             root.navigateFolder(modelData.path);
                         } else {
                             if (mouse.modifiers & Qt.ControlModifier) {
-                                var sList = root.selectedPaths.slice();
+                                // The open photo is drawn as selected even when selectedPaths is empty
+                                var sList = root.selectedPaths.length
+                                    ? root.selectedPaths.slice()
+                                    : (root.activePhotoPath ? [root.activePhotoPath] : []);
                                 var idx = sList.indexOf(modelData.path);
                                 if (idx !== -1) {
                                     sList.splice(idx, 1);
@@ -582,12 +587,22 @@ Rectangle {
                                 }
                                 root.selectedPaths = sList;
                             } else if (mouse.modifiers & Qt.ShiftModifier) {
-                                var sel = [root.activePhotoPath];
-                                if (sel.indexOf(modelData.path) === -1) sel.push(modelData.path);
+                                // Select the whole range between the open photo and the clicked one
+                                var anchorIdx = -1;
+                                for (var a = 0; a < root.photoList.length; a++) {
+                                    if (root.photoList[a].path === root.activePhotoPath) { anchorIdx = a; break; }
+                                }
+                                if (anchorIdx === -1) anchorIdx = index;
+                                var lo = Math.min(anchorIdx, index);
+                                var hi = Math.max(anchorIdx, index);
+                                var sel = [];
+                                for (var k = lo; k <= hi; k++) {
+                                    if (!root.photoList[k].is_dir) sel.push(root.photoList[k].path);
+                                }
                                 root.selectedPaths = sel;
                             } else {
                                 root.selectedPaths = [modelData.path];
-                                root.activePhotoPath = modelData.path;
+                                // activePhotoPath stays bound to MainWindow; loadPhoto updates it
                                 root.selectPhoto(modelData.path, modelData.is_remote || false);
                             }
                         }

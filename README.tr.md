@@ -22,7 +22,7 @@
 
 ## Mimari ve Tasarım İlkeleri
 
-OmaStudio, modern Wayland ve Hyprland Linux masaüstü ortamları için tasarlanmış sektör standardı hibrit bir mimari kullanır: Kullanıcı arayüzü GPU ivmeli **Quickshell (Qt 6 / QML)** üzerinde 120/144 FPS akıcılıkla çalışırken, görüntü işleme ve RAW kod çözme boru hattı **Yönlendirilmiş Çevrimsiz Çizge (DAG) Motoru, Parçalı (Tiled) Talep Odaklı Bölgeleme ve Rust + Slang/Vulkan GPU Hesaplama** çekirdekleri tarafından yürütülür.
+OmaStudio, modern Wayland ve Hyprland Linux masaüstü ortamları için tasarlanmış sektör standardı hibrit bir mimari kullanır: Kullanıcı arayüzü GPU ivmeli **Quickshell (Qt 6 / QML)** üzerinde 120/144 FPS akıcılıkla çalışırken, görüntü işleme ve RAW kod çözme boru hattı **Yönlendirilmiş Çevrimsiz Çizge (DAG) Motoru, Parçalı (Tiled) Talep Odaklı Bölgeleme ve çok çekirdekli Rust CPU hesaplaması (rayon)** tarafından yürütülür. Vulkan/Slang GPU çekirdekleri yol haritasında yer alıyor, mevcut motorun parçası değil.
 
 ```mermaid
 graph TD
@@ -38,10 +38,10 @@ graph TD
         Sock["Kalıcı Daemon IPC (stdin/stdout JSON satırları)<br/>& Quickshell IPC Protokolü"]
     end
 
-    subgraph Engine [" DaVinci & Nuke Sınıfı Motor (DAG + GPU Slang / Vulkan)"]
+    subgraph Engine [" DaVinci & Nuke Sınıfı Motor (DAG + Parçalı CPU Hesaplama)"]
         DAGEngine["Talep Odaklı DAG Motoru<br/>(Yönlendirilmiş Çizge / Geçersiz Kılma Ağacı)"]
         TiledEngine["Parçalı (Tiled) ROI Yürütme<br/>(512x512 Karo Izgarası / Bellek İzolasyonu)"]
-        GPUCompute["Slang / Vulkan SPIR-V Hesaplama<br/>(NVIDIA / AMD / Intel Arc GPU Çekirdekleri)"]
+        GPUCompute["Paralel CPU Hesaplama<br/>(Rust + rayon, tüm çekirdekler)"]
         Decoders["LibRaw FFI Donanım Matrisi<br/>(Sony ARW, Fuji RAF, Nikon NEF, Canon CR3, DNG)"]
         ACES["ACES 1.3 Renk Bilimi<br/>(ACEScg, ACEScc, RGC, RRT/ODT Ton Eşleyici)"]
         FilmSim["Film Benzetimleri<br/>(Fujifilm Provia, Velvia, Astia, Acros / Hasselblad HNCS)"]
@@ -194,18 +194,25 @@ flowchart LR
 * `libraw` (RAW kod çözme motoru)
 * `quickshell` (Qt 6 QML masaüstü kabuk çalışma zamanı)
 * `libjxl` & `libavif` (Modern donanım ivmeli görsel kodekleri)
-* `exiftool` (Meta veri ve ICC profil gömme aracı)
 * `zenity` (Masaüstü dosya seçim pencereleri)
-* `rust` (Yerel motor derleme araç zinciri)
+* `rust`, `clang`, `pkgconf` (Yerel motor derleme araç zinciri)
+
+İsteğe bağlı:
+* `exiftool` (`perl-image-exiftool`): Dışa aktarımda EXIF verisini korur ve ICC profilini gömer. Yoksa geniş gamlı dışa aktarımlar (Adobe RGB, ProPhoto) sRGB'ye düşer.
+* `ffmpeg`: Yerleşik kodlayıcı başarısız olursa AVIF dışa aktarımı için yedek.
+* `qrencode`: OmaID QR kodu için alternatif çizici (yoksa yerleşik kodlayıcı kullanılır).
 
 ### Yerel Derleme ve Kurulum
 ```bash
 # Projeyi derleyin
 cargo build --release --locked
 
-# İkili dosyayı yerel kullanıcı dizinine kurun
-install -d -m 755 ~/.local/bin
-install -m 755 target/release/omastudio-engine ~/.local/bin/
+# Motoru, başlatıcıyı, arayüzü ve ICC profillerini yerel olarak kurun
+install -Dm755 target/release/omastudio-engine ~/.local/bin/omastudio-engine
+install -Dm755 omastudio ~/.local/bin/omastudio
+install -d ~/.local/share/omastudio/icc
+cp -r qml ~/.local/share/omastudio/
+install -m644 assets/icc/*.icc ~/.local/share/omastudio/icc/
 
 # OmaStudio uygulamasını başlatın
 omastudio

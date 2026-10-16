@@ -147,18 +147,34 @@ struct DaemonCache {
 }
 
 
+/// Cache path of a photo's thumbnail. Keyed by a hash of the full path (not just the
+/// file stem) so DSC_0001.NEF / DSC_0001.JPG or same-named files from two cards don't
+/// share or overwrite each other's thumbnail.
+fn thumbnail_path_for(photo: &Path) -> PathBuf {
+    let home = env::var("HOME").unwrap_or_else(|_| ".".to_string());
+    let canonical = std::fs::canonicalize(photo).unwrap_or_else(|_| photo.to_path_buf());
+    let digest = rendezvous::sha256_hex(canonical.to_string_lossy().as_bytes());
+    let stem = photo.file_stem().and_then(|s| s.to_str()).unwrap_or("thumb");
+    PathBuf::from(home)
+        .join(".cache/omastudio/thumbnails")
+        .join(format!("{}-{}.jpg", stem, &digest[..16]))
+}
+
 #[derive(Serialize)]
 struct FolderScanItem {
     name: String,
     path: String,
     thumbnail: String,
     is_remote: bool,
+    is_dir: bool,
 }
 
 fn scan_directory(dir_path: &str) -> Result<Vec<FolderScanItem>, String> {
     let expanded = if let Some(stripped) = dir_path.strip_prefix("~/") {
         let home = env::var("HOME").unwrap_or_else(|_| ".".to_string());
         PathBuf::from(home).join(stripped)
+    } else if dir_path == "~" {
+        PathBuf::from(env::var("HOME").unwrap_or_else(|_| ".".to_string()))
     } else {
         PathBuf::from(dir_path)
     };
@@ -171,17 +187,29 @@ fn scan_directory(dir_path: &str) -> Result<Vec<FolderScanItem>, String> {
     let thumb_dir = PathBuf::from(home).join(".cache/omastudio/thumbnails");
     let _ = security::ensure_secure_dir(&thumb_dir);
 
+    let mut dirs = Vec::new();
     let mut items = Vec::new();
     if let Ok(entries) = std::fs::read_dir(&expanded) {
         for entry in entries.flatten() {
             let path = entry.path();
+            let name = entry.file_name().to_string_lossy().to_string();
+            // Subfolders are listed (first) so the filmstrip can navigate into them
+            if path.is_dir() && !name.starts_with('.') {
+                dirs.push(FolderScanItem {
+                    name,
+                    path: path.to_string_lossy().to_string(),
+                    thumbnail: String::new(),
+                    is_remote: false,
+                    is_dir: true,
+                });
+                continue;
+            }
             if path.is_file() {
                 if let Some(ext) = path.extension().and_then(|e| e.to_str()) {
                     let ext_lower = ext.to_lowercase();
                     let is_supported = ["nef", "nrw", "raf", "cr2", "cr3", "arw", "dng", "rwl", "orf", "rw2", "3fr", "jpg", "jpeg", "png", "webp", "tif", "tiff", "heic"].contains(&ext_lower.as_str());
                     if is_supported {
-                        let stem = path.file_stem().and_then(|s| s.to_str()).unwrap_or("thumb");
-                        let thumb_path = thumb_dir.join(format!("{}.jpg", stem));
+                        let thumb_path = thumbnail_path_for(&path);
                         if !thumb_path.exists() {
                             if let Ok(raw) = RawImage::open(&path) {
                                 let _ = raw.extract_thumbnail(&thumb_path);
@@ -196,6 +224,7 @@ fn scan_directory(dir_path: &str) -> Result<Vec<FolderScanItem>, String> {
                             path: path.to_string_lossy().to_string(),
                             thumbnail: if thumb_path.exists() { thumb_path.to_string_lossy().to_string() } else { path.to_string_lossy().to_string() },
                             is_remote: false,
+                            is_dir: false,
                         });
                     }
                 }
@@ -203,8 +232,10 @@ fn scan_directory(dir_path: &str) -> Result<Vec<FolderScanItem>, String> {
         }
     }
 
+    dirs.sort_by_key(|a| a.name.to_lowercase());
     items.sort_by(|a, b| a.name.cmp(&b.name));
-    Ok(items)
+    dirs.extend(items);
+    Ok(dirs)
 }
 
 fn main() {
@@ -470,7 +501,7 @@ fn main() {
                     let tolerance: u32 = args.get(5).and_then(|s| s.parse().ok()).unwrap_or(1);
 
                     let mut cand_bytes = [0u8; 32];
-                    if cand_hex.len() != 64 {
+                    if !cand_hex.is_ascii() || cand_hex.len() != 64 {
                         print_json::<()>(&ResponseWrapper::err("Invalid topic hex length (must be 64 characters)"));
                         return;
                     }
@@ -798,7 +829,7 @@ fn inspect_file(raw_path: &str) -> Result<InspectResult, String> {
         .file_stem()
         .and_then(|s| s.to_str())
         .unwrap_or("thumb");
-    let thumb_path = thumb_dir.join(format!("{}.jpg", file_stem));
+    let thumb_path = thumbnail_path_for(Path::new(raw_path));
 
     // Fast thumbnail extraction
     let _ = raw.extract_thumbnail(&thumb_path);
@@ -817,15 +848,17 @@ fn inspect_file(raw_path: &str) -> Result<InspectResult, String> {
         .unwrap_or_default()
         .as_secs();
 
+    // Preserve culling data (rating / flag / colour label) already stored for this photo
+    let prev = catalog.get(raw_path).cloned();
     catalog.upsert(CatalogItem {
         id: file_stem.to_string(),
         path: raw_path.to_string(),
-        remote_path: None,
+        remote_path: prev.as_ref().and_then(|p| p.remote_path.clone()),
         thumbnail_path: thumb_path.to_string_lossy().to_string(),
         metadata: meta.clone(),
-        rating: 0,
-        color_label: String::new(),
-        flag: "unflagged".to_string(),
+        rating: prev.as_ref().map_or(0, |p| p.rating),
+        color_label: prev.as_ref().map_or_else(String::new, |p| p.color_label.clone()),
+        flag: prev.as_ref().map_or_else(|| "unflagged".to_string(), |p| p.flag.clone()),
         recipe: recipe.clone(),
         updated_at: now,
     });
@@ -868,7 +901,7 @@ fn render_file(raw_path: &str, recipe: &Recipe, split: f32, out_path: &str) -> R
     if out_path.ends_with(".ppm") {
         let mut ppm_bytes = format!("P6\n{} {}\n255\n", preview.width, preview.height).into_bytes();
         ppm_bytes.extend_from_slice(&final_buf);
-        security::atomic_write_secure(dest_path, &ppm_bytes)
+        security::atomic_write_user(dest_path, &ppm_bytes)
             .map_err(|e| format!("Failed to write PPM: {}", e))?;
     } else {
         let img: image::ImageBuffer<image::Rgb<u8>, Vec<u8>> = image::ImageBuffer::from_raw(
@@ -884,7 +917,7 @@ fn render_file(raw_path: &str, recipe: &Recipe, split: f32, out_path: &str) -> R
         };
         img.write_to(&mut std::io::Cursor::new(&mut encoded), fmt)
             .map_err(|e| format!("Failed to encode preview: {}", e))?;
-        security::atomic_write_secure(dest_path, &encoded)
+        security::atomic_write_user(dest_path, &encoded)
             .map_err(|e| format!("Failed to save preview: {}", e))?;
     }
 
@@ -902,10 +935,7 @@ fn run_ai_auto(raw_path: &str) -> Result<InspectResult, String> {
     let auto_recipe = ai_auto_enhance(preview.as_slice(), preview.width, preview.height, preview.channels, &meta);
     let scene = ai_classify_scene(preview.as_slice(), preview.width, preview.height, preview.channels, &meta);
 
-    let home = env::var("HOME").unwrap_or_else(|_| ".".to_string());
-    let thumb_path = PathBuf::from(home)
-        .join(".cache/omastudio/thumbnails")
-        .join(format!("{}.jpg", Path::new(raw_path).file_stem().and_then(|s| s.to_str()).unwrap_or("thumb")));
+    let thumb_path = thumbnail_path_for(Path::new(raw_path));
 
     Ok(InspectResult {
         path: raw_path.to_string(),
@@ -935,10 +965,7 @@ fn run_ai_jev(raw_path: &str) -> Result<JevInspectResult, String> {
         apply_jev_decisions_to_recipe(&mut auto_recipe, jev);
     }
 
-    let home = env::var("HOME").unwrap_or_else(|_| ".".to_string());
-    let thumb_path = PathBuf::from(home)
-        .join(".cache/omastudio/thumbnails")
-        .join(format!("{}.jpg", Path::new(raw_path).file_stem().and_then(|s| s.to_str()).unwrap_or("thumb")));
+    let thumb_path = thumbnail_path_for(Path::new(raw_path));
 
     Ok(JevInspectResult {
         path: raw_path.to_string(),
@@ -1020,24 +1047,50 @@ fn run_daemon() {
 
     let stdin = io::stdin();
     let mut stdin_lock = stdin.lock();
-    let mut line_buf = String::new();
+    let mut raw_buf: Vec<u8> = Vec::new();
     const MAX_LINE_BYTES: usize = 1024 * 1024; // 1 MiB JSON line limit
 
     loop {
-        line_buf.clear();
-        let bytes_read = match stdin_lock.read_line(&mut line_buf) {
+        raw_buf.clear();
+        // Bounded byte read: an oversized line never lands in memory whole, and a stray
+        // invalid UTF-8 byte yields an error response instead of silently ending the daemon.
+        let bytes_read = match io::Read::take(&mut stdin_lock, MAX_LINE_BYTES as u64 + 1)
+            .read_until(b'\n', &mut raw_buf)
+        {
             Ok(0) => break, // EOF
             Ok(n) => n,
+            Err(e) if e.kind() == io::ErrorKind::Interrupted => continue,
             Err(_) => break,
         };
 
         if bytes_read > MAX_LINE_BYTES {
+            // Discard the rest of the oversized line
+            if raw_buf.last() != Some(&b'\n') {
+                let mut sink = Vec::new();
+                loop {
+                    sink.clear();
+                    match io::Read::take(&mut stdin_lock, 64 * 1024).read_until(b'\n', &mut sink) {
+                        Ok(0) => break,
+                        Ok(_) if sink.last() == Some(&b'\n') => break,
+                        Ok(_) => continue,
+                        Err(_) => break,
+                    }
+                }
+            }
             print_json::<()>(&ResponseWrapper::err_action(
                 "error",
                 "JSON line exceeded maximum limit of 1 MiB",
             ));
             continue;
         }
+
+        let line_buf = match std::str::from_utf8(&raw_buf) {
+            Ok(s) => s,
+            Err(_) => {
+                print_json::<()>(&ResponseWrapper::err_action("error", "Command line is not valid UTF-8"));
+                continue;
+            }
+        };
 
         let trimmed = line_buf.trim();
         if trimmed.is_empty() {
@@ -1098,12 +1151,11 @@ fn run_daemon() {
                                 c.raw_buffer_16 = Some(u16_vec);
                                 c.raw_buffer_8 = Some(Arc::clone(&u8_arc));
                                 c.metadata = Some(meta.clone());
-                                c.ping_pong = 0;
+                                // Keep ping_pong running across loads: resetting it made the first
+                                // render of every photo reuse the same preview path, so the UI saw
+                                // no source change and kept showing the previous photo.
 
-                                let home = env::var("HOME").unwrap_or_else(|_| ".".to_string());
-                                let thumb_path = PathBuf::from(home)
-                                    .join(".cache/omastudio/thumbnails")
-                                    .join(format!("{}.jpg", Path::new(p).file_stem().and_then(|s| s.to_str()).unwrap_or("thumb")));
+                                let thumb_path = thumbnail_path_for(Path::new(p));
                                 let _ = raw.extract_thumbnail(&thumb_path);
 
                                 let sidecar = Recipe::load_sidecar(p).unwrap_or_default();
@@ -1185,26 +1237,31 @@ fn run_daemon() {
                 };
 
                 let dest_path = Path::new(&out_dest);
-                if out_dest.ends_with(".ppm") {
+                let write_result: Result<(), String> = if out_dest.ends_with(".ppm") {
                     let mut ppm_bytes = format!("P6\n{} {}\n255\n", width, height).into_bytes();
                     ppm_bytes.extend_from_slice(&final_buf);
-                    let _ = security::atomic_write_secure(dest_path, &ppm_bytes);
+                    security::atomic_write_secure(dest_path, &ppm_bytes).map_err(|e| e.to_string())
                 } else {
-                    if let Some(img) = image::ImageBuffer::<image::Rgb<u8>, Vec<u8>>::from_raw(
-                        width,
-                        height,
-                        final_buf,
-                    ) {
-                        let mut encoded = Vec::new();
-                        let fmt = if out_dest.ends_with(".png") {
-                            image::ImageFormat::Png
-                        } else {
-                            image::ImageFormat::Jpeg
-                        };
-                        if img.write_to(&mut std::io::Cursor::new(&mut encoded), fmt).is_ok() {
-                            let _ = security::atomic_write_secure(dest_path, &encoded);
+                    match image::ImageBuffer::<image::Rgb<u8>, Vec<u8>>::from_raw(width, height, final_buf) {
+                        Some(img) => {
+                            let mut encoded = Vec::new();
+                            let fmt = if out_dest.ends_with(".png") {
+                                image::ImageFormat::Png
+                            } else {
+                                image::ImageFormat::Jpeg
+                            };
+                            img.write_to(&mut std::io::Cursor::new(&mut encoded), fmt)
+                                .map_err(|e| e.to_string())
+                                .and_then(|_| security::atomic_write_secure(dest_path, &encoded).map_err(|e| e.to_string()))
                         }
+                        None => Err("Rendered buffer size does not match image dimensions".to_string()),
                     }
+                };
+
+                // Report write failures instead of handing the UI a stale preview path
+                if let Err(e) = write_result {
+                    print_json::<()>(&ResponseWrapper::err_action("adjust", format!("Failed to write preview: {}", e)));
+                    continue;
                 }
 
                 print_json(&ResponseWrapper::ok_action("adjust", RenderResult {
@@ -1325,13 +1382,18 @@ fn run_daemon() {
                     continue;
                 }
                 let options = cmd_obj.options.unwrap_or_default();
+                let item_paths: Vec<&str> = items.iter().map(|i| i.path.as_str()).collect();
+                let name_tags = export::batch_name_tags(&item_paths);
 
                 // Multi-threaded parallel batch export using Rayon
                 let results: Vec<BatchExportItemResult> = items
                     .par_iter()
-                    .map(|item| {
+                    .zip(name_tags.par_iter())
+                    .map(|(item, tag)| {
                         let recipe = item.recipe.clone().or_else(|| Recipe::load_sidecar(&item.path)).unwrap_or_default();
-                        match export_photo(&item.path, &recipe, &options) {
+                        let mut item_options = options.clone();
+                        item_options.name_tag = tag.clone();
+                        match export_photo(&item.path, &recipe, &item_options) {
                             Ok(dest) => BatchExportItemResult {
                                 path: item.path.clone(),
                                 success: true,
@@ -1398,7 +1460,7 @@ fn run_daemon() {
                 let tolerance = cmd_obj.tolerance.unwrap_or(1);
 
                 let mut cand_bytes = [0u8; 32];
-                if cand_hex.len() != 64 {
+                if !cand_hex.is_ascii() || cand_hex.len() != 64 {
                     print_json::<()>(&ResponseWrapper::err_action("rendezvous_verify", "Invalid topic hex length"));
                     continue;
                 }

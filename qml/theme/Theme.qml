@@ -74,6 +74,7 @@ QtObject {
     readonly property string iconCoffee: "\uf0f4"
     readonly property string iconInfo: "\uf05a"
     readonly property string iconArrowUp: "\uf062"
+    readonly property string iconLayers: "\uf5fd"
 
     // Filesystem Paths for Omarchy System Theme
     readonly property string homeDir: Quickshell.env("HOME")
@@ -105,6 +106,9 @@ QtObject {
         var acc = dict["accent"] || dict["color4"] || dict["color6"] || "#7aa2f7";
         var sel = dict["selection"] || dict["selection_background"] || "";
         var mut = dict["muted"] || dict["color8"] || "";
+        // fg/acc are hex strings; convert to color so .r/.g/.b exist for Qt.rgba below
+        var fgC = Qt.lighter(fg, 1.0);
+        var accC = Qt.lighter(acc, 1.0);
 
         root.bgBase = base;
 
@@ -113,21 +117,21 @@ QtObject {
             root.bgSurface = dict["lighter_background"] || Qt.lighter(base, 1.15);
             root.bgCard = (sel && sel !== base) ? sel : Qt.lighter(base, 1.3);
             root.bgCardHover = Qt.lighter(root.bgCard, 1.15);
-            root.border = mut ? mut : Qt.rgba(fg.r, fg.g, fg.b, 0.14);
-            root.borderLight = acc ? Qt.rgba(acc.r, acc.g, acc.b, 0.35) : Qt.rgba(fg.r, fg.g, fg.b, 0.22);
+            root.border = mut ? mut : Qt.rgba(fgC.r, fgC.g, fgC.b, 0.14);
+            root.borderLight = acc ? Qt.rgba(accC.r, accC.g, accC.b, 0.35) : Qt.rgba(fgC.r, fgC.g, fgC.b, 0.22);
             root.textMain = dict["bright_foreground"] || fg;
-            root.textMuted = dict["light_foreground"] || mut || Qt.rgba(fg.r, fg.g, fg.b, 0.65);
-            root.textDim = dict["dark_foreground"] || dict["color8"] || Qt.rgba(fg.r, fg.g, fg.b, 0.40);
+            root.textMuted = dict["light_foreground"] || mut || Qt.rgba(fgC.r, fgC.g, fgC.b, 0.65);
+            root.textDim = dict["dark_foreground"] || dict["color8"] || Qt.rgba(fgC.r, fgC.g, fgC.b, 0.40);
         } else {
             root.bgDark = dict["dark_background"] || Qt.darker(base, 1.08);
             root.bgSurface = dict["lighter_background"] || Qt.lighter(base, 1.02);
             root.bgCard = (sel && sel !== base) ? sel : Qt.darker(base, 1.04);
             root.bgCardHover = Qt.darker(root.bgCard, 1.06);
-            root.border = mut ? mut : Qt.rgba(fg.r, fg.g, fg.b, 0.14);
-            root.borderLight = acc ? Qt.rgba(acc.r, acc.g, acc.b, 0.35) : Qt.rgba(fg.r, fg.g, fg.b, 0.22);
+            root.border = mut ? mut : Qt.rgba(fgC.r, fgC.g, fgC.b, 0.14);
+            root.borderLight = acc ? Qt.rgba(accC.r, accC.g, accC.b, 0.35) : Qt.rgba(fgC.r, fgC.g, fgC.b, 0.22);
             root.textMain = dict["bright_foreground"] || fg;
-            root.textMuted = dict["light_foreground"] || mut || Qt.rgba(fg.r, fg.g, fg.b, 0.65);
-            root.textDim = dict["dark_foreground"] || dict["color8"] || Qt.rgba(fg.r, fg.g, fg.b, 0.40);
+            root.textMuted = dict["light_foreground"] || mut || Qt.rgba(fgC.r, fgC.g, fgC.b, 0.65);
+            root.textDim = dict["dark_foreground"] || dict["color8"] || Qt.rgba(fgC.r, fgC.g, fgC.b, 0.40);
         }
 
         root.accent = acc;

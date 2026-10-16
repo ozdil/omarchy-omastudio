@@ -22,7 +22,7 @@
 
 ## Architecture & Principles
 
-OmaStudio employs an industry-leading hybrid architecture designed for extreme performance on modern Wayland and Hyprland Linux desktops: The graphical user interface runs at 120/144 FPS powered by GPU-accelerated **Quickshell (Qt 6 / QML)**, while the mathematical image processing and RAW decoding pipeline is driven by a **Directed Acyclic Graph (DAG) Engine, Tiled Region-of-Interest (ROI) Execution, and Rust + Vulkan/Slang GPU Compute**.
+OmaStudio employs an industry-leading hybrid architecture designed for extreme performance on modern Wayland and Hyprland Linux desktops: The graphical user interface runs at 120/144 FPS powered by GPU-accelerated **Quickshell (Qt 6 / QML)**, while the mathematical image processing and RAW decoding pipeline is driven by a **Directed Acyclic Graph (DAG) Engine, Tiled Region-of-Interest (ROI) Execution, and multi-threaded Rust CPU compute (rayon)**. Vulkan/Slang GPU kernels are on the roadmap and not part of the current engine.
 
 ```mermaid
 graph TD
@@ -38,10 +38,10 @@ graph TD
         Sock["Persistent Daemon IPC (stdin/stdout JSON lines)<br/>& Quickshell IPC Protocol"]
     end
 
-    subgraph Engine [" DaVinci & Nuke-Grade Engine (DAG + GPU Slang / Vulkan)"]
+    subgraph Engine [" DaVinci & Nuke-Grade Engine (DAG + Tiled CPU Compute)"]
         DAGEngine["Demand-Driven DAG Engine<br/>(Directed Acyclic Graph / Invalidation Tree)"]
         TiledEngine["Tiled ROI Execution<br/>(512x512 Tile Grid / Memory Isolation)"]
-        GPUCompute["Slang / Vulkan SPIR-V Compute<br/>(NVIDIA / AMD / Intel Arc GPU Kernels)"]
+        GPUCompute["Parallel CPU Compute<br/>(Rust + rayon, all cores)"]
         Decoders["LibRaw FFI Hardware Matrix<br/>(Sony ARW, Fuji RAF, Nikon NEF, Canon CR3, DNG)"]
         ACES["ACES 1.3 Color Science<br/>(ACEScg, ACEScc, RGC, RRT/ODT Tonemapper)"]
         FilmSim["Film Simulations<br/>(Fujifilm Provia, Velvia, Astia, Acros / Hasselblad HNCS)"]
@@ -194,18 +194,25 @@ flowchart LR
 * `libraw` (RAW image decoding engine)
 * `quickshell` (Qt 6 QML desktop shell runtime)
 * `libjxl` & `libavif` (Modern hardware-accelerated image codecs)
-* `exiftool` (Metadata and ICC profile embedding)
 * `zenity` (Native file selection dialogs)
-* `rust` (Toolchain for compiling the native engine)
+* `rust`, `clang`, `pkgconf` (Toolchain for compiling the native engine)
+
+Optional:
+* `exiftool` (`perl-image-exiftool`): keeps EXIF metadata and embeds ICC profiles on export. Without it, wide-gamut exports (Adobe RGB, ProPhoto) fall back to sRGB.
+* `ffmpeg`: AVIF export fallback when the built-in encoder fails.
+* `qrencode`: alternative renderer for the OmaID QR code (a built-in encoder is used otherwise).
 
 ### Build & Local Installation
 ```bash
 # Clone and build the project
 cargo build --release --locked
 
-# Install the binary locally
-install -d -m 755 ~/.local/bin
-install -m 755 target/release/omastudio-engine ~/.local/bin/
+# Install the engine, launcher, UI and ICC profiles locally
+install -Dm755 target/release/omastudio-engine ~/.local/bin/omastudio-engine
+install -Dm755 omastudio ~/.local/bin/omastudio
+install -d ~/.local/share/omastudio/icc
+cp -r qml ~/.local/share/omastudio/
+install -m644 assets/icc/*.icc ~/.local/share/omastudio/icc/
 
 # Launch OmaStudio
 omastudio

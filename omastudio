@@ -9,6 +9,15 @@ fi
 
 # Re-exec through fixed trusted shell under sanitized environment (/usr/bin/env -i)
 if [ "${OMASTUDIO_SECURE_ENV:-0}" != "1" ]; then
+    # Desktop-session variables (D-Bus, cursor theme, HiDPI scaling) are forwarded only
+    # when set; dropping them gave the UI the wrong cursor and scale factor.
+    SESSION_ENV=()
+    for var in XDG_CURRENT_DESKTOP XDG_SESSION_TYPE DBUS_SESSION_BUS_ADDRESS HYPRLAND_INSTANCE_SIGNATURE \
+               XCURSOR_THEME XCURSOR_SIZE QT_QPA_PLATFORMTHEME QT_SCALE_FACTOR QT_AUTO_SCREEN_SCALE_FACTOR; do
+        if [ -n "${!var:-}" ]; then
+            SESSION_ENV+=("${var}=${!var}")
+        fi
+    done
     exec /usr/bin/env -i \
         PATH="/usr/bin:/bin:${HOME}/.local/bin:${HOME}/.cargo/bin" \
         HOME="${HOME}" \
@@ -21,6 +30,7 @@ if [ "${OMASTUDIO_SECURE_ENV:-0}" != "1" ]; then
         XDG_DATA_DIRS="${XDG_DATA_DIRS:-/usr/local/share:/usr/share}" \
         XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-${HOME}/.config}" \
         XDG_CACHE_HOME="${XDG_CACHE_HOME:-${HOME}/.cache}" \
+        "${SESSION_ENV[@]}" \
         OMASTUDIO_SECURE_ENV=1 \
         /bin/bash -p "$0" "$@"
 fi
@@ -118,7 +128,7 @@ elif [[ "${1:-}" == "theme" ]]; then
 elif [[ $# -gt 0 ]]; then
     # Check if first arg is an engine subcommand
     case "${1:-}" in
-        inspect|render|export|ai-auto|ai-social|icc|scan|catalog|dag|daemon|theme)
+        inspect|render|export|ai-auto|ai-social|ai-jev|icc|scan|catalog|dag|daemon|rendezvous|oma-id-qr|force-scan)
             exec "${BIN}" "$@"
             ;;
         *)
@@ -143,6 +153,13 @@ fi
 
 # Otherwise launch Quickshell Studio UI
 if [[ -n "${QUICKSHELL_BIN}" && -n "${QML_SHELL}" ]]; then
+    # Tell the UI which engine binary was resolved (e.g. /usr/bin for packaged installs)
+    export OMASTUDIO_ENGINE="${BIN}"
+    # Cold start with a file argument: hand the photo to the UI to open on startup
+    if [[ -f "${1:-}" ]]; then
+        OMASTUDIO_OPEN_PATH="$(/usr/bin/realpath "$1")"
+        export OMASTUDIO_OPEN_PATH
+    fi
     exec "${QUICKSHELL_BIN}" -p "${QML_SHELL}"
 else
     echo "Quickshell is not found on PATH or QML shell is missing. Falling back to omastudio-engine CLI."

@@ -74,7 +74,7 @@ pub fn resolve_watermark_text(template: &str, meta: Option<&RawMetadata>) -> Str
 /// Parses hex color string (e.g. "#ffffff", "#c0caf5") to RGB u8
 fn parse_hex_color(hex: &str) -> (u8, u8, u8) {
     let clean = hex.trim().trim_start_matches('#');
-    if clean.len() == 6 {
+    if clean.is_ascii() && clean.len() == 6 {
         let r = u8::from_str_radix(&clean[0..2], 16).unwrap_or(255);
         let g = u8::from_str_radix(&clean[2..4], 16).unwrap_or(255);
         let b = u8::from_str_radix(&clean[4..6], 16).unwrap_or(255);

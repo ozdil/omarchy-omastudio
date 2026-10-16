@@ -186,8 +186,10 @@ pub fn ai_auto_enhance(
             recipe.wb_temperature = cct.clamp(2400.0, 9500.0);
 
             // Green-Magenta Tint balance
+            // R/B above G means a magenta cast; positive tint adds magenta, so correct the
+            // opposite way (the sign was inverted and amplified the cast).
             let tint_val = ((r_to_g + b_to_g) / 2.0 - 1.0) * 45.0;
-            recipe.wb_tint = tint_val.clamp(-30.0, 30.0);
+            recipe.wb_tint = (-tint_val).clamp(-30.0, 30.0);
         }
     } else if sum_g > 1.0 {
         // Fallback to simple Gray World
@@ -199,7 +201,7 @@ pub fn ai_auto_enhance(
         let b_to_g = avg_b / avg_g.max(1.0);
         let r_to_g = avg_r / avg_g.max(1.0);
         recipe.wb_temperature = (5500.0 + (b_to_g - 1.0) * 2200.0).clamp(2800.0, 8500.0);
-        recipe.wb_tint = (((r_to_g + b_to_g) / 2.0 - 1.0) * 35.0).clamp(-25.0, 25.0);
+        recipe.wb_tint = (-((r_to_g + b_to_g) / 2.0 - 1.0) * 35.0).clamp(-25.0, 25.0);
     }
 
     // 6. Presence, Clarity & Sensor Denoising

@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang libraw-dev mold pkg-config
+      - name: Build
+        run: cargo build --locked --all-targets
+      - name: Test
+        run: cargo test --locked
+
+  clippy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      # Pinned so a new stable release's lints can't turn unrelated PRs red;
+      # bump deliberately and fix any new warnings in the same change.
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: 1.97.0
+          components: clippy
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang libraw-dev mold pkg-config
+      - name: Clippy
+        run: cargo clippy --locked --all-targets -- -D warnings

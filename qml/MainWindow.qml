@@ -158,7 +158,8 @@ Rectangle {
         root.currentGradeVersion = ver;
         if (vMap[ver]) {
             root.gradeVersions = vMap;
-            root.applyRecipeObject(vMap[ver]);
+            // Grade versions hold the edit, not the photo's culling state
+            root.applyRecipeObject(Object.assign({}, vMap[ver], { "rating": root.photoRating, "flag": root.photoFlag }));
             root.showToast("[Grade] Switched to Version " + ver, Theme.accentCyan);
         } else {
             vMap[ver] = cur;
@@ -195,7 +196,9 @@ Rectangle {
     property var daemonQueue: []
 
     function resolveEnginePath() {
-        return Quickshell.env("HOME") + "/.local/bin/omastudio-engine";
+        // The launcher exports the engine it resolved (e.g. /usr/bin for packaged installs)
+        var e = Quickshell.env("OMASTUDIO_ENGINE");
+        return e ? String(e) : Quickshell.env("HOME") + "/.local/bin/omastudio-engine";
     }
 
     function showToast(msg, col) {
@@ -215,18 +218,59 @@ Rectangle {
     property var undoStack: []
     property var redoStack: []
     property bool isPerformingUndoRedo: false
+    // Engine-only tone flags with no UI control yet; kept so UI saves don't drop them
+    property bool highlightReconstruct: true
+    property bool filmicAgx: false
+    // Undo baseline: the recipe as of the last committed edit (see commitPendingUndo)
+    property string undoBaselineJson: ""
 
     function pushUndoState() {
         if (root.isPerformingUndoRedo) return;
+        root.commitPendingUndo();
         var r = root.buildRecipeObject();
+        var json = JSON.stringify(r);
         var stack = root.undoStack.slice();
-        if (stack.length >= 50) stack.shift();
-        stack.push(r);
-        root.undoStack = stack;
+        if (stack.length === 0 || JSON.stringify(stack[stack.length - 1]) !== json) {
+            if (stack.length >= 50) stack.shift();
+            stack.push(r);
+            root.undoStack = stack;
+            root.redoStack = [];
+        }
+        root.undoBaselineJson = json;
+    }
+
+    // Slider, wheel and panel edits never called pushUndoState, so Ctrl+Z skipped
+    // them. Every render request (re)starts undoCommitTimer; once edits settle, the
+    // pre-edit baseline is pushed as one undo step (a whole drag = one step).
+    function commitPendingUndo() {
+        undoCommitTimer.stop();
+        if (root.isPerformingUndoRedo || root.activePhotoPath === "") return;
+        var cur = JSON.stringify(root.buildRecipeObject());
+        var base = root.undoBaselineJson;
+        if (base === "" || cur === base) {
+            root.undoBaselineJson = cur;
+            return;
+        }
+        var stack = root.undoStack.slice();
+        var top = stack.length > 0 ? JSON.stringify(stack[stack.length - 1]) : "";
+        if (top !== base) {
+            if (stack.length >= 50) stack.shift();
+            stack.push(JSON.parse(base));
+            root.undoStack = stack;
+        }
         root.redoStack = [];
+        root.undoBaselineJson = cur;
+    }
+
+    Timer {
+        id: undoCommitTimer
+        interval: 600
+        repeat: false
+        onTriggered: root.commitPendingUndo()
     }
 
     function undo() {
+        root.commitPendingUndo();
         if (root.undoStack.length === 0) {
             root.showToast("[Undo] No previous actions", Theme.textDim);
             return;
@@ -241,12 +285,15 @@ Rectangle {
         var prev = uStack.pop();
         root.undoStack = uStack;
 
+        // Culling (stars / flag) is not part of the edit history
+        prev = Object.assign({}, prev, { "rating": root.photoRating, "flag": root.photoFlag });
         root.applyRecipeObject(prev);
         root.isPerformingUndoRedo = false;
         root.showToast("[OK] Undo (Ctrl+Z)", Theme.accentCyan);
     }
 
     function redo() {
+        root.commitPendingUndo();
         if (root.redoStack.length === 0) {
             root.showToast("[Redo] No actions to redo", Theme.textDim);
             return;
@@ -261,6 +308,8 @@ Rectangle {
         var next = rStack.pop();
         root.redoStack = rStack;
 
+        // Culling (stars / flag) is not part of the edit history
+        next = Object.assign({}, next, { "rating": root.photoRating, "flag": root.photoFlag });
         root.applyRecipeObject(next);
         root.isPerformingUndoRedo = false;
         root.showToast("[OK] Redo (Ctrl+Shift+Z)", Theme.accentCyan);
@@ -362,6 +411,9 @@ Rectangle {
         if (typeof socialOpt !== "undefined" && socialOpt) socialOpt.activePlatform = "";
         if (typeof hslMixer !== "undefined" && hslMixer) hslMixer.resetAll();
         if (typeof colorWheels !== "undefined" && colorWheels) colorWheels.resetAllWheels();
+        root.highlightReconstruct = true;
+        root.filmicAgx = false;
+        try { root.syncPanels(); } catch (e) { console.warn("syncPanels failed: " + e); }
         root.showToast("[OK] Reset to defaults (Ctrl+R)", Theme.textDim);
         root.requestRender();
     }
@@ -392,6 +444,8 @@ Rectangle {
             "wb_tint": root.wbTint,
             "exposure": root.expValue,
             "contrast": root.contrastValue,
+            "highlight_reconstruct": root.highlightReconstruct,
+            "filmic_agx": root.filmicAgx,
             "highlights": root.highlightsValue,
             "shadows": root.shadowsValue,
             "whites": root.whitesValue,
@@ -468,86 +522,92 @@ Rectangle {
         };
     }
 
+    // Number(v) || d would turn a legitimate 0 (e.g. sharpening 0) into the default
+    function num(v, d) {
+        var n = Number(v);
+        return (v === undefined || v === null || v === "" || isNaN(n)) ? d : n;
+    }
+
     function applyRecipeObject(r) {
         if (!r) return;
         root.wbTemp = Number(r.wb_temperature) || 5500.0;
-        root.wbTint = Number(r.wb_tint) || 0.0;
-        root.expValue = Number(r.exposure) || 0.0;
-        root.contrastValue = Number(r.contrast) || 0.0;
-        root.highlightsValue = Number(r.highlights) || 0.0;
-        root.shadowsValue = Number(r.shadows) || 0.0;
-        root.whitesValue = Number(r.whites) || 0.0;
-        root.blacksValue = Number(r.blacks) || 0.0;
-        root.textureValue = Number(r.texture) || 0.0;
-        root.clarityValue = Number(r.clarity) || 0.0;
-        root.dehazeValue = Number(r.dehaze) || 0.0;
-        root.vibranceValue = Number(r.vibrance) || 0.0;
-        root.saturationValue = Number(r.saturation) || 0.0;
-        root.curveHighlights = Number(r.curve_highlights) || 0.0;
-        root.curveLights = Number(r.curve_lights) || 0.0;
-        root.curveDarks = Number(r.curve_darks) || 0.0;
-        root.curveShadows = Number(r.curve_shadows) || 0.0;
+        root.wbTint = root.num(r.wb_tint, 0.0);
+        root.expValue = root.num(r.exposure, 0.0);
+        root.contrastValue = root.num(r.contrast, 0.0);
+        root.highlightsValue = root.num(r.highlights, 0.0);
+        root.shadowsValue = root.num(r.shadows, 0.0);
+        root.whitesValue = root.num(r.whites, 0.0);
+        root.blacksValue = root.num(r.blacks, 0.0);
+        root.textureValue = root.num(r.texture, 0.0);
+        root.clarityValue = root.num(r.clarity, 0.0);
+        root.dehazeValue = root.num(r.dehaze, 0.0);
+        root.vibranceValue = root.num(r.vibrance, 0.0);
+        root.saturationValue = root.num(r.saturation, 0.0);
+        root.curveHighlights = root.num(r.curve_highlights, 0.0);
+        root.curveLights = root.num(r.curve_lights, 0.0);
+        root.curveDarks = root.num(r.curve_darks, 0.0);
+        root.curveShadows = root.num(r.curve_shadows, 0.0);
         root.hslH = r.hsl_hue || [0,0,0,0,0,0,0,0];
         root.hslS = r.hsl_sat || [0,0,0,0,0,0,0,0];
         root.hslL = r.hsl_lum || [0,0,0,0,0,0,0,0];
-        root.sharpnessVal = Number(r.sharpness) || 25.0;
-        root.denoiseLumVal = Number(r.denoise_lum) || 0.0;
-        root.denoiseColVal = Number(r.denoise_col) || 10.0;
-        root.vignetteVal = Number(r.vignette) || 0.0;
-        if (r.rotation !== undefined) viewport.rotationAngle = Number(r.rotation) || 0.0;
+        root.sharpnessVal = root.num(r.sharpness, 25.0);
+        root.denoiseLumVal = root.num(r.denoise_lum, 0.0);
+        root.denoiseColVal = root.num(r.denoise_col, 10.0);
+        root.vignetteVal = root.num(r.vignette, 0.0);
+        if (r.rotation !== undefined) viewport.rotationAngle = root.num(r.rotation, 0.0);
         if (r.flip_h !== undefined) viewport.flipH = Boolean(r.flip_h);
         if (r.flip_v !== undefined) viewport.flipV = Boolean(r.flip_v);
 
         // Color Wheels
         if (r.lift) root.liftRgb = r.lift;
-        if (r.lift_luma !== undefined) root.liftLuma = Number(r.lift_luma) || 0.0;
+        if (r.lift_luma !== undefined) root.liftLuma = root.num(r.lift_luma, 0.0);
         if (r.gamma) root.gammaRgb = r.gamma;
-        if (r.gamma_luma !== undefined) root.gammaLuma = Number(r.gamma_luma) || 0.0;
+        if (r.gamma_luma !== undefined) root.gammaLuma = root.num(r.gamma_luma, 0.0);
         if (r.gain) root.gainRgb = r.gain;
-        if (r.gain_luma !== undefined) root.gainLuma = Number(r.gain_luma) || 0.0;
+        if (r.gain_luma !== undefined) root.gainLuma = root.num(r.gain_luma, 0.0);
         if (r.offset) root.offsetRgb = r.offset;
-        if (r.offset_luma !== undefined) root.offsetLuma = Number(r.offset_luma) || 0.0;
+        if (r.offset_luma !== undefined) root.offsetLuma = root.num(r.offset_luma, 0.0);
 
         // DaVinci Primaries & 3D LUT
-        if (r.contrast_pivot !== undefined) root.contrastPivot = Number(r.contrast_pivot) || 0.435;
-        if (r.color_boost !== undefined) root.colorBoost = Number(r.color_boost) || 0.0;
-        if (r.midtone_detail !== undefined) root.midtoneDetail = Number(r.midtone_detail) || 0.0;
+        if (r.contrast_pivot !== undefined) root.contrastPivot = root.num(r.contrast_pivot, 0.435);
+        if (r.color_boost !== undefined) root.colorBoost = root.num(r.color_boost, 0.0);
+        if (r.midtone_detail !== undefined) root.midtoneDetail = root.num(r.midtone_detail, 0.0);
         if (r.lut_name !== undefined) root.activeLutName = r.lut_name || "";
-        if (r.lut_intensity !== undefined) root.activeLutIntensity = Number(r.lut_intensity) || 1.0;
+        if (r.lut_intensity !== undefined) root.activeLutIntensity = root.num(r.lut_intensity, 1.0);
         if (r.lut_path !== undefined) root.activeLutPath = r.lut_path || "";
 
         // ACES 1.3 & Film Simulations
         if (r.color_space !== undefined) root.activeColorSpace = r.color_space || "sRGB";
         if (r.aces_tonemap !== undefined) root.activeAcesTonemap = Boolean(r.aces_tonemap);
         if (r.film_simulation !== undefined) root.activeFilmSimulation = r.film_simulation || "none";
-        if (r.film_sim_intensity !== undefined) root.activeFilmSimIntensity = Number(r.film_sim_intensity) || 1.0;
+        if (r.film_sim_intensity !== undefined) root.activeFilmSimIntensity = root.num(r.film_sim_intensity, 1.0);
 
         // Capture One Skin Tone Uniformity
         if (r.skin_tone_enabled !== undefined) root.skinToneEnabled = Boolean(r.skin_tone_enabled);
-        if (r.skin_target_hue !== undefined) root.skinTargetHue = Number(r.skin_target_hue) || 50.0;
-        if (r.skin_hue_range !== undefined) root.skinHueRange = Number(r.skin_hue_range) || 32.0;
-        if (r.skin_uniformity_hue !== undefined) root.skinUniformityHue = Number(r.skin_uniformity_hue) || 0.0;
-        if (r.skin_uniformity_sat !== undefined) root.skinUniformitySat = Number(r.skin_uniformity_sat) || 0.0;
-        if (r.skin_amount_hue !== undefined) root.skinAmountHue = Number(r.skin_amount_hue) || 0.0;
-        if (r.skin_amount_sat !== undefined) root.skinAmountSat = Number(r.skin_amount_sat) || 0.0;
+        if (r.skin_target_hue !== undefined) root.skinTargetHue = root.num(r.skin_target_hue, 50.0);
+        if (r.skin_hue_range !== undefined) root.skinHueRange = root.num(r.skin_hue_range, 32.0);
+        if (r.skin_uniformity_hue !== undefined) root.skinUniformityHue = root.num(r.skin_uniformity_hue, 0.0);
+        if (r.skin_uniformity_sat !== undefined) root.skinUniformitySat = root.num(r.skin_uniformity_sat, 0.0);
+        if (r.skin_amount_hue !== undefined) root.skinAmountHue = root.num(r.skin_amount_hue, 0.0);
+        if (r.skin_amount_sat !== undefined) root.skinAmountSat = root.num(r.skin_amount_sat, 0.0);
 
         // DaVinci RGB Primary Mixer
         if (r.rgb_mixer_enabled !== undefined) root.rgbMixerEnabled = Boolean(r.rgb_mixer_enabled);
         if (r.rgb_mixer_monochrome !== undefined) root.rgbMixerMonochrome = Boolean(r.rgb_mixer_monochrome);
-        if (r.mixer_red_in_r !== undefined) root.mixerRedInR = Number(r.mixer_red_in_r) || 1.0;
-        if (r.mixer_green_in_r !== undefined) root.mixerGreenInR = Number(r.mixer_green_in_r) || 0.0;
-        if (r.mixer_blue_in_r !== undefined) root.mixerBlueInR = Number(r.mixer_blue_in_r) || 0.0;
-        if (r.mixer_red_in_g !== undefined) root.mixerRedInG = Number(r.mixer_red_in_g) || 0.0;
-        if (r.mixer_green_in_g !== undefined) root.mixerGreenInG = Number(r.mixer_green_in_g) || 1.0;
-        if (r.mixer_blue_in_g !== undefined) root.mixerBlueInG = Number(r.mixer_blue_in_g) || 0.0;
-        if (r.mixer_red_in_b !== undefined) root.mixerRedInB = Number(r.mixer_red_in_b) || 0.0;
-        if (r.mixer_green_in_b !== undefined) root.mixerGreenInB = Number(r.mixer_green_in_b) || 0.0;
-        if (r.mixer_blue_in_b !== undefined) root.mixerBlueInB = Number(r.mixer_blue_in_b) || 1.0;
+        if (r.mixer_red_in_r !== undefined) root.mixerRedInR = root.num(r.mixer_red_in_r, 1.0);
+        if (r.mixer_green_in_r !== undefined) root.mixerGreenInR = root.num(r.mixer_green_in_r, 0.0);
+        if (r.mixer_blue_in_r !== undefined) root.mixerBlueInR = root.num(r.mixer_blue_in_r, 0.0);
+        if (r.mixer_red_in_g !== undefined) root.mixerRedInG = root.num(r.mixer_red_in_g, 0.0);
+        if (r.mixer_green_in_g !== undefined) root.mixerGreenInG = root.num(r.mixer_green_in_g, 1.0);
+        if (r.mixer_blue_in_g !== undefined) root.mixerBlueInG = root.num(r.mixer_blue_in_g, 0.0);
+        if (r.mixer_red_in_b !== undefined) root.mixerRedInB = root.num(r.mixer_red_in_b, 0.0);
+        if (r.mixer_green_in_b !== undefined) root.mixerGreenInB = root.num(r.mixer_green_in_b, 0.0);
+        if (r.mixer_blue_in_b !== undefined) root.mixerBlueInB = root.num(r.mixer_blue_in_b, 1.0);
 
         // Silver-Halide Film Grain
-        if (r.grain_amount !== undefined) root.grainAmount = Number(r.grain_amount) || 0.0;
+        if (r.grain_amount !== undefined) root.grainAmount = root.num(r.grain_amount, 0.0);
         if (r.grain_size !== undefined) root.grainSize = Number(r.grain_size) || 1.0;
-        if (r.grain_roughness !== undefined) root.grainRoughness = Number(r.grain_roughness) || 50.0;
+        if (r.grain_roughness !== undefined) root.grainRoughness = root.num(r.grain_roughness, 50.0);
 
         // Local Adjustment Layers
         if (r.layers !== undefined && Array.isArray(r.layers)) {
@@ -574,8 +634,72 @@ Rectangle {
 
         if (r.rating !== undefined) root.photoRating = Number(r.rating) || 0;
         if (r.flag !== undefined) root.photoFlag = r.flag || "none";
+        root.highlightReconstruct = r.highlight_reconstruct !== undefined ? Boolean(r.highlight_reconstruct) : true;
+        root.filmicAgx = Boolean(r.filmic_agx);
 
+        try { root.syncPanels(); } catch (e) { console.warn("syncPanels failed: " + e); }
+        // Programmatic recipe changes (load, undo, paste, AI) are not user edits
+        root.undoBaselineJson = JSON.stringify(root.buildRecipeObject());
         requestRender();
+    }
+
+    // Panels assign to their own properties while being edited, which replaces the
+    // binding to the main state. Re-establish the bindings so undo, paste, AI and
+    // photo switches are reflected in every panel (and stale panel values are not
+    // written back on the next touch).
+    function syncPanels() {
+        hslMixer.hslHue = Qt.binding(function() { return root.hslH; });
+        hslMixer.hslSat = Qt.binding(function() { return root.hslS; });
+        hslMixer.hslLum = Qt.binding(function() { return root.hslL; });
+
+        lutSelector.activeLut = Qt.binding(function() { return root.activeLutName; });
+        lutSelector.lutIntensity = Qt.binding(function() { return root.activeLutIntensity; });
+        lutSelector.customLutPath = Qt.binding(function() { return root.activeLutPath; });
+
+        colorWheels.liftRgb = Qt.binding(function() { return root.liftRgb; });
+        colorWheels.liftLuma = Qt.binding(function() { return root.liftLuma; });
+        colorWheels.gammaRgb = Qt.binding(function() { return root.gammaRgb; });
+        colorWheels.gammaLuma = Qt.binding(function() { return root.gammaLuma; });
+        colorWheels.gainRgb = Qt.binding(function() { return root.gainRgb; });
+        colorWheels.gainLuma = Qt.binding(function() { return root.gainLuma; });
+        colorWheels.offsetRgb = Qt.binding(function() { return root.offsetRgb; });
+        colorWheels.offsetLuma = Qt.binding(function() { return root.offsetLuma; });
+        colorWheels.colorBoost = Qt.binding(function() { return root.colorBoost; });
+        colorWheels.midtoneDetail = Qt.binding(function() { return root.midtoneDetail; });
+        colorWheels.contrastPivot = Qt.binding(function() { return root.contrastPivot; });
+        colorWheels.rebindWheels();
+
+        rgbMixerPanel.mixerEnabled = Qt.binding(function() { return root.rgbMixerEnabled; });
+        rgbMixerPanel.monochrome = Qt.binding(function() { return root.rgbMixerMonochrome; });
+        rgbMixerPanel.redInR = Qt.binding(function() { return root.mixerRedInR; });
+        rgbMixerPanel.greenInR = Qt.binding(function() { return root.mixerGreenInR; });
+        rgbMixerPanel.blueInR = Qt.binding(function() { return root.mixerBlueInR; });
+        rgbMixerPanel.redInG = Qt.binding(function() { return root.mixerRedInG; });
+        rgbMixerPanel.greenInG = Qt.binding(function() { return root.mixerGreenInG; });
+        rgbMixerPanel.blueInG = Qt.binding(function() { return root.mixerBlueInG; });
+        rgbMixerPanel.redInB = Qt.binding(function() { return root.mixerRedInB; });
+        rgbMixerPanel.greenInB = Qt.binding(function() { return root.mixerGreenInB; });
+        rgbMixerPanel.blueInB = Qt.binding(function() { return root.mixerBlueInB; });
+
+        skinTonePanel.skinToneEnabled = Qt.binding(function() { return root.skinToneEnabled; });
+        skinTonePanel.skinTargetHue = Qt.binding(function() { return root.skinTargetHue; });
+        skinTonePanel.skinHueRange = Qt.binding(function() { return root.skinHueRange; });
+        skinTonePanel.skinUniformityHue = Qt.binding(function() { return root.skinUniformityHue; });
+        skinTonePanel.skinUniformitySat = Qt.binding(function() { return root.skinUniformitySat; });
+        skinTonePanel.skinAmountHue = Qt.binding(function() { return root.skinAmountHue; });
+        skinTonePanel.skinAmountSat = Qt.binding(function() { return root.skinAmountSat; });
+
+        filmSimPanel.activeSimulation = Qt.binding(function() { return root.activeFilmSimulation; });
+        filmSimPanel.intensity = Qt.binding(function() { return root.activeFilmSimIntensity; });
+
+        filmGrainPanel.grainAmount = Qt.binding(function() { return root.grainAmount; });
+        filmGrainPanel.grainSize = Qt.binding(function() { return root.grainSize; });
+        filmGrainPanel.grainRoughness = Qt.binding(function() { return root.grainRoughness; });
+
+        layersPanel.layersList = Qt.binding(function() { return root.adjustmentLayers; });
+
+        colorSpaceSelector.activeColorSpace = Qt.binding(function() { return root.activeColorSpace; });
+        colorSpaceSelector.acesTonemap = Qt.binding(function() { return root.activeAcesTonemap; });
     }
 
     function sendDaemonCommand(obj) {
@@ -600,6 +724,12 @@ Rectangle {
                     root.showToast("[ERR] Failed to load RAW: " + (resp.error || "Unknown error"), Theme.highlightClip);
                 } else if (resp.action === "ai_auto" || resp.action === "ai_social" || resp.action === "ai_jev") {
                     root.showToast("[ERR] " + (resp.error || "AI action failed"), Theme.highlightClip);
+                } else if (resp.action === "batch_export") {
+                    // Without this the dialog stays stuck on "Exporting Batch..."
+                    exportDialog.isExporting = false;
+                    exportDialog.exportStatusText = "[ERR] " + (resp.error || "Batch export failed");
+                } else if (resp.action === "adjust") {
+                    root.showToast("[ERR] " + (resp.error || "Preview render failed"), Theme.highlightClip);
                 }
                 return;
             }
@@ -673,6 +803,7 @@ Rectangle {
     }
 
     function requestRender() {
+        if (!root.isPerformingUndoRedo) undoCommitTimer.restart();
         if (renderDebounce.running) {
             renderDebounce.restart();
         } else {
@@ -912,7 +1043,51 @@ Rectangle {
     }
     Shortcut {
         sequence: "E"
-        onActivated: { root.showExportModal = !root.showExportModal; }
+        onActivated: {
+            if (root.activePhotoPath === "" && !root.showExportModal) {
+                root.showToast("Open a photo first to export", Theme.textDim);
+                return;
+            }
+            root.showExportModal = !root.showExportModal;
+        }
+    }
+    Shortcut {
+        sequence: StandardKey.Open
+        onActivated: openFileProc.running = true
+    }
+    Shortcut {
+        sequence: "Ctrl+0"
+        onActivated: viewport.resetZoomFit()
+    }
+    Shortcut {
+        sequence: "Ctrl+1"
+        onActivated: viewport.setZoomAbsolute(1.0)
+    }
+    Shortcut {
+        sequence: "Ctrl+Right"
+        onActivated: root.stepPhoto(1)
+    }
+    Shortcut {
+        sequence: "Ctrl+Left"
+        onActivated: root.stepPhoto(-1)
+    }
+
+    // Opens the next / previous photo of the current folder (skips folders)
+    function stepPhoto(delta) {
+        var list = root.photoList || [];
+        if (list.length === 0) return;
+        var cur = -1;
+        for (var i = 0; i < list.length; i++) {
+            if (list[i].path === root.activePhotoPath) { cur = i; break; }
+        }
+        var j = cur;
+        for (var n = 0; n < list.length; n++) {
+            j = (j + delta + list.length) % list.length;
+            if (!list[j].is_dir) {
+                if (list[j].path !== root.activePhotoPath) root.loadPhoto(list[j].path);
+                return;
+            }
+        }
     }
     Shortcut {
         sequence: "Tab"
@@ -925,6 +1100,15 @@ Rectangle {
     }
 
     function loadPhoto(path) {
+        if (path !== root.activePhotoPath) {
+            // Undo history and grade versions belong to the previous photo
+            undoCommitTimer.stop();
+            root.undoBaselineJson = "";
+            root.undoStack = [];
+            root.redoStack = [];
+            root.gradeVersions = { "A": null, "B": null, "C": null, "D": null };
+            root.currentGradeVersion = "A";
+        }
         root.activePhotoPath = path;
         root.sendDaemonCommand({
             cmd: "load",
@@ -2298,6 +2482,7 @@ Rectangle {
             }
             onNavigateFolder: function(remotePath) {
                 root.showToast("[Folder] Navigating: " + remotePath, Theme.accent);
+                filmstrip.currentFolder = remotePath;
                 root.scanLocalFolder(remotePath);
             }
             onParentFolderRequested: {
@@ -2307,6 +2492,7 @@ Rectangle {
                     if (parts.length > 1) {
                         parts.pop();
                         var parentP = (cur.startsWith("/") ? "/" : "") + parts.join("/");
+                        if (parentP === "~") parentP = Quickshell.env("HOME");
                         filmstrip.currentFolder = parentP;
                         root.scanLocalFolder(parentP);
                     }
@@ -2446,6 +2632,9 @@ Rectangle {
 
     Component.onCompleted: {
         scanLocalFolder("~/Pictures");
+        // Photo passed on the command line (`omastudio photo.NEF`, desktop "Open with")
+        var openPath = Quickshell.env("OMASTUDIO_OPEN_PATH");
+        if (openPath && root.activePhotoPath === "") root.activePhotoPath = String(openPath);
         if (root.activePhotoPath !== "") {
             loadPhoto(root.activePhotoPath);
         }

@@ -6,6 +6,9 @@ use std::process::{Child, Command};
 use std::thread;
 use std::time::{Duration, Instant};
 
+/// Monotonic per-process counter keeping concurrent staging file names unique
+static STAGING_COUNTER: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(0);
+
 /// Whitelisted environment variables for subprocess execution
 pub const WHITELISTED_ENV_VARS: &[&str] = &[
     "PATH",
@@ -364,6 +367,7 @@ impl SecureDir {
                         )
                     };
 
+                    let mut created_now = false;
                     if next_fd < 0 {
                         let err = io::Error::last_os_error();
                         if err.raw_os_error() == Some(libc::ENOENT) {
@@ -375,6 +379,8 @@ impl SecureDir {
                                     unsafe { libc::close(cur_fd); }
                                     return Err(mkdir_err);
                                 }
+                            } else {
+                                created_now = true;
                             }
 
                             next_fd = unsafe {
@@ -428,8 +434,10 @@ impl SecureDir {
                         ));
                     }
 
-                    // If owned by current user, enforce strict 0700 permissions descriptor-bound
-                    if stat.st_uid == current_uid && (stat.st_mode & 0o777) != 0o700 {
+                    // Enforce strict 0700 only on directories this call created. Pre-existing
+                    // ancestors ($HOME, ~/Pictures, /dev/shm, ...) belong to the user and must
+                    // keep their permissions; chmod-ing them broke shared and served folders.
+                    if created_now && stat.st_uid == current_uid && (stat.st_mode & 0o777) != 0o700 {
                         let _ = unsafe { libc::fchmod(next_fd, 0o700) };
                     }
 
@@ -442,6 +450,31 @@ impl SecureDir {
         Ok(Self { fd: cur_fd })
     }
 
+    /// Opens (creating if needed) a directory the *user* chose, such as an export
+    /// folder or the folder holding their photos. Unlike `open_or_create_hierarchy`
+    /// this follows symlinks and accepts directories owned by other uids (NAS / USB
+    /// mounts), and never changes permissions. Files are still staged with
+    /// O_EXCL | O_NOFOLLOW and renamed into place relative to the opened descriptor.
+    pub fn open_user_dir(path: &Path) -> io::Result<Self> {
+        use std::ffi::CString;
+        use std::os::unix::ffi::OsStrExt;
+
+        if path.components().any(|c| matches!(c, std::path::Component::ParentDir)) {
+            return Err(io::Error::new(
+                io::ErrorKind::InvalidInput,
+                "Parent directory traversal (..) is not permitted in output paths",
+            ));
+        }
+        fs::create_dir_all(path)?;
+        let c_path = CString::new(path.as_os_str().as_bytes())
+            .map_err(|e| io::Error::new(io::ErrorKind::InvalidInput, e))?;
+        let fd = unsafe { libc::open(c_path.as_ptr(), libc::O_RDONLY | libc::O_DIRECTORY | libc::O_CLOEXEC) };
+        if fd < 0 {
+            return Err(io::Error::last_os_error());
+        }
+        Ok(Self { fd })
+    }
+
     /// Creates an exclusive, no-follow temporary staging file with mode 0600 relative to this directory
     pub fn open_staging_file(&self, prefix: &str, suffix: &str) -> io::Result<(fs::File, std::ffi::CString)> {
         use std::ffi::CString;
@@ -451,7 +484,7 @@ impl SecureDir {
             "{}_{}_{}_{}",
             prefix,
             std::process::id(),
-            Instant::now().elapsed().as_nanos(),
+            STAGING_COUNTER.fetch_add(1, std::sync::atomic::Ordering::Relaxed),
             suffix
         );
         let c_name = CString::new(temp_name.as_bytes())
@@ -529,7 +562,16 @@ impl<'a> Drop for SecureDirCleanupGuard<'a> {
 
 /// Ensures directory exists with strict Mode 0700 permissions without following symbolic links
 pub fn ensure_secure_dir(path: &Path) -> io::Result<()> {
-    let _dir = SecureDir::open_or_create_hierarchy(path)?;
+    let dir = SecureDir::open_or_create_hierarchy(path)?;
+    // The leaf is an engine-owned private directory: tighten it to 0700 even if it
+    // pre-existed with looser permissions (ancestors are left untouched).
+    let mut stat: libc::stat = unsafe { std::mem::zeroed() };
+    if unsafe { libc::fstat(dir.fd, &mut stat) } == 0
+        && stat.st_uid == unsafe { libc::getuid() }
+        && (stat.st_mode & 0o777) != 0o700
+    {
+        let _ = unsafe { libc::fchmod(dir.fd, 0o700) };
+    }
     Ok(())
 }
 
@@ -592,10 +634,26 @@ pub fn read_secure_file(path: &Path, max_bytes: usize) -> io::Result<Vec<u8>> {
 
 /// Atomically writes sensitive data to a file with Mode 0600 permissions using descriptor-bound staging
 pub fn atomic_write_secure(target: &Path, data: &[u8]) -> io::Result<()> {
-    use std::ffi::CString;
-
     let parent = target.parent().unwrap_or_else(|| Path::new("."));
     let secure_dir = SecureDir::open_or_create_hierarchy(parent)?;
+    atomic_write_in(&secure_dir, target, data)
+}
+
+/// Atomic write into a user-chosen folder (exports, sidecars, render output).
+/// The folder may be a symlink or live on a mount owned by another uid; see
+/// [`SecureDir::open_user_dir`]. Engine-private state keeps using
+/// [`atomic_write_secure`].
+pub fn atomic_write_user(target: &Path, data: &[u8]) -> io::Result<()> {
+    let parent = match target.parent() {
+        Some(p) if !p.as_os_str().is_empty() => p,
+        _ => Path::new("."),
+    };
+    let dir = SecureDir::open_user_dir(parent)?;
+    atomic_write_in(&dir, target, data)
+}
+
+fn atomic_write_in(secure_dir: &SecureDir, target: &Path, data: &[u8]) -> io::Result<()> {
+    use std::ffi::CString;
 
     let filename = target
         .file_name()
@@ -607,7 +665,7 @@ pub fn atomic_write_secure(target: &Path, data: &[u8]) -> io::Result<()> {
 
     let (mut stage_file, c_stage_name) = secure_dir.open_staging_file(".tmp_atomic", filename)?;
     let mut guard = SecureDirCleanupGuard {
-        secure_dir: &secure_dir,
+        secure_dir,
         filename: c_stage_name.clone(),
         active: true,
     };

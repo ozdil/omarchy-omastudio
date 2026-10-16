@@ -629,70 +629,70 @@ pub fn generate_raw_oma_id() -> String {
     digits.iter().map(|d| d.to_string()).collect()
 }
 
-/// Generates a valid, self-contained SVG QR code matrix for OmaID identity payloads.
-#[allow(clippy::needless_range_loop, clippy::manual_range_contains)]
+/// Encodes `content` into a scannable QR module matrix (row-major, `true` = dark).
+///
+/// Uses a spec-compliant encoder (Reed-Solomon ECC level M) so the fallback output
+/// is readable by phone cameras even when `qrencode` is not installed.
+fn qr_matrix(content: &str) -> Option<(usize, Vec<bool>)> {
+    let code = qrcode::QrCode::with_error_correction_level(content.as_bytes(), qrcode::EcLevel::M).ok()?;
+    let width = code.width();
+    let modules = code
+        .to_colors()
+        .into_iter()
+        .map(|c| c == qrcode::Color::Dark)
+        .collect();
+    Some((width, modules))
+}
+
+/// Generates a valid, self-contained SVG QR code for OmaID identity payloads.
 pub fn generate_fallback_qr_svg(content: &str) -> String {
-    let size = 256;
-    let grid_size = 25;
-    let module_size = 8;
-    let offset = (size - (grid_size * module_size)) / 2;
-
-    let hash = sha256(content.as_bytes());
-    let mut matrix = vec![vec![false; grid_size]; grid_size];
-
-    let draw_finder = |mat: &mut Vec<Vec<bool>>, start_x: usize, start_y: usize| {
-        for y in 0..7 {
-            for x in 0..7 {
-                let is_outer = x == 0 || x == 6 || y == 0 || y == 6;
-                let is_inner = x >= 2 && x <= 4 && y >= 2 && y <= 4;
-                mat[start_y + y][start_x + x] = is_outer || is_inner;
-            }
-        }
-    };
-
-    draw_finder(&mut matrix, 0, 0);
-    draw_finder(&mut matrix, grid_size - 7, 0);
-    draw_finder(&mut matrix, 0, grid_size - 7);
-
-    for i in 8..(grid_size - 8) {
-        matrix[6][i] = i % 2 == 0;
-        matrix[i][6] = i % 2 == 0;
-    }
-
-    let mut byte_idx = 0;
-    for y in 0..grid_size {
-        for x in 0..grid_size {
-            if (x < 8 && y < 8) || (x >= grid_size - 8 && y < 8) || (x < 8 && y >= grid_size - 8) {
-                continue;
-            }
-            if x == 6 || y == 6 {
-                continue;
-            }
-            let h_byte = hash[byte_idx % hash.len()];
-            let bit = (h_byte >> ((x + y * 7) % 8)) & 1;
-            matrix[y][x] = bit == 1;
-            byte_idx += 1;
-        }
-    }
+    let size = 256usize;
+    let (grid_size, modules) = qr_matrix(content).unwrap_or((0, Vec::new()));
 
     let mut paths = String::new();
-    for y in 0..grid_size {
-        for x in 0..grid_size {
-            if matrix[y][x] {
-                let px = offset + x * module_size;
-                let py = offset + y * module_size;
-                paths.push_str(&format!(
-                    r##"<rect x="{}" y="{}" width="{}" height="{}" fill="#111827"/>"##,
-                    px, py, module_size, module_size
-                ));
+    if grid_size > 0 {
+        // 4-module quiet zone around the symbol, as required by ISO/IEC 18004
+        let module_size = size as f64 / (grid_size + 8) as f64;
+        let offset = 4.0 * module_size;
+        for y in 0..grid_size {
+            for x in 0..grid_size {
+                if modules[y * grid_size + x] {
+                    paths.push_str(&format!(
+                        r##"<rect x="{:.3}" y="{:.3}" width="{:.3}" height="{:.3}" fill="#111827"/>"##,
+                        offset + x as f64 * module_size,
+                        offset + y as f64 * module_size,
+                        module_size,
+                        module_size
+                    ));
+                }
             }
         }
     }
 
     format!(
-        r##"<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {0} {0}" width="{0}" height="{0}"><rect width="{0}" height="{0}" fill="#ffffff" rx="12"/>{1}</svg>"##,
+        r##"<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {0} {0}" width="{0}" height="{0}" shape-rendering="crispEdges"><rect width="{0}" height="{0}" fill="#ffffff" rx="12"/>{1}</svg>"##,
         size, paths
     )
+}
+
+/// Renders the QR code as an 8-bit grayscale PNG (8 px per module, 2-module margin).
+fn generate_fallback_qr_png(content: &str) -> Option<Vec<u8>> {
+    const SCALE: usize = 8;
+    const MARGIN: usize = 2;
+    let (grid_size, modules) = qr_matrix(content)?;
+    let dim = (grid_size + 2 * MARGIN) * SCALE;
+    let img = image::GrayImage::from_fn(dim as u32, dim as u32, |px, py| {
+        let mx = (px as usize / SCALE).checked_sub(MARGIN);
+        let my = (py as usize / SCALE).checked_sub(MARGIN);
+        let dark = match (mx, my) {
+            (Some(x), Some(y)) if x < grid_size && y < grid_size => modules[y * grid_size + x],
+            _ => false,
+        };
+        image::Luma([if dark { 0 } else { 255 }])
+    });
+    let mut buf = std::io::Cursor::new(Vec::new());
+    img.write_to(&mut buf, image::ImageFormat::Png).ok()?;
+    Some(buf.into_inner())
 }
 
 /// Updates and ensures desktop OmaID QR code files (oma_id_qr.png / .svg) are available in ~/.local/state/omarchy/omasend/
@@ -732,7 +732,16 @@ pub fn update_desktop_oma_id_qr(state_dir: &std::path::Path) -> Result<(std::pat
 
     let mut cmd_png = crate::security::secure_command("qrencode");
     cmd_png.args(["-o", png_file.to_str().unwrap_or_default(), "-t", "PNG", "-s", "8", "-m", "2", "--", &qr_content]);
-    let _ = crate::security::run_bounded_command(cmd_png, std::time::Duration::from_secs(5));
+    let png_ok = crate::security::run_bounded_command(cmd_png, std::time::Duration::from_secs(5))
+        .map(|(code, _, _)| code == 0)
+        .unwrap_or(false);
+
+    // qrencode is optional: render the PNG ourselves when it is missing or failed
+    if !png_ok || !png_file.exists() {
+        let png_data = generate_fallback_qr_png(&qr_content).ok_or("QR PNG encoding failed")?;
+        crate::security::atomic_write_secure(&png_file, &png_data)
+            .map_err(|e| format!("write {}: {}", png_file.display(), e))?;
+    }
 
     Ok((svg_file, png_file))
 }

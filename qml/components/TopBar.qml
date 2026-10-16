@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
+import QtQuick.Controls
 import "../theme"
 
 Rectangle {
@@ -86,14 +87,20 @@ Rectangle {
         // Active filename badge
         Rectangle {
             visible: root.activePhotoName !== ""
-            implicitWidth: photoNameText.implicitWidth + 14
+            // Cap the badge so long camera filenames don't push the toolbar off-screen
+            implicitWidth: Math.min(photoNameText.implicitWidth + 14, 280)
             implicitHeight: 22
             radius: 4
             color: Theme.bgCard
             border.color: Theme.border
             Text {
                 id: photoNameText
-                anchors.centerIn: parent
+                anchors.fill: parent
+                anchors.leftMargin: 7
+                anchors.rightMargin: 7
+                elide: Text.ElideMiddle
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
                 text: root.activePhotoName
                 textFormat: Text.PlainText
                 font.pixelSize: 10
@@ -287,6 +294,11 @@ Rectangle {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
                     hoverEnabled: true
+                    ToolTip.visible: containsMouse
+                    ToolTip.delay: 500
+                    ToolTip.text: "Undo (Ctrl+Z)"
+                    Accessible.role: Accessible.Button
+                    Accessible.name: "Undo"
                     onClicked: root.undoClicked()
                 }
             }
@@ -311,6 +323,11 @@ Rectangle {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
                     hoverEnabled: true
+                    ToolTip.visible: containsMouse
+                    ToolTip.delay: 500
+                    ToolTip.text: "Redo (Ctrl+Shift+Z)"
+                    Accessible.role: Accessible.Button
+                    Accessible.name: "Redo"
                     onClicked: root.redoClicked()
                 }
             }

@@ -70,6 +70,30 @@ impl ProcessedBuffer {
         self.as_slice().to_vec()
     }
 
+    /// Converts a 1-channel buffer into an owned interleaved 3-channel buffer.
+    fn expand_gray_to_rgb(self) -> ProcessedBuffer {
+        let pixels = (self.width as usize) * (self.height as usize);
+        let (storage, data_size) = if self.bits_per_sample == 16 {
+            let src = self.as_slice_u16();
+            let out: Vec<u16> = src.iter().take(pixels).flat_map(|&v| [v, v, v]).collect();
+            let len = out.len() * 2;
+            (BufferStorage::OwnedU16(out), len)
+        } else {
+            let src = self.as_slice();
+            let out: Vec<u8> = src.iter().take(pixels).flat_map(|&v| [v, v, v]).collect();
+            let len = out.len();
+            (BufferStorage::OwnedU8(out), len)
+        };
+        ProcessedBuffer {
+            storage,
+            width: self.width,
+            height: self.height,
+            channels: 3,
+            bits_per_sample: self.bits_per_sample,
+            data_size,
+        }
+    }
+
     pub fn as_slice_u16(&self) -> &[u16] {
         if self.data_size < 2 {
             &[]
@@ -88,7 +112,7 @@ impl ProcessedBuffer {
                 BufferStorage::OwnedU16(vec) => &vec[..(self.data_size / 2).min(vec.len())],
                 BufferStorage::OwnedU8(vec) => {
                     let ptr = vec.as_ptr();
-                    if (ptr as usize) % std::mem::align_of::<u16>() == 0 {
+                    if (ptr as usize).is_multiple_of(std::mem::align_of::<u16>()) {
                         // SAFETY: vec pointer is 2-byte aligned and contains data_size bytes
                         unsafe {
                             std::slice::from_raw_parts(ptr as *const u16, self.data_size / 2)
@@ -106,7 +130,7 @@ impl ProcessedBuffer {
             BufferStorage::OwnedU16(vec) => vec[..(self.data_size / 2).min(vec.len())].to_vec(),
             BufferStorage::OwnedU8(vec) => {
                 let ptr = vec.as_ptr();
-                if (ptr as usize) % std::mem::align_of::<u16>() == 0 {
+                if (ptr as usize).is_multiple_of(std::mem::align_of::<u16>()) {
                     self.as_slice_u16().to_vec()
                 } else {
                     let mut u16_vec = Vec::with_capacity(self.data_size / 2);
@@ -130,6 +154,48 @@ impl Drop for ProcessedBuffer {
                     omaraw_free_image(ptr);
                 }
             }
+        }
+    }
+}
+
+/// RGB spaces LibRaw can render directly, with the transfer curve each ICC expects.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum OutputColorSpace {
+    Srgb,
+    AdobeRgb,
+    ProPhotoRgb,
+    DisplayP3,
+    Rec2020,
+}
+
+impl OutputColorSpace {
+    /// Maps an export ICC profile id ("AdobeRGB1998", "DisplayP3", ...) to a space.
+    pub fn from_profile_name(name: &str) -> Option<Self> {
+        let n = name.to_lowercase().replace([' ', '-', '_', '.'], "");
+        if n.contains("adobe") || n.contains("a98") {
+            Some(Self::AdobeRgb)
+        } else if n.contains("prophoto") || n.contains("romm") {
+            Some(Self::ProPhotoRgb)
+        } else if n.contains("p3") {
+            Some(Self::DisplayP3)
+        } else if n.contains("2020") {
+            Some(Self::Rec2020)
+        } else if n.contains("srgb") {
+            Some(Self::Srgb)
+        } else {
+            None
+        }
+    }
+
+    /// (LibRaw output_color, gamm[0], gamm[1])
+    fn libraw_params(self) -> (i32, f64, f64) {
+        match self {
+            // Keep LibRaw's default BT.709 curve so exports match the viewport preview
+            Self::Srgb => (1, 0.45, 4.5),
+            Self::AdobeRgb => (2, 1.0 / 2.199_218_75, 0.0),
+            Self::ProPhotoRgb => (4, 1.0 / 1.8, 0.0),
+            Self::DisplayP3 => (7, 1.0 / 2.4, 12.92),
+            Self::Rec2020 => (8, 0.45, 4.5),
         }
     }
 }
@@ -421,15 +487,36 @@ impl RawImage {
                     return Err("Failed to process RAW image".to_string());
                 }
 
-                Ok(ProcessedBuffer {
+                let buf = ProcessedBuffer {
                     storage: BufferStorage::LibRaw(ptr),
                     width: out_w.max(0) as u32,
                     height: out_h.max(0) as u32,
                     channels: out_colors.max(0) as u32,
                     bits_per_sample: if bps == 16 { 16 } else { 8 },
                     data_size: out_size.max(0) as usize,
-                })
+                };
+
+                match buf.channels {
+                    3 => Ok(buf),
+                    // Monochrome sensors (Leica Monochrom, some DNGs) decode to 1 channel; the
+                    // whole pipeline assumes interleaved RGB, so replicate the sample.
+                    1 => Ok(buf.expand_gray_to_rgb()),
+                    n => Err(format!("Unsupported channel count from decoder: {}", n)),
+                }
             }
+        }
+    }
+
+    /// Selects the RGB output space for the next decode. Only LibRaw sources can be
+    /// converted; raster sources stay sRGB and return false.
+    pub fn set_output_space(&self, space: OutputColorSpace) -> bool {
+        match &self.backend {
+            RawBackend::LibRaw(handle) => {
+                let (code, power, slope) = space.libraw_params();
+                // SAFETY: handle is a valid open LibRaw handle owned by self
+                unsafe { omaraw_set_output_space(*handle, code, power, slope) == 0 }
+            }
+            RawBackend::Raster { .. } => space == OutputColorSpace::Srgb,
         }
     }
 
