@@ -232,7 +232,7 @@ fn scan_directory(dir_path: &str) -> Result<Vec<FolderScanItem>, String> {
         }
     }
 
-    dirs.sort_by(|a, b| a.name.to_lowercase().cmp(&b.name.to_lowercase()));
+    dirs.sort_by_key(|a| a.name.to_lowercase());
     items.sort_by(|a, b| a.name.cmp(&b.name));
     dirs.extend(items);
     Ok(dirs)

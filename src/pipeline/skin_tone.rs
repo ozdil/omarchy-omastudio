@@ -24,7 +24,7 @@ pub fn calculate_skin_weight(
     hue_tolerance: f32,
 ) -> f32 {
     // 1. Luminance gating: Skin requires reasonable light (reject deep shadows and pure specular blowouts)
-    if luma < 0.08 || luma > 0.98 {
+    if !(0.08..=0.98).contains(&luma) {
         return 0.0;
     }
     let luma_gate = if luma < 0.20 {
@@ -36,7 +36,7 @@ pub fn calculate_skin_weight(
     };
 
     // 2. Chroma gating: Neutral grays or super-saturated neons are not natural skin
-    if chroma < 0.025 || chroma > 0.28 {
+    if !(0.025..=0.28).contains(&chroma) {
         return 0.0;
     }
     let chroma_gate = if chroma < 0.045 {
@@ -139,10 +139,12 @@ mod tests {
 
     #[test]
     fn test_skin_detection_and_uniformity() {
-        let mut recipe = Recipe::default();
-        recipe.skin_tone_enabled = true;
-        recipe.skin_uniformity_hue = 80.0;
-        recipe.skin_target_hue = 50.0;
+        let recipe = Recipe {
+            skin_tone_enabled: true,
+            skin_uniformity_hue: 80.0,
+            skin_target_hue: 50.0,
+            ..Default::default()
+        };
 
         // Warm reddish skin pixel in linear RGB
         let (r, g, b) = (0.75, 0.55, 0.45);

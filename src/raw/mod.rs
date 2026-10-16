@@ -112,7 +112,7 @@ impl ProcessedBuffer {
                 BufferStorage::OwnedU16(vec) => &vec[..(self.data_size / 2).min(vec.len())],
                 BufferStorage::OwnedU8(vec) => {
                     let ptr = vec.as_ptr();
-                    if (ptr as usize) % std::mem::align_of::<u16>() == 0 {
+                    if (ptr as usize).is_multiple_of(std::mem::align_of::<u16>()) {
                         // SAFETY: vec pointer is 2-byte aligned and contains data_size bytes
                         unsafe {
                             std::slice::from_raw_parts(ptr as *const u16, self.data_size / 2)
@@ -130,7 +130,7 @@ impl ProcessedBuffer {
             BufferStorage::OwnedU16(vec) => vec[..(self.data_size / 2).min(vec.len())].to_vec(),
             BufferStorage::OwnedU8(vec) => {
                 let ptr = vec.as_ptr();
-                if (ptr as usize) % std::mem::align_of::<u16>() == 0 {
+                if (ptr as usize).is_multiple_of(std::mem::align_of::<u16>()) {
                     self.as_slice_u16().to_vec()
                 } else {
                     let mut u16_vec = Vec::with_capacity(self.data_size / 2);

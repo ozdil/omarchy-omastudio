@@ -48,8 +48,8 @@ pub struct TileGrid {
 impl TileGrid {
     pub fn new(image_width: u32, image_height: u32, tile_size: u32) -> Self {
         let ts = if tile_size == 0 { DEFAULT_TILE_SIZE } else { tile_size };
-        let cols = (image_width + ts - 1) / ts;
-        let rows = (image_height + ts - 1) / ts;
+        let cols = image_width.div_ceil(ts);
+        let rows = image_height.div_ceil(ts);
         Self {
             image_width,
             image_height,
@@ -70,10 +70,10 @@ impl TileGrid {
     ) -> Vec<TileCoordinate> {
         let step = self.tile_size << lod;
         let start_col = (view_x / step).min(self.cols.saturating_sub(1));
-        let end_col = ((view_x + view_w + step - 1) / step).min(self.cols);
+        let end_col = (view_x + view_w).div_ceil(step).min(self.cols);
 
         let start_row = (view_y / step).min(self.rows.saturating_sub(1));
-        let end_row = ((view_y + view_h + step - 1) / step).min(self.rows);
+        let end_row = (view_y + view_h).div_ceil(step).min(self.rows);
 
         let mut tiles = Vec::new();
         for r in start_row..end_row {
