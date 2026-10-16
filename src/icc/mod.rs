@@ -19,8 +19,15 @@ pub fn get_icc_directories() -> Vec<PathBuf> {
     
     // User OmaStudio ICC folder
     dirs.push(PathBuf::from(&home).join(".local/share/omastudio/icc"));
-    // Project bundled assets
+    // Project bundled assets (source checkout)
     dirs.push(PathBuf::from("assets/icc"));
+    // Bundled assets of installed builds: <prefix>/share/omastudio/icc next to <prefix>/bin
+    if let Ok(exe) = env::current_exe() {
+        if let Some(prefix) = exe.parent().and_then(|bin| bin.parent()) {
+            dirs.push(prefix.join("share/omastudio/icc"));
+        }
+    }
+    dirs.push(PathBuf::from("/usr/share/omastudio/icc"));
     // System Ghostscript ICC folder
     dirs.push(PathBuf::from("/usr/share/ghostscript/iccprofiles"));
     // System color ICC folder

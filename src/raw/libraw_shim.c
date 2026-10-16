@@ -95,6 +95,16 @@ int omaraw_extract_thumb_file(void *handle, const char *dest_path) {
     return 0;
 }
 
+int omaraw_set_output_space(void *handle, int output_color, double gamma_power, double gamma_slope) {
+    if (!handle) return -1;
+    if (output_color < 1 || output_color > 8) return -1;
+    libraw_data_t *lr = (libraw_data_t*)handle;
+    lr->params.output_color = output_color;
+    lr->params.gamm[0] = gamma_power;
+    lr->params.gamm[1] = gamma_slope;
+    return 0;
+}
+
 unsigned char* omaraw_process_image(void *handle, int half_size, int quality, int bps, int *out_w, int *out_h, int *out_colors, int *out_size) {
     if (!handle) return NULL;
     libraw_data_t *lr = (libraw_data_t*)handle;
@@ -107,9 +117,10 @@ unsigned char* omaraw_process_image(void *handle, int half_size, int quality, in
     // Configure Lightroom-grade raw extraction parameters
     lr->params.half_size = (half_size != 0) ? 1 : 0;
     lr->params.user_qual = quality; // 0=linear (fast), 3=AHD, 11=DHT, 12=AAHD
-    lr->params.output_color = 1;    // 1 = sRGB
+    // output_color: LibRaw defaults to 1 (sRGB); omaraw_set_output_space() may pick a
+    // wide-gamut space for export, so it is not overridden here.
     lr->params.output_bps = (bps == 16) ? 16 : 8;
-    lr->params.no_auto_bright = 1;  // Keep linear photonic brightness
+    lr->params.no_auto_bright = 1;  // No auto exposure stretch (output stays BT.709 gamma-encoded: default gamm 0.45/4.5)
     lr->params.use_camera_wb = 1;   // Use camera native white balance
 
     ret = libraw_dcraw_process(lr);

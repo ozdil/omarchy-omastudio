@@ -1,4 +1,4 @@
-use std::os::raw::{c_char, c_float, c_int, c_longlong, c_uchar, c_void};
+use std::os::raw::{c_char, c_double, c_float, c_int, c_longlong, c_uchar, c_void};
 
 #[repr(C)]
 #[derive(Debug, Clone)]
@@ -24,6 +24,12 @@ extern "C" {
     pub fn omaraw_open(path: *const c_char, errcode: *mut c_int) -> *mut c_void;
     pub fn omaraw_get_metadata(handle: *mut c_void, meta: *mut COmaRawMetadata) -> c_int;
     pub fn omaraw_extract_thumb_file(handle: *mut c_void, dest_path: *const c_char) -> c_int;
+    pub fn omaraw_set_output_space(
+        handle: *mut c_void,
+        output_color: c_int,
+        gamma_power: c_double,
+        gamma_slope: c_double,
+    ) -> c_int;
     pub fn omaraw_process_image(
         handle: *mut c_void,
         half_size: c_int,

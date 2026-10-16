@@ -738,23 +738,19 @@ pub fn process_split_comparison_16_to_8_ex(
             let orig_row = &input[y * w * ch..(y + 1) * w * ch];
             let proc_row = &processed[y * w * ch..(y + 1) * w * ch];
 
-            let to_srgb = |val16: u16| -> u8 {
-                let lin = val16 as f32 / 65535.0;
-                let srgb = if lin <= 0.0031308 {
-                    lin * 12.92
-                } else {
-                    1.055 * lin.powf(1.0 / 2.4) - 0.055
-                };
-                (srgb.clamp(0.0, 1.0) * 255.0 + 0.5) as u8
-            };
+            // LibRaw already delivers display-encoded (gamma) values and the AFTER path
+            // writes its result without another transfer curve, so BEFORE must use the
+            // same plain 16 -> 8 bit mapping. Applying the sRGB OETF here a second time
+            // made the "before" half look washed out next to an untouched "after" half.
+            let to_8bit = |val16: u16| -> u8 { ((val16 as f32 / 65535.0).clamp(0.0, 1.0) * 255.0) as u8 };
 
             for x in 0..w {
                 let px = x * ch;
                 if x < split_x {
-                    // BEFORE (Original unprocessed RAW with standard sRGB transfer curve)
-                    row[px] = to_srgb(orig_row[px]);
-                    row[px + 1] = to_srgb(orig_row[px + 1]);
-                    row[px + 2] = to_srgb(orig_row[px + 2]);
+                    // BEFORE (original decoded RAW, same encoding as the AFTER half)
+                    row[px] = to_8bit(orig_row[px]);
+                    row[px + 1] = to_8bit(orig_row[px + 1]);
+                    row[px + 2] = to_8bit(orig_row[px + 2]);
                     if ch == 4 {
                         row[px + 3] = (orig_row[px + 3] >> 8) as u8;
                     }

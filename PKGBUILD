@@ -33,6 +33,8 @@ package() {
     
     install -d "$pkgdir/usr/share/omastudio"
     cp -r qml "$pkgdir/usr/share/omastudio/"
+    install -d "$pkgdir/usr/share/omastudio/icc"
+    install -m644 assets/icc/*.icc "$pkgdir/usr/share/omastudio/icc/"
     install -Dm644 omastudio.desktop "$pkgdir/usr/share/applications/omastudio.desktop"
     ln -sf "omastudio.desktop" "$pkgdir/usr/share/applications/omaraw.desktop"
     install -Dm644 Panel.qml "$pkgdir/usr/share/omastudio/Panel.qml"
