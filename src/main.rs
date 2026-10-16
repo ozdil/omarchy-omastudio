@@ -147,18 +147,34 @@ struct DaemonCache {
 }
 
 
+/// Cache path of a photo's thumbnail. Keyed by a hash of the full path (not just the
+/// file stem) so DSC_0001.NEF / DSC_0001.JPG or same-named files from two cards don't
+/// share or overwrite each other's thumbnail.
+fn thumbnail_path_for(photo: &Path) -> PathBuf {
+    let home = env::var("HOME").unwrap_or_else(|_| ".".to_string());
+    let canonical = std::fs::canonicalize(photo).unwrap_or_else(|_| photo.to_path_buf());
+    let digest = rendezvous::sha256_hex(canonical.to_string_lossy().as_bytes());
+    let stem = photo.file_stem().and_then(|s| s.to_str()).unwrap_or("thumb");
+    PathBuf::from(home)
+        .join(".cache/omastudio/thumbnails")
+        .join(format!("{}-{}.jpg", stem, &digest[..16]))
+}
+
 #[derive(Serialize)]
 struct FolderScanItem {
     name: String,
     path: String,
     thumbnail: String,
     is_remote: bool,
+    is_dir: bool,
 }
 
 fn scan_directory(dir_path: &str) -> Result<Vec<FolderScanItem>, String> {
     let expanded = if let Some(stripped) = dir_path.strip_prefix("~/") {
         let home = env::var("HOME").unwrap_or_else(|_| ".".to_string());
         PathBuf::from(home).join(stripped)
+    } else if dir_path == "~" {
+        PathBuf::from(env::var("HOME").unwrap_or_else(|_| ".".to_string()))
     } else {
         PathBuf::from(dir_path)
     };
@@ -171,17 +187,29 @@ fn scan_directory(dir_path: &str) -> Result<Vec<FolderScanItem>, String> {
     let thumb_dir = PathBuf::from(home).join(".cache/omastudio/thumbnails");
     let _ = security::ensure_secure_dir(&thumb_dir);
 
+    let mut dirs = Vec::new();
     let mut items = Vec::new();
     if let Ok(entries) = std::fs::read_dir(&expanded) {
         for entry in entries.flatten() {
             let path = entry.path();
+            let name = entry.file_name().to_string_lossy().to_string();
+            // Subfolders are listed (first) so the filmstrip can navigate into them
+            if path.is_dir() && !name.starts_with('.') {
+                dirs.push(FolderScanItem {
+                    name,
+                    path: path.to_string_lossy().to_string(),
+                    thumbnail: String::new(),
+                    is_remote: false,
+                    is_dir: true,
+                });
+                continue;
+            }
             if path.is_file() {
                 if let Some(ext) = path.extension().and_then(|e| e.to_str()) {
                     let ext_lower = ext.to_lowercase();
                     let is_supported = ["nef", "nrw", "raf", "cr2", "cr3", "arw", "dng", "rwl", "orf", "rw2", "3fr", "jpg", "jpeg", "png", "webp", "tif", "tiff", "heic"].contains(&ext_lower.as_str());
                     if is_supported {
-                        let stem = path.file_stem().and_then(|s| s.to_str()).unwrap_or("thumb");
-                        let thumb_path = thumb_dir.join(format!("{}.jpg", stem));
+                        let thumb_path = thumbnail_path_for(&path);
                         if !thumb_path.exists() {
                             if let Ok(raw) = RawImage::open(&path) {
                                 let _ = raw.extract_thumbnail(&thumb_path);
@@ -196,6 +224,7 @@ fn scan_directory(dir_path: &str) -> Result<Vec<FolderScanItem>, String> {
                             path: path.to_string_lossy().to_string(),
                             thumbnail: if thumb_path.exists() { thumb_path.to_string_lossy().to_string() } else { path.to_string_lossy().to_string() },
                             is_remote: false,
+                            is_dir: false,
                         });
                     }
                 }
@@ -203,8 +232,10 @@ fn scan_directory(dir_path: &str) -> Result<Vec<FolderScanItem>, String> {
         }
     }
 
+    dirs.sort_by(|a, b| a.name.to_lowercase().cmp(&b.name.to_lowercase()));
     items.sort_by(|a, b| a.name.cmp(&b.name));
-    Ok(items)
+    dirs.extend(items);
+    Ok(dirs)
 }
 
 fn main() {
@@ -798,7 +829,7 @@ fn inspect_file(raw_path: &str) -> Result<InspectResult, String> {
         .file_stem()
         .and_then(|s| s.to_str())
         .unwrap_or("thumb");
-    let thumb_path = thumb_dir.join(format!("{}.jpg", file_stem));
+    let thumb_path = thumbnail_path_for(Path::new(raw_path));
 
     // Fast thumbnail extraction
     let _ = raw.extract_thumbnail(&thumb_path);
@@ -904,10 +935,7 @@ fn run_ai_auto(raw_path: &str) -> Result<InspectResult, String> {
     let auto_recipe = ai_auto_enhance(preview.as_slice(), preview.width, preview.height, preview.channels, &meta);
     let scene = ai_classify_scene(preview.as_slice(), preview.width, preview.height, preview.channels, &meta);
 
-    let home = env::var("HOME").unwrap_or_else(|_| ".".to_string());
-    let thumb_path = PathBuf::from(home)
-        .join(".cache/omastudio/thumbnails")
-        .join(format!("{}.jpg", Path::new(raw_path).file_stem().and_then(|s| s.to_str()).unwrap_or("thumb")));
+    let thumb_path = thumbnail_path_for(Path::new(raw_path));
 
     Ok(InspectResult {
         path: raw_path.to_string(),
@@ -937,10 +965,7 @@ fn run_ai_jev(raw_path: &str) -> Result<JevInspectResult, String> {
         apply_jev_decisions_to_recipe(&mut auto_recipe, jev);
     }
 
-    let home = env::var("HOME").unwrap_or_else(|_| ".".to_string());
-    let thumb_path = PathBuf::from(home)
-        .join(".cache/omastudio/thumbnails")
-        .join(format!("{}.jpg", Path::new(raw_path).file_stem().and_then(|s| s.to_str()).unwrap_or("thumb")));
+    let thumb_path = thumbnail_path_for(Path::new(raw_path));
 
     Ok(JevInspectResult {
         path: raw_path.to_string(),
@@ -1130,10 +1155,7 @@ fn run_daemon() {
                                 // render of every photo reuse the same preview path, so the UI saw
                                 // no source change and kept showing the previous photo.
 
-                                let home = env::var("HOME").unwrap_or_else(|_| ".".to_string());
-                                let thumb_path = PathBuf::from(home)
-                                    .join(".cache/omastudio/thumbnails")
-                                    .join(format!("{}.jpg", Path::new(p).file_stem().and_then(|s| s.to_str()).unwrap_or("thumb")));
+                                let thumb_path = thumbnail_path_for(Path::new(p));
                                 let _ = raw.extract_thumbnail(&thumb_path);
 
                                 let sidecar = Recipe::load_sidecar(p).unwrap_or_default();
