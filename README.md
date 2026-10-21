@@ -200,7 +200,6 @@ flowchart LR
 Optional:
 * `exiftool` (`perl-image-exiftool`): keeps EXIF metadata and embeds ICC profiles on export. Without it, wide-gamut exports (Adobe RGB, ProPhoto) fall back to sRGB.
 * `ffmpeg`: AVIF export fallback when the built-in encoder fails.
-* `qrencode`: alternative renderer for the OmaID QR code (a built-in encoder is used otherwise).
 
 ### Build & Local Installation
 ```bash

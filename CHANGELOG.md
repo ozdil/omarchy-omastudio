@@ -5,6 +5,9 @@
 ### Engine
 - Thumbnails are always re-encoded by the engine. A JPEG, PNG or WebP that fails to decode is no longer copied into the thumbnail cache unchanged or shown from its original file; the filmstrip shows a placeholder instead, so a crafted image cannot reach Qt's image decoders without the engine's limits. *(The thumbnail cache is rebuilt once.)*
 
+### Removed
+- OmaSend code that had been copied into this repository: the `rendezvous`, `oma-id-qr` and `force-scan` engine commands, the matching daemon commands (`rendezvous_derive`, `rendezvous_verify`, `pin_verify`), the OmaSend web pages (`assets/web/omasend`, `docs/index.html`) and the `qrcode` dependency. OmaSend lives in [omarchy-omasend](https://github.com/ozdil/omarchy-omasend) and [omasend-web](https://github.com/ozdil/omasend-web). The OmaStudio UI never used these commands.
+
 ## v2.4.0 — 2026-10-16
 
 A large stability and correctness release covering the engine, the UI, colour handling, export and CI.

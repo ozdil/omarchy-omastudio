@@ -1,43 +1,9 @@
 use omastudio_engine::pipeline::lut::Lut3D;
 use omastudio_engine::pipeline::tone::{apply_agx_filmic_curve, apply_tone_pixel};
 use omastudio_engine::recipe::Recipe;
-use omastudio_engine::rendezvous::{constant_time_eq, verify_epoch_topic};
 use omastudio_engine::security::read_secure_file;
 use std::fs::File;
 use std::io::Write;
-
-#[test]
-fn test_constant_time_eq_different_lengths() {
-    let a = b"123456";
-    let b = b"12345";
-    let c = b"12345678";
-    let d = b"123456";
-
-    assert!(!constant_time_eq(a, b));
-    assert!(!constant_time_eq(a, c));
-    assert!(constant_time_eq(a, d));
-    assert!(constant_time_eq(b"", b""));
-}
-
-#[test]
-fn test_verify_epoch_topic_unbounded_tolerance_capped() {
-    let oma_id = "test-peer-oma-001";
-    let candidate = [0x5au8; 32];
-    let now = 1774000000u64;
-
-    // Tolerance u32::MAX would take 8.5 billion iterations without the security cap.
-    // With safe_window = tolerance.min(8), this finishes in < 1 millisecond.
-    let start = std::time::Instant::now();
-    let verified = verify_epoch_topic(oma_id, &candidate, now, u32::MAX);
-    let elapsed = start.elapsed();
-
-    assert!(!verified);
-    assert!(
-        elapsed < std::time::Duration::from_millis(50),
-        "verify_epoch_topic with u32::MAX tolerance must be capped and complete within 50ms, took {:?}",
-        elapsed
-    );
-}
 
 #[test]
 fn test_color_boost_negative_channel_no_nan() {
