@@ -20,11 +20,13 @@ const PROBE_EDGE: u32 = 320;
 const RANGE: (f32, f32) = (-3.0, 4.0);
 
 type Key = (PathBuf, u64, Option<SystemTime>);
+/// Baseline exposure in EV, and why it could not be measured if it could not.
+type Measured = (f32, Option<String>);
 
 /// Results per file, so the preview, the full-resolution frame and the export of one
 /// photo share exactly the same value.
-fn memo() -> &'static Mutex<HashMap<Key, (f32, Option<String>)>> {
-    static MEMO: OnceLock<Mutex<HashMap<Key, (f32, Option<String>)>>> = OnceLock::new();
+fn memo() -> &'static Mutex<HashMap<Key, Measured>> {
+    static MEMO: OnceLock<Mutex<HashMap<Key, Measured>>> = OnceLock::new();
     MEMO.get_or_init(|| Mutex::new(HashMap::new()))
 }
 
@@ -45,7 +47,7 @@ pub fn exposure(raw: &RawImage, decoded: Option<&ProcessedBuffer>) -> f32 {
 }
 
 /// [`exposure`], with the reason when it could not be measured.
-pub fn explain(raw: &RawImage, decoded: Option<&ProcessedBuffer>) -> (f32, Option<String>) {
+pub fn explain(raw: &RawImage, decoded: Option<&ProcessedBuffer>) -> Measured {
     if std::env::var("OMASTUDIO_BASELINE_EXPOSURE").is_ok_and(|v| v == "off") {
         return (0.0, None);
     }
