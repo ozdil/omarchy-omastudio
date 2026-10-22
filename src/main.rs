@@ -1106,7 +1106,15 @@ fn run_fuji_camera(args: &[String]) {
         let mut cam = Camera::connect().map_err(|e| e.to_string())?;
         let out = match sub {
             "info" => Ok(serde_json::json!({ "device": cam.info, "raw_conversion": cam.can_convert() })),
-            "presets" => cam.presets().map_err(|e| e.to_string()).and_then(|p| serde_json::to_value(p).map_err(|e| e.to_string())),
+            "presets" => cam.presets().map_err(|e| e.to_string()).map(|presets| {
+                presets
+                    .into_iter()
+                    .map(|p| {
+                        let omastudio = p.recipe.to_recipe();
+                        serde_json::json!({ "slot": p.slot, "name": p.name, "recipe": p.recipe, "omastudio": omastudio })
+                    })
+                    .collect()
+            }),
             "convert" => {
                 let raf_path = args.get(1).ok_or("Missing RAF file")?;
                 let raf = security::read_secure_file(Path::new(raf_path), 1024 * 1024 * 1024).map_err(|e| format!("Cannot read {}: {}", raf_path, e))?;

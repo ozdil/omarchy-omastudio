@@ -18,6 +18,7 @@ Rectangle {
     property bool stripGps: true
     property bool preserveExif: true
     property string selectedIcc: "sRGB"
+    property string renderingIntent: "relative_colorimetric"
     property string localOutputDir: "~/Pictures/OmaStudio_Exports"
     property bool isExporting: false
     property string exportStatusText: ""
@@ -288,6 +289,59 @@ Rectangle {
                     }
                 }
             }
+
+            // How colours the destination profile cannot hold are mapped
+            RowLayout {
+                Layout.fillWidth: true
+                spacing: 6
+
+                Text {
+                    text: "Intent"
+                    textFormat: Text.PlainText
+                    font.pixelSize: 10
+                    color: Theme.textDim
+                    Layout.preferredWidth: 44
+                }
+
+                Repeater {
+                    model: [
+                        { id: "perceptual", name: "Perceptual", tip: "Compresses the whole gamut; smooth, saturated colours keep their relations" },
+                        { id: "relative_colorimetric", name: "Relative", tip: "In-gamut colours stay exact; out-of-gamut colours clip to the edge" },
+                        { id: "saturation", name: "Saturation", tip: "Keeps colours vivid at the cost of accuracy; for graphics" },
+                        { id: "absolute_colorimetric", name: "Absolute", tip: "Exact colours including the source white point; for proofing" }
+                    ]
+                    delegate: Rectangle {
+                        Layout.fillWidth: true
+                        implicitHeight: 26
+                        radius: Theme.radiusSm
+                        property bool isCur: root.renderingIntent === modelData.id
+                        color: isCur ? Qt.rgba(Theme.accent.r, Theme.accent.g, Theme.accent.b, 0.2) : Theme.bgCard
+                        border.color: isCur ? Theme.accent : Theme.border
+                        border.width: 1
+
+                        Text {
+                            anchors.centerIn: parent
+                            text: modelData.name
+                            textFormat: Text.PlainText
+                            font.pixelSize: 10
+                            font.weight: parent.isCur ? Font.Bold : Font.Normal
+                            color: parent.isCur ? Theme.accent : Theme.textMain
+                        }
+
+                        MouseArea {
+                            id: intentMouse
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: root.renderingIntent = modelData.id
+                        }
+
+                        ToolTip.visible: intentMouse.containsMouse
+                        ToolTip.delay: 400
+                        ToolTip.text: modelData.tip
+                    }
+                }
+            }
         }
 
         // Privacy & Metadata Options
@@ -434,6 +488,7 @@ Rectangle {
                         "strip_gps": root.stripGps,
                         "preserve_exif": root.preserveExif,
                         "icc_profile": root.selectedIcc,
+                        "rendering_intent": root.renderingIntent,
                         "output_dir": root.localOutputDir,
                         // The options object carries the global "enabled" flag; force it on so
                         // this dialog's own switch actually takes effect.

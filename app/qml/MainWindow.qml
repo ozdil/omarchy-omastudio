@@ -532,6 +532,30 @@ Rectangle {
         return (v === undefined || v === null || v === "" || isNaN(n)) ? d : n;
     }
 
+    // Applies the recipe a Fujifilm photo was shot with (the open photo by default)
+    function applyCameraRecipe(path) {
+        var p = path || root.activePhotoPath;
+        if (p === "") return "Error: no photo open";
+        return fujiPanel.run("read", ["fuji-recipe", p]) ? "OK" : "Error: busy";
+    }
+
+    function fujiRecipeLibrary() {
+        return fujiPanel.recipes.map(function(e) {
+            return { "path": e.path, "label": e.recipe.label, "film_simulation": e.recipe.recipe.film_simulation_name, "device": e.recipe.device };
+        });
+    }
+
+    function applyFujiRecipe(name) {
+        var list = fujiPanel.recipes;
+        for (var i = 0; i < list.length; i++) {
+            if (list[i].path === name || list[i].recipe.label === name) {
+                root.applyRecipeObject(list[i].recipe.omastudio);
+                return "OK";
+            }
+        }
+        return "Error: no recipe named " + name;
+    }
+
     function applyRecipeObject(r) {
         if (!r) return;
         root.wbTemp = Number(r.wb_temperature) || 5500.0;
@@ -2332,6 +2356,29 @@ Rectangle {
                                     root.activeFilmSimulation = id;
                                     root.activeFilmSimIntensity = intensity;
                                     root.requestRender();
+                                }
+                            }
+
+                            // Fujifilm recipe library, camera on USB, Pixel Shift
+                            FujiPanel {
+                                id: fujiPanel
+                                Layout.fillWidth: true
+                                enginePath: root.resolveEnginePath()
+                                activePhotoPath: root.activePhotoPath
+                                selectedPaths: filmstrip.selectedPaths
+                                onRecipeApplied: function(recipe, label) {
+                                    if (root.activePhotoPath === "") {
+                                        root.showToast("[ERR] Open a photo first", Theme.accentMagenta);
+                                        return;
+                                    }
+                                    root.applyRecipeObject(recipe);
+                                    root.showToast("[OK] " + label, Theme.accentGreen);
+                                }
+                                onFileProduced: function(path, openIt) {
+                                    if (openIt) root.loadPhoto(path);
+                                }
+                                onNotify: function(text, isError) {
+                                    root.showToast((isError ? "[ERR] " : "[OK] ") + text, isError ? Theme.accentMagenta : Theme.accentGreen);
                                 }
                             }
 

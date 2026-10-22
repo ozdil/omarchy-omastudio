@@ -21,7 +21,7 @@ OmaStudio is a non-destructive RAW editor built for Omarchy Linux. It develops R
 | :--- | :--- |
 | **RAW development** | The engine's own demosaicing for X-Trans and Bayer sensors on linear light, with camera colour matrices and black levels taken from the file. Demosaicing runs on the GPU through Vulkan (NVIDIA, AMD, Intel, Qualcomm Adreno) with an identical CPU fallback. LibRaw only unpacks the sensor data. |
 | **Medium format** | Fujifilm GFX and Hasselblad RAW files with a 16-bit pipeline from sensor to export. |
-| **Fujifilm** | Photos open with the recipe they were shot with: film simulation, tone, colour, grain, Color Chrome, white balance shift and dynamic range. X RAW Studio profiles (.FP1/.FP2/.FP3) and recipes shared as text can be imported and exported. |
+| **Fujifilm** | Photos open with the recipe they were shot with: film simulation, tone, colour, grain, Color Chrome, white balance shift and dynamic range. X RAW Studio profiles (.FP1/.FP2/.FP3) and recipes shared as text can be imported and exported. The Fujifilm panel keeps a recipe library, reads and writes a connected camera's custom settings C1-C7, converts RAFs in camera and merges GFX Pixel Shift sequences. |
 | **Colour management** | Little CMS 2 with built-in sRGB, Display P3, Adobe RGB, ProPhoto RGB and Rec. 2020 profiles, plus custom ICC profiles with a choice of rendering intent. ICC profiles are embedded in every export. |
 | **Editing** | Exposure, tone, presence, HSL, tone curve, three-way colour wheels, 3D LUTs, RGB mixer, skin tone uniformity, film grain, local masks, crop and lens corrections. |
 | **Library** | Local catalog with star ratings, pick/reject flags and colour labels; adjustments are stored in sidecar files and the original RAW is never modified. |
@@ -148,6 +148,9 @@ omastudio-engine fuji-recipe list                  # saved recipes
 omastudio-engine fuji-recipe save <file> --label "Name"
 omastudio-engine fuji-recipe export <file> out.FP1 --device X-T30
 omastudio-engine fuji-pixel-shift DSCF*.RAF --out merged.dng   # GFX Pixel Shift to DNG
+omastudio-engine fuji-camera info | presets      # camera on USB, custom settings C1-C7
+omastudio-engine fuji-camera write-preset C3 recipe.FP1
+omastudio-engine fuji-camera convert DSCF0001.RAF --recipe recipe.FP1
 omastudio-engine gpu                               # GPU in use (OMASTUDIO_GPU=off for CPU only)
 omastudio-engine icc list
 omastudio-engine help

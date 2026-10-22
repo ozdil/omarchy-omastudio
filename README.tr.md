@@ -23,7 +23,7 @@ OmaStudio, Omarchy Linux için geliştirilmiş, orijinal dosyaya dokunmayan bir 
 | :--- | :--- |
 | **RAW geliştirme** | X-Trans ve Bayer sensörler için motorun kendi demozaik işlemi, lineer ışık üzerinde. Kamera renk matrisi ve siyah seviyeleri dosyadan okunur. Demozaik Vulkan üzerinden GPU'da çalışır (NVIDIA, AMD, Intel, Qualcomm Adreno); GPU yoksa aynı sonucu veren CPU yolu kullanılır. LibRaw yalnızca sensör verisini açar. |
 | **Orta format** | Fujifilm GFX ve Hasselblad RAW dosyaları. Sensörden dışa aktarıma kadar 16-bit işlenir. |
-| **Fujifilm** | Fotoğraflar çekildikleri tarifle açılır: film simülasyonu, ton, renk, gren, Color Chrome, beyaz dengesi kaydırması ve dinamik aralık. X RAW Studio profilleri (.FP1/.FP2/.FP3) ve metin olarak paylaşılan tarifler içe ve dışa aktarılabilir. |
+| **Fujifilm** | Fotoğraflar çekildikleri tarifle açılır: film simülasyonu, ton, renk, gren, Color Chrome, beyaz dengesi kaydırması ve dinamik aralık. X RAW Studio profilleri (.FP1/.FP2/.FP3) ve metin olarak paylaşılan tarifler içe ve dışa aktarılabilir. Fujifilm panelinde tarif kütüphanesi bulunur; bağlı kameranın C1-C7 özel ayarları okunup yazılabilir, RAF dosyaları kamera içinde dönüştürülebilir ve GFX Pixel Shift serileri birleştirilebilir. |
 | **Renk yönetimi** | Little CMS 2 kullanılır. sRGB, Display P3, Adobe RGB, ProPhoto RGB ve Rec. 2020 profilleri yerleşik gelir. Özel ICC profilleri de seçilebilir bir işleme amacıyla (rendering intent) desteklenir. Her dışa aktarıma ICC profili gömülür. |
 | **Düzenleme** | Pozlama, ton, varlık, HSL, ton eğrisi, üç yollu renk tekerlekleri, 3D LUT, RGB karıştırıcı, cilt tonu eşitleme, film greni, yerel maskeler, kırpma ve lens düzeltmeleri. |
 | **Kütüphane** | Yerel katalogda yıldız puanı, seç/ele bayrakları ve renk etiketleri tutulur. Ayarlar yan dosyalarda saklanır, orijinal RAW hiçbir zaman değiştirilmez. |
@@ -137,6 +137,9 @@ omastudio-engine fuji-recipe list                  # kaydedilmiş tarifler
 omastudio-engine fuji-recipe save <dosya> --label "Ad"
 omastudio-engine fuji-recipe export <dosya> cikti.FP1 --device X-T30
 omastudio-engine fuji-pixel-shift DSCF*.RAF --out birlesik.dng # GFX Pixel Shift → DNG
+omastudio-engine fuji-camera info | presets      # USB'deki kamera, C1-C7 özel ayarları
+omastudio-engine fuji-camera write-preset C3 tarif.FP1
+omastudio-engine fuji-camera convert DSCF0001.RAF --recipe tarif.FP1
 omastudio-engine gpu                               # kullanılan GPU (yalnızca CPU için OMASTUDIO_GPU=off)
 omastudio-engine icc list
 omastudio-engine help
