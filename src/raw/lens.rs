@@ -62,6 +62,16 @@ impl RadialCorrection {
         Step { scale: [g + cr, g, g + cb], gain: 100.0 / v.clamp(10.0, 100.0) }
     }
 
+    /// Sampling scale of red, green and blue at normalised radius `r`.
+    pub fn sample_scale(&self, r: f32) -> [f32; 3] {
+        self.step(r).scale
+    }
+
+    /// Brightness gain at normalised radius `r` (1 = none).
+    pub fn sample_gain(&self, r: f32) -> f32 {
+        self.step(r).gain
+    }
+
     /// Table over r in 0..=1 plus the zoom that keeps every sample inside the frame.
     fn table(&self) -> (Vec<Step>, f32) {
         let steps: Vec<Step> = (0..=TABLE).map(|i| self.step(i as f32 / TABLE as f32)).collect();

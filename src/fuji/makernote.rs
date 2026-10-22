@@ -20,6 +20,8 @@ const MAX_ENTRIES: usize = 1024;
 #[derive(Debug, Clone, PartialEq)]
 pub enum Value {
     Ints(Vec<i64>),
+    /// Rationals, kept as fractions (pixel shift offsets are half pixels).
+    Ratios(Vec<f64>),
     Text(String),
     Bytes(Vec<u8>),
 }
@@ -28,8 +30,18 @@ impl Value {
     pub fn int(&self) -> Option<i64> {
         match self {
             Self::Ints(v) => v.first().copied(),
+            Self::Ratios(v) => v.first().map(|x| x.trunc() as i64),
             Self::Bytes(b) => b.first().map(|&x| x as i8 as i64),
             Self::Text(_) => None,
+        }
+    }
+
+    /// Numeric values as floats (rationals keep their fraction).
+    pub fn floats(&self) -> Vec<f64> {
+        match self {
+            Self::Ints(v) => v.iter().map(|&x| x as f64).collect(),
+            Self::Ratios(v) => v.clone(),
+            _ => Vec::new(),
         }
     }
 
@@ -202,15 +214,17 @@ pub fn parse_makernote(note: &[u8]) -> Result<Tags, String> {
             8 => Value::Ints(raw.as_chunks::<2>().0.iter().map(|c| i16::from_le_bytes(*c) as i64).collect()),
             4 => Value::Ints(raw.as_chunks::<4>().0.iter().map(|c| u32::from_le_bytes(*c) as i64).collect()),
             9 => Value::Ints(raw.as_chunks::<4>().0.iter().map(|c| i32::from_le_bytes(*c) as i64).collect()),
-            // Rationals: numerator only is enough for the tags used here
-            5 | 10 => Value::Ints(
+            5 | 10 => Value::Ratios(
                 raw.as_chunks::<8>()
                     .0
                     .iter()
                     .map(|c| {
-                        let n = i32::from_le_bytes([c[0], c[1], c[2], c[3]]) as i64;
-                        let d = i32::from_le_bytes([c[4], c[5], c[6], c[7]]) as i64;
-                        if d != 0 { n / d } else { 0 }
+                        let (n, d) = if kind == 5 {
+                            (u32::from_le_bytes([c[0], c[1], c[2], c[3]]) as f64, u32::from_le_bytes([c[4], c[5], c[6], c[7]]) as f64)
+                        } else {
+                            (i32::from_le_bytes([c[0], c[1], c[2], c[3]]) as f64, i32::from_le_bytes([c[4], c[5], c[6], c[7]]) as f64)
+                        };
+                        if d != 0.0 { n / d } else { 0.0 }
                     })
                     .collect(),
             ),

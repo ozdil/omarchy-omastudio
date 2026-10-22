@@ -6,6 +6,7 @@ pub mod fp1;
 pub mod lens;
 pub mod library;
 pub mod makernote;
+pub mod pixel_shift;
 pub mod ptp;
 pub mod text;
 

@@ -126,7 +126,19 @@ impl CfaFrame {
     }
 }
 
-type Mat3 = [[f32; 3]; 3];
+pub type Mat3 = [[f32; 3]; 3];
+
+impl CfaFrame {
+    /// White-balanced camera RGB -> linear `space`.
+    pub fn camera_to(&self, space: OutputColorSpace) -> Mat3 {
+        mul3(&srgb_to(space), &self.rgb_cam)
+    }
+}
+
+/// XYZ (D65) -> linear Rec. 2020, for files that declare their colours by an XYZ matrix.
+pub fn xyz_d65_to_rec2020() -> Mat3 {
+    invert3(&rgb_to_xyz([(0.708, 0.292), (0.170, 0.797), (0.131, 0.046)], D65))
+}
 
 fn mul3(a: &Mat3, b: &Mat3) -> Mat3 {
     std::array::from_fn(|r| std::array::from_fn(|c| (0..3).map(|k| a[r][k] * b[k][c]).sum()))

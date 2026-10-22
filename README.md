@@ -79,7 +79,7 @@ OmaStudio opens every RAW format LibRaw 0.22 supports. The engine develops Bayer
 
 | Manufacturer | Additional support |
 | :--- | :--- |
-| Fujifilm X and GFX | In-camera recipe, film simulations, Color Chrome, X RAW Studio profiles, PTP/USB |
+| Fujifilm X and GFX | In-camera recipe, film simulations, Color Chrome, X RAW Studio profiles, camera lens corrections, GFX Pixel Shift, PTP/USB |
 | Hasselblad | 3FR/FFF files, HNCS-style rendering (in development) |
 | Other manufacturers | Full development pipeline through the generic path |
 
@@ -144,6 +144,7 @@ omastudio-engine fuji-recipe <raf|jpg|fp1|txt>     # read a Fujifilm recipe
 omastudio-engine fuji-recipe list                  # saved recipes
 omastudio-engine fuji-recipe save <file> --label "Name"
 omastudio-engine fuji-recipe export <file> out.FP1 --device X-T30
+omastudio-engine fuji-pixel-shift DSCF*.RAF --out merged.dng   # GFX Pixel Shift to DNG
 omastudio-engine icc list
 omastudio-engine help
 ```
@@ -185,7 +186,6 @@ Details are in [SECURITY.md](SECURITY.md) and [CONTRIBUTING.md](CONTRIBUTING.md)
 
 Planned next:
 * Fujifilm in-camera conversion and custom setting slots (C1–C7) over USB
-* GFX Pixel Shift composites
 * A GPU pipeline (wgpu/Vulkan) on NVIDIA, Intel, AMD and Snapdragon
 * A standalone Qt 6.12 application with pixel-exact HiDPI
 * Local AI features accelerated by NPUs

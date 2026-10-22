@@ -68,7 +68,7 @@ OmaStudio, LibRaw 0.22'nin desteklediği tüm RAW biçimlerini açar. Bayer ve X
 
 | Üretici | Ek destek |
 | :--- | :--- |
-| Fujifilm X ve GFX | Kamera tarifi, film simülasyonları, Color Chrome, X RAW Studio profilleri, PTP/USB |
+| Fujifilm X ve GFX | Kamera tarifi, film simülasyonları, Color Chrome, X RAW Studio profilleri, kameranın lens düzeltmeleri, GFX Pixel Shift, PTP/USB |
 | Hasselblad | 3FR/FFF dosyaları, HNCS benzeri işleme (geliştiriliyor) |
 | Diğer üreticiler | Genel yol üzerinden tam geliştirme |
 
@@ -133,6 +133,7 @@ omastudio-engine fuji-recipe <raf|jpg|fp1|txt>     # Fujifilm tarifini oku
 omastudio-engine fuji-recipe list                  # kaydedilmiş tarifler
 omastudio-engine fuji-recipe save <dosya> --label "Ad"
 omastudio-engine fuji-recipe export <dosya> cikti.FP1 --device X-T30
+omastudio-engine fuji-pixel-shift DSCF*.RAF --out birlesik.dng # GFX Pixel Shift → DNG
 omastudio-engine icc list
 omastudio-engine help
 ```
@@ -174,7 +175,6 @@ Ayrıntılar [SECURITY.md](SECURITY.md) ve [CONTRIBUTING.md](CONTRIBUTING.md) do
 
 Sıradaki planlar:
 * USB üzerinden Fujifilm kamera içi dönüştürme ve özel ayar yuvaları (C1–C7)
-* GFX Pixel Shift birleştirme
 * NVIDIA, Intel, AMD ve Snapdragon üzerinde GPU boru hattı (wgpu/Vulkan)
 * Piksel hassasiyetinde HiDPI desteğiyle bağımsız Qt 6.12 uygulaması
 * NPU ile hızlandırılan yerel yapay zekâ özellikleri

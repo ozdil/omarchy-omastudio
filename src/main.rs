@@ -460,6 +460,36 @@ fn main() {
         "fuji-camera" => {
             run_fuji_camera(&args[2..]);
         }
+        "fuji-pixel-shift" => {
+            let mut paths = Vec::new();
+            let mut out: Option<PathBuf> = None;
+            let mut i = 2;
+            while i < args.len() {
+                if args[i] == "--out" && i + 1 < args.len() {
+                    out = Some(PathBuf::from(&args[i + 1]));
+                    i += 2;
+                } else {
+                    paths.push(PathBuf::from(&args[i]));
+                    i += 1;
+                }
+            }
+            if paths.len() < 2 {
+                print_json::<()>(&ResponseWrapper::err("Usage: fuji-pixel-shift <raf>... [--out <file.dng>]"));
+                return;
+            }
+            let out = out.unwrap_or_else(|| {
+                let stem = paths[0].file_stem().and_then(|s| s.to_str()).unwrap_or("pixelshift");
+                paths[0].with_file_name(format!("{stem}_pixelshift.dng"))
+            });
+            if out.exists() {
+                print_json::<()>(&ResponseWrapper::err(format!("{} already exists", out.display())));
+                return;
+            }
+            match fuji::pixel_shift::combine(&paths, &out) {
+                Ok(report) => print_json(&ResponseWrapper::ok(report)),
+                Err(e) => print_json::<()>(&ResponseWrapper::err(e)),
+            }
+        }
         "fuji-calibrate" => {
             let paths: Vec<PathBuf> = args[2..].iter().filter(|a| !a.starts_with("--")).map(PathBuf::from).collect();
             if paths.is_empty() {
@@ -608,6 +638,7 @@ fn main() {
             println!("  fuji-camera convert <raf> [--recipe F] [--out J]  Convert a RAF in the camera (X RAW Studio protocol)");
             println!("  fuji-camera write-preset <C1-C7> <recipe> [--label L]  Store a recipe in a custom setting slot");
             println!("  fuji-calibrate <raf>... [--any]       Measure film simulation LUTs from your RAFs' camera JPEGs");
+            println!("  fuji-pixel-shift <raf>... [--out F]   Merge a GFX Pixel Shift sequence into a linear DNG");
             println!("  icc list                              List all detected system and bundled ICC color profiles");
             println!("  scan [dir]                            Scan local folder for supported RAW photos");
             println!("  catalog                               Retrieve persistent photo catalog database");

@@ -1,7 +1,9 @@
 pub mod demosaic;
 pub mod develop;
+pub mod dng;
 pub mod ffi;
 pub mod lens;
+pub mod pixel_shift;
 
 use crate::pipeline::transfer::Transfer;
 use ffi::*;
@@ -492,8 +494,8 @@ impl RawImage {
 
     /// Like [`RawImage::process_custom`] with an explicit demosaic engine.
     ///
-    /// Lens corrections the camera recorded in the file (Fujifilm RAF) are applied to
-    /// every decode, as the camera does for its own JPEGs. `OMASTUDIO_LENS_CORRECTION=off`
+    /// Lens corrections recorded in the file (Fujifilm RAF data, DNG OpcodeList3) are
+    /// applied to every decode, as the camera does for its own JPEGs. `OMASTUDIO_LENS_CORRECTION=off`
     /// turns them off.
     pub fn process_with(
         &self,
@@ -516,7 +518,7 @@ impl RawImage {
         {
             return None;
         }
-        self.lens.get_or_init(|| crate::fuji::lens::read(&self.path)).as_ref()
+        self.lens.get_or_init(|| crate::fuji::lens::read(&self.path).or_else(|| dng::read_corrections(&self.path))).as_ref()
     }
 
     fn process_uncorrected(
@@ -639,7 +641,9 @@ impl RawImage {
 
     /// Develops a CFA RAW with OmaStudio's own pipeline into linear 16-bit RGB, or
     /// returns None when the source is not a plain 3-colour CFA.
-    fn develop_own(&self, half_size: bool) -> Option<ProcessedBuffer> {
+    /// Black-subtracted, white-balanced sensor data of a plain 3-colour CFA (Bayer or
+    /// X-Trans), or None for other sensors and raster files.
+    pub fn cfa_frame(&self) -> Option<develop::CfaFrame> {
         let RawBackend::LibRaw(handle) = &self.backend else {
             return None;
         };
@@ -649,7 +653,11 @@ impl RawImage {
         let raw = unsafe { omaraw_unpack_cfa(*handle, &mut info) };
         // SAFETY: the shim returns the handle's raw plane (raw_pitch * raw_height values),
         // which stays valid while self (and so the handle) is alive
-        let frame = unsafe { develop::CfaFrame::from_libraw(raw, &info) }?;
+        unsafe { develop::CfaFrame::from_libraw(raw, &info) }
+    }
+
+    fn develop_own(&self, half_size: bool) -> Option<ProcessedBuffer> {
+        let frame = self.cfa_frame()?;
         // Binning an X-Trans sensor gives a 1/3-size preview; LibRaw's half-size decode
         // is larger and renders the same colours, so previews keep using it
         if half_size && matches!(frame.pattern, demosaic::CfaPattern::XTrans(_)) {
