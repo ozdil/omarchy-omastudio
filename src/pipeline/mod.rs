@@ -62,6 +62,7 @@ pub fn process_buffer(
     // Resolve active 3D LUT if requested
     let maybe_lut = resolve_recipe_lut(recipe);
     let film_sim = film_sim::FilmSimulation::from_id(&recipe.film_simulation);
+    let color_chrome = recipe.color_chrome > 0.0 || recipe.color_chrome_blue > 0.0;
     let working_space = aces::WorkingColorSpace::from_str_name(&recipe.color_space);
 
     // Intermediate float buffer for multi-stage 16-bit precision processing
@@ -109,6 +110,11 @@ pub fn process_buffer(
                     film_sim.apply_pixel(r4, g4, b4, recipe.film_sim_intensity)
                 } else {
                     (r4, g4, b4)
+                };
+                let (r5, g5, b5) = if color_chrome {
+                    film_sim::apply_color_chrome(r5, g5, b5, recipe.color_chrome, recipe.color_chrome_blue)
+                } else {
+                    (r5, g5, b5)
                 };
 
                 // 8. ACES 1.3 Gamut Compression if ACEScg or wide-gamut mode active
@@ -273,6 +279,7 @@ pub fn process_buffer_16_to_8_ex(
     // Resolve active 3D LUT if requested
     let maybe_lut = resolve_recipe_lut(recipe);
     let film_sim = film_sim::FilmSimulation::from_id(&recipe.film_simulation);
+    let color_chrome = recipe.color_chrome > 0.0 || recipe.color_chrome_blue > 0.0;
     let working_space = aces::WorkingColorSpace::from_str_name(&recipe.color_space);
 
     // Intermediate float buffer for multi-stage 16-bit precision processing
@@ -322,6 +329,11 @@ pub fn process_buffer_16_to_8_ex(
                     film_sim.apply_pixel(r4, g4, b4, recipe.film_sim_intensity)
                 } else {
                     (r4, g4, b4)
+                };
+                let (r5, g5, b5) = if color_chrome {
+                    film_sim::apply_color_chrome(r5, g5, b5, recipe.color_chrome, recipe.color_chrome_blue)
+                } else {
+                    (r5, g5, b5)
                 };
 
                 // 8. ACES 1.3 Gamut Compression if ACEScg or wide-gamut mode active
@@ -504,6 +516,7 @@ pub fn process_buffer_16_to_16_ex(
     // Resolve active 3D LUT if requested
     let maybe_lut = resolve_recipe_lut(recipe);
     let film_sim = film_sim::FilmSimulation::from_id(&recipe.film_simulation);
+    let color_chrome = recipe.color_chrome > 0.0 || recipe.color_chrome_blue > 0.0;
     let working_space = aces::WorkingColorSpace::from_str_name(&recipe.color_space);
 
     // Intermediate float buffer for multi-stage 16-bit precision processing
@@ -553,6 +566,11 @@ pub fn process_buffer_16_to_16_ex(
                     film_sim.apply_pixel(r4, g4, b4, recipe.film_sim_intensity)
                 } else {
                     (r4, g4, b4)
+                };
+                let (r5, g5, b5) = if color_chrome {
+                    film_sim::apply_color_chrome(r5, g5, b5, recipe.color_chrome, recipe.color_chrome_blue)
+                } else {
+                    (r5, g5, b5)
                 };
 
                 // 8. ACES 1.3 Gamut Compression if ACEScg or wide-gamut mode active

@@ -368,6 +368,32 @@ fn eval_acros_curve(y: f32) -> f32 {
     (0.44 + (diff * 1.30).tanh() * 0.50).clamp(0.0, 1.0)
 }
 
+/// Fujifilm Color Chrome Effect and Color Chrome FX Blue.
+///
+/// Deepens highly saturated colours (and, for FX Blue, blues) by lowering their
+/// brightness while keeping hue and saturation, which restores gradation in
+/// saturated areas the way the in-camera effect does. `amount` and `blue` are
+/// 0..=100 (Fuji "Weak" = 50, "Strong" = 100).
+#[inline(always)]
+pub fn apply_color_chrome(r: f32, g: f32, b: f32, amount: f32, blue: f32) -> (f32, f32, f32) {
+    let max = r.max(g).max(b);
+    let min = r.min(g).min(b);
+    if max <= 1e-6 {
+        return (r, g, b);
+    }
+    let sat = ((max - min) / max).clamp(0.0, 1.0);
+    // Saturated, bright colours lose the most gradation, so they get the most depth.
+    let weight = sat * sat * (max.clamp(0.0, 1.0)).sqrt();
+    let mut depth = 0.22 * (amount / 100.0).clamp(0.0, 1.0) * weight;
+    if blue > 0.0 {
+        // Blueness: how far blue leads the other two channels, relative to the chroma.
+        let blueness = ((b - r.max(g)) / (max - min).max(1e-6)).clamp(0.0, 1.0);
+        depth += 0.25 * (blue / 100.0).clamp(0.0, 1.0) * sat * blueness;
+    }
+    let k = 1.0 - depth.min(0.4);
+    (r * k, g * k, b * k)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -412,5 +438,24 @@ mod tests {
         let (hr, hg, hb) = FilmSimulation::HasselbladHncs.apply_pixel(gray, gray, gray, 1.0);
         assert!((hr - hg).abs() < 1e-4);
         assert!((hg - hb).abs() < 1e-4);
+    }
+    #[test]
+    fn color_chrome_darkens_saturated_colours_only() {
+        let grey = apply_color_chrome(0.6, 0.6, 0.6, 100.0, 100.0);
+        assert_eq!(grey, (0.6, 0.6, 0.6));
+        let (r, g, b) = apply_color_chrome(0.9, 0.1, 0.1, 100.0, 0.0);
+        assert!(r < 0.9 && r > 0.65);
+        // Hue and saturation are kept: channel ratios do not change.
+        assert!((g / r - 0.1 / 0.9).abs() < 1e-5 && (b - g).abs() < 1e-6);
+        let off = apply_color_chrome(0.9, 0.1, 0.1, 0.0, 0.0);
+        assert_eq!(off, (0.9, 0.1, 0.1));
+    }
+
+    #[test]
+    fn fx_blue_targets_blue() {
+        let red = apply_color_chrome(0.9, 0.2, 0.1, 0.0, 100.0);
+        let blue = apply_color_chrome(0.1, 0.2, 0.9, 0.0, 100.0);
+        assert!(red.0 > 0.89);
+        assert!(blue.2 < 0.8);
     }
 }

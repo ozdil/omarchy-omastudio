@@ -3,6 +3,7 @@
 pub mod ai;
 pub mod dag;
 pub mod export;
+pub mod fuji;
 pub mod icc;
 pub mod pipeline;
 pub mod raw;
@@ -259,6 +260,7 @@ fn main() {
         eprintln!("  catalog list");
         eprintln!("  catalog query [--rating <0-5>] [--flag <pick|reject>] [--search <str>]");
         eprintln!("  catalog cull <path> [--rating <0-5>] [--flag <pick|reject>]");
+        eprintln!("  fuji-recipe <raf|jpg>");
         eprintln!("  scan [folder]");
         eprintln!("  daemon");
         return;
@@ -450,6 +452,24 @@ fn main() {
                 print_json::<()>(&ResponseWrapper::err("Unknown catalog subcommand: list, query, cull"));
             }
         }
+        "fuji-recipe" => {
+            if args.len() < 3 {
+                print_json::<()>(&ResponseWrapper::err("Missing RAF or JPEG file path"));
+                return;
+            }
+            match fuji::CameraRecipe::read(Path::new(&args[2])) {
+                Some(camera) => {
+                    #[derive(Serialize)]
+                    struct FujiRecipeResult {
+                        camera: fuji::CameraRecipe,
+                        recipe: Recipe,
+                    }
+                    let recipe = camera.to_recipe();
+                    print_json(&ResponseWrapper::ok(FujiRecipeResult { camera, recipe }));
+                }
+                None => print_json::<()>(&ResponseWrapper::err("No Fujifilm camera recipe found in file")),
+            }
+        }
         "icc" => {
             if args.len() < 3 || args[2] == "list" {
                 let profiles = icc::list_icc_profiles();
@@ -579,6 +599,7 @@ fn main() {
             println!("  ai-social <raw_file> [platform]       Calculate social media crop & OLED recipe (ig, story, x, ig_square, fb, yt)");
             println!("  render <raw_file> [options]           Process RAW image to preview PPM/PNG/JPG");
             println!("  export <raw_file> [options]           High-res demosaic & export (jxl, avif, webp, tiff, png, jpg)");
+            println!("  fuji-recipe <raf|jpg>                 Read the in-camera Fujifilm recipe (film simulation, tone, grain, WB)");
             println!("  icc list                              List all detected system and bundled ICC color profiles");
             println!("  scan [dir]                            Scan local folder for supported RAW photos");
             println!("  catalog                               Retrieve persistent photo catalog database");
@@ -669,7 +690,7 @@ fn inspect_file(raw_path: &str) -> Result<InspectResult, String> {
     let _ = raw.extract_thumbnail(&thumb_path);
 
     // Load existing sidecar or create default
-    let recipe = Recipe::load_sidecar(raw_path).unwrap_or_default();
+    let recipe = Recipe::load_initial(raw_path);
 
     // Fast preview for AI scene analysis
     let preview = raw.process_preview(true)?;
@@ -820,7 +841,7 @@ fn run_ai_jev(raw_path: &str) -> Result<JevInspectResult, String> {
 fn run_ai_social(raw_path: &str, platform: &str) -> Result<ai::SocialOptimizationResult, String> {
     let raw = RawImage::open(raw_path)?;
     let preview = raw.process_preview(true)?;
-    let sidecar = Recipe::load_sidecar(raw_path).unwrap_or_default();
+    let sidecar = Recipe::load_initial(raw_path);
     let result = ai_optimize_for_social(
         preview.as_slice(),
         preview.width,
@@ -994,7 +1015,7 @@ fn run_daemon() {
                                 let thumb_path = thumbnail_path_for(Path::new(p));
                                 let _ = raw.extract_thumbnail(&thumb_path);
 
-                                let sidecar = Recipe::load_sidecar(p).unwrap_or_default();
+                                let sidecar = Recipe::load_initial(p);
                                 let scene = ai_classify_scene(&u8_arc, prev.width, prev.height, prev.channels, &meta);
 
                                 print_json(&ResponseWrapper::ok_action("load", InspectResult {
@@ -1158,7 +1179,7 @@ fn run_daemon() {
                 let c = cache.lock().unwrap();
                 if let Some(ref buffer) = c.raw_buffer_8 {
                     let sidecar = c.current_path.as_ref()
-                        .and_then(Recipe::load_sidecar)
+                        .map(Recipe::load_initial)
                         .unwrap_or_default();
                     let result = ai_optimize_for_social(
                         buffer,
@@ -1229,7 +1250,7 @@ fn run_daemon() {
                     .par_iter()
                     .zip(name_tags.par_iter())
                     .map(|(item, tag)| {
-                        let recipe = item.recipe.clone().or_else(|| Recipe::load_sidecar(&item.path)).unwrap_or_default();
+                        let recipe = item.recipe.clone().unwrap_or_else(|| Recipe::load_initial(&item.path));
                         let mut item_options = options.clone();
                         item_options.name_tag = tag.clone();
                         match export_photo(&item.path, &recipe, &item_options) {

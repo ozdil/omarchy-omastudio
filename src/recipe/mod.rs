@@ -170,6 +170,12 @@ pub struct Recipe {
     #[serde(default = "default_fifty")]
     pub grain_roughness: f32, // 0.0 to 100.0 (Default: 50.0)
 
+    // Fujifilm Color Chrome Effect / FX Blue: deepen saturated colours (and blues)
+    #[serde(default)]
+    pub color_chrome: f32, // 0.0 to 100.0 (Default: 0.0)
+    #[serde(default)]
+    pub color_chrome_blue: f32, // 0.0 to 100.0 (Default: 0.0)
+
     // Local Adjustment Layers (Linear, Radial, Luma Range Masks)
     #[serde(default)]
     pub layers: Vec<crate::pipeline::layers::AdjustmentLayer>,
@@ -296,6 +302,8 @@ impl Default for Recipe {
             grain_amount: 0.0,
             grain_size: 1.0,
             grain_roughness: 50.0,
+            color_chrome: 0.0,
+            color_chrome_blue: 0.0,
             layers: Vec::new(),
         }
     }
@@ -419,6 +427,15 @@ impl Recipe {
 
         crate::security::atomic_write_user(&sidecar_path, &json)?;
         Ok(sidecar_path)
+    }
+
+    /// The recipe a photo opens with: its sidecar if one exists, else the settings the
+    /// camera recorded (Fujifilm film simulation, tone, grain, ...), else the defaults.
+    pub fn load_initial<P: AsRef<Path>>(raw_path: P) -> Self {
+        let path = raw_path.as_ref();
+        Self::load_sidecar(path)
+            .or_else(|| crate::fuji::CameraRecipe::read(path).map(|c| c.to_recipe()))
+            .unwrap_or_default()
     }
 
     pub fn load_sidecar<P: AsRef<Path>>(raw_path: P) -> Option<Self> {

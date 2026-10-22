@@ -16,6 +16,11 @@
 - New demosaic for X-Trans and Bayer: four directional candidates per pixel, keeping the most homogeneous ones (Markesteijn-style), plus a median on the colour differences against false colour. On a 26 MP X-T30 RAF it matches LibRaw's 3-pass Markesteijn within 45-50 dB PSNR at the same brightness, and a full-resolution export is about 25% faster (8.3 s vs 11.0 s on 4 cores).
 - Previews of X-Trans files still use LibRaw's half-size decode (larger than a 3x3 binned preview, same colours). Sensors the new path doesn't handle (Foveon, linear DNG, Fuji SuperCCD, 4-colour CFAs) fall back to LibRaw automatically. `OMASTUDIO_DEMOSAIC=libraw` switches back to LibRaw's processing entirely.
 
+### Fujifilm
+- Photos from Fujifilm cameras open with the recipe they were shot with. The engine reads the MakerNote of RAF and Fujifilm JPEG files itself: film simulation (including Acros/monochrome filters and Reala Ace, Bleach Bypass and Nostalgic Neg ids), highlight and shadow tone, colour, sharpness, noise reduction, clarity, grain, Color Chrome, white balance shift and dynamic range (DR200/DR400). A saved sidecar still wins.
+- New `fuji-recipe <file>` command prints the camera recipe and the OmaStudio recipe it maps to as JSON.
+- New Color Chrome Effect and Color Chrome FX Blue sliders (Weak = 50, Strong = 100): saturated colours, and blues for FX Blue, get deeper while keeping their hue.
+
 ### Colour & Export
 - Colour management with Little CMS 2. The engine builds sRGB, Display P3, Adobe RGB (1998), ProPhoto RGB and Rec. 2020 profiles itself and embeds the profile directly in PNG, JPEG, TIFF, WebP, JXL and AVIF files. Wide-gamut export no longer needs exiftool, and Display P3 and Rec. 2020 are new export options.
 - Custom RGB ICC profiles (printer, lab or display profiles in `~/.local/share/omastudio/icc`) are real conversions now: the photo is rendered in ProPhoto RGB and converted with lcms2, with black point compensation and a choice of rendering intent (`rendering_intent`, relative colorimetric by default). Non-RGB profiles are refused with a clear error.

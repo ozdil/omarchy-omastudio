@@ -119,6 +119,10 @@ Rectangle {
     property real grainSize: 1.0
     property real grainRoughness: 50.0
 
+    // Fujifilm Color Chrome Effect / FX Blue
+    property real colorChrome: 0.0
+    property real colorChromeBlue: 0.0
+
     // Local Layered Adjustments & Masks
     property var adjustmentLayers: []
 
@@ -395,6 +399,8 @@ Rectangle {
         root.grainAmount = 0.0;
         root.grainSize = 1.0;
         root.grainRoughness = 50.0;
+        root.colorChrome = 0.0;
+        root.colorChromeBlue = 0.0;
         root.adjustmentLayers = [];
         root.defringeVal = 0.0;
         root.lensDistortionVal = 0.0;
@@ -508,6 +514,8 @@ Rectangle {
             "grain_amount": root.grainAmount,
             "grain_size": root.grainSize,
             "grain_roughness": root.grainRoughness,
+            "color_chrome": root.colorChrome,
+            "color_chrome_blue": root.colorChromeBlue,
             "layers": root.adjustmentLayers,
             "defringe": root.defringeVal,
             "lens_distortion": root.lensDistortionVal,
@@ -608,6 +616,8 @@ Rectangle {
         if (r.grain_amount !== undefined) root.grainAmount = root.num(r.grain_amount, 0.0);
         if (r.grain_size !== undefined) root.grainSize = Number(r.grain_size) || 1.0;
         if (r.grain_roughness !== undefined) root.grainRoughness = root.num(r.grain_roughness, 50.0);
+        root.colorChrome = root.num(r.color_chrome, 0.0);
+        root.colorChromeBlue = root.num(r.color_chrome_blue, 0.0);
 
         // Local Adjustment Layers
         if (r.layers !== undefined && Array.isArray(r.layers)) {
@@ -2300,6 +2310,28 @@ Rectangle {
                                     root.activeFilmSimIntensity = intensity;
                                     root.requestRender();
                                 }
+                            }
+
+                            // Fujifilm Color Chrome Effect / FX Blue (Weak = 50, Strong = 100)
+                            SliderGroup {
+                                title: "Color Chrome Effect"
+                                from: 0.0
+                                to: 100.0
+                                value: root.colorChrome
+                                defaultValue: 0.0
+                                stepSize: 1.0
+                                accentColor: Theme.accentOrange
+                                onSliderMoved: function(v) { root.colorChrome = v; root.requestRender() }
+                            }
+                            SliderGroup {
+                                title: "Color Chrome FX Blue"
+                                from: 0.0
+                                to: 100.0
+                                value: root.colorChromeBlue
+                                defaultValue: 0.0
+                                stepSize: 1.0
+                                accentColor: Theme.accentCyan
+                                onSliderMoved: function(v) { root.colorChromeBlue = v; root.requestRender() }
                             }
 
                             // Photochemical Silver-Halide Film Grain
