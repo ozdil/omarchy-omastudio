@@ -980,7 +980,7 @@ Rectangle {
     // Process: File picker
     Process {
         id: openFileProc
-        command: ["zenity", "--file-selection", "--title=Open RAW Photo", "--file-filter=RAW Photos | *.RAF *.raf *.NEF *.nef *.CR2 *.cr2 *.CR3 *.cr3 *.ARW *.arw *.DNG *.dng"]
+        command: ["zenity", "--file-selection", "--title=Open RAW Photo", "--file-filter=RAW Photos | *.RAF *.raf *.NEF *.nef *.CR2 *.cr2 *.CR3 *.cr3 *.ARW *.arw *.DNG *.dng *.3FR *.3fr *.FFF *.fff *.IIQ *.iiq *.MOS *.mos *.MEF *.mef *.PEF *.pef"]
         onFinished: function(exitCode, output) {
             var p = String(output || "").trim();
             if (exitCode === 0 && p.length > 0) {

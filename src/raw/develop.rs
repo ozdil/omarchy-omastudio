@@ -127,6 +127,11 @@ impl CfaFrame {
     }
 }
 
+/// Applies LibRaw's `flip` to interleaved RGB (for images merged outside `develop`).
+pub fn rotate_rgb(src: Vec<u16>, w: usize, h: usize, flip: i32) -> (Vec<u16>, usize, usize) {
+    rotate(src, w, h, flip)
+}
+
 pub type Mat3 = [[f32; 3]; 3];
 
 impl CfaFrame {

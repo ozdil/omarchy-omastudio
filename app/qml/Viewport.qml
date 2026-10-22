@@ -1448,7 +1448,7 @@ Rectangle {
             if (!path || path.trim() === "") return;
 
             var lower = path.toLowerCase();
-            var rawExts = [".nef", ".nrw", ".raf", ".cr2", ".cr3", ".arw", ".dng", ".rwl", ".orf", ".rw2", ".jpg", ".jpeg", ".png", ".webp", ".tiff", ".tif"];
+            var rawExts = [".nef", ".nrw", ".raf", ".cr2", ".cr3", ".arw", ".dng", ".rwl", ".orf", ".rw2", ".3fr", ".fff", ".iiq", ".mos", ".mef", ".pef", ".jpg", ".jpeg", ".png", ".webp", ".tiff", ".tif"];
             var isFile = false;
             for (var i = 0; i < rawExts.length; i++) {
                 if (lower.endsWith(rawExts[i])) {

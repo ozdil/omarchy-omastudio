@@ -267,6 +267,8 @@ pub struct RawImage {
     output_space: Cell<OutputColorSpace>,
     /// Lens corrections recorded by the camera, read on first decode.
     lens: std::cell::OnceCell<Option<lens::RadialCorrection>>,
+    /// LibRaw `flip` of the last image developed by the own pipeline.
+    developed_flip: Cell<i32>,
 }
 
 // SAFETY: RawImage handle/backend is managed exclusively by Rust wrapper
@@ -297,6 +299,7 @@ impl RawImage {
                 path: path_ref.to_path_buf(),
                 output_space: Cell::new(OutputColorSpace::Srgb),
                 lens: std::cell::OnceCell::new(),
+                developed_flip: Cell::new(0),
             });
         }
 
@@ -315,6 +318,7 @@ impl RawImage {
                     path: path_ref.to_path_buf(),
                     output_space: Cell::new(OutputColorSpace::Srgb),
                     lens: std::cell::OnceCell::new(),
+                    developed_flip: Cell::new(0),
                 });
             }
             return Err(format!("LibRaw failed to open {}: code {}", path_ref.display(), errcode));
@@ -325,6 +329,7 @@ impl RawImage {
             path: path_ref.to_path_buf(),
             output_space: Cell::new(OutputColorSpace::Srgb),
             lens: std::cell::OnceCell::new(),
+            developed_flip: Cell::new(0),
         })
     }
 
@@ -350,6 +355,7 @@ impl RawImage {
                     path: PathBuf::from(proc_path),
                     output_space: Cell::new(OutputColorSpace::Srgb),
                     lens: std::cell::OnceCell::new(),
+                    developed_flip: Cell::new(0),
                 });
             }
             return Err(format!("LibRaw failed to open descriptor {}: code {}", fd, errcode));
@@ -360,6 +366,7 @@ impl RawImage {
             path: PathBuf::from(proc_path),
             output_space: Cell::new(OutputColorSpace::Srgb),
             lens: std::cell::OnceCell::new(),
+            developed_flip: Cell::new(0),
         })
     }
 
@@ -529,6 +536,11 @@ impl RawImage {
         {
             return None;
         }
+        // Medium format raws are TIFF-based too but carry no DNG opcodes; their lens
+        // corrections run in develop_own (medium_format::lens)
+        if crate::medium_format::is_medium_format(&self.path) {
+            return None;
+        }
         self.lens.get_or_init(|| crate::fuji::lens::read(&self.path).or_else(|| dng::read_corrections(&self.path))).as_ref()
     }
 
@@ -650,8 +662,6 @@ impl RawImage {
         }
     }
 
-    /// Develops a CFA RAW with OmaStudio's own pipeline into linear 16-bit RGB, or
-    /// returns None when the source is not a plain 3-colour CFA.
     /// Black-subtracted, white-balanced sensor data of a plain 3-colour CFA (Bayer or
     /// X-Trans), or None for other sensors and raster files.
     pub fn cfa_frame(&self) -> Option<develop::CfaFrame> {
@@ -662,6 +672,11 @@ impl RawImage {
         let mut info: COmaRawCfaInfo = unsafe { std::mem::zeroed() };
         // SAFETY: handle is a valid open LibRaw handle owned by self; info is a valid pointer
         let raw = unsafe { omaraw_unpack_cfa(*handle, &mut info) };
+        // Medium format raws keep dark border photosites inside LibRaw's visible area;
+        // the file's own crop (3FR DefaultCrop) says which part is image
+        if let Some(crop) = crate::medium_format::develop_crop(&self.path) {
+            apply_crop(&mut info, crop);
+        }
         // SAFETY: the shim returns the handle's raw plane (raw_pitch * raw_height values),
         // which stays valid while self (and so the handle) is alive
         unsafe { develop::CfaFrame::from_libraw(raw, &info) }
@@ -675,7 +690,12 @@ impl RawImage {
             return None;
         }
         let space = self.output_space.get();
-        let (data, width, height) = frame.develop(space, half_size);
+        let flip = frame.flip;
+        self.developed_flip.set(flip);
+        let (mut data, width, height) = frame.develop(space, half_size);
+        if let Ok(meta) = self.get_metadata() {
+            crate::medium_format::lens::correct_developed(&self.path, &meta.lens, meta.focal_length, meta.aperture, &mut data, width as usize, height as usize, flip);
+        }
         let data_size = data.len() * 2;
         Some(ProcessedBuffer {
             storage: BufferStorage::OwnedU16(data),
@@ -735,4 +755,37 @@ impl RawImage {
     pub fn path(&self) -> &Path {
         &self.path
     }
+
+    /// Rotation (LibRaw `flip`) the last own-pipeline develop applied.
+    pub fn developed_flip(&self) -> i32 {
+        self.developed_flip.get()
+    }
+}
+
+/// Narrows the developed area to `crop` (raw plane coordinates). The CFA pattern is
+/// re-based when the new origin is not on a pattern boundary. A crop that does not fit
+/// the raw plane is ignored.
+fn apply_crop(info: &mut COmaRawCfaInfo, crop: crate::medium_format::Rect) {
+    let (x, y, w, h) = (crop.x as i64, crop.y as i64, crop.width as i64, crop.height as i64);
+    if w < 16 || h < 16 || x + w > info.raw_pitch.min(info.raw_width) as i64 || y + h > info.raw_height as i64 {
+        return;
+    }
+    let dy = y - info.top_margin as i64;
+    let dx = x - info.left_margin as i64;
+    if info.filters == 9 {
+        let old = info.xtrans;
+        for (r, row) in info.xtrans.iter_mut().enumerate() {
+            for (c, v) in row.iter_mut().enumerate() {
+                *v = old[(r as i64 + dy).rem_euclid(6) as usize][(c as i64 + dx).rem_euclid(6) as usize];
+            }
+        }
+    } else if info.filters > 1000 {
+        info.filters = crate::medium_format::shift_bayer_filters(info.filters, dy.rem_euclid(8) as usize, dx.rem_euclid(2) as usize);
+    } else {
+        return;
+    }
+    info.top_margin = y as i32;
+    info.left_margin = x as i32;
+    info.width = w as i32;
+    info.height = h as i32;
 }
