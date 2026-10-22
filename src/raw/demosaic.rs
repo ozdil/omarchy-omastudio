@@ -166,6 +166,44 @@ impl Tables {
     }
 }
 
+/// Most photosites of one colour in an interpolation window ([`Phase::window`]).
+pub const GPU_WINDOW_MAX: usize = 24;
+/// u32 words per phase in [`gpu_tables`].
+pub const GPU_PHASE_STRIDE: usize = 15 + 2 * GPU_WINDOW_MAX * 3;
+
+/// The interpolation tables of `pattern`, flattened for the GPU demosaic: per phase,
+/// colour; (plus, minus, same) tap distances per direction (0 = none); the number of
+/// red and blue window entries; then (dy, dx, weight) of each, as raw bits.
+/// Returns the CFA period and the table.
+pub fn gpu_tables(pattern: CfaPattern) -> Option<(u32, Vec<u32>)> {
+    let t = Tables::new(pattern);
+    let mut out = vec![0u32; t.phases.len() * GPU_PHASE_STRIDE];
+    for (p, phase) in t.phases.iter().enumerate() {
+        let row = &mut out[p * GPU_PHASE_STRIDE..(p + 1) * GPU_PHASE_STRIDE];
+        row[0] = phase.color as u32;
+        for (d, tap) in phase.taps.iter().enumerate() {
+            if let Some(tap) = tap {
+                row[1 + d * 3] = tap.plus as u32;
+                row[2 + d * 3] = tap.minus as u32;
+                row[3 + d * 3] = tap.same.unwrap_or(0) as u32;
+            }
+        }
+        for (k, win) in phase.window.iter().enumerate() {
+            if win.len() > GPU_WINDOW_MAX {
+                return None;
+            }
+            row[13 + k] = win.len() as u32;
+            for (e, &(dy, dx, w)) in win.iter().enumerate() {
+                let o = 15 + k * GPU_WINDOW_MAX * 3 + e * 3;
+                row[o] = dy as i32 as u32;
+                row[o + 1] = dx as i32 as u32;
+                row[o + 2] = w.to_bits();
+            }
+        }
+    }
+    Some((t.period as u32, out))
+}
+
 /// Full-resolution demosaic; returns interleaved linear RGB.
 ///
 /// Every candidate direction is developed into a full RGB image, and per pixel the

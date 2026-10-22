@@ -19,7 +19,7 @@ OmaStudio is a non-destructive RAW editor built for Omarchy Linux. It develops R
 
 | Area | What OmaStudio provides |
 | :--- | :--- |
-| **RAW development** | The engine's own demosaicing for X-Trans and Bayer sensors on linear light, with camera colour matrices and black levels taken from the file. LibRaw only unpacks the sensor data. |
+| **RAW development** | The engine's own demosaicing for X-Trans and Bayer sensors on linear light, with camera colour matrices and black levels taken from the file. Demosaicing runs on the GPU through Vulkan (NVIDIA, AMD, Intel, Qualcomm Adreno) with an identical CPU fallback. LibRaw only unpacks the sensor data. |
 | **Medium format** | Fujifilm GFX and Hasselblad RAW files with a 16-bit pipeline from sensor to export. |
 | **Fujifilm** | Photos open with the recipe they were shot with: film simulation, tone, colour, grain, Color Chrome, white balance shift and dynamic range. X RAW Studio profiles (.FP1/.FP2/.FP3) and recipes shared as text can be imported and exported. |
 | **Colour management** | Little CMS 2 with built-in sRGB, Display P3, Adobe RGB, ProPhoto RGB and Rec. 2020 profiles, plus custom ICC profiles with a choice of rendering intent. ICC profiles are embedded in every export. |
@@ -145,6 +145,7 @@ omastudio-engine fuji-recipe list                  # saved recipes
 omastudio-engine fuji-recipe save <file> --label "Name"
 omastudio-engine fuji-recipe export <file> out.FP1 --device X-T30
 omastudio-engine fuji-pixel-shift DSCF*.RAF --out merged.dng   # GFX Pixel Shift to DNG
+omastudio-engine gpu                               # GPU in use (OMASTUDIO_GPU=off for CPU only)
 omastudio-engine icc list
 omastudio-engine help
 ```
@@ -185,8 +186,7 @@ Details are in [SECURITY.md](SECURITY.md) and [CONTRIBUTING.md](CONTRIBUTING.md)
 ## Roadmap
 
 Planned next:
-* Fujifilm in-camera conversion and custom setting slots (C1–C7) over USB
-* A GPU pipeline (wgpu/Vulkan) on NVIDIA, Intel, AMD and Snapdragon
+* The full editing pipeline on the GPU (demosaicing already runs there)
 * A standalone Qt 6.12 application with pixel-exact HiDPI
 * Local AI features accelerated by NPUs
 

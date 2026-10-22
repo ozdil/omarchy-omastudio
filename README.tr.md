@@ -21,7 +21,7 @@ OmaStudio, Omarchy Linux için geliştirilmiş, orijinal dosyaya dokunmayan bir 
 
 | Alan | OmaStudio'nun sunduğu |
 | :--- | :--- |
-| **RAW geliştirme** | X-Trans ve Bayer sensörler için motorun kendi demozaik işlemi, lineer ışık üzerinde. Kamera renk matrisi ve siyah seviyeleri dosyadan okunur. LibRaw yalnızca sensör verisini açar. |
+| **RAW geliştirme** | X-Trans ve Bayer sensörler için motorun kendi demozaik işlemi, lineer ışık üzerinde. Kamera renk matrisi ve siyah seviyeleri dosyadan okunur. Demozaik Vulkan üzerinden GPU'da çalışır (NVIDIA, AMD, Intel, Qualcomm Adreno); GPU yoksa aynı sonucu veren CPU yolu kullanılır. LibRaw yalnızca sensör verisini açar. |
 | **Orta format** | Fujifilm GFX ve Hasselblad RAW dosyaları. Sensörden dışa aktarıma kadar 16-bit işlenir. |
 | **Fujifilm** | Fotoğraflar çekildikleri tarifle açılır: film simülasyonu, ton, renk, gren, Color Chrome, beyaz dengesi kaydırması ve dinamik aralık. X RAW Studio profilleri (.FP1/.FP2/.FP3) ve metin olarak paylaşılan tarifler içe ve dışa aktarılabilir. |
 | **Renk yönetimi** | Little CMS 2 kullanılır. sRGB, Display P3, Adobe RGB, ProPhoto RGB ve Rec. 2020 profilleri yerleşik gelir. Özel ICC profilleri de seçilebilir bir işleme amacıyla (rendering intent) desteklenir. Her dışa aktarıma ICC profili gömülür. |
@@ -134,6 +134,7 @@ omastudio-engine fuji-recipe list                  # kaydedilmiş tarifler
 omastudio-engine fuji-recipe save <dosya> --label "Ad"
 omastudio-engine fuji-recipe export <dosya> cikti.FP1 --device X-T30
 omastudio-engine fuji-pixel-shift DSCF*.RAF --out birlesik.dng # GFX Pixel Shift → DNG
+omastudio-engine gpu                               # kullanılan GPU (yalnızca CPU için OMASTUDIO_GPU=off)
 omastudio-engine icc list
 omastudio-engine help
 ```
@@ -174,8 +175,7 @@ Ayrıntılar [SECURITY.md](SECURITY.md) ve [CONTRIBUTING.md](CONTRIBUTING.md) do
 ## Yol haritası
 
 Sıradaki planlar:
-* USB üzerinden Fujifilm kamera içi dönüştürme ve özel ayar yuvaları (C1–C7)
-* NVIDIA, Intel, AMD ve Snapdragon üzerinde GPU boru hattı (wgpu/Vulkan)
+* Tüm düzenleme hattının GPU'ya taşınması (demozaik zaten GPU'da)
 * Piksel hassasiyetinde HiDPI desteğiyle bağımsız Qt 6.12 uygulaması
 * NPU ile hızlandırılan yerel yapay zekâ özellikleri
 

@@ -4,6 +4,7 @@ pub mod ai;
 pub mod dag;
 pub mod export;
 pub mod fuji;
+pub mod gpu;
 pub mod icc;
 pub mod pipeline;
 pub mod ptp;
@@ -558,11 +559,10 @@ fn main() {
                 supported_raw_formats: Vec<String>,
                 icc_profiles_count: usize,
                 local_only_mode: bool,
-                gpu_capabilities: Option<pipeline::gpu::GpuComputeCapabilities>,
+                gpu: gpu::GpuStatus,
                 features: Vec<String>,
             }
             let icc_count = icc::list_icc_profiles().len();
-            let (_, gpu_caps) = pipeline::gpu::GpuEngineContext::detect_vulkan_capabilities();
             let active_theme = env::var("HOME")
                 .ok()
                 .and_then(|h| security::read_secure_file(&PathBuf::from(h).join(".local/state/omarchy/current/theme.name"), 1024).ok())
@@ -582,7 +582,7 @@ fn main() {
                 ],
                 icc_profiles_count: icc_count,
                 local_only_mode: true,
-                gpu_capabilities: gpu_caps,
+                gpu: gpu::status(),
                 features: vec![
                     "davinci_3way_color_wheels".into(),
                     "ai_social_media_optimizer".into(),
@@ -616,6 +616,9 @@ fn main() {
             };
             print_json(&ResponseWrapper::ok(status));
         }
+        "gpu" => {
+            print_json(&ResponseWrapper::ok(gpu::status()));
+        }
         "version" | "--version" | "-v" => {
             println!("omastudio-engine v{}", env!("CARGO_PKG_VERSION"));
         }
@@ -639,6 +642,7 @@ fn main() {
             println!("  fuji-camera write-preset <C1-C7> <recipe> [--label L]  Store a recipe in a custom setting slot");
             println!("  fuji-calibrate <raf>... [--any]       Measure film simulation LUTs from your RAFs' camera JPEGs");
             println!("  fuji-pixel-shift <raf>... [--out F]   Merge a GFX Pixel Shift sequence into a linear DNG");
+            println!("  gpu                                   GPU used for demosaicing (OMASTUDIO_GPU=off uses the CPU)");
             println!("  icc list                              List all detected system and bundled ICC color profiles");
             println!("  scan [dir]                            Scan local folder for supported RAW photos");
             println!("  catalog                               Retrieve persistent photo catalog database");

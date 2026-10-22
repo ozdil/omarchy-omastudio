@@ -4,6 +4,7 @@ pub mod ai;
 pub mod dag;
 pub mod export;
 pub mod fuji;
+pub mod gpu;
 pub mod icc;
 pub mod pipeline;
 pub mod ptp;

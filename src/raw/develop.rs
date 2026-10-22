@@ -117,7 +117,8 @@ impl CfaFrame {
             out.par_chunks_mut(3).zip(rgb.par_chunks(3)).for_each(|(o, p)| o.copy_from_slice(&to_u16([p[0], p[1], p[2]])));
             (out, w, h)
         } else {
-            (demosaic::demosaic_map(&mosaic, to_u16), self.width, self.height)
+            let out = crate::gpu::demosaic::demosaic(&mosaic, m).unwrap_or_else(|| demosaic::demosaic_map(&mosaic, to_u16));
+            (out, self.width, self.height)
         };
         let flip = self.flip;
         drop(self);

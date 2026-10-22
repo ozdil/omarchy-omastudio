@@ -3,7 +3,6 @@ pub mod color_grading;
 pub mod detail;
 pub mod film_grain;
 pub mod film_sim;
-pub mod gpu;
 pub mod histogram;
 pub mod layers;
 pub mod lut;

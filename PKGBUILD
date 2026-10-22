@@ -7,7 +7,7 @@ arch=('x86_64')
 url="https://github.com/ozdil/omarchy-omastudio"
 license=('MIT')
 depends=('libraw>=0.22' 'lcms2' 'quickshell' 'qt6-declarative>=6.12' 'libjxl' 'libavif' 'zenity')
-optdepends=('perl-image-exiftool: preserve EXIF metadata on export' 'ffmpeg: AVIF export fallback')
+optdepends=('vulkan-icd-loader: GPU demosaicing (with your GPU'"'"'s Vulkan driver)' 'perl-image-exiftool: preserve EXIF metadata on export' 'ffmpeg: AVIF export fallback')
 makedepends=('rust' 'cargo' 'pkgconf' 'clang')
 source=()
 sha256sums=()
