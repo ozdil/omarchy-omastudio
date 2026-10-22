@@ -26,11 +26,21 @@ Rectangle {
         { "id": "fuji_classic_chrome", "name": "Classic Chrome", "brand": "Fujifilm", "desc": "Documentary tones, muted colors & deep shadows", "color": "#e0af68" },
         { "id": "fuji_classic_neg", "name": "Classic Neg", "brand": "Fujifilm", "desc": "Superia color negative film nostalgia", "color": "#9ece6a" },
         { "id": "fuji_eterna", "name": "Eterna Cinema", "brand": "Fujifilm", "desc": "Cinematic flat gamma with soft highlight roll-off", "color": "#7dcfff" },
+        { "id": "fuji_reala_ace", "name": "Reala Ace", "brand": "Fujifilm", "desc": "Faithful colour with slightly firmer contrast", "color": "#7aa2f7" },
+        { "id": "fuji_nostalgic_neg", "name": "Nostalgic Neg.", "brand": "Fujifilm", "desc": "Amber highlights and rich shadows", "color": "#ff9e64" },
+        { "id": "fuji_pro_neg_hi", "name": "PRO Neg. Hi", "brand": "Fujifilm", "desc": "Studio portraits with a little more contrast", "color": "#e0af68" },
+        { "id": "fuji_pro_neg_std", "name": "PRO Neg. Std", "brand": "Fujifilm", "desc": "Soft studio portraits with even skin tones", "color": "#c0caf5" },
+        { "id": "fuji_eterna_bleach_bypass", "name": "Eterna Bleach Bypass", "brand": "Fujifilm", "desc": "Hard contrast with very low saturation", "color": "#545c7e" },
         // Fujifilm Monochrome
         { "id": "fuji_acros_standard", "name": "Acros 100", "brand": "Acros B&W", "desc": "Legendary ultra-fine grain monochrome", "color": "#c0caf5" },
         { "id": "fuji_acros_yellow", "name": "Acros (+Ye)", "brand": "Acros B&W", "desc": "Slight contrast lift for skies and portraits", "color": "#e0af68" },
         { "id": "fuji_acros_red", "name": "Acros (+R)", "brand": "Acros B&W", "desc": "Deep dramatic skies and high micro-contrast", "color": "#f7768e" },
         { "id": "fuji_acros_green", "name": "Acros (+G)", "brand": "Acros B&W", "desc": "Enhanced foliage separation and soft skin tones", "color": "#9ece6a" },
+        { "id": "fuji_monochrome", "name": "Monochrome", "brand": "Acros B&W", "desc": "Standard black and white", "color": "#c0caf5" },
+        { "id": "fuji_monochrome_yellow", "name": "Monochrome (+Ye)", "brand": "Acros B&W", "desc": "Yellow filter: darker skies", "color": "#e0af68" },
+        { "id": "fuji_monochrome_red", "name": "Monochrome (+R)", "brand": "Acros B&W", "desc": "Red filter: dramatic skies", "color": "#f7768e" },
+        { "id": "fuji_monochrome_green", "name": "Monochrome (+G)", "brand": "Acros B&W", "desc": "Green filter: lighter foliage", "color": "#9ece6a" },
+        { "id": "fuji_sepia", "name": "Sepia", "brand": "Acros B&W", "desc": "Warm brown toned monochrome", "color": "#ff9e64" },
         // Hasselblad
         { "id": "hasselblad_hncs", "name": "HNCS Neutral", "brand": "Hasselblad", "desc": "Natural Colour Solution 16-bit medium format", "color": "#bb9af7" },
         { "id": "hasselblad_xpan", "name": "XPan Panoramic", "brand": "Hasselblad", "desc": "35mm panoramic cinematic contrast", "color": "#545c7e" }

@@ -460,6 +460,17 @@ fn main() {
         "fuji-camera" => {
             run_fuji_camera(&args[2..]);
         }
+        "fuji-calibrate" => {
+            let paths: Vec<PathBuf> = args[2..].iter().filter(|a| !a.starts_with("--")).map(PathBuf::from).collect();
+            if paths.is_empty() {
+                print_json::<()>(&ResponseWrapper::err("Usage: fuji-calibrate <raf>... [--any] [--dry-run]"));
+                return;
+            }
+            let any = args.iter().any(|a| a == "--any");
+            let write = !args.iter().any(|a| a == "--dry-run");
+            let (reports, skipped) = fuji::calibrate::calibrate(&paths, any, write);
+            print_json(&ResponseWrapper::ok(serde_json::json!({ "calibrated": reports, "skipped": skipped })));
+        }
         "icc" => {
             if args.len() < 3 || args[2] == "list" {
                 let profiles = icc::list_icc_profiles();
@@ -596,6 +607,7 @@ fn main() {
             println!("  fuji-camera list|info|presets         Fujifilm cameras on USB (PTP mode) and their C1-C7 settings");
             println!("  fuji-camera convert <raf> [--recipe F] [--out J]  Convert a RAF in the camera (X RAW Studio protocol)");
             println!("  fuji-camera write-preset <C1-C7> <recipe> [--label L]  Store a recipe in a custom setting slot");
+            println!("  fuji-calibrate <raf>... [--any]       Measure film simulation LUTs from your RAFs' camera JPEGs");
             println!("  icc list                              List all detected system and bundled ICC color profiles");
             println!("  scan [dir]                            Scan local folder for supported RAW photos");
             println!("  catalog                               Retrieve persistent photo catalog database");

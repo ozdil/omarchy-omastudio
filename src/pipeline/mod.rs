@@ -62,6 +62,7 @@ pub fn process_buffer(
     // Resolve active 3D LUT if requested
     let maybe_lut = resolve_recipe_lut(recipe);
     let film_sim = film_sim::FilmSimulation::from_id(&recipe.film_simulation);
+    let film_lut = film_sim::calibrated_lut(film_sim);
     let color_chrome = recipe.color_chrome > 0.0 || recipe.color_chrome_blue > 0.0;
     let working_space = aces::WorkingColorSpace::from_str_name(&recipe.color_space);
 
@@ -107,7 +108,7 @@ pub fn process_buffer(
 
                 // 7. Authentic Film Simulations (Fujifilm X-Trans / GFX & Hasselblad HNCS / XPan)
                 let (r5, g5, b5) = if film_sim != film_sim::FilmSimulation::None {
-                    film_sim.apply_pixel(r4, g4, b4, recipe.film_sim_intensity)
+                    film_sim::apply(film_sim, film_lut.as_deref(), r4, g4, b4, recipe.film_sim_intensity)
                 } else {
                     (r4, g4, b4)
                 };
@@ -279,6 +280,7 @@ pub fn process_buffer_16_to_8_ex(
     // Resolve active 3D LUT if requested
     let maybe_lut = resolve_recipe_lut(recipe);
     let film_sim = film_sim::FilmSimulation::from_id(&recipe.film_simulation);
+    let film_lut = film_sim::calibrated_lut(film_sim);
     let color_chrome = recipe.color_chrome > 0.0 || recipe.color_chrome_blue > 0.0;
     let working_space = aces::WorkingColorSpace::from_str_name(&recipe.color_space);
 
@@ -326,7 +328,7 @@ pub fn process_buffer_16_to_8_ex(
 
                 // 7. Authentic Film Simulations (Fujifilm X-Trans / GFX & Hasselblad HNCS / XPan)
                 let (r5, g5, b5) = if film_sim != film_sim::FilmSimulation::None {
-                    film_sim.apply_pixel(r4, g4, b4, recipe.film_sim_intensity)
+                    film_sim::apply(film_sim, film_lut.as_deref(), r4, g4, b4, recipe.film_sim_intensity)
                 } else {
                     (r4, g4, b4)
                 };
@@ -516,6 +518,7 @@ pub fn process_buffer_16_to_16_ex(
     // Resolve active 3D LUT if requested
     let maybe_lut = resolve_recipe_lut(recipe);
     let film_sim = film_sim::FilmSimulation::from_id(&recipe.film_simulation);
+    let film_lut = film_sim::calibrated_lut(film_sim);
     let color_chrome = recipe.color_chrome > 0.0 || recipe.color_chrome_blue > 0.0;
     let working_space = aces::WorkingColorSpace::from_str_name(&recipe.color_space);
 
@@ -563,7 +566,7 @@ pub fn process_buffer_16_to_16_ex(
 
                 // 7. Authentic Film Simulations (Fujifilm X-Trans / GFX & Hasselblad HNCS / XPan)
                 let (r5, g5, b5) = if film_sim != film_sim::FilmSimulation::None {
-                    film_sim.apply_pixel(r4, g4, b4, recipe.film_sim_intensity)
+                    film_sim::apply(film_sim, film_lut.as_deref(), r4, g4, b4, recipe.film_sim_intensity)
                 } else {
                     (r4, g4, b4)
                 };

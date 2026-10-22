@@ -109,9 +109,14 @@ unsigned char* omaraw_process_image(void *handle, int half_size, int quality, in
     if (!handle) return NULL;
     libraw_data_t *lr = (libraw_data_t*)handle;
 
-    int ret = libraw_unpack(lr);
-    if (ret != LIBRAW_SUCCESS) {
-        return NULL;
+    // omaraw_unpack_cfa may already have unpacked this handle; unpacking again
+    // fails for some decoders (Fujifilm compressed RAF), so only unpack once
+    int ret;
+    if (!(lr->progress_flags & LIBRAW_PROGRESS_LOAD_RAW)) {
+        ret = libraw_unpack(lr);
+        if (ret != LIBRAW_SUCCESS) {
+            return NULL;
+        }
     }
 
     // Configure Lightroom-grade raw extraction parameters
@@ -155,7 +160,8 @@ const unsigned short* omaraw_unpack_cfa(void *handle, OmaRawCfaInfo *info) {
     if (!handle || !info) return NULL;
     libraw_data_t *lr = (libraw_data_t*)handle;
 
-    if (libraw_unpack(lr) != LIBRAW_SUCCESS) return NULL;
+    if (!(lr->progress_flags & LIBRAW_PROGRESS_LOAD_RAW) && libraw_unpack(lr) != LIBRAW_SUCCESS)
+        return NULL;
     if (!lr->rawdata.raw_image) return NULL;
     if (lr->idata.filters == 0 || lr->idata.colors != 3) return NULL;
     if (lr->rawdata.ioparams.fuji_width != 0) return NULL;

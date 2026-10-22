@@ -67,6 +67,26 @@ pub fn read_file(path: &Path) -> Result<Tags, String> {
     parse_jpeg(&jpeg)
 }
 
+/// The full-size JPEG the camera stored inside a RAF.
+pub fn embedded_jpeg(path: &Path) -> Result<Vec<u8>, String> {
+    const MAX: u64 = 64 * 1024 * 1024;
+    let mut file = File::open(path).map_err(|e| format!("Cannot open {}: {}", path.display(), e))?;
+    let mut head = [0u8; 92];
+    file.read_exact(&mut head).map_err(|e| format!("File too short: {}", e))?;
+    if !head.starts_with(b"FUJIFILMCCD-RAW") {
+        return Err("Not a Fujifilm RAF file".to_string());
+    }
+    let offset = u32::from_be_bytes([head[84], head[85], head[86], head[87]]) as u64;
+    let length = u32::from_be_bytes([head[88], head[89], head[90], head[91]]) as u64;
+    if length == 0 || length > MAX {
+        return Err("RAF has no usable embedded JPEG".to_string());
+    }
+    let mut buf = vec![0u8; length as usize];
+    file.seek(SeekFrom::Start(offset)).map_err(|e| e.to_string())?;
+    file.read_exact(&mut buf).map_err(|e| format!("Embedded JPEG truncated: {}", e))?;
+    Ok(buf)
+}
+
 /// Finds the EXIF block of a JPEG and returns its Fujifilm MakerNote tags.
 pub fn parse_jpeg(jpeg: &[u8]) -> Result<Tags, String> {
     if !jpeg.starts_with(&[0xFF, 0xD8]) {

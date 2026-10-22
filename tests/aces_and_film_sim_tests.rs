@@ -99,6 +99,13 @@ fn test_film_simulations_all_variants_produce_valid_linear_output() {
         FilmSimulation::FujiAcrosYellow,
         FilmSimulation::FujiAcrosRed,
         FilmSimulation::FujiAcrosGreen,
+        FilmSimulation::FujiProNegStd,
+        FilmSimulation::FujiRealaAce,
+        FilmSimulation::FujiEternaBleachBypass,
+        FilmSimulation::FujiMonochrome,
+        FilmSimulation::FujiMonochromeYellow,
+        FilmSimulation::FujiMonochromeRed,
+        FilmSimulation::FujiMonochromeGreen,
         FilmSimulation::HasselbladHncs,
         FilmSimulation::HasselbladXPan,
     ];

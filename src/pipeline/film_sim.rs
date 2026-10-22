@@ -9,6 +9,12 @@
 //! - Hasselblad XPan 65:24 Panoramic Character.
 
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
+use std::path::PathBuf;
+use std::sync::{Arc, Mutex};
+use std::time::SystemTime;
+
+use super::lut::{self, Lut3D};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default, Serialize, Deserialize)]
 pub enum FilmSimulation {
@@ -22,11 +28,19 @@ pub enum FilmSimulation {
     FujiClassicNeg,
     FujiNostalgicNeg,
     FujiProNegHi,
+    FujiProNegStd,
+    FujiRealaAce,
     FujiEterna,
+    FujiEternaBleachBypass,
     FujiAcrosStandard,
     FujiAcrosYellow,
     FujiAcrosRed,
     FujiAcrosGreen,
+    FujiMonochrome,
+    FujiMonochromeYellow,
+    FujiMonochromeRed,
+    FujiMonochromeGreen,
+    FujiSepia,
     // Hasselblad
     HasselbladHncs,
     HasselbladXPan,
@@ -42,7 +56,15 @@ impl FilmSimulation {
             "fuji_classic_neg" | "classic_neg" => Self::FujiClassicNeg,
             "fuji_nostalgic_neg" | "nostalgic_neg" => Self::FujiNostalgicNeg,
             "fuji_pro_neg_hi" | "pro_neg_hi" | "proneghi" => Self::FujiProNegHi,
+            "fuji_pro_neg_std" | "pro_neg_std" | "pronegstd" => Self::FujiProNegStd,
+            "fuji_reala_ace" | "reala_ace" => Self::FujiRealaAce,
             "fuji_eterna" | "eterna" => Self::FujiEterna,
+            "fuji_eterna_bleach_bypass" | "bleach_bypass" => Self::FujiEternaBleachBypass,
+            "fuji_monochrome" | "monochrome" => Self::FujiMonochrome,
+            "fuji_monochrome_yellow" | "monochrome_yellow" => Self::FujiMonochromeYellow,
+            "fuji_monochrome_red" | "monochrome_red" => Self::FujiMonochromeRed,
+            "fuji_monochrome_green" | "monochrome_green" => Self::FujiMonochromeGreen,
+            "fuji_sepia" | "sepia" => Self::FujiSepia,
             "fuji_acros" | "acros" | "acros_standard" => Self::FujiAcrosStandard,
             "fuji_acros_yellow" | "acros_yellow" | "acros_ye" => Self::FujiAcrosYellow,
             "fuji_acros_red" | "acros_red" | "acros_r" => Self::FujiAcrosRed,
@@ -63,7 +85,15 @@ impl FilmSimulation {
             Self::FujiClassicNeg => "fuji_classic_neg",
             Self::FujiNostalgicNeg => "fuji_nostalgic_neg",
             Self::FujiProNegHi => "fuji_pro_neg_hi",
+            Self::FujiProNegStd => "fuji_pro_neg_std",
+            Self::FujiRealaAce => "fuji_reala_ace",
             Self::FujiEterna => "fuji_eterna",
+            Self::FujiEternaBleachBypass => "fuji_eterna_bleach_bypass",
+            Self::FujiMonochrome => "fuji_monochrome",
+            Self::FujiMonochromeYellow => "fuji_monochrome_yellow",
+            Self::FujiMonochromeRed => "fuji_monochrome_red",
+            Self::FujiMonochromeGreen => "fuji_monochrome_green",
+            Self::FujiSepia => "fuji_sepia",
             Self::FujiAcrosStandard => "fuji_acros_standard",
             Self::FujiAcrosYellow => "fuji_acros_yellow",
             Self::FujiAcrosRed => "fuji_acros_red",
@@ -83,7 +113,15 @@ impl FilmSimulation {
             Self::FujiClassicNeg => "Fujifilm Classic Neg",
             Self::FujiNostalgicNeg => "Fujifilm Nostalgic Neg (GFX)",
             Self::FujiProNegHi => "Fujifilm PRO Neg. Hi (Studio)",
+            Self::FujiProNegStd => "Fujifilm PRO Neg. Std",
+            Self::FujiRealaAce => "Fujifilm Reala Ace",
             Self::FujiEterna => "Fujifilm Eterna Cinema",
+            Self::FujiEternaBleachBypass => "Fujifilm Eterna Bleach Bypass",
+            Self::FujiMonochrome => "Fujifilm Monochrome",
+            Self::FujiMonochromeYellow => "Fujifilm Monochrome (+Ye)",
+            Self::FujiMonochromeRed => "Fujifilm Monochrome (+R)",
+            Self::FujiMonochromeGreen => "Fujifilm Monochrome (+G)",
+            Self::FujiSepia => "Fujifilm Sepia",
             Self::FujiAcrosStandard => "Fujifilm Acros 100",
             Self::FujiAcrosYellow => "Fujifilm Acros 100 (+Ye)",
             Self::FujiAcrosRed => "Fujifilm Acros 100 (+R)",
@@ -100,6 +138,11 @@ impl FilmSimulation {
                 | Self::FujiAcrosYellow
                 | Self::FujiAcrosRed
                 | Self::FujiAcrosGreen
+                | Self::FujiMonochrome
+                | Self::FujiMonochromeYellow
+                | Self::FujiMonochromeRed
+                | Self::FujiMonochromeGreen
+                | Self::FujiSepia
         )
     }
 
@@ -276,6 +319,71 @@ impl FilmSimulation {
                 (r_e.clamp(0.0, 1.0), g_e.clamp(0.0, 1.0), b_e.clamp(0.0, 1.0))
             }
 
+            Self::FujiProNegStd => {
+                // PRO Neg. Std: the softest colour simulation, low contrast and restrained
+                // saturation for even studio skin tones
+                let diff = luma - 0.50;
+                let soft = (0.50 + (diff * 0.92).tanh() * 0.50).clamp(0.0, 1.0);
+                let ratio = if luma > 1e-4 { soft / luma } else { 1.0 };
+                let k = 0.90;
+                (
+                    (soft + (r * ratio - soft) * k).clamp(0.0, 1.0),
+                    (soft + (g * ratio - soft) * k).clamp(0.0, 1.0),
+                    (soft + (b * ratio - soft) * k * 0.97).clamp(0.0, 1.0),
+                )
+            }
+
+            Self::FujiRealaAce => {
+                // Reala Ace: faithful hues with a little more contrast than Provia
+                let diff = luma - 0.46;
+                let tone = (0.46 + (diff * 1.12).tanh() * 0.50).clamp(0.0, 1.0);
+                let ratio = if luma > 1e-4 { tone / luma } else { 1.0 };
+                (
+                    (tone + (r * ratio - tone) * 1.04).clamp(0.0, 1.0),
+                    (tone + (g * ratio - tone) * 1.03).clamp(0.0, 1.0),
+                    (tone + (b * ratio - tone) * 1.03).clamp(0.0, 1.0),
+                )
+            }
+
+            Self::FujiEternaBleachBypass => {
+                // Bleach Bypass: silver retained in the print, so hard contrast and little colour
+                let diff = luma - 0.45;
+                let hard = (0.45 + (diff * 1.55).tanh() * 0.52).clamp(0.0, 1.0);
+                let ratio = if luma > 1e-4 { hard / luma } else { 1.0 };
+                let k = 0.38;
+                (
+                    (hard + (r * ratio - hard) * k).clamp(0.0, 1.0),
+                    (hard + (g * ratio - hard) * k).clamp(0.0, 1.0),
+                    (hard + (b * ratio - hard) * k).clamp(0.0, 1.0),
+                )
+            }
+
+            Self::FujiMonochrome => {
+                let v = eval_mono_curve(0.30 * r + 0.59 * g + 0.11 * b);
+                (v, v, v)
+            }
+
+            Self::FujiMonochromeYellow => {
+                let v = eval_mono_curve(0.42 * r + 0.52 * g + 0.06 * b);
+                (v, v, v)
+            }
+
+            Self::FujiMonochromeRed => {
+                let v = eval_mono_curve(0.66 * r + 0.29 * g + 0.05 * b);
+                (v, v, v)
+            }
+
+            Self::FujiMonochromeGreen => {
+                let v = eval_mono_curve(0.22 * r + 0.68 * g + 0.10 * b);
+                (v, v, v)
+            }
+
+            Self::FujiSepia => {
+                // Monochrome toned warm brown; all channels from one luminance
+                let v = eval_mono_curve(0.30 * r + 0.59 * g + 0.11 * b);
+                ((v * 1.07).min(1.0), v * 0.94, v * 0.76)
+            }
+
             Self::FujiAcrosStandard => {
                 // Acros Standard Panchromatic: 0.32 R + 0.55 G + 0.13 B
                 let y = 0.32 * r + 0.55 * g + 0.13 * b;
@@ -359,6 +467,53 @@ impl FilmSimulation {
             }
         }
     }
+}
+
+/// Folder of film simulation LUTs calibrated from the user's own photos
+/// (`omastudio-engine fuji-calibrate`), named `<simulation id>.cube`.
+pub fn calibrated_lut_dir() -> PathBuf {
+    let home = std::env::var("HOME").unwrap_or_else(|_| ".".to_string());
+    PathBuf::from(home).join(".local/share/omastudio/film-luts")
+}
+
+type LutCache = HashMap<&'static str, (Option<SystemTime>, Option<Arc<Lut3D>>)>;
+static CALIBRATED: Mutex<Option<LutCache>> = Mutex::new(None);
+
+/// The calibrated LUT for a simulation, if the user made one. Reloaded when the file
+/// changes; `OMASTUDIO_FILM_LUTS=off` uses the built-in approximations only.
+pub fn calibrated_lut(sim: FilmSimulation) -> Option<Arc<Lut3D>> {
+    if sim == FilmSimulation::None || std::env::var("OMASTUDIO_FILM_LUTS").is_ok_and(|v| v == "off") {
+        return None;
+    }
+    let id = sim.as_id();
+    let path = calibrated_lut_dir().join(format!("{}.cube", id));
+    let mtime = std::fs::symlink_metadata(&path).ok().and_then(|m| m.modified().ok());
+    let mut guard = CALIBRATED.lock().ok()?;
+    let cache = guard.get_or_insert_with(HashMap::new);
+    if let Some((cached_mtime, lut)) = cache.get(id)
+        && *cached_mtime == mtime
+    {
+        return lut.clone();
+    }
+    let lut = mtime.and_then(|_| lut::read_cube_file(&path).ok()).map(Arc::new);
+    cache.insert(id, (mtime, lut.clone()));
+    lut
+}
+
+/// Applies a simulation, through its calibrated LUT when one exists.
+#[inline(always)]
+pub fn apply(sim: FilmSimulation, calibrated: Option<&Lut3D>, r: f32, g: f32, b: f32, intensity: f32) -> (f32, f32, f32) {
+    match calibrated {
+        Some(l) => lut::apply_lut_pixel(r, g, b, l, intensity),
+        None => sim.apply_pixel(r, g, b, intensity),
+    }
+}
+
+/// Monochrome: a gentler S-curve than Acros
+#[inline(always)]
+fn eval_mono_curve(y: f32) -> f32 {
+    let diff = y.clamp(0.0, 1.0) - 0.46;
+    (0.46 + (diff * 1.10).tanh() * 0.52).clamp(0.0, 1.0)
 }
 
 /// Acros high micro-contrast S-curve
