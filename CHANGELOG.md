@@ -24,6 +24,7 @@
 
 ### Cameras over USB
 - New PTP/USB layer (`ptp` module, pure Rust via nusb, no libusb or gphoto2): sessions, device info, storage and object transfer, capture, device properties and events. It is the base for tethering and in-camera RAW conversion.
+- Fujifilm in-camera RAW conversion, the protocol X RAW Studio uses: `fuji-camera convert <raf> [--recipe <fp1|txt|raf>]` uploads the RAF, applies the recipe to the camera's conversion profile and saves the camera's own JPEG. `fuji-camera presets` reads custom settings C1-C7 and `fuji-camera write-preset <slot> <recipe>` stores a recipe in one. `fuji-camera list` and `info` show connected cameras.
 - The package installs a udev rule (`70-omastudio-cameras.rules`) that gives the logged-in user access to Fujifilm cameras in PTP mode.
 
 ### Colour & Export

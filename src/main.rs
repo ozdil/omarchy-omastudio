@@ -262,6 +262,7 @@ fn main() {
         eprintln!("  catalog query [--rating <0-5>] [--flag <pick|reject>] [--search <str>]");
         eprintln!("  catalog cull <path> [--rating <0-5>] [--flag <pick|reject>]");
         eprintln!("  fuji-recipe <raf|jpg|fp1|txt> | list | save <file> | export <file> <out.fp1>");
+        eprintln!("  fuji-camera list | info | presets | convert <raf> | write-preset <slot> <recipe>");
         eprintln!("  scan [folder]");
         eprintln!("  daemon");
         return;
@@ -456,6 +457,9 @@ fn main() {
         "fuji-recipe" => {
             run_fuji_recipe(&args[2..]);
         }
+        "fuji-camera" => {
+            run_fuji_camera(&args[2..]);
+        }
         "icc" => {
             if args.len() < 3 || args[2] == "list" {
                 let profiles = icc::list_icc_profiles();
@@ -589,6 +593,9 @@ fn main() {
             println!("  fuji-recipe list                      List the recipes saved in ~/.local/share/omastudio/fuji-recipes");
             println!("  fuji-recipe save <file> [--label L]   Save a recipe into the library as .FP1");
             println!("  fuji-recipe export <file> <out.fp1>   Write a recipe as an X RAW Studio profile [--label L] [--device X-T30]");
+            println!("  fuji-camera list|info|presets         Fujifilm cameras on USB (PTP mode) and their C1-C7 settings");
+            println!("  fuji-camera convert <raf> [--recipe F] [--out J]  Convert a RAF in the camera (X RAW Studio protocol)");
+            println!("  fuji-camera write-preset <C1-C7> <recipe> [--label L]  Store a recipe in a custom setting slot");
             println!("  icc list                              List all detected system and bundled ICC color profiles");
             println!("  scan [dir]                            Scan local folder for supported RAW photos");
             println!("  catalog                               Retrieve persistent photo catalog database");
@@ -924,6 +931,55 @@ fn run_fuji_recipe(args: &[String]) {
         },
         Some(path) => import(path).and_then(|p| serde_json::to_value(FujiRecipeResult::new(p)).map_err(|e| e.to_string())),
     };
+    match result {
+        Ok(v) => print_json(&ResponseWrapper::ok(v)),
+        Err(e) => print_json::<()>(&ResponseWrapper::err(e)),
+    }
+}
+
+/// `fuji-camera list | info | presets | convert <raf> [--recipe <file>] [--out <jpg>] |
+/// write-preset <slot> <file> [--label L]`: Fujifilm cameras on USB.
+fn run_fuji_camera(args: &[String]) {
+    use fuji::ptp::Camera;
+    let flag = |name: &str| args.iter().position(|a| a == name).and_then(|i| args.get(i + 1)).cloned();
+    let result: Result<serde_json::Value, String> = (|| {
+        let sub = args.first().map(String::as_str).unwrap_or("info");
+        if sub == "list" {
+            let cams = ptp::usb::list_cameras(Some(fuji::ptp::VENDOR_ID)).map_err(|e| e.to_string())?;
+            return serde_json::to_value(cams).map_err(|e| e.to_string());
+        }
+        let mut cam = Camera::connect().map_err(|e| e.to_string())?;
+        let out = match sub {
+            "info" => Ok(serde_json::json!({ "device": cam.info, "raw_conversion": cam.can_convert() })),
+            "presets" => cam.presets().map_err(|e| e.to_string()).and_then(|p| serde_json::to_value(p).map_err(|e| e.to_string())),
+            "convert" => {
+                let raf_path = args.get(1).ok_or("Missing RAF file")?;
+                let raf = security::read_secure_file(Path::new(raf_path), 1024 * 1024 * 1024).map_err(|e| format!("Cannot read {}: {}", raf_path, e))?;
+                let recipe = match flag("--recipe") {
+                    Some(f) => Some(fuji::library::import(Path::new(&f))?.recipe),
+                    None => None,
+                };
+                let out_path = flag("--out").unwrap_or_else(|| {
+                    Path::new(raf_path).with_extension("camera.jpg").to_string_lossy().into_owned()
+                });
+                let jpeg = cam.convert_raf(&raf, recipe.as_ref()).map_err(|e| e.to_string())?;
+                security::atomic_write_user(Path::new(&out_path), &jpeg).map_err(|e| format!("Cannot write {}: {}", out_path, e))?;
+                Ok(serde_json::json!({ "path": out_path, "bytes": jpeg.len() }))
+            }
+            "write-preset" => {
+                let slot: u8 = args.get(1).and_then(|s| s.trim_start_matches(['C', 'c']).parse().ok()).ok_or("Slot must be 1-7 (or C1-C7)")?;
+                let src = args.get(2).ok_or("Missing recipe file")?;
+                let profile = fuji::library::import(Path::new(src))?;
+                let name = flag("--label").unwrap_or(profile.label);
+                cam.write_preset(slot, &name, &profile.recipe)
+                    .map_err(|e| e.to_string())
+                    .map(|refused| serde_json::json!({ "slot": slot, "name": name, "refused_properties": refused }))
+            }
+            other => Err(format!("Unknown fuji-camera command: {}", other)),
+        };
+        cam.close();
+        out
+    })();
     match result {
         Ok(v) => print_json(&ResponseWrapper::ok(v)),
         Err(e) => print_json::<()>(&ResponseWrapper::err(e)),
