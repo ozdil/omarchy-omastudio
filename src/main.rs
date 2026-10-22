@@ -594,6 +594,15 @@ fn main() {
                 Err(e) => print_json::<()>(&ResponseWrapper::err(e)),
             }
         }
+        "fuji-compat" => {
+            let paths: Vec<PathBuf> = args[2..].iter().filter(|a| !a.starts_with("--")).map(PathBuf::from).collect();
+            if paths.is_empty() {
+                print_json::<()>(&ResponseWrapper::err("Usage: fuji-compat <raf>... [--full]"));
+                return;
+            }
+            let full = args.iter().any(|a| a == "--full");
+            print_json(&ResponseWrapper::ok(fuji::compat::check_all(&paths, full)));
+        }
         "fuji-calibrate" => {
             let paths: Vec<PathBuf> = args[2..].iter().filter(|a| !a.starts_with("--")).map(PathBuf::from).collect();
             if paths.is_empty() {
@@ -759,6 +768,7 @@ fn main() {
             println!("  fuji-camera convert <raf> [--recipe F] [--out J]  Convert a RAF in the camera (X RAW Studio protocol)");
             println!("  fuji-camera write-preset <C1-C7> <recipe> [--label L]  Store a recipe in a custom setting slot");
             println!("  fuji-calibrate <raf>... [--any]       Measure film simulation LUTs from your RAFs' camera JPEGs");
+            println!("  fuji-compat <raf>... [--full]         Sensor, settings and camera-JPEG match report per file");
             println!("  fuji-pixel-shift <raf>... [--out F]   Merge a GFX Pixel Shift sequence into a linear DNG");
             println!("  ai providers                          AI providers, stored keys and local servers (Ollama, LM Studio)");
             println!("  ai key <provider> [--delete]          Store the API key read from stdin in the Secret Service");

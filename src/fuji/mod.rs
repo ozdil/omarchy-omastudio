@@ -2,6 +2,7 @@
 //! dynamic range...) read from a RAF or JPEG, and its mapping onto an OmaStudio recipe.
 
 pub mod calibrate;
+pub mod compat;
 pub mod fp1;
 pub mod lens;
 pub mod library;

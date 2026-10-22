@@ -135,7 +135,7 @@ impl Fit {
 }
 
 /// Box-averages an RGB8 image onto a `dw`×`dh` grid, as 0..1 floats.
-fn reduce(src: &[u8], sw: u32, sh: u32, dw: u32, dh: u32) -> Vec<[f32; 3]> {
+pub(crate) fn reduce(src: &[u8], sw: u32, sh: u32, dw: u32, dh: u32) -> Vec<[f32; 3]> {
     let mut out = vec![[0.0f32; 3]; (dw * dh) as usize];
     for (y, row) in out.chunks_mut(dw as usize).enumerate() {
         let y0 = (y as u64 * sh as u64 / dh as u64) as u32;
