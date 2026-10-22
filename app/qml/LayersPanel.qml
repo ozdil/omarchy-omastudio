@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
+import OmaStudio.Host
 
 Rectangle {
     id: root
@@ -22,6 +23,82 @@ Rectangle {
     readonly property var activeL: (selectedLayerIndex >= 0 && selectedLayerIndex < layersList.length) ? layersList[selectedLayerIndex] : null
 
     signal layersChanged()
+    signal notify(string text, bool isError)
+
+    property string enginePath: ""
+    property string activePhotoPath: ""
+    property string aiKind: ""
+
+    function newLayer(name, shape) {
+        return {
+            "id": "layer_" + Date.now(),
+            "name": name,
+            "enabled": true,
+            "invert": false,
+            "opacity": 1.0,
+            "shape": shape,
+            "exposure": 0.0, "contrast": 0.0, "highlights": 0.0, "shadows": 0.0,
+            "whites": 0.0, "blacks": 0.0, "clarity": 0.0, "saturation": 0.0,
+            "tint_r": 0.0, "tint_g": 0.0, "tint_b": 0.0
+        };
+    }
+
+    // Local segmentation model (ONNX Runtime on the NPU, GPU or CPU) makes a mask image
+    function addAiLayer(kind) {
+        if (root.enginePath === "" || root.activePhotoPath === "" || aiProc.running) return;
+        root.aiKind = kind;
+        aiProc.command = [root.enginePath, "ai-mask", root.activePhotoPath, "--kind", kind];
+        aiProc.running = true;
+    }
+
+    Process {
+        id: aiProc
+        onFinished: function(exitCode, output) {
+            var resp;
+            try { resp = JSON.parse(String(output || "")); } catch (e) { resp = { "success": false, "error": "The engine gave no answer" }; }
+            if (!resp.success) {
+                root.notify(String(resp.error || "AI mask failed").split("\n")[0], true);
+                return;
+            }
+            var list = root.cloneLayers();
+            var label = root.aiKind === "sky" ? "AI Sky " : "AI Subject ";
+            list.push(root.newLayer(label + (list.length + 1), { "type": "bitmap", "path": resp.data.path }));
+            root.layersList = list;
+            root.selectedLayerIndex = list.length - 1;
+            root.layersChanged();
+            root.notify(label.trim() + " mask ready (" + resp.data.provider + ")", false);
+        }
+    }
+
+    component AiButton: Rectangle {
+        id: ab
+        property string label: ""
+        property string kind: ""
+        Layout.fillWidth: true
+        implicitHeight: 20
+        radius: 4
+        enabled: root.activePhotoPath !== "" && !aiProc.running
+        opacity: enabled ? 1.0 : 0.4
+        color: abMouse.containsMouse ? Theme.bgCardHover : Theme.bgCard
+        border.color: Theme.border
+        border.width: 1
+        Text {
+            anchors.centerIn: parent
+            text: aiProc.running && root.aiKind === ab.kind ? "DETECTING..." : ab.label
+            textFormat: Text.PlainText
+            font.family: Theme.monoFont
+            font.pixelSize: 8
+            font.weight: Font.Bold
+            color: Theme.accentGreen
+        }
+        MouseArea {
+            id: abMouse
+            anchors.fill: parent
+            cursorShape: Qt.PointingHandCursor
+            hoverEnabled: true
+            onClicked: root.addAiLayer(ab.kind)
+        }
+    }
 
     ColumnLayout {
         id: mainCol
@@ -224,6 +301,14 @@ Rectangle {
                     }
                 }
             }
+        }
+
+        // Masks from local AI models
+        RowLayout {
+            Layout.fillWidth: true
+            spacing: 6
+            AiButton { label: "+ AI SUBJECT"; kind: "subject" }
+            AiButton { label: "+ AI SKY"; kind: "sky" }
         }
 
         // Layers List View

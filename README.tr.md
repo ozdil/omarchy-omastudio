@@ -87,6 +87,7 @@ OmaStudio, LibRaw 0.22'nin desteklediği tüm RAW biçimlerini açar. Bayer ve X
 İsteğe bağlı:
 * `perl-image-exiftool`: dışa aktarılan dosyalarda EXIF bilgilerini korur.
 * `ffmpeg`: yerleşik kodlayıcı başarısız olursa AVIF dışa aktarımı için kullanılır.
+* `onnxruntime`: yerel yapay zekâ maskelerini çalıştırır. Donanımınızın yürütme sağlayıcısını (OpenVINO, QNN, Vitis AI, CUDA, MIGraphX) içeren bir derleme NPU'yu veya GPU'yu kullanır.
 
 ---
 
@@ -121,6 +122,8 @@ omastudio
 | `~/.local/share/omastudio/catalog.json` | Katalog: puanlar, bayraklar, renk etiketleri |
 | `~/.local/share/omastudio/fuji-recipes/` | Kaydedilmiş Fujifilm tarifleri (.FP1) |
 | `~/.local/share/omastudio/icc/` | Özel ICC profilleri |
+| `~/.local/share/omastudio/models/` | Yerel yapay zekâ modelleri (`subject.onnx`, `sky.onnx`) |
+| `~/.local/share/omastudio/masks/` | Yapay zekâ modellerinin ürettiği maskeler |
 | `~/.config/omastudio/` | Ayarlar |
 | `~/.cache/omastudio/` | Küçük resimler ve önizlemeler |
 | `<fotoğraf>.omastudio` | Fotoğrafın ayarları (yan dosya) |
@@ -143,6 +146,8 @@ omastudio-engine fuji-camera convert DSCF0001.RAF --recipe tarif.FP1
 omastudio-engine xmp export <raw>                  # Lightroom / Capture One / darktable yan dosyası
 omastudio-engine xmp import <raw> [--save]
 omastudio-engine gpu                               # kullanılan GPU (yalnızca CPU için OMASTUDIO_GPU=off)
+omastudio-engine npu                               # ONNX Runtime, NPU/GPU sağlayıcıları ve yerel modeller
+omastudio-engine ai-mask <raw> --kind subject|sky  # yerel modelle maske
 omastudio-engine icc list
 omastudio-engine help
 ```
@@ -170,6 +175,15 @@ Düzenleyicideki yapay zekâ asistanı, düz cümleyle yazılan bir isteği ayar
 omastudio ai key anthropic          # anahtarı yapıştırıp Enter'a basın (secret-tool ile saklanır)
 omastudio ai use ollama llava       # ya da: anthropic, openai <model>, openrouter <model>, gemini <model>, lmstudio
 omastudio ai edit DSCF0001.RAF --prompt "daha sıcak, gökyüzünü kurtar"
+```
+
+### Yerel yapay zekâ maskeleri
+
+Katmanlar panelindeki "+ AI SUBJECT" ve "+ AI SKY" düğmeleri, bu bilgisayarda çalışan bir bölütleme modelinin maskesiyle yerel bir ayar katmanı ekler; fotoğraf bilgisayardan çıkmaz. OmaStudio, kuruluysa ONNX Runtime'ı (`onnxruntime`) kullanır ve sunduğu en hızlı yürütme sağlayıcısını seçer: önce NPU (Intel Core Ultra'da OpenVINO, Snapdragon X'te QNN, AMD Ryzen AI'da Vitis AI), sonra GPU (CUDA, MIGraphX, OpenVINO, WebGPU), en son CPU. Hiçbir model pakete eklenmez ya da indirilmez. Bir ONNX bölütleme modelini (örneğin U²-Net, IS-Net veya BiRefNet gibi bir belirgin nesne modelinin ONNX'e aktarılmış hâli) `~/.local/share/omastudio/models` altına `subject.onnx` ya da `sky.onnx` adıyla koyun. Model `[1, 3, H, W]` RGB alır ve maske döndürür. Model ImageNet normalleştirmesini 1024 piksel üzerinde kullanmıyorsa yanına konan bir `subject.json` dosyası `mean`, `std` ve `size` değerlerini belirleyebilir.
+
+```bash
+omastudio npu                                  # çalışma zamanı, hızlandırıcılar, kurulu modeller
+OMASTUDIO_NPU=openvino-npu omastudio ai-mask DSCF0001.RAF --kind subject
 ```
 
 

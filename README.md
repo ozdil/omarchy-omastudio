@@ -98,6 +98,7 @@ OmaStudio opens every RAW format LibRaw 0.22 supports. The engine develops Bayer
 Optional:
 * `perl-image-exiftool` keeps EXIF metadata in exported files.
 * `ffmpeg` is used for AVIF export if the built-in encoder fails.
+* `onnxruntime` runs the local AI masks; a build with your hardware's execution provider (OpenVINO, QNN, Vitis AI, CUDA, MIGraphX) uses the NPU or GPU.
 
 ---
 
@@ -132,6 +133,8 @@ omastudio
 | `~/.local/share/omastudio/catalog.json` | Catalog: ratings, flags, colour labels |
 | `~/.local/share/omastudio/fuji-recipes/` | Saved Fujifilm recipes (.FP1) |
 | `~/.local/share/omastudio/icc/` | Custom ICC profiles |
+| `~/.local/share/omastudio/models/` | Local AI models (`subject.onnx`, `sky.onnx`) |
+| `~/.local/share/omastudio/masks/` | Masks made by the AI models |
 | `~/.config/omastudio/` | Settings |
 | `~/.cache/omastudio/` | Thumbnails and previews |
 | `<photo>.omastudio` | Adjustments for a photo (sidecar) |
@@ -154,6 +157,8 @@ omastudio-engine fuji-camera convert DSCF0001.RAF --recipe recipe.FP1
 omastudio-engine xmp export <raw>                  # Lightroom / Capture One / darktable sidecar
 omastudio-engine xmp import <raw> [--save]
 omastudio-engine gpu                               # GPU in use (OMASTUDIO_GPU=off for CPU only)
+omastudio-engine npu                               # ONNX Runtime, NPU/GPU providers and local models
+omastudio-engine ai-mask <raw> --kind subject|sky  # mask from a local model
 omastudio-engine icc list
 omastudio-engine help
 ```
@@ -181,6 +186,15 @@ The AI edit assistant in the editor turns a request in plain words into adjustme
 omastudio ai key anthropic          # paste the key, then Enter (stored with secret-tool)
 omastudio ai use ollama llava       # or: anthropic, openai <model>, openrouter <model>, gemini <model>, lmstudio
 omastudio ai edit DSCF0001.RAF --prompt "warmer, recover the sky"
+```
+
+### Local AI masks
+
+"+ AI SUBJECT" and "+ AI SKY" in the layers panel add a local adjustment layer masked by a segmentation model that runs on this machine; the photo never leaves it. OmaStudio uses ONNX Runtime (`onnxruntime`) when it is installed and picks the fastest execution provider it offers: NPU (OpenVINO on Intel Core Ultra, QNN on Snapdragon X, Vitis AI on AMD Ryzen AI), then GPU (CUDA, MIGraphX, OpenVINO, WebGPU), then CPU. No model is bundled or downloaded. Put an ONNX segmentation model (for example a salient-object model such as U²-Net, IS-Net or BiRefNet, exported to ONNX) in `~/.local/share/omastudio/models` as `subject.onnx` or `sky.onnx`. The model takes `[1, 3, H, W]` RGB and returns a mask; a `subject.json` next to it can set `mean`, `std` and `size` if the model does not use ImageNet normalisation at 1024 px.
+
+```bash
+omastudio npu                                  # runtime, accelerators, installed models
+OMASTUDIO_NPU=openvino-npu omastudio ai-mask DSCF0001.RAF --kind subject
 ```
 
 

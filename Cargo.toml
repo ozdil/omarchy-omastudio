@@ -28,6 +28,7 @@ lcms2 = "6.2"
 nusb = "0.2.8"
 wgpu = { version = "30.0.1", default-features = false, features = ["std", "wgsl", "vulkan", "gles"] }
 pollster = "1.0.1"
+ort = { version = "=2.0.0-rc.15", default-features = false, features = ["std", "load-dynamic", "api-20", "openvino", "qnn", "vitis", "cuda", "migraphx", "xnnpack", "webgpu"] }
 
 [build-dependencies]
 pkg-config = "0.3"

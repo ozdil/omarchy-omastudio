@@ -6,6 +6,7 @@ pub mod export;
 pub mod fuji;
 pub mod gpu;
 pub mod icc;
+pub mod ml;
 pub mod pipeline;
 pub mod ptp;
 pub mod raw;

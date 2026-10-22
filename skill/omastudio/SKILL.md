@@ -27,10 +27,13 @@ OmaStudio is the RAW photo editor of the user's Omarchy desktop. It has an engin
    - `omastudio fuji-pixel-shift <raf>... --out merged.dng`
    - `omastudio xmp export <photo>` / `xmp import <photo>`: XMP sidecars for Lightroom, Capture One, darktable
    - `omastudio ai edit <photo> --prompt "..." --recipe '<json>'`: the user's configured AI provider proposes a recipe
+   - `omastudio npu`: local model runtime (ONNX Runtime), NPU/GPU providers, installed models
+   - `omastudio ai-mask <photo> --kind subject|sky`: mask image from a local model, usable as a
+     `{"type": "bitmap", "path": ...}` layer shape
 3. **The open window.** `omastudio ipc <method> [args]` answers with one line:
    `getStatus`, `openPhoto <path>`, `applyRecipe '<json>'`, `setExposure <ev>`,
    `setWarmth <kelvin>`, `applyPreset <name>`, `fujiRecipes`, `applyFujiRecipe <label>`,
-   `applyCameraRecipe [photo]`, `aiEdit <request>`, `importXmp`, `writeXmp`,
+   `applyCameraRecipe [photo]`, `aiEdit <request>`, `aiMask subject|sky`, `importXmp`, `writeXmp`,
    `setZoom <scale|fit>`, `screenshot <file.png>`.
 
 ## Recipes

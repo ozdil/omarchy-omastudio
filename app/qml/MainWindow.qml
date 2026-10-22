@@ -553,6 +553,14 @@ Rectangle {
         return "OK";
     }
 
+    function aiMask(kind) {
+        if (root.activePhotoPath === "") return "Error: no photo open";
+        if (kind !== "subject" && kind !== "sky") return "Error: kind must be subject or sky";
+        root.pushUndoState();
+        layersPanel.addAiLayer(kind);
+        return "OK";
+    }
+
     function applyFujiRecipe(name) {
         var list = fujiPanel.recipes;
         for (var i = 0; i < list.length; i++) {
@@ -2490,6 +2498,11 @@ Rectangle {
                                 id: layersPanel
                                 Layout.fillWidth: true
                                 layersList: root.adjustmentLayers
+                                enginePath: root.resolveEnginePath()
+                                activePhotoPath: root.activePhotoPath
+                                onNotify: function(text, isError) {
+                                    root.showToast((isError ? "[ERR] " : "[OK] ") + text, isError ? Theme.accentMagenta : Theme.accentGreen);
+                                }
                                 onLayersChanged: {
                                     root.adjustmentLayers = layersPanel.layersList;
                                     root.requestRender();

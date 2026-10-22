@@ -110,6 +110,8 @@ Window {
                 return mainWin.applyFujiRecipe(str(a[0]));
             case "aiEdit":
                 return mainWin.aiEdit(str(a[0]));
+            case "aiMask":
+                return mainWin.aiMask(str(a[0]));
             case "importXmp":
                 return mainWin.importXmp();
             case "writeXmp":

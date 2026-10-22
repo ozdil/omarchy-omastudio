@@ -6,6 +6,7 @@ pub mod export;
 pub mod fuji;
 pub mod gpu;
 pub mod icc;
+pub mod ml;
 mod mcp;
 pub mod pipeline;
 pub mod ptp;
@@ -724,6 +725,18 @@ fn main() {
         "mcp" => mcp::run(),
         "ai" => run_ai(&args[2..]),
         "xmp" => run_xmp(&args[2..]),
+        "npu" => print_json(&ResponseWrapper::ok(ml::status())),
+        "ai-mask" => {
+            let flag = |name: &str| args.iter().position(|a| a == name).and_then(|i| args.get(i + 1)).cloned();
+            let result = match args.get(2).filter(|a| !a.starts_with("--")) {
+                Some(photo) => ai_mask(photo, flag("--kind").as_deref().unwrap_or("subject"), flag("--model")),
+                None => Err("Usage: ai-mask <photo> [--kind subject|sky] [--model file.onnx]".to_string()),
+            };
+            match result {
+                Ok(v) => print_json(&ResponseWrapper::ok(v)),
+                Err(e) => print_json::<()>(&ResponseWrapper::err(e)),
+            }
+        }
         "version" | "--version" | "-v" => {
             println!("omastudio-engine v{}", env!("CARGO_PKG_VERSION"));
         }
@@ -753,6 +766,8 @@ fn main() {
             println!("  ai edit <photo> [--prompt P] [--recipe JSON]  Let the chosen model edit the photo");
             println!("  xmp export <photo> [--out F] [--force] Write the edit, rating and label as an XMP sidecar");
             println!("  xmp import <photo> [--from F] [--save] Read an XMP sidecar from Lightroom, Capture One, darktable");
+            println!("  npu                                   ONNX Runtime and the NPU/GPU/CPU it can use for local models");
+            println!("  ai-mask <photo> [--kind subject|sky]  Segment the photo with a local model into a mask layer image");
             println!("  mcp                                   Model Context Protocol server on stdin/stdout for AI agents");
             println!("  gpu                                   GPU used for demosaicing (OMASTUDIO_GPU=off uses the CPU)");
             println!("  icc list                              List all detected system and bundled ICC color profiles");
@@ -1210,6 +1225,41 @@ fn run_xmp(args: &[String]) {
         Ok(v) => print_json(&ResponseWrapper::ok(v)),
         Err(e) => print_json::<()>(&ResponseWrapper::err(e)),
     }
+}
+
+/// Segments the photo with a local model and stores the mask for a Bitmap layer.
+fn ai_mask(photo: &str, kind: &str, model: Option<String>) -> Result<serde_json::Value, String> {
+    if !kind.chars().all(|c| c.is_ascii_alphanumeric() || c == '-' || c == '_') || kind.is_empty() {
+        return Err("Invalid mask kind".to_string());
+    }
+    let model = model.map(PathBuf::from).unwrap_or_else(|| ml::models_dir().join(format!("{kind}.onnx")));
+    if !model.is_file() {
+        return Err(format!(
+            "No {kind} model: put an ONNX segmentation model at {} (for example U2-Net, IS-Net or BiRefNet)",
+            model.display()
+        ));
+    }
+    // The neutral development of the whole frame, which Bitmap layers are mapped onto
+    let ppm = security::get_secure_preview_dir().join(format!("omastudio_mask_{}.ppm", std::process::id()));
+    let rendered = render_file(photo, &Recipe::default(), 0.0, &ppm.to_string_lossy());
+    let image = rendered.and_then(|_| image::open(&ppm).map_err(|e| e.to_string()));
+    let _ = std::fs::remove_file(&ppm);
+    let image = image?.to_rgb8();
+    let mask = ml::segment(&model, &image)?;
+
+    let dir = pipeline::layers::masks_dir();
+    std::fs::create_dir_all(&dir).map_err(|e| e.to_string())?;
+    let stem = Path::new(photo).file_stem().and_then(|s| s.to_str()).unwrap_or("photo");
+    let stamp = SystemTime::now().duration_since(UNIX_EPOCH).map(|d| d.as_millis()).unwrap_or(0);
+    let out = dir.join(format!("{stem}-{kind}-{stamp}.png"));
+    let gray = image::GrayImage::from_raw(mask.width, mask.height, mask.data).ok_or("Mask size mismatch")?;
+    let mut png = Vec::new();
+    gray.write_to(&mut io::Cursor::new(&mut png), image::ImageFormat::Png).map_err(|e| e.to_string())?;
+    security::atomic_write_user(&out, &png).map_err(|e| format!("Cannot write {}: {e}", out.display()))?;
+    Ok(serde_json::json!({
+        "path": out, "kind": kind, "width": mask.width, "height": mask.height,
+        "provider": mask.provider, "model": model,
+    }))
 }
 
 /// `ai providers | key <provider> [--delete] | use <provider> [model] [--endpoint URL] |

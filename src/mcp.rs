@@ -144,6 +144,9 @@ fn tools() -> Vec<Value> {
         tool("write_xmp", "Writes the photo's OmaStudio edit, rating and label as an XMP sidecar for other editors. An XMP from another application is only replaced with force.",
             schema(json!({ "path": path, "recipe": recipe, "force": { "type": "boolean" } }), &["path"]), false),
         tool("gpu_status", "The GPU OmaStudio uses for demosaicing, or why it falls back to the CPU.", schema(json!({}), &[]), true),
+        tool("npu_status", "Local AI models: whether ONNX Runtime is installed, its accelerators (NPU, GPU, CPU) and the installed models.", schema(json!({}), &[]), true),
+        tool("ai_mask", "Adds a local adjustment layer masked by a local AI model (subject or sky) to the open photo.",
+            schema(json!({ "kind": { "type": "string", "enum": ["subject", "sky"] } }), &["kind"]), false),
         tool("window_status", "State of the OmaStudio window: open photo, current recipe, view and theme.", schema(json!({}), &[]), true),
         tool("window_screenshot", "Returns a screenshot of the OmaStudio window.", schema(json!({}), &[]), true),
         tool("open_photo", "Opens a photo in the OmaStudio window.", schema(json!({ "path": path }), &["path"]), false),
@@ -283,6 +286,8 @@ fn call_tool(name: &str, args: &Value) -> Option<Result<Vec<Value>, String>> {
             engine(&cli).map(text)
         })(),
         "gpu_status" => engine(&["gpu"]).map(text),
+        "npu_status" => engine(&["npu"]).map(text),
+        "ai_mask" => required(args, "kind").and_then(|k| window("aiMask", vec![k.into()])).map(text),
         "window_status" => window("getStatus", vec![]).map(text),
         "window_screenshot" => window_screenshot(),
         "open_photo" => required(args, "path").and_then(|p| window("openPhoto", vec![p.into()])).map(text),
