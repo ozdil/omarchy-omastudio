@@ -4,7 +4,11 @@ fn main() {
     // The interface is served from qrc:/omastudio/qml; one flat directory, so every file
     // sees the others and the Theme singleton through qml/qmldir
     let mut ui = QResource::new().prefix("/omastudio".to_string());
-    let mut files: Vec<_> = std::fs::read_dir("qml").expect("app/qml").flatten().map(|e| e.path()).collect();
+    let mut files: Vec<_> = std::fs::read_dir("qml")
+        .expect("app/qml")
+        .flatten()
+        .map(|e| e.path())
+        .collect();
     files.sort();
     for path in files {
         let name = path.file_name().unwrap().to_string_lossy().to_string();
@@ -20,7 +24,12 @@ fn main() {
     for entry in std::fs::read_dir("qml").expect("app/qml").flatten() {
         let name = entry.file_name().to_string_lossy().to_string();
         if name.ends_with(".qml") && name != "Main.qml" {
-            assert!(qmldir.lines().any(|l| l.split_whitespace().last() == Some(name.as_str())), "{name} is missing from app/qml/qmldir");
+            assert!(
+                qmldir
+                    .lines()
+                    .any(|l| l.split_whitespace().last() == Some(name.as_str())),
+                "{name} is missing from app/qml/qmldir"
+            );
         }
     }
 
