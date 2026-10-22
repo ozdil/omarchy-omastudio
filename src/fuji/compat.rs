@@ -80,7 +80,7 @@ fn camera_match(raw: &RawImage, path: &Path, recipe: &CameraRecipe, full: bool) 
         return Err("Unexpected channel count".into());
     }
     let mut r = recipe.to_recipe();
-    r.baseline_exposure = raw.baseline_exposure();
+    r.baseline_exposure = raw.baseline_exposure_from(&buf);
     // Sharpening and grain are texture; they would only add noise to the comparison
     r.sharpness = 0.0;
     r.grain_amount = 0.0;

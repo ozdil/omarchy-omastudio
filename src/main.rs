@@ -213,7 +213,7 @@ fn spawn_full_decode(cache: Arc<Mutex<DaemonCache>>, path: String) {
     std::thread::spawn(move || {
         let Ok(raw) = RawImage::open(&path) else { return };
         let Ok(full) = raw.process_full_16(3) else { return };
-        let baseline_exposure = raw.baseline_exposure();
+        let baseline_exposure = raw.baseline_exposure_from(&full);
         drop(raw);
         if full.channels != 3 {
             return;
@@ -942,8 +942,8 @@ fn inspect_file(raw_path: &str) -> Result<InspectResult, String> {
 
 fn render_file(raw_path: &str, recipe: &Recipe, split: f32, out_path: &str) -> Result<RenderResult, String> {
     let raw = RawImage::open(raw_path)?;
-    let recipe = &Recipe { baseline_exposure: raw.baseline_exposure(), ..recipe.clone() };
     let preview = raw.process_preview_16(true)?;
+    let recipe = &Recipe { baseline_exposure: raw.baseline_exposure_from(&preview), ..recipe.clone() };
 
     let (final_buf, hist) = if split > 0.001 {
         process_split_comparison_16_to_8_ex(
@@ -1503,7 +1503,7 @@ fn run_daemon() {
 
                                 let mut c = cache.lock().unwrap();
                                 c.current_path = Some(p.clone());
-                                c.baseline_exposure = raw.baseline_exposure();
+                                c.baseline_exposure = raw.baseline_exposure_from(&prev);
                                 c.width = pw;
                                 c.height = ph;
                                 c.channels = prev.channels;

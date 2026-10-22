@@ -204,7 +204,7 @@ pub fn load_pair(path: &Path, allow_non_neutral: bool) -> Result<Pair, String> {
     if preview.channels != 3 {
         return Err("Unexpected channel count".into());
     }
-    let neutral = Recipe { sharpness: 0.0, denoise_col: 0.0, baseline_exposure: raw.baseline_exposure(), ..Recipe::default() };
+    let neutral = Recipe { sharpness: 0.0, denoise_col: 0.0, baseline_exposure: raw.baseline_exposure_from(&preview), ..Recipe::default() };
     let (rendered, _) = pipeline::process_buffer_16_to_8_ex(
         preview.as_slice_u16(),
         preview.width,

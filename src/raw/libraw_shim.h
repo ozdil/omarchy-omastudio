@@ -58,7 +58,6 @@ unsigned char* omaraw_process_image(void *handle, int half_size, int quality, in
 void omaraw_free_image(unsigned char *ptr);
 void omaraw_close(void *handle);
 
-float omaraw_baseline_ev(void *handle);
 
 #ifdef __cplusplus
 }

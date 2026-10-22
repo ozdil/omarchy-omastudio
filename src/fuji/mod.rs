@@ -1,6 +1,7 @@
 //! Fujifilm support: the in-camera recipe (film simulation, grain, Color Chrome, tone,
 //! dynamic range...) read from a RAF or JPEG, and its mapping onto an OmaStudio recipe.
 
+pub mod baseline;
 pub mod calibrate;
 pub mod compat;
 pub mod fp1;

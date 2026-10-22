@@ -511,17 +511,15 @@ impl RawImage {
         }
     }
 
-    /// Exposure the camera adds for its own rendering of this photo, in EV (0 when the
-    /// file records none). `OMASTUDIO_BASELINE_EXPOSURE=off` ignores it.
+    /// Exposure the camera adds for its own rendering of this photo, in EV (see
+    /// [`crate::fuji::baseline`]). `OMASTUDIO_BASELINE_EXPOSURE=off` ignores it.
     pub fn baseline_exposure(&self) -> f32 {
-        if std::env::var("OMASTUDIO_BASELINE_EXPOSURE").is_ok_and(|v| v == "off") {
-            return 0.0;
-        }
-        match &self.backend {
-            // SAFETY: handle is a valid open LibRaw handle owned by self
-            RawBackend::LibRaw(handle) => unsafe { omaraw_baseline_ev(*handle) },
-            RawBackend::Raster { .. } => 0.0,
-        }
+        crate::fuji::baseline::exposure(self, None)
+    }
+
+    /// Same as [`RawImage::baseline_exposure`], measured on a development the caller has.
+    pub fn baseline_exposure_from(&self, decoded: &ProcessedBuffer) -> f32 {
+        crate::fuji::baseline::exposure(self, Some(decoded))
     }
 
     /// Lens corrections recorded in the file, if any and not turned off.
