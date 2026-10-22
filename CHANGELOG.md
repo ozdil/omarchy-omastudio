@@ -4,14 +4,19 @@
 
 ### Toolchain
 - Rust 1.99.1 (pinned in `rust-toolchain.toml`) and the Rust 2024 edition. Nested `if let` blocks became let-chains and the new clippy lints are fixed; behaviour is unchanged.
-- The Arch package now requires LibRaw 0.22 and Qt 6.12 (`qt6-declarative`), the versions current Omarchy ships.
+- The Arch package now requires LibRaw 0.22 and Qt 6.12 (`qt6-declarative`), the versions current Omarchy ships, and Little CMS 2 (`lcms2`).
 - CI builds, tests and lints in an Arch Linux container, so it uses the same LibRaw, Qt and Rust packages as Omarchy instead of Ubuntu's older ones.
 
 ### Engine
 - Exposure and white balance now work on linear light. LibRaw and 16-bit TIFF/PNG decodes stay linear until white balance and exposure are applied, and are display-encoded once (with the curve of the output colour space) before the tone and colour modules. Exposure is a true photographic EV step (+1 EV doubles the light) and the white balance multipliers act on light the way the camera's own do. A recipe at 0 EV and 5500 K renders as before; recipes that change exposure or temperature will look somewhat different.
 - Thumbnails are always re-encoded by the engine. A JPEG, PNG or WebP that fails to decode is no longer copied into the thumbnail cache unchanged or shown from its original file; the filmstrip shows a placeholder instead, so a crafted image cannot reach Qt's image decoders without the engine's limits. *(The thumbnail cache is rebuilt once.)*
 
-### Removed
+### Colour & Export
+- Colour management with Little CMS 2. The engine builds sRGB, Display P3, Adobe RGB (1998), ProPhoto RGB and Rec. 2020 profiles itself and embeds the profile directly in PNG, JPEG, TIFF, WebP, JXL and AVIF files. Wide-gamut export no longer needs exiftool, and Display P3 and Rec. 2020 are new export options.
+- Custom RGB ICC profiles (printer, lab or display profiles in `~/.local/share/omastudio/icc`) are real conversions now: the photo is rendered in ProPhoto RGB and converted with lcms2, with black point compensation and a choice of rendering intent (`rendering_intent`, relative colorimetric by default). Non-RGB profiles are refused with a clear error.
+- JPEG, PNG and other raster sources exported to a wide-gamut profile are converted from sRGB instead of falling back to sRGB.
+- Profiles such as scRGB Linear and e-sRGB are no longer mistaken for sRGB.
+
 - OmaSend code that had been copied into this repository: the `rendezvous`, `oma-id-qr` and `force-scan` engine commands, the matching daemon commands (`rendezvous_derive`, `rendezvous_verify`, `pin_verify`), the OmaSend web pages (`assets/web/omasend`, `docs/index.html`) and the `qrcode` dependency. OmaSend lives in [omarchy-omasend](https://github.com/ozdil/omarchy-omasend) and [omasend-web](https://github.com/ozdil/omasend-web). The OmaStudio UI never used these commands.
 
 ## v2.4.0 — 2026-10-16

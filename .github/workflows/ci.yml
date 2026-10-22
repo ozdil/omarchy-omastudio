@@ -16,7 +16,7 @@ jobs:
     container: archlinux:latest
     steps:
       - name: Install build dependencies
-        run: pacman -Syu --noconfirm --needed base-devel clang git libraw mold pkgconf rustup
+        run: pacman -Syu --noconfirm --needed base-devel clang git lcms2 libraw mold pkgconf rustup
       - uses: actions/checkout@v4
       - name: Install pinned Rust toolchain
         run: rustup toolchain install
@@ -30,7 +30,7 @@ jobs:
     container: archlinux:latest
     steps:
       - name: Install build dependencies
-        run: pacman -Syu --noconfirm --needed base-devel clang git libraw mold pkgconf rustup
+        run: pacman -Syu --noconfirm --needed base-devel clang git lcms2 libraw mold pkgconf rustup
       - uses: actions/checkout@v4
       - name: Install pinned Rust toolchain
         run: rustup toolchain install

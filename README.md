@@ -198,7 +198,7 @@ flowchart LR
 * `rust` (1.99.1 or newer; `rust-toolchain.toml` pins it for rustup users), `clang`, `pkgconf` (Toolchain for compiling the native engine)
 
 Optional:
-* `exiftool` (`perl-image-exiftool`): keeps EXIF metadata and embeds ICC profiles on export. Without it, wide-gamut exports (Adobe RGB, ProPhoto) fall back to sRGB.
+* `exiftool` (`perl-image-exiftool`): keeps EXIF metadata on export. ICC profiles are embedded by the engine itself, so wide-gamut exports work without it.
 * `ffmpeg`: AVIF export fallback when the built-in encoder fails.
 
 ### Build & Local Installation

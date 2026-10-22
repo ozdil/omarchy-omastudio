@@ -198,7 +198,7 @@ flowchart LR
 * `rust` (1.99.1 veya üstü; rustup kullananlar için `rust-toolchain.toml` sabitler), `clang`, `pkgconf` (Yerel motor derleme araç zinciri)
 
 İsteğe bağlı:
-* `exiftool` (`perl-image-exiftool`): Dışa aktarımda EXIF verisini korur ve ICC profilini gömer. Yoksa geniş gamlı dışa aktarımlar (Adobe RGB, ProPhoto) sRGB'ye düşer.
+* `exiftool` (`perl-image-exiftool`): Dışa aktarımda EXIF verisini korur. ICC profillerini motorun kendisi gömer, bu yüzden geniş gamlı dışa aktarımlar onsuz da çalışır.
 * `ffmpeg`: Yerleşik kodlayıcı başarısız olursa AVIF dışa aktarımı için yedek.
 
 ### Yerel Derleme ve Kurulum
