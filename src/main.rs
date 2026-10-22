@@ -210,30 +210,30 @@ fn scan_directory(dir_path: &str) -> Result<Vec<FolderScanItem>, String> {
                 });
                 continue;
             }
-            if path.is_file() {
-                if let Some(ext) = path.extension().and_then(|e| e.to_str()) {
-                    let ext_lower = ext.to_lowercase();
-                    let is_supported = ["nef", "nrw", "raf", "cr2", "cr3", "arw", "dng", "rwl", "orf", "rw2", "3fr", "jpg", "jpeg", "png", "webp", "tif", "tiff", "heic"].contains(&ext_lower.as_str());
-                    if is_supported {
-                        let thumb_path = thumbnail_path_for(&path);
-                        if !thumb_path.exists() {
-                            // Thumbnails are always re-encoded by the engine. A file that
-                            // fails to decode gets no thumbnail (the filmstrip shows a
-                            // placeholder): handing the original to Qt would let a crafted
-                            // image reach its decoders without the engine's limits.
-                            if let Ok(raw) = RawImage::open(&path) {
-                                let _ = raw.extract_thumbnail(&thumb_path);
-                            }
+            if path.is_file()
+                && let Some(ext) = path.extension().and_then(|e| e.to_str())
+            {
+                let ext_lower = ext.to_lowercase();
+                let is_supported = ["nef", "nrw", "raf", "cr2", "cr3", "arw", "dng", "rwl", "orf", "rw2", "3fr", "jpg", "jpeg", "png", "webp", "tif", "tiff", "heic"].contains(&ext_lower.as_str());
+                if is_supported {
+                    let thumb_path = thumbnail_path_for(&path);
+                    if !thumb_path.exists() {
+                        // Thumbnails are always re-encoded by the engine. A file that
+                        // fails to decode gets no thumbnail (the filmstrip shows a
+                        // placeholder): handing the original to Qt would let a crafted
+                        // image reach its decoders without the engine's limits.
+                        if let Ok(raw) = RawImage::open(&path) {
+                            let _ = raw.extract_thumbnail(&thumb_path);
                         }
-
-                        items.push(FolderScanItem {
-                            name: path.file_name().and_then(|s| s.to_str()).unwrap_or("").to_string(),
-                            path: path.to_string_lossy().to_string(),
-                            thumbnail: if thumb_path.exists() { thumb_path.to_string_lossy().to_string() } else { String::new() },
-                            is_remote: false,
-                            is_dir: false,
-                        });
                     }
+
+                    items.push(FolderScanItem {
+                        name: path.file_name().and_then(|s| s.to_str()).unwrap_or("").to_string(),
+                        path: path.to_string_lossy().to_string(),
+                        thumbnail: if thumb_path.exists() { thumb_path.to_string_lossy().to_string() } else { String::new() },
+                        is_remote: false,
+                        is_dir: false,
+                    });
                 }
             }
         }
@@ -1095,7 +1095,7 @@ fn run_daemon() {
             }
             "ai_auto" => {
                 let c = cache.lock().unwrap();
-                if let (Some(ref buffer), Some(ref meta)) = (&c.raw_buffer_8, &c.metadata) {
+                if let (Some(buffer), Some(meta)) = (&c.raw_buffer_8, &c.metadata) {
                     let auto_recipe = ai_auto_enhance(buffer, c.width, c.height, c.channels, meta);
                     let scene = ai_classify_scene(buffer, c.width, c.height, c.channels, meta);
                     let path_str = c.current_path.clone().unwrap_or_default();
@@ -1112,7 +1112,7 @@ fn run_daemon() {
             }
             "ai_jev" => {
                 let c = cache.lock().unwrap();
-                if let (Some(ref buffer), Some(ref meta)) = (&c.raw_buffer_8, &c.metadata) {
+                if let (Some(buffer), Some(meta)) = (&c.raw_buffer_8, &c.metadata) {
                     let mut auto_recipe = ai_auto_enhance(buffer, c.width, c.height, c.channels, meta);
                     let (mut scene, mut jev_opt) = ai_classify_scene_with_jev(buffer, c.width, c.height, c.channels, meta);
                     if jev_opt.is_none() {
@@ -1160,7 +1160,7 @@ fn run_daemon() {
             }
             "save_recipe" => {
                 let c = cache.lock().unwrap();
-                if let (Some(ref p), Some(ref recipe)) = (&c.current_path, &cmd_obj.recipe) {
+                if let (Some(p), Some(recipe)) = (&c.current_path, &cmd_obj.recipe) {
                     match recipe.save_sidecar(p) {
                         Ok(sidecar_path) => print_json(&ResponseWrapper::ok_action("save_recipe", sidecar_path.to_string_lossy().to_string())),
                         Err(e) => print_json::<()>(&ResponseWrapper::err_action("save_recipe", format!("Failed to save sidecar: {}", e))),

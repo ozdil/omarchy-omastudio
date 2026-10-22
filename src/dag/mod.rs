@@ -243,12 +243,12 @@ impl DagEngine {
             if current == from {
                 return true;
             }
-            if visited.insert(current) {
-                if let Some(lock) = self.nodes.get(&current) {
-                    let node = lock.read().unwrap();
-                    for &next in &node.outputs {
-                        stack.push(next);
-                    }
+            if visited.insert(current)
+                && let Some(lock) = self.nodes.get(&current)
+            {
+                let node = lock.read().unwrap();
+                for &next in &node.outputs {
+                    stack.push(next);
                 }
             }
         }
@@ -261,13 +261,13 @@ impl DagEngine {
         let mut visited = HashSet::new();
 
         while let Some(current) = stack.pop() {
-            if visited.insert(current) {
-                if let Some(lock) = self.nodes.get(&current) {
-                    let mut node = lock.write().unwrap();
-                    node.invalidate();
-                    for &downstream in &node.outputs {
-                        stack.push(downstream);
-                    }
+            if visited.insert(current)
+                && let Some(lock) = self.nodes.get(&current)
+            {
+                let mut node = lock.write().unwrap();
+                node.invalidate();
+                for &downstream in &node.outputs {
+                    stack.push(downstream);
                 }
             }
         }
@@ -323,12 +323,11 @@ impl DagEngine {
             let mut node = self.nodes.get(&node_id).ok_or("Node not found")?.write().unwrap();
 
             // Lazy Evaluation check: reuse cached buffer if valid and covers requested ROI
-            if !node.dirty && node.cached_buffer.is_some() {
-                if let Some(ref cached_roi) = node.cached_roi {
-                    if cached_roi == &roi {
-                        continue;
-                    }
-                }
+            if !node.dirty && node.cached_buffer.is_some()
+                && let Some(ref cached_roi) = node.cached_roi
+                && cached_roi == &roi
+            {
+                continue;
             }
 
             let start = Instant::now();
@@ -383,7 +382,7 @@ impl DagEngine {
                 let in_buf = inputs.first().ok_or("WB node requires 1 input")?;
                 let mut out_buf = in_buf.as_ref().clone();
                 let (wr, wg, wb) = crate::pipeline::white_balance::kelvin_to_rgb_multipliers(*temp, *tint);
-                for chunk in out_buf.data.chunks_exact_mut(3) {
+                for chunk in out_buf.data.as_chunks_mut::<3>().0 {
                     chunk[0] *= wr;
                     chunk[1] *= wg;
                     chunk[2] *= wb;
@@ -393,7 +392,7 @@ impl DagEngine {
             NodeType::ToneCurve { highlights, lights, darks, shadows } => {
                 let in_buf = inputs.first().ok_or("Curve node requires 1 input")?;
                 let mut out_buf = in_buf.as_ref().clone();
-                for chunk in out_buf.data.chunks_exact_mut(3) {
+                for chunk in out_buf.data.as_chunks_mut::<3>().0 {
                     let r = chunk[0];
                     let g = chunk[1];
                     let b = chunk[2];
@@ -415,7 +414,7 @@ impl DagEngine {
                 let mut out_buf = in_buf.as_ref().clone();
                 let ws = crate::pipeline::aces::WorkingColorSpace::from_str_name(color_space);
 
-                for chunk in out_buf.data.chunks_exact_mut(3) {
+                for chunk in out_buf.data.as_chunks_mut::<3>().0 {
                     let (r, g, b) = (chunk[0], chunk[1], chunk[2]);
                     let (lr, lg, lb) = crate::pipeline::aces::linear_to_acescg(r, g, b, ws);
                     let (cr, cg, cb) = crate::pipeline::aces::apply_aces_gamut_compression(lr, lg, lb);
@@ -438,7 +437,7 @@ impl DagEngine {
                 let in_buf = inputs.first().ok_or("FilmSimulation node requires 1 input")?;
                 let mut out_buf = in_buf.as_ref().clone();
                 let sim = crate::pipeline::film_sim::FilmSimulation::from_id(id);
-                for chunk in out_buf.data.chunks_exact_mut(3) {
+                for chunk in out_buf.data.as_chunks_mut::<3>().0 {
                     let (r, g, b) = (chunk[0], chunk[1], chunk[2]);
                     let (sr, sg, sb) = sim.apply_pixel(r, g, b, *intensity);
                     chunk[0] = sr;
@@ -462,7 +461,7 @@ impl DagEngine {
             } => {
                 let in_buf = inputs.first().ok_or("ColorWheels node requires 1 input")?;
                 let mut out_buf = in_buf.as_ref().clone();
-                for chunk in out_buf.data.chunks_exact_mut(3) {
+                for chunk in out_buf.data.as_chunks_mut::<3>().0 {
                     let (mut r, mut g, mut b) = (chunk[0], chunk[1], chunk[2]);
                     // Lift (Shadows)
                     let luma = 0.2126 * r + 0.7152 * g + 0.0722 * b;
@@ -526,9 +525,9 @@ impl DagEngine {
                 let in_buf = inputs.first().ok_or("Lut3D node requires 1 input")?;
                 let mut out_buf = in_buf.as_ref().clone();
 
-                let maybe_lut = if let Some(ref p) = path {
+                let maybe_lut = if let Some(p) = path {
                     crate::pipeline::lut::read_cube_file(p).ok()
-                } else if let Some(ref n) = name {
+                } else if let Some(n) = name {
                     match n.as_str() {
                         "Kodak 2383" => Some(crate::pipeline::lut::Lut3D::kodak_2383()),
                         "Teal & Orange" => Some(crate::pipeline::lut::Lut3D::teal_and_orange()),
@@ -541,7 +540,7 @@ impl DagEngine {
                 };
 
                 if let Some(active_lut) = maybe_lut {
-                    for chunk in out_buf.data.chunks_exact_mut(3) {
+                    for chunk in out_buf.data.as_chunks_mut::<3>().0 {
                         let (r, g, b) = (chunk[0], chunk[1], chunk[2]);
                         let (lr, lg, lb) = crate::pipeline::lut::apply_lut_pixel(r, g, b, &active_lut, *intensity);
                         chunk[0] = lr;

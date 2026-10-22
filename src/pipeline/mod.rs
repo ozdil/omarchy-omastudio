@@ -19,12 +19,11 @@ use rayon::prelude::*;
 
 /// Resolves active 3D LUT (built-in cinematic profile or external .cube file)
 pub fn resolve_recipe_lut(recipe: &Recipe) -> Option<lut::Lut3D> {
-    if let Some(ref path) = recipe.lut_path {
-        if !path.is_empty() {
-            if let Ok(l) = lut::read_cube_file(path) {
-                return Some(l);
-            }
-        }
+    if let Some(ref path) = recipe.lut_path
+        && !path.is_empty()
+        && let Ok(l) = lut::read_cube_file(path)
+    {
+        return Some(l);
     }
     if let Some(ref name) = recipe.lut_name {
         match name.as_str() {

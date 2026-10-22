@@ -123,20 +123,19 @@ impl JevClient {
         let home = std::env::var("HOME").unwrap_or_else(|_| ".".to_string());
         let config_dir = PathBuf::from(&home).join(".config/omastudio");
 
-        if let Ok(sec_dir) = SecureDir::open_or_create_hierarchy(&config_dir) {
-            if let Ok(c_name) = std::ffi::CString::new("ai.json") {
-                if let Ok(mut file) = sec_dir.open_existing_file_ro(&c_name) {
-                    // HANCORE: 0600 mode, S_IFREG, UID ownership, and size limit verification
-                    if crate::security::verify_secure_open_file(&file, MAX_CONFIG_BYTES).is_ok() {
-                        let mut content = String::new();
-                        // HANCORE: take(MAX + 1) to prevent silent truncation
-                        if file.by_ref().take((MAX_CONFIG_BYTES as u64) + 1).read_to_string(&mut content).is_ok()
-                            && content.len() <= MAX_CONFIG_BYTES {
-                                if let Ok(parsed) = serde_json::from_str::<JevConfig>(&content) {
-                                    config = parsed;
-                                }
-                        }
-                    }
+        if let Ok(sec_dir) = SecureDir::open_or_create_hierarchy(&config_dir)
+            && let Ok(c_name) = std::ffi::CString::new("ai.json")
+            && let Ok(mut file) = sec_dir.open_existing_file_ro(&c_name)
+        {
+            // HANCORE: 0600 mode, S_IFREG, UID ownership, and size limit verification
+            if crate::security::verify_secure_open_file(&file, MAX_CONFIG_BYTES).is_ok() {
+                let mut content = String::new();
+                // HANCORE: take(MAX + 1) to prevent silent truncation
+                if file.by_ref().take((MAX_CONFIG_BYTES as u64) + 1).read_to_string(&mut content).is_ok()
+                    && content.len() <= MAX_CONFIG_BYTES
+                    && let Ok(parsed) = serde_json::from_str::<JevConfig>(&content)
+                {
+                    config = parsed;
                 }
             }
         }

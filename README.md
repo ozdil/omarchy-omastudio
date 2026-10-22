@@ -10,7 +10,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Platform](https://img.shields.io/badge/Platform-Omarchy%20Linux%20%7C%20Arch%20Linux-1793d1.svg)](https://omarchy.org)
-[![Engine: Rust](https://img.shields.io/badge/Engine-Rust%202021%20%28Rayon%29-dea584.svg)](Cargo.toml)
+[![Engine: Rust](https://img.shields.io/badge/Engine-Rust%202024%20%28Rayon%29-dea584.svg)](Cargo.toml)
 [![UI: Quickshell](https://img.shields.io/badge/UI-Quickshell%20%7C%20Qt%206-41cd52.svg)](qml/)
 [![Security: CONTRIBUTING.md Compliant](https://img.shields.io/badge/Security-CONTRIBUTING.md%20Mode%200600-brightgreen.svg)](CONTRIBUTING.md)
 [![Omarchy Verified Plugin](https://img.shields.io/badge/Omarchy-Verified_Plugin-22c55e?style=for-the-badge&logo=omarchy)](https://github.com/ozdil)
@@ -195,7 +195,7 @@ flowchart LR
 * `quickshell` (Qt 6 QML desktop shell runtime)
 * `libjxl` & `libavif` (Modern hardware-accelerated image codecs)
 * `zenity` (Native file selection dialogs)
-* `rust`, `clang`, `pkgconf` (Toolchain for compiling the native engine)
+* `rust` (1.99.1 or newer; `rust-toolchain.toml` pins it for rustup users), `clang`, `pkgconf` (Toolchain for compiling the native engine)
 
 Optional:
 * `exiftool` (`perl-image-exiftool`): keeps EXIF metadata and embeds ICC profiles on export. Without it, wide-gamut exports (Adobe RGB, ProPhoto) fall back to sRGB.

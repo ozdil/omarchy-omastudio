@@ -148,11 +148,11 @@ pub fn run_bounded_command_with_stdin(
 
     let mut child = cmd.spawn()?;
 
-    if let Some(data) = stdin_data {
-        if let Some(mut stdin) = child.stdin.take() {
-            let _ = stdin.write_all(data);
-            let _ = stdin.flush();
-        }
+    if let Some(data) = stdin_data
+        && let Some(mut stdin) = child.stdin.take()
+    {
+        let _ = stdin.write_all(data);
+        let _ = stdin.flush();
     }
 
     let guard = ProcessGroupGuard::new(&mut child);
@@ -184,11 +184,11 @@ pub fn run_bounded_command_with_stdin(
 
     while Instant::now() < deadline {
         // Poll for child exit
-        if !child_exited {
-            if let Ok(Some(status)) = guard.child.try_wait() {
-                child_exited = true;
-                exit_code = status.code().unwrap_or(-1);
-            }
+        if !child_exited
+            && let Ok(Some(status)) = guard.child.try_wait()
+        {
+            child_exited = true;
+            exit_code = status.code().unwrap_or(-1);
         }
 
         // Drain stdout
@@ -720,35 +720,35 @@ pub fn run_bounded_command_stream_to_file(
     let mut stdout_closed = false;
 
     while Instant::now() < deadline {
-        if !child_exited {
-            if let Ok(Some(status)) = guard.child.try_wait() {
-                child_exited = true;
-                exit_code = status.code().unwrap_or(-1);
-            }
+        if !child_exited
+            && let Ok(Some(status)) = guard.child.try_wait()
+        {
+            child_exited = true;
+            exit_code = status.code().unwrap_or(-1);
         }
 
         // Drain stdout into target_file
-        if let Some(ref mut pipe) = guard.child.stdout {
-            if !stdout_closed {
-                loop {
-                    match pipe.read(&mut chunk) {
-                        Ok(0) => {
-                            stdout_closed = true;
-                            break;
-                        }
-                        Ok(n) => {
-                            if total_written + n > max_bytes {
-                                return Err(io::Error::new(
-                                    io::ErrorKind::OutOfMemory,
-                                    format!("Output exceeded maximum allowed size of {} bytes", max_bytes),
-                                ));
-                            }
-                            target_file.write_all(&chunk[..n])?;
-                            total_written += n;
-                        }
-                        Err(ref e) if e.kind() == io::ErrorKind::WouldBlock => break,
-                        Err(e) => return Err(e),
+        if let Some(ref mut pipe) = guard.child.stdout
+            && !stdout_closed
+        {
+            loop {
+                match pipe.read(&mut chunk) {
+                    Ok(0) => {
+                        stdout_closed = true;
+                        break;
                     }
+                    Ok(n) => {
+                        if total_written + n > max_bytes {
+                            return Err(io::Error::new(
+                                io::ErrorKind::OutOfMemory,
+                                format!("Output exceeded maximum allowed size of {} bytes", max_bytes),
+                            ));
+                        }
+                        target_file.write_all(&chunk[..n])?;
+                        total_written += n;
+                    }
+                    Err(ref e) if e.kind() == io::ErrorKind::WouldBlock => break,
+                    Err(e) => return Err(e),
                 }
             }
         }
@@ -860,12 +860,11 @@ pub fn get_secure_preview_dir() -> std::path::PathBuf {
     let shm_dir = Path::new("/dev/shm");
     if shm_dir.exists() && shm_dir.is_dir() {
         let user_shm = std::path::PathBuf::from(format!("/dev/shm/omastudio-{}", uid));
-        if ensure_secure_dir(&user_shm).is_ok() {
-            if let Ok(meta) = fs::symlink_metadata(&user_shm) {
-                if meta.file_type().is_dir() && !meta.file_type().is_symlink() && meta.uid() == uid {
-                    return user_shm;
-                }
-            }
+        if ensure_secure_dir(&user_shm).is_ok()
+            && let Ok(meta) = fs::symlink_metadata(&user_shm)
+            && meta.file_type().is_dir() && !meta.file_type().is_symlink() && meta.uid() == uid
+        {
+            return user_shm;
         }
     }
     let home = std::env::var("HOME").unwrap_or_else(|_| ".".to_string());

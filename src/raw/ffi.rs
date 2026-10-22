@@ -20,7 +20,7 @@ pub struct COmaRawMetadata {
 
 #[link(name = "omaraw_shim", kind = "static")]
 #[link(name = "raw_r")]
-extern "C" {
+unsafe extern "C" {
     pub fn omaraw_open(path: *const c_char, errcode: *mut c_int) -> *mut c_void;
     pub fn omaraw_get_metadata(handle: *mut c_void, meta: *mut COmaRawMetadata) -> c_int;
     pub fn omaraw_extract_thumb_file(handle: *mut c_void, dest_path: *const c_char) -> c_int;

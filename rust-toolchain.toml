@@ -1,0 +1,6 @@
+# Pinned so a new stable release's lints can't turn unrelated PRs red;
+# bump deliberately (here, in CI and in PKGBUILD) and fix any new warnings in the same change.
+[toolchain]
+channel = "1.99.1"
+components = ["clippy", "rustfmt"]
+profile = "minimal"

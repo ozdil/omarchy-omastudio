@@ -6,7 +6,7 @@ pkgdesc="Premier Professional RAW Photo Editor for Omarchy Linux with Studio Cat
 arch=('x86_64')
 url="https://github.com/ozdil/omarchy-omastudio"
 license=('MIT')
-depends=('libraw' 'quickshell' 'libjxl' 'libavif' 'zenity')
+depends=('libraw>=0.22' 'quickshell' 'qt6-declarative>=6.12' 'libjxl' 'libavif' 'zenity')
 optdepends=('perl-image-exiftool: preserve EXIF metadata on export' 'ffmpeg: AVIF export fallback')
 makedepends=('rust' 'cargo' 'pkgconf' 'clang')
 source=()

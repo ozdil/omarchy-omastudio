@@ -22,10 +22,10 @@ pub fn get_icc_directories() -> Vec<PathBuf> {
     // Project bundled assets (source checkout)
     dirs.push(PathBuf::from("assets/icc"));
     // Bundled assets of installed builds: <prefix>/share/omastudio/icc next to <prefix>/bin
-    if let Ok(exe) = env::current_exe() {
-        if let Some(prefix) = exe.parent().and_then(|bin| bin.parent()) {
-            dirs.push(prefix.join("share/omastudio/icc"));
-        }
+    if let Ok(exe) = env::current_exe()
+        && let Some(prefix) = exe.parent().and_then(|bin| bin.parent())
+    {
+        dirs.push(prefix.join("share/omastudio/icc"));
     }
     dirs.push(PathBuf::from("/usr/share/omastudio/icc"));
     // System Ghostscript ICC folder
@@ -69,24 +69,24 @@ pub fn list_icc_profiles() -> Vec<IccProfileInfo> {
         if let Ok(entries) = fs::read_dir(dir) {
             for entry in entries.flatten() {
                 let path = entry.path();
-                if path.is_file() {
-                    if let Some(ext) = path.extension().and_then(|s| s.to_str()) {
-                        let ext_lower = ext.to_lowercase();
-                        if ext_lower == "icc" || ext_lower == "icm" {
-                            if let Some(stem) = path.file_stem().and_then(|s| s.to_str()) {
-                                let id_lower = stem.to_lowercase();
-                                if !seen_ids.contains(&id_lower) {
-                                    seen_ids.insert(id_lower);
-                                    profiles.push(IccProfileInfo {
-                                        id: stem.to_string(),
-                                        name: stem.replace('_', " "),
-                                        description: "Custom ICC Color Profile".to_string(),
-                                        path: path.to_string_lossy().to_string(),
-                                        is_wide_gamut: true,
-                                        is_default: false,
-                                    });
-                                }
-                            }
+                if path.is_file()
+                    && let Some(ext) = path.extension().and_then(|s| s.to_str())
+                {
+                    let ext_lower = ext.to_lowercase();
+                    if (ext_lower == "icc" || ext_lower == "icm")
+                        && let Some(stem) = path.file_stem().and_then(|s| s.to_str())
+                    {
+                        let id_lower = stem.to_lowercase();
+                        if !seen_ids.contains(&id_lower) {
+                            seen_ids.insert(id_lower);
+                            profiles.push(IccProfileInfo {
+                                id: stem.to_string(),
+                                name: stem.replace('_', " "),
+                                description: "Custom ICC Color Profile".to_string(),
+                                path: path.to_string_lossy().to_string(),
+                                is_wide_gamut: true,
+                                is_default: false,
+                            });
                         }
                     }
                 }
@@ -125,10 +125,10 @@ pub fn resolve_icc_path(name_or_id: &str) -> Option<PathBuf> {
         if let Ok(entries) = fs::read_dir(&dir) {
             for entry in entries.flatten() {
                 let p = entry.path();
-                if let Some(stem) = p.file_stem().and_then(|s| s.to_str()) {
-                    if stem.to_lowercase() == lower {
-                        return Some(p);
-                    }
+                if let Some(stem) = p.file_stem().and_then(|s| s.to_str())
+                    && stem.to_lowercase() == lower
+                {
+                    return Some(p);
                 }
             }
         }

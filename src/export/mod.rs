@@ -64,15 +64,13 @@ pub fn export_photo<P: AsRef<Path>>(
         .and_then(crate::raw::OutputColorSpace::from_profile_name);
     let mut embed_icc: Option<PathBuf> = None;
     let mut converted = false;
-    if let (Some(space), Some(name)) = (requested_space, options.icc_profile.as_deref()) {
-        if space != crate::raw::OutputColorSpace::Srgb {
-            if let Some(icc_path) = crate::icc::resolve_icc_path(name) {
-                if exiftool_available() && raw.set_output_space(space) {
-                    embed_icc = Some(icc_path);
-                    converted = true;
-                }
-            }
-        }
+    if let (Some(space), Some(name)) = (requested_space, options.icc_profile.as_deref())
+        && space != crate::raw::OutputColorSpace::Srgb
+        && let Some(icc_path) = crate::icc::resolve_icc_path(name)
+        && exiftool_available() && raw.set_output_space(space)
+    {
+        embed_icc = Some(icc_path);
+        converted = true;
     }
     if embed_icc.is_none() && options.icc_profile.is_some() {
         embed_icc = crate::icc::resolve_icc_path("sRGB");
@@ -317,11 +315,11 @@ pub fn export_photo<P: AsRef<Path>>(
             }
         }
 
-        if let Some(ref artist) = options.artist_copyright {
-            if !artist.trim().is_empty() {
-                exif_cmd.arg(format!("-Artist={}", artist))
-                    .arg(format!("-Copyright={}", artist));
-            }
+        if let Some(ref artist) = options.artist_copyright
+            && !artist.trim().is_empty()
+        {
+            exif_cmd.arg(format!("-Artist={}", artist))
+                .arg(format!("-Copyright={}", artist));
         }
 
         if let Some(ref icc_path) = embed_icc {

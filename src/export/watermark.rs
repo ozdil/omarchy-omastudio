@@ -307,7 +307,7 @@ pub fn apply_watermark(
 
     // Alpha blend watermark onto image
     match img {
-        DynamicImage::ImageRgb8(ref mut rgb8) => {
+        DynamicImage::ImageRgb8(rgb8) => {
             for y in 0..wm_h {
                 let dst_y = target_y + y;
                 if dst_y >= img_h {
@@ -330,7 +330,7 @@ pub fn apply_watermark(
                 }
             }
         }
-        DynamicImage::ImageRgb16(ref mut rgb16) => {
+        DynamicImage::ImageRgb16(rgb16) => {
             for y in 0..wm_h {
                 let dst_y = target_y + y;
                 if dst_y >= img_h {

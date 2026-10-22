@@ -427,18 +427,18 @@ impl Recipe {
         
         // Check primary .omastudio sidecar first
         let studio_sidecar = path.with_extension(format!("{}.omastudio", ext));
-        if let Ok(data) = crate::security::read_secure_file(&studio_sidecar, 1024 * 1024) {
-            if let Ok(recipe) = serde_json::from_slice(&data) {
-                return Some(recipe);
-            }
+        if let Ok(data) = crate::security::read_secure_file(&studio_sidecar, 1024 * 1024)
+            && let Ok(recipe) = serde_json::from_slice(&data)
+        {
+            return Some(recipe);
         }
 
         // Fallback to legacy .omaraw sidecar
         let legacy_sidecar = path.with_extension(format!("{}.omaraw", ext));
-        if let Ok(data) = crate::security::read_secure_file(&legacy_sidecar, 1024 * 1024) {
-            if let Ok(recipe) = serde_json::from_slice(&data) {
-                return Some(recipe);
-            }
+        if let Ok(data) = crate::security::read_secure_file(&legacy_sidecar, 1024 * 1024)
+            && let Ok(recipe) = serde_json::from_slice(&data)
+        {
+            return Some(recipe);
         }
         None
     }
@@ -486,12 +486,12 @@ impl Catalog {
 
     pub fn load() -> Self {
         let path = Self::default_catalog_path();
-        if let Ok(bytes) = crate::security::read_secure_file(&path, 16 * 1024 * 1024) {
-            if let Ok(mut cat) = serde_json::from_slice::<Catalog>(&bytes) {
-                // Filter out ghost entries where RAW file no longer exists on disk
-                cat.items.retain(|file_path, _| std::path::Path::new(file_path).exists());
-                return cat;
-            }
+        if let Ok(bytes) = crate::security::read_secure_file(&path, 16 * 1024 * 1024)
+            && let Ok(mut cat) = serde_json::from_slice::<Catalog>(&bytes)
+        {
+            // Filter out ghost entries where RAW file no longer exists on disk
+            cat.items.retain(|file_path, _| std::path::Path::new(file_path).exists());
+            return cat;
         }
         Self {
             version: 1,
@@ -539,50 +539,50 @@ impl Catalog {
 
     pub fn filter_items(&self, filter: &CatalogFilter) -> Vec<&CatalogItem> {
         let mut matched: Vec<&CatalogItem> = self.items.values().filter(|item| {
-            if let Some(min_r) = filter.min_rating {
-                if item.rating < min_r {
-                    return false;
-                }
+            if let Some(min_r) = filter.min_rating
+                && item.rating < min_r
+            {
+                return false;
             }
-            if let Some(ref fl) = filter.flag {
-                if !fl.is_empty() && &item.flag != fl {
-                    return false;
-                }
+            if let Some(ref fl) = filter.flag
+                && !fl.is_empty() && &item.flag != fl
+            {
+                return false;
             }
-            if let Some(ref make) = filter.camera_make {
-                if !make.is_empty() && !item.metadata.make.to_lowercase().contains(&make.to_lowercase()) {
-                    return false;
-                }
+            if let Some(ref make) = filter.camera_make
+                && !make.is_empty() && !item.metadata.make.to_lowercase().contains(&make.to_lowercase())
+            {
+                return false;
             }
-            if let Some(ref model) = filter.camera_model {
-                if !model.is_empty() && !item.metadata.model.to_lowercase().contains(&model.to_lowercase()) {
-                    return false;
-                }
+            if let Some(ref model) = filter.camera_model
+                && !model.is_empty() && !item.metadata.model.to_lowercase().contains(&model.to_lowercase())
+            {
+                return false;
             }
-            if let Some(ref lens) = filter.lens {
-                if !lens.is_empty() && !item.metadata.lens.to_lowercase().contains(&lens.to_lowercase()) {
-                    return false;
-                }
+            if let Some(ref lens) = filter.lens
+                && !lens.is_empty() && !item.metadata.lens.to_lowercase().contains(&lens.to_lowercase())
+            {
+                return false;
             }
-            if let Some(min_iso) = filter.min_iso {
-                if item.metadata.iso < min_iso {
-                    return false;
-                }
+            if let Some(min_iso) = filter.min_iso
+                && item.metadata.iso < min_iso
+            {
+                return false;
             }
-            if let Some(max_iso) = filter.max_iso {
-                if item.metadata.iso > max_iso {
-                    return false;
-                }
+            if let Some(max_iso) = filter.max_iso
+                && item.metadata.iso > max_iso
+            {
+                return false;
             }
-            if let Some(ref q) = filter.search_query {
-                if !q.is_empty() {
-                    let q_lower = q.to_lowercase();
-                    let matches_name = item.path.to_lowercase().contains(&q_lower);
-                    let matches_model = item.metadata.model.to_lowercase().contains(&q_lower);
-                    let matches_lens = item.metadata.lens.to_lowercase().contains(&q_lower);
-                    if !matches_name && !matches_model && !matches_lens {
-                        return false;
-                    }
+            if let Some(ref q) = filter.search_query
+                && !q.is_empty()
+            {
+                let q_lower = q.to_lowercase();
+                let matches_name = item.path.to_lowercase().contains(&q_lower);
+                let matches_model = item.metadata.model.to_lowercase().contains(&q_lower);
+                let matches_lens = item.metadata.lens.to_lowercase().contains(&q_lower);
+                if !matches_name && !matches_model && !matches_lens {
+                    return false;
                 }
             }
             true

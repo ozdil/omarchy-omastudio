@@ -19,7 +19,10 @@ jobs:
       ARCH: ${{ matrix.arch }}
     steps:
       - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
+      # Same toolchain as rust-toolchain.toml
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: 1.99.1
       - name: Install build dependencies
         run: |
           sudo apt-get update

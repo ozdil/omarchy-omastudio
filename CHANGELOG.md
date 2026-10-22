@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+### Toolchain
+- Rust 1.99.1 (pinned in `rust-toolchain.toml`) and the Rust 2024 edition. Nested `if let` blocks became let-chains and the new clippy lints are fixed; behaviour is unchanged.
+- The Arch package now requires LibRaw 0.22 and Qt 6.12 (`qt6-declarative`), the versions current Omarchy ships.
+- CI builds, tests and lints in an Arch Linux container, so it uses the same LibRaw, Qt and Rust packages as Omarchy instead of Ubuntu's older ones.
+
 ### Engine
 - Thumbnails are always re-encoded by the engine. A JPEG, PNG or WebP that fails to decode is no longer copied into the thumbnail cache unchanged or shown from its original file; the filmstrip shows a placeholder instead, so a crafted image cannot reach Qt's image decoders without the engine's limits. *(The thumbnail cache is rebuilt once.)*
 

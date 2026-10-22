@@ -10,7 +10,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Platform](https://img.shields.io/badge/Platform-Omarchy%20Linux%20%7C%20Arch%20Linux-1793d1.svg)](https://omarchy.org)
-[![Engine: Rust](https://img.shields.io/badge/Engine-Rust%202021%20%28Rayon%29-dea584.svg)](Cargo.toml)
+[![Engine: Rust](https://img.shields.io/badge/Engine-Rust%202024%20%28Rayon%29-dea584.svg)](Cargo.toml)
 [![UI: Quickshell](https://img.shields.io/badge/UI-Quickshell%20%7C%20Qt%206-41cd52.svg)](qml/)
 [![Security: CONTRIBUTING.md Compliant](https://img.shields.io/badge/Security-CONTRIBUTING.md%20Mode%200600-brightgreen.svg)](CONTRIBUTING.md)
 [![Omarchy Verified Plugin](https://img.shields.io/badge/Omarchy-Verified_Plugin-22c55e?style=for-the-badge&logo=omarchy)](https://github.com/ozdil)
@@ -195,7 +195,7 @@ flowchart LR
 * `quickshell` (Qt 6 QML masaüstü kabuk çalışma zamanı)
 * `libjxl` & `libavif` (Modern donanım ivmeli görsel kodekleri)
 * `zenity` (Masaüstü dosya seçim pencereleri)
-* `rust`, `clang`, `pkgconf` (Yerel motor derleme araç zinciri)
+* `rust` (1.99.1 veya üstü; rustup kullananlar için `rust-toolchain.toml` sabitler), `clang`, `pkgconf` (Yerel motor derleme araç zinciri)
 
 İsteğe bağlı:
 * `exiftool` (`perl-image-exiftool`): Dışa aktarımda EXIF verisini korur ve ICC profilini gömer. Yoksa geniş gamlı dışa aktarımlar (Adobe RGB, ProPhoto) sRGB'ye düşer.

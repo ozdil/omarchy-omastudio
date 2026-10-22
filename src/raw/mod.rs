@@ -134,7 +134,7 @@ impl ProcessedBuffer {
                     self.as_slice_u16().to_vec()
                 } else {
                     let mut u16_vec = Vec::with_capacity(self.data_size / 2);
-                    for chunk in vec[..self.data_size].chunks_exact(2) {
+                    for chunk in vec[..self.data_size].as_chunks::<2>().0 {
                         u16_vec.push(u16::from_ne_bytes([chunk[0], chunk[1]]));
                     }
                     u16_vec
@@ -147,12 +147,12 @@ impl ProcessedBuffer {
 
 impl Drop for ProcessedBuffer {
     fn drop(&mut self) {
-        if let BufferStorage::LibRaw(ptr) = self.storage {
-            if !ptr.is_null() {
-                // SAFETY: ptr was allocated by malloc in C shim and is freed here
-                unsafe {
-                    omaraw_free_image(ptr);
-                }
+        if let BufferStorage::LibRaw(ptr) = self.storage
+            && !ptr.is_null()
+        {
+            // SAFETY: ptr was allocated by malloc in C shim and is freed here
+            unsafe {
+                omaraw_free_image(ptr);
             }
         }
     }
@@ -539,12 +539,12 @@ impl RawImage {
 
 impl Drop for RawImage {
     fn drop(&mut self) {
-        if let RawBackend::LibRaw(handle) = self.backend {
-            if !handle.is_null() {
-                // SAFETY: handle was opened by omaraw_open and is cleanly released here
-                unsafe {
-                    omaraw_close(handle);
-                }
+        if let RawBackend::LibRaw(handle) = self.backend
+            && !handle.is_null()
+        {
+            // SAFETY: handle was opened by omaraw_open and is cleanly released here
+            unsafe {
+                omaraw_close(handle);
             }
         }
     }

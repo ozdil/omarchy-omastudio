@@ -250,13 +250,13 @@ pub fn read_cube_file<P: AsRef<Path>>(path: P) -> Result<Lut3D, String> {
             domain_max[0] = parts[1].parse().unwrap_or(1.0);
             domain_max[1] = parts[2].parse().unwrap_or(1.0);
             domain_max[2] = parts[3].parse().unwrap_or(1.0);
-        } else if parts.len() >= 3 {
-            if let (Ok(r), Ok(g), Ok(b)) = (parts[0].parse::<f32>(), parts[1].parse::<f32>(), parts[2].parse::<f32>()) {
-                if r.is_finite() && g.is_finite() && b.is_finite() {
-                    table.push([r, g, b]);
-                } else {
-                    return Err("Non-finite float detected in LUT file".to_string());
-                }
+        } else if parts.len() >= 3
+            && let (Ok(r), Ok(g), Ok(b)) = (parts[0].parse::<f32>(), parts[1].parse::<f32>(), parts[2].parse::<f32>())
+        {
+            if r.is_finite() && g.is_finite() && b.is_finite() {
+                table.push([r, g, b]);
+            } else {
+                return Err("Non-finite float detected in LUT file".to_string());
             }
         }
     }
