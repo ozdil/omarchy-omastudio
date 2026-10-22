@@ -57,6 +57,7 @@ pub fn export_photo<P: AsRef<Path>>(
 ) -> Result<PathBuf, String> {
     let raw = RawImage::open(&raw_path)
         .map_err(|e| format!("Could not open RAW for export: {}", e))?;
+    let recipe = &Recipe { baseline_exposure: raw.baseline_exposure(), ..recipe.clone() };
 
     // Render straight into the requested space when the decoder can (built-in spaces
     // from a RAW), otherwise into a built-in space lcms2 converts from: ProPhoto for

@@ -185,7 +185,7 @@ impl FilmSimulation {
                 // Velvia 50: Rich saturation, deep sky blue, vivid landscape foliage, punchy S-curve
                 let curve = |v: f32| -> f32 {
                     let diff = v - 0.50;
-                    (0.50 + (diff * 1.35).tanh() * 0.49).clamp(0.0, 1.0)
+                    s_curve(diff + 0.50, 0.50, 1.35, 0.49)
                 };
                 let r_c = curve(r);
                 let g_c = curve(g);
@@ -223,7 +223,7 @@ impl FilmSimulation {
             Self::FujiClassicChrome => {
                 // Classic Chrome: Documentary muted vibrance, cyan-tinted blues, hard midtone contrast
                 let diff = luma - 0.42;
-                let contrast_luma = (0.42 + (diff * 1.28).tanh() * 0.48).clamp(0.0, 1.0);
+                let contrast_luma = s_curve(diff + 0.42, 0.42, 1.28, 0.48);
                 let luma_ratio = if luma > 1e-4 { contrast_luma / luma } else { 1.0 };
 
                 let mut r_cc = r * luma_ratio;
@@ -244,7 +244,7 @@ impl FilmSimulation {
             Self::FujiClassicNeg => {
                 // Classic Neg: Superia nostalgia, warm amber highlights, rich cool shadows
                 let diff = luma - 0.48;
-                let s_curve = (0.48 + (diff * 1.32).tanh() * 0.50).clamp(0.0, 1.0);
+                let s_curve = s_curve(diff + 0.48, 0.48, 1.32, 0.50);
                 let ratio = if luma > 1e-4 { s_curve / luma } else { 1.0 };
 
                 let mut r_cn = r * ratio;
@@ -270,7 +270,7 @@ impl FilmSimulation {
                 // Nostalgic Neg (GFX 100S Debut): Warm amber highlights, rich deep magenta/cyan shadows,
                 // and distinct American New Color photography tones (William Eggleston / Stephen Shore).
                 let diff = luma - 0.45;
-                let s_curve = (0.45 + (diff * 1.22).tanh() * 0.48).clamp(0.0, 1.0);
+                let s_curve = s_curve(diff + 0.45, 0.45, 1.22, 0.48);
                 let ratio = if luma > 1e-4 { s_curve / luma } else { 1.0 };
 
                 let mut r_nn = r * ratio;
@@ -297,7 +297,7 @@ impl FilmSimulation {
                 // PRO Neg. Hi: Professional studio portrait profile with slightly higher contrast,
                 // neutral skin tones, and rich controlled highlight roll-off.
                 let diff = luma - 0.50;
-                let contrast_luma = (0.50 + (diff * 1.15).tanh() * 0.48).clamp(0.0, 1.0);
+                let contrast_luma = s_curve(diff + 0.50, 0.50, 1.15, 0.48);
                 let ratio = if luma > 1e-4 { contrast_luma / luma } else { 1.0 };
 
                 let r_pn = contrast_luma + (r * ratio - contrast_luma) * 1.02;
@@ -323,7 +323,7 @@ impl FilmSimulation {
                 // PRO Neg. Std: the softest colour simulation, low contrast and restrained
                 // saturation for even studio skin tones
                 let diff = luma - 0.50;
-                let soft = (0.50 + (diff * 0.92).tanh() * 0.50).clamp(0.0, 1.0);
+                let soft = s_curve(diff + 0.50, 0.50, 0.92, 0.50);
                 let ratio = if luma > 1e-4 { soft / luma } else { 1.0 };
                 let k = 0.90;
                 (
@@ -336,7 +336,7 @@ impl FilmSimulation {
             Self::FujiRealaAce => {
                 // Reala Ace: faithful hues with a little more contrast than Provia
                 let diff = luma - 0.46;
-                let tone = (0.46 + (diff * 1.12).tanh() * 0.50).clamp(0.0, 1.0);
+                let tone = s_curve(diff + 0.46, 0.46, 1.12, 0.50);
                 let ratio = if luma > 1e-4 { tone / luma } else { 1.0 };
                 (
                     (tone + (r * ratio - tone) * 1.04).clamp(0.0, 1.0),
@@ -348,7 +348,7 @@ impl FilmSimulation {
             Self::FujiEternaBleachBypass => {
                 // Bleach Bypass: silver retained in the print, so hard contrast and little colour
                 let diff = luma - 0.45;
-                let hard = (0.45 + (diff * 1.55).tanh() * 0.52).clamp(0.0, 1.0);
+                let hard = s_curve(diff + 0.45, 0.45, 1.55, 0.52);
                 let ratio = if luma > 1e-4 { hard / luma } else { 1.0 };
                 let k = 0.38;
                 (
@@ -452,7 +452,7 @@ impl FilmSimulation {
             Self::HasselbladXPan => {
                 // Hasselblad XPan: Dramatic cinematic contrast, velvety deep blacks, crisp micro-acutance
                 let diff = luma - 0.45;
-                let xpan_luma = (0.45 + (diff * 1.45).tanh() * 0.52).clamp(0.0, 1.0);
+                let xpan_luma = s_curve(diff + 0.45, 0.45, 1.45, 0.52);
                 let ratio = if luma > 1e-4 { xpan_luma / luma } else { 1.0 };
 
                 let cr = (r * ratio - xpan_luma) * 0.85;
@@ -509,18 +509,29 @@ pub fn apply(sim: FilmSimulation, calibrated: Option<&Lut3D>, r: f32, g: f32, b:
     }
 }
 
+/// A film S-curve around `pivot`: `pivot + tanh((y - pivot) * k) * amp`, rescaled so
+/// black stays black and white stays white. The bare tanh curve lifted black to about
+/// 0.2 and capped white near 0.75, which also made the chroma-preserving sims divide
+/// tiny luma values into extreme saturation in the shadows.
+#[inline(always)]
+fn s_curve(y: f32, pivot: f32, k: f32, amp: f32) -> f32 {
+    let f = |v: f32| pivot + ((v - pivot) * k).tanh() * amp;
+    let (lo, hi) = (f(0.0), f(1.0));
+    ((f(y.clamp(0.0, 1.0)) - lo) / (hi - lo)).clamp(0.0, 1.0)
+}
+
 /// Monochrome: a gentler S-curve than Acros
 #[inline(always)]
 fn eval_mono_curve(y: f32) -> f32 {
     let diff = y.clamp(0.0, 1.0) - 0.46;
-    (0.46 + (diff * 1.10).tanh() * 0.52).clamp(0.0, 1.0)
+    s_curve(diff + 0.46, 0.46, 1.10, 0.52)
 }
 
 /// Acros high micro-contrast S-curve
 #[inline(always)]
 fn eval_acros_curve(y: f32) -> f32 {
     let diff = y.clamp(0.0, 1.0) - 0.44;
-    (0.44 + (diff * 1.30).tanh() * 0.50).clamp(0.0, 1.0)
+    s_curve(diff + 0.44, 0.44, 1.30, 0.50)
 }
 
 /// Fujifilm Color Chrome Effect and Color Chrome FX Blue.

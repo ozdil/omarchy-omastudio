@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <strings.h>
 
 void* omaraw_open(const char *path, int *errcode) {
     if (!path) {
@@ -211,4 +212,16 @@ void omaraw_close(void *handle) {
     if (handle) {
         libraw_close((libraw_data_t*)handle);
     }
+}
+
+/* Exposure the camera's own JPEG adds to the raw data, in EV: Fujifilm records how far
+ * its rendering moves the metered mid-point up from the raw data (tag 0x9650; larger
+ * with DR200/DR400, which expose the raw lower). 0 for other makes. */
+float omaraw_baseline_ev(void *handle) {
+    if (!handle) return 0.0f;
+    libraw_data_t *lr = (libraw_data_t*)handle;
+    if (strncasecmp(lr->idata.make, "Fujifilm", 8) != 0) return 0.0f;
+    float shift = lr->makernotes.fuji.ExpoMidPointShift;
+    if (!(shift > -4.0f && shift < 4.0f)) return 0.0f;
+    return shift;
 }

@@ -46,6 +46,7 @@ pub struct COmaRawCfaInfo {
 #[link(name = "raw_r")]
 unsafe extern "C" {
     pub fn omaraw_open(path: *const c_char, errcode: *mut c_int) -> *mut c_void;
+    pub fn omaraw_baseline_ev(handle: *mut c_void) -> c_float;
     pub fn omaraw_unpack_cfa(handle: *mut c_void, info: *mut COmaRawCfaInfo) -> *const u16;
     pub fn omaraw_get_metadata(handle: *mut c_void, meta: *mut COmaRawMetadata) -> c_int;
     pub fn omaraw_extract_thumb_file(handle: *mut c_void, dest_path: *const c_char) -> c_int;

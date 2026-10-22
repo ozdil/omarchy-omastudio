@@ -194,6 +194,10 @@ Rectangle {
     property string currentCatalogFilter: ""
     property bool isListingFolder: false
     property bool daemonReady: false
+    // One preview render at a time: slider moves arriving while the engine renders
+    // collapse into a single follow-up render with the latest values
+    property bool renderInFlight: false
+    property bool renderPending: false
     property var daemonQueue: []
 
     function resolveEnginePath() {
@@ -776,6 +780,7 @@ Rectangle {
                     exportDialog.isExporting = false;
                     exportDialog.exportStatusText = "[ERR] " + (resp.error || "Batch export failed");
                 } else if (resp.action === "adjust") {
+                    root.renderFinished();
                     root.showToast("[ERR] " + (resp.error || "Preview render failed"), Theme.highlightClip);
                 } else if (resp.action === "detail") {
                     viewport.detailFailed();
@@ -793,6 +798,7 @@ Rectangle {
                     root.applyRecipeObject(data.recipe);
                 }
             } else if (act === "adjust") {
+                root.renderFinished();
                 if (data) {
                     root.activeHistogram = data.histogram;
                     viewport.imageSource = data.image;
@@ -910,6 +916,12 @@ Rectangle {
         repeat: false
         onTriggered: {
             if (root.activePhotoPath !== "") {
+                if (root.renderInFlight) {
+                    root.renderPending = true;
+                    return;
+                }
+                root.renderInFlight = true;
+                renderWatchdog.restart();
                 var splitVal = root.isSplitView ? root.splitRatio : 0.0;
                 root.sendDaemonCommand({
                     cmd: "adjust",
@@ -919,6 +931,23 @@ Rectangle {
                     shadow_mask: viewport.showShadowMask
                 });
             }
+        }
+    }
+
+    // Recovers if a render reply never arrives (engine restarted mid-render)
+    Timer {
+        id: renderWatchdog
+        interval: 5000
+        repeat: false
+        onTriggered: root.renderFinished()
+    }
+
+    function renderFinished() {
+        renderWatchdog.stop();
+        root.renderInFlight = false;
+        if (root.renderPending) {
+            root.renderPending = false;
+            renderDebounce.restart();
         }
     }
 
@@ -944,6 +973,7 @@ Rectangle {
 
         onFinished: function(exitCode, output) {
             root.daemonReady = false;
+            root.renderInFlight = false;
         }
     }
 

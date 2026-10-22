@@ -145,6 +145,8 @@ struct DaemonCache {
     raw_buffer_8: Option<Arc<Vec<u8>>>,
     /// Transfer curve of `raw_buffer_16` (linear light for LibRaw decodes).
     transfer: Transfer,
+    /// The photo's baseline exposure (see `Recipe::baseline_exposure`).
+    baseline_exposure: f32,
     width: u32,
     height: u32,
     channels: u32,
@@ -161,6 +163,7 @@ struct FullFrame {
     width: usize,
     height: usize,
     transfer: Transfer,
+    baseline_exposure: f32,
 }
 
 #[derive(Serialize)]
@@ -181,10 +184,36 @@ struct DetailResult {
 
 /// Decodes `path` at full resolution on a background thread and stores it in the cache
 /// if that photo is still the current one.
+/// Longest edge of the interactive preview buffer. A half-size decode of a 100 MP
+/// GFX file is 25 MP, far more than any display shows at once; pixel-exact views
+/// render from the full decode instead.
+const PREVIEW_MAX_EDGE: u32 = 3840;
+
+/// Scales a half-size decode down to [`PREVIEW_MAX_EDGE`] when it is larger.
+fn cap_preview(data: &[u16], width: u32, height: u32, channels: u32) -> (Vec<u16>, u32, u32) {
+    let long = width.max(height);
+    if long <= PREVIEW_MAX_EDGE || !(channels == 3 || channels == 4) {
+        return (data.to_vec(), width, height);
+    }
+    let scale = PREVIEW_MAX_EDGE as f64 / long as f64;
+    let (nw, nh) = (((width as f64 * scale).round() as u32).max(1), ((height as f64 * scale).round() as u32).max(1));
+    let filter = image::imageops::FilterType::Triangle;
+    let out = if channels == 3 {
+        image::ImageBuffer::<image::Rgb<u16>, _>::from_raw(width, height, data.to_vec()).map(|i| image::imageops::resize(&i, nw, nh, filter).into_raw())
+    } else {
+        image::ImageBuffer::<image::Rgba<u16>, _>::from_raw(width, height, data.to_vec()).map(|i| image::imageops::resize(&i, nw, nh, filter).into_raw())
+    };
+    match out {
+        Some(v) => (v, nw, nh),
+        None => (data.to_vec(), width, height),
+    }
+}
+
 fn spawn_full_decode(cache: Arc<Mutex<DaemonCache>>, path: String) {
     std::thread::spawn(move || {
         let Ok(raw) = RawImage::open(&path) else { return };
         let Ok(full) = raw.process_full_16(3) else { return };
+        let baseline_exposure = raw.baseline_exposure();
         drop(raw);
         if full.channels != 3 {
             return;
@@ -193,6 +222,7 @@ fn spawn_full_decode(cache: Arc<Mutex<DaemonCache>>, path: String) {
             width: full.width as usize,
             height: full.height as usize,
             transfer: full.transfer,
+            baseline_exposure,
             data: full.to_vec_u16(),
         };
         let ready = FullReady { path: path.clone(), width: frame.width, height: frame.height };
@@ -843,6 +873,8 @@ fn main() {
             }));
         }
         "daemon" => {
+            // The daemon serves the editor's viewport; exports go through export_photo
+            pipeline::set_interactive(true);
             run_daemon();
         }
         cmd => {
@@ -910,6 +942,7 @@ fn inspect_file(raw_path: &str) -> Result<InspectResult, String> {
 
 fn render_file(raw_path: &str, recipe: &Recipe, split: f32, out_path: &str) -> Result<RenderResult, String> {
     let raw = RawImage::open(raw_path)?;
+    let recipe = &Recipe { baseline_exposure: raw.baseline_exposure(), ..recipe.clone() };
     let preview = raw.process_preview_16(true)?;
 
     let (final_buf, hist) = if split > 0.001 {
@@ -1355,6 +1388,7 @@ fn run_daemon() {
         raw_buffer_16: None,
         raw_buffer_8: None,
         transfer: Transfer::default(),
+        baseline_exposure: 0.0,
         width: 0,
         height: 0,
         channels: 0,
@@ -1457,8 +1491,9 @@ fn run_daemon() {
 
                         match raw.process_preview_16(true) {
                             Ok(prev) => {
-                                let u16_slice = prev.as_slice_u16();
-                                let u16_vec = Arc::new(u16_slice.to_vec());
+                                let (u16_full, pw, ph) = cap_preview(prev.as_slice_u16(), prev.width, prev.height, prev.channels);
+                                let u16_vec = Arc::new(u16_full);
+                                let u16_slice = &u16_vec[..];
                                 let transfer = prev.transfer;
                                 let u8_vec: Vec<u8> = u16_slice
                                     .iter()
@@ -1468,8 +1503,9 @@ fn run_daemon() {
 
                                 let mut c = cache.lock().unwrap();
                                 c.current_path = Some(p.clone());
-                                c.width = prev.width;
-                                c.height = prev.height;
+                                c.baseline_exposure = raw.baseline_exposure();
+                                c.width = pw;
+                                c.height = ph;
                                 c.channels = prev.channels;
                                 c.raw_buffer_16 = Some(u16_vec);
                                 c.raw_buffer_8 = Some(Arc::clone(&u8_arc));
@@ -1486,7 +1522,7 @@ fn run_daemon() {
                                 let _ = raw.extract_thumbnail(&thumb_path);
 
                                 let sidecar = Recipe::load_initial(p);
-                                let scene = ai_classify_scene(&u8_arc, prev.width, prev.height, prev.channels, &meta);
+                                let scene = ai_classify_scene(&u8_arc, pw, ph, prev.channels, &meta);
 
                                 print_json(&ResponseWrapper::ok_action("load", InspectResult {
                                     path: p.clone(),
@@ -1513,7 +1549,7 @@ fn run_daemon() {
                 let height = c.height;
                 let channels = c.channels;
                 let transfer = c.transfer;
-                let recipe = cmd_obj.recipe.unwrap_or_default();
+                let recipe = Recipe { baseline_exposure: c.baseline_exposure, ..cmd_obj.recipe.unwrap_or_default() };
                 let split = cmd_obj.split.unwrap_or(0.0);
 
                 let next_slot = (c.ping_pong + 1) % 2;
@@ -1621,7 +1657,7 @@ fn run_daemon() {
                 let ox = ((rx * vw as f64).round().max(0.0) as usize).min(vw.saturating_sub(1));
                 let oy = ((ry * vh as f64).round().max(0.0) as usize).min(vh.saturating_sub(1));
                 let (ow, oh) = (ow.min(vw - ox), oh.min(vh - oy));
-                let recipe = cmd_obj.recipe.unwrap_or_default();
+                let recipe = Recipe { baseline_exposure: full.baseline_exposure, ..cmd_obj.recipe.unwrap_or_default() };
                 let out = (ox, oy, ow, oh);
                 let src = pipeline::region_source(out, vw, vh, &recipe);
                 let input = resample_rect(&full, scale, src);

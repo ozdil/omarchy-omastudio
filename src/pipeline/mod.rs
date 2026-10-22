@@ -56,7 +56,7 @@ pub fn process_buffer(
         recipe.wb_temperature,
         recipe.wb_tint,
     );
-    let exp_factor = 2.0f32.powf(recipe.exposure);
+    let exp_factor = 2.0f32.powf(recipe.exposure + recipe.baseline_exposure);
 
     // Resolve active 3D LUT if requested
     let maybe_lut = resolve_recipe_lut(recipe);
@@ -241,6 +241,104 @@ pub fn process_buffer(
     (output, hist)
 }
 
+static INTERACTIVE: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+
+/// Marks this process as an interactive previewer (the editor's daemon): viewport
+/// renders may then trade a sub-level colour difference for speed. Exports never do.
+pub fn set_interactive(on: bool) {
+    INTERACTIVE.store(on, std::sync::atomic::Ordering::Relaxed);
+}
+
+fn interactive() -> bool {
+    INTERACTIVE.load(std::sync::atomic::Ordering::Relaxed)
+}
+
+/// Grid size of the baked point-operation LUT, and the image size from which baking
+/// (BAKE_GRID³ evaluations) is cheaper than evaluating every pixel.
+const BAKE_GRID: usize = 65;
+const BAKE_MIN_PIXELS: usize = 1 << 20;
+/// Upper end of the baked domain. The highlight knee and desaturation near clipping
+/// bend too sharply for a lattice, so brighter pixels are evaluated exactly.
+pub const BAKE_MAX: f32 = 0.9;
+/// Image size from which the per-channel input curves are tabulated.
+const ENCODE_TABLE_MIN_PIXELS: usize = 1 << 16;
+
+/// The creative per-pixel operations after white balance, exposure and the display
+/// curve: tone, RGB mixer, skin tone, colour wheels, HSL, LUT, film simulation,
+/// Color Chrome and ACES gamut compression.
+pub struct PointOps<'a> {
+    recipe: &'a Recipe,
+    look_lut: Option<lut::Lut3D>,
+    film_sim: film_sim::FilmSimulation,
+    film_lut: Option<std::sync::Arc<lut::Lut3D>>,
+    color_chrome: bool,
+    aces: bool,
+}
+
+impl<'a> PointOps<'a> {
+    pub fn new(recipe: &'a Recipe) -> Self {
+        let film_sim = film_sim::FilmSimulation::from_id(&recipe.film_simulation);
+        let working_space = aces::WorkingColorSpace::from_str_name(&recipe.color_space);
+        Self {
+            recipe,
+            look_lut: resolve_recipe_lut(recipe),
+            film_sim,
+            film_lut: film_sim::calibrated_lut(film_sim),
+            color_chrome: recipe.color_chrome > 0.0 || recipe.color_chrome_blue > 0.0,
+            aces: working_space == aces::WorkingColorSpace::AcesCg || recipe.aces_tonemap,
+        }
+    }
+
+    #[inline]
+    pub fn apply(&self, r: f32, g: f32, b: f32) -> (f32, f32, f32) {
+        let recipe = self.recipe;
+        // 1. Tone & Dynamic range (exposure was already applied in linear light)
+        let (r, g, b) = tone::apply_tone_pixel(r, g, b, recipe, 1.0);
+        // 2. RGB primary mixer
+        let (r, g, b) = rgb_mixer::apply_rgb_mixer(r, g, b, recipe);
+        // 3. Skin tone uniformity
+        let (r, g, b) = skin_tone::apply_skin_tone_uniformity(r, g, b, recipe);
+        // 4. 3-way colour wheels
+        let (r, g, b) = color_grading::apply_color_wheels(r, g, b, recipe);
+        // 5. 8-band HSL mixer
+        let (r, g, b) = color_grading::apply_hsl_mixer(r, g, b, recipe);
+        // 6. Look LUT
+        let (r, g, b) = match &self.look_lut {
+            Some(l) => lut::apply_lut_pixel(r, g, b, l, recipe.lut_intensity),
+            None => (r, g, b),
+        };
+        // 7. Film simulation and Color Chrome
+        let (r, g, b) = if self.film_sim != film_sim::FilmSimulation::None {
+            film_sim::apply(self.film_sim, self.film_lut.as_deref(), r, g, b, recipe.film_sim_intensity)
+        } else {
+            (r, g, b)
+        };
+        let (r, g, b) = if self.color_chrome {
+            film_sim::apply_color_chrome(r, g, b, recipe.color_chrome, recipe.color_chrome_blue)
+        } else {
+            (r, g, b)
+        };
+        // 8. ACES gamut compression
+        if self.aces { aces::apply_aces_gamut_compression(r, g, b) } else { (r, g, b) }
+    }
+
+    /// The operations sampled on a BAKE_GRID³ lattice over 0..BAKE_MAX.
+    pub fn bake(&self) -> lut::Lut3D {
+        let n = BAKE_GRID;
+        let step = BAKE_MAX / (n - 1) as f32;
+        let mut table = vec![[0.0f32; 3]; n * n * n];
+        table.par_chunks_mut(n * n).enumerate().for_each(|(bi, plane)| {
+            for gi in 0..n {
+                for ri in 0..n {
+                    let (r, g, b) = self.apply(ri as f32 * step, gi as f32 * step, bi as f32 * step);
+                    plane[gi * n + ri] = [r, g, b];
+                }
+            }
+        });
+        lut::Lut3D { size: n, domain_min: [0.0; 3], domain_max: [BAKE_MAX; 3], table }
+    }
+}
+
 /// Processes a 16-bit linear RGB buffer (0..65535) and outputs an 8-bit RGB buffer for high-speed viewport rendering.
 /// The output uses the BT.709 curve; use [`process_buffer_16_to_8_ex`] for another colour space.
 pub fn process_buffer_16_to_8(
@@ -274,19 +372,24 @@ pub fn process_buffer_16_to_8_ex(
         recipe.wb_temperature,
         recipe.wb_tint,
     );
-    let exp_factor = 2.0f32.powf(recipe.exposure);
-
-    // Resolve active 3D LUT if requested
-    let maybe_lut = resolve_recipe_lut(recipe);
-    let film_sim = film_sim::FilmSimulation::from_id(&recipe.film_simulation);
-    let film_lut = film_sim::calibrated_lut(film_sim);
-    let color_chrome = recipe.color_chrome > 0.0 || recipe.color_chrome_blue > 0.0;
-    let working_space = aces::WorkingColorSpace::from_str_name(&recipe.color_space);
+    let exp_factor = 2.0f32.powf(recipe.exposure + recipe.baseline_exposure);
 
     // Intermediate float buffer for multi-stage 16-bit precision processing
     let mut f32_buf = vec![0.0f32; num_pixels * 3];
 
     // PASS 1: Point Operations (White Balance, Exposure, Tone, Color Wheels, HSL Mixer, 3D LUT, Film Sim, ACES)
+    let ops = PointOps::new(recipe);
+    // Interactive previews bake the creative point operations into a 3D LUT once per
+    // render instead of evaluating them for every pixel
+    let baked = (interactive() && num_pixels >= BAKE_MIN_PIXELS).then(|| ops.bake());
+    // White balance, exposure and the display curve depend only on the 16-bit input
+    // value, so each channel is a 65536-entry table instead of a power per pixel
+    let curves = (num_pixels >= ENCODE_TABLE_MIN_PIXELS).then(|| {
+        [wb_r, wb_g, wb_b].map(|m| {
+            let k = m * exp_factor / 65535.0;
+            (0..=u16::MAX).map(|v| transfer.encode(v as f32 * k)).collect::<Vec<f32>>()
+        })
+    });
     f32_buf
         .par_chunks_mut(w * 3)
         .enumerate()
@@ -299,49 +402,18 @@ pub fn process_buffer_16_to_8_ex(
 
                 // Scene-linear stage: white balance and exposure act on linear light,
                 // then the buffer's display curve is applied once for the creative stage.
-                let r_norm = transfer.encode((in_row[px_in] as f32 / 65535.0) * wb_r * exp_factor);
-                let g_norm = transfer.encode((in_row[px_in + 1] as f32 / 65535.0) * wb_g * exp_factor);
-                let b_norm = transfer.encode((in_row[px_in + 2] as f32 / 65535.0) * wb_b * exp_factor);
-
-                // 1. Tone & Dynamic range (exposure was already applied in linear light)
-                let (r1, g1, b1) = tone::apply_tone_pixel(r_norm, g_norm, b_norm, recipe, 1.0);
-
-                // 2. DaVinci Resolve RGB Primary Matrix Mixer
-                let (r1_mix, g1_mix, b1_mix) = rgb_mixer::apply_rgb_mixer(r1, g1, b1, recipe);
-
-                // 3. Capture One Pro Style Skin Tone Uniformity Engine
-                let (r1_skin, g1_skin, b1_skin) = skin_tone::apply_skin_tone_uniformity(r1_mix, g1_mix, b1_mix, recipe);
-
-                // 4. DaVinci Resolve 3-Way Color Wheels
-                let (r2, g2, b2) = color_grading::apply_color_wheels(r1_skin, g1_skin, b1_skin, recipe);
-
-                // 5. 8-Band HSL Color Mixer
-                let (r3, g3, b3) = color_grading::apply_hsl_mixer(r2, g2, b2, recipe);
-
-                // 6. DaVinci 3D LUT
-                let (r4, g4, b4) = if let Some(ref active_lut) = maybe_lut {
-                    lut::apply_lut_pixel(r3, g3, b3, active_lut, recipe.lut_intensity)
-                } else {
-                    (r3, g3, b3)
+                let (r_norm, g_norm, b_norm) = match &curves {
+                    Some([cr, cg, cb]) => (cr[in_row[px_in] as usize], cg[in_row[px_in + 1] as usize], cb[in_row[px_in + 2] as usize]),
+                    None => (
+                        transfer.encode((in_row[px_in] as f32 / 65535.0) * wb_r * exp_factor),
+                        transfer.encode((in_row[px_in + 1] as f32 / 65535.0) * wb_g * exp_factor),
+                        transfer.encode((in_row[px_in + 2] as f32 / 65535.0) * wb_b * exp_factor),
+                    ),
                 };
 
-                // 7. Authentic Film Simulations (Fujifilm X-Trans / GFX & Hasselblad HNCS / XPan)
-                let (r5, g5, b5) = if film_sim != film_sim::FilmSimulation::None {
-                    film_sim::apply(film_sim, film_lut.as_deref(), r4, g4, b4, recipe.film_sim_intensity)
-                } else {
-                    (r4, g4, b4)
-                };
-                let (r5, g5, b5) = if color_chrome {
-                    film_sim::apply_color_chrome(r5, g5, b5, recipe.color_chrome, recipe.color_chrome_blue)
-                } else {
-                    (r5, g5, b5)
-                };
-
-                // 8. ACES 1.3 Gamut Compression if ACEScg or wide-gamut mode active
-                let (r6, g6, b6) = if working_space == aces::WorkingColorSpace::AcesCg || recipe.aces_tonemap {
-                    aces::apply_aces_gamut_compression(r5, g5, b5)
-                } else {
-                    (r5, g5, b5)
+                let (r6, g6, b6) = match &baked {
+                    Some(lut) if r_norm <= BAKE_MAX && g_norm <= BAKE_MAX && b_norm <= BAKE_MAX => lut.sample(r_norm, g_norm, b_norm),
+                    _ => ops.apply(r_norm, g_norm, b_norm),
                 };
 
                 row_f32[px_out] = r6;
@@ -632,7 +704,7 @@ impl PointStage {
         let working_space = aces::WorkingColorSpace::from_str_name(&recipe.color_space);
         Self {
             wb: white_balance::kelvin_to_rgb_multipliers(recipe.wb_temperature, recipe.wb_tint),
-            exp_factor: 2.0f32.powf(recipe.exposure),
+            exp_factor: 2.0f32.powf(recipe.exposure + recipe.baseline_exposure),
             lut: resolve_recipe_lut(recipe),
             film_sim,
             film_lut: film_sim::calibrated_lut(film_sim),
@@ -1043,5 +1115,45 @@ mod tests {
             }
             assert!(worst <= 1, "lens {lens}: max difference {worst}");
         }
+    }
+
+    #[test]
+    fn baked_point_ops_match_direct_evaluation() {
+        let mut recipe = Recipe {
+            contrast: 30.0,
+            highlights: -40.0,
+            shadows: 35.0,
+            vibrance: 25.0,
+            saturation: 10.0,
+            film_simulation: "fuji_classic_chrome".into(),
+            color_chrome: 50.0,
+            ..Recipe::default()
+        };
+        recipe.hsl_hue[2] = 20.0;
+        recipe.hsl_sat[4] = -30.0;
+        let ops = PointOps::new(&recipe);
+        let lut = ops.bake();
+        let (mut worst, mut total, mut n) = (0.0f32, 0.0f32, 0);
+        let mut seed = 12345u32;
+        let mut rnd = || {
+            seed = seed.wrapping_mul(1664525).wrapping_add(1013904223);
+            (seed >> 8) as f32 / (1u32 << 24) as f32
+        };
+        for _ in 0..200_000 {
+            let (r, g, b) = (rnd() * BAKE_MAX, rnd() * BAKE_MAX, rnd() * BAKE_MAX);
+            let exact = ops.apply(r, g, b);
+            let baked = lut.sample(r, g, b);
+            for (e, k) in [(exact.0, baked.0), (exact.1, baked.1), (exact.2, baked.2)] {
+                let d = (e.clamp(0.0, 1.0) - k.clamp(0.0, 1.0)).abs() * 255.0;
+                worst = worst.max(d);
+                total += d;
+                n += 1;
+            }
+        }
+        let mean = total / n as f32;
+        // Sub-level on average; only saturated colours right at black, where the tone
+        // stage crushes to zero, stay a few levels apart
+        assert!(mean < 0.25, "mean difference {mean}");
+        assert!(worst < 6.0, "max difference {worst}");
     }
 }

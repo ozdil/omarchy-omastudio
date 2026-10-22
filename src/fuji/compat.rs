@@ -80,15 +80,33 @@ fn camera_match(raw: &RawImage, path: &Path, recipe: &CameraRecipe, full: bool) 
         return Err("Unexpected channel count".into());
     }
     let mut r = recipe.to_recipe();
+    r.baseline_exposure = raw.baseline_exposure();
     // Sharpening and grain are texture; they would only add noise to the comparison
     r.sharpness = 0.0;
     r.grain_amount = 0.0;
     let (dev, _) = pipeline::process_buffer_16_to_8_ex(buf.as_slice_u16(), buf.width, buf.height, 3, &r, buf.transfer, false, false);
-    if (buf.width as f32 / buf.height as f32 - jw as f32 / jh as f32).abs() > 0.02 {
+    let aspect = |w: u32, h: u32| w as f32 / h as f32;
+    // A vertical shot: the development is rotated, the camera JPEG may not be (its EXIF
+    // orientation says how); compare with both rotations and keep the closer one
+    let candidates = if (aspect(buf.width, buf.height) - aspect(jw, jh)).abs() <= 0.02 {
+        vec![jpeg]
+    } else if (aspect(buf.width, buf.height) - aspect(jh, jw)).abs() <= 0.02 {
+        vec![image::imageops::rotate90(&jpeg), image::imageops::rotate270(&jpeg)]
+    } else {
         return Err(format!("Camera JPEG ({jw}x{jh}) and RAW ({}x{}) are framed differently", buf.width, buf.height));
-    }
+    };
+    candidates
+        .iter()
+        .filter_map(|j| measure(&dev, buf.width, buf.height, j))
+        .min_by(|a, b| a.mean_error.total_cmp(&b.mean_error))
+        .ok_or_else(|| "The photo is clipped everywhere".to_string())
+}
+
+/// Compares a development with the camera JPEG on a coarse grid, ignoring clipped areas.
+fn measure(dev: &[u8], w: u32, h: u32, jpeg: &image::RgbImage) -> Option<Match> {
+    let (jw, jh) = jpeg.dimensions();
     let (dw, dh) = ((jw / 8).max(16), (jh / 8).max(16));
-    let a = super::calibrate::reduce(&dev, buf.width, buf.height, dw, dh);
+    let a = super::calibrate::reduce(dev, w, h, dw, dh);
     let b = super::calibrate::reduce(jpeg.as_raw(), jw, jh, dw, dh);
     let (mut err, mut la, mut lb, mut bias, mut n) = (0f64, 0f64, 0f64, [0f64; 3], 0usize);
     for (p, q) in a.iter().zip(&b) {
@@ -106,14 +124,14 @@ fn camera_match(raw: &RawImage, path: &Path, recipe: &CameraRecipe, full: bool) 
         n += 1;
     }
     if n == 0 {
-        return Err("The photo is clipped everywhere".into());
+        return None;
     }
     let s = 255.0 / n as f64;
-    Ok(Match {
+    Some(Match {
         mean_error: (err * s / 3.0) as f32,
         brightness_ratio: (la / lb.max(1e-9)) as f32,
         channel_bias: [(bias[0] * s) as f32, (bias[1] * s) as f32, (bias[2] * s) as f32],
-        compared_at: format!("{dw}x{dh}"),
+        compared_at: format!("{dw}x{dh} (camera JPEG {jw}x{jh})"),
     })
 }
 

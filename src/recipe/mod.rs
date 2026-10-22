@@ -179,6 +179,12 @@ pub struct Recipe {
     // Local Adjustment Layers (Linear, Radial, Luma Range Masks)
     #[serde(default)]
     pub layers: Vec<crate::pipeline::layers::AdjustmentLayer>,
+
+    /// Exposure the camera adds to this photo's raw data for its own rendering, in EV
+    /// (Fujifilm's mid-point shift, DR200/DR400 included). Set from the photo when it
+    /// is developed, never stored or exchanged with the recipe.
+    #[serde(skip)]
+    pub baseline_exposure: f32,
 }
 
 fn default_skin_target_hue() -> f32 {
@@ -305,6 +311,7 @@ impl Default for Recipe {
             color_chrome: 0.0,
             color_chrome_blue: 0.0,
             layers: Vec::new(),
+            baseline_exposure: 0.0,
         }
     }
 }
