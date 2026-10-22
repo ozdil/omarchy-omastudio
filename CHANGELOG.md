@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+### Application
+- OmaStudio is now a standalone Qt 6 application, `omastudio-app`, built in Rust with cxx-qt. It no longer runs inside Quickshell: the window is a regular Wayland client (app id `omastudio`, so Hyprland window rules can match it) and uses Qt's fractional scaling, so the interface is drawn at the monitor's real pixel density. The QML interface is compiled into the binary; `~/.local/share/omastudio/qml` is no longer used.
+- The window listens on a control socket in `$XDG_RUNTIME_DIR/omastudio/` that only the same user can reach. `omastudio ipc <method> [args]` replaces `quickshell ipc call ozdil.omastudio ...` with the same methods (openPhoto, applyRecipe, applyPreset, setExposure, getStatus, getTheme, ...), plus `show` and `screenshot <file.png>`. Opening a photo while a window is running hands it to that window.
+- The theme follows Omarchy theme changes without the extra polling timer, and the About dialog shows the application's own version.
+- Quickshell is now only needed for the OmaStudio button in the Omarchy bar (`Panel.qml`), which no longer depends on the application's files.
+
 ### Toolchain
 - Rust 1.99.1 (pinned in `rust-toolchain.toml`) and the Rust 2024 edition. Nested `if let` blocks became let-chains and the new clippy lints are fixed; behaviour is unchanged.
 - The Arch package now requires LibRaw 0.22 and Qt 6.12 (`qt6-declarative`), the versions current Omarchy ships, and Little CMS 2 (`lcms2`).

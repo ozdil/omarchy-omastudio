@@ -591,7 +591,7 @@ fn main() {
                     "icc_color_profile_management".into(),
                     "exif_preservation_and_gps_strip".into(),
                     "touchpad_mac_pinch_rotate_pan".into(),
-                    "quickshell_ipc_agent_api".into(),
+                    "control_socket_ipc".into(),
                     "omarchy_system_theme_sync".into(),
                     "presence_engine_texture_clarity_dehaze".into(),
                     "detail_and_optics_engine".into(),

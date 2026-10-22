@@ -16,23 +16,23 @@ jobs:
     container: archlinux:latest
     steps:
       - name: Install build dependencies
-        run: pacman -Syu --noconfirm --needed base-devel clang git lcms2 libraw mold pkgconf rustup
+        run: pacman -Syu --noconfirm --needed base-devel clang git lcms2 libraw mold pkgconf qt6-base qt6-declarative rustup
       - uses: actions/checkout@v4
       - name: Install pinned Rust toolchain
         run: rustup toolchain install
       - name: Build
-        run: cargo build --locked --all-targets
+        run: cargo build --locked --workspace --all-targets
       - name: Test
-        run: cargo test --locked
+        run: cargo test --locked --workspace
 
   clippy:
     runs-on: ubuntu-latest
     container: archlinux:latest
     steps:
       - name: Install build dependencies
-        run: pacman -Syu --noconfirm --needed base-devel clang git lcms2 libraw mold pkgconf rustup
+        run: pacman -Syu --noconfirm --needed base-devel clang git lcms2 libraw mold pkgconf qt6-base qt6-declarative rustup
       - uses: actions/checkout@v4
       - name: Install pinned Rust toolchain
         run: rustup toolchain install
       - name: Clippy
-        run: cargo clippy --locked --all-targets -- -D warnings
+        run: cargo clippy --locked --workspace --all-targets -- -D warnings

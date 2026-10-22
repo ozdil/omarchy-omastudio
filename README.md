@@ -9,7 +9,7 @@ OmaStudio is a non-destructive RAW editor built for Omarchy Linux. It develops R
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Platform: Omarchy](https://img.shields.io/badge/Platform-Omarchy%20%7C%20Arch%20Linux-1793d1.svg)](https://omarchy.org)
 [![Engine: Rust 2024](https://img.shields.io/badge/Engine-Rust%202024-dea584.svg)](Cargo.toml)
-[![UI: Qt 6](https://img.shields.io/badge/UI-Qt%206%20%7C%20Quickshell-41cd52.svg)](qml/)
+[![UI: Qt 6](https://img.shields.io/badge/UI-Qt%206%20%7C%20Wayland-41cd52.svg)](app/)
 
 ![OmaStudio Preview](preview.png)
 
@@ -32,11 +32,13 @@ OmaStudio is a non-destructive RAW editor built for Omarchy Linux. It develops R
 
 ## Architecture
 
-The interface is written in Qt 6 QML and runs under Quickshell. All image processing happens in a separate Rust engine process, `omastudio-engine`. The interface talks to the engine through a JSON-lines daemon over stdin/stdout. The same engine also offers a command line interface for scripts and Omarchy agents.
+OmaStudio is a native Qt 6 application, `omastudio-app` (Rust with cxx-qt, QML interface compiled into the binary). It runs as a Wayland client with Qt's fractional scaling, so the interface is drawn at the monitor's real pixel density under Hyprland. All image processing happens in a separate Rust engine process, `omastudio-engine`, which the window drives through a JSON-lines daemon over stdin/stdout. The same engine also offers a command line interface for scripts and Omarchy agents. A small Quickshell widget (`Panel.qml`) puts an OmaStudio button in the Omarchy bar.
+
+The running window listens on a control socket (`$XDG_RUNTIME_DIR/omastudio/ipc.sock`, current user only). `omastudio ipc <method> [args]` calls it, for example `omastudio ipc openPhoto ~/Pictures/DSCF0001.RAF` or `omastudio ipc getStatus`; launching `omastudio photo.RAF` while a window is open hands the photo to that window.
 
 ```mermaid
 graph TD
-    subgraph UI ["Interface (Qt 6 QML / Quickshell)"]
+    subgraph UI ["omastudio-app (Qt 6 / QML, Wayland)"]
         Viewport["Viewport, crop and overlays"]
         Panels["Adjustment panels, colour wheels, scopes"]
         Library["Filmstrip and catalog"]
@@ -88,7 +90,8 @@ OmaStudio opens every RAW format LibRaw 0.22 supports. The engine develops Bayer
 ## Requirements
 
 * Omarchy (Arch Linux) with Wayland and Hyprland
-* `libraw` 0.22 or newer, `lcms2`, `qt6-declarative` 6.12 or newer, `quickshell`
+* `libraw` 0.22 or newer, `lcms2`, `qt6-base`, `qt6-declarative` and `qt6-wayland` 6.12 or newer
+* `quickshell` only for the button in the Omarchy bar
 * `zenity` for file dialogs
 * To build: Rust 1.99.1 or newer (pinned in `rust-toolchain.toml`), `clang`, `pkgconf`
 
@@ -106,17 +109,17 @@ Optional:
 makepkg -si
 ```
 
-The package installs the engine, the interface, the ICC profiles and a udev rule (`70-omastudio-cameras.rules`) that gives the logged-in user USB access to Fujifilm cameras in PTP mode.
+The package installs the application, the engine, the ICC profiles and a udev rule (`70-omastudio-cameras.rules`) that gives the logged-in user USB access to Fujifilm cameras in PTP mode.
 
 ### Local build
 
 ```bash
-cargo build --release --locked
+cargo build --release --locked --workspace
 
 install -Dm755 target/release/omastudio-engine ~/.local/bin/omastudio-engine
+install -Dm755 target/release/omastudio-app ~/.local/bin/omastudio-app
 install -Dm755 omastudio ~/.local/bin/omastudio
 install -d ~/.local/share/omastudio/icc
-cp -r qml ~/.local/share/omastudio/
 install -m644 assets/icc/*.icc ~/.local/share/omastudio/icc/
 
 omastudio
@@ -187,7 +190,6 @@ Details are in [SECURITY.md](SECURITY.md) and [CONTRIBUTING.md](CONTRIBUTING.md)
 
 Planned next:
 * The full editing pipeline on the GPU (demosaicing already runs there)
-* A standalone Qt 6.12 application with pixel-exact HiDPI
 * Local AI features accelerated by NPUs
 
 ---

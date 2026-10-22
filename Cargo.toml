@@ -7,6 +7,9 @@ authors = ["Ozan Özdil"]
 description = "High-performance Lightroom-grade RAW photo engine for Omarchy Linux"
 license = "MIT"
 
+[workspace]
+members = [".", "app"]
+
 [lib]
 name = "omastudio_engine"
 path = "src/lib.rs"

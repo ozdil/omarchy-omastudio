@@ -26,16 +26,19 @@ jobs:
       - name: Install build dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y clang liblcms2-dev libraw-dev mold pkg-config
+          sudo apt-get install -y clang liblcms2-dev libraw-dev mold pkg-config qt6-base-dev qt6-declarative-dev
       - name: Build and package
         run: |
-          cargo build --release --locked
+          # Ubuntu keeps qmake6 outside PATH
+          export QMAKE=/usr/lib/qt6/bin/qmake6
+          cargo build --release --locked --workspace
           version="${VERSION#v}"
           package="omastudio-$version-$ARCH-linux"
           mkdir -p "dist/$package/bin" "dist/$package/share/omastudio"
           install -m755 target/release/omastudio-engine "dist/$package/bin/omastudio-engine"
+          install -m755 target/release/omastudio-app "dist/$package/bin/omastudio-app"
           install -m755 omastudio "dist/$package/bin/omastudio"
-          cp -r qml "dist/$package/share/omastudio/"
+          install -m644 Panel.qml manifest.json "dist/$package/share/omastudio/"
           cp -r assets/icc "dist/$package/share/omastudio/"
           cp LICENSE README.md "dist/$package/"
           tar -C dist -czf "dist/$package.tar.gz" "$package"

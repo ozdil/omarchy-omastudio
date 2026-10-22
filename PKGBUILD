@@ -6,25 +6,26 @@ pkgdesc="The Complete Medium Format RAW Editor for Omarchy"
 arch=('x86_64')
 url="https://github.com/ozdil/omarchy-omastudio"
 license=('MIT')
-depends=('libraw>=0.22' 'lcms2' 'quickshell' 'qt6-declarative>=6.12' 'libjxl' 'libavif' 'zenity')
-optdepends=('vulkan-icd-loader: GPU demosaicing (with your GPU'"'"'s Vulkan driver)' 'perl-image-exiftool: preserve EXIF metadata on export' 'ffmpeg: AVIF export fallback')
+depends=('libraw>=0.22' 'lcms2' 'qt6-base>=6.12' 'qt6-declarative>=6.12' 'qt6-wayland' 'libjxl' 'libavif' 'zenity')
+optdepends=('quickshell: OmaStudio button in the Omarchy bar' 'wl-clipboard: bounded paste in text fields' 'vulkan-icd-loader: GPU demosaicing (with your GPU'"'"'s Vulkan driver)' 'perl-image-exiftool: preserve EXIF metadata on export' 'ffmpeg: AVIF export fallback')
 makedepends=('rust' 'cargo' 'pkgconf' 'clang')
 source=()
 sha256sums=()
 
 build() {
     cd "$startdir"
-    cargo build --release --locked
+    cargo build --release --locked --workspace
 }
 
 check() {
     cd "$startdir"
-    cargo test --release --locked
+    cargo test --release --locked --workspace
 }
 
 package() {
     cd "$startdir"
     install -Dm755 "target/release/omastudio-engine" "$pkgdir/usr/bin/omastudio-engine"
+    install -Dm755 "target/release/omastudio-app" "$pkgdir/usr/bin/omastudio-app"
     install -Dm755 "omastudio" "$pkgdir/usr/bin/omastudio"
     install -Dm755 "omastudio-dashboard" "$pkgdir/usr/bin/omastudio-dashboard"
     install -Dm755 "omastudio-status" "$pkgdir/usr/bin/omastudio-status"
@@ -32,7 +33,6 @@ package() {
     ln -sf "omastudio" "$pkgdir/usr/bin/omaraw"
     
     install -d "$pkgdir/usr/share/omastudio"
-    cp -r qml "$pkgdir/usr/share/omastudio/"
     install -d "$pkgdir/usr/share/omastudio/icc"
     install -m644 assets/icc/*.icc "$pkgdir/usr/share/omastudio/icc/"
     install -Dm644 omastudio.desktop "$pkgdir/usr/share/applications/omastudio.desktop"

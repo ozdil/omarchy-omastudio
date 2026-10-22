@@ -11,7 +11,7 @@ OmaStudio, Omarchy Linux için geliştirilmiş, orijinal dosyaya dokunmayan bir 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Platform: Omarchy](https://img.shields.io/badge/Platform-Omarchy%20%7C%20Arch%20Linux-1793d1.svg)](https://omarchy.org)
 [![Engine: Rust 2024](https://img.shields.io/badge/Engine-Rust%202024-dea584.svg)](Cargo.toml)
-[![UI: Qt 6](https://img.shields.io/badge/UI-Qt%206%20%7C%20Quickshell-41cd52.svg)](qml/)
+[![UI: Qt 6](https://img.shields.io/badge/UI-Qt%206%20%7C%20Wayland-41cd52.svg)](app/)
 
 ![OmaStudio Önizleme](preview.png)
 
@@ -34,11 +34,13 @@ OmaStudio, Omarchy Linux için geliştirilmiş, orijinal dosyaya dokunmayan bir 
 
 ## Mimari
 
-Arayüz Qt 6 QML ile yazılmıştır ve Quickshell altında çalışır. Tüm görüntü işleme `omastudio-engine` adlı ayrı bir Rust sürecinde yapılır. Arayüz ile motor, stdin/stdout üzerinden JSON satırlarıyla konuşan bir daemon aracılığıyla haberleşir. Aynı motor, betikler ve Omarchy ajanları için bir komut satırı arayüzü de sunar.
+OmaStudio yerel bir Qt 6 uygulamasıdır: `omastudio-app` (cxx-qt ile Rust; QML arayüzü ikili dosyanın içine derlenir). Qt'nin kesirli ölçekleme desteğiyle Wayland istemcisi olarak çalışır; arayüz Hyprland altında monitörün gerçek piksel yoğunluğunda çizilir. Tüm görüntü işleme `omastudio-engine` adlı ayrı bir Rust sürecinde yapılır; pencere motoru stdin/stdout üzerinden JSON satırlarıyla konuşan bir daemon aracılığıyla yönetir. Aynı motor, betikler ve Omarchy ajanları için bir komut satırı arayüzü de sunar. Küçük bir Quickshell bileşeni (`Panel.qml`) Omarchy çubuğuna OmaStudio düğmesi ekler.
+
+Çalışan pencere bir kontrol soketini dinler (`$XDG_RUNTIME_DIR/omastudio/ipc.sock`, yalnızca aynı kullanıcı). `omastudio ipc <yöntem> [argümanlar]` bu soketi çağırır, örneğin `omastudio ipc openPhoto ~/Pictures/DSCF0001.RAF` veya `omastudio ipc getStatus`. Bir pencere açıkken `omastudio foto.RAF` çalıştırılırsa fotoğraf o pencerede açılır.
 
 ```mermaid
 graph TD
-    subgraph UI ["Arayüz (Qt 6 QML / Quickshell)"]
+    subgraph UI ["omastudio-app (Qt 6 / QML, Wayland)"]
         Viewport["Görüntü alanı, kırpma ve kılavuzlar"]
         Panels["Ayar panelleri, renk tekerlekleri, skoplar"]
         Library["Film şeridi ve katalog"]
@@ -77,7 +79,8 @@ OmaStudio, LibRaw 0.22'nin desteklediği tüm RAW biçimlerini açar. Bayer ve X
 ## Gereksinimler
 
 * Wayland ve Hyprland ile Omarchy (Arch Linux)
-* `libraw` 0.22 veya üstü, `lcms2`, `qt6-declarative` 6.12 veya üstü, `quickshell`
+* `libraw` 0.22 veya üstü, `lcms2`, `qt6-base`, `qt6-declarative` ve `qt6-wayland` 6.12 veya üstü
+* `quickshell` yalnızca Omarchy çubuğundaki düğme için
 * Dosya pencereleri için `zenity`
 * Derlemek için: Rust 1.99.1 veya üstü (`rust-toolchain.toml` içinde sabit), `clang`, `pkgconf`
 
@@ -95,17 +98,17 @@ OmaStudio, LibRaw 0.22'nin desteklediği tüm RAW biçimlerini açar. Bayer ve X
 makepkg -si
 ```
 
-Paket şunları kurar: motor, arayüz, ICC profilleri ve bir udev kuralı (`70-omastudio-cameras.rules`). Bu kural, oturum açmış kullanıcıya PTP modundaki Fujifilm kameralara USB erişimi verir.
+Paket şunları kurar: uygulama, motor, ICC profilleri ve bir udev kuralı (`70-omastudio-cameras.rules`). Bu kural, oturum açmış kullanıcıya PTP modundaki Fujifilm kameralara USB erişimi verir.
 
 ### Yerel derleme
 
 ```bash
-cargo build --release --locked
+cargo build --release --locked --workspace
 
 install -Dm755 target/release/omastudio-engine ~/.local/bin/omastudio-engine
+install -Dm755 target/release/omastudio-app ~/.local/bin/omastudio-app
 install -Dm755 omastudio ~/.local/bin/omastudio
 install -d ~/.local/share/omastudio/icc
-cp -r qml ~/.local/share/omastudio/
 install -m644 assets/icc/*.icc ~/.local/share/omastudio/icc/
 
 omastudio
@@ -176,7 +179,6 @@ Ayrıntılar [SECURITY.md](SECURITY.md) ve [CONTRIBUTING.md](CONTRIBUTING.md) do
 
 Sıradaki planlar:
 * Tüm düzenleme hattının GPU'ya taşınması (demozaik zaten GPU'da)
-* Piksel hassasiyetinde HiDPI desteğiyle bağımsız Qt 6.12 uygulaması
 * NPU ile hızlandırılan yerel yapay zekâ özellikleri
 
 ---
