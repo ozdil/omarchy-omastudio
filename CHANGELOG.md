@@ -57,6 +57,14 @@
 - `tools/fuji-usb`: a capture script and decoder for documenting the USB protocol of more Fujifilm cameras by black-box observation (usbmon while X RAW Studio runs in a VM), with timestamped notes and per-setting data dumps. Not installed by the package.
 - The package installs a udev rule (`70-omastudio-cameras.rules`) that gives the logged-in user access to Fujifilm cameras in PTP mode.
 
+### Medium format
+- Raws from Hasselblad (3FR, FFF), Phase One and Leaf (IIQ, MOS), Mamiya (MEF) and Pentax 645 (PEF) open in the browser, the file dialog and the engine. Hasselblad files are cropped to the camera's DefaultCrop, so the dark border photosites no longer show; Phase One files get the back's own sensor calibration (column black levels, defect map, split-sensor gains), which fixes the magenta cast on IQ4 files.
+- `omastudio-engine medium-format info <raw>` reads what Phocus and Capture One read next to the sensor data: Hasselblad MakerNote (model, crop) and the Phase One directory (back, firmware, body, lens, sensor temperature).
+- Lens corrections for medium format: a flat field (LCC) from a shot of an evenly lit white target corrects light falloff and colour cast per channel (`medium-format lcc-create <raw>`, written as `lcc.json` for the folder or `<raw>.lcc.json` for one file); clipped or underexposed calibration shots are refused. `--lensfun` also writes a Lensfun profile for the lens. Lensfun profiles from the system, `~/.local/share/lensfun` and `~/.local/share/omastudio/lenses` are applied to medium format files. `OMASTUDIO_LENS_CORRECTION=off` turns this off.
+- 4-shot multi-shot merge for pixel-shift backs: `medium-format multishot f1 f2 f3 f4 --out merged.tif` gives full RGB at every pixel without demosaicing.
+- Experimental Hasselblad tethering over Phocus's vendor USB interface (`medium-format tether list|info|iso|capture --experimental`) and a udev rule for Hasselblad and DJI USB ids. It is untested on hardware.
+- `docs/medium-format.md` documents the file formats and protocols, worked out clean-room from sample files and from how Phocus, Capture One and Pentax Digital Camera Utility behave. No vendor code, colour tables or lens data are included.
+
 ### Colour & Export
 - Colour management with Little CMS 2. The engine builds sRGB, Display P3, Adobe RGB (1998), ProPhoto RGB and Rec. 2020 profiles itself and embeds the profile directly in PNG, JPEG, TIFF, WebP, JXL and AVIF files. Wide-gamut export no longer needs exiftool, and Display P3 and Rec. 2020 are new export options.
 - Custom RGB ICC profiles (printer, lab or display profiles in `~/.local/share/omastudio/icc`) are real conversions now: the photo is rendered in ProPhoto RGB and converted with lcms2, with black point compensation and a choice of rendering intent (`rendering_intent`, relative colorimetric by default). Non-RGB profiles are refused with a clear error.
