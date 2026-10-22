@@ -7,7 +7,7 @@ arch=('x86_64')
 url="https://github.com/ozdil/omarchy-omastudio"
 license=('MIT')
 depends=('libraw>=0.22' 'lcms2' 'qt6-base>=6.12' 'qt6-declarative>=6.12' 'qt6-wayland' 'libjxl' 'libavif' 'zenity')
-optdepends=('quickshell: OmaStudio button in the Omarchy bar' 'wl-clipboard: bounded paste in text fields' 'vulkan-icd-loader: GPU demosaicing (with your GPU'"'"'s Vulkan driver)' 'perl-image-exiftool: preserve EXIF metadata on export' 'ffmpeg: AVIF export fallback')
+optdepends=('quickshell: OmaStudio button in the Omarchy bar' 'wl-clipboard: bounded paste in text fields' 'vulkan-icd-loader: GPU demosaicing (with your GPU'"'"'s Vulkan driver)' 'perl-image-exiftool: preserve EXIF metadata on export' 'ffmpeg: AVIF export fallback' 'curl: AI edit assistant' 'libsecret: store AI provider keys in the keyring (secret-tool)' 'ollama: local AI models')
 makedepends=('rust' 'cargo' 'pkgconf' 'clang')
 source=()
 sha256sums=()

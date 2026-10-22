@@ -545,6 +545,14 @@ Rectangle {
         });
     }
 
+    function aiEdit(prompt) {
+        if (root.activePhotoPath === "") return "Error: no photo open";
+        if (aiAssist.busy) return "Error: busy";
+        aiAssist.promptText = String(prompt || "");
+        aiAssist.runEdit();
+        return "OK";
+    }
+
     function applyFujiRecipe(name) {
         var list = fujiPanel.recipes;
         for (var i = 0; i < list.length; i++) {
@@ -1562,6 +1570,22 @@ Rectangle {
                             }
                             onResetPreset: {
                                 root.resetRecipe();
+                            }
+                        }
+
+                        // AI edit assistant (Claude, OpenAI, OpenRouter, Gemini, Ollama, LM Studio)
+                        AiAssistPanel {
+                            id: aiAssist
+                            Layout.fillWidth: true
+                            enginePath: root.resolveEnginePath()
+                            activePhotoPath: root.activePhotoPath
+                            recipeProvider: function() { return root.buildRecipeObject(); }
+                            onRecipeSuggested: function(recipe, explanation) {
+                                root.applyRecipeObject(recipe);
+                                root.showToast("[OK] AI edit applied", Theme.accentGreen);
+                            }
+                            onNotify: function(text, isError) {
+                                root.showToast((isError ? "[ERR] " : "[OK] ") + text, isError ? Theme.accentMagenta : Theme.accentGreen);
                             }
                         }
 

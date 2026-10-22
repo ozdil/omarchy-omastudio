@@ -171,6 +171,17 @@ omastudio skill                              # installs the agent skill into ~/.
 
 Other clients (opencode, Codex, Gemini CLI, ...) take the same command, `omastudio mcp`, in their MCP server settings. The skill (`skill/omastudio/SKILL.md`, installed to `/usr/share/omastudio/skill`) describes the tools, the command line and the recipe format for agents that read skills.
 
+### Edit assistant
+
+The AI edit assistant in the editor turns a request in plain words into adjustments, using Claude, OpenAI, OpenRouter, Gemini, or a local Ollama or LM Studio model. Keys go to the desktop keyring:
+
+```bash
+omastudio ai key anthropic          # paste the key, then Enter (stored with secret-tool)
+omastudio ai use ollama llava       # or: anthropic, openai <model>, openrouter <model>, gemini <model>, lmstudio
+omastudio ai edit DSCF0001.RAF --prompt "warmer, recover the sky"
+```
+
+
 ---
 
 ## Keyboard shortcuts

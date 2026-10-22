@@ -108,6 +108,8 @@ Window {
             case "applyFujiRecipe":
                 if (str(a[0]).length === 0) return "Error: empty recipe name";
                 return mainWin.applyFujiRecipe(str(a[0]));
+            case "aiEdit":
+                return mainWin.aiEdit(str(a[0]));
             case "setZoom":
                 return mainWin.setViewZoom(a.length > 0 ? a[0] : "fit");
             case "reloadTheme":

@@ -160,6 +160,17 @@ omastudio skill                              # ajan skill'ini ~/.claude/skills i
 
 Diğer istemciler (opencode, Codex, Gemini CLI, ...) MCP sunucu ayarlarında aynı komutu, `omastudio mcp`, kullanır. Skill dosyası (`skill/omastudio/SKILL.md`, `/usr/share/omastudio/skill` altına kurulur) araçları, komut satırını ve tarif biçimini anlatır.
 
+### Düzenleme asistanı
+
+Düzenleyicideki yapay zekâ asistanı, düz cümleyle yazılan bir isteği ayarlara dönüştürür. Claude, OpenAI, OpenRouter, Gemini ya da yerel Ollama veya LM Studio modeli kullanılabilir. Anahtarlar masaüstü anahtar zincirinde saklanır:
+
+```bash
+omastudio ai key anthropic          # anahtarı yapıştırıp Enter'a basın (secret-tool ile saklanır)
+omastudio ai use ollama llava       # ya da: anthropic, openai <model>, openrouter <model>, gemini <model>, lmstudio
+omastudio ai edit DSCF0001.RAF --prompt "daha sıcak, gökyüzünü kurtar"
+```
+
+
 ---
 
 ## Klavye kısayolları

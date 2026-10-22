@@ -121,7 +121,7 @@ case "${1:-}" in
         echo "SKILL.md not found" >&2
         exit 1
         ;;
-    inspect|render|export|ai-auto|ai-social|ai-jev|icc|scan|catalog|dag|daemon|gpu|mcp|fuji-*)
+    inspect|render|export|ai-auto|ai-social|ai-jev|icc|scan|catalog|dag|daemon|gpu|mcp|ai|fuji-*)
         exec "${BIN}" "$@"
         ;;
 esac

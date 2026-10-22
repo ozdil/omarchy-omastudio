@@ -13,6 +13,7 @@
 
 ### AI agents
 - `omastudio mcp`: a Model Context Protocol server on stdin/stdout with 24 tools. Engine tools inspect, render (the preview comes back as an image), export, scan and cull photos, read and save Fujifilm recipes, merge Pixel Shift sequences and use a Fujifilm camera on USB. Window tools read the window's state, take a screenshot, open photos and apply recipes, presets, exposure, white balance and zoom through the control socket.
+- AI edit assistant (panel under Film Looks). Describe the edit in plain words ("warmer, recover the sky") or leave it empty; a vision model sees the photo as currently developed with its camera data and sets exposure, white balance, tone, presence, vignette, grain and film simulation. The answer is constrained to a JSON schema and clamped to each control's range, and it can be undone like any edit. Providers: Anthropic Claude (Claude Opus 5.5 by default), OpenAI, OpenRouter, Google Gemini, and local Ollama or LM Studio servers, which need no key and keep the photo on the machine. API keys are stored in the desktop keyring through `secret-tool` (or read from `ANTHROPIC_API_KEY`, `OPENAI_API_KEY`, `OPENROUTER_API_KEY`, `GEMINI_API_KEY`) and reach curl on stdin, never on a command line. Command line: `omastudio ai providers`, `ai key <provider>`, `ai use <provider> [model]`, `ai edit <photo> --prompt "..."`; control socket: `aiEdit <request>`.
 - An agent skill (`skill/omastudio/SKILL.md`) documents the tools, command line and recipe format; `omastudio skill` installs it into `~/.claude/skills`.
 
 ### Toolchain

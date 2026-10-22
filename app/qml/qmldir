@@ -1,6 +1,7 @@
 # Types of the OmaStudio interface (one directory, so every file sees all of them)
 singleton Theme 1.0 Theme.qml
 AboutDialog 1.0 AboutDialog.qml
+AiAssistPanel 1.0 AiAssistPanel.qml
 BoundedTextInput 1.0 BoundedTextInput.qml
 ColorGradingWheels 1.0 ColorGradingWheels.qml
 ColorSpaceSelector 1.0 ColorSpaceSelector.qml
