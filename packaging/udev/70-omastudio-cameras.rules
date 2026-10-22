@@ -1,5 +1,6 @@
-# OmaStudio: let the logged-in user talk PTP to cameras over USB (tethering,
-# in-camera RAW conversion). Only still-image (PTP) interfaces are matched.
+# OmaStudio: let the logged-in user talk to cameras over USB (tethering,
+# in-camera RAW conversion). Only still-image (PTP) interfaces are matched, except
+# for Hasselblad, whose X and V cameras use a vendor-specific interface (class ff).
 
 ACTION!="add|change", GOTO="omastudio_cameras_end"
 SUBSYSTEM!="usb", GOTO="omastudio_cameras_end"
@@ -7,5 +8,9 @@ ENV{DEVTYPE}!="usb_device", GOTO="omastudio_cameras_end"
 
 # Fujifilm (X and GFX series)
 ATTRS{idVendor}=="04cb", ENV{ID_USB_INTERFACES}=="*:060101:*", TAG+="uaccess"
+
+# Hasselblad (X1D, X2D, 907X/CFV); some enumerate with DJI's vendor id
+ATTRS{idVendor}=="2756", ENV{ID_USB_INTERFACES}=="*:ff*", TAG+="uaccess"
+ATTRS{idVendor}=="2ca3", ATTRS{product}=="*asselblad*", TAG+="uaccess"
 
 LABEL="omastudio_cameras_end"

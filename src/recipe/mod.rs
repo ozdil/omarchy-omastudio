@@ -442,6 +442,7 @@ impl Recipe {
         let path = raw_path.as_ref();
         Self::load_sidecar(path)
             .or_else(|| crate::fuji::CameraRecipe::read(path).map(|c| c.to_recipe()))
+            .or_else(|| crate::medium_format::camera_recipe(path))
             .unwrap_or_default()
     }
 
