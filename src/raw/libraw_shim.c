@@ -156,6 +156,46 @@ unsigned char* omaraw_process_image(void *handle, int half_size, int quality, in
     return buf;
 }
 
+// Phase One / Leaf IIQ: the raw plane still carries the back's per-row and per-column
+// black levels, and the sensor calibration (flat field, defects, split-sensor gains)
+// lives in the file. LibRaw applies both only while it copies the plane into image[].
+static int is_phase_one_decoder(libraw_data_t *lr) {
+    libraw_decoder_info_t d;
+    if (libraw_get_decoder_info(lr, &d) != LIBRAW_SUCCESS || !d.decoder_name) return 0;
+    return strncmp(d.decoder_name, "phase_one_load_raw", 18) == 0;
+}
+
+// Runs LibRaw's raw2image (black subtraction + Phase One correction) and packs the
+// visible area back into a single CFA plane, in place in image[]. The plane stays
+// valid until the handle is processed again or closed.
+static const unsigned short* phase_one_cfa(libraw_data_t *lr, OmaRawCfaInfo *info) {
+    lr->params.half_size = 0;
+    if (libraw_raw2image(lr) != LIBRAW_SUCCESS || !lr->image) return NULL;
+    int w = lr->sizes.iwidth, h = lr->sizes.iheight;
+    if (w != lr->sizes.width || h != lr->sizes.height) return NULL;
+
+    unsigned short (*img)[4] = lr->image;
+    unsigned short *plane = (unsigned short*)lr->image;
+    // Writing index i reads index 4*i, so packing from the front never overwrites
+    // a pixel that is still to be read.
+    for (int row = 0; row < h; row++)
+        for (int col = 0; col < w; col++) {
+            size_t i = (size_t)row * w + col;
+            plane[i] = img[i][libraw_COLOR(lr, row, col)];
+        }
+
+    info->raw_width = w;
+    info->raw_height = h;
+    info->raw_pitch = w;
+    info->top_margin = 0;
+    info->left_margin = 0;
+    // phase_one_subtract_black removed the whole black level
+    for (int c = 0; c < 4; c++) info->black[c] = 0.0f;
+    info->black_pattern_h = 0;
+    info->black_pattern_w = 0;
+    return plane;
+}
+
 const unsigned short* omaraw_unpack_cfa(void *handle, OmaRawCfaInfo *info) {
     if (!handle || !info) return NULL;
     libraw_data_t *lr = (libraw_data_t*)handle;
@@ -198,6 +238,9 @@ const unsigned short* omaraw_unpack_cfa(void *handle, OmaRawCfaInfo *info) {
     }
     info->white = (float)lr->color.maximum;
     memcpy(info->rgb_cam, lr->color.rgb_cam, sizeof(info->rgb_cam));
+
+    if (is_phase_one_decoder(lr))
+        return phase_one_cfa(lr, info);
     return lr->rawdata.raw_image;
 }
 
