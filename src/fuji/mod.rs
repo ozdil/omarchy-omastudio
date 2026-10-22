@@ -1,7 +1,10 @@
 //! Fujifilm support: the in-camera recipe (film simulation, grain, Color Chrome, tone,
 //! dynamic range...) read from a RAF or JPEG, and its mapping onto an OmaStudio recipe.
 
+pub mod fp1;
+pub mod library;
 pub mod makernote;
+pub mod text;
 
 use crate::recipe::Recipe;
 use makernote::Tags;
@@ -171,6 +174,38 @@ pub struct CameraRecipe {
     /// Monochromatic colour: warm(+)/cool(-) and magenta(-)/green(+), -9..+9.
     pub mono_warm_cool: i32,
     pub mono_magenta_green: i32,
+    /// Exposure compensation in EV (FP1 and text recipes; 0 for photos).
+    #[serde(default)]
+    pub exposure_bias: f32,
+}
+
+impl Default for CameraRecipe {
+    fn default() -> Self {
+        Self {
+            camera: String::new(),
+            film_simulation: FilmSim::Provia,
+            film_simulation_name: FilmSim::Provia.display_name().to_string(),
+            grain: Strength::Off,
+            grain_size: GrainSize::Small,
+            color_chrome: Strength::Off,
+            color_chrome_fx_blue: Strength::Off,
+            white_balance: "Auto".to_string(),
+            color_temperature: None,
+            wb_shift: (0, 0),
+            dynamic_range: Some(100),
+            dynamic_range_auto: false,
+            d_range_priority: None,
+            highlight: 0.0,
+            shadow: 0.0,
+            color: 0,
+            sharpness: 0,
+            noise_reduction: 0,
+            clarity: 0,
+            mono_warm_cool: 0,
+            mono_magenta_green: 0,
+            exposure_bias: 0.0,
+        }
+    }
 }
 
 impl CameraRecipe {
@@ -312,6 +347,7 @@ impl CameraRecipe {
             clarity: int(0x100f).map(|v| (v / 1000) as i32).unwrap_or(0),
             mono_warm_cool: int(0x1049).unwrap_or(0) as i32,
             mono_magenta_green: int(0x104b).unwrap_or(0) as i32,
+            exposure_bias: 0.0,
         })
     }
 
@@ -341,6 +377,8 @@ impl CameraRecipe {
             r.exposure = stops;
             r.highlights -= 25.0 * stops;
         }
+
+        r.exposure += self.exposure_bias;
 
         // WB shift: blue steps move along the amber/blue axis, red steps along magenta/green
         let (red, blue) = self.wb_shift;

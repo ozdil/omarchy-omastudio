@@ -18,7 +18,8 @@
 
 ### Fujifilm
 - Photos from Fujifilm cameras open with the recipe they were shot with. The engine reads the MakerNote of RAF and Fujifilm JPEG files itself: film simulation (including Acros/monochrome filters and Reala Ace, Bleach Bypass and Nostalgic Neg ids), highlight and shadow tone, colour, sharpness, noise reduction, clarity, grain, Color Chrome, white balance shift and dynamic range (DR200/DR400). A saved sidecar still wins.
-- New `fuji-recipe <file>` command prints the camera recipe and the OmaStudio recipe it maps to as JSON.
+- X RAW Studio profiles (.FP1, .FP2, .FP3) and recipes shared as text ("Film Simulation: Classic Chrome / Grain Effect: Strong, Small / White Balance: Daylight, +3 Red & -5 Blue ...") can be imported, and any recipe can be written back as an .FP1 for X RAW Studio.
+- Recipe library in `~/.local/share/omastudio/fuji-recipes`. New commands: `fuji-recipe <raf|jpg|fp1|txt>`, `fuji-recipe list`, `fuji-recipe save <file> [--label]` and `fuji-recipe export <file> <out.fp1> [--device]`; the daemon gains `fuji_recipes` and `fuji_import`. Saving never overwrites a recipe with the same name.
 - New Color Chrome Effect and Color Chrome FX Blue sliders (Weak = 50, Strong = 100): saturated colours, and blues for FX Blue, get deeper while keeping their hue.
 
 ### Colour & Export

@@ -260,7 +260,7 @@ fn main() {
         eprintln!("  catalog list");
         eprintln!("  catalog query [--rating <0-5>] [--flag <pick|reject>] [--search <str>]");
         eprintln!("  catalog cull <path> [--rating <0-5>] [--flag <pick|reject>]");
-        eprintln!("  fuji-recipe <raf|jpg>");
+        eprintln!("  fuji-recipe <raf|jpg|fp1|txt> | list | save <file> | export <file> <out.fp1>");
         eprintln!("  scan [folder]");
         eprintln!("  daemon");
         return;
@@ -453,22 +453,7 @@ fn main() {
             }
         }
         "fuji-recipe" => {
-            if args.len() < 3 {
-                print_json::<()>(&ResponseWrapper::err("Missing RAF or JPEG file path"));
-                return;
-            }
-            match fuji::CameraRecipe::read(Path::new(&args[2])) {
-                Some(camera) => {
-                    #[derive(Serialize)]
-                    struct FujiRecipeResult {
-                        camera: fuji::CameraRecipe,
-                        recipe: Recipe,
-                    }
-                    let recipe = camera.to_recipe();
-                    print_json(&ResponseWrapper::ok(FujiRecipeResult { camera, recipe }));
-                }
-                None => print_json::<()>(&ResponseWrapper::err("No Fujifilm camera recipe found in file")),
-            }
+            run_fuji_recipe(&args[2..]);
         }
         "icc" => {
             if args.len() < 3 || args[2] == "list" {
@@ -599,7 +584,10 @@ fn main() {
             println!("  ai-social <raw_file> [platform]       Calculate social media crop & OLED recipe (ig, story, x, ig_square, fb, yt)");
             println!("  render <raw_file> [options]           Process RAW image to preview PPM/PNG/JPG");
             println!("  export <raw_file> [options]           High-res demosaic & export (jxl, avif, webp, tiff, png, jpg)");
-            println!("  fuji-recipe <raf|jpg>                 Read the in-camera Fujifilm recipe (film simulation, tone, grain, WB)");
+            println!("  fuji-recipe <raf|jpg|fp1|txt>         Read a Fujifilm recipe from a photo, X RAW Studio profile or recipe text");
+            println!("  fuji-recipe list                      List the recipes saved in ~/.local/share/omastudio/fuji-recipes");
+            println!("  fuji-recipe save <file> [--label L]   Save a recipe into the library as .FP1");
+            println!("  fuji-recipe export <file> <out.fp1>   Write a recipe as an X RAW Studio profile [--label L] [--device X-T30]");
             println!("  icc list                              List all detected system and bundled ICC color profiles");
             println!("  scan [dir]                            Scan local folder for supported RAW photos");
             println!("  catalog                               Retrieve persistent photo catalog database");
@@ -882,6 +870,63 @@ struct DaemonCommand {
     pub color_label: Option<String>,
     #[serde(default)]
     pub search_query: Option<String>,
+}
+
+#[derive(Serialize)]
+struct FujiRecipeResult {
+    #[serde(flatten)]
+    profile: fuji::fp1::Profile,
+    omastudio: Recipe,
+}
+
+impl FujiRecipeResult {
+    fn new(profile: fuji::fp1::Profile) -> Self {
+        let omastudio = profile.recipe.to_recipe();
+        Self { profile, omastudio }
+    }
+}
+
+/// `fuji-recipe <file>`, `fuji-recipe list`, `fuji-recipe save <file> [--label L]`,
+/// `fuji-recipe export <file> <out.fp1> [--label L] [--device D]`.
+fn run_fuji_recipe(args: &[String]) {
+    let flag = |name: &str| args.iter().position(|a| a == name).and_then(|i| args.get(i + 1)).cloned();
+    let import = |path: &str| -> Result<fuji::fp1::Profile, String> {
+        let mut profile = fuji::library::import(Path::new(path))?;
+        if let Some(label) = flag("--label") {
+            profile.label = label;
+        }
+        if let Some(device) = flag("--device") {
+            profile.device = device;
+        }
+        Ok(profile)
+    };
+    let result: Result<serde_json::Value, String> = match args.first().map(String::as_str) {
+        None => Err("Usage: fuji-recipe <raf|jpg|fp1|txt> | list | save <file> | export <file> <out.fp1>".to_string()),
+        Some("list") => serde_json::to_value(
+            fuji::library::list()
+                .into_iter()
+                .map(|e| serde_json::json!({ "path": e.path, "recipe": FujiRecipeResult::new(e.profile) }))
+                .collect::<Vec<_>>(),
+        )
+        .map_err(|e| e.to_string()),
+        Some("save") => match args.get(1) {
+            Some(src) => import(src)
+                .and_then(|p| fuji::library::save(&p))
+                .map(|path| serde_json::json!({ "path": path })),
+            None => Err("Missing recipe source file".to_string()),
+        },
+        Some("export") => match (args.get(1), args.get(2)) {
+            (Some(src), Some(out)) => import(src)
+                .and_then(|p| fuji::library::export(&p, Path::new(out)))
+                .map(|_| serde_json::json!({ "path": out })),
+            _ => Err("Usage: fuji-recipe export <file> <out.fp1> [--label L] [--device D]".to_string()),
+        },
+        Some(path) => import(path).and_then(|p| serde_json::to_value(FujiRecipeResult::new(p)).map_err(|e| e.to_string())),
+    };
+    match result {
+        Ok(v) => print_json(&ResponseWrapper::ok(v)),
+        Err(e) => print_json::<()>(&ResponseWrapper::err(e)),
+    }
 }
 
 fn run_daemon() {
@@ -1280,6 +1325,18 @@ fn run_daemon() {
                     results,
                 }));
             }
+            "fuji_recipes" => {
+                let list: Vec<_> = fuji::library::list()
+                    .into_iter()
+                    .map(|e| serde_json::json!({ "path": e.path, "recipe": FujiRecipeResult::new(e.profile) }))
+                    .collect();
+                print_json(&ResponseWrapper::ok_action("fuji_recipes", list));
+            }
+            "fuji_import" => match cmd_obj.path.as_deref().map(|p| fuji::library::import(Path::new(p))) {
+                Some(Ok(profile)) => print_json(&ResponseWrapper::ok_action("fuji_import", FujiRecipeResult::new(profile))),
+                Some(Err(e)) => print_json::<()>(&ResponseWrapper::err_action("fuji_import", e)),
+                None => print_json::<()>(&ResponseWrapper::err_action("fuji_import", "Missing path")),
+            },
             "catalog_query" => {
                 let cat = Catalog::load();
                 let filter = recipe::CatalogFilter {
