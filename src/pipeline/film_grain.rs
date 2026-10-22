@@ -27,14 +27,16 @@ pub fn apply_film_grain(
     size: f32,      // 1.0 to 3.0 (Default: 1.0)
     roughness: f32, // 0.0 to 100.0 (Default: 50.0)
 ) {
-    apply_film_grain_rows(buffer, width, 0, amount, size, roughness);
+    apply_film_grain_window(buffer, width, 0, 0, amount, size, roughness);
 }
 
-/// [`apply_film_grain`] for a band of rows that starts at image row `first_row`, so
-/// the grain pattern is the same as when the whole image is processed at once.
-pub fn apply_film_grain_rows(
+/// [`apply_film_grain`] for a window of the image whose top-left pixel is image pixel
+/// (`first_col`, `first_row`), so the grain pattern is the same as when the whole
+/// image is processed at once.
+pub fn apply_film_grain_window(
     buffer: &mut [f32],
     width: u32,
+    first_col: u32,
     first_row: u32,
     amount: f32,
     size: f32,
@@ -58,7 +60,8 @@ pub fn apply_film_grain_rows(
 
             for x in 0..w {
                 let px = x * 3;
-                let sample_x = (x as f32 / step) as u32;
+                let gx = first_col + x as u32;
+                let sample_x = (gx as f32 / step) as u32;
 
                 let r = row[px];
                 let g = row[px + 1];
@@ -74,7 +77,7 @@ pub fn apply_film_grain_rows(
 
                 // Multi-scale noise: Base grain + Fine particulate roughness
                 let n1 = hash_noise(sample_x, sample_y, 42);
-                let n2 = hash_noise(x as u32, y, 1337);
+                let n2 = hash_noise(gx, y, 1337);
                 let combined_noise = n1 * (1.0 - rough_weight * 0.4) + n2 * (rough_weight * 0.4);
 
                 let delta = combined_noise * norm_amount * luma_response;

@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
+import QtQuick.Window
 
 Rectangle {
     id: root
@@ -17,6 +18,8 @@ Rectangle {
         }
         root.revisionCounter++;
         var nextSrc = "file://" + root.imageSource + "?v=" + root.revisionCounter;
+        // A new preview means new adjustments: the detail view follows
+        if (root.detailWanted) detailTimer.restart();
 
         if (imgBuffer0.status !== Image.Ready && imgBuffer1.status !== Image.Ready) {
             imgBuffer0.source = nextSrc;
@@ -28,6 +31,101 @@ Rectangle {
     }
 
     property real zoomFactor: 1.0
+
+    // Pixel-exact detail view. The preview is a reduced development; once the photo
+    // is shown larger than the preview's own pixels, the engine renders the visible
+    // part from the full-resolution frame at the screen's physical pixel size, and it
+    // is drawn unscaled over the preview (1 rendered pixel = 1 screen pixel).
+    property int fullWidth: 0
+    property int fullHeight: 0
+    readonly property real dpr: Screen.devicePixelRatio > 0 ? Screen.devicePixelRatio : 1.0
+    // Screen pixels per full-resolution pixel (1.0 = 100%)
+    readonly property real pixelScale: (root.fullWidth > 0 && root.fitWidth > 0) ? root.fitWidth * root.zoomFactor * root.dpr / root.fullWidth : root.zoomFactor
+    readonly property bool detailWanted: root.fullWidth > 0 && root.imageSource !== ""
+        && Math.abs(root.rotationAngle) < 0.01 && !root.isCropMode && !root.isSplitView
+        && !root.showHighlightMask && !root.showShadowMask
+        && root.fitWidth * root.zoomFactor * root.dpr > mainImage.implicitWidth * 1.05
+    property var detailRegion: null          // normalised x, y, w, h of the shown detail
+    property var detailRequest: null         // what the next request asks for
+    property bool detailPending: false
+    readonly property bool detailShown: detailImage.visible
+    readonly property real previewWidth: mainImage.implicitWidth
+    signal detailRequested(var region, int outWidth, int outHeight)
+
+    // zoomFactor at which one full-resolution pixel covers `scale` screen pixels
+    function zoomForPixelScale(scale) {
+        if (root.fullWidth <= 0 || root.fitWidth <= 0) return scale;
+        return scale * root.fullWidth / (root.fitWidth * root.dpr);
+    }
+
+    // The visible part of the photo, snapped to physical pixels
+    function visibleDetail() {
+        var effW = root.fitWidth * root.zoomFactor;
+        var effH = root.fitHeight * root.zoomFactor;
+        if (effW <= 0 || effH <= 0) return null;
+        var left = root.width / 2 + root.panX - effW / 2;
+        var top = root.height / 2 + root.panY - effH / 2;
+        var d = root.dpr;
+        var x0 = Math.ceil(Math.max(0, left) * d) / d;
+        var y0 = Math.ceil(Math.max(0, top) * d) / d;
+        var x1 = Math.floor(Math.min(root.width, left + effW) * d) / d;
+        var y1 = Math.floor(Math.min(root.height, top + effH) * d) / d;
+        if (x1 - x0 < 2 || y1 - y0 < 2) return null;
+        return {
+            screen: [x0, y0, x1 - x0, y1 - y0],
+            region: [(x0 - left) / effW, (y0 - top) / effH, (x1 - x0) / effW, (y1 - y0) / effH],
+            outWidth: Math.round((x1 - x0) * d),
+            outHeight: Math.round((y1 - y0) * d)
+        };
+    }
+
+    function scheduleDetail() {
+        detailImage.visible = false;
+        root.detailRegion = null;
+        if (root.detailWanted) detailTimer.restart(); else detailTimer.stop();
+    }
+
+    function sendDetailRequest() {
+        var v = root.visibleDetail();
+        if (!v || !root.detailWanted) return;
+        root.detailRequest = v;
+        if (root.detailPending) return;   // sent again when the running one answers
+        root.detailPending = true;
+        root.detailRequested(v.region, v.outWidth, v.outHeight);
+    }
+
+    // Answer from the engine; shown only if the view hasn't moved since
+    function showDetail(path, region) {
+        root.detailPending = false;
+        var want = root.detailRequest;
+        if (!want || !root.detailWanted) return;
+        var same = Math.abs(want.region[0] - region[0]) < 1e-3 && Math.abs(want.region[1] - region[1]) < 1e-3
+            && Math.abs(want.region[2] - region[2]) < 1e-3 && Math.abs(want.region[3] - region[3]) < 1e-3;
+        if (!same) {
+            root.sendDetailRequest();
+            return;
+        }
+        root.detailRegion = want;
+        detailImage.source = "file://" + path + "?v=" + (++root.revisionCounter);
+    }
+
+    function detailFailed() {
+        root.detailPending = false;
+    }
+
+    onZoomFactorChanged: scheduleDetail()
+    onPanXChanged: scheduleDetail()
+    onPanYChanged: scheduleDetail()
+    onRotationAngleChanged: scheduleDetail()
+    onDetailWantedChanged: scheduleDetail()
+    onDprChanged: scheduleDetail()
+    onFullWidthChanged: scheduleDetail()
+
+    Timer {
+        id: detailTimer
+        interval: 140
+        onTriggered: root.sendDetailRequest()
+    }
     property real rotationAngle: 0.0
     property bool flipH: false
     property bool flipV: false
@@ -171,7 +269,8 @@ Rectangle {
 
     function setZoomAtPoint(cx, cy, targetZoom) {
         var oldZoom = root.zoomFactor;
-        var newZoom = Math.max(0.2, Math.min(8.0, targetZoom));
+        // Up to 8x the fit size, or 4:1 on the photo's own pixels for large files
+        var newZoom = Math.max(0.2, Math.min(Math.max(8.0, root.zoomForPixelScale(4.0)), targetZoom));
         if (Math.abs(newZoom - oldZoom) < 0.0005) return;
 
         var curCenterX = root.width / 2 + root.panX;
@@ -721,6 +820,24 @@ Rectangle {
                 }
             }
         }
+
+        // Full-resolution detail of the visible area, drawn 1:1 in physical pixels
+        Image {
+            id: detailImage
+            visible: false
+            x: root.detailRegion ? root.detailRegion.screen[0] : 0
+            y: root.detailRegion ? root.detailRegion.screen[1] : 0
+            width: root.detailRegion ? root.detailRegion.screen[2] : 0
+            height: root.detailRegion ? root.detailRegion.screen[3] : 0
+            asynchronous: true
+            cache: false
+            smooth: false
+            mipmap: false
+            z: 1
+            onStatusChanged: {
+                if (status === Image.Ready && root.detailRegion && root.detailWanted) visible = true;
+            }
+        }
     }
 
     // FLOATING ROTATION HUD BADGE (Appears when photo is rotated)
@@ -883,7 +1000,7 @@ Rectangle {
                 implicitWidth: 42
                 implicitHeight: 24
                 radius: 4
-                color: (Math.abs(root.zoomFactor - 1.0) < 0.05 && root.zoomFactor > 1.02) ? Theme.accent : (pct100Mouse.containsMouse ? Theme.bgCardHover : "transparent")
+                color: Math.abs(root.pixelScale - 1.0) < 0.02 ? Theme.accent : (pct100Mouse.containsMouse ? Theme.bgCardHover : "transparent")
                 Text {
                     anchors.centerIn: parent
                     text: "100%"
@@ -891,14 +1008,14 @@ Rectangle {
                     font.pixelSize: 10
                     font.family: Theme.monoFont
                     font.weight: Font.Bold
-                    color: (Math.abs(root.zoomFactor - 1.0) < 0.05 && root.zoomFactor > 1.02) ? (Theme.isDarkTheme ? "#080c10" : "#ffffff") : Theme.textMain
+                    color: Math.abs(root.pixelScale - 1.0) < 0.02 ? (Theme.isDarkTheme ? "#080c10" : "#ffffff") : Theme.textMain
                 }
                 MouseArea {
                     id: pct100Mouse
                     anchors.fill: parent
                     hoverEnabled: true
                     cursorShape: Qt.PointingHandCursor
-                    onClicked: root.setZoomAbsolute(1.0)
+                    onClicked: root.setZoomAtPoint(root.width / 2, root.height / 2, root.zoomForPixelScale(1.0))
                 }
             }
 
@@ -907,7 +1024,7 @@ Rectangle {
                 implicitWidth: 42
                 implicitHeight: 24
                 radius: 4
-                color: Math.abs(root.zoomFactor - 2.0) < 0.05 ? Theme.accent : (pct200Mouse.containsMouse ? Theme.bgCardHover : "transparent")
+                color: Math.abs(root.pixelScale - 2.0) < 0.04 ? Theme.accent : (pct200Mouse.containsMouse ? Theme.bgCardHover : "transparent")
                 Text {
                     anchors.centerIn: parent
                     text: "200%"
@@ -915,14 +1032,14 @@ Rectangle {
                     font.pixelSize: 10
                     font.family: Theme.monoFont
                     font.weight: Font.Bold
-                    color: Math.abs(root.zoomFactor - 2.0) < 0.05 ? (Theme.isDarkTheme ? "#080c10" : "#ffffff") : Theme.textMain
+                    color: Math.abs(root.pixelScale - 2.0) < 0.04 ? (Theme.isDarkTheme ? "#080c10" : "#ffffff") : Theme.textMain
                 }
                 MouseArea {
                     id: pct200Mouse
                     anchors.fill: parent
                     hoverEnabled: true
                     cursorShape: Qt.PointingHandCursor
-                    onClicked: root.setZoomAbsolute(2.0)
+                    onClicked: root.setZoomAtPoint(root.width / 2, root.height / 2, root.zoomForPixelScale(2.0))
                 }
             }
 
@@ -1273,7 +1390,7 @@ Rectangle {
         Text {
             id: zoomText
             anchors.centerIn: parent
-            text: Math.round(root.zoomFactor * 100) + "%"
+            text: Math.round(root.pixelScale * 100) + "%"
             textFormat: Text.PlainText
             font.pixelSize: 10
             font.family: Theme.monoFont
@@ -1393,6 +1510,6 @@ Rectangle {
         }
     }
 
-    onWidthChanged: updateNormCoordinates()
-    onHeightChanged: updateNormCoordinates()
+    onWidthChanged: { updateNormCoordinates(); scheduleDetail(); }
+    onHeightChanged: { updateNormCoordinates(); scheduleDetail(); }
 }

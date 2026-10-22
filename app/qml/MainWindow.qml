@@ -736,6 +736,8 @@ Rectangle {
                     exportDialog.exportStatusText = "[ERR] " + (resp.error || "Batch export failed");
                 } else if (resp.action === "adjust") {
                     root.showToast("[ERR] " + (resp.error || "Preview render failed"), Theme.highlightClip);
+                } else if (resp.action === "detail") {
+                    viewport.detailFailed();
                 }
                 return;
             }
@@ -755,6 +757,13 @@ Rectangle {
                     viewport.imageSource = data.image;
                     navigator.imageSource = data.image;
                 }
+            } else if (act === "full_ready") {
+                if (data && data.path === root.activePhotoPath) {
+                    viewport.fullWidth = data.width;
+                    viewport.fullHeight = data.height;
+                }
+            } else if (act === "detail") {
+                if (data) viewport.showDetail(data.image, data.region);
             } else if (act === "ai_auto") {
                 if (data) {
                     root.applyRecipeObject(data.recipe);
@@ -1095,6 +1104,23 @@ Rectangle {
         }
     }
 
+    // Viewport zoom: "fit", or screen pixels per photo pixel (1 = 100 %)
+    function viewState() {
+        return { "pixelScale": viewport.pixelScale, "detailShown": viewport.detailShown, "detailWanted": viewport.detailWanted,
+                 "fullWidth": viewport.fullWidth, "previewWidth": viewport.previewWidth };
+    }
+
+    function setViewZoom(scale) {
+        if (scale === "fit") {
+            viewport.resetZoomFit();
+            return "OK";
+        }
+        var s = Number(scale);
+        if (!(s > 0)) return "Error: zoom must be fit or a positive number";
+        viewport.setZoomAtPoint(viewport.width / 2, viewport.height / 2, viewport.zoomForPixelScale(s));
+        return "OK";
+    }
+
     function loadPhoto(path) {
         if (path !== root.activePhotoPath) {
             // Undo history and grade versions belong to the previous photo
@@ -1106,6 +1132,9 @@ Rectangle {
             root.currentGradeVersion = "A";
         }
         root.activePhotoPath = path;
+        // The full-resolution frame is decoded again for this photo (see full_ready)
+        viewport.fullWidth = 0;
+        viewport.fullHeight = 0;
         root.sendDaemonCommand({
             cmd: "load",
             path: path
@@ -1451,6 +1480,15 @@ Rectangle {
                     }
                     onRotationChangedByUser: function(a) {
                         root.requestRender();
+                    }
+                    onDetailRequested: function(region, outWidth, outHeight) {
+                        root.sendDaemonCommand({
+                            cmd: "detail",
+                            recipe: root.buildRecipeObject(),
+                            region: region,
+                            out_width: outWidth,
+                            out_height: outHeight
+                        });
                     }
                     onCropChangedByUser: function(cx, cy, cw, ch, aspect) {
                         root.cropX = cx;

@@ -101,6 +101,8 @@ Window {
                 var out = str(a[0]);
                 if (!win.contentItem.grabToImage(function(r) { r.saveToFile(out); })) return "Error: window not visible";
                 return "OK";
+            case "setZoom":
+                return mainWin.setViewZoom(a.length > 0 ? a[0] : "fit");
             case "reloadTheme":
                 return Theme.reloadTheme();
             case "getTheme":
@@ -125,6 +127,7 @@ Window {
                     "isSplitView": mainWin.isSplitView,
                     "windowVisible": win.visible,
                     "devicePixelRatio": win.screen ? win.screen.devicePixelRatio : 1,
+                    "view": mainWin.viewState(),
                     "recipe": mainWin.buildRecipeObject()
                 };
             default:

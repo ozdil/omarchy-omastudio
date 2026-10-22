@@ -549,7 +549,7 @@ fn process_16_to_16_banded(
     for y0 in (0..h).step_by(band_rows) {
         let y1 = (y0 + band_rows).min(h);
         let (by0, by1) = (y0.saturating_sub(BAND_HALO), (y1 + BAND_HALO).min(h));
-        let band = process_band(input, w, h, ch, by0, by1, recipe, &stage);
+        let band = process_band(input, w, ch, by0, by1, Window::whole(w, h), recipe, &stage);
         let inner = &band[(y0 - by0) * w * 3..(y1 - by0) * w * 3];
 
         if lens.is_some() {
@@ -676,17 +676,124 @@ impl PointStage {
     }
 }
 
-/// Passes 1 to 4 (point operations, local masks, presence, detail, grain) for image
-/// rows `y0..y1`. Rows near the band's edges only serve as context for the neighbourhood
+/// Where a buffer sits in the frame it belongs to: position-dependent effects (local
+/// masks, grain, vignette, lens distortion) use frame coordinates, so a window of the
+/// frame renders the same as that part of the whole.
+#[derive(Clone, Copy, Debug)]
+pub struct Window {
+    pub x0: usize,
+    pub y0: usize,
+    pub frame_w: usize,
+    pub frame_h: usize,
+}
+
+impl Window {
+    pub fn whole(w: usize, h: usize) -> Self {
+        Self { x0: 0, y0: 0, frame_w: w, frame_h: h }
+    }
+}
+
+/// Context the neighbourhood passes need around a region (see [`BAND_HALO`]).
+pub const REGION_HALO: usize = BAND_HALO;
+
+/// Renders part of a frame to 8-bit RGB, for the viewport's detail view.
+///
+/// `input` is 3-channel linear RGB, `w` x `h`, placed in a `window.frame_w` x
+/// `window.frame_h` frame at (`window.x0`, `window.y0`). The output is the frame
+/// rectangle `out` = (x, y, width, height). `input` must cover `out` plus
+/// [`REGION_HALO`] pixels (and, with lens distortion, the area the distortion reads
+/// from); see [`region_source`].
+pub fn render_region_8(
+    input: &[u16],
+    w: usize,
+    h: usize,
+    window: Window,
+    out: (usize, usize, usize, usize),
+    recipe: &Recipe,
+    transfer: Transfer,
+) -> Vec<u8> {
+    let stage = PointStage::new(recipe, transfer);
+    let buf = process_band(input, w, 3, 0, h, window, recipe, &stage);
+    let lens = detail::LensDistortion::new(window.frame_w, window.frame_h, recipe.lens_distortion);
+    let (ox, oy, ow, oh) = out;
+    let (fw, fh) = (window.frame_w as f32, window.frame_h as f32);
+    let mut output = vec![0u8; ow * oh * 3];
+    output.par_chunks_mut(ow * 3).enumerate().for_each(|(j, row)| {
+        let gy = oy + j;
+        for i in 0..ow {
+            let gx = ox + i;
+            let (sx, sy) = match &lens {
+                Some(l) => l.source(gx as f32, gy as f32),
+                None => (gx as f32, gy as f32),
+            };
+            let px = if sx >= 0.0 && sx < fw - 1.0 && sy >= 0.0 && sy < fh - 1.0 {
+                // Source position inside this buffer; clamped at its edges
+                let lx = (sx - window.x0 as f32).clamp(0.0, (w - 1) as f32);
+                let ly = (sy - window.y0 as f32).clamp(0.0, (h - 1) as f32);
+                let (x0, y0) = (lx.floor() as usize, ly.floor() as usize);
+                let (x1, y1) = ((x0 + 1).min(w - 1), (y0 + 1).min(h - 1));
+                let (fx, fy) = (lx - x0 as f32, ly - y0 as f32);
+                let at = |yy: usize, xx: usize, c: usize| buf[(yy * w + xx) * 3 + c];
+                let sample = |c: usize| {
+                    let top = at(y0, x0, c) * (1.0 - fx) + at(y0, x1, c) * fx;
+                    let bottom = at(y1, x0, c) * (1.0 - fx) + at(y1, x1, c) * fx;
+                    top * (1.0 - fy) + bottom * fy
+                };
+                (sample(0), sample(1), sample(2))
+            } else {
+                (0.0, 0.0, 0.0)
+            };
+            let (r, g, b) = detail::apply_defringe(px.0, px.1, px.2, recipe.defringe);
+            let (r, g, b) =
+                detail::apply_vignette(r, g, b, gx as u32, gy as u32, window.frame_w as u32, window.frame_h as u32, recipe.vignette);
+            row[i * 3] = (r.clamp(0.0, 1.0) * 255.0) as u8;
+            row[i * 3 + 1] = (g.clamp(0.0, 1.0) * 255.0) as u8;
+            row[i * 3 + 2] = (b.clamp(0.0, 1.0) * 255.0) as u8;
+        }
+    });
+    output
+}
+
+/// The frame rectangle (x, y, width, height) [`render_region_8`] needs as input to
+/// render `out` of a `frame_w` x `frame_h` frame with `recipe`.
+pub fn region_source(out: (usize, usize, usize, usize), frame_w: usize, frame_h: usize, recipe: &Recipe) -> (usize, usize, usize, usize) {
+    let (ox, oy, ow, oh) = out;
+    let (mut x0, mut y0, mut x1, mut y1) = (ox as f32, oy as f32, (ox + ow) as f32, (oy + oh) as f32);
+    if let Some(lens) = detail::LensDistortion::new(frame_w, frame_h, recipe.lens_distortion) {
+        // The distortion is radial and monotonic, so the border of the output maps to
+        // the border of what it reads
+        let steps = 32;
+        for k in 0..=steps {
+            let t = k as f32 / steps as f32;
+            let (ex, ey) = (ox as f32 + t * ow as f32, oy as f32 + t * oh as f32);
+            for (x, y) in [(ex, oy as f32), (ex, (oy + oh) as f32), (ox as f32, ey), ((ox + ow) as f32, ey)] {
+                let (sx, sy) = lens.source(x, y);
+                x0 = x0.min(sx);
+                y0 = y0.min(sy);
+                x1 = x1.max(sx);
+                y1 = y1.max(sy);
+            }
+        }
+    }
+    let halo = REGION_HALO as f32 + 2.0;
+    let x0 = (x0 - halo).floor().clamp(0.0, frame_w as f32) as usize;
+    let y0 = (y0 - halo).floor().clamp(0.0, frame_h as f32) as usize;
+    let x1 = (x1 + halo).ceil().clamp(0.0, frame_w as f32) as usize;
+    let y1 = (y1 + halo).ceil().clamp(0.0, frame_h as f32) as usize;
+    (x0, y0, x1.saturating_sub(x0).max(1), y1.saturating_sub(y0).max(1))
+}
+
+/// Passes 1 to 4 (point operations, local masks, presence, detail, grain) for rows
+/// `y0..y1` of `input` (`w` pixels wide), which sits in the frame as `window` says. Rows near the band's edges only serve as context for the neighbourhood
 /// passes; the caller keeps the rows at least [`BAND_HALO`] away from a cut.
 #[allow(clippy::too_many_arguments)]
 fn process_band(
     input: &[u16],
     w: usize,
-    h: usize,
     ch: usize,
     y0: usize,
     y1: usize,
+    window: Window,
     recipe: &Recipe,
     stage: &PointStage,
 ) -> Vec<f32> {
@@ -704,14 +811,14 @@ fn process_band(
         }
     });
 
-    // Local layered mask adjustments, positioned in whole-image coordinates
+    // Local layered mask adjustments, positioned in whole-frame coordinates
     if !recipe.layers.is_empty() {
-        let inv_w = 1.0 / (w as f32).max(1.0);
-        let inv_h = 1.0 / (h as f32).max(1.0);
+        let inv_w = 1.0 / (window.frame_w as f32).max(1.0);
+        let inv_h = 1.0 / (window.frame_h as f32).max(1.0);
         buf.par_chunks_mut(w * 3).enumerate().for_each(|(i, row)| {
-            let v = ((y0 + i) as f32 + 0.5) * inv_h;
+            let v = ((window.y0 + y0 + i) as f32 + 0.5) * inv_h;
             for x in 0..w {
-                let u = (x as f32 + 0.5) * inv_w;
+                let u = ((window.x0 + x) as f32 + 0.5) * inv_w;
                 let px = x * 3;
                 let (lr, lg, lb) =
                     layers::apply_layers_pixel(row[px], row[px + 1], row[px + 2], &recipe.layers, u, v);
@@ -733,10 +840,11 @@ fn process_band(
     );
     detail::apply_detail(&mut buf, w, rows, recipe.sharpness, recipe.denoise_lum, recipe.denoise_col);
     if recipe.grain_amount > 0.001 {
-        film_grain::apply_film_grain_rows(
+        film_grain::apply_film_grain_window(
             &mut buf,
             w as u32,
-            y0 as u32,
+            window.x0 as u32,
+            (window.y0 + y0) as u32,
             recipe.grain_amount,
             recipe.grain_size,
             recipe.grain_roughness,
@@ -895,6 +1003,45 @@ mod tests {
             // Rolling blur sums start at a different row, so float rounding can move a
             // value by one step (two with lens distortion's 15-bit intermediate)
             assert!(worst <= 2, "lens {lens}: max difference {worst}");
+        }
+    }
+
+    /// A region rendered from its source window matches the same pixels of the whole frame.
+    #[test]
+    fn region_render_matches_whole_frame() {
+        let (w, h) = (180usize, 140usize);
+        let input: Vec<u16> = (0..w * h * 3)
+            .map(|i| {
+                let (p, c) = (i / 3, i % 3);
+                let (x, y) = (p % w, p / w);
+                (((x * 37 + y * 53 + c * 101) % 251) as u16) * 200 + ((x ^ y) as u16 & 63) * 100
+            })
+            .collect();
+        let mut recipe = Recipe {
+            clarity: 40.0,
+            sharpness: 50.0,
+            denoise_col: 60.0,
+            grain_amount: 20.0,
+            vignette: -30.0,
+            ..Default::default()
+        };
+        let t = Transfer::bt709();
+        for lens in [0.0, 25.0, -25.0] {
+            recipe.lens_distortion = lens;
+            let whole = render_region_8(&input, w, h, Window::whole(w, h), (0, 0, w, h), &recipe, t);
+            let out = (110, 9, 50, 40);
+            let (sx, sy, sw, sh) = region_source(out, w, h, &recipe);
+            let crop: Vec<u16> = (sy..sy + sh).flat_map(|y| input[(y * w + sx) * 3..(y * w + sx + sw) * 3].to_vec()).collect();
+            let window = Window { x0: sx, y0: sy, frame_w: w, frame_h: h };
+            let part = render_region_8(&crop, sw, sh, window, out, &recipe, t);
+            let mut worst = 0;
+            for j in 0..out.3 {
+                for i in 0..out.2 * 3 {
+                    let a = whole[((out.1 + j) * w + out.0) * 3 + i];
+                    worst = worst.max(a.abs_diff(part[j * out.2 * 3 + i]));
+                }
+            }
+            assert!(worst <= 1, "lens {lens}: max difference {worst}");
         }
     }
 }
