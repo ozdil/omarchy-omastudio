@@ -295,6 +295,25 @@ pub struct FlatField {
 }
 
 impl FlatField {
+    /// Refuses a flat field shot that cannot give a usable gain map: one where more
+    /// than 0.1% of the pixels clip, or where the brightest channel averages below
+    /// 2% of full scale (noise would then dominate the corner gains).
+    pub fn check_exposure(rgb: &[u16]) -> Result<(), String> {
+        let pixels = rgb.as_chunks::<3>().0;
+        if pixels.is_empty() {
+            return Err("The flat field image is empty".into());
+        }
+        let clipped = pixels.iter().filter(|p| p.iter().any(|&v| v >= 65000)).count();
+        if clipped * 1000 > pixels.len() {
+            return Err(format!("The flat field shot is overexposed ({:.1}% of pixels clip); take it about one stop darker", clipped as f64 * 100.0 / pixels.len() as f64));
+        }
+        let mean = (0..3).map(|c| pixels.iter().map(|p| p[c] as f64).sum::<f64>() / pixels.len() as f64).fold(0.0, f64::max);
+        if mean < 65535.0 * 0.02 {
+            return Err("The flat field shot is underexposed; expose the white target to about one stop below clipping".into());
+        }
+        Ok(())
+    }
+
     /// Builds a flat field from a developed (linear, rotated by `flip`) image.
     pub fn from_linear(rgb: &[u16], width: usize, height: usize, flip: i32, source: &str) -> Option<Self> {
         if width < GRID_W * 4 || height < GRID_H * 4 || rgb.len() < width * height * 3 {
@@ -634,6 +653,14 @@ mod tests {
         let k = flat.fit_vignetting();
         assert!((k[0] + 0.4).abs() < 0.1, "{:?}", k);
         assert!(lensfun_xml("Hasselblad", "XCD 38V", "Hasselblad XCD", 0.79, 38.0, 4.0, k).contains("model=\"pa\""));
+    }
+
+    #[test]
+    fn flat_field_exposure_is_checked() {
+        let (w, h) = (48, 36);
+        assert!(FlatField::check_exposure(&vignetted(w, h, -0.4)).is_ok());
+        assert!(FlatField::check_exposure(&vec![65535u16; w * h * 3]).unwrap_err().contains("overexposed"));
+        assert!(FlatField::check_exposure(&vec![500u16; w * h * 3]).unwrap_err().contains("underexposed"));
     }
 
     #[test]

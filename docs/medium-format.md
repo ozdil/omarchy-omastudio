@@ -110,9 +110,13 @@ not handled yet because no sample files were available.
 
 ## Hasselblad tethering (experimental)
 
-X and V system cameras (X1D, X2D, 907X/CFV II) do not speak PTP. Phocus opens a
-vendor-specific USB interface (class 0xff) and exchanges small "hblm" signal
-messages with the processors inside the camera.
+Phocus talks to X and V system cameras (X1D, X2D, 907X/CFV II) through a
+vendor-specific USB interface (class 0xff), exchanging small "hblm" signal messages
+with the processors inside the camera. Capture One instead drives Hasselblad cameras
+over standard PTP with one vendor operation (0x9003, live view on/off), so at least
+the cameras it supports also offer a PTP interface. For those, the existing PTP
+tethering in `src/ptp` is the safer route, and the hblm commands below are only needed
+for what PTP does not expose.
 
 - USB vendor ids: 0x2756 (Victor Hasselblad AB) and 0x2ca3 (DJI).
 - Protocol generation: product ids 7 to 30 under 0x2756 use v2, all others use v1.
@@ -159,10 +163,36 @@ vendor interface.
   "Peripheral Illumination Corr", "Diffraction Correction"). The correction data itself
   is not in the file. Lensfun knows the 645D and 645Z bodies but no 645 lenses, so
   `lcc-create --lensfun` is the way to calibrate them.
-- **Capture One** (Phase One and Leaf backs). The download sits behind a Cloudflare
-  check and a Capture One account, so it could not be fetched from the build
-  environment and has not been examined yet. IIQ support here rests on the sample
-  files and the public LibRaw decoder.
+- **Capture One** 16.8.6 for macOS (Phase One, Leaf, Mamiya backs and Hasselblad,
+  Fujifilm GFX and others). Findings from the application bundle:
+  - *Raw formats.* The decoder names the IIQ variants IIQ L, S and X at 12, 14 and
+    16 bits (with "H" variants such as "IIQ X 14H"), and has a separate reader for
+    Leaf MOS files (`CLeafMOSImageRepFactory`, TIFF tag `LeafPrivateData`).
+  - *Lens corrections.* The lens database (`lensDatabase.cdx`, an obfuscated XML file,
+    926 lenses) describes every correction as a radial curve: pairs of distance from
+    the optical centre and value, interpolated between focal lengths, apertures and
+    focus distances. Geometric distortion and red/blue lateral CA are given as radial
+    shifts in micrometres on the sensor, light falloff in EV. Lenses are matched
+    through a `fileDetectID` (maker-specific lens id or name from the raw file). Its
+    medium format entries cover Hasselblad X (XCD, "converted from Zemax data"),
+    Hasselblad H and V, Fujifilm G, Mamiya 645, Phase One XT/RS/R, Leica S and
+    Contax 645. None of these values are used here; OmaStudio keeps Lensfun profiles
+    and LCC flat fields.
+  - *LCC.* Capture One's flat field ("LCC") corrects colour cast, light falloff and
+    dust, can fix vertical stripes on some backs, and refuses a calibration shot that
+    is clipped or underexposed. `lcc-create` now does the same exposure check.
+  - *Colour.* Each camera has ICC input profiles (`<Camera>-Generic.icm`,
+    `-ProStandard.icm`, Leaf `LF2`–`LF6` looks) and film curves (`.fcrv`, and
+    `.P1X` "Formation" files for Fujifilm film simulations), chosen per camera by a
+    defaults table (`coreConfig.cdx`). This is vendor data and is not used.
+  - *Tethering.* Hasselblad cameras are driven over **PTP** (`Hasselblad/USB`): the
+    standard device properties, GetPartialObject (0x101b) for image download, plus vendor operation 0x9003
+    to switch live view on and off. The list of supported Hasselblad models is
+    obfuscated in the binary and was not decoded. Phase One IQ backs use a separate
+    protocol ("IQP"): multiplexed channels over USB or the network with an
+    authentication token, and agents for device control, image transfer, live view
+    and firmware programming. Because it is authenticated, IQ back tethering is out of
+    scope for OmaStudio.
 - **Leaf Capture** is discontinued and is only offered by third-party mirrors, so it
   was not used.
 

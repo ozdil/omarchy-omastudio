@@ -1421,6 +1421,7 @@ fn run_medium_format(args: &[String]) {
                 let buf = raw.process_custom(false, 0, 16)?;
                 let (w, h) = (buf.width as usize, buf.height as usize);
                 let name = path.file_name().map(|n| n.to_string_lossy().into_owned()).unwrap_or_default();
+                lens::FlatField::check_exposure(buf.as_slice_u16())?;
                 let flat = lens::FlatField::from_linear(buf.as_slice_u16(), w, h, raw.developed_flip(), &name).ok_or("Image too small or too dark for a flat field")?;
                 let out = flag("--out").map(PathBuf::from).unwrap_or_else(|| path.with_file_name("lcc.json"));
                 flat.save(&out)?;
