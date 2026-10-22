@@ -32,6 +32,7 @@ Rectangle {
     signal redoClicked()
     signal exportClicked()
     signal infoClicked()
+    signal homeClicked()
 
 
     RowLayout {
@@ -40,9 +41,12 @@ Rectangle {
         anchors.rightMargin: 12
         spacing: 12
 
-        // App Emblem & Title (Theme-reactive)
+        // App Emblem & Title (Theme-reactive); click returns to the start screen
         RowLayout {
             spacing: 8
+
+            HoverHandler { cursorShape: Qt.PointingHandCursor }
+            TapHandler { onTapped: root.homeClicked() }
             Rectangle {
                 width: 26
                 height: 26

@@ -192,6 +192,8 @@ Rectangle {
     property color toastColor: Theme.accent
     property string currentCatalogFilter: ""
     property bool isListingFolder: false
+    // Start screen; shown at launch and whenever the user clicks the emblem
+    property bool showHome: true
     property bool daemonReady: false
     property var daemonQueue: []
 
@@ -871,6 +873,23 @@ Rectangle {
         }
     }
 
+    // Process: Folder picker (start screen "Open folder")
+    Process {
+        id: openFolderProc
+        command: ["zenity", "--file-selection", "--directory", "--title=Open Photo Folder"]
+        stdout: StdioCollector {
+            waitForEnd: true
+            onStreamFinished: {
+                var p = String(text || "").trim();
+                if (p.length > 0) {
+                    filmstrip.isCatalogMode = false;
+                    filmstrip.currentFolder = p;
+                    root.scanLocalFolder(p);
+                }
+            }
+        }
+    }
+
     // Process: Export
     Process {
         id: exportProc
@@ -1111,6 +1130,7 @@ Rectangle {
             root.currentGradeVersion = "A";
         }
         root.activePhotoPath = path;
+        root.showHome = false;
         root.sendDaemonCommand({
             cmd: "load",
             path: path
@@ -1234,6 +1254,7 @@ Rectangle {
             onUndoClicked: root.undo()
             onRedoClicked: root.redo()
             onOpenFileClicked: openFileProc.running = true
+            onHomeClicked: root.showHome = true
             onToggleSplit: {
                 root.isSplitView = !root.isSplitView;
                 requestRender();
@@ -1472,6 +1493,26 @@ Rectangle {
                         filmstrip.currentFolder = folderPath;
                         root.scanLocalFolder(folderPath);
                         root.showToast("[OK] Scanning dropped folder: " + folderPath.split("/").pop(), Theme.accentCyan);
+                    }
+
+                    // Start screen sits above the canvas; the viewport's DropArea (z 50) stays on top
+                    HomeView {
+                        anchors.fill: parent
+                        z: 40
+                        visible: root.showHome
+                        photoList: root.photoList
+                        currentFolder: filmstrip.currentFolder
+                        isCatalogMode: filmstrip.isCatalogMode
+                        isListingFolder: root.isListingFolder
+                        activePhotoPath: root.activePhotoPath
+                        onOpenPhoto: function(path) { root.loadPhoto(path) }
+                        onOpenFileRequested: openFileProc.running = true
+                        onOpenFolderRequested: openFolderProc.running = true
+                        onCatalogRequested: {
+                            filmstrip.isCatalogMode = true;
+                            root.loadStudioCatalog("");
+                        }
+                        onResumeRequested: root.showHome = false
                     }
                 }
             }
@@ -2649,5 +2690,6 @@ Rectangle {
         if (exportProc.running) exportProc.running = false;
         if (listProc.running) listProc.running = false;
         if (openFileProc.running) openFileProc.running = false;
+        if (openFolderProc.running) openFolderProc.running = false;
     }
 }

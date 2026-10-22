@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+### UI
+- New start screen shown at launch: a carousel of the current folder's photos (auto-advance, arrows, ← → keys, Enter or click to open) with entry points for Open RAW file, Open folder and Studio Catalog. Click the OmaStudio emblem in the top bar to return to it; a "Continue editing" card takes you back to the open photo without losing edits.
+
 ### Engine
 - Thumbnails are always re-encoded by the engine. A JPEG, PNG or WebP that fails to decode is no longer copied into the thumbnail cache unchanged or shown from its original file; the filmstrip shows a placeholder instead, so a crafted image cannot reach Qt's image decoders without the engine's limits. *(The thumbnail cache is rebuilt once.)*
 
