@@ -2,6 +2,17 @@
 
 ## Unreleased
 
+## v3.0.0 — 2026-10-22
+
+OmaStudio 3 is a new RAW engine and a standalone Qt 6 application: its own Bayer and X-Trans development on linear light, GPU demosaicing, colour management with Little CMS 2, full Fujifilm support (recipes, film simulations, lens corrections, Pixel Shift, cameras over USB), Hasselblad and other medium-format cameras, AI agents over MCP, and local AI masks.
+
+### Upgrading from 2.x
+- OmaStudio now runs as its own window, `omastudio-app`, instead of inside Quickshell. `omastudio ipc <method>` replaces `quickshell ipc call ozdil.omastudio ...`; `~/.local/share/omastudio/qml` is no longer used and can be removed. Quickshell is only needed for the bar button.
+- Exposure and white balance now act on linear light. Saved recipes at 0 EV and 5500 K look the same; recipes that change exposure or temperature render somewhat differently.
+- Fujifilm RAFs open at the brightness of the camera's own JPEG (baseline exposure), so they look brighter than in 2.x at the same slider values.
+- The thumbnail cache is rebuilt once. Ratings, flags and colour labels in `catalog.json` are kept.
+- Requires LibRaw 0.22, Qt 6.12 and Little CMS 2; release archives are built on Arch Linux for x86_64.
+
 ### Application
 - OmaStudio is now a standalone Qt 6 application, `omastudio-app`, built in Rust with cxx-qt. It no longer runs inside Quickshell: the window is a regular Wayland client (app id `omastudio`, so Hyprland window rules can match it) and uses Qt's fractional scaling, so the interface is drawn at the monitor's real pixel density. The QML interface is compiled into the binary; `~/.local/share/omastudio/qml` is no longer used.
 - The window listens on a control socket in `$XDG_RUNTIME_DIR/omastudio/` that only the same user can reach. `omastudio ipc <method> [args]` replaces `quickshell ipc call ozdil.omastudio ...` with the same methods (openPhoto, applyRecipe, applyPreset, setExposure, getStatus, getTheme, ...), plus `show` and `screenshot <file.png>`. Opening a photo while a window is running hands it to that window.

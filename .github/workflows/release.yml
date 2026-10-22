@@ -3,34 +3,26 @@ name: Release
 on:
   push:
     tags: ['v*']
+  # Builds the archive without publishing, to check a release before tagging it
+  workflow_dispatch:
 
 jobs:
+  # Arch Linux container, like CI: the same LibRaw, Qt and Rust packages as Omarchy.
+  # Omarchy and the PKGBUILD are x86_64 only.
   build:
-    strategy:
-      matrix:
-        include:
-          - runner: ubuntu-latest
-            arch: x86_64
-          - runner: ubuntu-24.04-arm
-            arch: aarch64
-    runs-on: ${{ matrix.runner }}
+    runs-on: ubuntu-latest
+    container: archlinux:latest
     env:
       VERSION: ${{ github.ref_name }}
-      ARCH: ${{ matrix.arch }}
+      ARCH: x86_64
     steps:
-      - uses: actions/checkout@v4
-      # Same toolchain as rust-toolchain.toml
-      - uses: dtolnay/rust-toolchain@master
-        with:
-          toolchain: 1.99.1
       - name: Install build dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y clang liblcms2-dev libraw-dev mold pkg-config qt6-base-dev qt6-declarative-dev
+        run: pacman -Syu --noconfirm --needed base-devel clang git lcms2 libraw mold pkgconf qt6-base qt6-declarative rustup
+      - uses: actions/checkout@v4
+      - name: Install pinned Rust toolchain
+        run: rustup toolchain install
       - name: Build and package
         run: |
-          # Ubuntu keeps qmake6 outside PATH
-          export QMAKE=/usr/lib/qt6/bin/qmake6
           cargo build --release --locked --workspace
           version="${VERSION#v}"
           package="omastudio-$version-$ARCH-linux"
@@ -42,19 +34,24 @@ jobs:
           cp -r assets/icc skill "dist/$package/share/omastudio/"
           cp LICENSE README.md "dist/$package/"
           tar -C dist -czf "dist/$package.tar.gz" "$package"
+          "dist/$package/bin/omastudio-engine" --version
       - uses: actions/upload-artifact@v4
         with:
-          name: dist-${{ matrix.arch }}
+          name: dist-x86_64
           path: dist/*.tar.gz
 
   publish:
     needs: build
+    if: startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
     permissions:
       contents: write
       id-token: write
       attestations: write
     steps:
+      - uses: actions/checkout@v4
+      # Release notes: this version's section of CHANGELOG.md
+      - run: awk -v h="## ${GITHUB_REF_NAME} " 'index($0, h) == 1 {on = 1; next} on && /^## / {exit} on' CHANGELOG.md > notes.md
       - uses: actions/download-artifact@v4
         with:
           pattern: dist-*
@@ -66,7 +63,7 @@ jobs:
           subject-path: dist/*.tar.gz
       - uses: softprops/action-gh-release@v2
         with:
-          generate_release_notes: true
+          body_path: notes.md
           files: |
             dist/*.tar.gz
             dist/checksums.txt
