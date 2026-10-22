@@ -148,6 +148,24 @@ needs `--experimental` (except for `list`). The udev rule
 `packaging/udev/70-omastudio-cameras.rules` gives the logged-in user access to the
 vendor interface.
 
+## Other makers' tools
+
+- **Pentax Digital Camera Utility 5** (5.10.2 for macOS, from ricoh-imaging.co.jp). It is
+  built on Ichikawa Soft's SILKYPIX engine (`IslEPIPEC`, `SfxImage`). Its lens corrections
+  (distortion, lateral CA, falloff, diffraction, fringing) are computed from a lens
+  database that ships obfuscated inside the app (`PUTLL5.dat`, `*.aet`), and that data
+  is not used here. A 645Z PEF only records which corrections were switched on in the
+  camera (Pentax maker tags "Distortion Correction", "Chromatic Aberration Correction",
+  "Peripheral Illumination Corr", "Diffraction Correction"). The correction data itself
+  is not in the file. Lensfun knows the 645D and 645Z bodies but no 645 lenses, so
+  `lcc-create --lensfun` is the way to calibrate them.
+- **Capture One** (Phase One and Leaf backs). The download sits behind a Cloudflare
+  check and a Capture One account, so it could not be fetched from the build
+  environment and has not been examined yet. IIQ support here rests on the sample
+  files and the public LibRaw decoder.
+- **Leaf Capture** is discontinued and is only offered by third-party mirrors, so it
+  was not used.
+
 ## Sample files
 
 All samples come from raw.pixls.us: X2D 100C (3FR and FFF), X1D II 50C,
