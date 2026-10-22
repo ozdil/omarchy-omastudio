@@ -12,3 +12,4 @@ pub mod raw;
 pub mod recipe;
 pub mod hash;
 pub mod security;
+pub mod xmp;

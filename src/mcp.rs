@@ -140,6 +140,9 @@ fn tools() -> Vec<Value> {
             schema(json!({ "path": path, "recipe_file": { "type": "string" }, "out": { "type": "string" } }), &["path"]), false),
         tool("fuji_camera_write_preset", "Writes a recipe file into a custom setting slot (1-7) of the connected camera. Changes the camera's settings.",
             schema(json!({ "slot": { "type": "integer", "minimum": 1, "maximum": 7 }, "recipe_file": { "type": "string" }, "label": { "type": "string" } }), &["slot", "recipe_file"]), false),
+        tool("read_xmp", "Reads the XMP sidecar of a photo (Lightroom, Capture One, darktable) as an OmaStudio recipe with rating and label.", schema(json!({ "path": path }), &["path"]), true),
+        tool("write_xmp", "Writes the photo's OmaStudio edit, rating and label as an XMP sidecar for other editors. An XMP from another application is only replaced with force.",
+            schema(json!({ "path": path, "recipe": recipe, "force": { "type": "boolean" } }), &["path"]), false),
         tool("gpu_status", "The GPU OmaStudio uses for demosaicing, or why it falls back to the CPU.", schema(json!({}), &[]), true),
         tool("window_status", "State of the OmaStudio window: open photo, current recipe, view and theme.", schema(json!({}), &[]), true),
         tool("window_screenshot", "Returns a screenshot of the OmaStudio window.", schema(json!({}), &[]), true),
@@ -264,6 +267,18 @@ fn call_tool(name: &str, args: &Value) -> Option<Result<Vec<Value>, String>> {
             let mut cli = vec!["fuji-camera".to_string(), "write-preset".into(), slot.to_string(), file.into()];
             if let Some(label) = str_arg(args, "label") {
                 cli.extend(["--label".into(), label.into()]);
+            }
+            engine(&cli).map(text)
+        })(),
+        "read_xmp" => required(args, "path").and_then(|p| engine(&["xmp", "import", p])).map(text),
+        "write_xmp" => (|| {
+            let path = required(args, "path")?;
+            let mut cli = vec!["xmp".to_string(), "export".into(), path.into()];
+            if let Some(r) = recipe_arg(args)? {
+                cli.extend(["--recipe".into(), r]);
+            }
+            if args.get("force").and_then(Value::as_bool) == Some(true) {
+                cli.push("--force".into());
             }
             engine(&cli).map(text)
         })(),

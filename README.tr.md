@@ -140,6 +140,8 @@ omastudio-engine fuji-pixel-shift DSCF*.RAF --out birlesik.dng # GFX Pixel Shift
 omastudio-engine fuji-camera info | presets      # USB'deki kamera, C1-C7 özel ayarları
 omastudio-engine fuji-camera write-preset C3 tarif.FP1
 omastudio-engine fuji-camera convert DSCF0001.RAF --recipe tarif.FP1
+omastudio-engine xmp export <raw>                  # Lightroom / Capture One / darktable yan dosyası
+omastudio-engine xmp import <raw> [--save]
 omastudio-engine gpu                               # kullanılan GPU (yalnızca CPU için OMASTUDIO_GPU=off)
 omastudio-engine icc list
 omastudio-engine help

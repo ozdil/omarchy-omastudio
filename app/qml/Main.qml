@@ -110,6 +110,10 @@ Window {
                 return mainWin.applyFujiRecipe(str(a[0]));
             case "aiEdit":
                 return mainWin.aiEdit(str(a[0]));
+            case "importXmp":
+                return mainWin.importXmp();
+            case "writeXmp":
+                return mainWin.writeXmp(str(a[0]) === "force");
             case "setZoom":
                 return mainWin.setViewZoom(a.length > 0 ? a[0] : "fit");
             case "reloadTheme":

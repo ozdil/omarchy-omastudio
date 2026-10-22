@@ -13,6 +13,7 @@ pub mod raw;
 pub mod recipe;
 pub mod hash;
 pub mod security;
+pub mod xmp;
 
 use ai::{
     ai_auto_enhance, ai_classify_scene, ai_classify_scene_with_jev, ai_optimize_for_social,
@@ -722,6 +723,7 @@ fn main() {
         }
         "mcp" => mcp::run(),
         "ai" => run_ai(&args[2..]),
+        "xmp" => run_xmp(&args[2..]),
         "version" | "--version" | "-v" => {
             println!("omastudio-engine v{}", env!("CARGO_PKG_VERSION"));
         }
@@ -749,6 +751,8 @@ fn main() {
             println!("  ai key <provider> [--delete]          Store the API key read from stdin in the Secret Service");
             println!("  ai use <provider> [model]             Choose the provider and model for the edit assistant");
             println!("  ai edit <photo> [--prompt P] [--recipe JSON]  Let the chosen model edit the photo");
+            println!("  xmp export <photo> [--out F] [--force] Write the edit, rating and label as an XMP sidecar");
+            println!("  xmp import <photo> [--from F] [--save] Read an XMP sidecar from Lightroom, Capture One, darktable");
             println!("  mcp                                   Model Context Protocol server on stdin/stdout for AI agents");
             println!("  gpu                                   GPU used for demosaicing (OMASTUDIO_GPU=off uses the CPU)");
             println!("  icc list                              List all detected system and bundled ICC color profiles");
@@ -1150,6 +1154,57 @@ fn run_fuji_camera(args: &[String]) {
         };
         cam.close();
         out
+    })();
+    match result {
+        Ok(v) => print_json(&ResponseWrapper::ok(v)),
+        Err(e) => print_json::<()>(&ResponseWrapper::err(e)),
+    }
+}
+
+/// `xmp export <photo> [--recipe JSON] [--out F] [--force]` and
+/// `xmp import <photo> [--from F] [--save]`: XMP sidecars for other editors.
+fn run_xmp(args: &[String]) {
+    let flag = |name: &str| args.iter().position(|a| a == name).and_then(|i| args.get(i + 1)).cloned();
+    let has = |name: &str| args.iter().any(|a| a == name);
+    let result: Result<serde_json::Value, String> = (|| {
+        let photo = args.get(1).ok_or("Usage: xmp export|import <photo>")?;
+        let path = Path::new(photo);
+        match args.first().map(String::as_str) {
+            Some("export") => {
+                let recipe = match flag("--recipe") {
+                    Some(j) => serde_json::from_str(&j).map_err(|e| format!("Invalid recipe: {e}"))?,
+                    None => Recipe::load_initial(path),
+                };
+                let item = Catalog::load().get(photo).cloned();
+                let culling = xmp::Culling {
+                    rating: match &item {
+                        Some(i) if i.flag == "reject" => -1,
+                        Some(i) => i.rating as i32,
+                        None => recipe.rating as i32,
+                    },
+                    label: item.map(|i| i.color_label).unwrap_or_default(),
+                };
+                let out = flag("--out").map(PathBuf::from);
+                let written = xmp::export(path, &recipe, &culling, out.as_deref(), has("--force"))?;
+                Ok(serde_json::json!({ "path": written }))
+            }
+            Some("import") => {
+                let from = flag("--from").map(PathBuf::from);
+                let (recipe, culling, source) = xmp::read(path, from.as_deref())?;
+                let mut saved = None;
+                if has("--save") {
+                    saved = Some(recipe.save_sidecar(path).map_err(|e| e.to_string())?);
+                    let mut cat = Catalog::load();
+                    let flag = (culling.rating < 0).then_some("reject");
+                    let label = (!culling.label.is_empty()).then_some(culling.label.as_str());
+                    if cat.update_culling(photo, Some(culling.rating.clamp(0, 5) as u8), flag, label) {
+                        let _ = cat.save();
+                    }
+                }
+                Ok(serde_json::json!({ "source": source, "recipe": recipe, "culling": culling, "sidecar": saved }))
+            }
+            _ => Err("Usage: xmp export|import <photo>".to_string()),
+        }
     })();
     match result {
         Ok(v) => print_json(&ResponseWrapper::ok(v)),

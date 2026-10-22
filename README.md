@@ -151,6 +151,8 @@ omastudio-engine fuji-pixel-shift DSCF*.RAF --out merged.dng   # GFX Pixel Shift
 omastudio-engine fuji-camera info | presets      # camera on USB, custom settings C1-C7
 omastudio-engine fuji-camera write-preset C3 recipe.FP1
 omastudio-engine fuji-camera convert DSCF0001.RAF --recipe recipe.FP1
+omastudio-engine xmp export <raw>                  # Lightroom / Capture One / darktable sidecar
+omastudio-engine xmp import <raw> [--save]
 omastudio-engine gpu                               # GPU in use (OMASTUDIO_GPU=off for CPU only)
 omastudio-engine icc list
 omastudio-engine help

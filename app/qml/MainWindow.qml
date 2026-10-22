@@ -557,6 +557,7 @@ Rectangle {
         var list = fujiPanel.recipes;
         for (var i = 0; i < list.length; i++) {
             if (list[i].path === name || list[i].recipe.label === name) {
+                root.pushUndoState();
                 root.applyRecipeObject(list[i].recipe.omastudio);
                 return "OK";
             }
@@ -827,6 +828,43 @@ Rectangle {
             }
         } catch(e) {
             console.error("Error parsing daemon message:", e, line);
+        }
+    }
+
+    // XMP sidecars for Lightroom, Capture One and darktable
+    function importXmp() {
+        if (root.activePhotoPath === "" || xmpProc.running) return "Error: no photo open or busy";
+        xmpProc.action = "import";
+        xmpProc.command = [root.resolveEnginePath(), "xmp", "import", root.activePhotoPath];
+        xmpProc.running = true;
+        return "OK";
+    }
+
+    function writeXmp(force) {
+        if (root.activePhotoPath === "" || xmpProc.running) return "Error: no photo open or busy";
+        xmpProc.action = "export";
+        var cmd = [root.resolveEnginePath(), "xmp", "export", root.activePhotoPath, "--recipe", JSON.stringify(root.buildRecipeObject())];
+        if (force) cmd.push("--force");
+        xmpProc.command = cmd;
+        xmpProc.running = true;
+        return "OK";
+    }
+
+    Process {
+        id: xmpProc
+        property string action: ""
+        onFinished: function(exitCode, output) {
+            var resp;
+            try { resp = JSON.parse(String(output || "")); } catch (e) { resp = { "success": false, "error": "No answer from the engine" }; }
+            if (!resp.success) {
+                root.showToast("[ERR] " + String(resp.error || "XMP failed").split("\n")[0], Theme.accentMagenta);
+            } else if (xmpProc.action === "import") {
+                root.pushUndoState();
+                root.applyRecipeObject(resp.data.recipe);
+                root.showToast("[OK] Edit read from " + String(resp.data.source).split("/").pop(), Theme.accentGreen);
+            } else {
+                root.showToast("[OK] Wrote " + String(resp.data.path).split("/").pop(), Theme.accentGreen);
+            }
         }
     }
 
@@ -1581,6 +1619,7 @@ Rectangle {
                             activePhotoPath: root.activePhotoPath
                             recipeProvider: function() { return root.buildRecipeObject(); }
                             onRecipeSuggested: function(recipe, explanation) {
+                                root.pushUndoState();
                                 root.applyRecipeObject(recipe);
                                 root.showToast("[OK] AI edit applied", Theme.accentGreen);
                             }
@@ -2395,6 +2434,7 @@ Rectangle {
                                         root.showToast("[ERR] Open a photo first", Theme.accentMagenta);
                                         return;
                                     }
+                                    root.pushUndoState();
                                     root.applyRecipeObject(recipe);
                                     root.showToast("[OK] " + label, Theme.accentGreen);
                                 }
@@ -2587,6 +2627,47 @@ Rectangle {
                                     cursorShape: Qt.PointingHandCursor
                                     hoverEnabled: true
                                     onClicked: root.resetRecipe()
+                                }
+                            }
+                        }
+
+                        // Edits exchanged with other editors as XMP sidecars
+                        RowLayout {
+                            Layout.fillWidth: true
+                            spacing: 6
+
+                            Repeater {
+                                model: [
+                                    { "label": "Import XMP", "tip": "Read DSCF0001.xmp from Lightroom, Capture One or darktable" },
+                                    { "label": "Write XMP", "tip": "Write the edit, rating and label to DSCF0001.xmp for other editors" }
+                                ]
+                                delegate: Rectangle {
+                                    Layout.fillWidth: true
+                                    implicitHeight: 28
+                                    radius: Theme.radiusSm
+                                    opacity: root.activePhotoPath !== "" ? 1.0 : 0.4
+                                    color: xmpBtnMouse.containsMouse ? Theme.bgCardHover : Theme.bgCard
+                                    border.color: Theme.border
+
+                                    Text {
+                                        anchors.centerIn: parent
+                                        text: modelData.label
+                                        textFormat: Text.PlainText
+                                        font.family: Theme.monoFont
+                                        font.pixelSize: 10
+                                        font.weight: Font.Medium
+                                        color: Theme.textMain
+                                    }
+                                    MouseArea {
+                                        id: xmpBtnMouse
+                                        anchors.fill: parent
+                                        cursorShape: Qt.PointingHandCursor
+                                        hoverEnabled: true
+                                        onClicked: index === 0 ? root.importXmp() : root.writeXmp(false)
+                                    }
+                                    ToolTip.visible: xmpBtnMouse.containsMouse
+                                    ToolTip.delay: 500
+                                    ToolTip.text: modelData.tip
                                 }
                             }
                         }

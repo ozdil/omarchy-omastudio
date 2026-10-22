@@ -25,10 +25,13 @@ OmaStudio is the RAW photo editor of the user's Omarchy desktop. It has an engin
    - `omastudio fuji-camera info|presets`, `fuji-camera convert <raf> [--recipe F]`,
      `fuji-camera write-preset <1-7> <recipe-file>`
    - `omastudio fuji-pixel-shift <raf>... --out merged.dng`
+   - `omastudio xmp export <photo>` / `xmp import <photo>`: XMP sidecars for Lightroom, Capture One, darktable
+   - `omastudio ai edit <photo> --prompt "..." --recipe '<json>'`: the user's configured AI provider proposes a recipe
 3. **The open window.** `omastudio ipc <method> [args]` answers with one line:
    `getStatus`, `openPhoto <path>`, `applyRecipe '<json>'`, `setExposure <ev>`,
    `setWarmth <kelvin>`, `applyPreset <name>`, `fujiRecipes`, `applyFujiRecipe <label>`,
-   `applyCameraRecipe [photo]`, `setZoom <scale|fit>`, `screenshot <file.png>`.
+   `applyCameraRecipe [photo]`, `aiEdit <request>`, `importXmp`, `writeXmp`,
+   `setZoom <scale|fit>`, `screenshot <file.png>`.
 
 ## Recipes
 
