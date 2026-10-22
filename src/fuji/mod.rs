@@ -3,6 +3,7 @@
 
 pub mod calibrate;
 pub mod fp1;
+pub mod lens;
 pub mod library;
 pub mod makernote;
 pub mod ptp;

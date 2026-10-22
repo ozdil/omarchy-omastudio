@@ -1,6 +1,7 @@
 pub mod demosaic;
 pub mod develop;
 pub mod ffi;
+pub mod lens;
 
 use crate::pipeline::transfer::Transfer;
 use ffi::*;
@@ -78,6 +79,22 @@ impl ProcessedBuffer {
     }
 
     /// Converts a 1-channel buffer into an owned interleaved 3-channel buffer.
+    /// Applies radial lens corrections. 16-bit buffers are linear light; 8-bit ones are
+    /// encoded with the buffer's curve.
+    fn with_lens_correction(self, corr: &lens::RadialCorrection) -> ProcessedBuffer {
+        let (w, h) = (self.width as usize, self.height as usize);
+        let (storage, data_size) = if self.bits_per_sample == 16 {
+            let out = corr.apply_linear_u16(&self.as_slice_u16()[..w * h * 3], w, h);
+            let len = out.len() * 2;
+            (BufferStorage::OwnedU16(out), len)
+        } else {
+            let out = corr.apply_encoded_u8(&self.as_slice()[..w * h * 3], w, h, self.transfer);
+            let len = out.len();
+            (BufferStorage::OwnedU8(out), len)
+        };
+        ProcessedBuffer { storage, data_size, ..self }
+    }
+
     fn expand_gray_to_rgb(self) -> ProcessedBuffer {
         let pixels = (self.width as usize) * (self.height as usize);
         let (storage, data_size) = if self.bits_per_sample == 16 {
@@ -246,6 +263,8 @@ pub struct RawImage {
     path: PathBuf,
     /// Colour space the next LibRaw decode renders into (sRGB unless an export picks another).
     output_space: Cell<OutputColorSpace>,
+    /// Lens corrections recorded by the camera, read on first decode.
+    lens: std::cell::OnceCell<Option<lens::RadialCorrection>>,
 }
 
 // SAFETY: RawImage handle/backend is managed exclusively by Rust wrapper
@@ -275,6 +294,7 @@ impl RawImage {
                 backend: RawBackend::Raster { img },
                 path: path_ref.to_path_buf(),
                 output_space: Cell::new(OutputColorSpace::Srgb),
+                lens: std::cell::OnceCell::new(),
             });
         }
 
@@ -292,6 +312,7 @@ impl RawImage {
                     backend: RawBackend::Raster { img },
                     path: path_ref.to_path_buf(),
                     output_space: Cell::new(OutputColorSpace::Srgb),
+                    lens: std::cell::OnceCell::new(),
                 });
             }
             return Err(format!("LibRaw failed to open {}: code {}", path_ref.display(), errcode));
@@ -301,6 +322,7 @@ impl RawImage {
             backend: RawBackend::LibRaw(handle),
             path: path_ref.to_path_buf(),
             output_space: Cell::new(OutputColorSpace::Srgb),
+            lens: std::cell::OnceCell::new(),
         })
     }
 
@@ -325,6 +347,7 @@ impl RawImage {
                     backend: RawBackend::Raster { img },
                     path: PathBuf::from(proc_path),
                     output_space: Cell::new(OutputColorSpace::Srgb),
+                    lens: std::cell::OnceCell::new(),
                 });
             }
             return Err(format!("LibRaw failed to open descriptor {}: code {}", fd, errcode));
@@ -334,6 +357,7 @@ impl RawImage {
             backend: RawBackend::LibRaw(handle),
             path: PathBuf::from(proc_path),
             output_space: Cell::new(OutputColorSpace::Srgb),
+            lens: std::cell::OnceCell::new(),
         })
     }
 
@@ -467,7 +491,35 @@ impl RawImage {
     }
 
     /// Like [`RawImage::process_custom`] with an explicit demosaic engine.
+    ///
+    /// Lens corrections the camera recorded in the file (Fujifilm RAF) are applied to
+    /// every decode, as the camera does for its own JPEGs. `OMASTUDIO_LENS_CORRECTION=off`
+    /// turns them off.
     pub fn process_with(
+        &self,
+        engine: DemosaicEngine,
+        half_size: bool,
+        quality: i32,
+        bps: i32,
+    ) -> Result<ProcessedBuffer, String> {
+        let buf = self.process_uncorrected(engine, half_size, quality, bps)?;
+        match self.lens_correction() {
+            Some(corr) if buf.channels == 3 => Ok(buf.with_lens_correction(corr)),
+            _ => Ok(buf),
+        }
+    }
+
+    /// Lens corrections recorded in the file, if any and not turned off.
+    pub fn lens_correction(&self) -> Option<&lens::RadialCorrection> {
+        if !matches!(self.backend, RawBackend::LibRaw(_))
+            || std::env::var("OMASTUDIO_LENS_CORRECTION").is_ok_and(|v| v == "off" || v == "0")
+        {
+            return None;
+        }
+        self.lens.get_or_init(|| crate::fuji::lens::read(&self.path)).as_ref()
+    }
+
+    fn process_uncorrected(
         &self,
         engine: DemosaicEngine,
         half_size: bool,
