@@ -151,6 +151,50 @@ unsigned char* omaraw_process_image(void *handle, int half_size, int quality, in
     return buf;
 }
 
+const unsigned short* omaraw_unpack_cfa(void *handle, OmaRawCfaInfo *info) {
+    if (!handle || !info) return NULL;
+    libraw_data_t *lr = (libraw_data_t*)handle;
+
+    if (libraw_unpack(lr) != LIBRAW_SUCCESS) return NULL;
+    if (!lr->rawdata.raw_image) return NULL;
+    if (lr->idata.filters == 0 || lr->idata.colors != 3) return NULL;
+    if (lr->rawdata.ioparams.fuji_width != 0) return NULL;
+    if (lr->sizes.pixel_aspect < 0.999 || lr->sizes.pixel_aspect > 1.001) return NULL;
+
+    memset(info, 0, sizeof(OmaRawCfaInfo));
+    info->raw_width = lr->sizes.raw_width;
+    info->raw_height = lr->sizes.raw_height;
+    info->raw_pitch = (int)(lr->sizes.raw_pitch / 2);
+    info->top_margin = lr->sizes.top_margin;
+    info->left_margin = lr->sizes.left_margin;
+    info->width = lr->sizes.width;
+    info->height = lr->sizes.height;
+    info->filters = lr->idata.filters;
+    memcpy(info->xtrans, lr->idata.xtrans, sizeof(info->xtrans));
+    info->colors = lr->idata.colors;
+    info->flip = lr->sizes.flip;
+
+    if (info->raw_pitch < info->raw_width) return NULL;
+    if (info->top_margin + info->height > info->raw_height) return NULL;
+    if (info->left_margin + info->width > info->raw_width) return NULL;
+
+    for (int c = 0; c < 4; c++) {
+        info->black[c] = (float)(lr->color.black + lr->color.cblack[c]);
+        info->cam_mul[c] = lr->color.cam_mul[c];
+        info->pre_mul[c] = lr->color.pre_mul[c];
+    }
+    unsigned ph = lr->color.cblack[4], pw = lr->color.cblack[5];
+    if (ph && pw) {
+        if (ph * pw > 36) return NULL;
+        info->black_pattern_h = (int)ph;
+        info->black_pattern_w = (int)pw;
+        for (unsigned i = 0; i < ph * pw; i++) info->black_pattern[i] = (float)lr->color.cblack[6 + i];
+    }
+    info->white = (float)lr->color.maximum;
+    memcpy(info->rgb_cam, lr->color.rgb_cam, sizeof(info->rgb_cam));
+    return lr->rawdata.raw_image;
+}
+
 void omaraw_free_image(unsigned char *ptr) {
     if (ptr) {
         free(ptr);

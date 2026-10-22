@@ -1,3 +1,5 @@
+pub mod demosaic;
+pub mod develop;
 pub mod ffi;
 
 use crate::pipeline::transfer::Transfer;
@@ -208,6 +210,26 @@ impl OutputColorSpace {
             Self::ProPhotoRgb => (4, 1.0 / 1.8, 0.0),
             Self::DisplayP3 => (7, 1.0 / 2.4, 12.92),
             Self::Rec2020 => (8, 0.45, 4.5),
+        }
+    }
+}
+
+/// Who turns sensor data into RGB for 16-bit (linear) decodes.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum DemosaicEngine {
+    /// OmaStudio's own development ([`develop`]); falls back to LibRaw for sensors it
+    /// does not handle (Foveon, linear DNG, Fuji SuperCCD, 4-colour CFAs).
+    Own,
+    /// LibRaw's `dcraw_process`.
+    LibRaw,
+}
+
+impl DemosaicEngine {
+    /// `OMASTUDIO_DEMOSAIC=libraw` switches back to LibRaw's processing.
+    pub fn from_env() -> Self {
+        match std::env::var("OMASTUDIO_DEMOSAIC") {
+            Ok(v) if v.eq_ignore_ascii_case("libraw") => Self::LibRaw,
+            _ => Self::Own,
         }
     }
 }
@@ -441,6 +463,23 @@ impl RawImage {
     }
 
     pub fn process_custom(&self, half_size: bool, quality: i32, bps: i32) -> Result<ProcessedBuffer, String> {
+        self.process_with(DemosaicEngine::from_env(), half_size, quality, bps)
+    }
+
+    /// Like [`RawImage::process_custom`] with an explicit demosaic engine.
+    pub fn process_with(
+        &self,
+        engine: DemosaicEngine,
+        half_size: bool,
+        quality: i32,
+        bps: i32,
+    ) -> Result<ProcessedBuffer, String> {
+        if engine == DemosaicEngine::Own
+            && bps == 16
+            && let Some(buf) = self.develop_own(half_size)
+        {
+            return Ok(buf);
+        }
         match &self.backend {
             RawBackend::Raster { img } => {
                 let target_img = if half_size {
@@ -544,6 +583,39 @@ impl RawImage {
                 }
             }
         }
+    }
+
+    /// Develops a CFA RAW with OmaStudio's own pipeline into linear 16-bit RGB, or
+    /// returns None when the source is not a plain 3-colour CFA.
+    fn develop_own(&self, half_size: bool) -> Option<ProcessedBuffer> {
+        let RawBackend::LibRaw(handle) = &self.backend else {
+            return None;
+        };
+        // SAFETY: COmaRawCfaInfo is plain old data; all-zero is a valid value
+        let mut info: COmaRawCfaInfo = unsafe { std::mem::zeroed() };
+        // SAFETY: handle is a valid open LibRaw handle owned by self; info is a valid pointer
+        let raw = unsafe { omaraw_unpack_cfa(*handle, &mut info) };
+        // SAFETY: the shim returns the handle's raw plane (raw_pitch * raw_height values),
+        // which stays valid while self (and so the handle) is alive
+        let frame = unsafe { develop::CfaFrame::from_libraw(raw, &info) }?;
+        // Binning an X-Trans sensor gives a 1/3-size preview; LibRaw's half-size decode
+        // is larger and renders the same colours, so previews keep using it
+        if half_size && matches!(frame.pattern, demosaic::CfaPattern::XTrans(_)) {
+            return None;
+        }
+        let space = self.output_space.get();
+        let (data, width, height) = frame.develop(space, half_size);
+        let data_size = data.len() * 2;
+        Some(ProcessedBuffer {
+            storage: BufferStorage::OwnedU16(data),
+            width,
+            height,
+            channels: 3,
+            bits_per_sample: 16,
+            data_size,
+            // Linear data; the pipeline encodes it with the output space's curve
+            transfer: space.transfer(),
+        })
     }
 
     /// Selects the RGB output space for the next decode. Only LibRaw sources can be
