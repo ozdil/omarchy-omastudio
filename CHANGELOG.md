@@ -8,6 +8,7 @@
 - CI builds, tests and lints in an Arch Linux container, so it uses the same LibRaw, Qt and Rust packages as Omarchy instead of Ubuntu's older ones.
 
 ### Engine
+- Exposure and white balance now work on linear light. LibRaw and 16-bit TIFF/PNG decodes stay linear until white balance and exposure are applied, and are display-encoded once (with the curve of the output colour space) before the tone and colour modules. Exposure is a true photographic EV step (+1 EV doubles the light) and the white balance multipliers act on light the way the camera's own do. A recipe at 0 EV and 5500 K renders as before; recipes that change exposure or temperature will look somewhat different.
 - Thumbnails are always re-encoded by the engine. A JPEG, PNG or WebP that fails to decode is no longer copied into the thumbnail cache unchanged or shown from its original file; the filmstrip shows a placeholder instead, so a crafted image cannot reach Qt's image decoders without the engine's limits. *(The thumbnail cache is rebuilt once.)*
 
 ### Removed

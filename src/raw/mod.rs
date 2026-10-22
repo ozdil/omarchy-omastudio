@@ -1,7 +1,9 @@
 pub mod ffi;
 
+use crate::pipeline::transfer::Transfer;
 use ffi::*;
 use serde::{Deserialize, Serialize};
+use std::cell::Cell;
 use std::ffi::{CStr, CString};
 use std::path::{Path, PathBuf};
 
@@ -35,6 +37,9 @@ pub struct ProcessedBuffer {
     pub channels: u32,
     pub bits_per_sample: u32,
     pub data_size: usize,
+    /// Display curve of this buffer's colour space. 16-bit buffers hold linear light
+    /// and the pipeline encodes them with this curve; 8-bit buffers are already encoded.
+    pub transfer: Transfer,
 }
 
 // SAFETY: The buffer is exclusively owned and safe to pass across threads
@@ -91,6 +96,7 @@ impl ProcessedBuffer {
             channels: 3,
             bits_per_sample: self.bits_per_sample,
             data_size,
+            transfer: self.transfer,
         }
     }
 
@@ -187,6 +193,12 @@ impl OutputColorSpace {
         }
     }
 
+    /// Display curve of this space (the one its ICC profile expects).
+    pub fn transfer(self) -> Transfer {
+        let (_, power, slope) = self.libraw_params();
+        Transfer::from_libraw(power, slope)
+    }
+
     /// (LibRaw output_color, gamm[0], gamm[1])
     fn libraw_params(self) -> (i32, f64, f64) {
         match self {
@@ -210,6 +222,8 @@ pub enum RawBackend {
 pub struct RawImage {
     backend: RawBackend,
     path: PathBuf,
+    /// Colour space the next LibRaw decode renders into (sRGB unless an export picks another).
+    output_space: Cell<OutputColorSpace>,
 }
 
 // SAFETY: RawImage handle/backend is managed exclusively by Rust wrapper
@@ -238,6 +252,7 @@ impl RawImage {
             return Ok(Self {
                 backend: RawBackend::Raster { img },
                 path: path_ref.to_path_buf(),
+                output_space: Cell::new(OutputColorSpace::Srgb),
             });
         }
 
@@ -254,6 +269,7 @@ impl RawImage {
                 return Ok(Self {
                     backend: RawBackend::Raster { img },
                     path: path_ref.to_path_buf(),
+                    output_space: Cell::new(OutputColorSpace::Srgb),
                 });
             }
             return Err(format!("LibRaw failed to open {}: code {}", path_ref.display(), errcode));
@@ -262,6 +278,7 @@ impl RawImage {
         Ok(Self {
             backend: RawBackend::LibRaw(handle),
             path: path_ref.to_path_buf(),
+            output_space: Cell::new(OutputColorSpace::Srgb),
         })
     }
 
@@ -285,6 +302,7 @@ impl RawImage {
                 return Ok(Self {
                     backend: RawBackend::Raster { img },
                     path: PathBuf::from(proc_path),
+                    output_space: Cell::new(OutputColorSpace::Srgb),
                 });
             }
             return Err(format!("LibRaw failed to open descriptor {}: code {}", fd, errcode));
@@ -293,6 +311,7 @@ impl RawImage {
         Ok(Self {
             backend: RawBackend::LibRaw(handle),
             path: PathBuf::from(proc_path),
+            output_space: Cell::new(OutputColorSpace::Srgb),
         })
     }
 
@@ -437,8 +456,15 @@ impl RawImage {
                 let channels = 3u32;
 
                 if bps == 16 {
-                    let rgb16 = target_img.to_rgb16();
-                    let raw_u16 = rgb16.into_raw();
+                    // 16-bit buffers are linear light: undo the file's sRGB curve.
+                    let srgb = Transfer::srgb();
+                    let lut: Vec<u16> = (0..=u16::MAX)
+                        .map(|v| (srgb.decode(v as f32 / 65535.0) * 65535.0).round().clamp(0.0, 65535.0) as u16)
+                        .collect();
+                    let mut raw_u16 = target_img.to_rgb16().into_raw();
+                    for v in raw_u16.iter_mut() {
+                        *v = lut[*v as usize];
+                    }
                     let data_size = raw_u16.len() * 2;
                     Ok(ProcessedBuffer {
                         storage: BufferStorage::OwnedU16(raw_u16),
@@ -447,6 +473,7 @@ impl RawImage {
                         channels,
                         bits_per_sample: 16,
                         data_size,
+                        transfer: Transfer::srgb(),
                     })
                 } else {
                     let rgb8 = target_img.to_rgb8();
@@ -459,6 +486,7 @@ impl RawImage {
                         channels,
                         bits_per_sample: 8,
                         data_size,
+                        transfer: Transfer::srgb(),
                     })
                 }
             }
@@ -467,6 +495,16 @@ impl RawImage {
                 let mut out_h = 0;
                 let mut out_colors = 0;
                 let mut out_size = 0;
+
+                // 16-bit decodes are linear light; the pipeline applies the space's curve after
+                // white balance and exposure. 8-bit decodes keep LibRaw's encoded output.
+                let space = self.output_space.get();
+                let (code, power, slope) = space.libraw_params();
+                let (power, slope) = if bps == 16 { (1.0, 1.0) } else { (power, slope) };
+                // SAFETY: handle is a valid open LibRaw handle owned by self
+                if unsafe { omaraw_set_output_space(*handle, code, power, slope) } != 0 {
+                    return Err("Failed to configure RAW output space".to_string());
+                }
 
                 let hs = if half_size { 1 } else { 0 };
                 // SAFETY: handle is valid, all output pointers point to stack variables
@@ -494,6 +532,7 @@ impl RawImage {
                     channels: out_colors.max(0) as u32,
                     bits_per_sample: if bps == 16 { 16 } else { 8 },
                     data_size: out_size.max(0) as usize,
+                    transfer: space.transfer(),
                 };
 
                 match buf.channels {
@@ -511,10 +550,9 @@ impl RawImage {
     /// converted; raster sources stay sRGB and return false.
     pub fn set_output_space(&self, space: OutputColorSpace) -> bool {
         match &self.backend {
-            RawBackend::LibRaw(handle) => {
-                let (code, power, slope) = space.libraw_params();
-                // SAFETY: handle is a valid open LibRaw handle owned by self
-                unsafe { omaraw_set_output_space(*handle, code, power, slope) == 0 }
+            RawBackend::LibRaw(_) => {
+                self.output_space.set(space);
+                true
             }
             RawBackend::Raster { .. } => space == OutputColorSpace::Srgb,
         }

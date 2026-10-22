@@ -15,10 +15,8 @@ use ai::{
     apply_jev_decisions_to_recipe, JevDecisions,
 };
 use export::{export_photo, ExportOptions};
-use pipeline::{
-    process_buffer_16_to_8, process_buffer_16_to_8_ex, process_split_comparison_16_to_8,
-    process_split_comparison_16_to_8_ex,
-};
+use pipeline::transfer::Transfer;
+use pipeline::{process_buffer_16_to_8_ex, process_split_comparison_16_to_8_ex};
 use raw::RawImage;
 use rayon::prelude::*;
 use recipe::{Catalog, CatalogItem, Recipe};
@@ -139,6 +137,8 @@ struct DaemonCache {
     current_path: Option<String>,
     raw_buffer_16: Option<Arc<Vec<u16>>>,
     raw_buffer_8: Option<Arc<Vec<u8>>>,
+    /// Transfer curve of `raw_buffer_16` (linear light for LibRaw decodes).
+    transfer: Transfer,
     width: u32,
     height: u32,
     channels: u32,
@@ -712,21 +712,27 @@ fn render_file(raw_path: &str, recipe: &Recipe, split: f32, out_path: &str) -> R
     let preview = raw.process_preview_16(true)?;
 
     let (final_buf, hist) = if split > 0.001 {
-        process_split_comparison_16_to_8(
+        process_split_comparison_16_to_8_ex(
             preview.as_slice_u16(),
             preview.width,
             preview.height,
             preview.channels,
             recipe,
+            preview.transfer,
             split,
+            false,
+            false,
         )
     } else {
-        process_buffer_16_to_8(
+        process_buffer_16_to_8_ex(
             preview.as_slice_u16(),
             preview.width,
             preview.height,
             preview.channels,
             recipe,
+            preview.transfer,
+            false,
+            false,
         )
     };
 
@@ -862,6 +868,7 @@ fn run_daemon() {
         current_path: None,
         raw_buffer_16: None,
         raw_buffer_8: None,
+        transfer: Transfer::default(),
         width: 0,
         height: 0,
         channels: 0,
@@ -964,7 +971,11 @@ fn run_daemon() {
                             Ok(prev) => {
                                 let u16_slice = prev.as_slice_u16();
                                 let u16_vec = Arc::new(u16_slice.to_vec());
-                                let u8_vec: Vec<u8> = u16_slice.iter().map(|&x| (x >> 8) as u8).collect();
+                                let transfer = prev.transfer;
+                                let u8_vec: Vec<u8> = u16_slice
+                                    .iter()
+                                    .map(|&x| (transfer.encode(x as f32 / 65535.0).clamp(0.0, 1.0) * 255.0).round() as u8)
+                                    .collect();
                                 let u8_arc = Arc::new(u8_vec);
 
                                 let mut c = cache.lock().unwrap();
@@ -974,6 +985,7 @@ fn run_daemon() {
                                 c.channels = prev.channels;
                                 c.raw_buffer_16 = Some(u16_vec);
                                 c.raw_buffer_8 = Some(Arc::clone(&u8_arc));
+                                c.transfer = transfer;
                                 c.metadata = Some(meta.clone());
                                 // Keep ping_pong running across loads: resetting it made the first
                                 // render of every photo reuse the same preview path, so the UI saw
@@ -1009,6 +1021,7 @@ fn run_daemon() {
                 let width = c.width;
                 let height = c.height;
                 let channels = c.channels;
+                let transfer = c.transfer;
                 let recipe = cmd_obj.recipe.unwrap_or_default();
                 let split = cmd_obj.split.unwrap_or(0.0);
 
@@ -1044,6 +1057,7 @@ fn run_daemon() {
                         height,
                         channels,
                         &recipe,
+                        transfer,
                         split,
                         highlight_mask,
                         shadow_mask,
@@ -1055,6 +1069,7 @@ fn run_daemon() {
                         height,
                         channels,
                         &recipe,
+                        transfer,
                         highlight_mask,
                         shadow_mask,
                     )

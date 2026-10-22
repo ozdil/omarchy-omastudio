@@ -11,11 +11,13 @@ pub mod presence;
 pub mod rgb_mixer;
 pub mod skin_tone;
 pub mod tone;
+pub mod transfer;
 pub mod white_balance;
 
 use crate::recipe::Recipe;
 use histogram::{compute_histogram_with_dimensions, compute_histogram_16_with_dimensions, HistogramData};
 use rayon::prelude::*;
+use transfer::Transfer;
 
 /// Resolves active 3D LUT (built-in cinematic profile or external .cube file)
 pub fn resolve_recipe_lut(recipe: &Recipe) -> Option<lut::Lut3D> {
@@ -233,7 +235,8 @@ pub fn process_buffer(
     (output, hist)
 }
 
-/// Processes a 16-bit linear RGB buffer (0..65535) and outputs an 8-bit RGB buffer for high-speed viewport rendering
+/// Processes a 16-bit linear RGB buffer (0..65535) and outputs an 8-bit RGB buffer for high-speed viewport rendering.
+/// The output uses the BT.709 curve; use [`process_buffer_16_to_8_ex`] for another colour space.
 pub fn process_buffer_16_to_8(
     input: &[u16],
     width: u32,
@@ -241,16 +244,18 @@ pub fn process_buffer_16_to_8(
     channels: u32,
     recipe: &Recipe,
 ) -> (Vec<u8>, HistogramData) {
-    process_buffer_16_to_8_ex(input, width, height, channels, recipe, false, false)
+    process_buffer_16_to_8_ex(input, width, height, channels, recipe, Transfer::bt709(), false, false)
 }
 
 /// Extended 16-to-8 processing supporting zebra highlight & shadow clipping mask overlays
+#[allow(clippy::too_many_arguments)]
 pub fn process_buffer_16_to_8_ex(
     input: &[u16],
     width: u32,
     height: u32,
     channels: u32,
     recipe: &Recipe,
+    transfer: Transfer,
     highlight_mask: bool,
     shadow_mask: bool,
 ) -> (Vec<u8>, HistogramData) {
@@ -284,12 +289,14 @@ pub fn process_buffer_16_to_8_ex(
                 let px_in = x * ch;
                 let px_out = x * 3;
 
-                let r_norm = (in_row[px_in] as f32 / 65535.0) * wb_r;
-                let g_norm = (in_row[px_in + 1] as f32 / 65535.0) * wb_g;
-                let b_norm = (in_row[px_in + 2] as f32 / 65535.0) * wb_b;
+                // Scene-linear stage: white balance and exposure act on linear light,
+                // then the buffer's display curve is applied once for the creative stage.
+                let r_norm = transfer.encode((in_row[px_in] as f32 / 65535.0) * wb_r * exp_factor);
+                let g_norm = transfer.encode((in_row[px_in + 1] as f32 / 65535.0) * wb_g * exp_factor);
+                let b_norm = transfer.encode((in_row[px_in + 2] as f32 / 65535.0) * wb_b * exp_factor);
 
-                // 1. Tone & Dynamic range
-                let (r1, g1, b1) = tone::apply_tone_pixel(r_norm, g_norm, b_norm, recipe, exp_factor);
+                // 1. Tone & Dynamic range (exposure was already applied in linear light)
+                let (r1, g1, b1) = tone::apply_tone_pixel(r_norm, g_norm, b_norm, recipe, 1.0);
 
                 // 2. DaVinci Resolve RGB Primary Matrix Mixer
                 let (r1_mix, g1_mix, b1_mix) = rgb_mixer::apply_rgb_mixer(r1, g1, b1, recipe);
@@ -462,13 +469,26 @@ pub fn process_buffer_16_to_8_ex(
     (output, hist)
 }
 
-/// Processes a 16-bit linear RGB buffer and outputs a 16-bit RGB buffer (0..65535) for master export
+/// Processes a 16-bit linear RGB buffer and outputs a 16-bit RGB buffer (0..65535) for master export.
+/// The output uses the BT.709 curve; use [`process_buffer_16_to_16_ex`] for another colour space.
 pub fn process_buffer_16_to_16(
     input: &[u16],
     width: u32,
     height: u32,
     channels: u32,
     recipe: &Recipe,
+) -> (Vec<u16>, HistogramData) {
+    process_buffer_16_to_16_ex(input, width, height, channels, recipe, Transfer::bt709())
+}
+
+/// [`process_buffer_16_to_16`] for a buffer whose colour space uses `transfer`.
+pub fn process_buffer_16_to_16_ex(
+    input: &[u16],
+    width: u32,
+    height: u32,
+    channels: u32,
+    recipe: &Recipe,
+    transfer: Transfer,
 ) -> (Vec<u16>, HistogramData) {
     let ch = channels as usize;
     let w = width as usize;
@@ -500,12 +520,14 @@ pub fn process_buffer_16_to_16(
                 let px_in = x * ch;
                 let px_out = x * 3;
 
-                let r_norm = (in_row[px_in] as f32 / 65535.0) * wb_r;
-                let g_norm = (in_row[px_in + 1] as f32 / 65535.0) * wb_g;
-                let b_norm = (in_row[px_in + 2] as f32 / 65535.0) * wb_b;
+                // Scene-linear stage: white balance and exposure act on linear light,
+                // then the buffer's display curve is applied once for the creative stage.
+                let r_norm = transfer.encode((in_row[px_in] as f32 / 65535.0) * wb_r * exp_factor);
+                let g_norm = transfer.encode((in_row[px_in + 1] as f32 / 65535.0) * wb_g * exp_factor);
+                let b_norm = transfer.encode((in_row[px_in + 2] as f32 / 65535.0) * wb_b * exp_factor);
 
-                // 1. Tone & Dynamic range
-                let (r1, g1, b1) = tone::apply_tone_pixel(r_norm, g_norm, b_norm, recipe, exp_factor);
+                // 1. Tone & Dynamic range (exposure was already applied in linear light)
+                let (r1, g1, b1) = tone::apply_tone_pixel(r_norm, g_norm, b_norm, recipe, 1.0);
 
                 // 2. DaVinci Resolve RGB Primary Matrix Mixer
                 let (r1_mix, g1_mix, b1_mix) = rgb_mixer::apply_rgb_mixer(r1, g1, b1, recipe);
@@ -710,7 +732,7 @@ pub fn process_split_comparison_16_to_8(
     recipe: &Recipe,
     split_ratio: f32,
 ) -> (Vec<u8>, HistogramData) {
-    process_split_comparison_16_to_8_ex(input, width, height, channels, recipe, split_ratio, false, false)
+    process_split_comparison_16_to_8_ex(input, width, height, channels, recipe, Transfer::bt709(), split_ratio, false, false)
 }
 
 /// Extended Before / After split comparison buffer with clipping mask overlay support
@@ -720,11 +742,12 @@ pub fn process_split_comparison_16_to_8_ex(
     height: u32,
     channels: u32,
     recipe: &Recipe,
+    transfer: Transfer,
     split_ratio: f32,
     highlight_mask: bool,
     shadow_mask: bool,
 ) -> (Vec<u8>, HistogramData) {
-    let (processed, hist) = process_buffer_16_to_8_ex(input, width, height, channels, recipe, highlight_mask, shadow_mask);
+    let (processed, hist) = process_buffer_16_to_8_ex(input, width, height, channels, recipe, transfer, highlight_mask, shadow_mask);
     let ch = channels as usize;
     let w = width as usize;
     let split_x = ((width as f32) * split_ratio.clamp(0.0, 1.0)) as usize;
@@ -737,11 +760,9 @@ pub fn process_split_comparison_16_to_8_ex(
             let orig_row = &input[y * w * ch..(y + 1) * w * ch];
             let proc_row = &processed[y * w * ch..(y + 1) * w * ch];
 
-            // LibRaw already delivers display-encoded (gamma) values and the AFTER path
-            // writes its result without another transfer curve, so BEFORE must use the
-            // same plain 16 -> 8 bit mapping. Applying the sRGB OETF here a second time
-            // made the "before" half look washed out next to an untouched "after" half.
-            let to_8bit = |val16: u16| -> u8 { ((val16 as f32 / 65535.0).clamp(0.0, 1.0) * 255.0) as u8 };
+            // The source is linear light; BEFORE gets the same single display curve the
+            // AFTER path applies, so a neutral recipe looks the same on both halves.
+            let to_8bit = |val16: u16| -> u8 { (transfer.encode(val16 as f32 / 65535.0).clamp(0.0, 1.0) * 255.0) as u8 };
 
             for x in 0..w {
                 let px = x * ch;

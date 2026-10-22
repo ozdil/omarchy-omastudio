@@ -1,3 +1,4 @@
+use omastudio_engine::pipeline::transfer::Transfer;
 use omastudio_engine::pipeline::{process_buffer_16_to_8, process_buffer_16_to_16};
 use omastudio_engine::raw::RawImage;
 use omastudio_engine::recipe::Recipe;
@@ -13,8 +14,10 @@ fn test_presence_clarity_midtone_isolation() {
     for y in 0..height {
         for x in 0..width {
             let idx = (y * width + x) * 3;
-            // Linear gradient from 0 to 65535
-            let v = ((x * 65535) / (width - 1)) as u16;
+            // Perceptually even gradient: 16-bit input is linear light, so decode an even
+            // display-encoded ramp to get shadows, midtones and highlights where they appear.
+            let encoded = x as f32 / (width - 1) as f32;
+            let v = (Transfer::bt709().decode(encoded) * 65535.0).round() as u16;
             buffer16[idx] = v;
             buffer16[idx + 1] = v;
             buffer16[idx + 2] = v;
