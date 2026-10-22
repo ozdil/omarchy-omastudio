@@ -160,6 +160,19 @@ All commands print JSON, so Omarchy agents and scripts can use them directly.
 
 ---
 
+## AI agents
+
+`omastudio mcp` is a Model Context Protocol server (stdio), so any MCP client on Omarchy can inspect, render, cull and export photos, read and apply Fujifilm recipes, use a camera on USB, and control the open window (open a photo, apply a recipe, adjust, zoom, take a screenshot). Rendered previews and window screenshots are returned as images.
+
+```bash
+claude mcp add omastudio -- omastudio mcp    # Claude Code
+omastudio skill                              # installs the agent skill into ~/.claude/skills
+```
+
+Other clients (opencode, Codex, Gemini CLI, ...) take the same command, `omastudio mcp`, in their MCP server settings. The skill (`skill/omastudio/SKILL.md`, installed to `/usr/share/omastudio/skill`) describes the tools, the command line and the recipe format for agents that read skills.
+
+---
+
 ## Keyboard shortcuts
 
 | Key | Action |

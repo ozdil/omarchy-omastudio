@@ -149,6 +149,19 @@ Tüm komutlar JSON çıktı verir. Bu sayede Omarchy ajanları ve betikler onlar
 
 ---
 
+## Yapay zekâ ajanları
+
+`omastudio mcp` bir Model Context Protocol sunucusudur (stdio). Omarchy'deki her MCP istemcisi bununla fotoğrafları inceleyebilir, işleyebilir, ayıklayabilir ve dışa aktarabilir; Fujifilm tariflerini okuyup uygulayabilir; USB'deki kamerayı kullanabilir ve açık pencereyi yönetebilir (fotoğraf açma, tarif uygulama, ayar, yakınlaştırma, ekran görüntüsü). İşlenmiş önizlemeler ve pencere görüntüleri resim olarak döner.
+
+```bash
+claude mcp add omastudio -- omastudio mcp    # Claude Code
+omastudio skill                              # ajan skill'ini ~/.claude/skills içine kurar
+```
+
+Diğer istemciler (opencode, Codex, Gemini CLI, ...) MCP sunucu ayarlarında aynı komutu, `omastudio mcp`, kullanır. Skill dosyası (`skill/omastudio/SKILL.md`, `/usr/share/omastudio/skill` altına kurulur) araçları, komut satırını ve tarif biçimini anlatır.
+
+---
+
 ## Klavye kısayolları
 
 | Tuş | İşlem |

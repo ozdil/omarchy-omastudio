@@ -11,6 +11,10 @@
 - The export dialog has a rendering intent selector (perceptual, relative colorimetric, saturation, absolute colorimetric) for the conversion to the output ICC profile. Relative colorimetric stays the default.
 - Quickshell is now only needed for the OmaStudio button in the Omarchy bar (`Panel.qml`), which no longer depends on the application's files.
 
+### AI agents
+- `omastudio mcp`: a Model Context Protocol server on stdin/stdout with 24 tools. Engine tools inspect, render (the preview comes back as an image), export, scan and cull photos, read and save Fujifilm recipes, merge Pixel Shift sequences and use a Fujifilm camera on USB. Window tools read the window's state, take a screenshot, open photos and apply recipes, presets, exposure, white balance and zoom through the control socket.
+- An agent skill (`skill/omastudio/SKILL.md`) documents the tools, command line and recipe format; `omastudio skill` installs it into `~/.claude/skills`.
+
 ### Toolchain
 - Rust 1.99.1 (pinned in `rust-toolchain.toml`) and the Rust 2024 edition. Nested `if let` blocks became let-chains and the new clippy lints are fixed; behaviour is unchanged.
 - The Arch package now requires LibRaw 0.22 and Qt 6.12 (`qt6-declarative`), the versions current Omarchy ships, and Little CMS 2 (`lcms2`).

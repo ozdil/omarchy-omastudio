@@ -39,6 +39,7 @@ package() {
     ln -sf "omastudio.desktop" "$pkgdir/usr/share/applications/omaraw.desktop"
     install -Dm644 Panel.qml "$pkgdir/usr/share/omastudio/Panel.qml"
     install -Dm644 manifest.json "$pkgdir/usr/share/omastudio/manifest.json"
+    install -Dm644 skill/omastudio/SKILL.md "$pkgdir/usr/share/omastudio/skill/omastudio/SKILL.md"
     install -Dm644 README.md "$pkgdir/usr/share/doc/omastudio/README.md"
     install -Dm644 packaging/udev/70-omastudio-cameras.rules "$pkgdir/usr/lib/udev/rules.d/70-omastudio-cameras.rules"
 }

@@ -107,7 +107,21 @@ case "${1:-}" in
             *) exec "${BIN}" theme "$@" ;;
         esac
         ;;
-    inspect|render|export|ai-auto|ai-social|ai-jev|icc|scan|catalog|dag|daemon|gpu|fuji-*)
+    skill)
+        # `omastudio skill [dir]`: installs the agent skill (default ~/.claude/skills)
+        TARGET="${2:-${HOME}/.claude/skills}"
+        for SRC in "${DIR}/skill/omastudio/SKILL.md" "${HOME}/.local/share/omastudio/skill/omastudio/SKILL.md" \
+                   "/usr/share/omastudio/skill/omastudio/SKILL.md"; do
+            if [[ -f "${SRC}" ]]; then
+                /usr/bin/install -Dm644 "${SRC}" "${TARGET}/omastudio/SKILL.md"
+                echo "Installed ${TARGET}/omastudio/SKILL.md"
+                exit 0
+            fi
+        done
+        echo "SKILL.md not found" >&2
+        exit 1
+        ;;
+    inspect|render|export|ai-auto|ai-social|ai-jev|icc|scan|catalog|dag|daemon|gpu|mcp|fuji-*)
         exec "${BIN}" "$@"
         ;;
 esac

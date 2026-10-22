@@ -6,6 +6,7 @@ pub mod export;
 pub mod fuji;
 pub mod gpu;
 pub mod icc;
+mod mcp;
 pub mod pipeline;
 pub mod ptp;
 pub mod raw;
@@ -719,6 +720,7 @@ fn main() {
         "gpu" => {
             print_json(&ResponseWrapper::ok(gpu::status()));
         }
+        "mcp" => mcp::run(),
         "version" | "--version" | "-v" => {
             println!("omastudio-engine v{}", env!("CARGO_PKG_VERSION"));
         }
@@ -742,6 +744,7 @@ fn main() {
             println!("  fuji-camera write-preset <C1-C7> <recipe> [--label L]  Store a recipe in a custom setting slot");
             println!("  fuji-calibrate <raf>... [--any]       Measure film simulation LUTs from your RAFs' camera JPEGs");
             println!("  fuji-pixel-shift <raf>... [--out F]   Merge a GFX Pixel Shift sequence into a linear DNG");
+            println!("  mcp                                   Model Context Protocol server on stdin/stdout for AI agents");
             println!("  gpu                                   GPU used for demosaicing (OMASTUDIO_GPU=off uses the CPU)");
             println!("  icc list                              List all detected system and bundled ICC color profiles");
             println!("  scan [dir]                            Scan local folder for supported RAW photos");
