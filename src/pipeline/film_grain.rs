@@ -27,6 +27,19 @@ pub fn apply_film_grain(
     size: f32,      // 1.0 to 3.0 (Default: 1.0)
     roughness: f32, // 0.0 to 100.0 (Default: 50.0)
 ) {
+    apply_film_grain_rows(buffer, width, 0, amount, size, roughness);
+}
+
+/// [`apply_film_grain`] for a band of rows that starts at image row `first_row`, so
+/// the grain pattern is the same as when the whole image is processed at once.
+pub fn apply_film_grain_rows(
+    buffer: &mut [f32],
+    width: u32,
+    first_row: u32,
+    amount: f32,
+    size: f32,
+    roughness: f32,
+) {
     if amount <= 0.001 {
         return;
     }
@@ -40,7 +53,7 @@ pub fn apply_film_grain(
         .par_chunks_mut(w * 3)
         .enumerate()
         .for_each(|(y_idx, row)| {
-            let y = y_idx as u32;
+            let y = first_row + y_idx as u32;
             let sample_y = (y as f32 / step) as u32;
 
             for x in 0..w {

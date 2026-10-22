@@ -81,6 +81,9 @@ pub fn export_photo<P: AsRef<Path>>(
         recipe,
         processed.transfer,
     );
+    let (width, height) = (processed.width, processed.height);
+    // A 100 MP frame is 600 MB at 16 bits; free the decode before encoding starts
+    drop(processed);
 
     let icc_bytes = match &target {
         Some(target) => {
@@ -99,9 +102,6 @@ pub fn export_photo<P: AsRef<Path>>(
         None => None,
     };
     let icc_bytes = icc_bytes.as_deref();
-
-    let width = processed.width;
-    let height = processed.height;
 
     // Convert to 16-bit ImageBuffer
     let img: ImageBuffer<Rgb<u16>, Vec<u16>> = ImageBuffer::from_raw(width, height, final_buf)

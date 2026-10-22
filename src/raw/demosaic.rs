@@ -172,22 +172,40 @@ impl Tables {
 /// directions whose result is most homogeneous (fewest abrupt changes in luma and
 /// chroma around it) are kept, so interpolation follows edges instead of crossing them.
 pub fn demosaic(m: &Mosaic) -> Vec<f32> {
+    demosaic_map(m, |p| p)
+}
+
+/// [`demosaic`] that hands every finished pixel to `convert` and stores what it
+/// returns, so a caller can go straight to its output format. No full-frame float
+/// RGB is ever held: each tile is demosaiced, cleaned of false colour and converted
+/// on its own.
+pub fn demosaic_map<T, F>(m: &Mosaic, convert: F) -> Vec<T>
+where
+    T: Copy + Default + Send,
+    F: Fn([f32; 3]) -> [T; 3] + Sync,
+{
     let (w, h) = (m.width, m.height);
     let tables = Tables::new(m.pattern);
-    let mut rgb = vec![0f32; w * h * 3];
-    rgb.par_chunks_mut(TILE * w * 3).enumerate().for_each(|(band, out)| {
+    let mut out = vec![T::default(); w * h * 3];
+    out.par_chunks_mut(TILE * w * 3).enumerate().for_each(|(band, out)| {
         let y0 = band * TILE;
         let y1 = (y0 + TILE).min(h);
         for x0 in (0..w).step_by(TILE) {
             let x1 = (x0 + TILE).min(w);
-            develop_tile(m, &tables, (y0, y1, x0, x1), out, w);
+            develop_tile(m, &tables, (y0, y1, x0, x1), out, w, &convert);
         }
     });
-    suppress_false_color(&mut rgb, w, h);
-    rgb
+    out
 }
 
-fn develop_tile(m: &Mosaic, t: &Tables, (y0, y1, x0, x1): (usize, usize, usize, usize), out: &mut [f32], w: usize) {
+fn develop_tile<T: Copy>(
+    m: &Mosaic,
+    t: &Tables,
+    (y0, y1, x0, x1): (usize, usize, usize, usize),
+    out: &mut [T],
+    w: usize,
+    convert: &impl Fn([f32; 3]) -> [T; 3],
+) {
     let ey0 = y0.saturating_sub(BORDER);
     let ex0 = x0.saturating_sub(BORDER);
     let ey1 = (y1 + BORDER).min(m.height);
@@ -389,13 +407,15 @@ fn develop_tile(m: &Mosaic, t: &Tables, (y0, y1, x0, x1): (usize, usize, usize, 
         }
     }
 
-    // Keep the most homogeneous directions and average them
-    for y in y0..y1 {
-        let ly = y - ey0;
-        let row = &mut out[(y - y0) * w * 3..(y - y0 + 1) * w * 3];
-        for x in x0..x1 {
-            let lx = x - ex0;
-            let i = ly * tw + lx;
+    // Keep the most homogeneous directions and average them, for the tile plus a
+    // one-pixel ring that the false-colour median reads
+    let (sy0, sy1) = (y0.saturating_sub(1), (y1 + 1).min(m.height));
+    let (sx0, sx1) = (x0.saturating_sub(1), (x1 + 1).min(m.width));
+    let sw = sx1 - sx0;
+    let mut sel = vec![[0f32; 3]; (sy1 - sy0) * sw];
+    for y in sy0..sy1 {
+        for x in sx0..sx1 {
+            let i = (y - ey0) * tw + (x - ex0);
             let score: [u16; 4] = std::array::from_fn(|d| score_map[d][i]);
             let best = *score.iter().max().unwrap_or(&0);
             let keep = best - best / 8;
@@ -409,9 +429,30 @@ fn develop_tile(m: &Mosaic, t: &Tables, (y0, y1, x0, x1): (usize, usize, usize, 
                     k += 1.0;
                 }
             }
-            for c in 0..3 {
-                row[x * 3 + c] = acc[c] / k;
+            sel[(y - sy0) * sw + (x - sx0)] = acc.map(|v| v / k);
+        }
+    }
+
+    // 3x3 median on the colour differences R-G and B-G removes isolated false colour
+    // without softening luminance detail. The outermost image rows and columns are kept.
+    let (img_w, img_h) = (m.width, m.height);
+    let at = |y: usize, x: usize| sel[(y - sy0) * sw + (x - sx0)];
+    for y in y0..y1 {
+        let row = &mut out[(y - y0) * w * 3..(y - y0 + 1) * w * 3];
+        for x in x0..x1 {
+            let mut px = at(y, x);
+            if img_w >= 3 && img_h >= 3 && y > 0 && y + 1 < img_h && x > 0 && x + 1 < img_w {
+                let g = px[1];
+                for c in [0usize, 2] {
+                    let mut v = [0f32; 9];
+                    for (k, slot) in v.iter_mut().enumerate() {
+                        let q = at(y + k / 3 - 1, x + k % 3 - 1);
+                        *slot = q[c] - q[1];
+                    }
+                    px[c] = (g + median9(v)).max(0.0);
+                }
             }
+            row[x * 3..x * 3 + 3].copy_from_slice(&convert(px));
         }
     }
 }
@@ -419,28 +460,6 @@ fn develop_tile(m: &Mosaic, t: &Tables, (y0, y1, x0, x1): (usize, usize, usize, 
 #[inline(always)]
 fn chroma_dist(a: [f32; 3], b: [f32; 3]) -> f32 {
     (a[1] - b[1]).powi(2) + (a[2] - b[2]).powi(2)
-}
-
-/// 3x3 median on the colour differences R-G and B-G, which removes isolated false
-/// colour without softening luminance detail.
-fn suppress_false_color(rgb: &mut [f32], w: usize, h: usize) {
-    if w < 3 || h < 3 {
-        return;
-    }
-    let diff: Vec<[f32; 2]> = rgb.par_chunks(3).map(|p| [p[0] - p[1], p[2] - p[1]]).collect();
-    rgb.par_chunks_mut(w * 3).enumerate().for_each(|(y, row)| {
-        if y == 0 || y == h - 1 {
-            return;
-        }
-        for x in 1..w - 1 {
-            let g = row[x * 3 + 1];
-            for (k, c) in [0usize, 2].into_iter().enumerate() {
-                let at = |dy: usize, dx: usize| diff[(y + dy - 1) * w + (x + dx - 1)][k];
-                let v = [at(0, 0), at(0, 1), at(0, 2), at(1, 0), at(1, 1), at(1, 2), at(2, 0), at(2, 1), at(2, 2)];
-                row[x * 3 + c] = (g + median9(v)).max(0.0);
-            }
-        }
-    });
 }
 
 /// Median of nine values with a fixed exchange network (Paeth / Devillard).

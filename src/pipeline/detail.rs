@@ -191,6 +191,34 @@ pub fn apply_detail(
     });
 }
 
+/// Radial polynomial lens distortion: r_source = r * (1 + k1 * (r / max_r)^2).
+#[derive(Clone, Copy)]
+pub struct LensDistortion {
+    cx: f32,
+    cy: f32,
+    inv_max_r2: f32,
+    k1: f32,
+}
+
+impl LensDistortion {
+    /// None when `distortion` (-100..100) is too small to have an effect.
+    pub fn new(width: usize, height: usize, distortion: f32) -> Option<Self> {
+        if distortion.abs() < 0.1 || width == 0 || height == 0 {
+            return None;
+        }
+        let (cx, cy) = (width as f32 / 2.0, height as f32 / 2.0);
+        Some(Self { cx, cy, inv_max_r2: 1.0 / (cx * cx + cy * cy), k1: (distortion / 100.0) * 0.15 })
+    }
+
+    /// Where the output pixel (x, y) samples the source image.
+    #[inline(always)]
+    pub fn source(&self, x: f32, y: f32) -> (f32, f32) {
+        let (dx, dy) = (x - self.cx, y - self.cy);
+        let factor = 1.0 + self.k1 * (dx * dx + dy * dy) * self.inv_max_r2;
+        (self.cx + dx * factor, self.cy + dy * factor)
+    }
+}
+
 /// Corrects optical barrel / pincushion lens distortion via radial polynomial mapping
 pub fn apply_lens_distortion(
     input: &[f32],
@@ -199,36 +227,17 @@ pub fn apply_lens_distortion(
     channels: usize,
     distortion: f32,
 ) -> Vec<f32> {
-    if distortion.abs() < 0.1 || width == 0 || height == 0 {
+    let Some(lens) = LensDistortion::new(width, height, distortion) else {
         return input.to_vec();
-    }
+    };
 
     let mut output = vec![0.0f32; input.len()];
-    let cx = width as f32 / 2.0;
-    let cy = height as f32 / 2.0;
-    let max_radius = (cx * cx + cy * cy).sqrt();
-
-    // k1 factor for polynomial distortion: r_distorted = r * (1 + k1 * (r/max_r)^2)
-    let k1 = (distortion / 100.0) * 0.15;
-
     output
         .par_chunks_mut(width * channels)
         .enumerate()
         .for_each(|(y_idx, row)| {
-            let y = y_idx as f32;
-            let dy = y - cy;
-
             for x_idx in 0..width {
-                let x = x_idx as f32;
-                let dx = x - cx;
-
-                let r = (dx * dx + dy * dy).sqrt();
-                let r_norm = r / max_radius;
-
-                let factor = 1.0 + k1 * r_norm * r_norm;
-                let src_x = cx + dx * factor;
-                let src_y = cy + dy * factor;
-
+                let (src_x, src_y) = lens.source(x_idx as f32, y_idx as f32);
                 let px = x_idx * channels;
 
                 if src_x >= 0.0 && src_x < (width - 1) as f32 && src_y >= 0.0 && src_y < (height - 1) as f32 {

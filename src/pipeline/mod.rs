@@ -495,7 +495,21 @@ pub fn process_buffer_16_to_16(
     process_buffer_16_to_16_ex(input, width, height, channels, recipe, Transfer::bt709())
 }
 
+/// Rows per band of the master export. Each band is processed on its own with
+/// [`BAND_HALO`] extra rows above and below, so working memory no longer grows with
+/// the size of the photo (a 100 MP GFX frame needs the same scratch space as a 24 MP one).
+const BAND_ROWS: usize = 384;
+/// Context rows around a band: the widest neighbourhood any pass reads (clarity's
+/// 16-pixel blur), plus detail's 3 rows that run on presence's result.
+const BAND_HALO: usize = 24;
+/// Pre-distortion rows are kept as u16 covering 0..2, so values pushed above white by
+/// sharpening or clarity survive until the final clamp.
+const PRE_DISTORTION_SCALE: f32 = 32767.5;
+
 /// [`process_buffer_16_to_16`] for a buffer whose colour space uses `transfer`.
+///
+/// The photo is processed in bands of rows. The result is the same as processing it in
+/// one piece; only the scratch memory is bounded.
 pub fn process_buffer_16_to_16_ex(
     input: &[u16],
     width: u32,
@@ -504,199 +518,232 @@ pub fn process_buffer_16_to_16_ex(
     recipe: &Recipe,
     transfer: Transfer,
 ) -> (Vec<u16>, HistogramData) {
+    process_16_to_16_banded(input, width, height, channels, recipe, transfer, BAND_ROWS)
+}
+
+fn process_16_to_16_banded(
+    input: &[u16],
+    width: u32,
+    height: u32,
+    channels: u32,
+    recipe: &Recipe,
+    transfer: Transfer,
+    max_band_rows: usize,
+) -> (Vec<u16>, HistogramData) {
     let ch = channels as usize;
     let w = width as usize;
     let h = height as usize;
     let num_pixels = w * h;
 
-    let (wb_r, wb_g, wb_b) = white_balance::kelvin_to_rgb_multipliers(
-        recipe.wb_temperature,
-        recipe.wb_tint,
-    );
-    let exp_factor = 2.0f32.powf(recipe.exposure);
+    let stage = PointStage::new(recipe, transfer);
+    let lens = detail::LensDistortion::new(w, h, recipe.lens_distortion);
 
-    // Resolve active 3D LUT if requested
-    let maybe_lut = resolve_recipe_lut(recipe);
-    let film_sim = film_sim::FilmSimulation::from_id(&recipe.film_simulation);
-    let film_lut = film_sim::calibrated_lut(film_sim);
-    let color_chrome = recipe.color_chrome > 0.0 || recipe.color_chrome_blue > 0.0;
-    let working_space = aces::WorkingColorSpace::from_str_name(&recipe.color_space);
+    // Bands of equal height, so the last one is never a sliver
+    let bands = h.div_ceil(max_band_rows).max(1);
+    let band_rows = h.div_ceil(bands).max(1);
 
-    // Intermediate float buffer for multi-stage 16-bit precision processing
-    let mut f32_buf = vec![0.0f32; num_pixels * 3];
+    let mut output = vec![0u16; num_pixels * ch];
+    // With lens distortion the remap can read rows of any band, so the bands are
+    // collected first and the remap, defringe and vignette run on the whole frame
+    let mut pre = if lens.is_some() { vec![0u16; num_pixels * 3] } else { Vec::new() };
 
-    // PASS 1: Point Operations (White Balance, Exposure, Tone, Color Wheels, HSL Mixer, 3D LUT, Film Sim, ACES)
-    f32_buf
-        .par_chunks_mut(w * 3)
-        .enumerate()
-        .for_each(|(y_idx, row_f32)| {
-            let in_row = &input[y_idx * w * ch..(y_idx + 1) * w * ch];
+    for y0 in (0..h).step_by(band_rows) {
+        let y1 = (y0 + band_rows).min(h);
+        let (by0, by1) = (y0.saturating_sub(BAND_HALO), (y1 + BAND_HALO).min(h));
+        let band = process_band(input, w, h, ch, by0, by1, recipe, &stage);
+        let inner = &band[(y0 - by0) * w * 3..(y1 - by0) * w * 3];
 
-            for x in 0..w {
-                let px_in = x * ch;
-                let px_out = x * 3;
-
-                // Scene-linear stage: white balance and exposure act on linear light,
-                // then the buffer's display curve is applied once for the creative stage.
-                let r_norm = transfer.encode((in_row[px_in] as f32 / 65535.0) * wb_r * exp_factor);
-                let g_norm = transfer.encode((in_row[px_in + 1] as f32 / 65535.0) * wb_g * exp_factor);
-                let b_norm = transfer.encode((in_row[px_in + 2] as f32 / 65535.0) * wb_b * exp_factor);
-
-                // 1. Tone & Dynamic range (exposure was already applied in linear light)
-                let (r1, g1, b1) = tone::apply_tone_pixel(r_norm, g_norm, b_norm, recipe, 1.0);
-
-                // 2. DaVinci Resolve RGB Primary Matrix Mixer
-                let (r1_mix, g1_mix, b1_mix) = rgb_mixer::apply_rgb_mixer(r1, g1, b1, recipe);
-
-                // 3. Capture One Pro Style Skin Tone Uniformity Engine
-                let (r1_skin, g1_skin, b1_skin) = skin_tone::apply_skin_tone_uniformity(r1_mix, g1_mix, b1_mix, recipe);
-
-                // 4. DaVinci Resolve 3-Way Color Wheels
-                let (r2, g2, b2) = color_grading::apply_color_wheels(r1_skin, g1_skin, b1_skin, recipe);
-
-                // 5. 8-Band HSL Color Mixer
-                let (r3, g3, b3) = color_grading::apply_hsl_mixer(r2, g2, b2, recipe);
-
-                // 6. DaVinci 3D LUT
-                let (r4, g4, b4) = if let Some(ref active_lut) = maybe_lut {
-                    lut::apply_lut_pixel(r3, g3, b3, active_lut, recipe.lut_intensity)
-                } else {
-                    (r3, g3, b3)
-                };
-
-                // 7. Authentic Film Simulations (Fujifilm X-Trans / GFX & Hasselblad HNCS / XPan)
-                let (r5, g5, b5) = if film_sim != film_sim::FilmSimulation::None {
-                    film_sim::apply(film_sim, film_lut.as_deref(), r4, g4, b4, recipe.film_sim_intensity)
-                } else {
-                    (r4, g4, b4)
-                };
-                let (r5, g5, b5) = if color_chrome {
-                    film_sim::apply_color_chrome(r5, g5, b5, recipe.color_chrome, recipe.color_chrome_blue)
-                } else {
-                    (r5, g5, b5)
-                };
-
-                // 8. ACES 1.3 Gamut Compression if ACEScg or wide-gamut mode active
-                let (r6, g6, b6) = if working_space == aces::WorkingColorSpace::AcesCg || recipe.aces_tonemap {
-                    aces::apply_aces_gamut_compression(r5, g5, b5)
-                } else {
-                    (r5, g5, b5)
-                };
-
-                row_f32[px_out] = r6;
-                row_f32[px_out + 1] = g6;
-                row_f32[px_out + 2] = b6;
-            }
-        });
-
-    // PASS 1.5: Local Layered Mask Adjustments (Linear, Radial, Luma Range)
-    if !recipe.layers.is_empty() {
-        let inv_w = 1.0 / (w as f32).max(1.0);
-        let inv_h = 1.0 / (h as f32).max(1.0);
-        f32_buf
-            .par_chunks_mut(w * 3)
+        if lens.is_some() {
+            pre[y0 * w * 3..y1 * w * 3].par_iter_mut().zip(inner.par_iter()).for_each(|(o, &v)| {
+                *o = (v.clamp(0.0, 2.0) * PRE_DISTORTION_SCALE + 0.5) as u16;
+            });
+            continue;
+        }
+        output[y0 * w * ch..y1 * w * ch]
+            .par_chunks_mut(w * ch)
+            .zip(inner.par_chunks(w * 3))
             .enumerate()
-            .for_each(|(y_idx, row_f32)| {
-                let v = (y_idx as f32 + 0.5) * inv_h;
+            .for_each(|(i, (row, src))| {
+                let y = y0 + i;
                 for x in 0..w {
-                    let u = (x as f32 + 0.5) * inv_w;
-                    let px = x * 3;
-                    let (lr, lg, lb) = layers::apply_layers_pixel(
-                        row_f32[px],
-                        row_f32[px + 1],
-                        row_f32[px + 2],
-                        &recipe.layers,
-                        u,
-                        v,
-                    );
-                    row_f32[px] = lr;
-                    row_f32[px + 1] = lg;
-                    row_f32[px + 2] = lb;
+                    let px = (src[x * 3], src[x * 3 + 1], src[x * 3 + 2]);
+                    finish_pixel(&mut row[x * ch..x * ch + 3], px, x, y, width, height, recipe);
+                    if ch == 4 {
+                        row[x * ch + 3] = input[(y * w + x) * ch + 3];
+                    }
                 }
             });
     }
 
-    // PASS 2: Presence Engine (Texture, Clarity, Dehaze, DaVinci Midtone Detail)
+    if let Some(lens) = lens {
+        output.par_chunks_mut(w * ch).enumerate().for_each(|(y, row)| {
+            for x in 0..w {
+                let (sx, sy) = lens.source(x as f32, y as f32);
+                let px = if sx >= 0.0 && sx < (w - 1) as f32 && sy >= 0.0 && sy < (h - 1) as f32 {
+                    let (x0, y0) = (sx.floor() as usize, sy.floor() as usize);
+                    let (x1, y1) = ((x0 + 1).min(w - 1), (y0 + 1).min(h - 1));
+                    let (fx, fy) = (sx - x0 as f32, sy - y0 as f32);
+                    let at = |yy: usize, xx: usize, c: usize| pre[(yy * w + xx) * 3 + c] as f32 / PRE_DISTORTION_SCALE;
+                    let sample = |c: usize| {
+                        let top = at(y0, x0, c) * (1.0 - fx) + at(y0, x1, c) * fx;
+                        let bottom = at(y1, x0, c) * (1.0 - fx) + at(y1, x1, c) * fx;
+                        top * (1.0 - fy) + bottom * fy
+                    };
+                    (sample(0), sample(1), sample(2))
+                } else {
+                    (0.0, 0.0, 0.0)
+                };
+                finish_pixel(&mut row[x * ch..x * ch + 3], px, x, y, width, height, recipe);
+                if ch == 4 {
+                    row[x * ch + 3] = input[(y * w + x) * ch + 3];
+                }
+            }
+        });
+    }
+
+    let hist = compute_histogram_16_with_dimensions(&output, w, h, ch);
+    (output, hist)
+}
+
+/// Defringe, vignette and 16-bit quantisation of one output pixel.
+#[inline(always)]
+fn finish_pixel(out: &mut [u16], (r, g, b): (f32, f32, f32), x: usize, y: usize, width: u32, height: u32, recipe: &Recipe) {
+    let (r, g, b) = detail::apply_defringe(r, g, b, recipe.defringe);
+    let (r, g, b) = detail::apply_vignette(r, g, b, x as u32, y as u32, width, height, recipe.vignette);
+    out[0] = (r.clamp(0.0, 1.0) * 65535.0 + 0.5) as u16;
+    out[1] = (g.clamp(0.0, 1.0) * 65535.0 + 0.5) as u16;
+    out[2] = (b.clamp(0.0, 1.0) * 65535.0 + 0.5) as u16;
+}
+
+/// Per-recipe state of the point operations (pass 1).
+struct PointStage {
+    wb: (f32, f32, f32),
+    exp_factor: f32,
+    lut: Option<lut::Lut3D>,
+    film_sim: film_sim::FilmSimulation,
+    film_lut: Option<std::sync::Arc<lut::Lut3D>>,
+    color_chrome: bool,
+    gamut_compress: bool,
+    transfer: Transfer,
+}
+
+impl PointStage {
+    fn new(recipe: &Recipe, transfer: Transfer) -> Self {
+        let film_sim = film_sim::FilmSimulation::from_id(&recipe.film_simulation);
+        let working_space = aces::WorkingColorSpace::from_str_name(&recipe.color_space);
+        Self {
+            wb: white_balance::kelvin_to_rgb_multipliers(recipe.wb_temperature, recipe.wb_tint),
+            exp_factor: 2.0f32.powf(recipe.exposure),
+            lut: resolve_recipe_lut(recipe),
+            film_sim,
+            film_lut: film_sim::calibrated_lut(film_sim),
+            color_chrome: recipe.color_chrome > 0.0 || recipe.color_chrome_blue > 0.0,
+            gamut_compress: working_space == aces::WorkingColorSpace::AcesCg || recipe.aces_tonemap,
+            transfer,
+        }
+    }
+
+    /// White balance, exposure, tone, mixer, skin, wheels, HSL, LUT, film simulation,
+    /// Color Chrome and gamut compression for one linear 16-bit pixel.
+    #[inline(always)]
+    fn apply(&self, recipe: &Recipe, r: u16, g: u16, b: u16) -> (f32, f32, f32) {
+        let (wb_r, wb_g, wb_b) = self.wb;
+        // Scene-linear stage: white balance and exposure act on linear light,
+        // then the buffer's display curve is applied once for the creative stage.
+        let r = self.transfer.encode((r as f32 / 65535.0) * wb_r * self.exp_factor);
+        let g = self.transfer.encode((g as f32 / 65535.0) * wb_g * self.exp_factor);
+        let b = self.transfer.encode((b as f32 / 65535.0) * wb_b * self.exp_factor);
+
+        let (r, g, b) = tone::apply_tone_pixel(r, g, b, recipe, 1.0);
+        let (r, g, b) = rgb_mixer::apply_rgb_mixer(r, g, b, recipe);
+        let (r, g, b) = skin_tone::apply_skin_tone_uniformity(r, g, b, recipe);
+        let (r, g, b) = color_grading::apply_color_wheels(r, g, b, recipe);
+        let (r, g, b) = color_grading::apply_hsl_mixer(r, g, b, recipe);
+        let (r, g, b) = match &self.lut {
+            Some(active_lut) => lut::apply_lut_pixel(r, g, b, active_lut, recipe.lut_intensity),
+            None => (r, g, b),
+        };
+        let (r, g, b) = if self.film_sim != film_sim::FilmSimulation::None {
+            film_sim::apply(self.film_sim, self.film_lut.as_deref(), r, g, b, recipe.film_sim_intensity)
+        } else {
+            (r, g, b)
+        };
+        let (r, g, b) = if self.color_chrome {
+            film_sim::apply_color_chrome(r, g, b, recipe.color_chrome, recipe.color_chrome_blue)
+        } else {
+            (r, g, b)
+        };
+        if self.gamut_compress { aces::apply_aces_gamut_compression(r, g, b) } else { (r, g, b) }
+    }
+}
+
+/// Passes 1 to 4 (point operations, local masks, presence, detail, grain) for image
+/// rows `y0..y1`. Rows near the band's edges only serve as context for the neighbourhood
+/// passes; the caller keeps the rows at least [`BAND_HALO`] away from a cut.
+#[allow(clippy::too_many_arguments)]
+fn process_band(
+    input: &[u16],
+    w: usize,
+    h: usize,
+    ch: usize,
+    y0: usize,
+    y1: usize,
+    recipe: &Recipe,
+    stage: &PointStage,
+) -> Vec<f32> {
+    let rows = y1 - y0;
+    let mut buf = vec![0.0f32; rows * w * 3];
+
+    buf.par_chunks_mut(w * 3).enumerate().for_each(|(i, row)| {
+        let y = y0 + i;
+        let in_row = &input[y * w * ch..(y + 1) * w * ch];
+        for x in 0..w {
+            let (r, g, b) = stage.apply(recipe, in_row[x * ch], in_row[x * ch + 1], in_row[x * ch + 2]);
+            row[x * 3] = r;
+            row[x * 3 + 1] = g;
+            row[x * 3 + 2] = b;
+        }
+    });
+
+    // Local layered mask adjustments, positioned in whole-image coordinates
+    if !recipe.layers.is_empty() {
+        let inv_w = 1.0 / (w as f32).max(1.0);
+        let inv_h = 1.0 / (h as f32).max(1.0);
+        buf.par_chunks_mut(w * 3).enumerate().for_each(|(i, row)| {
+            let v = ((y0 + i) as f32 + 0.5) * inv_h;
+            for x in 0..w {
+                let u = (x as f32 + 0.5) * inv_w;
+                let px = x * 3;
+                let (lr, lg, lb) =
+                    layers::apply_layers_pixel(row[px], row[px + 1], row[px + 2], &recipe.layers, u, v);
+                row[px] = lr;
+                row[px + 1] = lg;
+                row[px + 2] = lb;
+            }
+        });
+    }
+
     presence::apply_presence_ex(
-        &mut f32_buf,
+        &mut buf,
         w,
-        h,
+        rows,
         recipe.clarity,
         recipe.texture,
         recipe.dehaze,
         recipe.midtone_detail,
     );
-
-    // PASS 3: Detail & Optics Engine (Sharpness, Luma Denoise, Chroma Denoise)
-    detail::apply_detail(
-        &mut f32_buf,
-        w,
-        h,
-        recipe.sharpness,
-        recipe.denoise_lum,
-        recipe.denoise_col,
-    );
-
-    // PASS 4: Photochemical Silver-Halide Film Grain
+    detail::apply_detail(&mut buf, w, rows, recipe.sharpness, recipe.denoise_lum, recipe.denoise_col);
     if recipe.grain_amount > 0.001 {
-        film_grain::apply_film_grain(
-            &mut f32_buf,
-            width,
-            height,
+        film_grain::apply_film_grain_rows(
+            &mut buf,
+            w as u32,
+            y0 as u32,
             recipe.grain_amount,
             recipe.grain_size,
             recipe.grain_roughness,
         );
     }
-
-    // PASS 5: Lens Distortion Correction (if enabled)
-    if recipe.lens_distortion.abs() >= 0.1 {
-        f32_buf = detail::apply_lens_distortion(&f32_buf, w, h, 3, recipe.lens_distortion);
-    }
-
-    // PASS 6: Defringe, Vignette & Final Quantization to 16-bit master output
-    let mut output = vec![0u16; num_pixels * ch];
-    output
-        .par_chunks_mut(w * ch)
-        .enumerate()
-        .for_each(|(y_idx, row)| {
-            let in_f32 = &f32_buf[y_idx * w * 3..(y_idx + 1) * w * 3];
-            let y = y_idx as u32;
-
-            for x in 0..w {
-                let px_out = x * ch;
-                let px_f32 = x * 3;
-
-                let (r4, g4, b4) = detail::apply_defringe(
-                    in_f32[px_f32],
-                    in_f32[px_f32 + 1],
-                    in_f32[px_f32 + 2],
-                    recipe.defringe,
-                );
-
-                let (r5, g5, b5) = detail::apply_vignette(
-                    r4,
-                    g4,
-                    b4,
-                    x as u32,
-                    y,
-                    width,
-                    height,
-                    recipe.vignette,
-                );
-
-                row[px_out] = (r5.clamp(0.0, 1.0) * 65535.0 + 0.5) as u16;
-                row[px_out + 1] = (g5.clamp(0.0, 1.0) * 65535.0 + 0.5) as u16;
-                row[px_out + 2] = (b5.clamp(0.0, 1.0) * 65535.0 + 0.5) as u16;
-
-                if ch == 4 {
-                    row[px_out + 3] = input[y_idx * w * ch + px_out + 3];
-                }
-            }
-        });
-
-    let hist = compute_histogram_16_with_dimensions(&output, w, h, ch);
-    (output, hist)
+    buf
 }
 
 /// Generates a Before / After split comparison buffer
@@ -811,4 +858,44 @@ pub fn process_split_comparison_16_to_8_ex(
         });
 
     (output, hist)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    /// Banding must not change the result: every neighbourhood pass and the grain are on.
+    #[test]
+    fn banded_export_matches_single_piece() {
+        let (w, h) = (97usize, 260usize);
+        let input: Vec<u16> = (0..w * h * 3)
+            .map(|i| {
+                let (p, c) = (i / 3, i % 3);
+                let (x, y) = (p % w, p / w);
+                (((x * 37 + y * 53 + c * 101) % 251) as u16) * 200 + ((x ^ y) as u16 & 63) * 100
+            })
+            .collect();
+        let mut recipe = Recipe {
+            clarity: 40.0,
+            texture: 30.0,
+            dehaze: 20.0,
+            midtone_detail: 25.0,
+            sharpness: 50.0,
+            denoise_lum: 30.0,
+            denoise_col: 60.0,
+            grain_amount: 20.0,
+            vignette: -30.0,
+            ..Default::default()
+        };
+        for lens in [0.0, 25.0] {
+            recipe.lens_distortion = lens;
+            let t = Transfer::bt709();
+            let (whole, _) = process_16_to_16_banded(&input, w as u32, h as u32, 3, &recipe, t, h);
+            let (banded, _) = process_16_to_16_banded(&input, w as u32, h as u32, 3, &recipe, t, 40);
+            let worst = whole.iter().zip(&banded).map(|(a, b)| a.abs_diff(*b)).max().unwrap();
+            // Rolling blur sums start at a different row, so float rounding can move a
+            // value by one step (two with lens distortion's 15-bit intermediate)
+            assert!(worst <= 2, "lens {lens}: max difference {worst}");
+        }
+    }
 }

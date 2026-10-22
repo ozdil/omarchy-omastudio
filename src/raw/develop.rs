@@ -101,22 +101,27 @@ impl CfaFrame {
 
     /// Develops the frame into interleaved 16-bit linear RGB in `space`.
     /// `half_size` bins instead of demosaicing (1/2 size for Bayer, 1/3 for X-Trans).
-    pub fn develop(&self, space: OutputColorSpace, half_size: bool) -> (Vec<u16>, u32, u32) {
-        let mosaic = Mosaic { width: self.width, height: self.height, data: &self.data, pattern: self.pattern };
-        let (rgb, w, h) = if half_size {
-            demosaic::bin(&mosaic)
-        } else {
-            (demosaic::demosaic(&mosaic), self.width, self.height)
-        };
+    /// The frame is consumed so its sensor data is freed before the image is rotated.
+    pub fn develop(self, space: OutputColorSpace, half_size: bool) -> (Vec<u16>, u32, u32) {
         let m = mul3(&srgb_to(space), &self.rgb_cam);
-        let mut out = vec![0u16; w * h * 3];
-        out.par_chunks_mut(3).zip(rgb.par_chunks(3)).for_each(|(o, p)| {
-            for r in 0..3 {
+        let to_u16 = |p: [f32; 3]| -> [u16; 3] {
+            std::array::from_fn(|r| {
                 let v = m[r][0] * p[0] + m[r][1] * p[1] + m[r][2] * p[2];
-                o[r] = (v.clamp(0.0, 1.0) * 65535.0).round() as u16;
-            }
-        });
-        let (out, w, h) = rotate(out, w, h, self.flip);
+                (v.clamp(0.0, 1.0) * 65535.0).round() as u16
+            })
+        };
+        let mosaic = Mosaic { width: self.width, height: self.height, data: &self.data, pattern: self.pattern };
+        let (out, w, h) = if half_size {
+            let (rgb, w, h) = demosaic::bin(&mosaic);
+            let mut out = vec![0u16; rgb.len()];
+            out.par_chunks_mut(3).zip(rgb.par_chunks(3)).for_each(|(o, p)| o.copy_from_slice(&to_u16([p[0], p[1], p[2]])));
+            (out, w, h)
+        } else {
+            (demosaic::demosaic_map(&mosaic, to_u16), self.width, self.height)
+        };
+        let flip = self.flip;
+        drop(self);
+        let (out, w, h) = rotate(out, w, h, flip);
         (out, w as u32, h as u32)
     }
 }
