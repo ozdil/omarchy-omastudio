@@ -29,6 +29,10 @@ pub struct Match {
     /// Mean difference per channel (development minus camera), 0..255
     pub channel_bias: [f32; 3],
     pub compared_at: String,
+    /// Exposure added to match the camera's brightness, in EV
+    pub baseline_exposure: f32,
+    /// Why the brightness could not be matched, if it could not
+    pub baseline_problem: Option<String>,
 }
 
 #[derive(Debug, Default, Serialize)]
@@ -80,7 +84,8 @@ fn camera_match(raw: &RawImage, path: &Path, recipe: &CameraRecipe, full: bool) 
         return Err("Unexpected channel count".into());
     }
     let mut r = recipe.to_recipe();
-    r.baseline_exposure = raw.baseline_exposure_from(&buf);
+    let (baseline, why) = super::baseline::explain(raw, Some(&buf));
+    r.baseline_exposure = baseline;
     // Sharpening and grain are texture; they would only add noise to the comparison
     r.sharpness = 0.0;
     r.grain_amount = 0.0;
@@ -99,6 +104,7 @@ fn camera_match(raw: &RawImage, path: &Path, recipe: &CameraRecipe, full: bool) 
         .iter()
         .filter_map(|j| measure(&dev, buf.width, buf.height, j))
         .min_by(|a, b| a.mean_error.total_cmp(&b.mean_error))
+        .map(|m| Match { baseline_exposure: baseline, baseline_problem: why.clone(), ..m })
         .ok_or_else(|| "The photo is clipped everywhere".to_string())
 }
 
@@ -132,6 +138,7 @@ fn measure(dev: &[u8], w: u32, h: u32, jpeg: &image::RgbImage) -> Option<Match> 
         brightness_ratio: (la / lb.max(1e-9)) as f32,
         channel_bias: [(bias[0] * s) as f32, (bias[1] * s) as f32, (bias[2] * s) as f32],
         compared_at: format!("{dw}x{dh} (camera JPEG {jw}x{jh})"),
+        ..Match::default()
     })
 }
 

@@ -23,8 +23,8 @@ type Key = (PathBuf, u64, Option<SystemTime>);
 
 /// Results per file, so the preview, the full-resolution frame and the export of one
 /// photo share exactly the same value.
-fn memo() -> &'static Mutex<HashMap<Key, f32>> {
-    static MEMO: OnceLock<Mutex<HashMap<Key, f32>>> = OnceLock::new();
+fn memo() -> &'static Mutex<HashMap<Key, (f32, Option<String>)>> {
+    static MEMO: OnceLock<Mutex<HashMap<Key, (f32, Option<String>)>>> = OnceLock::new();
     MEMO.get_or_init(|| Mutex::new(HashMap::new()))
 }
 
@@ -41,16 +41,21 @@ fn key(path: &Path) -> Key {
 /// JPEG, or with `OMASTUDIO_BASELINE_EXPOSURE=off`. `decoded` is a linear 16-bit
 /// development of the photo at any size when the caller already has one.
 pub fn exposure(raw: &RawImage, decoded: Option<&ProcessedBuffer>) -> f32 {
+    explain(raw, decoded).0
+}
+
+/// [`exposure`], with the reason when it could not be measured.
+pub fn explain(raw: &RawImage, decoded: Option<&ProcessedBuffer>) -> (f32, Option<String>) {
     if std::env::var("OMASTUDIO_BASELINE_EXPOSURE").is_ok_and(|v| v == "off") {
-        return 0.0;
+        return (0.0, None);
     }
     let path = raw.path();
     if !raw.get_metadata().is_ok_and(|m| m.make.to_ascii_lowercase().starts_with("fujifilm")) {
-        return 0.0;
+        return (0.0, None);
     }
     let k = key(path);
-    if let Some(&ev) = memo().lock().unwrap().get(&k) {
-        return ev;
+    if let Some(found) = memo().lock().unwrap().get(&k) {
+        return found.clone();
     }
     // Without a development at hand, a separate handle decodes a half-size one so the
     // caller's handle stays untouched for its own decode
@@ -62,25 +67,28 @@ pub fn exposure(raw: &RawImage, decoded: Option<&ProcessedBuffer>) -> f32 {
                 owned = b;
                 &owned
             }
-            Err(_) => return 0.0,
+            Err(e) => return (0.0, Some(e)),
         },
     };
-    let ev = measure(path, buf).unwrap_or(0.0);
-    memo().lock().unwrap().insert(k, ev);
-    ev
+    let result = match measure(path, buf) {
+        Ok(ev) => (ev, None),
+        Err(e) => (0.0, Some(e)),
+    };
+    memo().lock().unwrap().insert(k, result.clone());
+    result
 }
 
-fn measure(path: &Path, buf: &ProcessedBuffer) -> Option<f32> {
-    let target = camera_median(path)?;
+fn measure(path: &Path, buf: &ProcessedBuffer) -> Result<f32, String> {
+    let target = camera_median(path).ok_or("no readable camera JPEG")?;
     if !(0.02..=0.95).contains(&target) {
-        return None;
+        return Err(format!("camera JPEG median {target:.3} is out of range"));
     }
-    let mut recipe = CameraRecipe::read(path)?.to_recipe();
+    let mut recipe = CameraRecipe::read(path).ok_or("no camera recipe")?.to_recipe();
     recipe.sharpness = 0.0;
     recipe.grain_amount = 0.0;
     recipe.denoise_lum = 0.0;
     recipe.denoise_col = 0.0;
-    let (small, w, h) = shrink(buf.as_slice_u16(), buf.width, buf.height, buf.channels)?;
+    let (small, w, h) = shrink(buf.as_slice_u16(), buf.width, buf.height, buf.channels).ok_or("unusable development")?;
     let median_at = |ev: f32| {
         let r = crate::recipe::Recipe { baseline_exposure: ev, ..recipe.clone() };
         let (out, _) = pipeline::process_buffer_16_to_8_ex(&small, w, h, 3, &r, buf.transfer, false, false);
@@ -88,8 +96,9 @@ fn measure(path: &Path, buf: &ProcessedBuffer) -> Option<f32> {
     };
     // The median brightness rises with exposure, so a bisection finds the match
     let (mut lo, mut hi) = RANGE;
-    if median_at(hi) < target || median_at(lo) > target {
-        return None;
+    let (at_lo, at_hi) = (median_at(lo), median_at(hi));
+    if at_hi < target || at_lo > target {
+        return Err(format!("camera JPEG median {target:.3} outside {at_lo:.3}..{at_hi:.3} over {lo}..{hi} EV"));
     }
     for _ in 0..10 {
         let mid = 0.5 * (lo + hi);
@@ -99,7 +108,7 @@ fn measure(path: &Path, buf: &ProcessedBuffer) -> Option<f32> {
             hi = mid;
         }
     }
-    Some(0.5 * (lo + hi))
+    Ok(0.5 * (lo + hi))
 }
 
 /// Median brightness of the camera JPEG, from its EXIF thumbnail when it has one.
@@ -109,6 +118,9 @@ fn camera_median(path: &Path) -> Option<f32> {
         .and_then(|t| image::load_from_memory_with_format(t, image::ImageFormat::Jpeg).ok())
         .or_else(|| image::load_from_memory_with_format(&jpeg, image::ImageFormat::Jpeg).ok())?
         .to_rgb8();
+    if std::env::var_os("OMASTUDIO_BASELINE_DEBUG").is_some() {
+        eprintln!("baseline: {} reference {}x{}, median {:.3}", path.display(), img.width(), img.height(), median_luma(img.as_raw()));
+    }
     Some(median_luma(img.as_raw()))
 }
 
@@ -188,9 +200,9 @@ mod tests {
 
     #[test]
     fn median_of_a_split_image() {
+        // 6 dark pixels, 4 bright ones
         let mut rgb = vec![0u8; 30];
         rgb[18..].fill(255);
-        // 6 dark pixels, 4 bright ones
         assert_eq!(median_luma(&rgb), 0.0);
         rgb[12..].fill(255);
         assert_eq!(median_luma(&rgb), 1.0);
