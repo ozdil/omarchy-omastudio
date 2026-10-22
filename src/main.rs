@@ -3,22 +3,26 @@
 pub mod ai;
 pub mod dag;
 pub mod export;
+pub mod fuji;
+pub mod gpu;
 pub mod icc;
+pub mod ml;
+mod mcp;
 pub mod pipeline;
+pub mod ptp;
 pub mod raw;
 pub mod recipe;
 pub mod hash;
 pub mod security;
+pub mod xmp;
 
 use ai::{
     ai_auto_enhance, ai_classify_scene, ai_classify_scene_with_jev, ai_optimize_for_social,
     apply_jev_decisions_to_recipe, JevDecisions,
 };
 use export::{export_photo, ExportOptions};
-use pipeline::{
-    process_buffer_16_to_8, process_buffer_16_to_8_ex, process_split_comparison_16_to_8,
-    process_split_comparison_16_to_8_ex,
-};
+use pipeline::transfer::Transfer;
+use pipeline::{process_buffer_16_to_8_ex, process_split_comparison_16_to_8_ex};
 use raw::RawImage;
 use rayon::prelude::*;
 use recipe::{Catalog, CatalogItem, Recipe};
@@ -139,11 +143,143 @@ struct DaemonCache {
     current_path: Option<String>,
     raw_buffer_16: Option<Arc<Vec<u16>>>,
     raw_buffer_8: Option<Arc<Vec<u8>>>,
+    /// Transfer curve of `raw_buffer_16` (linear light for LibRaw decodes).
+    transfer: Transfer,
+    /// The photo's baseline exposure (see `Recipe::baseline_exposure`).
+    baseline_exposure: f32,
     width: u32,
     height: u32,
     channels: u32,
     metadata: Option<raw::RawMetadata>,
     ping_pong: usize,
+    /// The photo at full resolution for the viewport's 1:1 detail view, decoded in the
+    /// background after `load` (see `full_ready`).
+    full: Option<Arc<FullFrame>>,
+    detail_ping_pong: usize,
+}
+
+struct FullFrame {
+    data: Vec<u16>,
+    width: usize,
+    height: usize,
+    transfer: Transfer,
+    baseline_exposure: f32,
+}
+
+#[derive(Serialize)]
+struct FullReady {
+    path: String,
+    width: usize,
+    height: usize,
+}
+
+#[derive(Serialize)]
+struct DetailResult {
+    image: String,
+    /// The rendered part of the photo, normalised: x, y, width, height.
+    region: [f64; 4],
+    width: usize,
+    height: usize,
+}
+
+/// Decodes `path` at full resolution on a background thread and stores it in the cache
+/// if that photo is still the current one.
+/// Longest edge of the interactive preview buffer. A half-size decode of a 100 MP
+/// GFX file is 25 MP, far more than any display shows at once; pixel-exact views
+/// render from the full decode instead.
+const PREVIEW_MAX_EDGE: u32 = 3840;
+
+/// Scales a half-size decode down to [`PREVIEW_MAX_EDGE`] when it is larger.
+fn cap_preview(data: &[u16], width: u32, height: u32, channels: u32) -> (Vec<u16>, u32, u32) {
+    let long = width.max(height);
+    if long <= PREVIEW_MAX_EDGE || !(channels == 3 || channels == 4) {
+        return (data.to_vec(), width, height);
+    }
+    let scale = PREVIEW_MAX_EDGE as f64 / long as f64;
+    let (nw, nh) = (((width as f64 * scale).round() as u32).max(1), ((height as f64 * scale).round() as u32).max(1));
+    let filter = image::imageops::FilterType::Triangle;
+    let out = if channels == 3 {
+        image::ImageBuffer::<image::Rgb<u16>, _>::from_raw(width, height, data.to_vec()).map(|i| image::imageops::resize(&i, nw, nh, filter).into_raw())
+    } else {
+        image::ImageBuffer::<image::Rgba<u16>, _>::from_raw(width, height, data.to_vec()).map(|i| image::imageops::resize(&i, nw, nh, filter).into_raw())
+    };
+    match out {
+        Some(v) => (v, nw, nh),
+        None => (data.to_vec(), width, height),
+    }
+}
+
+fn spawn_full_decode(cache: Arc<Mutex<DaemonCache>>, path: String) {
+    std::thread::spawn(move || {
+        let Ok(raw) = RawImage::open(&path) else { return };
+        let Ok(full) = raw.process_full_16(3) else { return };
+        let baseline_exposure = raw.baseline_exposure_from(&full);
+        drop(raw);
+        if full.channels != 3 {
+            return;
+        }
+        let frame = FullFrame {
+            width: full.width as usize,
+            height: full.height as usize,
+            transfer: full.transfer,
+            baseline_exposure,
+            data: full.to_vec_u16(),
+        };
+        let ready = FullReady { path: path.clone(), width: frame.width, height: frame.height };
+        let Ok(mut c) = cache.lock() else { return };
+        if c.current_path.as_deref() != Some(path.as_str()) {
+            return;
+        }
+        c.full = Some(Arc::new(frame));
+        drop(c);
+        print_json(&ResponseWrapper::ok_action("full_ready", ready));
+    });
+}
+
+/// Pixels of `frame` scaled by `scale`, for the rectangle (x, y, w, h) of the scaled
+/// frame: box-filtered when reducing, bilinear when enlarging.
+fn resample_rect(frame: &FullFrame, scale: f64, rect: (usize, usize, usize, usize)) -> Vec<u16> {
+    let (rx, ry, rw, rh) = rect;
+    let (fw, fh) = (frame.width, frame.height);
+    let mut out = vec![0u16; rw * rh * 3];
+    out.par_chunks_mut(rw * 3).enumerate().for_each(|(j, row)| {
+        let vy = ry + j;
+        for i in 0..rw {
+            let vx = rx + i;
+            let px = &mut row[i * 3..i * 3 + 3];
+            if scale < 1.0 {
+                let (x0, x1) = ((vx as f64 / scale) as usize, (((vx + 1) as f64 / scale) as usize).max((vx as f64 / scale) as usize + 1));
+                let (y0, y1) = ((vy as f64 / scale) as usize, (((vy + 1) as f64 / scale) as usize).max((vy as f64 / scale) as usize + 1));
+                let (x1, y1) = (x1.min(fw), y1.min(fh));
+                let (x0, y0) = (x0.min(x1.saturating_sub(1)), y0.min(y1.saturating_sub(1)));
+                let mut sum = [0u64; 3];
+                for y in y0..y1 {
+                    for x in x0..x1 {
+                        let k = (y * fw + x) * 3;
+                        for (acc, &v) in sum.iter_mut().zip(&frame.data[k..k + 3]) {
+                            *acc += v as u64;
+                        }
+                    }
+                }
+                let n = ((x1 - x0) * (y1 - y0)).max(1) as u64;
+                for (p, acc) in px.iter_mut().zip(sum) {
+                    *p = (acc / n) as u16;
+                }
+            } else {
+                let sx = ((vx as f64 + 0.5) / scale - 0.5).clamp(0.0, (fw - 1) as f64);
+                let sy = ((vy as f64 + 0.5) / scale - 0.5).clamp(0.0, (fh - 1) as f64);
+                let (x0, y0) = (sx as usize, sy as usize);
+                let (x1, y1) = ((x0 + 1).min(fw - 1), (y0 + 1).min(fh - 1));
+                let (fx, fy) = (sx - x0 as f64, sy - y0 as f64);
+                for (c, p) in px.iter_mut().enumerate() {
+                    let at = |y: usize, x: usize| frame.data[(y * fw + x) * 3 + c] as f64;
+                    let v = (at(y0, x0) * (1.0 - fx) + at(y0, x1) * fx) * (1.0 - fy) + (at(y1, x0) * (1.0 - fx) + at(y1, x1) * fx) * fy;
+                    *p = v.round() as u16;
+                }
+            }
+        }
+    });
+    out
 }
 
 
@@ -210,30 +346,30 @@ fn scan_directory(dir_path: &str) -> Result<Vec<FolderScanItem>, String> {
                 });
                 continue;
             }
-            if path.is_file() {
-                if let Some(ext) = path.extension().and_then(|e| e.to_str()) {
-                    let ext_lower = ext.to_lowercase();
-                    let is_supported = ["nef", "nrw", "raf", "cr2", "cr3", "arw", "dng", "rwl", "orf", "rw2", "3fr", "jpg", "jpeg", "png", "webp", "tif", "tiff", "heic"].contains(&ext_lower.as_str());
-                    if is_supported {
-                        let thumb_path = thumbnail_path_for(&path);
-                        if !thumb_path.exists() {
-                            // Thumbnails are always re-encoded by the engine. A file that
-                            // fails to decode gets no thumbnail (the filmstrip shows a
-                            // placeholder): handing the original to Qt would let a crafted
-                            // image reach its decoders without the engine's limits.
-                            if let Ok(raw) = RawImage::open(&path) {
-                                let _ = raw.extract_thumbnail(&thumb_path);
-                            }
+            if path.is_file()
+                && let Some(ext) = path.extension().and_then(|e| e.to_str())
+            {
+                let ext_lower = ext.to_lowercase();
+                let is_supported = ["nef", "nrw", "raf", "cr2", "cr3", "arw", "dng", "rwl", "orf", "rw2", "3fr", "jpg", "jpeg", "png", "webp", "tif", "tiff", "heic"].contains(&ext_lower.as_str());
+                if is_supported {
+                    let thumb_path = thumbnail_path_for(&path);
+                    if !thumb_path.exists() {
+                        // Thumbnails are always re-encoded by the engine. A file that
+                        // fails to decode gets no thumbnail (the filmstrip shows a
+                        // placeholder): handing the original to Qt would let a crafted
+                        // image reach its decoders without the engine's limits.
+                        if let Ok(raw) = RawImage::open(&path) {
+                            let _ = raw.extract_thumbnail(&thumb_path);
                         }
-
-                        items.push(FolderScanItem {
-                            name: path.file_name().and_then(|s| s.to_str()).unwrap_or("").to_string(),
-                            path: path.to_string_lossy().to_string(),
-                            thumbnail: if thumb_path.exists() { thumb_path.to_string_lossy().to_string() } else { String::new() },
-                            is_remote: false,
-                            is_dir: false,
-                        });
                     }
+
+                    items.push(FolderScanItem {
+                        name: path.file_name().and_then(|s| s.to_str()).unwrap_or("").to_string(),
+                        path: path.to_string_lossy().to_string(),
+                        thumbnail: if thumb_path.exists() { thumb_path.to_string_lossy().to_string() } else { String::new() },
+                        is_remote: false,
+                        is_dir: false,
+                    });
                 }
             }
         }
@@ -259,6 +395,8 @@ fn main() {
         eprintln!("  catalog list");
         eprintln!("  catalog query [--rating <0-5>] [--flag <pick|reject>] [--search <str>]");
         eprintln!("  catalog cull <path> [--rating <0-5>] [--flag <pick|reject>]");
+        eprintln!("  fuji-recipe <raf|jpg|fp1|txt> | list | save <file> | export <file> <out.fp1>");
+        eprintln!("  fuji-camera list | info | presets | convert <raf> | write-preset <slot> <recipe>");
         eprintln!("  scan [folder]");
         eprintln!("  daemon");
         return;
@@ -450,6 +588,62 @@ fn main() {
                 print_json::<()>(&ResponseWrapper::err("Unknown catalog subcommand: list, query, cull"));
             }
         }
+        "fuji-recipe" => {
+            run_fuji_recipe(&args[2..]);
+        }
+        "fuji-camera" => {
+            run_fuji_camera(&args[2..]);
+        }
+        "fuji-pixel-shift" => {
+            let mut paths = Vec::new();
+            let mut out: Option<PathBuf> = None;
+            let mut i = 2;
+            while i < args.len() {
+                if args[i] == "--out" && i + 1 < args.len() {
+                    out = Some(PathBuf::from(&args[i + 1]));
+                    i += 2;
+                } else {
+                    paths.push(PathBuf::from(&args[i]));
+                    i += 1;
+                }
+            }
+            if paths.len() < 2 {
+                print_json::<()>(&ResponseWrapper::err("Usage: fuji-pixel-shift <raf>... [--out <file.dng>]"));
+                return;
+            }
+            let out = out.unwrap_or_else(|| {
+                let stem = paths[0].file_stem().and_then(|s| s.to_str()).unwrap_or("pixelshift");
+                paths[0].with_file_name(format!("{stem}_pixelshift.dng"))
+            });
+            if out.exists() {
+                print_json::<()>(&ResponseWrapper::err(format!("{} already exists", out.display())));
+                return;
+            }
+            match fuji::pixel_shift::combine(&paths, &out) {
+                Ok(report) => print_json(&ResponseWrapper::ok(report)),
+                Err(e) => print_json::<()>(&ResponseWrapper::err(e)),
+            }
+        }
+        "fuji-compat" => {
+            let paths: Vec<PathBuf> = args[2..].iter().filter(|a| !a.starts_with("--")).map(PathBuf::from).collect();
+            if paths.is_empty() {
+                print_json::<()>(&ResponseWrapper::err("Usage: fuji-compat <raf>... [--full]"));
+                return;
+            }
+            let full = args.iter().any(|a| a == "--full");
+            print_json(&ResponseWrapper::ok(fuji::compat::check_all(&paths, full)));
+        }
+        "fuji-calibrate" => {
+            let paths: Vec<PathBuf> = args[2..].iter().filter(|a| !a.starts_with("--")).map(PathBuf::from).collect();
+            if paths.is_empty() {
+                print_json::<()>(&ResponseWrapper::err("Usage: fuji-calibrate <raf>... [--any] [--dry-run]"));
+                return;
+            }
+            let any = args.iter().any(|a| a == "--any");
+            let write = !args.iter().any(|a| a == "--dry-run");
+            let (reports, skipped) = fuji::calibrate::calibrate(&paths, any, write);
+            print_json(&ResponseWrapper::ok(serde_json::json!({ "calibrated": reports, "skipped": skipped })));
+        }
         "icc" => {
             if args.len() < 3 || args[2] == "list" {
                 let profiles = icc::list_icc_profiles();
@@ -507,11 +701,10 @@ fn main() {
                 supported_raw_formats: Vec<String>,
                 icc_profiles_count: usize,
                 local_only_mode: bool,
-                gpu_capabilities: Option<pipeline::gpu::GpuComputeCapabilities>,
+                gpu: gpu::GpuStatus,
                 features: Vec<String>,
             }
             let icc_count = icc::list_icc_profiles().len();
-            let (_, gpu_caps) = pipeline::gpu::GpuEngineContext::detect_vulkan_capabilities();
             let active_theme = env::var("HOME")
                 .ok()
                 .and_then(|h| security::read_secure_file(&PathBuf::from(h).join(".local/state/omarchy/current/theme.name"), 1024).ok())
@@ -531,7 +724,7 @@ fn main() {
                 ],
                 icc_profiles_count: icc_count,
                 local_only_mode: true,
-                gpu_capabilities: gpu_caps,
+                gpu: gpu::status(),
                 features: vec![
                     "davinci_3way_color_wheels".into(),
                     "ai_social_media_optimizer".into(),
@@ -540,7 +733,7 @@ fn main() {
                     "icc_color_profile_management".into(),
                     "exif_preservation_and_gps_strip".into(),
                     "touchpad_mac_pinch_rotate_pan".into(),
-                    "quickshell_ipc_agent_api".into(),
+                    "control_socket_ipc".into(),
                     "omarchy_system_theme_sync".into(),
                     "presence_engine_texture_clarity_dehaze".into(),
                     "detail_and_optics_engine".into(),
@@ -565,6 +758,24 @@ fn main() {
             };
             print_json(&ResponseWrapper::ok(status));
         }
+        "gpu" => {
+            print_json(&ResponseWrapper::ok(gpu::status()));
+        }
+        "mcp" => mcp::run(),
+        "ai" => run_ai(&args[2..]),
+        "xmp" => run_xmp(&args[2..]),
+        "npu" => print_json(&ResponseWrapper::ok(ml::status())),
+        "ai-mask" => {
+            let flag = |name: &str| args.iter().position(|a| a == name).and_then(|i| args.get(i + 1)).cloned();
+            let result = match args.get(2).filter(|a| !a.starts_with("--")) {
+                Some(photo) => ai_mask(photo, flag("--kind").as_deref().unwrap_or("subject"), flag("--model")),
+                None => Err("Usage: ai-mask <photo> [--kind subject|sky] [--model file.onnx]".to_string()),
+            };
+            match result {
+                Ok(v) => print_json(&ResponseWrapper::ok(v)),
+                Err(e) => print_json::<()>(&ResponseWrapper::err(e)),
+            }
+        }
         "version" | "--version" | "-v" => {
             println!("omastudio-engine v{}", env!("CARGO_PKG_VERSION"));
         }
@@ -579,6 +790,26 @@ fn main() {
             println!("  ai-social <raw_file> [platform]       Calculate social media crop & OLED recipe (ig, story, x, ig_square, fb, yt)");
             println!("  render <raw_file> [options]           Process RAW image to preview PPM/PNG/JPG");
             println!("  export <raw_file> [options]           High-res demosaic & export (jxl, avif, webp, tiff, png, jpg)");
+            println!("  fuji-recipe <raf|jpg|fp1|txt>         Read a Fujifilm recipe from a photo, X RAW Studio profile or recipe text");
+            println!("  fuji-recipe list                      List the recipes saved in ~/.local/share/omastudio/fuji-recipes");
+            println!("  fuji-recipe save <file> [--label L]   Save a recipe into the library as .FP1");
+            println!("  fuji-recipe export <file> <out.fp1>   Write a recipe as an X RAW Studio profile [--label L] [--device X-T30]");
+            println!("  fuji-camera list|info|presets         Fujifilm cameras on USB (PTP mode) and their C1-C7 settings");
+            println!("  fuji-camera convert <raf> [--recipe F] [--out J]  Convert a RAF in the camera (X RAW Studio protocol)");
+            println!("  fuji-camera write-preset <C1-C7> <recipe> [--label L]  Store a recipe in a custom setting slot");
+            println!("  fuji-calibrate <raf>... [--any]       Measure film simulation LUTs from your RAFs' camera JPEGs");
+            println!("  fuji-compat <raf>... [--full]         Sensor, settings and camera-JPEG match report per file");
+            println!("  fuji-pixel-shift <raf>... [--out F]   Merge a GFX Pixel Shift sequence into a linear DNG");
+            println!("  ai providers                          AI providers, stored keys and local servers (Ollama, LM Studio)");
+            println!("  ai key <provider> [--delete]          Store the API key read from stdin in the Secret Service");
+            println!("  ai use <provider> [model]             Choose the provider and model for the edit assistant");
+            println!("  ai edit <photo> [--prompt P] [--recipe JSON]  Let the chosen model edit the photo");
+            println!("  xmp export <photo> [--out F] [--force] Write the edit, rating and label as an XMP sidecar");
+            println!("  xmp import <photo> [--from F] [--save] Read an XMP sidecar from Lightroom, Capture One, darktable");
+            println!("  npu                                   ONNX Runtime and the NPU/GPU/CPU it can use for local models");
+            println!("  ai-mask <photo> [--kind subject|sky]  Segment the photo with a local model into a mask layer image");
+            println!("  mcp                                   Model Context Protocol server on stdin/stdout for AI agents");
+            println!("  gpu                                   GPU used for demosaicing (OMASTUDIO_GPU=off uses the CPU)");
             println!("  icc list                              List all detected system and bundled ICC color profiles");
             println!("  scan [dir]                            Scan local folder for supported RAW photos");
             println!("  catalog                               Retrieve persistent photo catalog database");
@@ -642,6 +873,8 @@ fn main() {
             }));
         }
         "daemon" => {
+            // The daemon serves the editor's viewport; exports go through export_photo
+            pipeline::set_interactive(true);
             run_daemon();
         }
         cmd => {
@@ -669,7 +902,7 @@ fn inspect_file(raw_path: &str) -> Result<InspectResult, String> {
     let _ = raw.extract_thumbnail(&thumb_path);
 
     // Load existing sidecar or create default
-    let recipe = Recipe::load_sidecar(raw_path).unwrap_or_default();
+    let recipe = Recipe::load_initial(raw_path);
 
     // Fast preview for AI scene analysis
     let preview = raw.process_preview(true)?;
@@ -710,23 +943,30 @@ fn inspect_file(raw_path: &str) -> Result<InspectResult, String> {
 fn render_file(raw_path: &str, recipe: &Recipe, split: f32, out_path: &str) -> Result<RenderResult, String> {
     let raw = RawImage::open(raw_path)?;
     let preview = raw.process_preview_16(true)?;
+    let recipe = &Recipe { baseline_exposure: raw.baseline_exposure_from(&preview), ..recipe.clone() };
 
     let (final_buf, hist) = if split > 0.001 {
-        process_split_comparison_16_to_8(
+        process_split_comparison_16_to_8_ex(
             preview.as_slice_u16(),
             preview.width,
             preview.height,
             preview.channels,
             recipe,
+            preview.transfer,
             split,
+            false,
+            false,
         )
     } else {
-        process_buffer_16_to_8(
+        process_buffer_16_to_8_ex(
             preview.as_slice_u16(),
             preview.width,
             preview.height,
             preview.channels,
             recipe,
+            preview.transfer,
+            false,
+            false,
         )
     };
 
@@ -814,7 +1054,7 @@ fn run_ai_jev(raw_path: &str) -> Result<JevInspectResult, String> {
 fn run_ai_social(raw_path: &str, platform: &str) -> Result<ai::SocialOptimizationResult, String> {
     let raw = RawImage::open(raw_path)?;
     let preview = raw.process_preview(true)?;
-    let sidecar = Recipe::load_sidecar(raw_path).unwrap_or_default();
+    let sidecar = Recipe::load_initial(raw_path);
     let result = ai_optimize_for_social(
         preview.as_slice(),
         preview.width,
@@ -855,6 +1095,291 @@ struct DaemonCommand {
     pub color_label: Option<String>,
     #[serde(default)]
     pub search_query: Option<String>,
+    /// `detail`: normalised x, y, width, height of the photo to render.
+    #[serde(default)]
+    region: Option<[f64; 4]>,
+    /// `detail`: size of the rendered image in device pixels.
+    #[serde(default)]
+    out_width: Option<u32>,
+    #[serde(default)]
+    out_height: Option<u32>,
+}
+
+#[derive(Serialize)]
+struct FujiRecipeResult {
+    #[serde(flatten)]
+    profile: fuji::fp1::Profile,
+    omastudio: Recipe,
+}
+
+impl FujiRecipeResult {
+    fn new(profile: fuji::fp1::Profile) -> Self {
+        let omastudio = profile.recipe.to_recipe();
+        Self { profile, omastudio }
+    }
+}
+
+/// `fuji-recipe <file>`, `fuji-recipe list`, `fuji-recipe save <file> [--label L]`,
+/// `fuji-recipe export <file> <out.fp1> [--label L] [--device D]`.
+fn run_fuji_recipe(args: &[String]) {
+    let flag = |name: &str| args.iter().position(|a| a == name).and_then(|i| args.get(i + 1)).cloned();
+    let import = |path: &str| -> Result<fuji::fp1::Profile, String> {
+        let mut profile = fuji::library::import(Path::new(path))?;
+        if let Some(label) = flag("--label") {
+            profile.label = label;
+        }
+        if let Some(device) = flag("--device") {
+            profile.device = device;
+        }
+        Ok(profile)
+    };
+    let result: Result<serde_json::Value, String> = match args.first().map(String::as_str) {
+        None => Err("Usage: fuji-recipe <raf|jpg|fp1|txt> | list | save <file> | export <file> <out.fp1>".to_string()),
+        Some("list") => serde_json::to_value(
+            fuji::library::list()
+                .into_iter()
+                .map(|e| serde_json::json!({ "path": e.path, "recipe": FujiRecipeResult::new(e.profile) }))
+                .collect::<Vec<_>>(),
+        )
+        .map_err(|e| e.to_string()),
+        Some("save") => match args.get(1) {
+            Some(src) => import(src)
+                .and_then(|p| fuji::library::save(&p))
+                .map(|path| serde_json::json!({ "path": path })),
+            None => Err("Missing recipe source file".to_string()),
+        },
+        Some("export") => match (args.get(1), args.get(2)) {
+            (Some(src), Some(out)) => import(src)
+                .and_then(|p| fuji::library::export(&p, Path::new(out)))
+                .map(|_| serde_json::json!({ "path": out })),
+            _ => Err("Usage: fuji-recipe export <file> <out.fp1> [--label L] [--device D]".to_string()),
+        },
+        Some(path) => import(path).and_then(|p| serde_json::to_value(FujiRecipeResult::new(p)).map_err(|e| e.to_string())),
+    };
+    match result {
+        Ok(v) => print_json(&ResponseWrapper::ok(v)),
+        Err(e) => print_json::<()>(&ResponseWrapper::err(e)),
+    }
+}
+
+/// `fuji-camera list | info | presets | convert <raf> [--recipe <file>] [--out <jpg>] |
+/// write-preset <slot> <file> [--label L]`: Fujifilm cameras on USB.
+fn run_fuji_camera(args: &[String]) {
+    use fuji::ptp::Camera;
+    let flag = |name: &str| args.iter().position(|a| a == name).and_then(|i| args.get(i + 1)).cloned();
+    let result: Result<serde_json::Value, String> = (|| {
+        let sub = args.first().map(String::as_str).unwrap_or("info");
+        if sub == "list" {
+            let cams = ptp::usb::list_cameras(Some(fuji::ptp::VENDOR_ID)).map_err(|e| e.to_string())?;
+            return serde_json::to_value(cams).map_err(|e| e.to_string());
+        }
+        let mut cam = Camera::connect().map_err(|e| e.to_string())?;
+        let out = match sub {
+            "info" => Ok(serde_json::json!({ "device": cam.info, "raw_conversion": cam.can_convert() })),
+            "presets" => cam.presets().map_err(|e| e.to_string()).map(|presets| {
+                presets
+                    .into_iter()
+                    .map(|p| {
+                        let omastudio = p.recipe.to_recipe();
+                        serde_json::json!({ "slot": p.slot, "name": p.name, "recipe": p.recipe, "omastudio": omastudio })
+                    })
+                    .collect()
+            }),
+            "convert" => {
+                let raf_path = args.get(1).ok_or("Missing RAF file")?;
+                let raf = security::read_secure_file(Path::new(raf_path), 1024 * 1024 * 1024).map_err(|e| format!("Cannot read {}: {}", raf_path, e))?;
+                let recipe = match flag("--recipe") {
+                    Some(f) => Some(fuji::library::import(Path::new(&f))?.recipe),
+                    None => None,
+                };
+                let out_path = flag("--out").unwrap_or_else(|| {
+                    Path::new(raf_path).with_extension("camera.jpg").to_string_lossy().into_owned()
+                });
+                let jpeg = cam.convert_raf(&raf, recipe.as_ref()).map_err(|e| e.to_string())?;
+                security::atomic_write_user(Path::new(&out_path), &jpeg).map_err(|e| format!("Cannot write {}: {}", out_path, e))?;
+                Ok(serde_json::json!({ "path": out_path, "bytes": jpeg.len() }))
+            }
+            "write-preset" => {
+                let slot: u8 = args.get(1).and_then(|s| s.trim_start_matches(['C', 'c']).parse().ok()).ok_or("Slot must be 1-7 (or C1-C7)")?;
+                let src = args.get(2).ok_or("Missing recipe file")?;
+                let profile = fuji::library::import(Path::new(src))?;
+                let name = flag("--label").unwrap_or(profile.label);
+                cam.write_preset(slot, &name, &profile.recipe)
+                    .map_err(|e| e.to_string())
+                    .map(|refused| serde_json::json!({ "slot": slot, "name": name, "refused_properties": refused }))
+            }
+            other => Err(format!("Unknown fuji-camera command: {}", other)),
+        };
+        cam.close();
+        out
+    })();
+    match result {
+        Ok(v) => print_json(&ResponseWrapper::ok(v)),
+        Err(e) => print_json::<()>(&ResponseWrapper::err(e)),
+    }
+}
+
+/// `xmp export <photo> [--recipe JSON] [--out F] [--force]` and
+/// `xmp import <photo> [--from F] [--save]`: XMP sidecars for other editors.
+fn run_xmp(args: &[String]) {
+    let flag = |name: &str| args.iter().position(|a| a == name).and_then(|i| args.get(i + 1)).cloned();
+    let has = |name: &str| args.iter().any(|a| a == name);
+    let result: Result<serde_json::Value, String> = (|| {
+        let photo = args.get(1).ok_or("Usage: xmp export|import <photo>")?;
+        let path = Path::new(photo);
+        match args.first().map(String::as_str) {
+            Some("export") => {
+                let recipe = match flag("--recipe") {
+                    Some(j) => serde_json::from_str(&j).map_err(|e| format!("Invalid recipe: {e}"))?,
+                    None => Recipe::load_initial(path),
+                };
+                let item = Catalog::load().get(photo).cloned();
+                let culling = xmp::Culling {
+                    rating: match &item {
+                        Some(i) if i.flag == "reject" => -1,
+                        Some(i) => i.rating as i32,
+                        None => recipe.rating as i32,
+                    },
+                    label: item.map(|i| i.color_label).unwrap_or_default(),
+                };
+                let out = flag("--out").map(PathBuf::from);
+                let written = xmp::export(path, &recipe, &culling, out.as_deref(), has("--force"))?;
+                Ok(serde_json::json!({ "path": written }))
+            }
+            Some("import") => {
+                let from = flag("--from").map(PathBuf::from);
+                let (recipe, culling, source) = xmp::read(path, from.as_deref())?;
+                let mut saved = None;
+                if has("--save") {
+                    saved = Some(recipe.save_sidecar(path).map_err(|e| e.to_string())?);
+                    let mut cat = Catalog::load();
+                    let flag = (culling.rating < 0).then_some("reject");
+                    let label = (!culling.label.is_empty()).then_some(culling.label.as_str());
+                    if cat.update_culling(photo, Some(culling.rating.clamp(0, 5) as u8), flag, label) {
+                        let _ = cat.save();
+                    }
+                }
+                Ok(serde_json::json!({ "source": source, "recipe": recipe, "culling": culling, "sidecar": saved }))
+            }
+            _ => Err("Usage: xmp export|import <photo>".to_string()),
+        }
+    })();
+    match result {
+        Ok(v) => print_json(&ResponseWrapper::ok(v)),
+        Err(e) => print_json::<()>(&ResponseWrapper::err(e)),
+    }
+}
+
+/// Segments the photo with a local model and stores the mask for a Bitmap layer.
+fn ai_mask(photo: &str, kind: &str, model: Option<String>) -> Result<serde_json::Value, String> {
+    if !kind.chars().all(|c| c.is_ascii_alphanumeric() || c == '-' || c == '_') || kind.is_empty() {
+        return Err("Invalid mask kind".to_string());
+    }
+    let model = model.map(PathBuf::from).unwrap_or_else(|| ml::models_dir().join(format!("{kind}.onnx")));
+    if !model.is_file() {
+        return Err(format!(
+            "No {kind} model: put an ONNX segmentation model at {} (for example U2-Net, IS-Net or BiRefNet)",
+            model.display()
+        ));
+    }
+    // The neutral development of the whole frame, which Bitmap layers are mapped onto
+    let ppm = security::get_secure_preview_dir().join(format!("omastudio_mask_{}.ppm", std::process::id()));
+    let rendered = render_file(photo, &Recipe::default(), 0.0, &ppm.to_string_lossy());
+    let image = rendered.and_then(|_| image::open(&ppm).map_err(|e| e.to_string()));
+    let _ = std::fs::remove_file(&ppm);
+    let image = image?.to_rgb8();
+    let mask = ml::segment(&model, &image)?;
+
+    let dir = pipeline::layers::masks_dir();
+    std::fs::create_dir_all(&dir).map_err(|e| e.to_string())?;
+    let stem = Path::new(photo).file_stem().and_then(|s| s.to_str()).unwrap_or("photo");
+    let stamp = SystemTime::now().duration_since(UNIX_EPOCH).map(|d| d.as_millis()).unwrap_or(0);
+    let out = dir.join(format!("{stem}-{kind}-{stamp}.png"));
+    let gray = image::GrayImage::from_raw(mask.width, mask.height, mask.data).ok_or("Mask size mismatch")?;
+    let mut png = Vec::new();
+    gray.write_to(&mut io::Cursor::new(&mut png), image::ImageFormat::Png).map_err(|e| e.to_string())?;
+    security::atomic_write_user(&out, &png).map_err(|e| format!("Cannot write {}: {e}", out.display()))?;
+    Ok(serde_json::json!({
+        "path": out, "kind": kind, "width": mask.width, "height": mask.height,
+        "provider": mask.provider, "model": model,
+    }))
+}
+
+/// `ai providers | key <provider> [--delete] | use <provider> [model] [--endpoint URL] |
+/// edit <photo> [--prompt P] [--recipe JSON] [--provider X] [--model M]`.
+fn run_ai(args: &[String]) {
+    use ai::provider;
+    let flag = |name: &str| args.iter().position(|a| a == name).and_then(|i| args.get(i + 1)).cloned();
+    let lookup = |id: Option<&String>| -> Result<&'static provider::Provider, String> {
+        let id = id.ok_or("Missing provider: anthropic, openai, openrouter, gemini, ollama or lmstudio")?;
+        provider::find(id).ok_or_else(|| format!("Unknown provider {id}"))
+    };
+    let result: Result<serde_json::Value, String> = match args.first().map(String::as_str) {
+        Some("providers") | None => Ok(serde_json::json!({ "providers": provider::status(), "choice": provider::load_choice() })),
+        Some("key") => lookup(args.get(1)).and_then(|p| {
+            if args.iter().any(|a| a == "--delete") {
+                return provider::delete_key(p).map(|_| serde_json::json!({ "provider": p.id, "stored": false }));
+            }
+            // The key comes on stdin so it never shows up in the process list
+            let mut key = String::new();
+            io::Read::take(io::stdin().lock(), 4096).read_line(&mut key).map_err(|e| e.to_string())?;
+            provider::store_key(p, &key).map(|_| serde_json::json!({ "provider": p.id, "stored": true }))
+        }),
+        Some("use") => lookup(args.get(1)).and_then(|p| {
+            let model = args.get(2).filter(|m| !m.starts_with("--")).cloned().unwrap_or_default();
+            let choice = provider::Choice { provider: p.id.to_string(), model, endpoint: flag("--endpoint") };
+            provider::save_choice(&choice).and_then(|_| serde_json::to_value(&choice).map_err(|e| e.to_string()))
+        }),
+        Some("edit") => match args.get(1) {
+            Some(photo) => ai_edit(photo, flag("--prompt").as_deref().unwrap_or(""), flag("--recipe"), flag("--provider"), flag("--model")),
+            None => Err("Usage: ai edit <photo> [--prompt P] [--recipe JSON]".to_string()),
+        },
+        Some(other) => Err(format!("Unknown ai command: {other}")),
+    };
+    match result {
+        Ok(v) => print_json(&ResponseWrapper::ok(v)),
+        Err(e) => print_json::<()>(&ResponseWrapper::err(e)),
+    }
+}
+
+/// Shows the photo, as developed with `recipe`, to the chosen model and applies its edit.
+fn ai_edit(photo: &str, prompt: &str, recipe: Option<String>, provider: Option<String>, model: Option<String>) -> Result<serde_json::Value, String> {
+    use ai::{assistant, provider as prov};
+    let current: Recipe = match recipe {
+        Some(r) => serde_json::from_str(&r).map_err(|e| format!("Invalid recipe: {e}"))?,
+        None => Recipe::default(),
+    };
+    let target = prov::resolve(provider.as_deref(), model.as_deref())?;
+
+    let ppm = security::get_secure_preview_dir().join(format!("omastudio_ai_{}.ppm", std::process::id()));
+    let rendered = render_file(photo, &current, 0.0, &ppm.to_string_lossy());
+    let image = rendered.as_ref().map_err(Clone::clone).and_then(|_| image::open(&ppm).map_err(|e| e.to_string()));
+    let _ = std::fs::remove_file(&ppm);
+    let (rendered, image) = (rendered?, image?);
+    let image = image.thumbnail(1280, 1280).to_rgb8();
+    let mut jpeg = Vec::new();
+    image::codecs::jpeg::JpegEncoder::new_with_quality(&mut jpeg, 85)
+        .encode_image(&image)
+        .map_err(|e| e.to_string())?;
+
+    let meta = RawImage::open(photo).ok().and_then(|r| r.get_metadata().ok());
+    let camera = match meta {
+        Some(m) => serde_json::json!({
+            "camera": format!("{} {}", m.make, m.model).trim(), "lens": m.lens, "iso": m.iso,
+            "shutter_s": m.shutter, "aperture": m.aperture, "focal_length_mm": m.focal_length,
+            "shadow_clipping_percent": rendered.histogram.shadow_clipping_percent,
+            "highlight_clipping_percent": rendered.histogram.highlight_clipping_percent,
+        }),
+        None => serde_json::json!({}),
+    };
+    let answer = prov::ask_json(&target, assistant::SYSTEM, &jpeg, &assistant::request_text(prompt, &current, &camera), &assistant::schema())?;
+    let (recipe, explanation) = assistant::merge(&current, &answer);
+    Ok(serde_json::json!({
+        "recipe": recipe,
+        "explanation": explanation,
+        "provider": target.provider.id,
+        "model": target.model,
+    }))
 }
 
 fn run_daemon() {
@@ -862,11 +1387,15 @@ fn run_daemon() {
         current_path: None,
         raw_buffer_16: None,
         raw_buffer_8: None,
+        transfer: Transfer::default(),
+        baseline_exposure: 0.0,
         width: 0,
         height: 0,
         channels: 0,
         metadata: None,
         ping_pong: 0,
+        full: None,
+        detail_ping_pong: 0,
     }));
 
     let stdin = io::stdin();
@@ -962,19 +1491,29 @@ fn run_daemon() {
 
                         match raw.process_preview_16(true) {
                             Ok(prev) => {
-                                let u16_slice = prev.as_slice_u16();
-                                let u16_vec = Arc::new(u16_slice.to_vec());
-                                let u8_vec: Vec<u8> = u16_slice.iter().map(|&x| (x >> 8) as u8).collect();
+                                let (u16_full, pw, ph) = cap_preview(prev.as_slice_u16(), prev.width, prev.height, prev.channels);
+                                let u16_vec = Arc::new(u16_full);
+                                let u16_slice = &u16_vec[..];
+                                let transfer = prev.transfer;
+                                let u8_vec: Vec<u8> = u16_slice
+                                    .iter()
+                                    .map(|&x| (transfer.encode(x as f32 / 65535.0).clamp(0.0, 1.0) * 255.0).round() as u8)
+                                    .collect();
                                 let u8_arc = Arc::new(u8_vec);
 
                                 let mut c = cache.lock().unwrap();
                                 c.current_path = Some(p.clone());
-                                c.width = prev.width;
-                                c.height = prev.height;
+                                c.baseline_exposure = raw.baseline_exposure_from(&prev);
+                                c.width = pw;
+                                c.height = ph;
                                 c.channels = prev.channels;
                                 c.raw_buffer_16 = Some(u16_vec);
                                 c.raw_buffer_8 = Some(Arc::clone(&u8_arc));
+                                c.transfer = transfer;
                                 c.metadata = Some(meta.clone());
+                                c.full = None;
+                                drop(c);
+                                spawn_full_decode(Arc::clone(&cache), p.clone());
                                 // Keep ping_pong running across loads: resetting it made the first
                                 // render of every photo reuse the same preview path, so the UI saw
                                 // no source change and kept showing the previous photo.
@@ -982,8 +1521,8 @@ fn run_daemon() {
                                 let thumb_path = thumbnail_path_for(Path::new(p));
                                 let _ = raw.extract_thumbnail(&thumb_path);
 
-                                let sidecar = Recipe::load_sidecar(p).unwrap_or_default();
-                                let scene = ai_classify_scene(&u8_arc, prev.width, prev.height, prev.channels, &meta);
+                                let sidecar = Recipe::load_initial(p);
+                                let scene = ai_classify_scene(&u8_arc, pw, ph, prev.channels, &meta);
 
                                 print_json(&ResponseWrapper::ok_action("load", InspectResult {
                                     path: p.clone(),
@@ -1009,7 +1548,8 @@ fn run_daemon() {
                 let width = c.width;
                 let height = c.height;
                 let channels = c.channels;
-                let recipe = cmd_obj.recipe.unwrap_or_default();
+                let transfer = c.transfer;
+                let recipe = Recipe { baseline_exposure: c.baseline_exposure, ..cmd_obj.recipe.unwrap_or_default() };
                 let split = cmd_obj.split.unwrap_or(0.0);
 
                 let next_slot = (c.ping_pong + 1) % 2;
@@ -1044,6 +1584,7 @@ fn run_daemon() {
                         height,
                         channels,
                         &recipe,
+                        transfer,
                         split,
                         highlight_mask,
                         shadow_mask,
@@ -1055,6 +1596,7 @@ fn run_daemon() {
                         height,
                         channels,
                         &recipe,
+                        transfer,
                         highlight_mask,
                         shadow_mask,
                     )
@@ -1093,9 +1635,52 @@ fn run_daemon() {
                     histogram: hist,
                 }));
             }
+            "detail" => {
+                let (full, slot) = {
+                    let mut c = cache.lock().unwrap();
+                    c.detail_ping_pong = (c.detail_ping_pong + 1) % 2;
+                    (c.full.clone(), c.detail_ping_pong)
+                };
+                let Some(full) = full else {
+                    print_json::<()>(&ResponseWrapper::err_action("detail", "Full resolution not ready"));
+                    continue;
+                };
+                let [rx, ry, rw, rh] = cmd_obj.region.unwrap_or([0.0, 0.0, 1.0, 1.0]);
+                let (ow, oh) = (cmd_obj.out_width.unwrap_or(0) as usize, cmd_obj.out_height.unwrap_or(0) as usize);
+                if !(rw > 0.0 && rh > 0.0) || ow == 0 || oh == 0 || ow * oh > 64 << 20 {
+                    print_json::<()>(&ResponseWrapper::err_action("detail", "Invalid detail region"));
+                    continue;
+                }
+                // The frame at the requested scale; the region is cut from it
+                let scale = (ow as f64 / (rw * full.width as f64)).min(8.0);
+                let (vw, vh) = ((full.width as f64 * scale).round() as usize, (full.height as f64 * scale).round() as usize);
+                let ox = ((rx * vw as f64).round().max(0.0) as usize).min(vw.saturating_sub(1));
+                let oy = ((ry * vh as f64).round().max(0.0) as usize).min(vh.saturating_sub(1));
+                let (ow, oh) = (ow.min(vw - ox), oh.min(vh - oy));
+                let recipe = Recipe { baseline_exposure: full.baseline_exposure, ..cmd_obj.recipe.unwrap_or_default() };
+                let out = (ox, oy, ow, oh);
+                let src = pipeline::region_source(out, vw, vh, &recipe);
+                let input = resample_rect(&full, scale, src);
+                let window = pipeline::Window { x0: src.0, y0: src.1, frame_w: vw, frame_h: vh };
+                let rgb = pipeline::render_region_8(&input, src.2, src.3, window, out, &recipe, full.transfer);
+
+                let dest = security::get_secure_preview_dir().join(format!("omastudio_detail_{}.ppm", slot));
+                let mut ppm = format!("P6\n{} {}\n255\n", ow, oh).into_bytes();
+                ppm.extend_from_slice(&rgb);
+                if let Err(e) = security::atomic_write_secure(&dest, &ppm) {
+                    print_json::<()>(&ResponseWrapper::err_action("detail", format!("Failed to write detail view: {}", e)));
+                    continue;
+                }
+                print_json(&ResponseWrapper::ok_action("detail", DetailResult {
+                    image: dest.to_string_lossy().to_string(),
+                    region: [ox as f64 / vw as f64, oy as f64 / vh as f64, ow as f64 / vw as f64, oh as f64 / vh as f64],
+                    width: ow,
+                    height: oh,
+                }));
+            }
             "ai_auto" => {
                 let c = cache.lock().unwrap();
-                if let (Some(ref buffer), Some(ref meta)) = (&c.raw_buffer_8, &c.metadata) {
+                if let (Some(buffer), Some(meta)) = (&c.raw_buffer_8, &c.metadata) {
                     let auto_recipe = ai_auto_enhance(buffer, c.width, c.height, c.channels, meta);
                     let scene = ai_classify_scene(buffer, c.width, c.height, c.channels, meta);
                     let path_str = c.current_path.clone().unwrap_or_default();
@@ -1112,7 +1697,7 @@ fn run_daemon() {
             }
             "ai_jev" => {
                 let c = cache.lock().unwrap();
-                if let (Some(ref buffer), Some(ref meta)) = (&c.raw_buffer_8, &c.metadata) {
+                if let (Some(buffer), Some(meta)) = (&c.raw_buffer_8, &c.metadata) {
                     let mut auto_recipe = ai_auto_enhance(buffer, c.width, c.height, c.channels, meta);
                     let (mut scene, mut jev_opt) = ai_classify_scene_with_jev(buffer, c.width, c.height, c.channels, meta);
                     if jev_opt.is_none() {
@@ -1143,7 +1728,7 @@ fn run_daemon() {
                 let c = cache.lock().unwrap();
                 if let Some(ref buffer) = c.raw_buffer_8 {
                     let sidecar = c.current_path.as_ref()
-                        .and_then(Recipe::load_sidecar)
+                        .map(Recipe::load_initial)
                         .unwrap_or_default();
                     let result = ai_optimize_for_social(
                         buffer,
@@ -1160,7 +1745,7 @@ fn run_daemon() {
             }
             "save_recipe" => {
                 let c = cache.lock().unwrap();
-                if let (Some(ref p), Some(ref recipe)) = (&c.current_path, &cmd_obj.recipe) {
+                if let (Some(p), Some(recipe)) = (&c.current_path, &cmd_obj.recipe) {
                     match recipe.save_sidecar(p) {
                         Ok(sidecar_path) => print_json(&ResponseWrapper::ok_action("save_recipe", sidecar_path.to_string_lossy().to_string())),
                         Err(e) => print_json::<()>(&ResponseWrapper::err_action("save_recipe", format!("Failed to save sidecar: {}", e))),
@@ -1214,7 +1799,7 @@ fn run_daemon() {
                     .par_iter()
                     .zip(name_tags.par_iter())
                     .map(|(item, tag)| {
-                        let recipe = item.recipe.clone().or_else(|| Recipe::load_sidecar(&item.path)).unwrap_or_default();
+                        let recipe = item.recipe.clone().unwrap_or_else(|| Recipe::load_initial(&item.path));
                         let mut item_options = options.clone();
                         item_options.name_tag = tag.clone();
                         match export_photo(&item.path, &recipe, &item_options) {
@@ -1244,6 +1829,18 @@ fn run_daemon() {
                     results,
                 }));
             }
+            "fuji_recipes" => {
+                let list: Vec<_> = fuji::library::list()
+                    .into_iter()
+                    .map(|e| serde_json::json!({ "path": e.path, "recipe": FujiRecipeResult::new(e.profile) }))
+                    .collect();
+                print_json(&ResponseWrapper::ok_action("fuji_recipes", list));
+            }
+            "fuji_import" => match cmd_obj.path.as_deref().map(|p| fuji::library::import(Path::new(p))) {
+                Some(Ok(profile)) => print_json(&ResponseWrapper::ok_action("fuji_import", FujiRecipeResult::new(profile))),
+                Some(Err(e)) => print_json::<()>(&ResponseWrapper::err_action("fuji_import", e)),
+                None => print_json::<()>(&ResponseWrapper::err_action("fuji_import", "Missing path")),
+            },
             "catalog_query" => {
                 let cat = Catalog::load();
                 let filter = recipe::CatalogFilter {

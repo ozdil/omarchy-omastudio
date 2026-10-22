@@ -3,9 +3,14 @@
 pub mod ai;
 pub mod dag;
 pub mod export;
+pub mod fuji;
+pub mod gpu;
 pub mod icc;
+pub mod ml;
 pub mod pipeline;
+pub mod ptp;
 pub mod raw;
 pub mod recipe;
 pub mod hash;
 pub mod security;
+pub mod xmp;

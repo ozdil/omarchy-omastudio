@@ -9,33 +9,30 @@ permissions:
   contents: read
 
 jobs:
+  # Arch Linux container so CI uses the same LibRaw, Qt and Rust packages as Omarchy.
+  # rustup installs the toolchain pinned in rust-toolchain.toml.
   test:
     runs-on: ubuntu-latest
+    container: archlinux:latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
       - name: Install build dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y clang libraw-dev mold pkg-config
+        run: pacman -Syu --noconfirm --needed base-devel clang git lcms2 libraw mold pkgconf qt6-base qt6-declarative rustup
+      - uses: actions/checkout@v4
+      - name: Install pinned Rust toolchain
+        run: rustup toolchain install
       - name: Build
-        run: cargo build --locked --all-targets
+        run: cargo build --locked --workspace --all-targets
       - name: Test
-        run: cargo test --locked
+        run: cargo test --locked --workspace
 
   clippy:
     runs-on: ubuntu-latest
+    container: archlinux:latest
     steps:
-      - uses: actions/checkout@v4
-      # Pinned so a new stable release's lints can't turn unrelated PRs red;
-      # bump deliberately and fix any new warnings in the same change.
-      - uses: dtolnay/rust-toolchain@master
-        with:
-          toolchain: 1.97.0
-          components: clippy
       - name: Install build dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y clang libraw-dev mold pkg-config
+        run: pacman -Syu --noconfirm --needed base-devel clang git lcms2 libraw mold pkgconf qt6-base qt6-declarative rustup
+      - uses: actions/checkout@v4
+      - name: Install pinned Rust toolchain
+        run: rustup toolchain install
       - name: Clippy
-        run: cargo clippy --locked --all-targets -- -D warnings
+        run: cargo clippy --locked --workspace --all-targets -- -D warnings

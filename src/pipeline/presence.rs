@@ -62,7 +62,7 @@ pub fn fast_separable_blur(
     impl SendSyncPtr {
         #[inline(always)]
         unsafe fn add(self, offset: usize) -> *mut f32 {
-            self.0.add(offset)
+            unsafe { self.0.add(offset) }
         }
     }
 
@@ -206,7 +206,7 @@ pub fn apply_presence_ex(
 
             let mut luma_shift = 0.0f32;
 
-            if let (Some(ref fine), Some(ref med)) = (&blur_fine, &blur_med) {
+            if let (Some(fine), Some(med)) = (&blur_fine, &blur_med) {
                 let detail = fine[i] - med[i];
                 luma_shift += detail * t_factor;
             }
@@ -217,7 +217,7 @@ pub fn apply_presence_ex(
                 luma_shift += local_contrast * c_factor * midtone_mask;
             }
 
-            if let (Some(ref fine), Some(ref broad)) = (&blur_md_fine, &blur_md_broad) {
+            if let (Some(fine), Some(broad)) = (&blur_md_fine, &blur_md_broad) {
                 let md_detail = fine[i] - broad[i];
                 let dist = cur_luma.clamp(0.0, 1.0) - 0.5;
                 let midtone_bell = (-dist * dist / 0.06).exp();

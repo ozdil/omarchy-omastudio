@@ -1,10 +1,11 @@
 pub mod watermark;
 
-use crate::pipeline::process_buffer_16_to_16;
-use crate::raw::RawImage;
+use crate::icc::{self, ExportProfile, RenderingIntent};
+use crate::pipeline::process_buffer_16_to_16_ex;
+use crate::raw::{OutputColorSpace, RawImage};
 use crate::recipe::Recipe;
 use crate::security::{run_bounded_command, secure_command, secure_command_with_mem_limit};
-use image::{DynamicImage, ImageBuffer, Rgb};
+use image::{DynamicImage, ImageBuffer, ImageEncoder, Rgb};
 use serde::{Deserialize, Serialize};
 use std::fs;
 use std::path::{Path, PathBuf};
@@ -20,6 +21,8 @@ pub struct ExportOptions {
     pub strip_gps: bool,
     pub preserve_exif: bool,
     pub icc_profile: Option<String>,
+    /// How colours outside the destination profile's gamut are mapped.
+    pub rendering_intent: RenderingIntent,
     pub artist_copyright: Option<String>,
     pub output_dir: String,
     pub watermark: Option<watermark::WatermarkOptions>,
@@ -38,6 +41,7 @@ impl Default for ExportOptions {
             strip_gps: true,
             preserve_exif: true,
             icc_profile: Some("sRGB".to_string()),
+            rendering_intent: RenderingIntent::default(),
             artist_copyright: None,
             output_dir: "~/Pictures/OmaStudio_Exports".to_string(),
             watermark: None,
@@ -53,45 +57,52 @@ pub fn export_photo<P: AsRef<Path>>(
 ) -> Result<PathBuf, String> {
     let raw = RawImage::open(&raw_path)
         .map_err(|e| format!("Could not open RAW for export: {}", e))?;
+    let recipe = &Recipe { baseline_exposure: raw.baseline_exposure(), ..recipe.clone() };
 
-    // Pick the ICC to embed and render the pixels in that same space. Embedding a
-    // wide-gamut profile on sRGB pixels made exports look oversaturated, so a
-    // non-sRGB profile is used only when its ICC file exists, exiftool can embed
-    // it and the decoder can render into it; otherwise the export stays sRGB.
-    let requested_space = options
-        .icc_profile
-        .as_deref()
-        .and_then(crate::raw::OutputColorSpace::from_profile_name);
-    let mut embed_icc: Option<PathBuf> = None;
-    let mut converted = false;
-    if let (Some(space), Some(name)) = (requested_space, options.icc_profile.as_deref()) {
-        if space != crate::raw::OutputColorSpace::Srgb {
-            if let Some(icc_path) = crate::icc::resolve_icc_path(name) {
-                if exiftool_available() && raw.set_output_space(space) {
-                    embed_icc = Some(icc_path);
-                    converted = true;
-                }
-            }
-        }
-    }
-    if embed_icc.is_none() && options.icc_profile.is_some() {
-        embed_icc = crate::icc::resolve_icc_path("sRGB");
-    }
+    // Render straight into the requested space when the decoder can (built-in spaces
+    // from a RAW), otherwise into a built-in space lcms2 converts from: ProPhoto for
+    // custom profiles so nothing is clipped first, sRGB for raster sources.
+    let target = options.icc_profile.as_deref().map(ExportProfile::resolve).transpose()?;
+    let render_space = match &target {
+        Some(ExportProfile::Builtin(space)) => *space,
+        Some(ExportProfile::Custom { .. }) => OutputColorSpace::ProPhotoRgb,
+        None => OutputColorSpace::Srgb,
+    };
+    let decoded_space = if raw.set_output_space(render_space) { render_space } else { OutputColorSpace::Srgb };
 
     // Demosaic at high quality with full 16-bit depth (48-bit RGB)
     let processed = raw.process_full_16(3)
         .map_err(|e| format!("Failed to demosaic full resolution 16-bit: {}", e))?;
 
-    let (final_buf, _) = process_buffer_16_to_16(
+    let (mut final_buf, _) = process_buffer_16_to_16_ex(
         processed.as_slice_u16(),
         processed.width,
         processed.height,
         processed.channels,
         recipe,
+        processed.transfer,
     );
+    let (width, height) = (processed.width, processed.height);
+    // A 100 MP frame is 600 MB at 16 bits; free the decode before encoding starts
+    drop(processed);
 
-    let width = processed.width;
-    let height = processed.height;
+    let icc_bytes = match &target {
+        Some(target) => {
+            let source = icc::builtin_profile(decoded_space);
+            match target {
+                ExportProfile::Builtin(space) if *space == decoded_space => {}
+                ExportProfile::Builtin(space) => {
+                    icc::convert_rgb16(&mut final_buf, &source, &icc::builtin_profile(*space), options.rendering_intent)?
+                }
+                ExportProfile::Custom { profile, .. } => {
+                    icc::convert_rgb16(&mut final_buf, &source, profile, options.rendering_intent)?
+                }
+            }
+            Some(target.icc_bytes()?)
+        }
+        None => None,
+    };
+    let icc_bytes = icc_bytes.as_deref();
 
     // Convert to 16-bit ImageBuffer
     let img: ImageBuffer<Rgb<u16>, Vec<u16>> = ImageBuffer::from_raw(width, height, final_buf)
@@ -177,7 +188,9 @@ pub fn export_photo<P: AsRef<Path>>(
                 .unwrap_or_default()
                 .as_nanos();
             let tmp_png = expanded_dir.join(format!(".tmp_{}_{}_{}.png", stem, pid, rand_suffix));
-            dyn_img.save(&tmp_png)
+            // cjxl and avifenc carry the PNG's iCCP profile into the JXL file
+            let png = encode_png(&dyn_img, icc_bytes)?;
+            crate::security::atomic_write_user(&tmp_png, &png)
                 .map_err(|e| format!("Failed to save temporary PNG for JXL: {}", e))?;
 
             struct TmpPngGuard(PathBuf);
@@ -212,7 +225,9 @@ pub fn export_photo<P: AsRef<Path>>(
                 .unwrap_or_default()
                 .as_nanos();
             let tmp_png = expanded_dir.join(format!(".tmp_{}_{}_{}.png", stem, pid, rand_suffix));
-            dyn_img.save(&tmp_png)
+            // cjxl and avifenc carry the PNG's iCCP profile into the AVIF file
+            let png = encode_png(&dyn_img, icc_bytes)?;
+            crate::security::atomic_write_user(&tmp_png, &png)
                 .map_err(|e| format!("Failed to save temporary PNG for AVIF: {}", e))?;
 
             struct TmpPngGuard(PathBuf);
@@ -258,34 +273,37 @@ pub fn export_photo<P: AsRef<Path>>(
             }
         }
         "webp" => {
-            let mut buf = std::io::Cursor::new(Vec::new());
-            let dyn_rgb8 = DynamicImage::ImageRgb8(dyn_img.to_rgb8());
-            dyn_rgb8.write_to(&mut buf, image::ImageFormat::WebP)
+            let mut buf = Vec::new();
+            let mut encoder = image::codecs::webp::WebPEncoder::new_lossless(&mut buf);
+            set_icc(&mut encoder, icc_bytes)?;
+            DynamicImage::ImageRgb8(dyn_img.to_rgb8())
+                .write_with_encoder(encoder)
                 .map_err(|e| format!("Failed to encode WebP: {}", e))?;
-            crate::security::atomic_write_user(&final_dest, &buf.into_inner())
+            crate::security::atomic_write_user(&final_dest, &buf)
                 .map_err(|e| format!("Failed to securely write WebP file: {}", e))?;
         }
         "tiff" | "tif" => {
             let mut buf = std::io::Cursor::new(Vec::new());
-            dyn_img.write_to(&mut buf, image::ImageFormat::Tiff)
+            let mut encoder = image::codecs::tiff::TiffEncoder::new(&mut buf);
+            set_icc(&mut encoder, icc_bytes)?;
+            dyn_img.write_with_encoder(encoder)
                 .map_err(|e| format!("Failed to encode 16-bit TIFF: {}", e))?;
             crate::security::atomic_write_user(&final_dest, &buf.into_inner())
                 .map_err(|e| format!("Failed to securely write TIFF file: {}", e))?;
         }
         "png" => {
-            let mut buf = std::io::Cursor::new(Vec::new());
-            dyn_img.write_to(&mut buf, image::ImageFormat::Png)
-                .map_err(|e| format!("Failed to encode 16-bit PNG: {}", e))?;
-            crate::security::atomic_write_user(&final_dest, &buf.into_inner())
+            let buf = encode_png(&dyn_img, icc_bytes)?;
+            crate::security::atomic_write_user(&final_dest, &buf)
                 .map_err(|e| format!("Failed to securely write PNG file: {}", e))?;
         }
         "jpeg" | "jpg" => {
             let mut buf = std::io::Cursor::new(Vec::new());
             {
-                let encoder = image::codecs::jpeg::JpegEncoder::new_with_quality(
+                let mut encoder = image::codecs::jpeg::JpegEncoder::new_with_quality(
                     &mut buf,
                     options.quality.clamp(1, 100) as u8,
                 );
+                set_icc(&mut encoder, icc_bytes)?;
                 let dyn_rgb8 = DynamicImage::ImageRgb8(dyn_img.to_rgb8());
                 dyn_rgb8.write_with_encoder(encoder)
                     .map_err(|e| format!("Failed to encode JPEG: {}", e))?;
@@ -296,8 +314,8 @@ pub fn export_photo<P: AsRef<Path>>(
         _ => return Err(format!("Unsupported export format: {}", fmt)),
     }
 
-    // Embed camera EXIF, GPS settings, and ICC color profile
-    if options.preserve_exif || options.icc_profile.is_some() || options.artist_copyright.is_some() {
+    // Copy camera EXIF and GPS settings; the ICC profile is already in the file
+    if options.preserve_exif || options.artist_copyright.is_some() {
         // Enforce 512 MiB RLIMIT_AS ceiling on ExifTool helper to defend against
         // unbounded pointer array allocations (e.g. unchecked APP11/JUMBF sequence numbers)
         let mut exif_cmd = secure_command_with_mem_limit("exiftool", Some(512 * 1024 * 1024));
@@ -317,44 +335,40 @@ pub fn export_photo<P: AsRef<Path>>(
             }
         }
 
-        if let Some(ref artist) = options.artist_copyright {
-            if !artist.trim().is_empty() {
-                exif_cmd.arg(format!("-Artist={}", artist))
-                    .arg(format!("-Copyright={}", artist));
-            }
-        }
-
-        if let Some(ref icc_path) = embed_icc {
-            exif_cmd.arg(format!("-icc_profile<={}", icc_path.display()));
+        if let Some(ref artist) = options.artist_copyright
+            && !artist.trim().is_empty()
+        {
+            exif_cmd.arg(format!("-Artist={}", artist))
+                .arg(format!("-Copyright={}", artist));
         }
 
         exif_cmd.arg("--").arg(&final_dest);
 
         // Run exiftool with bounded timeout (safe failover if format doesn't support tags)
-        let tagged = run_bounded_command(exif_cmd, Duration::from_secs(20))
-            .map(|(code, _, _)| code == 0)
-            .unwrap_or(false);
-
-        // Wide-gamut pixels without their profile would display with wrong colours
-        if converted && !tagged {
-            return Err(format!(
-                "Exported {} but could not embed the {} ICC profile",
-                final_dest.display(),
-                options.icc_profile.as_deref().unwrap_or("")
-            ));
-        }
+        let _ = run_bounded_command(exif_cmd, Duration::from_secs(20));
     }
 
     Ok(final_dest)
 }
 
-/// True when the exiftool binary can be executed (needed to embed ICC profiles).
-fn exiftool_available() -> bool {
-    let mut cmd = secure_command("exiftool");
-    cmd.arg("-ver");
-    run_bounded_command(cmd, Duration::from_secs(5))
-        .map(|(code, _, _)| code == 0)
-        .unwrap_or(false)
+/// Hands the export's ICC profile to an image encoder.
+fn set_icc(encoder: &mut impl ImageEncoder, icc: Option<&[u8]>) -> Result<(), String> {
+    match icc {
+        Some(bytes) => encoder
+            .set_icc_profile(bytes.to_vec())
+            .map_err(|e| format!("Could not embed ICC profile: {}", e)),
+        None => Ok(()),
+    }
+}
+
+/// Encodes a PNG (16-bit when the image is) with the ICC profile in its iCCP chunk.
+fn encode_png(img: &DynamicImage, icc: Option<&[u8]>) -> Result<Vec<u8>, String> {
+    let mut buf = Vec::new();
+    let mut encoder = image::codecs::png::PngEncoder::new(&mut buf);
+    set_icc(&mut encoder, icc)?;
+    img.write_with_encoder(encoder)
+        .map_err(|e| format!("Failed to encode 16-bit PNG: {}", e))?;
+    Ok(buf)
 }
 
 /// Keeps only ASCII alphanumerics so a tag can never inject separators into the name.

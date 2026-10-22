@@ -2,7 +2,9 @@ use crate::raw::RawMetadata;
 use crate::recipe::Recipe;
 use serde::{Deserialize, Serialize};
 
+pub mod assistant;
 pub mod jev;
+pub mod provider;
 pub use jev::{
     ai_classify_scene_with_jev, apply_jev_decisions_to_recipe, extract_photographic_state,
     generate_offline_jev_decisions, JevClient, JevConfig, JevDecisions, JevStateInput,

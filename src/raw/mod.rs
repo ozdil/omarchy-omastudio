@@ -1,7 +1,14 @@
+pub mod demosaic;
+pub mod develop;
+pub mod dng;
 pub mod ffi;
+pub mod lens;
+pub mod pixel_shift;
 
+use crate::pipeline::transfer::Transfer;
 use ffi::*;
 use serde::{Deserialize, Serialize};
+use std::cell::Cell;
 use std::ffi::{CStr, CString};
 use std::path::{Path, PathBuf};
 
@@ -35,6 +42,9 @@ pub struct ProcessedBuffer {
     pub channels: u32,
     pub bits_per_sample: u32,
     pub data_size: usize,
+    /// Display curve of this buffer's colour space. 16-bit buffers hold linear light
+    /// and the pipeline encodes them with this curve; 8-bit buffers are already encoded.
+    pub transfer: Transfer,
 }
 
 // SAFETY: The buffer is exclusively owned and safe to pass across threads
@@ -71,6 +81,22 @@ impl ProcessedBuffer {
     }
 
     /// Converts a 1-channel buffer into an owned interleaved 3-channel buffer.
+    /// Applies radial lens corrections. 16-bit buffers are linear light; 8-bit ones are
+    /// encoded with the buffer's curve.
+    fn with_lens_correction(self, corr: &lens::RadialCorrection) -> ProcessedBuffer {
+        let (w, h) = (self.width as usize, self.height as usize);
+        let (storage, data_size) = if self.bits_per_sample == 16 {
+            let out = corr.apply_linear_u16(&self.as_slice_u16()[..w * h * 3], w, h);
+            let len = out.len() * 2;
+            (BufferStorage::OwnedU16(out), len)
+        } else {
+            let out = corr.apply_encoded_u8(&self.as_slice()[..w * h * 3], w, h, self.transfer);
+            let len = out.len();
+            (BufferStorage::OwnedU8(out), len)
+        };
+        ProcessedBuffer { storage, data_size, ..self }
+    }
+
     fn expand_gray_to_rgb(self) -> ProcessedBuffer {
         let pixels = (self.width as usize) * (self.height as usize);
         let (storage, data_size) = if self.bits_per_sample == 16 {
@@ -91,6 +117,7 @@ impl ProcessedBuffer {
             channels: 3,
             bits_per_sample: self.bits_per_sample,
             data_size,
+            transfer: self.transfer,
         }
     }
 
@@ -134,7 +161,7 @@ impl ProcessedBuffer {
                     self.as_slice_u16().to_vec()
                 } else {
                     let mut u16_vec = Vec::with_capacity(self.data_size / 2);
-                    for chunk in vec[..self.data_size].chunks_exact(2) {
+                    for chunk in vec[..self.data_size].as_chunks::<2>().0 {
                         u16_vec.push(u16::from_ne_bytes([chunk[0], chunk[1]]));
                     }
                     u16_vec
@@ -147,12 +174,12 @@ impl ProcessedBuffer {
 
 impl Drop for ProcessedBuffer {
     fn drop(&mut self) {
-        if let BufferStorage::LibRaw(ptr) = self.storage {
-            if !ptr.is_null() {
-                // SAFETY: ptr was allocated by malloc in C shim and is freed here
-                unsafe {
-                    omaraw_free_image(ptr);
-                }
+        if let BufferStorage::LibRaw(ptr) = self.storage
+            && !ptr.is_null()
+        {
+            // SAFETY: ptr was allocated by malloc in C shim and is freed here
+            unsafe {
+                omaraw_free_image(ptr);
             }
         }
     }
@@ -187,6 +214,12 @@ impl OutputColorSpace {
         }
     }
 
+    /// Display curve of this space (the one its ICC profile expects).
+    pub fn transfer(self) -> Transfer {
+        let (_, power, slope) = self.libraw_params();
+        Transfer::from_libraw(power, slope)
+    }
+
     /// (LibRaw output_color, gamm[0], gamm[1])
     fn libraw_params(self) -> (i32, f64, f64) {
         match self {
@@ -196,6 +229,26 @@ impl OutputColorSpace {
             Self::ProPhotoRgb => (4, 1.0 / 1.8, 0.0),
             Self::DisplayP3 => (7, 1.0 / 2.4, 12.92),
             Self::Rec2020 => (8, 0.45, 4.5),
+        }
+    }
+}
+
+/// Who turns sensor data into RGB for 16-bit (linear) decodes.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum DemosaicEngine {
+    /// OmaStudio's own development ([`develop`]); falls back to LibRaw for sensors it
+    /// does not handle (Foveon, linear DNG, Fuji SuperCCD, 4-colour CFAs).
+    Own,
+    /// LibRaw's `dcraw_process`.
+    LibRaw,
+}
+
+impl DemosaicEngine {
+    /// `OMASTUDIO_DEMOSAIC=libraw` switches back to LibRaw's processing.
+    pub fn from_env() -> Self {
+        match std::env::var("OMASTUDIO_DEMOSAIC") {
+            Ok(v) if v.eq_ignore_ascii_case("libraw") => Self::LibRaw,
+            _ => Self::Own,
         }
     }
 }
@@ -210,6 +263,10 @@ pub enum RawBackend {
 pub struct RawImage {
     backend: RawBackend,
     path: PathBuf,
+    /// Colour space the next LibRaw decode renders into (sRGB unless an export picks another).
+    output_space: Cell<OutputColorSpace>,
+    /// Lens corrections recorded by the camera, read on first decode.
+    lens: std::cell::OnceCell<Option<lens::RadialCorrection>>,
 }
 
 // SAFETY: RawImage handle/backend is managed exclusively by Rust wrapper
@@ -238,6 +295,8 @@ impl RawImage {
             return Ok(Self {
                 backend: RawBackend::Raster { img },
                 path: path_ref.to_path_buf(),
+                output_space: Cell::new(OutputColorSpace::Srgb),
+                lens: std::cell::OnceCell::new(),
             });
         }
 
@@ -254,6 +313,8 @@ impl RawImage {
                 return Ok(Self {
                     backend: RawBackend::Raster { img },
                     path: path_ref.to_path_buf(),
+                    output_space: Cell::new(OutputColorSpace::Srgb),
+                    lens: std::cell::OnceCell::new(),
                 });
             }
             return Err(format!("LibRaw failed to open {}: code {}", path_ref.display(), errcode));
@@ -262,6 +323,8 @@ impl RawImage {
         Ok(Self {
             backend: RawBackend::LibRaw(handle),
             path: path_ref.to_path_buf(),
+            output_space: Cell::new(OutputColorSpace::Srgb),
+            lens: std::cell::OnceCell::new(),
         })
     }
 
@@ -285,6 +348,8 @@ impl RawImage {
                 return Ok(Self {
                     backend: RawBackend::Raster { img },
                     path: PathBuf::from(proc_path),
+                    output_space: Cell::new(OutputColorSpace::Srgb),
+                    lens: std::cell::OnceCell::new(),
                 });
             }
             return Err(format!("LibRaw failed to open descriptor {}: code {}", fd, errcode));
@@ -293,6 +358,8 @@ impl RawImage {
         Ok(Self {
             backend: RawBackend::LibRaw(handle),
             path: PathBuf::from(proc_path),
+            output_space: Cell::new(OutputColorSpace::Srgb),
+            lens: std::cell::OnceCell::new(),
         })
     }
 
@@ -422,6 +489,62 @@ impl RawImage {
     }
 
     pub fn process_custom(&self, half_size: bool, quality: i32, bps: i32) -> Result<ProcessedBuffer, String> {
+        self.process_with(DemosaicEngine::from_env(), half_size, quality, bps)
+    }
+
+    /// Like [`RawImage::process_custom`] with an explicit demosaic engine.
+    ///
+    /// Lens corrections recorded in the file (Fujifilm RAF data, DNG OpcodeList3) are
+    /// applied to every decode, as the camera does for its own JPEGs. `OMASTUDIO_LENS_CORRECTION=off`
+    /// turns them off.
+    pub fn process_with(
+        &self,
+        engine: DemosaicEngine,
+        half_size: bool,
+        quality: i32,
+        bps: i32,
+    ) -> Result<ProcessedBuffer, String> {
+        let buf = self.process_uncorrected(engine, half_size, quality, bps)?;
+        match self.lens_correction() {
+            Some(corr) if buf.channels == 3 => Ok(buf.with_lens_correction(corr)),
+            _ => Ok(buf),
+        }
+    }
+
+    /// Exposure the camera adds for its own rendering of this photo, in EV (see
+    /// [`crate::fuji::baseline`]). `OMASTUDIO_BASELINE_EXPOSURE=off` ignores it.
+    pub fn baseline_exposure(&self) -> f32 {
+        crate::fuji::baseline::exposure(self, None)
+    }
+
+    /// Same as [`RawImage::baseline_exposure`], measured on a development the caller has.
+    pub fn baseline_exposure_from(&self, decoded: &ProcessedBuffer) -> f32 {
+        crate::fuji::baseline::exposure(self, Some(decoded))
+    }
+
+    /// Lens corrections recorded in the file, if any and not turned off.
+    pub fn lens_correction(&self) -> Option<&lens::RadialCorrection> {
+        if !matches!(self.backend, RawBackend::LibRaw(_))
+            || std::env::var("OMASTUDIO_LENS_CORRECTION").is_ok_and(|v| v == "off" || v == "0")
+        {
+            return None;
+        }
+        self.lens.get_or_init(|| crate::fuji::lens::read(&self.path).or_else(|| dng::read_corrections(&self.path))).as_ref()
+    }
+
+    fn process_uncorrected(
+        &self,
+        engine: DemosaicEngine,
+        half_size: bool,
+        quality: i32,
+        bps: i32,
+    ) -> Result<ProcessedBuffer, String> {
+        if engine == DemosaicEngine::Own
+            && bps == 16
+            && let Some(buf) = self.develop_own(half_size)
+        {
+            return Ok(buf);
+        }
         match &self.backend {
             RawBackend::Raster { img } => {
                 let target_img = if half_size {
@@ -437,8 +560,15 @@ impl RawImage {
                 let channels = 3u32;
 
                 if bps == 16 {
-                    let rgb16 = target_img.to_rgb16();
-                    let raw_u16 = rgb16.into_raw();
+                    // 16-bit buffers are linear light: undo the file's sRGB curve.
+                    let srgb = Transfer::srgb();
+                    let lut: Vec<u16> = (0..=u16::MAX)
+                        .map(|v| (srgb.decode(v as f32 / 65535.0) * 65535.0).round().clamp(0.0, 65535.0) as u16)
+                        .collect();
+                    let mut raw_u16 = target_img.to_rgb16().into_raw();
+                    for v in raw_u16.iter_mut() {
+                        *v = lut[*v as usize];
+                    }
                     let data_size = raw_u16.len() * 2;
                     Ok(ProcessedBuffer {
                         storage: BufferStorage::OwnedU16(raw_u16),
@@ -447,6 +577,7 @@ impl RawImage {
                         channels,
                         bits_per_sample: 16,
                         data_size,
+                        transfer: Transfer::srgb(),
                     })
                 } else {
                     let rgb8 = target_img.to_rgb8();
@@ -459,6 +590,7 @@ impl RawImage {
                         channels,
                         bits_per_sample: 8,
                         data_size,
+                        transfer: Transfer::srgb(),
                     })
                 }
             }
@@ -467,6 +599,16 @@ impl RawImage {
                 let mut out_h = 0;
                 let mut out_colors = 0;
                 let mut out_size = 0;
+
+                // 16-bit decodes are linear light; the pipeline applies the space's curve after
+                // white balance and exposure. 8-bit decodes keep LibRaw's encoded output.
+                let space = self.output_space.get();
+                let (code, power, slope) = space.libraw_params();
+                let (power, slope) = if bps == 16 { (1.0, 1.0) } else { (power, slope) };
+                // SAFETY: handle is a valid open LibRaw handle owned by self
+                if unsafe { omaraw_set_output_space(*handle, code, power, slope) } != 0 {
+                    return Err("Failed to configure RAW output space".to_string());
+                }
 
                 let hs = if half_size { 1 } else { 0 };
                 // SAFETY: handle is valid, all output pointers point to stack variables
@@ -494,6 +636,7 @@ impl RawImage {
                     channels: out_colors.max(0) as u32,
                     bits_per_sample: if bps == 16 { 16 } else { 8 },
                     data_size: out_size.max(0) as usize,
+                    transfer: space.transfer(),
                 };
 
                 match buf.channels {
@@ -507,14 +650,52 @@ impl RawImage {
         }
     }
 
+    /// Develops a CFA RAW with OmaStudio's own pipeline into linear 16-bit RGB, or
+    /// returns None when the source is not a plain 3-colour CFA.
+    /// Black-subtracted, white-balanced sensor data of a plain 3-colour CFA (Bayer or
+    /// X-Trans), or None for other sensors and raster files.
+    pub fn cfa_frame(&self) -> Option<develop::CfaFrame> {
+        let RawBackend::LibRaw(handle) = &self.backend else {
+            return None;
+        };
+        // SAFETY: COmaRawCfaInfo is plain old data; all-zero is a valid value
+        let mut info: COmaRawCfaInfo = unsafe { std::mem::zeroed() };
+        // SAFETY: handle is a valid open LibRaw handle owned by self; info is a valid pointer
+        let raw = unsafe { omaraw_unpack_cfa(*handle, &mut info) };
+        // SAFETY: the shim returns the handle's raw plane (raw_pitch * raw_height values),
+        // which stays valid while self (and so the handle) is alive
+        unsafe { develop::CfaFrame::from_libraw(raw, &info) }
+    }
+
+    fn develop_own(&self, half_size: bool) -> Option<ProcessedBuffer> {
+        let frame = self.cfa_frame()?;
+        // Binning an X-Trans sensor gives a 1/3-size preview; LibRaw's half-size decode
+        // is larger and renders the same colours, so previews keep using it
+        if half_size && matches!(frame.pattern, demosaic::CfaPattern::XTrans(_)) {
+            return None;
+        }
+        let space = self.output_space.get();
+        let (data, width, height) = frame.develop(space, half_size);
+        let data_size = data.len() * 2;
+        Some(ProcessedBuffer {
+            storage: BufferStorage::OwnedU16(data),
+            width,
+            height,
+            channels: 3,
+            bits_per_sample: 16,
+            data_size,
+            // Linear data; the pipeline encodes it with the output space's curve
+            transfer: space.transfer(),
+        })
+    }
+
     /// Selects the RGB output space for the next decode. Only LibRaw sources can be
     /// converted; raster sources stay sRGB and return false.
     pub fn set_output_space(&self, space: OutputColorSpace) -> bool {
         match &self.backend {
-            RawBackend::LibRaw(handle) => {
-                let (code, power, slope) = space.libraw_params();
-                // SAFETY: handle is a valid open LibRaw handle owned by self
-                unsafe { omaraw_set_output_space(*handle, code, power, slope) == 0 }
+            RawBackend::LibRaw(_) => {
+                self.output_space.set(space);
+                true
             }
             RawBackend::Raster { .. } => space == OutputColorSpace::Srgb,
         }
@@ -539,12 +720,12 @@ impl RawImage {
 
 impl Drop for RawImage {
     fn drop(&mut self) {
-        if let RawBackend::LibRaw(handle) = self.backend {
-            if !handle.is_null() {
-                // SAFETY: handle was opened by omaraw_open and is cleanly released here
-                unsafe {
-                    omaraw_close(handle);
-                }
+        if let RawBackend::LibRaw(handle) = self.backend
+            && !handle.is_null()
+        {
+            // SAFETY: handle was opened by omaraw_open and is cleanly released here
+            unsafe {
+                omaraw_close(handle);
             }
         }
     }

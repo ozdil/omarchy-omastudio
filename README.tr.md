@@ -1,260 +1,235 @@
 # OmaStudio
 
-[![Omarchy Verified Plugin](https://img.shields.io/badge/Omarchy-Verified_Plugin-22c55e?style=for-the-badge&logo=omarchy)](https://github.com/ozdil)
+**OmaStudio: The Complete Medium Format RAW Editor for Omarchy**
 
-**Omarchy Linux için Quickshell & Rust Tabanlı 1 Numaralı Profesyonel RAW Fotoğraf Stüdyosu**
+*Omarchy için eksiksiz orta format RAW düzenleyicisi.*
 
-*Kayıpsız parametrik RAW düzenleme, ACES 1.3 renk yönetimi ve Referans Gamut Sıkıştırma (RGC), aslına sadık Fujifilm ve Hasselblad film benzetimleri, Hollywood standardı DaVinci 3-Way renk tekerlekleri, seçmeli profesyonel filigran motoru, çevrimdışı YZ Jev karar motoru, kalıcı Studio Catalog DAM ve modern çoklu format dışa aktarma mimarisi.*
+OmaStudio, Omarchy Linux için geliştirilmiş, orijinal dosyaya dokunmayan bir RAW düzenleyicisidir. RAW dosyalarını Rust ile yazılmış kendi motoruyla geliştirir ve Wayland ile Hyprland üzerinde yerel olarak çalışır. Fujifilm X ve GFX ile Hasselblad orta format kameralar birinci sınıf destek alır.
 
 [English](README.md) • [Türkçe](README.tr.md)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Platform](https://img.shields.io/badge/Platform-Omarchy%20Linux%20%7C%20Arch%20Linux-1793d1.svg)](https://omarchy.org)
-[![Engine: Rust](https://img.shields.io/badge/Engine-Rust%202021%20%28Rayon%29-dea584.svg)](Cargo.toml)
-[![UI: Quickshell](https://img.shields.io/badge/UI-Quickshell%20%7C%20Qt%206-41cd52.svg)](qml/)
-[![Security: CONTRIBUTING.md Compliant](https://img.shields.io/badge/Security-CONTRIBUTING.md%20Mode%200600-brightgreen.svg)](CONTRIBUTING.md)
-[![Omarchy Verified Plugin](https://img.shields.io/badge/Omarchy-Verified_Plugin-22c55e?style=for-the-badge&logo=omarchy)](https://github.com/ozdil)
-[![Buy Me A Coffee](https://img.shields.io/badge/Buy_Me_A_Coffee-Destek_Ol-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/ozdil)
+[![Platform: Omarchy](https://img.shields.io/badge/Platform-Omarchy%20%7C%20Arch%20Linux-1793d1.svg)](https://omarchy.org)
+[![Engine: Rust 2024](https://img.shields.io/badge/Engine-Rust%202024-dea584.svg)](Cargo.toml)
+[![UI: Qt 6](https://img.shields.io/badge/UI-Qt%206%20%7C%20Wayland-41cd52.svg)](app/)
 
-![OmaStudio Preview](preview.png)
+![OmaStudio Önizleme](preview.png)
 
 ---
 
-## Mimari ve Tasarım İlkeleri
+## Genel bakış
 
-OmaStudio, modern Wayland ve Hyprland Linux masaüstü ortamları için tasarlanmış sektör standardı hibrit bir mimari kullanır: Kullanıcı arayüzü GPU ivmeli **Quickshell (Qt 6 / QML)** üzerinde 120/144 FPS akıcılıkla çalışırken, görüntü işleme ve RAW kod çözme boru hattı **Yönlendirilmiş Çevrimsiz Çizge (DAG) Motoru, Parçalı (Tiled) Talep Odaklı Bölgeleme ve çok çekirdekli Rust CPU hesaplaması (rayon)** tarafından yürütülür. Vulkan/Slang GPU çekirdekleri yol haritasında yer alıyor, mevcut motorun parçası değil.
+| Alan | OmaStudio'nun sunduğu |
+| :--- | :--- |
+| **RAW geliştirme** | X-Trans ve Bayer sensörler için motorun kendi demozaik işlemi, lineer ışık üzerinde. Kamera renk matrisi ve siyah seviyeleri dosyadan okunur. Demozaik Vulkan üzerinden GPU'da çalışır (NVIDIA, AMD, Intel, Qualcomm Adreno); GPU yoksa aynı sonucu veren CPU yolu kullanılır. LibRaw yalnızca sensör verisini açar. |
+| **Orta format** | Fujifilm GFX ve Hasselblad RAW dosyaları. Sensörden dışa aktarıma kadar 16-bit işlenir. |
+| **Fujifilm** | Fotoğraflar çekildikleri tarifle açılır: film simülasyonu, ton, renk, gren, Color Chrome, beyaz dengesi kaydırması ve dinamik aralık. X RAW Studio profilleri (.FP1/.FP2/.FP3) ve metin olarak paylaşılan tarifler içe ve dışa aktarılabilir. Fujifilm panelinde tarif kütüphanesi bulunur; bağlı kameranın C1-C7 özel ayarları okunup yazılabilir, RAF dosyaları kamera içinde dönüştürülebilir ve GFX Pixel Shift serileri birleştirilebilir. |
+| **Renk yönetimi** | Little CMS 2 kullanılır. sRGB, Display P3, Adobe RGB, ProPhoto RGB ve Rec. 2020 profilleri yerleşik gelir. Özel ICC profilleri de seçilebilir bir işleme amacıyla (rendering intent) desteklenir. Her dışa aktarıma ICC profili gömülür. |
+| **Düzenleme** | Pozlama, ton, varlık, HSL, ton eğrisi, üç yollu renk tekerlekleri, 3D LUT, RGB karıştırıcı, cilt tonu eşitleme, film greni, yerel maskeler, kırpma ve lens düzeltmeleri. |
+| **Kütüphane** | Yerel katalogda yıldız puanı, seç/ele bayrakları ve renk etiketleri tutulur. Ayarlar yan dosyalarda saklanır, orijinal RAW hiçbir zaman değiştirilmez. |
+| **USB ile kamera** | Kabloyla bağlı çekim ve Fujifilm kamera içi RAW dönüştürme için saf Rust ile yazılmış bir PTP/USB katmanı. |
+| **Dışa aktarma** | JPEG, PNG, TIFF (8/16-bit), WebP, JPEG XL ve AVIF. Filigran desteği vardır. |
+
+---
+
+## Mimari
+
+OmaStudio yerel bir Qt 6 uygulamasıdır: `omastudio-app` (cxx-qt ile Rust; QML arayüzü ikili dosyanın içine derlenir). Qt'nin kesirli ölçekleme desteğiyle Wayland istemcisi olarak çalışır; arayüz Hyprland altında monitörün gerçek piksel yoğunluğunda çizilir. Tüm görüntü işleme `omastudio-engine` adlı ayrı bir Rust sürecinde yapılır; pencere motoru stdin/stdout üzerinden JSON satırlarıyla konuşan bir daemon aracılığıyla yönetir. Aynı motor, betikler ve Omarchy ajanları için bir komut satırı arayüzü de sunar. Küçük bir Quickshell bileşeni (`Panel.qml`) Omarchy çubuğuna OmaStudio düğmesi ekler.
+
+Çalışan pencere bir kontrol soketini dinler (`$XDG_RUNTIME_DIR/omastudio/ipc.sock`, yalnızca aynı kullanıcı). `omastudio ipc <yöntem> [argümanlar]` bu soketi çağırır, örneğin `omastudio ipc openPhoto ~/Pictures/DSCF0001.RAF` veya `omastudio ipc getStatus`. Bir pencere açıkken `omastudio foto.RAF` çalıştırılırsa fotoğraf o pencerede açılır.
 
 ```mermaid
 graph TD
-    subgraph UI [" Kullanıcı Deneyimi (Quickshell / Qt 6 QML)"]
-        Viewport["Tuval Görünümü<br/>(Pinch-Zoom / Pan / Rotasyon / Filigran Önizleme)"]
-        Inspector["Pro Stüdyo & Basit Modlar<br/>(Film Benzetimleri / ACES / Filigran Yapılandırma)"]
-        Wheels["DaVinci 3-Way Tekerlekler<br/>(Lift / Gamma / Gain / Offset / Pivot)"]
-        CropTool["Kompozisyon Kılavuzları<br/>(Üçler / Altın Oran / Fibonacci)"]
+    subgraph UI ["omastudio-app (Qt 6 / QML, Wayland)"]
+        Viewport["Görüntü alanı, kırpma ve kılavuzlar"]
+        Panels["Ayar panelleri, renk tekerlekleri, skoplar"]
+        Library["Film şeridi ve katalog"]
     end
 
-    subgraph IPC [" Güvenli Yerel IPC & CLI Arayüzü"]
-        CLI["omastudio --cli"]
-        Sock["Kalıcı Daemon IPC (stdin/stdout JSON satırları)<br/>& Quickshell IPC Protokolü"]
+    subgraph Engine ["omastudio-engine (Rust)"]
+        Decode["LibRaw ile açma"]
+        Develop["Kendi demozaik, beyaz dengesi, kamera matrisi (lineer ışık)"]
+        Pipeline["Ton, renk ve detay modülleri (rayon)"]
+        ICC["Little CMS 2 renk yönetimi"]
+        Fuji["Fujifilm tarifleri, X RAW Studio profilleri"]
+        PTP["PTP/USB (nusb)"]
+        Export["ICC gömülü kodlayıcılar"]
     end
 
-    subgraph Engine [" DaVinci & Nuke Sınıfı Motor (DAG + Parçalı CPU Hesaplama)"]
-        DAGEngine["Talep Odaklı DAG Motoru<br/>(Yönlendirilmiş Çizge / Geçersiz Kılma Ağacı)"]
-        TiledEngine["Parçalı (Tiled) ROI Yürütme<br/>(512x512 Karo Izgarası / Bellek İzolasyonu)"]
-        GPUCompute["Paralel CPU Hesaplama<br/>(Rust + rayon, tüm çekirdekler)"]
-        Decoders["LibRaw FFI Donanım Matrisi<br/>(Sony ARW, Fuji RAF, Nikon NEF, Canon CR3, DNG)"]
-        ACES["ACES 1.3 Renk Bilimi<br/>(ACEScg, ACEScc, RGC, RRT/ODT Ton Eşleyici)"]
-        FilmSim["Film Benzetimleri<br/>(Fujifilm Provia, Velvia, Astia, Acros / Hasselblad HNCS)"]
-        WatermarkEngine["Filigran ve İmza Motoru<br/>(9 Nokta Izgara / EXIF Entegrasyonu / Logo PNG)"]
-        ShmPingPong["Çift Tamponlu Paylaşımlı Bellek<br/>(/dev/shm Sıfır Titreme Önizleme)"]
-    end
-
-    UI <--> Sock
-    CLI --> DAGEngine
-    Sock <--> DAGEngine
-    DAGEngine --> TiledEngine
-    TiledEngine --> GPUCompute
-    Decoders --> DAGEngine
-    GPUCompute --> ACES
-    ACES --> FilmSim
-    FilmSim --> ShmPingPong
-    ShmPingPong --> Viewport
+    UI <-->|JSON satırları| Pipeline
+    Decode --> Develop --> Pipeline --> ICC --> Export
+    Fuji --> Pipeline
+    PTP --> Fuji
 ```
 
 ---
 
-## Görüntü İşleme Boru Hattı (RAW Processing Pipeline)
+## Desteklenen kameralar
 
-Her RAW pikseli, matematiksel doğruluk ve kayıpsız dinamik aralık korunarak aşağıdaki adımlardan geçer:
+OmaStudio, LibRaw 0.22'nin desteklediği tüm RAW biçimlerini açar. Bayer ve X-Trans sensörler motorun kendi boru hattından geçer. Foveon, lineer DNG, Fujifilm SuperCCD ve dört renkli sensörler otomatik olarak LibRaw'a devredilir.
 
-```mermaid
-flowchart LR
-    A[" RAW Girdi<br/>(Bayer / X-Trans)"] --> B[" LibRaw<br/>Demosaicing"]
-    B --> C[" Beyaz Ayarı<br/>(Planckian AWB)"]
-    C --> D[" Doğrusal Pozlama<br/>(Zone System EV)"]
-    D --> E[" ACES 1.3 RGC<br/>(Gamut Sıkıştırma)"]
-    E --> F[" Film Benzetimi<br/>(Fuji / Hasselblad)"]
-    F --> G[" DaVinci Tekerlekler<br/>(Pivot & Boost)"]
-    G --> H[" Detay & Optik<br/>(Keskinlik / Denoise)"]
-    H --> I[" Filigran Motoru<br/>(9 Nokta / EXIF)"]
-    I --> J[" Çoklu Format Dışa Aktarım<br/>(JXL / AVIF / TIFF 16-Bit)"]
-```
+| Üretici | Ek destek |
+| :--- | :--- |
+| Fujifilm X ve GFX | Kamera tarifi, film simülasyonları, Color Chrome, X RAW Studio profilleri, kameranın lens düzeltmeleri, GFX Pixel Shift, PTP/USB |
+| Hasselblad | 3FR/FFF dosyaları, HNCS benzeri işleme (geliştiriliyor) |
+| Diğer üreticiler | Genel yol üzerinden tam geliştirme |
 
 ---
 
-## Öne Çıkan Özellikler
+## Gereksinimler
 
-### 1. ACES 1.3 Renk Yönetimi & Referans Gamut Sıkıştırma (RGC)
-* **ACEScg & ACEScc Renk Uzayları:** Sahneye atıflı (scene-referred) AP1 doğrusal çalışma uzayı. sRGB, Display P3 ve Rec.2020 için yüksek hassasiyetli Bradford renk adaptasyon matrisleri.
-* **ACES 1.3 Referans Gamut Sıkıştırma (RGC):** Gamut dışı ve aşırı doymuş parlak alanları akromatik eksene doğru yumuşak hiperbolik eğriyle sıkıştırır; yapay renk kırpılmalarını ve parlak kenar bozulmalarını tamamen engeller.
-* **ACES 1.3 Fitted RRT/ODT Ton Eşleme:** Stephen Hill ve Krzysztof Narkowicz rasyonel polinom yaklaşımı ile analog sinema filmi karakterinde parlak alan sönümlemesi ve zengin gölge tonlaması.
-
-### 2. Aslına Sadık Film Benzetimleri (Fujifilm & Hasselblad HNCS)
-* **Fujifilm Gün Işığı ve Manzara:**
-  * **Provia 100F:** Doğal gün ışığı renk üretimi, dengeli ten tonları ve nötr kontrast.
-  * **Velvia 50:** Yüksek doygunluk ve canlı manzara tonları; gökyüzü mavisi ve bitki örtüsünde derin ayrım.
-  * **Astia 100F:** Yumuşak kontrast ve portre fotoğrafçılığı için optimize edilmiş hassas cilt tonu geçişleri.
-* **Fujifilm Belgesel ve Sinematik:**
-  * **Classic Chrome:** Düşük doygunluk ve derin gölge kontrastıyla belgesel fotoğrafçılığı tonları.
-  * **Classic Neg:** Superia renkli negatif film karakterinde sıcak tonlar ve belirgin orta ton kontrastı.
-  * **Eterna Cinema:** Düz gama ve yumuşak parlak alan geçişiyle sinematik film profili.
-* **Fujifilm Acros Efsanevi Siyah-Beyaz:**
-  * **Acros Standard:** Ultra ince gren ve zengin ton geçişlerine sahip efsanevi siyah-beyaz simülasyonu.
-  * **Acros (+Ye) Sarı Filtre:** Dengeli kontrast artışı; gökyüzü ve portrelerde doğal ayrım.
-  * **Acros (+R) Kırmızı Filtre:** Dramatik koyu gökyüzü ve yüksek mikro kontrast.
-  * **Acros (+G) Yeşil Filtre:** Yeşil yaprakları öne çıkarırken dudak ve ten tonlarını yumuşatır.
-* **Hasselblad Orta Format Profilleri:**
-  * **Hasselblad Natural Colour Solution (HNCS):** 4. dereceden kök kroma ölçeklemesiyle stüdyo kalitesinde nötr gri kararlılığı.
-  * **Hasselblad XPan:** 35mm panoramik sinematik kontrast ve derin gölge sıkıştırması.
-
-### 3. Seçmeli Fotoğrafçılık Filigran ve İmza Motoru
-* **9 Nokta Izgara Hizalama:** Tuval üzerinde 9 farklı konuma yerleşim (Sol-Üst, Üst-Orta, Sağ-Üst, Orta-Sol, Merkez, Orta-Sağ, Sol-Alt, Alt-Orta, Sağ-Alt).
-* **Otomatik EXIF Etiket Değişimi:** Çekim meta verilerini otomatik algılama ve metne işleme: `{camera}`, `{lens}`, `{aperture}`, `{shutter}`, `{iso}`, `{focal}`.
-* **Özel Logo Ekleme:** Harici PNG logolarını Lanczos3 yeniden örnekleme ve alfa şeffaflığıyla fotoğrafa işleme.
-* **Canlı Tuval Önizlemesi:** Yeniden render beklemeden tuval üzerinde sıfır gecikmeli canlı filigran önizlemesi.
-* **Dışa Aktarım Entegrasyonu:** JPEG XL, AVIF, WebP, TIFF 16-bit, PNG ve JPEG dosyalarına doğrudan kalıcı gömme.
-
-### 4. Kesinlikle Tahribatsız (Non-Destructive) RAW İş Akışı
-* **Orijinal RAW Dosyaları Asla Değiştirilmez:** Sensör RAW dosyaları yalnızca salt okunur (read-only) açılır; kaynak dosyanın hiçbir baytı üzerine yazılmaz.
-* **Parametrik Yan Dosya (Sidecar) Mimarisi:** Tüm düzenlemeler, renk derecelendirmeleri, kırpmalar ve meta veriler atomik `.omastudio` JSON dosyalarında Mod 0600 izinleriyle saklanır.
-
-### 5. Yüksek Hassasiyetli 16-Bit / 26-Bit Orta Format Motoru
-* **Orta Format Sensör Desteği:** Fujifilm GFX serisi (GFX 100 II, GFX 100S, GFX 50S), Hasselblad (`.3FR`, `.DNG`) ve Phase One 16-bit 100+ MP devasa sensörler.
-* **16-Bit Matematiksel İşleme:** Derin gölge (+4 EV, +100 Shadows) ve aşırı ışık kurtarmalarında basamaklanmayı (banding) önleyen 48-bit RGB matrisi.
-* **Master 16-Bit Çıktı:** Sergi ve arşiv baskıları için gerçek 16-bit TIFF ve 16-bit PNG üretimi.
-
-### 6. Deterministik Bilgisayarlı Görü & Çevrimdışı JEV Motoru
-* **Doğrusal Ansel Adams Zone Pozlama:** Pozlama telafisini doğrusal aydınlık üzerinden hesaplar; 99. yüzdelik tavan korumasıyla parlak alan patlamalarını önler.
-* **Planckian Kara Cisim AWB:** 2400K ile 9500K aralığında sürekli renk sıcaklığı (CCT) tahmini.
-* **123 Derece Ten Çizgisi Vektorskop Koruması:** Cilt tonu renklerini ortam doygunluğundan bağımsız olarak vektorskop üzerinde koruma altına alır.
-* **Çoklu İpucu Belirginlik (Saliency) & Üçler Kuralı:** Kompozisyon analiziyle otomatik akıllı kadrajlama.
-* **Çevrimdışı JEV Zekası:** İnternet veya harici API erişimi bulunmadığında dahi yerel Bayes karar motoruyla stüdyo seviyesinde otomatik reçeteler oluşturur.
-
-### 7. DaVinci Resolve Kalitesinde Renk Bilimi & Canlı Skoplar
-* **Contrast Pivot:** S-eğrisi merkez noktasını (0.05-0.95, varsayılan 0.435) gölgeleri ezmeden genişletme.
-* **DaVinci Color Boost:** Düşük doymuş renkleri yükseltirken doymuş alanları patlamadan koruyan doğrusal olmayan kroma artırıcı.
-* **Midtone Detail (MD):** Frekans ayrıştırma ile orta frekansları izole ederek mikro doku keskinleştirme veya cilt yumuşatma.
-* **Canlı Video Skopları (60+ FPS):** Luma Waveform, RGB Parade ve 123 derece ten çizgili Vektorskop.
-* **3D LUT Motoru (.cube):** Donanım düzeyinde trilineer enterpolasyon ve yerleşik sinema profilleri.
-* **Yerel Derecelendirme Sürümleri (A/B/C/D):** `Alt + 1..4` kısayollarıyla anında sürüm dallanması ve klonlama.
-
-### 8. Capture One Kalitesinde Ten Rengi Tekdüzeliği (Skin Tone Uniformity)
-* **Algısal Oklch Ten Çizgisi:** 50° renk açısı ve yükseltilmiş kosinüs (raised-cosine) üyelik fonksiyonu ile insan ten tonlarını saç, dudak veya arka plana taşmadan hassasiyetle izole eder.
-* **Ton ve Doygunluk Homojenleştirme:** Doğal dokuyu ve mikro geçişleri kaybetmeden ciltteki kızarıklık, leke ve renk dalgalanmalarını hedef referans renge pürüzsüzce yaklaştırır.
-* **Kayıpsız Ayar Aralığı:** Hedef ten açısı, ton homojenlik miktarı ve doygunluk homojenlik miktarı üzerinde tam parametrik denetim.
-
-### 9. DaVinci 3x3 RGB Birincil Matris Mikseri (RGB Mixer)
-* **Renk Uzmanı Çapraz Karışım Matrisi:** Kırmızı, yeşil ve mavi çıkış kanallarının giriş R, G ve B bileşenlerini istenen oranlarda harmanlamasını sağlayan tam $3 \times 3$ matris.
-* **Monokrom Yoğunluk Simülasyonu:** Kanallar arası parlaklık tutarlılığını koruyarak stilize baskı tonları, cross-process bleach-bypass ve klasik ortokromatik/pankromatik siyah-beyaz işlemeler üretir.
-* **Hazır Ayar Profilleri:** Pankromatik, Ortokromatik, Kızılötesi (Infrared) ve Bleach Bypass için tek tıkla uygulanan profiller.
-
-### 10. Gümüş Halojenür Fotokimyasal Film Greni (Film Grain)
-* **Parlaklığa Bağlı Gren Tepkisi:** Fotokimyasal parabolik eğri ($4.0 \cdot Y \cdot (1 - Y)$) sayesinde greni doğal olarak orta tonlarda yoğunlaştırır; derin gölgelerde ve parlak vurgularda organik biçimde sönümler.
-* **Fiziksel Gren Yapısı:** Deterministik karma algoritmasıyla gren miktarı (0-100), gren boyutu (0.5 - 3.0) ve pürüzlülük/sertlik üzerinde tam parametrik kontrol.
-
-### 11. Katmanlı Bölgesel Maske Ayarları (Local Layered Masks)
-* **Doğrusal Gradyan Maskeleri:** Gökyüzünü koyulaştırma ve ufuk dengesi için konumu, açısı ve yumuşak geçişi (feather) ayarlanabilir rampa maskeleri.
-* **Radyal Gradyan Maskeleri:** Konu vurgusu ve vinyet efektleri için bağımsız merkez koordinatları, yatay/dikey yarıçap, rotasyon ve geçiş payına sahip eliptik maskeler.
-* **Parlaklık (Luma) Aralığı Maskeleri:** Yalnızca vurguları, gölgeleri veya orta ton aralıklarını pürüzsüz geçiş sınırlarıyla hedefleyen ışık şiddeti maskeleri.
-* **Bölgesel Düzeltmeler:** Her katman bağımsız pozlama, kontrast, doygunluk ve renk sıcaklığı (tint) düzeltmeleri uygular.
-
-### 12. Lightroom Kalitesinde Stüdyo Ayıklama, Derecelendirme ve Toplu Yönetim
-* **Anında 1-5 Yıldız ve Seçildi/Reddedildi Bayrakları:** Klavye odaklı hızlı ayıklama iş akışı (yıldızlar için `1`-`5`, temizlemek için `0`, Seçildi için `P`, Reddedildi için `X`, kaldırmak için `U`).
-* **Film Şeridi Görsel Rozetleri:** Film şeridi küçük resimlerinde doğrudan bayrak ve yıldız durum göstergeleri.
-* **Yüksek Hızlı Toplu Senkronizasyon:** `Ctrl + Shift + C` ile tüm reçeteyi kopyalayıp `Ctrl + Shift + V` ile tek veya çoklu fotoğraflara anında yapıştırma.
-
-### 13. Wayland & Hyprland 120Hz/144Hz Sıfır Titreme Mimarisi
-* **Çift Tamponlu Paylaşımlı Bellek:** `/dev/shm` ping-pong çerçeve tamponlarıyla slider hareketlerinde sıfır titreme.
-* **Mac Kalitesinde Touchpad Ergonomisi:** Kesintisiz logaritmik yakınlaştırma, 3.5 derece ölü bölgeli akıllı rotasyon ve kinetik süzülme.
-
----
-
-## Karşılaştırma Tablosu
-
-| Özellik | OmaStudio | Adobe Lightroom | Darktable | RawTherapee |
-| :--- | :---: | :---: | :---: | :---: |
-| **Lisans & Özgürlük** | **Açık Kaynak (MIT)** | Tescilli / Aylık Abonelik | GPLv3 | GPLv3 |
-| **Masaüstü Uyumu** | **Omarchy & Quickshell** | Yalnızca macOS / Windows | GTK | GTK |
-| **ACES 1.3 & RGC** | **Doğal ACEScg / ACEScc / RGC**| Kısmi / Eklenti Gerekir | Karmaşık Modüller | Karmaşık Profiller |
-| **Film Benzetimleri** | **Orijinal Fuji & Hasselblad** | Hazır Ayar Paketleri | Eğriler | HaldCLUT |
-| **Filigran Motoru** | **9 Nokta Izgara & EXIF** | Yalnızca Dışa Aktarım | Filigran Modülü | Filigran Modülü |
-| **DaVinci Renk Bilimi** | **Doğal (Pivot / Boost / MD)** | Kısmi | Karmaşık Modüller | Karmaşık Profiller |
-| **Gerçek Zamanlı Skoplar** | **Waveform, Parade, Vektorskop** | Yalnızca Histogram | Ayrı Pencereler | Ayrı Sekmeler |
-| **3D LUT (.cube) & Karışım**| **Donanım Trilineer & Hazır Ayar**| Profil Kütüphanesi | LUT Modülü | Yalnızca HaldCLUT |
-| **Yerel Sürümler (A/B/C/D)** | **Kısayol ile Anında Geçiş** | Anlık Görüntüler | Geçmiş Yığınları | Anlık Görüntüler |
-| **JPEG XL / AVIF Çıktısı** | **Donanım Hızlandırmalı** | Kısıtlı | Eklenti ile | Kısmi |
-| **Katalog & DAM**        | **Studio Yerel DAM (.omastudio)** | Adobe Cloud (Zorunlu) | Özel Veritabanı | XML Sidecar'lar |
-| **Bellek Tüketimi** | **Hafif (~35 MB RAM)** | Ağır (2+ GB RAM) | Orta (~400 MB) | Orta (~350 MB) |
-
----
-
-## Kurulum ve Kullanım
-
-### Sistem Gereksinimleri
-* `libraw` (RAW kod çözme motoru)
-* `quickshell` (Qt 6 QML masaüstü kabuk çalışma zamanı)
-* `libjxl` & `libavif` (Modern donanım ivmeli görsel kodekleri)
-* `zenity` (Masaüstü dosya seçim pencereleri)
-* `rust`, `clang`, `pkgconf` (Yerel motor derleme araç zinciri)
+* Wayland ve Hyprland ile Omarchy (Arch Linux)
+* `libraw` 0.22 veya üstü, `lcms2`, `qt6-base`, `qt6-declarative` ve `qt6-wayland` 6.12 veya üstü
+* `quickshell` yalnızca Omarchy çubuğundaki düğme için
+* Dosya pencereleri için `zenity`
+* Derlemek için: Rust 1.99.1 veya üstü (`rust-toolchain.toml` içinde sabit), `clang`, `pkgconf`
 
 İsteğe bağlı:
-* `exiftool` (`perl-image-exiftool`): Dışa aktarımda EXIF verisini korur ve ICC profilini gömer. Yoksa geniş gamlı dışa aktarımlar (Adobe RGB, ProPhoto) sRGB'ye düşer.
-* `ffmpeg`: Yerleşik kodlayıcı başarısız olursa AVIF dışa aktarımı için yedek.
+* `perl-image-exiftool`: dışa aktarılan dosyalarda EXIF bilgilerini korur.
+* `ffmpeg`: yerleşik kodlayıcı başarısız olursa AVIF dışa aktarımı için kullanılır.
+* `onnxruntime`: yerel yapay zekâ maskelerini çalıştırır. Donanımınızın yürütme sağlayıcısını (OpenVINO, QNN, Vitis AI, CUDA, MIGraphX) içeren bir derleme NPU'yu veya GPU'yu kullanır.
 
-### Yerel Derleme ve Kurulum
+---
+
+## Kurulum
+
+### Paket
+
 ```bash
-# Projeyi derleyin
-cargo build --release --locked
+makepkg -si
+```
 
-# Motoru, başlatıcıyı, arayüzü ve ICC profillerini yerel olarak kurun
+Paket şunları kurar: uygulama, motor, ICC profilleri ve bir udev kuralı (`70-omastudio-cameras.rules`). Bu kural, oturum açmış kullanıcıya PTP modundaki Fujifilm kameralara USB erişimi verir.
+
+### Yerel derleme
+
+```bash
+cargo build --release --locked --workspace
+
 install -Dm755 target/release/omastudio-engine ~/.local/bin/omastudio-engine
+install -Dm755 target/release/omastudio-app ~/.local/bin/omastudio-app
 install -Dm755 omastudio ~/.local/bin/omastudio
 install -d ~/.local/share/omastudio/icc
-cp -r qml ~/.local/share/omastudio/
 install -m644 assets/icc/*.icc ~/.local/share/omastudio/icc/
 
-# OmaStudio uygulamasını başlatın
 omastudio
 ```
 
----
+### Dosyalar
 
-## Klavye Kısayolları
-
-* `Ctrl + O`: RAW dosya açma penceresi
-* `Ctrl + S`: Ayar yan dosyasını kaydet (`.omastudio`, Mod 0600)
-* `Alt + 1..4`: Derecelendirme sürümleri arasında geçiş (A, B, C, D)
-* `1` - `5`: Seçili fotoğrafa yıldız derecelendirmesi ata (1 - 5 Yıldız)
-* `0`: Yıldız derecelendirmesini temizle
-* `P`: Fotoğrafı "Seçildi" (Pick) olarak işaretle
-* `X`: Fotoğrafı "Reddedildi" (Reject) olarak işaretle
-* `U`: Seçildi / Reddedildi işaretini kaldır
-* `C`: Kırpma ve kompozisyon kılavuzlarını aç/kapat (Üçler Kuralı, Altın Oran, Fibonacci)
-* `Y`: Önce / Sonra (A|B) bölünmüş karşılaştırma
-* `Ctrl + Shift + C`: Ayarları panoya kopyala
-* `Ctrl + Shift + V`: Ayarları geçerli fotoğrafa yapıştır
-* `Ctrl + R`: Tüm ayarları varsayılanlara sıfırla
-* `Çift Tıklama`: Ekrana Sığdır (%100) ve Birebir Piksel İnceleme (%200) arasında geçiş
+| Yol | İçerik |
+| :--- | :--- |
+| `~/.local/share/omastudio/catalog.json` | Katalog: puanlar, bayraklar, renk etiketleri |
+| `~/.local/share/omastudio/fuji-recipes/` | Kaydedilmiş Fujifilm tarifleri (.FP1) |
+| `~/.local/share/omastudio/icc/` | Özel ICC profilleri |
+| `~/.local/share/omastudio/models/` | Yerel yapay zekâ modelleri (`subject.onnx`, `sky.onnx`) |
+| `~/.local/share/omastudio/masks/` | Yapay zekâ modellerinin ürettiği maskeler |
+| `~/.config/omastudio/` | Ayarlar |
+| `~/.cache/omastudio/` | Küçük resimler ve önizlemeler |
+| `<fotoğraf>.omastudio` | Fotoğrafın ayarları (yan dosya) |
 
 ---
 
-## Güvenlik Standartları (`CONTRIBUTING.md`)
+## Komut satırı
 
-OmaStudio, Omarchy Linux Güvenlik Standartlarına tam uyum sağlar:
-1. **İzole Süreç Grupları (`cmd.process_group(0)`):** Alt süreçler bağımsız PGID altında çalıştırılır; zaman aşımında RAII `ProcessGroupGuard` ile temizlenir ve zombi süreç bırakmaz.
-2. **Korumalı Dosya İzinleri (`0600` / `0700`):** Yapılandırma ve kataloglar atomik geçici dosyalarla Mod 0600 olarak kaydedilir; sembolik bağlar reddedilir.
-3. **Quickshell Sertleştirmesi:** Dinamik metinler `textFormat: Text.PlainText` ile güvenli şekilde render edilir; dinamik `eval()` kullanımı kesinlikle yasaktır.
-4. **Argüman Enjeksiyonu Savunması:** Harici komutlar ayrık argüman dizisi ve `--` bayrağı ile yürütülür.
+```bash
+omastudio-engine inspect <raw>                     # meta veri, histogram, sahne analizi
+omastudio-engine export <raw> --recipe '<json>' --options '<json>'
+omastudio-engine fuji-recipe <raf|jpg|fp1|txt>     # Fujifilm tarifini oku
+omastudio-engine fuji-recipe list                  # kaydedilmiş tarifler
+omastudio-engine fuji-recipe save <dosya> --label "Ad"
+omastudio-engine fuji-recipe export <dosya> cikti.FP1 --device X-T30
+omastudio-engine fuji-pixel-shift DSCF*.RAF --out birlesik.dng # GFX Pixel Shift → DNG
+omastudio-engine fuji-camera info | presets      # USB'deki kamera, C1-C7 özel ayarları
+omastudio-engine fuji-camera write-preset C3 tarif.FP1
+omastudio-engine fuji-camera convert DSCF0001.RAF --recipe tarif.FP1
+omastudio-engine xmp export <raw>                  # Lightroom / Capture One / darktable yan dosyası
+omastudio-engine xmp import <raw> [--save]
+omastudio-engine gpu                               # kullanılan GPU (yalnızca CPU için OMASTUDIO_GPU=off)
+omastudio-engine npu                               # ONNX Runtime, NPU/GPU sağlayıcıları ve yerel modeller
+omastudio-engine ai-mask <raw> --kind subject|sky  # yerel modelle maske
+omastudio-engine icc list
+omastudio-engine help
+```
+
+Tüm komutlar JSON çıktı verir. Bu sayede Omarchy ajanları ve betikler onları doğrudan kullanabilir.
 
 ---
 
-## Destek ve Geliştirme
+## Yapay zekâ ajanları
 
-OmaStudio projesini faydalı buluyor ve bağımsız açık kaynak Linux yazılım ekosistemini desteklemek istiyorsanız:
+`omastudio mcp` bir Model Context Protocol sunucusudur (stdio). Omarchy'deki her MCP istemcisi bununla fotoğrafları inceleyebilir, işleyebilir, ayıklayabilir ve dışa aktarabilir; Fujifilm tariflerini okuyup uygulayabilir; USB'deki kamerayı kullanabilir ve açık pencereyi yönetebilir (fotoğraf açma, tarif uygulama, ayar, yakınlaştırma, ekran görüntüsü). İşlenmiş önizlemeler ve pencere görüntüleri resim olarak döner.
 
-<a href="https://buymeacoffee.com/ozdil" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 50px !important;width: 180px !important;" ></a>
+```bash
+claude mcp add omastudio -- omastudio mcp    # Claude Code
+omastudio skill                              # ajan skill'ini ~/.claude/skills içine kurar
+```
+
+Diğer istemciler (opencode, Codex, Gemini CLI, ...) MCP sunucu ayarlarında aynı komutu, `omastudio mcp`, kullanır. Skill dosyası (`skill/omastudio/SKILL.md`, `/usr/share/omastudio/skill` altına kurulur) araçları, komut satırını ve tarif biçimini anlatır.
+
+### Düzenleme asistanı
+
+Düzenleyicideki yapay zekâ asistanı, düz cümleyle yazılan bir isteği ayarlara dönüştürür. Claude, OpenAI, OpenRouter, Gemini ya da yerel Ollama veya LM Studio modeli kullanılabilir. Anahtarlar masaüstü anahtar zincirinde saklanır:
+
+```bash
+omastudio ai key anthropic          # anahtarı yapıştırıp Enter'a basın (secret-tool ile saklanır)
+omastudio ai use ollama llava       # ya da: anthropic, openai <model>, openrouter <model>, gemini <model>, lmstudio
+omastudio ai edit DSCF0001.RAF --prompt "daha sıcak, gökyüzünü kurtar"
+```
+
+### Yerel yapay zekâ maskeleri
+
+Katmanlar panelindeki "+ AI SUBJECT" ve "+ AI SKY" düğmeleri, bu bilgisayarda çalışan bir bölütleme modelinin maskesiyle yerel bir ayar katmanı ekler; fotoğraf bilgisayardan çıkmaz. OmaStudio, kuruluysa ONNX Runtime'ı (`onnxruntime`) kullanır ve sunduğu en hızlı yürütme sağlayıcısını seçer: önce NPU (Intel Core Ultra'da OpenVINO, Snapdragon X'te QNN, AMD Ryzen AI'da Vitis AI), sonra GPU (CUDA, MIGraphX, OpenVINO, WebGPU), en son CPU. Hiçbir model pakete eklenmez ya da indirilmez. Bir ONNX bölütleme modelini (örneğin U²-Net, IS-Net veya BiRefNet gibi bir belirgin nesne modelinin ONNX'e aktarılmış hâli) `~/.local/share/omastudio/models` altına `subject.onnx` ya da `sky.onnx` adıyla koyun. Model `[1, 3, H, W]` RGB alır ve maske döndürür. Model ImageNet normalleştirmesini 1024 piksel üzerinde kullanmıyorsa yanına konan bir `subject.json` dosyası `mean`, `std` ve `size` değerlerini belirleyebilir.
+
+```bash
+omastudio npu                                  # çalışma zamanı, hızlandırıcılar, kurulu modeller
+OMASTUDIO_NPU=openvino-npu omastudio ai-mask DSCF0001.RAF --kind subject
+```
+
 
 ---
+
+## Klavye kısayolları
+
+| Tuş | İşlem |
+| :--- | :--- |
+| `Ctrl + O` | Fotoğraf aç |
+| `Ctrl + S` | Ayarları kaydet |
+| `Alt + 1..4` | A–D sürümleri arasında geçiş |
+| `1`–`5`, `0` | Yıldız puanı ver veya temizle |
+| `P`, `X`, `U` | Seç, ele, bayrağı kaldır |
+| `C` | Kırpma ve kompozisyon kılavuzları |
+| `Y` | Önce/sonra bölünmüş görünüm |
+| `Ctrl + Shift + C` / `V` | Ayarları kopyala / yapıştır |
+| `Ctrl + R` | Ayarları sıfırla |
+| Çift tıklama | Sığdır ve 1:1 görünüm arasında geçiş |
+
+---
+
+## Güvenlik
+
+* RAW dosyaları salt okunur açılır ve asla değiştirilmez.
+* Katalog, ayarlar ve yan dosyalar `0600` izniyle atomik olarak yazılır. Sembolik bağlantılar reddedilir.
+* Motorun okuduğu her dosyanın bir boyut sınırı vardır. Çalıştırdığı her harici programın bir süre sınırı ve kendi süreç grubu vardır.
+* API anahtarları komut satırında asla geçirilmez.
+* Arayüz tüm dinamik metni düz metin olarak gösterir ve hiçbir zaman kod çalıştırmaz.
+
+Ayrıntılar [SECURITY.md](SECURITY.md) ve [CONTRIBUTING.md](CONTRIBUTING.md) dosyalarındadır.
+
+---
+
+## Yol haritası
+
+Sıradaki planlar:
+* Tüm düzenleme hattının GPU'ya taşınması (demozaik zaten GPU'da)
+* NPU ile hızlandırılan yerel yapay zekâ özellikleri
+
+---
+
+## Destek
+
+OmaStudio bağımsız bir açık kaynak yazılımdır. Geliştirmeyi [Buy Me a Coffee](https://buymeacoffee.com/ozdil) üzerinden destekleyebilirsiniz.
 
 ## Lisans
-MIT Lisansı (c) 2026 Ozan Özdil
+
+MIT Lisansı © 2026 Ozan Özdil

@@ -1,6 +1,7 @@
 //! Regression tests for bugs fixed in the full-stack review.
 
 use omastudio_engine::pipeline::film_sim::FilmSimulation;
+use omastudio_engine::pipeline::transfer::Transfer;
 use omastudio_engine::recipe::Recipe;
 use omastudio_engine::security::{atomic_write_secure, ensure_secure_dir};
 use std::fs;
@@ -104,8 +105,10 @@ fn split_before_half_is_not_gamma_encoded_twice() {
     let v = (0.2f32 * 65535.0) as u16;
     let input = vec![v; 8 * 2 * 3];
     let (out, _) = process_split_comparison_16_to_8(&input, 8, 2, 3, &Recipe::default(), 1.0);
-    // Pixel 0 lies in the BEFORE half: 0.2 must map to ~51, not ~124 (sRGB OETF again)
-    assert!((out[0] as i32 - 51).abs() <= 1, "before value {}", out[0]);
+    // Pixel 0 lies in the BEFORE half: linear 0.2 is display-encoded exactly once with
+    // the buffer's BT.709 curve (~104), not passed through raw (~51) or encoded twice (~170).
+    let once = (Transfer::bt709().encode(0.2) * 255.0).round() as i32;
+    assert!((out[0] as i32 - once).abs() <= 1, "before value {} (want {})", out[0], once);
 }
 
 #[test]
@@ -117,4 +120,21 @@ fn export_profile_names_map_to_decoder_spaces() {
     assert_eq!(S::from_profile_name("Rec2020"), Some(S::Rec2020));
     assert_eq!(S::from_profile_name("sRGB"), Some(S::Srgb));
     assert_eq!(S::from_profile_name("ACEScg"), None);
+}
+
+#[test]
+fn exposure_is_a_true_ev_step_on_linear_light() {
+    use omastudio_engine::pipeline::process_buffer_16_to_8;
+    let flat = |linear: f32| vec![(linear * 65535.0).round() as u16; 8 * 8 * 3];
+    let plus_one = Recipe { exposure: 1.0, ..Recipe::default() };
+    // +1 EV on linear 0.1 must render like linear 0.2 at 0 EV: exposure doubles light
+    // before the display curve, not the encoded value after it.
+    let (brightened, _) = process_buffer_16_to_8(&flat(0.1), 8, 8, 3, &plus_one);
+    let (reference, _) = process_buffer_16_to_8(&flat(0.2), 8, 8, 3, &Recipe::default());
+    assert!(
+        (brightened[27 * 3] as i32 - reference[27 * 3] as i32).abs() <= 1,
+        "+1 EV {} vs reference {}",
+        brightened[27 * 3],
+        reference[27 * 3]
+    );
 }

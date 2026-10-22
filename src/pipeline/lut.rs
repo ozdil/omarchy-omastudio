@@ -199,13 +199,13 @@ impl Lut3D {
 pub fn read_cube_file<P: AsRef<Path>>(path: P) -> Result<Lut3D, String> {
     let p = path.as_ref();
 
-    // HANCORE Security: reject symlinks
+    // Reject symlinks
     let meta = fs::symlink_metadata(p).map_err(|e| format!("Cannot stat LUT file: {}", e))?;
     if meta.file_type().is_symlink() {
         return Err("Security violation: symlink rejected for LUT file".to_string());
     }
 
-    // HANCORE Security: Max 12 MiB limit for up to 65^3 cinematic LUT tables
+    // Max 12 MiB limit for up to 65^3 cinematic LUT tables
     const MAX_SIZE: u64 = 12 * 1024 * 1024;
     let file = fs::File::open(p).map_err(|e| format!("Cannot open LUT file: {}", e))?;
     let limited = file.take(MAX_SIZE + 1);
@@ -250,13 +250,13 @@ pub fn read_cube_file<P: AsRef<Path>>(path: P) -> Result<Lut3D, String> {
             domain_max[0] = parts[1].parse().unwrap_or(1.0);
             domain_max[1] = parts[2].parse().unwrap_or(1.0);
             domain_max[2] = parts[3].parse().unwrap_or(1.0);
-        } else if parts.len() >= 3 {
-            if let (Ok(r), Ok(g), Ok(b)) = (parts[0].parse::<f32>(), parts[1].parse::<f32>(), parts[2].parse::<f32>()) {
-                if r.is_finite() && g.is_finite() && b.is_finite() {
-                    table.push([r, g, b]);
-                } else {
-                    return Err("Non-finite float detected in LUT file".to_string());
-                }
+        } else if parts.len() >= 3
+            && let (Ok(r), Ok(g), Ok(b)) = (parts[0].parse::<f32>(), parts[1].parse::<f32>(), parts[2].parse::<f32>())
+        {
+            if r.is_finite() && g.is_finite() && b.is_finite() {
+                table.push([r, g, b]);
+            } else {
+                return Err("Non-finite float detected in LUT file".to_string());
             }
         }
     }

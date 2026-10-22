@@ -9,6 +9,12 @@
 //! - Hasselblad XPan 65:24 Panoramic Character.
 
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
+use std::path::PathBuf;
+use std::sync::{Arc, Mutex};
+use std::time::SystemTime;
+
+use super::lut::{self, Lut3D};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default, Serialize, Deserialize)]
 pub enum FilmSimulation {
@@ -22,11 +28,19 @@ pub enum FilmSimulation {
     FujiClassicNeg,
     FujiNostalgicNeg,
     FujiProNegHi,
+    FujiProNegStd,
+    FujiRealaAce,
     FujiEterna,
+    FujiEternaBleachBypass,
     FujiAcrosStandard,
     FujiAcrosYellow,
     FujiAcrosRed,
     FujiAcrosGreen,
+    FujiMonochrome,
+    FujiMonochromeYellow,
+    FujiMonochromeRed,
+    FujiMonochromeGreen,
+    FujiSepia,
     // Hasselblad
     HasselbladHncs,
     HasselbladXPan,
@@ -42,7 +56,15 @@ impl FilmSimulation {
             "fuji_classic_neg" | "classic_neg" => Self::FujiClassicNeg,
             "fuji_nostalgic_neg" | "nostalgic_neg" => Self::FujiNostalgicNeg,
             "fuji_pro_neg_hi" | "pro_neg_hi" | "proneghi" => Self::FujiProNegHi,
+            "fuji_pro_neg_std" | "pro_neg_std" | "pronegstd" => Self::FujiProNegStd,
+            "fuji_reala_ace" | "reala_ace" => Self::FujiRealaAce,
             "fuji_eterna" | "eterna" => Self::FujiEterna,
+            "fuji_eterna_bleach_bypass" | "bleach_bypass" => Self::FujiEternaBleachBypass,
+            "fuji_monochrome" | "monochrome" => Self::FujiMonochrome,
+            "fuji_monochrome_yellow" | "monochrome_yellow" => Self::FujiMonochromeYellow,
+            "fuji_monochrome_red" | "monochrome_red" => Self::FujiMonochromeRed,
+            "fuji_monochrome_green" | "monochrome_green" => Self::FujiMonochromeGreen,
+            "fuji_sepia" | "sepia" => Self::FujiSepia,
             "fuji_acros" | "acros" | "acros_standard" => Self::FujiAcrosStandard,
             "fuji_acros_yellow" | "acros_yellow" | "acros_ye" => Self::FujiAcrosYellow,
             "fuji_acros_red" | "acros_red" | "acros_r" => Self::FujiAcrosRed,
@@ -63,7 +85,15 @@ impl FilmSimulation {
             Self::FujiClassicNeg => "fuji_classic_neg",
             Self::FujiNostalgicNeg => "fuji_nostalgic_neg",
             Self::FujiProNegHi => "fuji_pro_neg_hi",
+            Self::FujiProNegStd => "fuji_pro_neg_std",
+            Self::FujiRealaAce => "fuji_reala_ace",
             Self::FujiEterna => "fuji_eterna",
+            Self::FujiEternaBleachBypass => "fuji_eterna_bleach_bypass",
+            Self::FujiMonochrome => "fuji_monochrome",
+            Self::FujiMonochromeYellow => "fuji_monochrome_yellow",
+            Self::FujiMonochromeRed => "fuji_monochrome_red",
+            Self::FujiMonochromeGreen => "fuji_monochrome_green",
+            Self::FujiSepia => "fuji_sepia",
             Self::FujiAcrosStandard => "fuji_acros_standard",
             Self::FujiAcrosYellow => "fuji_acros_yellow",
             Self::FujiAcrosRed => "fuji_acros_red",
@@ -83,7 +113,15 @@ impl FilmSimulation {
             Self::FujiClassicNeg => "Fujifilm Classic Neg",
             Self::FujiNostalgicNeg => "Fujifilm Nostalgic Neg (GFX)",
             Self::FujiProNegHi => "Fujifilm PRO Neg. Hi (Studio)",
+            Self::FujiProNegStd => "Fujifilm PRO Neg. Std",
+            Self::FujiRealaAce => "Fujifilm Reala Ace",
             Self::FujiEterna => "Fujifilm Eterna Cinema",
+            Self::FujiEternaBleachBypass => "Fujifilm Eterna Bleach Bypass",
+            Self::FujiMonochrome => "Fujifilm Monochrome",
+            Self::FujiMonochromeYellow => "Fujifilm Monochrome (+Ye)",
+            Self::FujiMonochromeRed => "Fujifilm Monochrome (+R)",
+            Self::FujiMonochromeGreen => "Fujifilm Monochrome (+G)",
+            Self::FujiSepia => "Fujifilm Sepia",
             Self::FujiAcrosStandard => "Fujifilm Acros 100",
             Self::FujiAcrosYellow => "Fujifilm Acros 100 (+Ye)",
             Self::FujiAcrosRed => "Fujifilm Acros 100 (+R)",
@@ -100,6 +138,11 @@ impl FilmSimulation {
                 | Self::FujiAcrosYellow
                 | Self::FujiAcrosRed
                 | Self::FujiAcrosGreen
+                | Self::FujiMonochrome
+                | Self::FujiMonochromeYellow
+                | Self::FujiMonochromeRed
+                | Self::FujiMonochromeGreen
+                | Self::FujiSepia
         )
     }
 
@@ -142,7 +185,7 @@ impl FilmSimulation {
                 // Velvia 50: Rich saturation, deep sky blue, vivid landscape foliage, punchy S-curve
                 let curve = |v: f32| -> f32 {
                     let diff = v - 0.50;
-                    (0.50 + (diff * 1.35).tanh() * 0.49).clamp(0.0, 1.0)
+                    s_curve(diff + 0.50, 0.50, 1.35, 0.49)
                 };
                 let r_c = curve(r);
                 let g_c = curve(g);
@@ -180,7 +223,7 @@ impl FilmSimulation {
             Self::FujiClassicChrome => {
                 // Classic Chrome: Documentary muted vibrance, cyan-tinted blues, hard midtone contrast
                 let diff = luma - 0.42;
-                let contrast_luma = (0.42 + (diff * 1.28).tanh() * 0.48).clamp(0.0, 1.0);
+                let contrast_luma = s_curve(diff + 0.42, 0.42, 1.28, 0.48);
                 let luma_ratio = if luma > 1e-4 { contrast_luma / luma } else { 1.0 };
 
                 let mut r_cc = r * luma_ratio;
@@ -201,7 +244,7 @@ impl FilmSimulation {
             Self::FujiClassicNeg => {
                 // Classic Neg: Superia nostalgia, warm amber highlights, rich cool shadows
                 let diff = luma - 0.48;
-                let s_curve = (0.48 + (diff * 1.32).tanh() * 0.50).clamp(0.0, 1.0);
+                let s_curve = s_curve(diff + 0.48, 0.48, 1.32, 0.50);
                 let ratio = if luma > 1e-4 { s_curve / luma } else { 1.0 };
 
                 let mut r_cn = r * ratio;
@@ -227,7 +270,7 @@ impl FilmSimulation {
                 // Nostalgic Neg (GFX 100S Debut): Warm amber highlights, rich deep magenta/cyan shadows,
                 // and distinct American New Color photography tones (William Eggleston / Stephen Shore).
                 let diff = luma - 0.45;
-                let s_curve = (0.45 + (diff * 1.22).tanh() * 0.48).clamp(0.0, 1.0);
+                let s_curve = s_curve(diff + 0.45, 0.45, 1.22, 0.48);
                 let ratio = if luma > 1e-4 { s_curve / luma } else { 1.0 };
 
                 let mut r_nn = r * ratio;
@@ -254,7 +297,7 @@ impl FilmSimulation {
                 // PRO Neg. Hi: Professional studio portrait profile with slightly higher contrast,
                 // neutral skin tones, and rich controlled highlight roll-off.
                 let diff = luma - 0.50;
-                let contrast_luma = (0.50 + (diff * 1.15).tanh() * 0.48).clamp(0.0, 1.0);
+                let contrast_luma = s_curve(diff + 0.50, 0.50, 1.15, 0.48);
                 let ratio = if luma > 1e-4 { contrast_luma / luma } else { 1.0 };
 
                 let r_pn = contrast_luma + (r * ratio - contrast_luma) * 1.02;
@@ -274,6 +317,71 @@ impl FilmSimulation {
                 let g_e = flat_luma + (g * ratio - flat_luma) * 0.70;
                 let b_e = flat_luma + (b * ratio - flat_luma) * 0.70;
                 (r_e.clamp(0.0, 1.0), g_e.clamp(0.0, 1.0), b_e.clamp(0.0, 1.0))
+            }
+
+            Self::FujiProNegStd => {
+                // PRO Neg. Std: the softest colour simulation, low contrast and restrained
+                // saturation for even studio skin tones
+                let diff = luma - 0.50;
+                let soft = s_curve(diff + 0.50, 0.50, 0.92, 0.50);
+                let ratio = if luma > 1e-4 { soft / luma } else { 1.0 };
+                let k = 0.90;
+                (
+                    (soft + (r * ratio - soft) * k).clamp(0.0, 1.0),
+                    (soft + (g * ratio - soft) * k).clamp(0.0, 1.0),
+                    (soft + (b * ratio - soft) * k * 0.97).clamp(0.0, 1.0),
+                )
+            }
+
+            Self::FujiRealaAce => {
+                // Reala Ace: faithful hues with a little more contrast than Provia
+                let diff = luma - 0.46;
+                let tone = s_curve(diff + 0.46, 0.46, 1.12, 0.50);
+                let ratio = if luma > 1e-4 { tone / luma } else { 1.0 };
+                (
+                    (tone + (r * ratio - tone) * 1.04).clamp(0.0, 1.0),
+                    (tone + (g * ratio - tone) * 1.03).clamp(0.0, 1.0),
+                    (tone + (b * ratio - tone) * 1.03).clamp(0.0, 1.0),
+                )
+            }
+
+            Self::FujiEternaBleachBypass => {
+                // Bleach Bypass: silver retained in the print, so hard contrast and little colour
+                let diff = luma - 0.45;
+                let hard = s_curve(diff + 0.45, 0.45, 1.55, 0.52);
+                let ratio = if luma > 1e-4 { hard / luma } else { 1.0 };
+                let k = 0.38;
+                (
+                    (hard + (r * ratio - hard) * k).clamp(0.0, 1.0),
+                    (hard + (g * ratio - hard) * k).clamp(0.0, 1.0),
+                    (hard + (b * ratio - hard) * k).clamp(0.0, 1.0),
+                )
+            }
+
+            Self::FujiMonochrome => {
+                let v = eval_mono_curve(0.30 * r + 0.59 * g + 0.11 * b);
+                (v, v, v)
+            }
+
+            Self::FujiMonochromeYellow => {
+                let v = eval_mono_curve(0.42 * r + 0.52 * g + 0.06 * b);
+                (v, v, v)
+            }
+
+            Self::FujiMonochromeRed => {
+                let v = eval_mono_curve(0.66 * r + 0.29 * g + 0.05 * b);
+                (v, v, v)
+            }
+
+            Self::FujiMonochromeGreen => {
+                let v = eval_mono_curve(0.22 * r + 0.68 * g + 0.10 * b);
+                (v, v, v)
+            }
+
+            Self::FujiSepia => {
+                // Monochrome toned warm brown; all channels from one luminance
+                let v = eval_mono_curve(0.30 * r + 0.59 * g + 0.11 * b);
+                ((v * 1.07).min(1.0), v * 0.94, v * 0.76)
             }
 
             Self::FujiAcrosStandard => {
@@ -344,7 +452,7 @@ impl FilmSimulation {
             Self::HasselbladXPan => {
                 // Hasselblad XPan: Dramatic cinematic contrast, velvety deep blacks, crisp micro-acutance
                 let diff = luma - 0.45;
-                let xpan_luma = (0.45 + (diff * 1.45).tanh() * 0.52).clamp(0.0, 1.0);
+                let xpan_luma = s_curve(diff + 0.45, 0.45, 1.45, 0.52);
                 let ratio = if luma > 1e-4 { xpan_luma / luma } else { 1.0 };
 
                 let cr = (r * ratio - xpan_luma) * 0.85;
@@ -361,11 +469,95 @@ impl FilmSimulation {
     }
 }
 
+/// Folder of film simulation LUTs calibrated from the user's own photos
+/// (`omastudio-engine fuji-calibrate`), named `<simulation id>.cube`.
+pub fn calibrated_lut_dir() -> PathBuf {
+    let home = std::env::var("HOME").unwrap_or_else(|_| ".".to_string());
+    PathBuf::from(home).join(".local/share/omastudio/film-luts")
+}
+
+type LutCache = HashMap<&'static str, (Option<SystemTime>, Option<Arc<Lut3D>>)>;
+static CALIBRATED: Mutex<Option<LutCache>> = Mutex::new(None);
+
+/// The calibrated LUT for a simulation, if the user made one. Reloaded when the file
+/// changes; `OMASTUDIO_FILM_LUTS=off` uses the built-in approximations only.
+pub fn calibrated_lut(sim: FilmSimulation) -> Option<Arc<Lut3D>> {
+    if sim == FilmSimulation::None || std::env::var("OMASTUDIO_FILM_LUTS").is_ok_and(|v| v == "off") {
+        return None;
+    }
+    let id = sim.as_id();
+    let path = calibrated_lut_dir().join(format!("{}.cube", id));
+    let mtime = std::fs::symlink_metadata(&path).ok().and_then(|m| m.modified().ok());
+    let mut guard = CALIBRATED.lock().ok()?;
+    let cache = guard.get_or_insert_with(HashMap::new);
+    if let Some((cached_mtime, lut)) = cache.get(id)
+        && *cached_mtime == mtime
+    {
+        return lut.clone();
+    }
+    let lut = mtime.and_then(|_| lut::read_cube_file(&path).ok()).map(Arc::new);
+    cache.insert(id, (mtime, lut.clone()));
+    lut
+}
+
+/// Applies a simulation, through its calibrated LUT when one exists.
+#[inline(always)]
+pub fn apply(sim: FilmSimulation, calibrated: Option<&Lut3D>, r: f32, g: f32, b: f32, intensity: f32) -> (f32, f32, f32) {
+    match calibrated {
+        Some(l) => lut::apply_lut_pixel(r, g, b, l, intensity),
+        None => sim.apply_pixel(r, g, b, intensity),
+    }
+}
+
+/// A film S-curve around `pivot`: `pivot + tanh((y - pivot) * k) * amp`, rescaled so
+/// black stays black and white stays white. The bare tanh curve lifted black to about
+/// 0.2 and capped white near 0.75, which also made the chroma-preserving sims divide
+/// tiny luma values into extreme saturation in the shadows.
+#[inline(always)]
+fn s_curve(y: f32, pivot: f32, k: f32, amp: f32) -> f32 {
+    let f = |v: f32| pivot + ((v - pivot) * k).tanh() * amp;
+    let (lo, hi) = (f(0.0), f(1.0));
+    ((f(y.clamp(0.0, 1.0)) - lo) / (hi - lo)).clamp(0.0, 1.0)
+}
+
+/// Monochrome: a gentler S-curve than Acros
+#[inline(always)]
+fn eval_mono_curve(y: f32) -> f32 {
+    let diff = y.clamp(0.0, 1.0) - 0.46;
+    s_curve(diff + 0.46, 0.46, 1.10, 0.52)
+}
+
 /// Acros high micro-contrast S-curve
 #[inline(always)]
 fn eval_acros_curve(y: f32) -> f32 {
     let diff = y.clamp(0.0, 1.0) - 0.44;
-    (0.44 + (diff * 1.30).tanh() * 0.50).clamp(0.0, 1.0)
+    s_curve(diff + 0.44, 0.44, 1.30, 0.50)
+}
+
+/// Fujifilm Color Chrome Effect and Color Chrome FX Blue.
+///
+/// Deepens highly saturated colours (and, for FX Blue, blues) by lowering their
+/// brightness while keeping hue and saturation, which restores gradation in
+/// saturated areas the way the in-camera effect does. `amount` and `blue` are
+/// 0..=100 (Fuji "Weak" = 50, "Strong" = 100).
+#[inline(always)]
+pub fn apply_color_chrome(r: f32, g: f32, b: f32, amount: f32, blue: f32) -> (f32, f32, f32) {
+    let max = r.max(g).max(b);
+    let min = r.min(g).min(b);
+    if max <= 1e-6 {
+        return (r, g, b);
+    }
+    let sat = ((max - min) / max).clamp(0.0, 1.0);
+    // Saturated, bright colours lose the most gradation, so they get the most depth.
+    let weight = sat * sat * (max.clamp(0.0, 1.0)).sqrt();
+    let mut depth = 0.22 * (amount / 100.0).clamp(0.0, 1.0) * weight;
+    if blue > 0.0 {
+        // Blueness: how far blue leads the other two channels, relative to the chroma.
+        let blueness = ((b - r.max(g)) / (max - min).max(1e-6)).clamp(0.0, 1.0);
+        depth += 0.25 * (blue / 100.0).clamp(0.0, 1.0) * sat * blueness;
+    }
+    let k = 1.0 - depth.min(0.4);
+    (r * k, g * k, b * k)
 }
 
 #[cfg(test)]
@@ -412,5 +604,24 @@ mod tests {
         let (hr, hg, hb) = FilmSimulation::HasselbladHncs.apply_pixel(gray, gray, gray, 1.0);
         assert!((hr - hg).abs() < 1e-4);
         assert!((hg - hb).abs() < 1e-4);
+    }
+    #[test]
+    fn color_chrome_darkens_saturated_colours_only() {
+        let grey = apply_color_chrome(0.6, 0.6, 0.6, 100.0, 100.0);
+        assert_eq!(grey, (0.6, 0.6, 0.6));
+        let (r, g, b) = apply_color_chrome(0.9, 0.1, 0.1, 100.0, 0.0);
+        assert!(r < 0.9 && r > 0.65);
+        // Hue and saturation are kept: channel ratios do not change.
+        assert!((g / r - 0.1 / 0.9).abs() < 1e-5 && (b - g).abs() < 1e-6);
+        let off = apply_color_chrome(0.9, 0.1, 0.1, 0.0, 0.0);
+        assert_eq!(off, (0.9, 0.1, 0.1));
+    }
+
+    #[test]
+    fn fx_blue_targets_blue() {
+        let red = apply_color_chrome(0.9, 0.2, 0.1, 0.0, 100.0);
+        let blue = apply_color_chrome(0.1, 0.2, 0.9, 0.0, 100.0);
+        assert!(red.0 > 0.89);
+        assert!(blue.2 < 0.8);
     }
 }

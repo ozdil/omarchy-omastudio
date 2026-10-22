@@ -1,3 +1,8 @@
+use std::cell::RefCell;
+use std::collections::HashMap;
+use std::path::{Path, PathBuf};
+use std::sync::{Arc, Mutex, OnceLock};
+
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
@@ -21,7 +26,77 @@ pub enum MaskShape {
         max_luma: f32, // 0.0 to 1.0
         falloff: f32,  // 0.0 to 0.5
     },
+    /// A painted or AI-generated mask: a grayscale image in [`masks_dir`], stretched
+    /// over the whole frame
+    Bitmap {
+        path: String,
+    },
 }
+
+/// Where mask images live; a Bitmap path outside it is ignored.
+pub fn masks_dir() -> PathBuf {
+    let home = std::env::var("HOME").unwrap_or_else(|_| ".".into());
+    PathBuf::from(home).join(".local/share/omastudio/masks")
+}
+
+pub struct MaskBitmap {
+    width: usize,
+    height: usize,
+    data: Vec<u8>,
+}
+
+impl MaskBitmap {
+    /// Bilinear weight at normalised frame coordinates
+    fn sample(&self, u: f32, v: f32) -> f32 {
+        let x = (u.clamp(0.0, 1.0) * (self.width - 1) as f32).max(0.0);
+        let y = (v.clamp(0.0, 1.0) * (self.height - 1) as f32).max(0.0);
+        let (x0, y0) = (x as usize, y as usize);
+        let (x1, y1) = ((x0 + 1).min(self.width - 1), (y0 + 1).min(self.height - 1));
+        let (fx, fy) = (x - x0 as f32, y - y0 as f32);
+        let at = |x: usize, y: usize| self.data[y * self.width + x] as f32;
+        let top = at(x0, y0) + (at(x1, y0) - at(x0, y0)) * fx;
+        let bottom = at(x0, y1) + (at(x1, y1) - at(x0, y1)) * fx;
+        (top + (bottom - top) * fy) / 255.0
+    }
+}
+
+fn load_bitmap(path: &str) -> Option<Arc<MaskBitmap>> {
+    let file = Path::new(path);
+    let dir = std::fs::canonicalize(masks_dir()).ok()?;
+    if !std::fs::canonicalize(file).ok()?.starts_with(&dir) {
+        return None;
+    }
+    let bytes = crate::security::read_secure_file(file, 256 << 20).ok()?;
+    let img = image::load_from_memory(&bytes).ok()?.to_luma8();
+    if img.width() == 0 || img.height() == 0 {
+        return None;
+    }
+    Some(Arc::new(MaskBitmap { width: img.width() as usize, height: img.height() as usize, data: img.into_raw() }))
+}
+
+/// Mask images, loaded once per process (mask files are never rewritten: a new mask
+/// gets a new name); a per-thread slot avoids the lock per pixel.
+fn bitmap(path: &str) -> Option<Arc<MaskBitmap>> {
+    thread_local! {
+        static LAST: RefCell<Option<(String, Option<Arc<MaskBitmap>>)>> = const { RefCell::new(None) };
+    }
+    LAST.with(|last| {
+        if let Some((p, m)) = last.borrow().as_ref()
+            && p == path
+        {
+            return m.clone();
+        }
+        static CACHE: OnceLock<Mutex<HashMap<String, Option<Arc<MaskBitmap>>>>> = OnceLock::new();
+        let loaded = CACHE
+            .get_or_init(Default::default)
+            .lock()
+            .map(|mut c| c.entry(path.to_string()).or_insert_with(|| load_bitmap(path)).clone())
+            .unwrap_or(None);
+        *last.borrow_mut() = Some((path.to_string(), loaded.clone()));
+        loaded
+    })
+}
+
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 #[serde(default)]
@@ -138,6 +213,7 @@ pub fn sample_mask_weight(
                 t * t * (3.0 - 2.0 * t)
             }
         }
+        MaskShape::Bitmap { path } => bitmap(path).map(|m| m.sample(u, v)).unwrap_or(0.0),
     };
 
     let w = if invert { 1.0 - raw_weight } else { raw_weight };
@@ -211,6 +287,23 @@ pub fn apply_layers_pixel(
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn bitmap_mask_is_sampled_bilinearly() {
+        // 2x2: black left column, white right column
+        let m = MaskBitmap { width: 2, height: 2, data: vec![0, 255, 0, 255] };
+        assert!(m.sample(0.0, 0.0).abs() < 1e-6);
+        assert!((m.sample(1.0, 1.0) - 1.0).abs() < 1e-6);
+        assert!((m.sample(0.5, 0.3) - 0.5).abs() < 1e-3);
+        // Coordinates outside the frame clamp to the edge
+        assert!((m.sample(2.0, -1.0) - 1.0).abs() < 1e-6);
+    }
+
+    #[test]
+    fn bitmap_outside_masks_dir_is_ignored() {
+        let shape = MaskShape::Bitmap { path: "/etc/hostname".into() };
+        assert_eq!(sample_mask_weight(&shape, false, 1.0, 0.5, 0.5, 0.5), 0.0);
+    }
 
     #[test]
     fn test_linear_gradient_interpolation() {

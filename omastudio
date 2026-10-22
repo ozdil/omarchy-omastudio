@@ -13,7 +13,8 @@ if [ "${OMASTUDIO_SECURE_ENV:-0}" != "1" ]; then
     # when set; dropping them gave the UI the wrong cursor and scale factor.
     SESSION_ENV=()
     for var in XDG_CURRENT_DESKTOP XDG_SESSION_TYPE DBUS_SESSION_BUS_ADDRESS HYPRLAND_INSTANCE_SIGNATURE \
-               XCURSOR_THEME XCURSOR_SIZE QT_QPA_PLATFORMTHEME QT_SCALE_FACTOR QT_AUTO_SCREEN_SCALE_FACTOR; do
+               XCURSOR_THEME XCURSOR_SIZE QT_QPA_PLATFORM QT_QPA_PLATFORMTHEME QT_SCALE_FACTOR QT_SCREEN_SCALE_FACTORS \
+               QT_AUTO_SCREEN_SCALE_FACTOR XDG_ACTIVATION_TOKEN DESKTOP_STARTUP_ID; do
         if [ -n "${!var:-}" ]; then
             SESSION_ENV+=("${var}=${!var}")
         fi
@@ -68,100 +69,66 @@ if [[ ! -x "${BIN}" ]]; then
     fi
 fi
 
-# Locate Quickshell binary
-QUICKSHELL_BIN=""
-if [[ -x /usr/bin/quickshell ]]; then
-    QUICKSHELL_BIN="/usr/bin/quickshell"
-elif [[ -x /usr/local/bin/quickshell ]]; then
-    QUICKSHELL_BIN="/usr/local/bin/quickshell"
-elif [[ -x "${HOME}/.local/bin/quickshell" ]]; then
-    QUICKSHELL_BIN="${HOME}/.local/bin/quickshell"
+# Locate the application next to this script, in ~/.local/bin or in /usr/bin
+APP="${DIR}/omastudio-app"
+if [[ ! -x "${APP}" ]]; then
+    APP="${HOME}/.local/bin/omastudio-app"
 fi
-
-# Resolve QML shell path
-QML_SHELL=""
-if [[ -f "${DIR}/qml/shell.qml" ]]; then
-    QML_SHELL="${DIR}/qml/shell.qml"
-elif [[ -f "${DIR}/../share/omastudio/qml/shell.qml" ]]; then
-    QML_SHELL="${DIR}/../share/omastudio/qml/shell.qml"
-elif [[ -f "${HOME}/.local/share/omastudio/qml/shell.qml" ]]; then
-    QML_SHELL="${HOME}/.local/share/omastudio/qml/shell.qml"
-elif [[ -f "/usr/share/omastudio/qml/shell.qml" ]]; then
-    QML_SHELL="/usr/share/omastudio/qml/shell.qml"
-elif [[ -f "${HOME}/Projects/omarchy/omarchy-omastudio/qml/shell.qml" ]]; then
-    QML_SHELL="${HOME}/Projects/omarchy/omarchy-omastudio/qml/shell.qml"
+if [[ ! -x "${APP}" ]]; then
+    APP="/usr/bin/omastudio-app"
 fi
+# Tell the application which engine binary was resolved
+export OMASTUDIO_ENGINE="${BIN}"
 
-# If CLI arguments passed or --cli flag requested, delegate to binary
-if [[ "${1:-}" == "--cli" ]]; then
-    shift
-    exec "${BIN}" "$@"
-elif [[ "${1:-}" == "ipc" ]]; then
-    shift
-    if [[ -z "${QML_SHELL}" || -z "${QUICKSHELL_BIN}" ]]; then
-        echo "Error: OmaStudio QML shell or quickshell binary not found." >&2
-        exit 1
-    fi
-    if [[ "${1:-}" == "show" ]]; then
-        exec "${QUICKSHELL_BIN}" ipc -p "${QML_SHELL}" show
-    elif [[ "${1:-}" == "call" ]]; then
+case "${1:-}" in
+    --cli)
         shift
-        exec "${QUICKSHELL_BIN}" ipc -p "${QML_SHELL}" call ozdil.omastudio "$@"
-    else
-        exec "${QUICKSHELL_BIN}" ipc -p "${QML_SHELL}" call ozdil.omastudio "$@"
-    fi
-elif [[ "${1:-}" == "--help" || "${1:-}" == "-h" || "${1:-}" == "help" ]]; then
-    exec "${BIN}" help
-elif [[ "${1:-}" == "--version" || "${1:-}" == "-v" || "${1:-}" == "version" ]]; then
-    exec "${BIN}" version
-elif [[ "${1:-}" == "--status" || "${1:-}" == "status" ]]; then
-    exec "${BIN}" status
-elif [[ "${1:-}" == "theme" ]]; then
-    shift
-    if [[ "${1:-}" == "reload" && -n "${QUICKSHELL_BIN}" && -n "${QML_SHELL}" ]]; then
-        exec "${QUICKSHELL_BIN}" ipc -p "${QML_SHELL}" call ozdil.omastudio reloadTheme
-    elif [[ "${1:-}" == "get" && -n "${QUICKSHELL_BIN}" && -n "${QML_SHELL}" ]]; then
-        exec "${QUICKSHELL_BIN}" ipc -p "${QML_SHELL}" call ozdil.omastudio getTheme
-    else
-        exec "${BIN}" theme "$@"
-    fi
-elif [[ $# -gt 0 ]]; then
-    # Check if first arg is an engine subcommand
-    case "${1:-}" in
-        inspect|render|export|ai-auto|ai-social|ai-jev|icc|scan|catalog|dag|daemon)
-            exec "${BIN}" "$@"
-            ;;
-        *)
-            # If it's a file path and quickshell is already running, load via IPC
-            if [[ -f "${1:-}" && -n "${QUICKSHELL_BIN}" && -n "${QML_SHELL}" ]]; then
-                TARGET_PHOTO="$(/usr/bin/realpath "$1")"
-                if "${QUICKSHELL_BIN}" ipc -p "${QML_SHELL}" call ozdil.omastudio openPhoto "${TARGET_PHOTO}" >/dev/null 2>&1; then
-                    echo "Loaded photo in running OmaStudio instance: $1"
-                    exit 0
-                fi
+        exec "${BIN}" "$@"
+        ;;
+    ipc)
+        # `omastudio ipc [call] <method> [args...]`: talk to the running window
+        shift
+        exec "${APP}" ipc "$@"
+        ;;
+    --help|-h|help)
+        exec "${BIN}" help
+        ;;
+    --version|-v|version)
+        exec "${BIN}" version
+        ;;
+    --status|status)
+        exec "${BIN}" status
+        ;;
+    theme)
+        shift
+        case "${1:-}" in
+            reload) exec "${APP}" ipc reloadTheme ;;
+            get) exec "${APP}" ipc getTheme ;;
+            *) exec "${BIN}" theme "$@" ;;
+        esac
+        ;;
+    skill)
+        # `omastudio skill [dir]`: installs the agent skill (default ~/.claude/skills)
+        TARGET="${2:-${HOME}/.claude/skills}"
+        for SRC in "${DIR}/skill/omastudio/SKILL.md" "${HOME}/.local/share/omastudio/skill/omastudio/SKILL.md" \
+                   "/usr/share/omastudio/skill/omastudio/SKILL.md"; do
+            if [[ -f "${SRC}" ]]; then
+                /usr/bin/install -Dm644 "${SRC}" "${TARGET}/omastudio/SKILL.md"
+                echo "Installed ${TARGET}/omastudio/SKILL.md"
+                exit 0
             fi
-            ;;
-    esac
-fi
+        done
+        echo "SKILL.md not found" >&2
+        exit 1
+        ;;
+    inspect|render|export|ai-auto|ai-social|ai-jev|icc|scan|catalog|dag|daemon|gpu|npu|ai-mask|mcp|ai|xmp|fuji-*)
+        exec "${BIN}" "$@"
+        ;;
+esac
 
-# Try quickshell IPC toggle if already running and no args passed
-if [[ $# -eq 0 && -n "${QUICKSHELL_BIN}" && -n "${QML_SHELL}" ]]; then
-    if "${QUICKSHELL_BIN}" ipc -p "${QML_SHELL}" call ozdil.omastudio toggle >/dev/null 2>&1; then
-        exit 0
-    fi
-fi
-
-# Otherwise launch Quickshell Studio UI
-if [[ -n "${QUICKSHELL_BIN}" && -n "${QML_SHELL}" ]]; then
-    # Tell the UI which engine binary was resolved (e.g. /usr/bin for packaged installs)
-    export OMASTUDIO_ENGINE="${BIN}"
-    # Cold start with a file argument: hand the photo to the UI to open on startup
-    if [[ -f "${1:-}" ]]; then
-        OMASTUDIO_OPEN_PATH="$(/usr/bin/realpath "$1")"
-        export OMASTUDIO_OPEN_PATH
-    fi
-    exec "${QUICKSHELL_BIN}" -p "${QML_SHELL}"
-else
-    echo "Quickshell is not found on PATH or QML shell is missing. Falling back to omastudio-engine CLI."
+if [[ ! -x "${APP}" ]]; then
+    echo "omastudio-app is not installed. Falling back to the omastudio-engine CLI." >&2
     exec "${BIN}" help
 fi
+# Opens the window, or hands the photo to the one already running
+exec "${APP}" "$@"

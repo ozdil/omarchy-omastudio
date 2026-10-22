@@ -8,6 +8,6 @@ Briefly describe the purpose of this PR and architectural changes made.
 - [ ] Documentation update
 
 ## Verification Checklist
-- [ ] Conforms to Zero-Trust and HANCORE guidelines
+- [ ] Follows the security rules in SECURITY.md (bounded reads, no symlinks, no secrets on the command line)
 - [ ] JetBrainsMono Nerd Font typography preserved
 - [ ] Tested locally on Omarchy Linux

@@ -170,9 +170,21 @@ pub struct Recipe {
     #[serde(default = "default_fifty")]
     pub grain_roughness: f32, // 0.0 to 100.0 (Default: 50.0)
 
+    // Fujifilm Color Chrome Effect / FX Blue: deepen saturated colours (and blues)
+    #[serde(default)]
+    pub color_chrome: f32, // 0.0 to 100.0 (Default: 0.0)
+    #[serde(default)]
+    pub color_chrome_blue: f32, // 0.0 to 100.0 (Default: 0.0)
+
     // Local Adjustment Layers (Linear, Radial, Luma Range Masks)
     #[serde(default)]
     pub layers: Vec<crate::pipeline::layers::AdjustmentLayer>,
+
+    /// Exposure the camera adds to this photo's raw data for its own rendering, in EV
+    /// (Fujifilm's mid-point shift, DR200/DR400 included). Set from the photo when it
+    /// is developed, never stored or exchanged with the recipe.
+    #[serde(skip)]
+    pub baseline_exposure: f32,
 }
 
 fn default_skin_target_hue() -> f32 {
@@ -296,7 +308,10 @@ impl Default for Recipe {
             grain_amount: 0.0,
             grain_size: 1.0,
             grain_roughness: 50.0,
+            color_chrome: 0.0,
+            color_chrome_blue: 0.0,
             layers: Vec::new(),
+            baseline_exposure: 0.0,
         }
     }
 }
@@ -421,24 +436,33 @@ impl Recipe {
         Ok(sidecar_path)
     }
 
+    /// The recipe a photo opens with: its sidecar if one exists, else the settings the
+    /// camera recorded (Fujifilm film simulation, tone, grain, ...), else the defaults.
+    pub fn load_initial<P: AsRef<Path>>(raw_path: P) -> Self {
+        let path = raw_path.as_ref();
+        Self::load_sidecar(path)
+            .or_else(|| crate::fuji::CameraRecipe::read(path).map(|c| c.to_recipe()))
+            .unwrap_or_default()
+    }
+
     pub fn load_sidecar<P: AsRef<Path>>(raw_path: P) -> Option<Self> {
         let path = raw_path.as_ref();
         let ext = path.extension().and_then(|s| s.to_str()).unwrap_or("raw");
         
         // Check primary .omastudio sidecar first
         let studio_sidecar = path.with_extension(format!("{}.omastudio", ext));
-        if let Ok(data) = crate::security::read_secure_file(&studio_sidecar, 1024 * 1024) {
-            if let Ok(recipe) = serde_json::from_slice(&data) {
-                return Some(recipe);
-            }
+        if let Ok(data) = crate::security::read_secure_file(&studio_sidecar, 1024 * 1024)
+            && let Ok(recipe) = serde_json::from_slice(&data)
+        {
+            return Some(recipe);
         }
 
         // Fallback to legacy .omaraw sidecar
         let legacy_sidecar = path.with_extension(format!("{}.omaraw", ext));
-        if let Ok(data) = crate::security::read_secure_file(&legacy_sidecar, 1024 * 1024) {
-            if let Ok(recipe) = serde_json::from_slice(&data) {
-                return Some(recipe);
-            }
+        if let Ok(data) = crate::security::read_secure_file(&legacy_sidecar, 1024 * 1024)
+            && let Ok(recipe) = serde_json::from_slice(&data)
+        {
+            return Some(recipe);
         }
         None
     }
@@ -486,12 +510,12 @@ impl Catalog {
 
     pub fn load() -> Self {
         let path = Self::default_catalog_path();
-        if let Ok(bytes) = crate::security::read_secure_file(&path, 16 * 1024 * 1024) {
-            if let Ok(mut cat) = serde_json::from_slice::<Catalog>(&bytes) {
-                // Filter out ghost entries where RAW file no longer exists on disk
-                cat.items.retain(|file_path, _| std::path::Path::new(file_path).exists());
-                return cat;
-            }
+        if let Ok(bytes) = crate::security::read_secure_file(&path, 16 * 1024 * 1024)
+            && let Ok(mut cat) = serde_json::from_slice::<Catalog>(&bytes)
+        {
+            // Filter out ghost entries where RAW file no longer exists on disk
+            cat.items.retain(|file_path, _| std::path::Path::new(file_path).exists());
+            return cat;
         }
         Self {
             version: 1,
@@ -539,50 +563,50 @@ impl Catalog {
 
     pub fn filter_items(&self, filter: &CatalogFilter) -> Vec<&CatalogItem> {
         let mut matched: Vec<&CatalogItem> = self.items.values().filter(|item| {
-            if let Some(min_r) = filter.min_rating {
-                if item.rating < min_r {
-                    return false;
-                }
+            if let Some(min_r) = filter.min_rating
+                && item.rating < min_r
+            {
+                return false;
             }
-            if let Some(ref fl) = filter.flag {
-                if !fl.is_empty() && &item.flag != fl {
-                    return false;
-                }
+            if let Some(ref fl) = filter.flag
+                && !fl.is_empty() && &item.flag != fl
+            {
+                return false;
             }
-            if let Some(ref make) = filter.camera_make {
-                if !make.is_empty() && !item.metadata.make.to_lowercase().contains(&make.to_lowercase()) {
-                    return false;
-                }
+            if let Some(ref make) = filter.camera_make
+                && !make.is_empty() && !item.metadata.make.to_lowercase().contains(&make.to_lowercase())
+            {
+                return false;
             }
-            if let Some(ref model) = filter.camera_model {
-                if !model.is_empty() && !item.metadata.model.to_lowercase().contains(&model.to_lowercase()) {
-                    return false;
-                }
+            if let Some(ref model) = filter.camera_model
+                && !model.is_empty() && !item.metadata.model.to_lowercase().contains(&model.to_lowercase())
+            {
+                return false;
             }
-            if let Some(ref lens) = filter.lens {
-                if !lens.is_empty() && !item.metadata.lens.to_lowercase().contains(&lens.to_lowercase()) {
-                    return false;
-                }
+            if let Some(ref lens) = filter.lens
+                && !lens.is_empty() && !item.metadata.lens.to_lowercase().contains(&lens.to_lowercase())
+            {
+                return false;
             }
-            if let Some(min_iso) = filter.min_iso {
-                if item.metadata.iso < min_iso {
-                    return false;
-                }
+            if let Some(min_iso) = filter.min_iso
+                && item.metadata.iso < min_iso
+            {
+                return false;
             }
-            if let Some(max_iso) = filter.max_iso {
-                if item.metadata.iso > max_iso {
-                    return false;
-                }
+            if let Some(max_iso) = filter.max_iso
+                && item.metadata.iso > max_iso
+            {
+                return false;
             }
-            if let Some(ref q) = filter.search_query {
-                if !q.is_empty() {
-                    let q_lower = q.to_lowercase();
-                    let matches_name = item.path.to_lowercase().contains(&q_lower);
-                    let matches_model = item.metadata.model.to_lowercase().contains(&q_lower);
-                    let matches_lens = item.metadata.lens.to_lowercase().contains(&q_lower);
-                    if !matches_name && !matches_model && !matches_lens {
-                        return false;
-                    }
+            if let Some(ref q) = filter.search_query
+                && !q.is_empty()
+            {
+                let q_lower = q.to_lowercase();
+                let matches_name = item.path.to_lowercase().contains(&q_lower);
+                let matches_model = item.metadata.model.to_lowercase().contains(&q_lower);
+                let matches_lens = item.metadata.lens.to_lowercase().contains(&q_lower);
+                if !matches_name && !matches_model && !matches_lens {
+                    return false;
                 }
             }
             true
