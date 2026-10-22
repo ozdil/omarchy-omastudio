@@ -6,6 +6,7 @@ pub mod export;
 pub mod fuji;
 pub mod icc;
 pub mod pipeline;
+pub mod ptp;
 pub mod raw;
 pub mod recipe;
 pub mod hash;

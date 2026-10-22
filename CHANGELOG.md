@@ -22,6 +22,10 @@
 - Recipe library in `~/.local/share/omastudio/fuji-recipes`. New commands: `fuji-recipe <raf|jpg|fp1|txt>`, `fuji-recipe list`, `fuji-recipe save <file> [--label]` and `fuji-recipe export <file> <out.fp1> [--device]`; the daemon gains `fuji_recipes` and `fuji_import`. Saving never overwrites a recipe with the same name.
 - New Color Chrome Effect and Color Chrome FX Blue sliders (Weak = 50, Strong = 100): saturated colours, and blues for FX Blue, get deeper while keeping their hue.
 
+### Cameras over USB
+- New PTP/USB layer (`ptp` module, pure Rust via nusb, no libusb or gphoto2): sessions, device info, storage and object transfer, capture, device properties and events. It is the base for tethering and in-camera RAW conversion.
+- The package installs a udev rule (`70-omastudio-cameras.rules`) that gives the logged-in user access to Fujifilm cameras in PTP mode.
+
 ### Colour & Export
 - Colour management with Little CMS 2. The engine builds sRGB, Display P3, Adobe RGB (1998), ProPhoto RGB and Rec. 2020 profiles itself and embeds the profile directly in PNG, JPEG, TIFF, WebP, JXL and AVIF files. Wide-gamut export no longer needs exiftool, and Display P3 and Rec. 2020 are new export options.
 - Custom RGB ICC profiles (printer, lab or display profiles in `~/.local/share/omastudio/icc`) are real conversions now: the photo is rendered in ProPhoto RGB and converted with lcms2, with black point compensation and a choice of rendering intent (`rendering_intent`, relative colorimetric by default). Non-RGB profiles are refused with a clear error.

@@ -1,0 +1,11 @@
+# OmaStudio: let the logged-in user talk PTP to cameras over USB (tethering,
+# in-camera RAW conversion). Only still-image (PTP) interfaces are matched.
+
+ACTION!="add|change", GOTO="omastudio_cameras_end"
+SUBSYSTEM!="usb", GOTO="omastudio_cameras_end"
+ENV{DEVTYPE}!="usb_device", GOTO="omastudio_cameras_end"
+
+# Fujifilm (X and GFX series)
+ATTRS{idVendor}=="04cb", ENV{ID_USB_INTERFACES}=="*:060101:*", TAG+="uaccess"
+
+LABEL="omastudio_cameras_end"
