@@ -199,13 +199,13 @@ impl Lut3D {
 pub fn read_cube_file<P: AsRef<Path>>(path: P) -> Result<Lut3D, String> {
     let p = path.as_ref();
 
-    // HANCORE Security: reject symlinks
+    // Reject symlinks
     let meta = fs::symlink_metadata(p).map_err(|e| format!("Cannot stat LUT file: {}", e))?;
     if meta.file_type().is_symlink() {
         return Err("Security violation: symlink rejected for LUT file".to_string());
     }
 
-    // HANCORE Security: Max 12 MiB limit for up to 65^3 cinematic LUT tables
+    // Max 12 MiB limit for up to 65^3 cinematic LUT tables
     const MAX_SIZE: u64 = 12 * 1024 * 1024;
     let file = fs::File::open(p).map_err(|e| format!("Cannot open LUT file: {}", e))?;
     let limited = file.take(MAX_SIZE + 1);

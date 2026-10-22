@@ -1,260 +1,201 @@
 # OmaStudio
 
-[![Omarchy Verified Plugin](https://img.shields.io/badge/Omarchy-Verified_Plugin-22c55e?style=for-the-badge&logo=omarchy)](https://github.com/ozdil)
-
 **OmaStudio: The Complete Medium Format RAW Editor for Omarchy**
 
-*Parametric non-destructive RAW editing, ACES 1.3 color management & Reference Gamut Compression, authentic Fujifilm & Hasselblad film simulations, Hollywood-standard DaVinci 3-Way color wheels, customizable photography watermarking, offline AI Jev decision engine, persistent Studio Catalog DAM, and modern multi-format export pipeline.*
+OmaStudio is a non-destructive RAW editor built for Omarchy Linux. It develops RAW files with its own engine, written in Rust, and runs natively on Wayland and Hyprland. Fujifilm X and GFX, and Hasselblad medium format cameras get first-class support.
 
 [English](README.md) • [Türkçe](README.tr.md)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Platform](https://img.shields.io/badge/Platform-Omarchy%20Linux%20%7C%20Arch%20Linux-1793d1.svg)](https://omarchy.org)
-[![Engine: Rust](https://img.shields.io/badge/Engine-Rust%202024%20%28Rayon%29-dea584.svg)](Cargo.toml)
-[![UI: Quickshell](https://img.shields.io/badge/UI-Quickshell%20%7C%20Qt%206-41cd52.svg)](qml/)
-[![Security: CONTRIBUTING.md Compliant](https://img.shields.io/badge/Security-CONTRIBUTING.md%20Mode%200600-brightgreen.svg)](CONTRIBUTING.md)
-[![Omarchy Verified Plugin](https://img.shields.io/badge/Omarchy-Verified_Plugin-22c55e?style=for-the-badge&logo=omarchy)](https://github.com/ozdil)
-[![Buy Me A Coffee](https://img.shields.io/badge/Buy_Me_A_Coffee-Support_Development-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/ozdil)
+[![Platform: Omarchy](https://img.shields.io/badge/Platform-Omarchy%20%7C%20Arch%20Linux-1793d1.svg)](https://omarchy.org)
+[![Engine: Rust 2024](https://img.shields.io/badge/Engine-Rust%202024-dea584.svg)](Cargo.toml)
+[![UI: Qt 6](https://img.shields.io/badge/UI-Qt%206%20%7C%20Quickshell-41cd52.svg)](qml/)
 
 ![OmaStudio Preview](preview.png)
 
 ---
 
-## Architecture & Principles
+## Overview
 
-OmaStudio employs an industry-leading hybrid architecture designed for extreme performance on modern Wayland and Hyprland Linux desktops: The graphical user interface runs at 120/144 FPS powered by GPU-accelerated **Quickshell (Qt 6 / QML)**, while the mathematical image processing and RAW decoding pipeline is driven by a **Directed Acyclic Graph (DAG) Engine, Tiled Region-of-Interest (ROI) Execution, and multi-threaded Rust CPU compute (rayon)**. Vulkan/Slang GPU kernels are on the roadmap and not part of the current engine.
+| Area | What OmaStudio provides |
+| :--- | :--- |
+| **RAW development** | The engine's own demosaicing for X-Trans and Bayer sensors on linear light, with camera colour matrices and black levels taken from the file. LibRaw only unpacks the sensor data. |
+| **Medium format** | Fujifilm GFX and Hasselblad RAW files with a 16-bit pipeline from sensor to export. |
+| **Fujifilm** | Photos open with the recipe they were shot with: film simulation, tone, colour, grain, Color Chrome, white balance shift and dynamic range. X RAW Studio profiles (.FP1/.FP2/.FP3) and recipes shared as text can be imported and exported. |
+| **Colour management** | Little CMS 2 with built-in sRGB, Display P3, Adobe RGB, ProPhoto RGB and Rec. 2020 profiles, plus custom ICC profiles with a choice of rendering intent. ICC profiles are embedded in every export. |
+| **Editing** | Exposure, tone, presence, HSL, tone curve, three-way colour wheels, 3D LUTs, RGB mixer, skin tone uniformity, film grain, local masks, crop and lens corrections. |
+| **Library** | Local catalog with star ratings, pick/reject flags and colour labels; adjustments are stored in sidecar files and the original RAW is never modified. |
+| **Cameras over USB** | A PTP/USB layer in pure Rust for tethering and Fujifilm in-camera RAW conversion. |
+| **Export** | JPEG, PNG, TIFF (8/16-bit), WebP, JPEG XL and AVIF, with watermarking. |
+
+---
+
+## Architecture
+
+The interface is written in Qt 6 QML and runs under Quickshell. All image processing happens in a separate Rust engine process, `omastudio-engine`. The interface talks to the engine through a JSON-lines daemon over stdin/stdout. The same engine also offers a command line interface for scripts and Omarchy agents.
 
 ```mermaid
 graph TD
-    subgraph UI [" User Experience (Quickshell / Qt 6 QML)"]
-        Viewport["Canvas Viewport<br/>(Pinch-Zoom / Pan / Rotation / Watermark Overlay)"]
-        Inspector["Pro Studio & Simple Modes<br/>(Film Simulations / ACES / Watermark)"]
-        Wheels["DaVinci 3-Way Wheels<br/>(Lift / Gamma / Gain / Offset / Pivot)"]
-        CropTool["Composition Overlays<br/>(Rule of Thirds / Golden Ratio / Fibonacci)"]
+    subgraph UI ["Interface (Qt 6 QML / Quickshell)"]
+        Viewport["Viewport, crop and overlays"]
+        Panels["Adjustment panels, colour wheels, scopes"]
+        Library["Filmstrip and catalog"]
     end
 
-    subgraph IPC [" Secure Local IPC & CLI Interface"]
-        CLI["omastudio --cli"]
-        Sock["Persistent Daemon IPC (stdin/stdout JSON lines)<br/>& Quickshell IPC Protocol"]
+    subgraph Engine ["omastudio-engine (Rust)"]
+        Decode["LibRaw unpack"]
+        Develop["Own demosaic, white balance, camera matrix (linear light)"]
+        Pipeline["Tone, colour and detail modules (rayon)"]
+        ICC["Little CMS 2 colour management"]
+        Fuji["Fujifilm recipes, X RAW Studio profiles"]
+        PTP["PTP/USB (nusb)"]
+        Export["Encoders with embedded ICC"]
     end
 
-    subgraph Engine [" DaVinci & Nuke-Grade Engine (DAG + Tiled CPU Compute)"]
-        DAGEngine["Demand-Driven DAG Engine<br/>(Directed Acyclic Graph / Invalidation Tree)"]
-        TiledEngine["Tiled ROI Execution<br/>(512x512 Tile Grid / Memory Isolation)"]
-        GPUCompute["Parallel CPU Compute<br/>(Rust + rayon, all cores)"]
-        Decoders["LibRaw FFI Hardware Matrix<br/>(Sony ARW, Fuji RAF, Nikon NEF, Canon CR3, DNG)"]
-        ACES["ACES 1.3 Color Science<br/>(ACEScg, ACEScc, RGC, RRT/ODT Tonemapper)"]
-        FilmSim["Film Simulations<br/>(Fujifilm Provia, Velvia, Astia, Acros / Hasselblad HNCS)"]
-        WatermarkEngine["Watermark & Branding Engine<br/>(9-Point Grid / EXIF Interpolation / Lanczos3 Logo)"]
-        ShmPingPong["Double-Buffered Ping-Pong Shared Memory<br/>(/dev/shm Zero-Flicker Viewport)"]
-    end
-
-    UI <--> Sock
-    CLI --> DAGEngine
-    Sock <--> DAGEngine
-    DAGEngine --> TiledEngine
-    TiledEngine --> GPUCompute
-    Decoders --> DAGEngine
-    GPUCompute --> ACES
-    ACES --> FilmSim
-    FilmSim --> ShmPingPong
-    ShmPingPong --> Viewport
+    UI <-->|JSON lines| Pipeline
+    Decode --> Develop --> Pipeline --> ICC --> Export
+    Fuji --> Pipeline
+    PTP --> Fuji
 ```
 
----
-
-## RAW Processing Pipeline
-
-Every RAW pixel undergoes lossless, mathematically precise transformations to preserve maximum dynamic range:
+### Processing order
 
 ```mermaid
 flowchart LR
-    A[" RAW Input<br/>(Bayer / X-Trans)"] --> B[" LibRaw<br/>Demosaicing"]
-    B --> C[" White Balance<br/>(Planckian AWB)"]
-    C --> D[" Linear Exposure<br/>(Zone System EV)"]
-    D --> E[" ACES 1.3 RGC<br/>(Gamut Compression)"]
-    E --> F[" Film Simulation<br/>(Fuji / Hasselblad)"]
-    F --> G[" DaVinci Wheels<br/>(Pivot & Boost)"]
-    G --> H[" Detail & Optics<br/>(Sharpness / Denoise)"]
-    H --> I[" Watermark Engine<br/>(9-Point Grid / EXIF)"]
-    I --> J[" Multi-Format Export<br/>(JXL / AVIF / TIFF 16-Bit)"]
+    A["RAW sensor data"] --> B["Black level and white balance (linear)"]
+    B --> C["Demosaic (X-Trans / Bayer)"]
+    C --> D["Camera matrix to working space"]
+    D --> E["Exposure (linear)"]
+    E --> F["Tone, colour, film simulation"]
+    F --> G["Detail, grain, lens"]
+    G --> H["ICC conversion and export"]
 ```
 
 ---
 
-## Key Features
+## Supported cameras
 
-### 1. ACES 1.3 Color Management & Reference Gamut Compression (RGC)
-* **ACEScg & ACEScc Color Spaces:** Scene-referred AP1 linear working space with high-precision Bradford chromatic adaptation matrices for sRGB, Display P3, and Rec.2020.
-* **ACES 1.3 Reference Gamut Compression (RGC):** Smoothly compresses out-of-gamut and highly saturated specular highlights toward the achromatic axis, eliminating ugly color clipping and neon-edge distortion.
-* **ACES 1.3 Fitted RRT/ODT Tonemapping:** Rational polynomial approximation (Stephen Hill / Krzysztof Narkowicz) delivering cinematic shoulder roll-off and rich shadow gradation.
+OmaStudio opens every RAW format LibRaw 0.22 supports. The engine develops Bayer and X-Trans sensors with its own pipeline. Foveon, linear DNG, Fujifilm SuperCCD and four-colour sensors fall back to LibRaw automatically.
 
-### 2. Authentic Film Simulations (Fujifilm & Hasselblad HNCS)
-* **Fujifilm Daylight & Landscape:**
-  * **Provia 100F:** Standard daylight color rendition with natural skin tones and neutral contrast.
-  * **Velvia 50:** High-saturation, vibrant landscape film simulation with rich skies and foliage separation.
-  * **Astia 100F:** Soft contrast and delicate gradations tailored for portrait photography.
-* **Fujifilm Documentary & Cinematic:**
-  * **Classic Chrome:** Muted saturation with deep, hard shadow contrast for documentary realism.
-  * **Classic Neg:** Warm nostalgic tones with punchy midtone contrast inspired by Superia color negative film.
-  * **Eterna Cinema:** Flat gamma and subdued color saturation delivering modern cinema highlight roll-off.
-* **Fujifilm Acros Monochrome:**
-  * **Acros Standard:** Legendary monochrome film with ultra-fine grain and rich tonal transitions.
-  * **Acros (+Ye) Yellow Filter:** Moderate contrast lift, accentuating blue skies and portraits.
-  * **Acros (+R) Red Filter:** Dramatic contrast with deep black skies and high micro-contrast.
-  * **Acros (+G) Green Filter:** Emphasizes green foliage while softening lips and skin tones.
-* **Hasselblad Medium Format Profiles:**
-  * **Hasselblad Natural Colour Solution (HNCS):** 4th-root chroma scaling calibrated for medium-format studio photography, preserving neutral gray stability.
-  * **Hasselblad XPan:** 35mm panoramic cinematic contrast with deep shadow compression.
-
-### 3. Customizable Photography Watermark & Branding Engine
-* **9-Point Anchor Grid:** Selectable alignment across 9 grid locations (Top-Left, Top-Center, Top-Right, Middle-Left, Center, Middle-Right, Bottom-Left, Bottom-Center, Bottom-Right).
-* **EXIF Tag Interpolation:** Automatic token expansion for camera metadata: `{camera}`, `{lens}`, `{aperture}`, `{shutter}`, `{iso}`, and `{focal}`.
-* **Custom Logo Overlay:** High-quality PNG logo blending with Lanczos3 resampling and alpha transparency.
-* **Live Viewport Preview:** Non-destructive live preview directly inside the Viewport without requiring re-render.
-* **Export Integration:** Embedded directly into final output files across JPEG XL, AVIF, WebP, TIFF 16-bit, PNG, and JPEG.
-
-### 4. Strict Non-Destructive RAW Workflow
-* **Original RAW Files Never Mutated:** Sensor RAW files are opened read-only; no bytes of the source file are ever modified.
-* **Parametric Sidecar Architecture:** All recipes, grades, crops, and metadata adjustments reside strictly in `.omastudio` JSON sidecars with atomic write operations and Mode 0600 file permissions.
-
-### 5. High-Depth 16-Bit / 26-Bit Medium Format Pipeline
-* **Medium Format Sensors:** Fujifilm GFX series (GFX 100 II, GFX 100S, GFX 50S), Hasselblad (`.3FR`, `.DNG`), and Phase One 16-bit 100+ MP sensors.
-* **16-Bit Processing Matrix:** Eliminates quantization banding during extreme shadow recovery (+4 EV, +100 Shadows).
-* **Master 16-Bit Output:** Genuine 16-bit TIFF and 16-bit PNG (48-bit RGB) files for archival and gallery-grade print production.
-
-### 6. Deterministic Computer Vision & Offline JEV Decision Engine
-* **Linear Ansel Adams Zone System:** Computes exposure delta based on scene linear luminance rather than non-linear gamma values, protecting highlight headroom (ceiling check at 99th percentile).
-* **Planckian Blackbody AWB:** Continuous correlated color temperature (CCT) estimator mapping 2400K to 9500K.
-* **123-Degree Skin Tone Line Protection:** Vectorscope polar protection preserving facial hues regardless of scene saturation.
-* **Multi-Cue Saliency:** Gradient magnitude and Rule of Thirds alignment for automated cropping and composition.
-* **Offline JEV Intelligence:** Bayesian decision engine generating studio-grade presets even in air-gapped environments without external API connectivity.
-
-### 7. DaVinci Resolve-Grade Color Science & Real-Time Scopes
-* **Contrast Pivot:** Adjustable S-curve midpoint (0.05 to 0.95, default 0.435 / 18% middle gray) enabling contrast expansion without crushing shadows.
-* **DaVinci Color Boost:** Non-linear chroma enhancement amplifying low-saturation tones while protecting saturated colors.
-* **Midtone Detail (MD):** Frequency-separated band-pass filter isolating mid-frequencies to enhance micro-texture or soften skin tones.
-* **Real-Time Video Scopes (60+ FPS):** Luma Waveform, RGB Parade, and Vectorscope with calibrated 123-degree Skin Tone Line.
-* **3D LUT Engine (.cube):** Hardware-grade trilinear interpolation engine supporting standard `.cube` Look-Up Tables.
-* **Local Grade Versions (A/B/C/D):** Hotkey-driven (`Alt + 1..4`) non-destructive recipe branching with instant cloning.
-
-### 8. Capture One-Grade Skin Tone Uniformity
-* **Perceptual Oklch Skin Line:** Calibrated around 50° hue angle with raised-cosine membership weighting to isolate natural human complexion without spilling into hair, lips, or background.
-* **Hue & Saturation Homogenization:** Smooths uneven skin tones, redness, and color shifts toward a target reference while preserving micro-tonal depth and organic texture.
-* **Non-Destructive Range & Falloff:** Full parametric control over skin hue target, hue uniformity amount, and saturation uniformity amount.
-
-### 9. DaVinci 3x3 RGB Primary Matrix Mixer
-* **Colorist Cross-Talk Matrix:** Full $3 \times 3$ primary channel mixing matrix allowing individual red, green, and blue output channels to blend proportions of input R, G, and B.
-* **Monochrome Density Simulation:** Preserves luminance consistency across channels while crafting stylized print looks, cross-process bleach-bypass, and classic orthochromatic/panchromatic renderings.
-* **Preset Profiles:** One-click presets for Panchromatic, Orthochromatic, Infrared, and Bleach Bypass workflows.
-
-### 10. Silver-Halide Photochemical Film Grain
-* **Luminance-Dependent Grain Response:** Photochemical parabolic curve ($4.0 \cdot Y \cdot (1 - Y)$) concentrating organic grain in the midtones while rolling off gracefully in deep shadows and specular highlights.
-* **Physical Grain Structure:** Parametric control over grain amount (0-100), grain size (0.5 to 3.0), and roughness (spectral high-frequency distribution) using deterministic hash distribution.
-
-### 11. Local Layered Mask Adjustments
-* **Linear Gradient Masks:** Parametric ramp masks with customizable position, rotation angle, and feather transition for sky darkening and horizon balance.
-* **Radial Gradient Masks:** Elliptical masks with independent center coordinates, horizontal/vertical radius, rotation, and feather falloff for subject pop and vignettes.
-* **Luma Range Masks:** Targeted tonal masks isolating highlights, shadows, or midtone ranges with smooth feather boundaries.
-* **Targeted Corrections:** Each layer applies localized exposure, contrast, saturation, and temperature tint adjustments.
-
-### 12. Lightroom Studio Culling, Rating & Batch Management
-* **Instant 1-5 Star Ratings & Pick/Reject Flags:** Keyboard-driven rating workflow (`1`-`5` for stars, `0` to clear, `P` for Pick, `X` for Reject, `U` to unflag).
-* **Filmstrip Visual Overlays:** Visual badge markers for flagged and rated images directly on filmstrip thumbnails.
-* **High-Speed Batch Sync:** Copy entire adjustment recipes with `Ctrl + Shift + C` and paste across single or multiple candidate photos with `Ctrl + Shift + V`.
-
-### 13. Wayland & Hyprland 120Hz/144Hz Zero-Tear Architecture
-* **Double-Buffered Shared Memory:** `/dev/shm` ping-pong frame buffers eliminate render flickering during slider adjustments.
-* **Mac-Calibrated Touchpad Ergonomics:** Continuous logarithmic pinch-to-zoom, 3.5-degree deadzone rotation guard, and kinetic panning.
+| Manufacturer | Additional support |
+| :--- | :--- |
+| Fujifilm X and GFX | In-camera recipe, film simulations, Color Chrome, X RAW Studio profiles, PTP/USB |
+| Hasselblad | 3FR/FFF files, HNCS-style rendering (in development) |
+| Other manufacturers | Full development pipeline through the generic path |
 
 ---
 
-## Feature Comparison
+## Requirements
 
-| Feature | OmaStudio | Adobe Lightroom | Darktable | RawTherapee |
-| :--- | :---: | :---: | :---: | :---: |
-| **License & Freedom** | **Open Source (MIT)** | Proprietary / Monthly Subscription | GPLv3 | GPLv3 |
-| **Native Integration** | **Omarchy & Quickshell** | macOS / Windows Only | GTK | GTK |
-| **ACES 1.3 & RGC** | **Native ACEScg / ACEScc / RGC** | Partial / ACES OCIO Plugin | Complex Modules | Complex Profiles |
-| **Film Simulations** | **Authentic Fuji & Hasselblad** | Preset Packs | Curves | HaldCLUT |
-| **Watermark Engine** | **9-Point Grid & EXIF Tags** | Export Preset Only | Watermark Module | Watermark Module |
-| **DaVinci Color Science**| **Native (Pivot / Boost / MD)** | Partial | Complex Modules | Complex Profiles |
-| **Real-Time Video Scopes**| **Waveform, Parade, Vectorscope (I-Bar)** | Histogram Only | Separate Windows | Separate Tabs |
-| **3D LUT (.cube) & Mix** | **Hardware Trilinear & Presets** | Profile Library | LUT Module | HaldCLUT Only |
-| **Local Grade Versions** | **A/B/C/D Instant Hotkeys** | Snapshots | History Stacks | Snapshots |
-| **JPEG XL / AVIF Export** | **Hardware Accelerated** | Limited | Via Plugins | Partial |
-| **Catalog & DAM**       | **Studio Local DAM (.omastudio)**| Adobe Cloud (Enforced) | Proprietary DB | XML Sidecars |
-| **Resource Footprint** | **Lightweight (~35 MB RAM)** | Heavy (2+ GB RAM) | Moderate (~400 MB) | Moderate (~350 MB) |
-
----
-
-## Installation & Usage
-
-### System Requirements & Dependencies
-* `libraw` (RAW image decoding engine)
-* `quickshell` (Qt 6 QML desktop shell runtime)
-* `libjxl` & `libavif` (Modern hardware-accelerated image codecs)
-* `zenity` (Native file selection dialogs)
-* `rust` (1.99.1 or newer; `rust-toolchain.toml` pins it for rustup users), `clang`, `pkgconf` (Toolchain for compiling the native engine)
+* Omarchy (Arch Linux) with Wayland and Hyprland
+* `libraw` 0.22 or newer, `lcms2`, `qt6-declarative` 6.12 or newer, `quickshell`
+* `zenity` for file dialogs
+* To build: Rust 1.99.1 or newer (pinned in `rust-toolchain.toml`), `clang`, `pkgconf`
 
 Optional:
-* `exiftool` (`perl-image-exiftool`): keeps EXIF metadata on export. ICC profiles are embedded by the engine itself, so wide-gamut exports work without it.
-* `ffmpeg`: AVIF export fallback when the built-in encoder fails.
+* `perl-image-exiftool` keeps EXIF metadata in exported files.
+* `ffmpeg` is used for AVIF export if the built-in encoder fails.
 
-### Build & Local Installation
+---
+
+## Installation
+
+### Package
+
 ```bash
-# Clone and build the project
+makepkg -si
+```
+
+The package installs the engine, the interface, the ICC profiles and a udev rule (`70-omastudio-cameras.rules`) that gives the logged-in user USB access to Fujifilm cameras in PTP mode.
+
+### Local build
+
+```bash
 cargo build --release --locked
 
-# Install the engine, launcher, UI and ICC profiles locally
 install -Dm755 target/release/omastudio-engine ~/.local/bin/omastudio-engine
 install -Dm755 omastudio ~/.local/bin/omastudio
 install -d ~/.local/share/omastudio/icc
 cp -r qml ~/.local/share/omastudio/
 install -m644 assets/icc/*.icc ~/.local/share/omastudio/icc/
 
-# Launch OmaStudio
 omastudio
 ```
 
----
+### Files
 
-## Keyboard Shortcuts & Workflow
-
-* `Ctrl + O`: Open RAW image dialog
-* `Ctrl + S`: Save adjustment recipe sidecar (`.omastudio`, Mode 0600)
-* `Alt + 1..4`: Switch between Grade Versions (Version A, B, C, D)
-* `1` - `5`: Set Star Rating (1 to 5 Stars) on selected photo
-* `0`: Clear Star Rating
-* `P`: Flag photo as Pick
-* `X`: Flag photo as Reject
-* `U`: Clear Pick/Reject flag
-* `C`: Toggle Crop & Composition mode (Rule of Thirds, Golden Ratio, Fibonacci)
-* `Y`: Toggle Split Before / After (A|B) comparison
-* `Ctrl + Shift + C`: Copy color & tone adjustments to clipboard
-* `Ctrl + Shift + V`: Paste adjustments onto current photo
-* `Ctrl + R`: Reset all adjustments to default values
-* `Double Click`: Toggle between 100% Fit and 200% 1:1 Pixel Inspection
+| Path | Contents |
+| :--- | :--- |
+| `~/.local/share/omastudio/catalog.json` | Catalog: ratings, flags, colour labels |
+| `~/.local/share/omastudio/fuji-recipes/` | Saved Fujifilm recipes (.FP1) |
+| `~/.local/share/omastudio/icc/` | Custom ICC profiles |
+| `~/.config/omastudio/` | Settings |
+| `~/.cache/omastudio/` | Thumbnails and previews |
+| `<photo>.omastudio` | Adjustments for a photo (sidecar) |
 
 ---
 
-## Security Standards (`CONTRIBUTING.md`)
+## Command line
 
-OmaStudio strictly conforms to the Omarchy Linux Security Standards:
-1. **Isolated Process Groups (`cmd.process_group(0)`):** Subprocesses run in dedicated PGIDs; on timeout, RAII `ProcessGroupGuard` ensures clean cleanup with SIGTERM and SIGKILL, leaving zero zombies.
-2. **Protected File Permissions (`0600` / `0700`):** Catalogs and configuration are written atomically (`.tmp_...` + `fs::rename`) with mode `0600`; symlink traversals are rejected.
-3. **Quickshell Hardening:** Dynamic strings are rendered with `textFormat: Text.PlainText`; dynamic `eval()` and `createQmlObject()` are strictly prohibited.
-4. **Argument Injection Defense:** System utilities are invoked with discrete argument vectors and the `--` delimiter to block flag injection.
+```bash
+omastudio-engine inspect <raw>                     # metadata, histogram, scene analysis
+omastudio-engine export <raw> --recipe '<json>' --options '<json>'
+omastudio-engine fuji-recipe <raf|jpg|fp1|txt>     # read a Fujifilm recipe
+omastudio-engine fuji-recipe list                  # saved recipes
+omastudio-engine fuji-recipe save <file> --label "Name"
+omastudio-engine fuji-recipe export <file> out.FP1 --device X-T30
+omastudio-engine icc list
+omastudio-engine help
+```
+
+All commands print JSON, so Omarchy agents and scripts can use them directly.
 
 ---
 
-## Support & Sponsorship
+## Keyboard shortcuts
 
-If you find OmaStudio valuable and want to fuel independent Linux software development:
-
-<a href="https://buymeacoffee.com/ozdil" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 50px !important;width: 180px !important;" ></a>
+| Key | Action |
+| :--- | :--- |
+| `Ctrl + O` | Open a photo |
+| `Ctrl + S` | Save adjustments |
+| `Alt + 1..4` | Switch between grade versions A–D |
+| `1`–`5`, `0` | Set or clear the star rating |
+| `P`, `X`, `U` | Pick, reject, clear flag |
+| `C` | Crop and composition guides |
+| `Y` | Before/after split view |
+| `Ctrl + Shift + C` / `V` | Copy / paste adjustments |
+| `Ctrl + R` | Reset adjustments |
+| Double click | Toggle fit and 1:1 view |
 
 ---
+
+## Security
+
+* RAW files are opened read-only and never modified.
+* Catalog, settings and sidecars are written atomically with mode `0600`; symbolic links are rejected.
+* Every file the engine reads has a size limit, and every external program it runs has a time limit and its own process group.
+* API keys are never passed on the command line.
+* The interface renders all dynamic text as plain text and never evaluates code.
+
+Details are in [SECURITY.md](SECURITY.md) and [CONTRIBUTING.md](CONTRIBUTING.md).
+
+---
+
+## Roadmap
+
+Planned next:
+* Fujifilm in-camera conversion and custom setting slots (C1–C7) over USB
+* GFX Pixel Shift composites
+* A GPU pipeline (wgpu/Vulkan) on NVIDIA, Intel, AMD and Snapdragon
+* A standalone Qt 6.12 application with pixel-exact HiDPI
+* Local AI features accelerated by NPUs
+
+---
+
+## Support
+
+OmaStudio is independent open source software. You can support its development at [Buy Me a Coffee](https://buymeacoffee.com/ozdil).
 
 ## License
-MIT License (c) 2026 Ozan Özdil
+
+MIT License © 2026 Ozan Özdil

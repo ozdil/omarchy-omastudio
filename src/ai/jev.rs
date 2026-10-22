@@ -118,7 +118,7 @@ impl JevClient {
     pub fn load_default_config() -> JevConfig {
         let mut config = JevConfig::default();
 
-        // 1. Try reading ~/.config/omastudio/ai.json with strict HANCORE bounds (max 64 KiB, 0600 mode, UID check)
+        // 1. Try reading ~/.config/omastudio/ai.json with strict bounds (max 64 KiB, 0600 mode, UID check)
         const MAX_CONFIG_BYTES: usize = 64 * 1024;
         let home = std::env::var("HOME").unwrap_or_else(|_| ".".to_string());
         let config_dir = PathBuf::from(&home).join(".config/omastudio");
@@ -127,10 +127,10 @@ impl JevClient {
             && let Ok(c_name) = std::ffi::CString::new("ai.json")
             && let Ok(mut file) = sec_dir.open_existing_file_ro(&c_name)
         {
-            // HANCORE: 0600 mode, S_IFREG, UID ownership, and size limit verification
+            // 0600 mode, S_IFREG, UID ownership, and size limit verification
             if crate::security::verify_secure_open_file(&file, MAX_CONFIG_BYTES).is_ok() {
                 let mut content = String::new();
-                // HANCORE: take(MAX + 1) to prevent silent truncation
+                // take(MAX + 1) to prevent silent truncation
                 if file.by_ref().take((MAX_CONFIG_BYTES as u64) + 1).read_to_string(&mut content).is_ok()
                     && content.len() <= MAX_CONFIG_BYTES
                     && let Ok(parsed) = serde_json::from_str::<JevConfig>(&content)
@@ -246,8 +246,8 @@ impl JevClient {
         let payload_str = serde_json::to_string(&request_payload)
             .map_err(|e| format!("Failed to serialize Jev request: {}", e))?;
 
-        // Prepare bounded curl invocation according to HANCORE security rules.
-        // HANCORE Security: Never pass API keys via cmdline (-H "Authorization: Bearer <key>")
+        // Prepare bounded curl invocation so the request cannot hang or grow unbounded.
+        // Never pass API keys via cmdline (-H "Authorization: Bearer <key>")
         // because arguments are visible to all system users in /proc/<pid>/cmdline.
         // Pass sensitive authorization headers securely via stdin config (-K -).
         let effective_timeout = self.config.timeout_secs.clamp(1, 30);

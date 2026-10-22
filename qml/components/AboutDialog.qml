@@ -35,7 +35,7 @@ Rectangle {
 
     function loadManifest(raw) {
         if (!raw || typeof raw !== "string") return;
-        // HANCORE DoS / Memory Guard: limit size to 64 KiB
+        // Limit the manifest read to 64 KiB
         if (raw.length > 65536) return;
         try {
             var parsed = JSON.parse(raw);
