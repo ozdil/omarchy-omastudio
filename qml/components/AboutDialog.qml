@@ -25,7 +25,7 @@ Rectangle {
 
     property string pluginName: "OmaStudio"
     property string pluginVersion: "v2.4.0"
-    property string pluginDescription: "Lightroom-grade RAW Editor with DaVinci Color Wheels & Local Studio Catalog"
+    property string pluginDescription: "The complete medium format RAW editor for Omarchy: own X-Trans and Bayer development, Fujifilm recipes and colour-managed export."
     property string pluginAuthor: "Ozan Özdil (@ozdil)"
     property string pluginLicense: "MIT Open Source License"
     property bool isVerified: true
@@ -215,7 +215,7 @@ Rectangle {
                     color: Theme.accent
                 }
                 Text {
-                    text: "16-Bit Half-Float Color Science & AgX Filmic Tone Curve"
+                    text: "Own X-Trans & Bayer demosaic on linear light, AgX filmic tone curve"
                     textFormat: Text.PlainText
                     font.family: Theme.fontFamily
                     font.pixelSize: 10
@@ -232,7 +232,7 @@ Rectangle {
                     color: Theme.accent
                 }
                 Text {
-                    text: "Double-Buffered Zero-Flicker Hardware Accelerated Viewport"
+                    text: "Little CMS colour management: sRGB, Display P3, Adobe RGB, ProPhoto, Rec. 2020"
                     textFormat: Text.PlainText
                     font.family: Theme.fontFamily
                     font.pixelSize: 10
@@ -249,7 +249,7 @@ Rectangle {
                     color: Theme.accent
                 }
                 Text {
-                    text: "Zero-Trust Process Isolation & HANCORE Hardened Storage"
+                    text: "Fujifilm recipes: in-camera settings, X RAW Studio profiles, Color Chrome"
                     textFormat: Text.PlainText
                     font.family: Theme.fontFamily
                     font.pixelSize: 10
@@ -266,7 +266,7 @@ Rectangle {
                     color: Theme.accent
                 }
                 Text {
-                    text: "Jev AI Vision Engine & TypeSafe Photographic Decision Pipeline"
+                    text: "Medium format: Fujifilm GFX and Hasselblad RAW files, 16-bit throughout"
                     textFormat: Text.PlainText
                     font.family: Theme.fontFamily
                     font.pixelSize: 10
@@ -283,7 +283,7 @@ Rectangle {
                     color: Theme.accent
                 }
                 Text {
-                    text: "Studio Local Catalog DAM & Medium Format 16-Bit Processing"
+                    text: "Local catalog with ratings, flags and colour labels; USB camera access"
                     textFormat: Text.PlainText
                     font.family: Theme.fontFamily
                     font.pixelSize: 10

@@ -1,6 +1,6 @@
 [Desktop Entry]
 Name=OmaStudio
-Comment=Premier Professional RAW Photo Editor for Omarchy Linux with Studio Catalog & AI Jev Engine
+Comment=The Complete Medium Format RAW Editor for Omarchy
 Exec=omastudio %f
 Icon=camera-photo
 Terminal=false

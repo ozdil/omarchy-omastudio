@@ -2,7 +2,7 @@
 
 [![Omarchy Verified Plugin](https://img.shields.io/badge/Omarchy-Verified_Plugin-22c55e?style=for-the-badge&logo=omarchy)](https://github.com/ozdil)
 
-**Quickshell & Rust-Powered Premier Photo RAW Studio for Omarchy Linux**
+**OmaStudio: The Complete Medium Format RAW Editor for Omarchy**
 
 *Parametric non-destructive RAW editing, ACES 1.3 color management & Reference Gamut Compression, authentic Fujifilm & Hasselblad film simulations, Hollywood-standard DaVinci 3-Way color wheels, customizable photography watermarking, offline AI Jev decision engine, persistent Studio Catalog DAM, and modern multi-format export pipeline.*
 

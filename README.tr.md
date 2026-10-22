@@ -2,7 +2,9 @@
 
 [![Omarchy Verified Plugin](https://img.shields.io/badge/Omarchy-Verified_Plugin-22c55e?style=for-the-badge&logo=omarchy)](https://github.com/ozdil)
 
-**Omarchy Linux için Quickshell & Rust Tabanlı 1 Numaralı Profesyonel RAW Fotoğraf Stüdyosu**
+**OmaStudio: The Complete Medium Format RAW Editor for Omarchy**
+
+*Omarchy için eksiksiz orta format RAW düzenleyicisi.*
 
 *Kayıpsız parametrik RAW düzenleme, ACES 1.3 renk yönetimi ve Referans Gamut Sıkıştırma (RGC), aslına sadık Fujifilm ve Hasselblad film benzetimleri, Hollywood standardı DaVinci 3-Way renk tekerlekleri, seçmeli profesyonel filigran motoru, çevrimdışı YZ Jev karar motoru, kalıcı Studio Catalog DAM ve modern çoklu format dışa aktarma mimarisi.*
 

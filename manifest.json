@@ -5,7 +5,7 @@
   "version": "2.4.0",
   "author": "Ozan Özdil (ozdil)",
   "license": "MIT",
-  "description": "Lightroom-grade RAW editor for Omarchy Linux with DaVinci color grading, AI scene presets, 16-bit medium format pipeline, and local studio catalog DAM.",
+  "description": "The complete medium format RAW editor for Omarchy: own X-Trans and Bayer development, Fujifilm recipes and colour-managed export.",
   "kinds": [
     "bar-widget"
   ],
@@ -15,7 +15,7 @@
   },
   "barWidget": {
     "displayName": "OmaStudio",
-    "description": "Lightroom-grade RAW editor, DaVinci 3-Way wheels, 16-bit medium format pipeline, AI presets, and local studio catalog.",
+    "description": "The complete medium format RAW editor for Omarchy.",
     "category": "Media",
     "defaultSection": "right",
     "aliases": [

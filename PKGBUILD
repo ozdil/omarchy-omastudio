@@ -2,7 +2,7 @@
 pkgname=omastudio
 pkgver=2.4.0
 pkgrel=1
-pkgdesc="Premier Professional RAW Photo Editor for Omarchy Linux with Studio Catalog & AI Jev Engine"
+pkgdesc="The Complete Medium Format RAW Editor for Omarchy"
 arch=('x86_64')
 url="https://github.com/ozdil/omarchy-omastudio"
 license=('MIT')
