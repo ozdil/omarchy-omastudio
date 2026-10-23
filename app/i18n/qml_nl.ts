@@ -1249,12 +1249,64 @@
         <translation>Lineair verloop %1</translation>
     </message>
     <message>
+        <source>Linear</source>
+        <translation>Lineair</translation>
+    </message>
+    <message>
+        <source>Radial</source>
+        <translation>Radiaal</translation>
+    </message>
+    <message>
+        <source>Luminance</source>
+        <translation>Luminantie</translation>
+    </message>
+    <message>
+        <source>Colour</source>
+        <translation>Kleur</translation>
+    </message>
+    <message>
+        <source>Brush</source>
+        <translation>Penseel</translation>
+    </message>
+    <message>
+        <source>AI mask</source>
+        <translation>AI-masker</translation>
+    </message>
+    <message>
+        <source>Subtract</source>
+        <translation>Aftrekken</translation>
+    </message>
+    <message>
+        <source>Intersect</source>
+        <translation>Doorsnede</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>Toevoegen</translation>
+    </message>
+    <message>
         <source>Radial Mask %1</source>
         <translation>Radiaal masker %1</translation>
     </message>
     <message>
         <source>Luma Range %1</source>
         <translation>Luminantiebereik %1</translation>
+    </message>
+    <message>
+        <source>Colour Range %1</source>
+        <translation>Kleurbereik %1</translation>
+    </message>
+    <message>
+        <source>Brush %1</source>
+        <translation>Penseel %1</translation>
+    </message>
+    <message>
+        <source>+ Brush</source>
+        <translation>+ Penseel</translation>
+    </message>
+    <message>
+        <source>+ Colour</source>
+        <translation>+ Kleur</translation>
     </message>
     <message>
         <source>+ AI SUBJECT</source>
@@ -1270,6 +1322,70 @@
         <translation>I</translation>
     </message>
     <message>
+        <source>Combine with:</source>
+        <translation>Combineren met:</translation>
+    </message>
+    <message>
+        <source>Drag the handles on the photo. The effect builds up from the hollow handle to the solid one.</source>
+        <translation>Sleep de grepen op de foto. Het effect neemt toe van de holle naar de gevulde greep.</translation>
+    </message>
+    <message>
+        <source>Drag the centre or the edge handles on the photo.</source>
+        <translation>Sleep het midden of de randgrepen op de foto.</translation>
+    </message>
+    <message>
+        <source>Feather</source>
+        <translation>Doezelaar</translation>
+    </message>
+    <message>
+        <source>Darkest</source>
+        <translation>Donkerste</translation>
+    </message>
+    <message>
+        <source>Brightest</source>
+        <translation>Lichtste</translation>
+    </message>
+    <message>
+        <source>Falloff</source>
+        <translation>Overgang</translation>
+    </message>
+    <message>
+        <source>Click the photo…</source>
+        <translation>Klik op de foto…</translation>
+    </message>
+    <message>
+        <source>Pick colour</source>
+        <translation>Kleur kiezen</translation>
+    </message>
+    <message>
+        <source>Range</source>
+        <translation>Bereik</translation>
+    </message>
+    <message>
+        <source>Paint on the photo. The middle mouse button pans.</source>
+        <translation>Schilder op de foto. De middelste muisknop verschuift de weergave.</translation>
+    </message>
+    <message>
+        <source>Paint</source>
+        <translation>Schilderen</translation>
+    </message>
+    <message>
+        <source>Erase</source>
+        <translation>Gummen</translation>
+    </message>
+    <message>
+        <source>Clear</source>
+        <translation>Wissen</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>Grootte</translation>
+    </message>
+    <message>
+        <source>Flow</source>
+        <translation>Stroom</translation>
+    </message>
+    <message>
         <source>Layer Opacity</source>
         <translation>Laagdekking</translation>
     </message>
@@ -1280,6 +1396,22 @@
     <message>
         <source>Target Contrast</source>
         <translation>Contrast</translation>
+    </message>
+    <message>
+        <source>Highlights</source>
+        <translation>Hoge lichten</translation>
+    </message>
+    <message>
+        <source>Shadows</source>
+        <translation>Schaduwen</translation>
+    </message>
+    <message>
+        <source>Whites</source>
+        <translation>Witte tinten</translation>
+    </message>
+    <message>
+        <source>Blacks</source>
+        <translation>Zwarte tinten</translation>
     </message>
     <message>
         <source>Target Saturation</source>

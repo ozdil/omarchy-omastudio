@@ -1246,12 +1246,64 @@
         <translation>گرادیان خطی %1</translation>
     </message>
     <message>
+        <source>Linear</source>
+        <translation>خطی</translation>
+    </message>
+    <message>
+        <source>Radial</source>
+        <translation>شعاعی</translation>
+    </message>
+    <message>
+        <source>Luminance</source>
+        <translation>روشنایی</translation>
+    </message>
+    <message>
+        <source>Colour</source>
+        <translation>رنگ</translation>
+    </message>
+    <message>
+        <source>Brush</source>
+        <translation>قلم‌مو</translation>
+    </message>
+    <message>
+        <source>AI mask</source>
+        <translation>ماسک هوش مصنوعی</translation>
+    </message>
+    <message>
+        <source>Subtract</source>
+        <translation>کم کردن</translation>
+    </message>
+    <message>
+        <source>Intersect</source>
+        <translation>اشتراک</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>افزودن</translation>
+    </message>
+    <message>
         <source>Radial Mask %1</source>
         <translation>ماسک شعاعی %1</translation>
     </message>
     <message>
         <source>Luma Range %1</source>
         <translation>محدودهٔ روشنایی %1</translation>
+    </message>
+    <message>
+        <source>Colour Range %1</source>
+        <translation>محدوده رنگ %1</translation>
+    </message>
+    <message>
+        <source>Brush %1</source>
+        <translation>قلم‌مو %1</translation>
+    </message>
+    <message>
+        <source>+ Brush</source>
+        <translation>+ قلم‌مو</translation>
+    </message>
+    <message>
+        <source>+ Colour</source>
+        <translation>+ رنگ</translation>
     </message>
     <message>
         <source>+ AI SUBJECT</source>
@@ -1267,6 +1319,70 @@
         <translation>و</translation>
     </message>
     <message>
+        <source>Combine with:</source>
+        <translation>ترکیب با:</translation>
+    </message>
+    <message>
+        <source>Drag the handles on the photo. The effect builds up from the hollow handle to the solid one.</source>
+        <translation>دستگیره‌ها را روی عکس بکشید. اثر از دستگیره توخالی به سمت دستگیره توپر افزایش می‌یابد.</translation>
+    </message>
+    <message>
+        <source>Drag the centre or the edge handles on the photo.</source>
+        <translation>مرکز یا دستگیره‌های لبه را روی عکس بکشید.</translation>
+    </message>
+    <message>
+        <source>Feather</source>
+        <translation>نرمی لبه</translation>
+    </message>
+    <message>
+        <source>Darkest</source>
+        <translation>تیره‌ترین</translation>
+    </message>
+    <message>
+        <source>Brightest</source>
+        <translation>روشن‌ترین</translation>
+    </message>
+    <message>
+        <source>Falloff</source>
+        <translation>گذار</translation>
+    </message>
+    <message>
+        <source>Click the photo…</source>
+        <translation>روی عکس کلیک کنید…</translation>
+    </message>
+    <message>
+        <source>Pick colour</source>
+        <translation>برداشتن رنگ</translation>
+    </message>
+    <message>
+        <source>Range</source>
+        <translation>محدوده</translation>
+    </message>
+    <message>
+        <source>Paint on the photo. The middle mouse button pans.</source>
+        <translation>روی عکس نقاشی کنید. دکمه وسط ماوس نما را جابه‌جا می‌کند.</translation>
+    </message>
+    <message>
+        <source>Paint</source>
+        <translation>نقاشی</translation>
+    </message>
+    <message>
+        <source>Erase</source>
+        <translation>پاک کردن</translation>
+    </message>
+    <message>
+        <source>Clear</source>
+        <translation>پاک کردن همه</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>اندازه</translation>
+    </message>
+    <message>
+        <source>Flow</source>
+        <translation>جریان</translation>
+    </message>
+    <message>
         <source>Layer Opacity</source>
         <translation>کدری لایه</translation>
     </message>
@@ -1277,6 +1393,22 @@
     <message>
         <source>Target Contrast</source>
         <translation>کنتراست</translation>
+    </message>
+    <message>
+        <source>Highlights</source>
+        <translation>روشنی‌ها</translation>
+    </message>
+    <message>
+        <source>Shadows</source>
+        <translation>سایه‌ها</translation>
+    </message>
+    <message>
+        <source>Whites</source>
+        <translation>سفیدها</translation>
+    </message>
+    <message>
+        <source>Blacks</source>
+        <translation>سیاه‌ها</translation>
     </message>
     <message>
         <source>Target Saturation</source>

@@ -1249,12 +1249,64 @@
         <translation>Lineær graduering %1</translation>
     </message>
     <message>
+        <source>Linear</source>
+        <translation>Lineær</translation>
+    </message>
+    <message>
+        <source>Radial</source>
+        <translation>Radial</translation>
+    </message>
+    <message>
+        <source>Luminance</source>
+        <translation>Luminans</translation>
+    </message>
+    <message>
+        <source>Colour</source>
+        <translation>Farve</translation>
+    </message>
+    <message>
+        <source>Brush</source>
+        <translation>Pensel</translation>
+    </message>
+    <message>
+        <source>AI mask</source>
+        <translation>AI-maske</translation>
+    </message>
+    <message>
+        <source>Subtract</source>
+        <translation>Fratræk</translation>
+    </message>
+    <message>
+        <source>Intersect</source>
+        <translation>Fællesmængde</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>Tilføj</translation>
+    </message>
+    <message>
         <source>Radial Mask %1</source>
         <translation>Radial maske %1</translation>
     </message>
     <message>
         <source>Luma Range %1</source>
         <translation>Luminansområde %1</translation>
+    </message>
+    <message>
+        <source>Colour Range %1</source>
+        <translation>Farveområde %1</translation>
+    </message>
+    <message>
+        <source>Brush %1</source>
+        <translation>Pensel %1</translation>
+    </message>
+    <message>
+        <source>+ Brush</source>
+        <translation>+ Pensel</translation>
+    </message>
+    <message>
+        <source>+ Colour</source>
+        <translation>+ Farve</translation>
     </message>
     <message>
         <source>+ AI SUBJECT</source>
@@ -1270,6 +1322,70 @@
         <translation>I</translation>
     </message>
     <message>
+        <source>Combine with:</source>
+        <translation>Kombiner med:</translation>
+    </message>
+    <message>
+        <source>Drag the handles on the photo. The effect builds up from the hollow handle to the solid one.</source>
+        <translation>Træk håndtagene på billedet. Effekten tiltager fra det hule til det udfyldte håndtag.</translation>
+    </message>
+    <message>
+        <source>Drag the centre or the edge handles on the photo.</source>
+        <translation>Træk midten eller kanthåndtagene på billedet.</translation>
+    </message>
+    <message>
+        <source>Feather</source>
+        <translation>Blød kant</translation>
+    </message>
+    <message>
+        <source>Darkest</source>
+        <translation>Mørkeste</translation>
+    </message>
+    <message>
+        <source>Brightest</source>
+        <translation>Lyseste</translation>
+    </message>
+    <message>
+        <source>Falloff</source>
+        <translation>Overgang</translation>
+    </message>
+    <message>
+        <source>Click the photo…</source>
+        <translation>Klik på billedet…</translation>
+    </message>
+    <message>
+        <source>Pick colour</source>
+        <translation>Vælg farve</translation>
+    </message>
+    <message>
+        <source>Range</source>
+        <translation>Område</translation>
+    </message>
+    <message>
+        <source>Paint on the photo. The middle mouse button pans.</source>
+        <translation>Mal på billedet. Den midterste museknap panorerer.</translation>
+    </message>
+    <message>
+        <source>Paint</source>
+        <translation>Mal</translation>
+    </message>
+    <message>
+        <source>Erase</source>
+        <translation>Visk ud</translation>
+    </message>
+    <message>
+        <source>Clear</source>
+        <translation>Ryd</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>Størrelse</translation>
+    </message>
+    <message>
+        <source>Flow</source>
+        <translation>Flow</translation>
+    </message>
+    <message>
         <source>Layer Opacity</source>
         <translation>Lagets opacitet</translation>
     </message>
@@ -1280,6 +1396,22 @@
     <message>
         <source>Target Contrast</source>
         <translation>Kontrast</translation>
+    </message>
+    <message>
+        <source>Highlights</source>
+        <translation>Højlys</translation>
+    </message>
+    <message>
+        <source>Shadows</source>
+        <translation>Skygger</translation>
+    </message>
+    <message>
+        <source>Whites</source>
+        <translation>Hvide</translation>
+    </message>
+    <message>
+        <source>Blacks</source>
+        <translation>Sorte</translation>
     </message>
     <message>
         <source>Target Saturation</source>

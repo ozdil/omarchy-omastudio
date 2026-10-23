@@ -1249,12 +1249,64 @@
         <translation>Sfumatura lineare %1</translation>
     </message>
     <message>
+        <source>Linear</source>
+        <translation>Lineare</translation>
+    </message>
+    <message>
+        <source>Radial</source>
+        <translation>Radiale</translation>
+    </message>
+    <message>
+        <source>Luminance</source>
+        <translation>Luminanza</translation>
+    </message>
+    <message>
+        <source>Colour</source>
+        <translation>Colore</translation>
+    </message>
+    <message>
+        <source>Brush</source>
+        <translation>Pennello</translation>
+    </message>
+    <message>
+        <source>AI mask</source>
+        <translation>Maschera IA</translation>
+    </message>
+    <message>
+        <source>Subtract</source>
+        <translation>Sottrai</translation>
+    </message>
+    <message>
+        <source>Intersect</source>
+        <translation>Interseca</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>Aggiungi</translation>
+    </message>
+    <message>
         <source>Radial Mask %1</source>
         <translation>Maschera radiale %1</translation>
     </message>
     <message>
         <source>Luma Range %1</source>
         <translation>Intervallo di luminanza %1</translation>
+    </message>
+    <message>
+        <source>Colour Range %1</source>
+        <translation>Gamma colore %1</translation>
+    </message>
+    <message>
+        <source>Brush %1</source>
+        <translation>Pennello %1</translation>
+    </message>
+    <message>
+        <source>+ Brush</source>
+        <translation>+ Pennello</translation>
+    </message>
+    <message>
+        <source>+ Colour</source>
+        <translation>+ Colore</translation>
     </message>
     <message>
         <source>+ AI SUBJECT</source>
@@ -1270,6 +1322,70 @@
         <translation>I</translation>
     </message>
     <message>
+        <source>Combine with:</source>
+        <translation>Combina con:</translation>
+    </message>
+    <message>
+        <source>Drag the handles on the photo. The effect builds up from the hollow handle to the solid one.</source>
+        <translation>Trascina le maniglie sulla foto. L&apos;effetto cresce dalla maniglia vuota a quella piena.</translation>
+    </message>
+    <message>
+        <source>Drag the centre or the edge handles on the photo.</source>
+        <translation>Trascina il centro o le maniglie del bordo sulla foto.</translation>
+    </message>
+    <message>
+        <source>Feather</source>
+        <translation>Sfumatura</translation>
+    </message>
+    <message>
+        <source>Darkest</source>
+        <translation>Più scuro</translation>
+    </message>
+    <message>
+        <source>Brightest</source>
+        <translation>Più chiaro</translation>
+    </message>
+    <message>
+        <source>Falloff</source>
+        <translation>Transizione</translation>
+    </message>
+    <message>
+        <source>Click the photo…</source>
+        <translation>Fai clic sulla foto…</translation>
+    </message>
+    <message>
+        <source>Pick colour</source>
+        <translation>Preleva colore</translation>
+    </message>
+    <message>
+        <source>Range</source>
+        <translation>Gamma</translation>
+    </message>
+    <message>
+        <source>Paint on the photo. The middle mouse button pans.</source>
+        <translation>Dipingi sulla foto. Il tasto centrale del mouse sposta la vista.</translation>
+    </message>
+    <message>
+        <source>Paint</source>
+        <translation>Dipingi</translation>
+    </message>
+    <message>
+        <source>Erase</source>
+        <translation>Cancella</translation>
+    </message>
+    <message>
+        <source>Clear</source>
+        <translation>Svuota</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>Dimensioni</translation>
+    </message>
+    <message>
+        <source>Flow</source>
+        <translation>Flusso</translation>
+    </message>
+    <message>
         <source>Layer Opacity</source>
         <translation>Opacità del livello</translation>
     </message>
@@ -1280,6 +1396,22 @@
     <message>
         <source>Target Contrast</source>
         <translation>Contrasto</translation>
+    </message>
+    <message>
+        <source>Highlights</source>
+        <translation>Luci</translation>
+    </message>
+    <message>
+        <source>Shadows</source>
+        <translation>Ombre</translation>
+    </message>
+    <message>
+        <source>Whites</source>
+        <translation>Bianchi</translation>
+    </message>
+    <message>
+        <source>Blacks</source>
+        <translation>Neri</translation>
     </message>
     <message>
         <source>Target Saturation</source>

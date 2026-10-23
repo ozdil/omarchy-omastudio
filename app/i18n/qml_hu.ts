@@ -1246,12 +1246,64 @@
         <translation>Lineáris átmenet %1</translation>
     </message>
     <message>
+        <source>Linear</source>
+        <translation>Lineáris</translation>
+    </message>
+    <message>
+        <source>Radial</source>
+        <translation>Sugaras</translation>
+    </message>
+    <message>
+        <source>Luminance</source>
+        <translation>Fénysűrűség</translation>
+    </message>
+    <message>
+        <source>Colour</source>
+        <translation>Szín</translation>
+    </message>
+    <message>
+        <source>Brush</source>
+        <translation>Ecset</translation>
+    </message>
+    <message>
+        <source>AI mask</source>
+        <translation>MI-maszk</translation>
+    </message>
+    <message>
+        <source>Subtract</source>
+        <translation>Kivonás</translation>
+    </message>
+    <message>
+        <source>Intersect</source>
+        <translation>Metszet</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>Hozzáadás</translation>
+    </message>
+    <message>
         <source>Radial Mask %1</source>
         <translation>Körkörös maszk %1</translation>
     </message>
     <message>
         <source>Luma Range %1</source>
         <translation>Fénysűrűség-tartomány %1</translation>
+    </message>
+    <message>
+        <source>Colour Range %1</source>
+        <translation>Színtartomány %1</translation>
+    </message>
+    <message>
+        <source>Brush %1</source>
+        <translation>Ecset %1</translation>
+    </message>
+    <message>
+        <source>+ Brush</source>
+        <translation>+ Ecset</translation>
+    </message>
+    <message>
+        <source>+ Colour</source>
+        <translation>+ Szín</translation>
     </message>
     <message>
         <source>+ AI SUBJECT</source>
@@ -1267,6 +1319,70 @@
         <translation>F</translation>
     </message>
     <message>
+        <source>Combine with:</source>
+        <translation>Kombinálás ezzel:</translation>
+    </message>
+    <message>
+        <source>Drag the handles on the photo. The effect builds up from the hollow handle to the solid one.</source>
+        <translation>Húzza a fogantyúkat a fotón. A hatás az üres fogantyútól a telihez erősödik.</translation>
+    </message>
+    <message>
+        <source>Drag the centre or the edge handles on the photo.</source>
+        <translation>Húzza a középpontot vagy a szélső fogantyúkat a fotón.</translation>
+    </message>
+    <message>
+        <source>Feather</source>
+        <translation>Lágy szél</translation>
+    </message>
+    <message>
+        <source>Darkest</source>
+        <translation>Legsötétebb</translation>
+    </message>
+    <message>
+        <source>Brightest</source>
+        <translation>Legvilágosabb</translation>
+    </message>
+    <message>
+        <source>Falloff</source>
+        <translation>Átmenet</translation>
+    </message>
+    <message>
+        <source>Click the photo…</source>
+        <translation>Kattintson a fotóra…</translation>
+    </message>
+    <message>
+        <source>Pick colour</source>
+        <translation>Szín felvétele</translation>
+    </message>
+    <message>
+        <source>Range</source>
+        <translation>Tartomány</translation>
+    </message>
+    <message>
+        <source>Paint on the photo. The middle mouse button pans.</source>
+        <translation>Fessen a fotóra. A középső egérgomb mozgatja a nézetet.</translation>
+    </message>
+    <message>
+        <source>Paint</source>
+        <translation>Festés</translation>
+    </message>
+    <message>
+        <source>Erase</source>
+        <translation>Radírozás</translation>
+    </message>
+    <message>
+        <source>Clear</source>
+        <translation>Törlés</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>Méret</translation>
+    </message>
+    <message>
+        <source>Flow</source>
+        <translation>Áramlás</translation>
+    </message>
+    <message>
         <source>Layer Opacity</source>
         <translation>Réteg átlátszatlansága</translation>
     </message>
@@ -1277,6 +1393,22 @@
     <message>
         <source>Target Contrast</source>
         <translation>Kontraszt</translation>
+    </message>
+    <message>
+        <source>Highlights</source>
+        <translation>Csúcsfények</translation>
+    </message>
+    <message>
+        <source>Shadows</source>
+        <translation>Árnyékok</translation>
+    </message>
+    <message>
+        <source>Whites</source>
+        <translation>Fehérek</translation>
+    </message>
+    <message>
+        <source>Blacks</source>
+        <translation>Feketék</translation>
     </message>
     <message>
         <source>Target Saturation</source>

@@ -1252,12 +1252,64 @@
         <translation>Лінійний градієнт %1</translation>
     </message>
     <message>
+        <source>Linear</source>
+        <translation>Лінійна</translation>
+    </message>
+    <message>
+        <source>Radial</source>
+        <translation>Радіальна</translation>
+    </message>
+    <message>
+        <source>Luminance</source>
+        <translation>Яскравість</translation>
+    </message>
+    <message>
+        <source>Colour</source>
+        <translation>Колір</translation>
+    </message>
+    <message>
+        <source>Brush</source>
+        <translation>Пензель</translation>
+    </message>
+    <message>
+        <source>AI mask</source>
+        <translation>ШІ-маска</translation>
+    </message>
+    <message>
+        <source>Subtract</source>
+        <translation>Відняти</translation>
+    </message>
+    <message>
+        <source>Intersect</source>
+        <translation>Перетнути</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>Додати</translation>
+    </message>
+    <message>
         <source>Radial Mask %1</source>
         <translation>Радіальна маска %1</translation>
     </message>
     <message>
         <source>Luma Range %1</source>
         <translation>Діапазон яскравості %1</translation>
+    </message>
+    <message>
+        <source>Colour Range %1</source>
+        <translation>Колірний діапазон %1</translation>
+    </message>
+    <message>
+        <source>Brush %1</source>
+        <translation>Пензель %1</translation>
+    </message>
+    <message>
+        <source>+ Brush</source>
+        <translation>+ Пензель</translation>
+    </message>
+    <message>
+        <source>+ Colour</source>
+        <translation>+ Колір</translation>
     </message>
     <message>
         <source>+ AI SUBJECT</source>
@@ -1273,6 +1325,70 @@
         <translation>І</translation>
     </message>
     <message>
+        <source>Combine with:</source>
+        <translation>Поєднати з:</translation>
+    </message>
+    <message>
+        <source>Drag the handles on the photo. The effect builds up from the hollow handle to the solid one.</source>
+        <translation>Перетягуйте маркери на фото. Ефект наростає від порожнього маркера до заповненого.</translation>
+    </message>
+    <message>
+        <source>Drag the centre or the edge handles on the photo.</source>
+        <translation>Перетягуйте центр або маркери краю на фото.</translation>
+    </message>
+    <message>
+        <source>Feather</source>
+        <translation>Розмиття краю</translation>
+    </message>
+    <message>
+        <source>Darkest</source>
+        <translation>Найтемніші</translation>
+    </message>
+    <message>
+        <source>Brightest</source>
+        <translation>Найсвітліші</translation>
+    </message>
+    <message>
+        <source>Falloff</source>
+        <translation>Перехід</translation>
+    </message>
+    <message>
+        <source>Click the photo…</source>
+        <translation>Клацніть на фото…</translation>
+    </message>
+    <message>
+        <source>Pick colour</source>
+        <translation>Взяти колір</translation>
+    </message>
+    <message>
+        <source>Range</source>
+        <translation>Діапазон</translation>
+    </message>
+    <message>
+        <source>Paint on the photo. The middle mouse button pans.</source>
+        <translation>Малюйте на фото. Середня кнопка миші переміщує вигляд.</translation>
+    </message>
+    <message>
+        <source>Paint</source>
+        <translation>Малювати</translation>
+    </message>
+    <message>
+        <source>Erase</source>
+        <translation>Стерти</translation>
+    </message>
+    <message>
+        <source>Clear</source>
+        <translation>Очистити</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>Розмір</translation>
+    </message>
+    <message>
+        <source>Flow</source>
+        <translation>Потік</translation>
+    </message>
+    <message>
         <source>Layer Opacity</source>
         <translation>Непрозорість шару</translation>
     </message>
@@ -1283,6 +1399,22 @@
     <message>
         <source>Target Contrast</source>
         <translation>Контраст</translation>
+    </message>
+    <message>
+        <source>Highlights</source>
+        <translation>Світла</translation>
+    </message>
+    <message>
+        <source>Shadows</source>
+        <translation>Тіні</translation>
+    </message>
+    <message>
+        <source>Whites</source>
+        <translation>Білі</translation>
+    </message>
+    <message>
+        <source>Blacks</source>
+        <translation>Чорні</translation>
     </message>
     <message>
         <source>Target Saturation</source>

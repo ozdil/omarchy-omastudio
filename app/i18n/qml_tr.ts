@@ -1246,12 +1246,64 @@
         <translation>Doğrusal değişim %1</translation>
     </message>
     <message>
+        <source>Linear</source>
+        <translation>Doğrusal</translation>
+    </message>
+    <message>
+        <source>Radial</source>
+        <translation>Dairesel</translation>
+    </message>
+    <message>
+        <source>Luminance</source>
+        <translation>Parlaklık</translation>
+    </message>
+    <message>
+        <source>Colour</source>
+        <translation>Renk</translation>
+    </message>
+    <message>
+        <source>Brush</source>
+        <translation>Fırça</translation>
+    </message>
+    <message>
+        <source>AI mask</source>
+        <translation>YZ maskesi</translation>
+    </message>
+    <message>
+        <source>Subtract</source>
+        <translation>Çıkar</translation>
+    </message>
+    <message>
+        <source>Intersect</source>
+        <translation>Kesiştir</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>Ekle</translation>
+    </message>
+    <message>
         <source>Radial Mask %1</source>
         <translation>Dairesel maske %1</translation>
     </message>
     <message>
         <source>Luma Range %1</source>
         <translation>Parlaklık aralığı %1</translation>
+    </message>
+    <message>
+        <source>Colour Range %1</source>
+        <translation>Renk aralığı %1</translation>
+    </message>
+    <message>
+        <source>Brush %1</source>
+        <translation>Fırça %1</translation>
+    </message>
+    <message>
+        <source>+ Brush</source>
+        <translation>+ Fırça</translation>
+    </message>
+    <message>
+        <source>+ Colour</source>
+        <translation>+ Renk</translation>
     </message>
     <message>
         <source>+ AI SUBJECT</source>
@@ -1267,6 +1319,70 @@
         <translation>T</translation>
     </message>
     <message>
+        <source>Combine with:</source>
+        <translation>Birleştir:</translation>
+    </message>
+    <message>
+        <source>Drag the handles on the photo. The effect builds up from the hollow handle to the solid one.</source>
+        <translation>Fotoğraftaki tutamaçları sürükleyin. Etki içi boş tutamaktan dolu olana doğru artar.</translation>
+    </message>
+    <message>
+        <source>Drag the centre or the edge handles on the photo.</source>
+        <translation>Fotoğraftaki merkezi ya da kenar tutamaçlarını sürükleyin.</translation>
+    </message>
+    <message>
+        <source>Feather</source>
+        <translation>Yumuşak kenar</translation>
+    </message>
+    <message>
+        <source>Darkest</source>
+        <translation>En koyu</translation>
+    </message>
+    <message>
+        <source>Brightest</source>
+        <translation>En açık</translation>
+    </message>
+    <message>
+        <source>Falloff</source>
+        <translation>Geçiş</translation>
+    </message>
+    <message>
+        <source>Click the photo…</source>
+        <translation>Fotoğrafa tıklayın…</translation>
+    </message>
+    <message>
+        <source>Pick colour</source>
+        <translation>Renk seç</translation>
+    </message>
+    <message>
+        <source>Range</source>
+        <translation>Aralık</translation>
+    </message>
+    <message>
+        <source>Paint on the photo. The middle mouse button pans.</source>
+        <translation>Fotoğrafın üzerine boyayın. Farenin orta tuşu görüntüyü kaydırır.</translation>
+    </message>
+    <message>
+        <source>Paint</source>
+        <translation>Boya</translation>
+    </message>
+    <message>
+        <source>Erase</source>
+        <translation>Sil</translation>
+    </message>
+    <message>
+        <source>Clear</source>
+        <translation>Temizle</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>Boyut</translation>
+    </message>
+    <message>
+        <source>Flow</source>
+        <translation>Akış</translation>
+    </message>
+    <message>
         <source>Layer Opacity</source>
         <translation>Katman opaklığı</translation>
     </message>
@@ -1277,6 +1393,22 @@
     <message>
         <source>Target Contrast</source>
         <translation>Hedef kontrast</translation>
+    </message>
+    <message>
+        <source>Highlights</source>
+        <translation>Vurgular</translation>
+    </message>
+    <message>
+        <source>Shadows</source>
+        <translation>Gölgeler</translation>
+    </message>
+    <message>
+        <source>Whites</source>
+        <translation>Beyazlar</translation>
+    </message>
+    <message>
+        <source>Blacks</source>
+        <translation>Siyahlar</translation>
     </message>
     <message>
         <source>Target Saturation</source>

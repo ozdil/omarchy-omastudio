@@ -1246,12 +1246,64 @@
         <translation>线性渐变 %1</translation>
     </message>
     <message>
+        <source>Linear</source>
+        <translation>线性</translation>
+    </message>
+    <message>
+        <source>Radial</source>
+        <translation>径向</translation>
+    </message>
+    <message>
+        <source>Luminance</source>
+        <translation>明亮度</translation>
+    </message>
+    <message>
+        <source>Colour</source>
+        <translation>颜色</translation>
+    </message>
+    <message>
+        <source>Brush</source>
+        <translation>画笔</translation>
+    </message>
+    <message>
+        <source>AI mask</source>
+        <translation>AI 蒙版</translation>
+    </message>
+    <message>
+        <source>Subtract</source>
+        <translation>减去</translation>
+    </message>
+    <message>
+        <source>Intersect</source>
+        <translation>相交</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>添加</translation>
+    </message>
+    <message>
         <source>Radial Mask %1</source>
         <translation>径向蒙版 %1</translation>
     </message>
     <message>
         <source>Luma Range %1</source>
         <translation>明亮度范围 %1</translation>
+    </message>
+    <message>
+        <source>Colour Range %1</source>
+        <translation>颜色范围 %1</translation>
+    </message>
+    <message>
+        <source>Brush %1</source>
+        <translation>画笔 %1</translation>
+    </message>
+    <message>
+        <source>+ Brush</source>
+        <translation>+ 画笔</translation>
+    </message>
+    <message>
+        <source>+ Colour</source>
+        <translation>+ 颜色</translation>
     </message>
     <message>
         <source>+ AI SUBJECT</source>
@@ -1267,6 +1319,70 @@
         <translation>反</translation>
     </message>
     <message>
+        <source>Combine with:</source>
+        <translation>组合方式：</translation>
+    </message>
+    <message>
+        <source>Drag the handles on the photo. The effect builds up from the hollow handle to the solid one.</source>
+        <translation>拖动照片上的控制点。效果从空心控制点向实心控制点逐渐增强。</translation>
+    </message>
+    <message>
+        <source>Drag the centre or the edge handles on the photo.</source>
+        <translation>拖动照片上的中心或边缘控制点。</translation>
+    </message>
+    <message>
+        <source>Feather</source>
+        <translation>羽化</translation>
+    </message>
+    <message>
+        <source>Darkest</source>
+        <translation>最暗</translation>
+    </message>
+    <message>
+        <source>Brightest</source>
+        <translation>最亮</translation>
+    </message>
+    <message>
+        <source>Falloff</source>
+        <translation>过渡</translation>
+    </message>
+    <message>
+        <source>Click the photo…</source>
+        <translation>点击照片…</translation>
+    </message>
+    <message>
+        <source>Pick colour</source>
+        <translation>吸取颜色</translation>
+    </message>
+    <message>
+        <source>Range</source>
+        <translation>范围</translation>
+    </message>
+    <message>
+        <source>Paint on the photo. The middle mouse button pans.</source>
+        <translation>在照片上涂抹。鼠标中键用于平移视图。</translation>
+    </message>
+    <message>
+        <source>Paint</source>
+        <translation>涂抹</translation>
+    </message>
+    <message>
+        <source>Erase</source>
+        <translation>擦除</translation>
+    </message>
+    <message>
+        <source>Clear</source>
+        <translation>清除</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>尺寸</translation>
+    </message>
+    <message>
+        <source>Flow</source>
+        <translation>流量</translation>
+    </message>
+    <message>
         <source>Layer Opacity</source>
         <translation>图层不透明度</translation>
     </message>
@@ -1277,6 +1393,22 @@
     <message>
         <source>Target Contrast</source>
         <translation>对比度</translation>
+    </message>
+    <message>
+        <source>Highlights</source>
+        <translation>高光</translation>
+    </message>
+    <message>
+        <source>Shadows</source>
+        <translation>阴影</translation>
+    </message>
+    <message>
+        <source>Whites</source>
+        <translation>白色</translation>
+    </message>
+    <message>
+        <source>Blacks</source>
+        <translation>黑色</translation>
     </message>
     <message>
         <source>Target Saturation</source>

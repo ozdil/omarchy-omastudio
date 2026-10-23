@@ -39,6 +39,13 @@
 - Point curves are stored in the recipe (`curve_points`, `curve_points_red`, `curve_points_green`, `curve_points_blue`) and written to XMP sidecars as Camera Raw's `ToneCurvePV2012` curves, which OmaStudio also reads from Lightroom and Camera Raw sidecars.
 - The four region sliders stay below the editor.
 
+### Masks
+- New mask kinds: **Brush** (painted on the photo, with size, feather, flow and an erase mode) and **Colour** (colours close to one picked from the photo, with range and feather; compared in Oklab).
+- A layer's mask can be built from several parts: under **Combine with**, brush, colour, luminance, linear and radial parts are added to, subtracted from or intersected with the layer's own mask. Each part can be inverted.
+- Masks are edited on the photo: the brush paints with an outline of its size and shows what is painted; the colour picker takes the colour under the pointer; linear and radial masks have handles to drag.
+- The luminance mask has its range and falloff controls, and the radial mask its feather, in the panel.
+- Layers also adjust highlights, shadows, whites and blacks.
+
 ### Colour management
 - **Gamut compression** is now a switch of its own and follows the ACES 1.3 reference gamut compression: colours pushed outside the gamut by grading come back in smoothly, colours inside it are left alone. The previous version clipped negative values outright and desaturated every strongly saturated colour.
 - The working colour space list (sRGB, Display P3, Rec. 2020, ACEScg) is gone: the choice did not change the rendering (ACEScg only switched gamut compression on), and its coverage figures were wrong. The output colour space is chosen in the Export window, which converts with ICC profiles. Edits saved with ACEScg open with gamut compression on.

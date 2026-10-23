@@ -1747,6 +1747,15 @@ Rectangle {
                     watermarkColorHex: root.watermarkColorHex
                     watermarkDropShadow: root.watermarkDropShadow
                     exifMetadata: root.activeMetadata
+                    // Mask editing follows the selected layer while the Masks tab is open
+                    maskTool: root.activePhotoPath !== "" && root.showRightPanel && root.rightTab === "masks" ? layersPanel.overlayTool : ""
+                    maskShape: layersPanel.editShape
+                    maskBrushSize: layersPanel.brushSize
+                    maskBrushFeather: layersPanel.brushFeather
+                    maskBrushErase: layersPanel.brushErase
+                    onMaskShapeEdited: function(shape) { layersPanel.setEditShape(shape) }
+                    onMaskStrokePainted: function(points, aspect) { layersPanel.addStroke(points, aspect) }
+                    onMaskColourPicked: function(r, g, b) { layersPanel.setPickedColour(r, g, b) }
                     onSplitRatioChangedByUser: function(r) {
                         root.splitRatio = r;
                         requestRender();

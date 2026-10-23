@@ -1252,12 +1252,64 @@
         <translation>Gradient liniar %1</translation>
     </message>
     <message>
+        <source>Linear</source>
+        <translation>Liniar</translation>
+    </message>
+    <message>
+        <source>Radial</source>
+        <translation>Radial</translation>
+    </message>
+    <message>
+        <source>Luminance</source>
+        <translation>Luminanță</translation>
+    </message>
+    <message>
+        <source>Colour</source>
+        <translation>Culoare</translation>
+    </message>
+    <message>
+        <source>Brush</source>
+        <translation>Pensulă</translation>
+    </message>
+    <message>
+        <source>AI mask</source>
+        <translation>Mască IA</translation>
+    </message>
+    <message>
+        <source>Subtract</source>
+        <translation>Scade</translation>
+    </message>
+    <message>
+        <source>Intersect</source>
+        <translation>Intersectează</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>Adaugă</translation>
+    </message>
+    <message>
         <source>Radial Mask %1</source>
         <translation>Mască radială %1</translation>
     </message>
     <message>
         <source>Luma Range %1</source>
         <translation>Interval de luminanță %1</translation>
+    </message>
+    <message>
+        <source>Colour Range %1</source>
+        <translation>Interval de culoare %1</translation>
+    </message>
+    <message>
+        <source>Brush %1</source>
+        <translation>Pensulă %1</translation>
+    </message>
+    <message>
+        <source>+ Brush</source>
+        <translation>+ Pensulă</translation>
+    </message>
+    <message>
+        <source>+ Colour</source>
+        <translation>+ Culoare</translation>
     </message>
     <message>
         <source>+ AI SUBJECT</source>
@@ -1273,6 +1325,70 @@
         <translation>I</translation>
     </message>
     <message>
+        <source>Combine with:</source>
+        <translation>Combină cu:</translation>
+    </message>
+    <message>
+        <source>Drag the handles on the photo. The effect builds up from the hollow handle to the solid one.</source>
+        <translation>Trageți mânerele pe fotografie. Efectul crește de la mânerul gol la cel plin.</translation>
+    </message>
+    <message>
+        <source>Drag the centre or the edge handles on the photo.</source>
+        <translation>Trageți centrul sau mânerele marginii pe fotografie.</translation>
+    </message>
+    <message>
+        <source>Feather</source>
+        <translation>Estompare</translation>
+    </message>
+    <message>
+        <source>Darkest</source>
+        <translation>Cel mai întunecat</translation>
+    </message>
+    <message>
+        <source>Brightest</source>
+        <translation>Cel mai luminos</translation>
+    </message>
+    <message>
+        <source>Falloff</source>
+        <translation>Tranziție</translation>
+    </message>
+    <message>
+        <source>Click the photo…</source>
+        <translation>Faceți clic pe fotografie…</translation>
+    </message>
+    <message>
+        <source>Pick colour</source>
+        <translation>Preia culoarea</translation>
+    </message>
+    <message>
+        <source>Range</source>
+        <translation>Interval</translation>
+    </message>
+    <message>
+        <source>Paint on the photo. The middle mouse button pans.</source>
+        <translation>Pictați pe fotografie. Butonul din mijloc al mouse-ului mută vederea.</translation>
+    </message>
+    <message>
+        <source>Paint</source>
+        <translation>Pictează</translation>
+    </message>
+    <message>
+        <source>Erase</source>
+        <translation>Șterge</translation>
+    </message>
+    <message>
+        <source>Clear</source>
+        <translation>Golește</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>Dimensiune</translation>
+    </message>
+    <message>
+        <source>Flow</source>
+        <translation>Flux</translation>
+    </message>
+    <message>
         <source>Layer Opacity</source>
         <translation>Opacitatea stratului</translation>
     </message>
@@ -1283,6 +1399,22 @@
     <message>
         <source>Target Contrast</source>
         <translation>Contrast</translation>
+    </message>
+    <message>
+        <source>Highlights</source>
+        <translation>Lumini</translation>
+    </message>
+    <message>
+        <source>Shadows</source>
+        <translation>Umbre</translation>
+    </message>
+    <message>
+        <source>Whites</source>
+        <translation>Albe</translation>
+    </message>
+    <message>
+        <source>Blacks</source>
+        <translation>Negre</translation>
     </message>
     <message>
         <source>Target Saturation</source>
