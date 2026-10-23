@@ -183,6 +183,8 @@ def main():
                         "-qm", str(qml / "i18n" / (ts.stem + ".qm"))], check=True)
 
     app = QGuiApplication(sys.argv)
+    # Start in the first language so messages shown during startup are translated too
+    STATE["lang"] = langs[0]
     engine = QQmlApplicationEngine()
     engine.load(str(qml / "Main.qml"))
     if not engine.rootObjects():

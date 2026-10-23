@@ -59,6 +59,10 @@ QtObject {
         if (Qt.uiLanguage !== Host.uiLanguage) Qt.uiLanguage = Host.uiLanguage;
     }
 
+    // The singleton is created while the window is still being built, so the
+    // translation is in place before any component reports its first message
+    Component.onCompleted: root.apply()
+
     // "" follows the system language again
     function setLanguage(code) {
         var saved = Host.setUiLanguage(code);

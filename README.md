@@ -93,7 +93,7 @@ OmaStudio opens every RAW format LibRaw 0.22 supports. The engine develops Bayer
 * `libraw` 0.22 or newer, `lcms2`, `qt6-base`, `qt6-declarative` and `qt6-wayland` 6.12 or newer
 * `quickshell` only for the button in the Omarchy bar
 * `zenity` for file dialogs
-* To build: Rust 1.99.1 or newer (pinned in `rust-toolchain.toml`), `clang`, `pkgconf`
+* To build: Rust 1.99.1 or newer (pinned in `rust-toolchain.toml`), `clang`, `pkgconf`, `qt6-tools` (`lrelease` compiles the translations)
 
 Optional:
 * `perl-image-exiftool` keeps EXIF metadata in exported files.
@@ -136,6 +136,7 @@ omastudio
 | `~/.local/share/omastudio/models/` | Local AI models (`subject.onnx`, `sky.onnx`) |
 | `~/.local/share/omastudio/masks/` | Masks made by the AI models |
 | `~/.config/omastudio/` | Settings |
+| `~/.config/omastudio/language` | Interface language picked in the application (absent: system language) |
 | `~/.cache/omastudio/` | Thumbnails and previews |
 | `<photo>.omastudio` | Adjustments for a photo (sidecar) |
 
@@ -197,6 +198,22 @@ omastudio npu                                  # runtime, accelerators, installe
 OMASTUDIO_NPU=openvino-npu omastudio ai-mask DSCF0001.RAF --kind subject
 ```
 
+
+---
+
+## Languages
+
+The interface is available in 30 languages: Arabic, Chinese (Simplified and Traditional), Czech, Danish, Dutch, English, Finnish, French, German, Greek, Hebrew, Hindi, Hungarian, Indonesian, Italian, Japanese, Korean, Norwegian Bokmål, Persian, Polish, Portuguese (Brazil), Romanian, Russian, Spanish, Swedish, Thai, Turkish, Ukrainian and Vietnamese. Arabic, Hebrew and Persian are laid out right to left.
+
+OmaStudio follows the system language (`LANGUAGE`, `LC_ALL`, `LC_MESSAGES`, `LANG`) and falls back to English. Another language can be picked from the language menu in the top bar; the change applies at once.
+
+Translations live in `app/i18n/qml_<code>.ts`:
+
+* `tools/i18n/update.sh` refreshes them from the QML (`tools/i18n/update.sh xx` starts a new language).
+* `tools/i18n/check.py` fails when a string is missing, left in English, written in the wrong script or has mismatched placeholders. CI runs it on every change.
+* `tools/i18n/preview.py OUT_DIR [code ...]` writes a screenshot of the interface per language (needs PySide6) to spot text that does not fit.
+
+Engine messages (errors from RAW decoding, export and AI providers) are still in English.
 
 ---
 
