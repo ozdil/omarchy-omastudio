@@ -123,3 +123,12 @@ da:+ RADIAL
 da:HIST
 da:PARADE
 da:Original
+nb:AI
+nb:Sepia
+nb:[S] %1%
+nb:[H] %1%
+nb:Magenta
+nb:Standard
+nb:HIST
+nb:PARADE
+nb:Original
