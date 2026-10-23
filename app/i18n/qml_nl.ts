@@ -1074,6 +1074,33 @@
     </message>
 </context>
 <context>
+    <name>HistoryPanel</name>
+    <message>
+        <source>History</source>
+        <translation>Geschiedenis</translation>
+    </message>
+    <message>
+        <source>Click a step to go back to it. A new edit from there replaces the later steps.</source>
+        <translation>Klik op een stap om ernaar terug te gaan. Een nieuwe bewerking vanaf daar vervangt de latere stappen.</translation>
+    </message>
+    <message>
+        <source>Snapshots</source>
+        <translation>Momentopnamen</translation>
+    </message>
+    <message>
+        <source>New snapshot</source>
+        <translation>Nieuwe momentopname</translation>
+    </message>
+    <message>
+        <source>A snapshot keeps the current edit under a name, in the sidecar, so you can come back to it later.</source>
+        <translation>Een momentopname bewaart de huidige bewerking onder een naam in het sidecarbestand, zodat u er later naar terug kunt.</translation>
+    </message>
+    <message>
+        <source>Restore</source>
+        <translation>Herstellen</translation>
+    </message>
+</context>
+<context>
     <name>HslMixer</name>
     <message>
         <source>Red</source>
@@ -1657,6 +1684,42 @@
     <message>
         <source>Redo</source>
         <translation>Opnieuw</translation>
+    </message>
+    <message>
+        <source>Gamut compression</source>
+        <translation>Gamutcompressie</translation>
+    </message>
+    <message>
+        <source>ACES tone curve</source>
+        <translation>ACES-toonkromme</translation>
+    </message>
+    <message>
+        <source>Skin tone</source>
+        <translation>Huidtint</translation>
+    </message>
+    <message>
+        <source>Crop</source>
+        <translation>Uitsnijden</translation>
+    </message>
+    <message>
+        <source>Edit</source>
+        <translation>Bewerken</translation>
+    </message>
+    <message>
+        <source>Start</source>
+        <translation>Begin</translation>
+    </message>
+    <message>
+        <source>Snapshot %1</source>
+        <translation>Momentopname %1</translation>
+    </message>
+    <message>
+        <source>Snapshot saved</source>
+        <translation>Momentopname opgeslagen</translation>
+    </message>
+    <message>
+        <source>Snapshot restored</source>
+        <translation>Momentopname hersteld</translation>
     </message>
     <message>
         <source>Settings copied</source>

@@ -363,6 +363,138 @@ Rectangle {
         root.showToast(qsTr("Redo"), Theme.accentCyan);
     }
 
+    // History panel: the states in order (undo stack, the current edit, then redo
+    // states), each named for what changed from the one before
+    property var historyModel: []
+    onUndoStackChanged: Qt.callLater(root.refreshHistory)
+    onRedoStackChanged: Qt.callLater(root.refreshHistory)
+
+    // Sections the recipe keys belong to, by key prefix; single sliders are named on their own
+    function historyKeyLabel(key) {
+        var own = {
+            "exposure": qsTr("Exposure"), "contrast": qsTr("Contrast"), "highlights": qsTr("Highlights"),
+            "shadows": qsTr("Shadows"), "whites": qsTr("Whites"), "blacks": qsTr("Blacks"),
+            "texture": qsTr("Texture"), "clarity": qsTr("Clarity (Midtone Contrast)"), "dehaze": qsTr("Dehaze"),
+            "vibrance": qsTr("Vibrance"), "saturation": qsTr("Saturation"), "sharpness": qsTr("Sharpening"),
+            "vignette": qsTr("Vignette"), "gamut_compression": qsTr("Gamut compression"),
+            "aces_tonemap": qsTr("ACES tone curve"), "layers": qsTr("Local adjustments"),
+            "retouch": qsTr("Heal and clone"), "preset_name": qsTr("Presets")
+        };
+        if (own[key] !== undefined) return own[key];
+        var prefixes = [
+            ["wb_", qsTr("White balance")], ["curve_", qsTr("Tone curve")], ["hsl_", qsTr("Colour mixer")],
+            ["rgb_mixer", qsTr("Colour mixer")], ["mixer_", qsTr("Colour mixer")], ["skin_", qsTr("Skin tone")],
+            ["lut_", qsTr("LUT")], ["grain_", qsTr("Grain")], ["perspective_", qsTr("Transform")],
+            ["crop_", qsTr("Crop")], ["rotation", qsTr("Crop")], ["flip_", qsTr("Crop")],
+            ["film_sim", qsTr("Profile")], ["color_chrome", qsTr("Profile")],
+            ["denoise_", qsTr("Detail and optics")], ["defringe", qsTr("Detail and optics")],
+            ["lens_", qsTr("Detail and optics")],
+            ["lift", qsTr("Colour grading")], ["gamma", qsTr("Colour grading")], ["gain", qsTr("Colour grading")],
+            ["offset", qsTr("Colour grading")], ["contrast_pivot", qsTr("Colour grading")],
+            ["color_boost", qsTr("Colour grading")], ["midtone_detail", qsTr("Colour grading")]
+        ];
+        for (var i = 0; i < prefixes.length; ++i)
+            if (key.indexOf(prefixes[i][0]) === 0) return prefixes[i][1];
+        return "";
+    }
+
+    // What changed from a to b, e.g. "Exposure +0.50" or "Tone curve, Grain"
+    function describeChange(a, b) {
+        var names = [], keys = Object.keys(b);
+        var single = "";
+        for (var i = 0; i < keys.length; ++i) {
+            var k = keys[i];
+            if (k === "rating" || k === "flag" || k === "path" || k === "label") continue;
+            if (JSON.stringify(a[k]) === JSON.stringify(b[k])) continue;
+            var name = root.historyKeyLabel(k);
+            if (name === "") name = qsTr("Edit");
+            if (names.indexOf(name) < 0) names.push(name);
+            single = k;
+        }
+        if (names.length === 0) return qsTr("Edit");
+        if (names.length === 1 && typeof b[single] === "number" && root.historyKeyLabel(single) === names[0]
+                && ["exposure", "contrast", "highlights", "shadows", "whites", "blacks", "texture", "clarity",
+                    "dehaze", "vibrance", "saturation"].indexOf(single) >= 0) {
+            var v = b[single];
+            var text = single === "exposure" ? v.toFixed(2) : String(Math.round(v));
+            return names[0] + " " + (v > 0 ? "+" : "") + text;
+        }
+        return names.length > 2 ? names.slice(0, 2).join(", ") + ", …" : names.join(", ");
+    }
+
+    function historyStates() {
+        var states = root.undoStack.slice();
+        states.push(root.buildRecipeObject());
+        for (var i = root.redoStack.length - 1; i >= 0; --i) states.push(root.redoStack[i]);
+        return states;
+    }
+
+    function refreshHistory() {
+        if (root.activePhotoPath === "") {
+            root.historyModel = [];
+            return;
+        }
+        var states = root.historyStates();
+        var model = [];
+        for (var i = 0; i < states.length; ++i)
+            model.push({ "label": i === 0 ? qsTr("Start") : root.describeChange(states[i - 1], states[i]) });
+        root.historyModel = model;
+    }
+
+    // Go back or forward to a state in the history; later states stay until the next edit
+    function jumpToHistory(index) {
+        root.commitPendingUndo();
+        var states = root.historyStates();
+        if (index < 0 || index >= states.length || index === root.undoStack.length) return;
+        root.isPerformingUndoRedo = true;
+        root.undoStack = states.slice(0, index);
+        root.redoStack = states.slice(index + 1).reverse();
+        var target = Object.assign({}, states[index], { "rating": root.photoRating, "flag": root.photoFlag });
+        root.applyRecipeObject(target);
+        root.undoBaselineJson = JSON.stringify(root.buildRecipeObject());
+        root.isPerformingUndoRedo = false;
+    }
+
+    // Snapshots: named states of the edit, kept in the sidecar
+    property var snapshots: []
+
+    function takeSnapshot() {
+        root.commitPendingUndo();
+        var r = root.buildRecipeObject();
+        delete r.rating;
+        delete r.flag;
+        var list = root.snapshots.slice();
+        list.push({ "name": qsTr("Snapshot %1").arg(list.length + 1), "created": new Date().toISOString(), "recipe": r });
+        root.snapshots = list;
+        root.saveSidecar(true);
+        root.showToast(qsTr("Snapshot saved"), Theme.accentGreen);
+    }
+
+    function restoreSnapshot(index) {
+        var snap = root.snapshots[index];
+        if (!snap || !snap.recipe) return;
+        root.pushUndoState();
+        root.applyRecipeObject(Object.assign({}, snap.recipe, { "rating": root.photoRating, "flag": root.photoFlag }));
+        root.showToast(qsTr("Snapshot restored"), Theme.accentCyan);
+    }
+
+    function renameSnapshot(index, name) {
+        var trimmed = String(name).trim();
+        if (index < 0 || index >= root.snapshots.length || trimmed === "" || trimmed === root.snapshots[index].name) return;
+        var list = JSON.parse(JSON.stringify(root.snapshots));
+        list[index].name = trimmed.slice(0, 80);
+        root.snapshots = list;
+        root.saveSidecar(true);
+    }
+
+    function deleteSnapshot(index) {
+        if (index < 0 || index >= root.snapshots.length) return;
+        var list = root.snapshots.slice();
+        list.splice(index, 1);
+        root.snapshots = list;
+        root.saveSidecar(true);
+    }
+
     function copyRecipe() {
         root.copiedRecipe = root.buildRecipeObject();
         root.showToast(qsTr("Settings copied"), Theme.accentGreen);
@@ -867,7 +999,9 @@ Rectangle {
                     root.activeMetadata = data.metadata;
                     root.activeScene = data.scene;
                     root.applyRecipeObject(data.recipe);
+                    root.snapshots = data.recipe && Array.isArray(data.recipe.snapshots) ? data.recipe.snapshots : [];
                     root.savedRecipeJson = JSON.stringify(root.buildRecipeObject());
+                    root.refreshHistory();
                 }
             } else if (act === "adjust") {
                 root.renderFinished();
@@ -962,6 +1096,8 @@ Rectangle {
         if (root.activePhotoPath === "") return;
         var recipe = root.buildRecipeObject();
         root.savedRecipeJson = JSON.stringify(recipe);
+        // Snapshots live in the sidecar but not in the edit (undo, copy and the engine never see them)
+        if (root.snapshots.length > 0) recipe.snapshots = root.snapshots;
         if (quiet === true) root.quietSaves++;
         root.sendDaemonCommand({
             cmd: "save_recipe",
@@ -1419,6 +1555,7 @@ Rectangle {
             root.redoStack = [];
             root.gradeVersions = { "A": null, "B": null, "C": null, "D": null };
             root.currentGradeVersion = "A";
+            root.snapshots = [];
         }
         root.activePhotoPath = path;
         // The full-resolution frame is decoded again for this photo (see full_ready)
@@ -1702,6 +1839,20 @@ Rectangle {
                                     Layout.fillWidth: true
                                 }
                             }
+                        }
+
+                        // 5. History and snapshots
+                        HistoryPanel {
+                            Layout.fillWidth: true
+                            visible: root.activePhotoPath !== ""
+                            entries: root.historyModel
+                            currentIndex: root.undoStack.length
+                            snapshots: root.snapshots
+                            onJumpRequested: function(index) { root.jumpToHistory(index) }
+                            onSnapshotRequested: root.takeSnapshot()
+                            onRestoreRequested: function(index) { root.restoreSnapshot(index) }
+                            onRenameRequested: function(index, name) { root.renameSnapshot(index, name) }
+                            onDeleteRequested: function(index) { root.deleteSnapshot(index) }
                         }
 
                         Item { Layout.fillHeight: true }

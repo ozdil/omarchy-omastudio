@@ -1071,6 +1071,33 @@
     </message>
 </context>
 <context>
+    <name>HistoryPanel</name>
+    <message>
+        <source>History</source>
+        <translation>Előzmények</translation>
+    </message>
+    <message>
+        <source>Click a step to go back to it. A new edit from there replaces the later steps.</source>
+        <translation>Kattintson egy lépésre, hogy visszatérjen hozzá. Az onnan induló új szerkesztés felülírja a későbbi lépéseket.</translation>
+    </message>
+    <message>
+        <source>Snapshots</source>
+        <translation>Pillanatképek</translation>
+    </message>
+    <message>
+        <source>New snapshot</source>
+        <translation>Új pillanatkép</translation>
+    </message>
+    <message>
+        <source>A snapshot keeps the current edit under a name, in the sidecar, so you can come back to it later.</source>
+        <translation>A pillanatkép név alatt menti a jelenlegi szerkesztést a kísérőfájlba, hogy később visszatérhessen hozzá.</translation>
+    </message>
+    <message>
+        <source>Restore</source>
+        <translation>Visszaállítás</translation>
+    </message>
+</context>
+<context>
     <name>HslMixer</name>
     <message>
         <source>Red</source>
@@ -1653,6 +1680,42 @@
     <message>
         <source>Redo</source>
         <translation>Újra</translation>
+    </message>
+    <message>
+        <source>Gamut compression</source>
+        <translation>Színtartomány-tömörítés</translation>
+    </message>
+    <message>
+        <source>ACES tone curve</source>
+        <translation>ACES tónusgörbe</translation>
+    </message>
+    <message>
+        <source>Skin tone</source>
+        <translation>Bőrtónus</translation>
+    </message>
+    <message>
+        <source>Crop</source>
+        <translation>Vágás</translation>
+    </message>
+    <message>
+        <source>Edit</source>
+        <translation>Szerkesztés</translation>
+    </message>
+    <message>
+        <source>Start</source>
+        <translation>Kezdet</translation>
+    </message>
+    <message>
+        <source>Snapshot %1</source>
+        <translation>Pillanatkép %1</translation>
+    </message>
+    <message>
+        <source>Snapshot saved</source>
+        <translation>Pillanatkép mentve</translation>
+    </message>
+    <message>
+        <source>Snapshot restored</source>
+        <translation>Pillanatkép visszaállítva</translation>
     </message>
     <message>
         <source>Settings copied</source>

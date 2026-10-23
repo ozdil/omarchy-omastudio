@@ -1071,6 +1071,33 @@
     </message>
 </context>
 <context>
+    <name>HistoryPanel</name>
+    <message>
+        <source>History</source>
+        <translation>Riwayat</translation>
+    </message>
+    <message>
+        <source>Click a step to go back to it. A new edit from there replaces the later steps.</source>
+        <translation>Klik langkah untuk kembali ke sana. Edit baru dari sana menggantikan langkah-langkah setelahnya.</translation>
+    </message>
+    <message>
+        <source>Snapshots</source>
+        <translation>Snapshot</translation>
+    </message>
+    <message>
+        <source>New snapshot</source>
+        <translation>Snapshot baru</translation>
+    </message>
+    <message>
+        <source>A snapshot keeps the current edit under a name, in the sidecar, so you can come back to it later.</source>
+        <translation>Snapshot menyimpan edit saat ini dengan sebuah nama di file sidecar, agar Anda bisa kembali ke sana nanti.</translation>
+    </message>
+    <message>
+        <source>Restore</source>
+        <translation>Pulihkan</translation>
+    </message>
+</context>
+<context>
     <name>HslMixer</name>
     <message>
         <source>Red</source>
@@ -1653,6 +1680,42 @@
     <message>
         <source>Redo</source>
         <translation>Ulangi</translation>
+    </message>
+    <message>
+        <source>Gamut compression</source>
+        <translation>Kompresi gamut</translation>
+    </message>
+    <message>
+        <source>ACES tone curve</source>
+        <translation>Kurva nada ACES</translation>
+    </message>
+    <message>
+        <source>Skin tone</source>
+        <translation>Warna kulit</translation>
+    </message>
+    <message>
+        <source>Crop</source>
+        <translation>Pangkas</translation>
+    </message>
+    <message>
+        <source>Edit</source>
+        <translation>Sunting</translation>
+    </message>
+    <message>
+        <source>Start</source>
+        <translation>Awal</translation>
+    </message>
+    <message>
+        <source>Snapshot %1</source>
+        <translation>Snapshot %1</translation>
+    </message>
+    <message>
+        <source>Snapshot saved</source>
+        <translation>Snapshot disimpan</translation>
+    </message>
+    <message>
+        <source>Snapshot restored</source>
+        <translation>Snapshot dipulihkan</translation>
     </message>
     <message>
         <source>Settings copied</source>

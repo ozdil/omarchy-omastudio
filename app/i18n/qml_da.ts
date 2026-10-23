@@ -1074,6 +1074,33 @@
     </message>
 </context>
 <context>
+    <name>HistoryPanel</name>
+    <message>
+        <source>History</source>
+        <translation>Historik</translation>
+    </message>
+    <message>
+        <source>Click a step to go back to it. A new edit from there replaces the later steps.</source>
+        <translation>Klik på et trin for at gå tilbage til det. En ny redigering derfra erstatter de senere trin.</translation>
+    </message>
+    <message>
+        <source>Snapshots</source>
+        <translation>Snapshots</translation>
+    </message>
+    <message>
+        <source>New snapshot</source>
+        <translation>Nyt snapshot</translation>
+    </message>
+    <message>
+        <source>A snapshot keeps the current edit under a name, in the sidecar, so you can come back to it later.</source>
+        <translation>Et snapshot gemmer den aktuelle redigering under et navn i sidecar-filen, så du kan vende tilbage til den senere.</translation>
+    </message>
+    <message>
+        <source>Restore</source>
+        <translation>Gendan</translation>
+    </message>
+</context>
+<context>
     <name>HslMixer</name>
     <message>
         <source>Red</source>
@@ -1657,6 +1684,42 @@
     <message>
         <source>Redo</source>
         <translation>Gentag</translation>
+    </message>
+    <message>
+        <source>Gamut compression</source>
+        <translation>Gamutkomprimering</translation>
+    </message>
+    <message>
+        <source>ACES tone curve</source>
+        <translation>ACES-tonekurve</translation>
+    </message>
+    <message>
+        <source>Skin tone</source>
+        <translation>Hudtone</translation>
+    </message>
+    <message>
+        <source>Crop</source>
+        <translation>Beskær</translation>
+    </message>
+    <message>
+        <source>Edit</source>
+        <translation>Rediger</translation>
+    </message>
+    <message>
+        <source>Start</source>
+        <translation>Start</translation>
+    </message>
+    <message>
+        <source>Snapshot %1</source>
+        <translation>Snapshot %1</translation>
+    </message>
+    <message>
+        <source>Snapshot saved</source>
+        <translation>Snapshot gemt</translation>
+    </message>
+    <message>
+        <source>Snapshot restored</source>
+        <translation>Snapshot gendannet</translation>
     </message>
     <message>
         <source>Settings copied</source>

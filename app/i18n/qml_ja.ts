@@ -1071,6 +1071,33 @@
     </message>
 </context>
 <context>
+    <name>HistoryPanel</name>
+    <message>
+        <source>History</source>
+        <translation>履歴</translation>
+    </message>
+    <message>
+        <source>Click a step to go back to it. A new edit from there replaces the later steps.</source>
+        <translation>ステップをクリックするとその状態に戻ります。そこから新しく編集すると、後のステップは置き換えられます。</translation>
+    </message>
+    <message>
+        <source>Snapshots</source>
+        <translation>スナップショット</translation>
+    </message>
+    <message>
+        <source>New snapshot</source>
+        <translation>新規スナップショット</translation>
+    </message>
+    <message>
+        <source>A snapshot keeps the current edit under a name, in the sidecar, so you can come back to it later.</source>
+        <translation>スナップショットは現在の編集を名前を付けてサイドカーに保存し、後で戻れるようにします。</translation>
+    </message>
+    <message>
+        <source>Restore</source>
+        <translation>復元</translation>
+    </message>
+</context>
+<context>
     <name>HslMixer</name>
     <message>
         <source>Red</source>
@@ -1653,6 +1680,42 @@
     <message>
         <source>Redo</source>
         <translation>やり直す</translation>
+    </message>
+    <message>
+        <source>Gamut compression</source>
+        <translation>色域圧縮</translation>
+    </message>
+    <message>
+        <source>ACES tone curve</source>
+        <translation>ACES トーンカーブ</translation>
+    </message>
+    <message>
+        <source>Skin tone</source>
+        <translation>肌の色</translation>
+    </message>
+    <message>
+        <source>Crop</source>
+        <translation>切り抜き</translation>
+    </message>
+    <message>
+        <source>Edit</source>
+        <translation>編集</translation>
+    </message>
+    <message>
+        <source>Start</source>
+        <translation>開始</translation>
+    </message>
+    <message>
+        <source>Snapshot %1</source>
+        <translation>スナップショット %1</translation>
+    </message>
+    <message>
+        <source>Snapshot saved</source>
+        <translation>スナップショットを保存しました</translation>
+    </message>
+    <message>
+        <source>Snapshot restored</source>
+        <translation>スナップショットを復元しました</translation>
     </message>
     <message>
         <source>Settings copied</source>

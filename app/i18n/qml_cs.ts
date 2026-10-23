@@ -1077,6 +1077,33 @@
     </message>
 </context>
 <context>
+    <name>HistoryPanel</name>
+    <message>
+        <source>History</source>
+        <translation>Historie</translation>
+    </message>
+    <message>
+        <source>Click a step to go back to it. A new edit from there replaces the later steps.</source>
+        <translation>Kliknutím na krok se k němu vrátíte. Nová úprava od tohoto místa nahradí pozdější kroky.</translation>
+    </message>
+    <message>
+        <source>Snapshots</source>
+        <translation>Snímky stavu</translation>
+    </message>
+    <message>
+        <source>New snapshot</source>
+        <translation>Nový snímek stavu</translation>
+    </message>
+    <message>
+        <source>A snapshot keeps the current edit under a name, in the sidecar, so you can come back to it later.</source>
+        <translation>Snímek stavu uloží aktuální úpravu pod názvem do souboru sidecar, abyste se k ní mohli později vrátit.</translation>
+    </message>
+    <message>
+        <source>Restore</source>
+        <translation>Obnovit</translation>
+    </message>
+</context>
+<context>
     <name>HslMixer</name>
     <message>
         <source>Red</source>
@@ -1661,6 +1688,42 @@
     <message>
         <source>Redo</source>
         <translation>Opakovat</translation>
+    </message>
+    <message>
+        <source>Gamut compression</source>
+        <translation>Komprese gamutu</translation>
+    </message>
+    <message>
+        <source>ACES tone curve</source>
+        <translation>Tónová křivka ACES</translation>
+    </message>
+    <message>
+        <source>Skin tone</source>
+        <translation>Tón pleti</translation>
+    </message>
+    <message>
+        <source>Crop</source>
+        <translation>Oříznout</translation>
+    </message>
+    <message>
+        <source>Edit</source>
+        <translation>Upravit</translation>
+    </message>
+    <message>
+        <source>Start</source>
+        <translation>Začátek</translation>
+    </message>
+    <message>
+        <source>Snapshot %1</source>
+        <translation>Snímek stavu %1</translation>
+    </message>
+    <message>
+        <source>Snapshot saved</source>
+        <translation>Snímek stavu uložen</translation>
+    </message>
+    <message>
+        <source>Snapshot restored</source>
+        <translation>Snímek stavu obnoven</translation>
     </message>
     <message>
         <source>Settings copied</source>

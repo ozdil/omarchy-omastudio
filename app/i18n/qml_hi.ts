@@ -1074,6 +1074,33 @@
     </message>
 </context>
 <context>
+    <name>HistoryPanel</name>
+    <message>
+        <source>History</source>
+        <translation>इतिहास</translation>
+    </message>
+    <message>
+        <source>Click a step to go back to it. A new edit from there replaces the later steps.</source>
+        <translation>किसी चरण पर वापस जाने के लिए उस पर क्लिक करें। वहाँ से किया गया नया संपादन बाद के चरणों की जगह ले लेता है।</translation>
+    </message>
+    <message>
+        <source>Snapshots</source>
+        <translation>स्नैपशॉट</translation>
+    </message>
+    <message>
+        <source>New snapshot</source>
+        <translation>नया स्नैपशॉट</translation>
+    </message>
+    <message>
+        <source>A snapshot keeps the current edit under a name, in the sidecar, so you can come back to it later.</source>
+        <translation>स्नैपशॉट मौजूदा संपादन को एक नाम से साइडकार फ़ाइल में रखता है, ताकि आप बाद में उस पर लौट सकें।</translation>
+    </message>
+    <message>
+        <source>Restore</source>
+        <translation>पुनर्स्थापित करें</translation>
+    </message>
+</context>
+<context>
     <name>HslMixer</name>
     <message>
         <source>Red</source>
@@ -1657,6 +1684,42 @@
     <message>
         <source>Redo</source>
         <translation>फिर से करें</translation>
+    </message>
+    <message>
+        <source>Gamut compression</source>
+        <translation>गैमट संपीड़न</translation>
+    </message>
+    <message>
+        <source>ACES tone curve</source>
+        <translation>ACES टोन कर्व</translation>
+    </message>
+    <message>
+        <source>Skin tone</source>
+        <translation>त्वचा का रंग</translation>
+    </message>
+    <message>
+        <source>Crop</source>
+        <translation>क्रॉप</translation>
+    </message>
+    <message>
+        <source>Edit</source>
+        <translation>संपादित करें</translation>
+    </message>
+    <message>
+        <source>Start</source>
+        <translation>शुरुआत</translation>
+    </message>
+    <message>
+        <source>Snapshot %1</source>
+        <translation>स्नैपशॉट %1</translation>
+    </message>
+    <message>
+        <source>Snapshot saved</source>
+        <translation>स्नैपशॉट सहेजा गया</translation>
+    </message>
+    <message>
+        <source>Snapshot restored</source>
+        <translation>स्नैपशॉट पुनर्स्थापित किया गया</translation>
     </message>
     <message>
         <source>Settings copied</source>

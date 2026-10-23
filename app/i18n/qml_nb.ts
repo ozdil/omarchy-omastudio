@@ -1074,6 +1074,33 @@
     </message>
 </context>
 <context>
+    <name>HistoryPanel</name>
+    <message>
+        <source>History</source>
+        <translation>Historikk</translation>
+    </message>
+    <message>
+        <source>Click a step to go back to it. A new edit from there replaces the later steps.</source>
+        <translation>Klikk på et trinn for å gå tilbake til det. En ny redigering derfra erstatter de senere trinnene.</translation>
+    </message>
+    <message>
+        <source>Snapshots</source>
+        <translation>Øyeblikksbilder</translation>
+    </message>
+    <message>
+        <source>New snapshot</source>
+        <translation>Nytt øyeblikksbilde</translation>
+    </message>
+    <message>
+        <source>A snapshot keeps the current edit under a name, in the sidecar, so you can come back to it later.</source>
+        <translation>Et øyeblikksbilde lagrer gjeldende redigering under et navn i sidecar-filen, så du kan gå tilbake til den senere.</translation>
+    </message>
+    <message>
+        <source>Restore</source>
+        <translation>Gjenopprett</translation>
+    </message>
+</context>
+<context>
     <name>HslMixer</name>
     <message>
         <source>Red</source>
@@ -1657,6 +1684,42 @@
     <message>
         <source>Redo</source>
         <translation>Gjør om</translation>
+    </message>
+    <message>
+        <source>Gamut compression</source>
+        <translation>Gamutkomprimering</translation>
+    </message>
+    <message>
+        <source>ACES tone curve</source>
+        <translation>ACES-tonekurve</translation>
+    </message>
+    <message>
+        <source>Skin tone</source>
+        <translation>Hudtone</translation>
+    </message>
+    <message>
+        <source>Crop</source>
+        <translation>Beskjær</translation>
+    </message>
+    <message>
+        <source>Edit</source>
+        <translation>Rediger</translation>
+    </message>
+    <message>
+        <source>Start</source>
+        <translation>Start</translation>
+    </message>
+    <message>
+        <source>Snapshot %1</source>
+        <translation>Øyeblikksbilde %1</translation>
+    </message>
+    <message>
+        <source>Snapshot saved</source>
+        <translation>Øyeblikksbilde lagret</translation>
+    </message>
+    <message>
+        <source>Snapshot restored</source>
+        <translation>Øyeblikksbilde gjenopprettet</translation>
     </message>
     <message>
         <source>Settings copied</source>

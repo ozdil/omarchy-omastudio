@@ -207,6 +207,11 @@ pub struct Recipe {
     #[serde(default)]
     pub retouch: Vec<crate::pipeline::retouch::RetouchSpot>,
 
+    /// Named states of the edit the user saved to come back to. Kept in the sidecar
+    /// for the editor only; rendering ignores them.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub snapshots: Vec<Snapshot>,
+
     /// Exposure the camera adds to this photo's raw data for its own rendering, in EV
     /// (Fujifilm's mid-point shift, DR200/DR400 included). Set from the photo when it
     /// is developed, never stored or exchanged with the recipe.
@@ -260,6 +265,16 @@ fn default_crop_dimension() -> f32 {
 
 fn default_crop_aspect() -> String {
     "Original".to_string()
+}
+
+/// A saved state of the edit: the recipe as the editor sent it, without its own snapshots
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Default)]
+#[serde(default)]
+pub struct Snapshot {
+    pub name: String,
+    /// When it was taken, as the editor wrote it (ISO 8601)
+    pub created: String,
+    pub recipe: serde_json::Value,
 }
 
 impl Default for Recipe {
@@ -355,6 +370,7 @@ impl Default for Recipe {
             color_chrome_blue: 0.0,
             layers: Vec::new(),
             retouch: Vec::new(),
+            snapshots: Vec::new(),
             baseline_exposure: 0.0,
         }
     }
@@ -765,5 +781,26 @@ mod catalog_tests {
         assert_eq!(kept.len(), 1);
         assert!(std::fs::read_to_string(kept[0].path()).unwrap().contains("future"));
         let _ = std::fs::remove_dir_all(&dir);
+    }
+}
+
+#[cfg(test)]
+mod snapshot_tests {
+    use super::*;
+
+    /// Snapshots survive a sidecar round trip, and a recipe without any writes none.
+    #[test]
+    fn snapshots_round_trip_and_are_omitted_when_empty() {
+        let plain = serde_json::to_value(Recipe::default()).unwrap();
+        assert!(plain.get("snapshots").is_none());
+
+        let mut r = Recipe::default();
+        r.snapshots.push(Snapshot {
+            name: "Warm".into(),
+            created: "2026-10-23T11:00:00Z".into(),
+            recipe: serde_json::json!({ "exposure": 0.5, "retouch": [] }),
+        });
+        let back: Recipe = serde_json::from_str(&serde_json::to_string(&r).unwrap()).unwrap();
+        assert_eq!(back.snapshots, r.snapshots);
     }
 }

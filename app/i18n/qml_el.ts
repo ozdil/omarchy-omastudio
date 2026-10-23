@@ -1074,6 +1074,33 @@
     </message>
 </context>
 <context>
+    <name>HistoryPanel</name>
+    <message>
+        <source>History</source>
+        <translation>Ιστορικό</translation>
+    </message>
+    <message>
+        <source>Click a step to go back to it. A new edit from there replaces the later steps.</source>
+        <translation>Κάντε κλικ σε ένα βήμα για να επιστρέψετε σε αυτό. Μια νέα επεξεργασία από εκεί αντικαθιστά τα επόμενα βήματα.</translation>
+    </message>
+    <message>
+        <source>Snapshots</source>
+        <translation>Στιγμιότυπα</translation>
+    </message>
+    <message>
+        <source>New snapshot</source>
+        <translation>Νέο στιγμιότυπο</translation>
+    </message>
+    <message>
+        <source>A snapshot keeps the current edit under a name, in the sidecar, so you can come back to it later.</source>
+        <translation>Ένα στιγμιότυπο κρατά την τρέχουσα επεξεργασία με ένα όνομα, στο συνοδευτικό αρχείο, ώστε να επιστρέψετε σε αυτή αργότερα.</translation>
+    </message>
+    <message>
+        <source>Restore</source>
+        <translation>Επαναφορά</translation>
+    </message>
+</context>
+<context>
     <name>HslMixer</name>
     <message>
         <source>Red</source>
@@ -1657,6 +1684,42 @@
     <message>
         <source>Redo</source>
         <translation>Επανάληψη</translation>
+    </message>
+    <message>
+        <source>Gamut compression</source>
+        <translation>Συμπίεση γκάμας</translation>
+    </message>
+    <message>
+        <source>ACES tone curve</source>
+        <translation>Καμπύλη τόνων ACES</translation>
+    </message>
+    <message>
+        <source>Skin tone</source>
+        <translation>Τόνος δέρματος</translation>
+    </message>
+    <message>
+        <source>Crop</source>
+        <translation>Περικοπή</translation>
+    </message>
+    <message>
+        <source>Edit</source>
+        <translation>Επεξεργασία</translation>
+    </message>
+    <message>
+        <source>Start</source>
+        <translation>Αρχή</translation>
+    </message>
+    <message>
+        <source>Snapshot %1</source>
+        <translation>Στιγμιότυπο %1</translation>
+    </message>
+    <message>
+        <source>Snapshot saved</source>
+        <translation>Το στιγμιότυπο αποθηκεύτηκε</translation>
+    </message>
+    <message>
+        <source>Snapshot restored</source>
+        <translation>Το στιγμιότυπο επαναφέρθηκε</translation>
     </message>
     <message>
         <source>Settings copied</source>

@@ -1071,6 +1071,33 @@
     </message>
 </context>
 <context>
+    <name>HistoryPanel</name>
+    <message>
+        <source>History</source>
+        <translation>Lịch sử</translation>
+    </message>
+    <message>
+        <source>Click a step to go back to it. A new edit from there replaces the later steps.</source>
+        <translation>Nhấp vào một bước để quay lại bước đó. Một chỉnh sửa mới từ đó sẽ thay thế các bước sau.</translation>
+    </message>
+    <message>
+        <source>Snapshots</source>
+        <translation>Ảnh chụp trạng thái</translation>
+    </message>
+    <message>
+        <source>New snapshot</source>
+        <translation>Ảnh chụp trạng thái mới</translation>
+    </message>
+    <message>
+        <source>A snapshot keeps the current edit under a name, in the sidecar, so you can come back to it later.</source>
+        <translation>Ảnh chụp trạng thái lưu bản chỉnh sửa hiện tại dưới một tên trong tệp đi kèm, để bạn quay lại sau.</translation>
+    </message>
+    <message>
+        <source>Restore</source>
+        <translation>Khôi phục</translation>
+    </message>
+</context>
+<context>
     <name>HslMixer</name>
     <message>
         <source>Red</source>
@@ -1653,6 +1680,42 @@
     <message>
         <source>Redo</source>
         <translation>Làm lại</translation>
+    </message>
+    <message>
+        <source>Gamut compression</source>
+        <translation>Nén gam màu</translation>
+    </message>
+    <message>
+        <source>ACES tone curve</source>
+        <translation>Đường cong tông ACES</translation>
+    </message>
+    <message>
+        <source>Skin tone</source>
+        <translation>Màu da</translation>
+    </message>
+    <message>
+        <source>Crop</source>
+        <translation>Cắt</translation>
+    </message>
+    <message>
+        <source>Edit</source>
+        <translation>Chỉnh sửa</translation>
+    </message>
+    <message>
+        <source>Start</source>
+        <translation>Bắt đầu</translation>
+    </message>
+    <message>
+        <source>Snapshot %1</source>
+        <translation>Ảnh chụp trạng thái %1</translation>
+    </message>
+    <message>
+        <source>Snapshot saved</source>
+        <translation>Đã lưu ảnh chụp trạng thái</translation>
+    </message>
+    <message>
+        <source>Snapshot restored</source>
+        <translation>Đã khôi phục ảnh chụp trạng thái</translation>
     </message>
     <message>
         <source>Settings copied</source>

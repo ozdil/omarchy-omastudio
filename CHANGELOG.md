@@ -56,6 +56,10 @@
 - Applied with lens distortion in one resampling step, in the preview, the 1:1 detail view and export alike. Masks and heal spots stay where they were placed on the photo; their overlays follow the correction.
 - Stored in the recipe as `perspective_vertical`, `perspective_horizontal` and `perspective_scale`. Not yet written to XMP sidecars.
 
+### History and snapshots
+- New **History** list in the left panel: every step of the edit, oldest first, named for what changed ("Exposure +0.70", "Tone curve", "Heal and clone"). A click goes back or forward to that step; a new edit from there replaces the later steps, as with Ctrl+Z.
+- **Snapshots** keep the current edit under a name you can change, and **Restore** brings one back as a new step that Ctrl+Z can undo. They are saved in the photo's sidecar (`snapshots`), so they are still there the next time the photo opens; undo, copy and paste leave them alone.
+
 ### Colour management
 - **Gamut compression** is now a switch of its own and follows the ACES 1.3 reference gamut compression: colours pushed outside the gamut by grading come back in smoothly, colours inside it are left alone. The previous version clipped negative values outright and desaturated every strongly saturated colour.
 - The working colour space list (sRGB, Display P3, Rec. 2020, ACEScg) is gone: the choice did not change the rendering (ACEScg only switched gamut compression on), and its coverage figures were wrong. The output colour space is chosen in the Export window, which converts with ICC profiles. Edits saved with ACEScg open with gamut compression on.

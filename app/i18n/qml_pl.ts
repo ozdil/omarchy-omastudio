@@ -1077,6 +1077,33 @@
     </message>
 </context>
 <context>
+    <name>HistoryPanel</name>
+    <message>
+        <source>History</source>
+        <translation>Historia</translation>
+    </message>
+    <message>
+        <source>Click a step to go back to it. A new edit from there replaces the later steps.</source>
+        <translation>Kliknij krok, aby do niego wrócić. Nowa edycja od tego miejsca zastąpi późniejsze kroki.</translation>
+    </message>
+    <message>
+        <source>Snapshots</source>
+        <translation>Migawki</translation>
+    </message>
+    <message>
+        <source>New snapshot</source>
+        <translation>Nowa migawka</translation>
+    </message>
+    <message>
+        <source>A snapshot keeps the current edit under a name, in the sidecar, so you can come back to it later.</source>
+        <translation>Migawka zachowuje bieżącą edycję pod nazwą w pliku pomocniczym, aby można było do niej wrócić później.</translation>
+    </message>
+    <message>
+        <source>Restore</source>
+        <translation>Przywróć</translation>
+    </message>
+</context>
+<context>
     <name>HslMixer</name>
     <message>
         <source>Red</source>
@@ -1661,6 +1688,42 @@
     <message>
         <source>Redo</source>
         <translation>Ponów</translation>
+    </message>
+    <message>
+        <source>Gamut compression</source>
+        <translation>Kompresja gamy</translation>
+    </message>
+    <message>
+        <source>ACES tone curve</source>
+        <translation>Krzywa tonalna ACES</translation>
+    </message>
+    <message>
+        <source>Skin tone</source>
+        <translation>Odcień skóry</translation>
+    </message>
+    <message>
+        <source>Crop</source>
+        <translation>Kadruj</translation>
+    </message>
+    <message>
+        <source>Edit</source>
+        <translation>Edytuj</translation>
+    </message>
+    <message>
+        <source>Start</source>
+        <translation>Początek</translation>
+    </message>
+    <message>
+        <source>Snapshot %1</source>
+        <translation>Migawka %1</translation>
+    </message>
+    <message>
+        <source>Snapshot saved</source>
+        <translation>Zapisano migawkę</translation>
+    </message>
+    <message>
+        <source>Snapshot restored</source>
+        <translation>Przywrócono migawkę</translation>
     </message>
     <message>
         <source>Settings copied</source>

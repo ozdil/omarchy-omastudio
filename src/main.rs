@@ -965,7 +965,8 @@ fn inspect_file(raw_path: &str) -> Result<InspectResult, String> {
         rating: prev.as_ref().map_or(0, |p| p.rating),
         color_label: prev.as_ref().map_or_else(String::new, |p| p.color_label.clone()),
         flag: prev.as_ref().map_or_else(|| recipe.flag.clone(), |p| p.flag.clone()),
-        recipe: recipe.clone(),
+        // Snapshots stay in the sidecar; the catalogue keeps only the edit
+        recipe: Recipe { snapshots: Vec::new(), ..recipe.clone() },
         updated_at: now,
     });
     let _ = catalog.save();

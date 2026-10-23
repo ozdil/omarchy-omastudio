@@ -1071,6 +1071,33 @@
     </message>
 </context>
 <context>
+    <name>HistoryPanel</name>
+    <message>
+        <source>History</source>
+        <translation>ประวัติ</translation>
+    </message>
+    <message>
+        <source>Click a step to go back to it. A new edit from there replaces the later steps.</source>
+        <translation>คลิกขั้นตอนเพื่อย้อนกลับไปที่ขั้นตอนนั้น การแก้ไขใหม่จากจุดนั้นจะแทนที่ขั้นตอนหลังจากนั้น</translation>
+    </message>
+    <message>
+        <source>Snapshots</source>
+        <translation>สแนปช็อต</translation>
+    </message>
+    <message>
+        <source>New snapshot</source>
+        <translation>สแนปช็อตใหม่</translation>
+    </message>
+    <message>
+        <source>A snapshot keeps the current edit under a name, in the sidecar, so you can come back to it later.</source>
+        <translation>สแนปช็อตเก็บการแก้ไขปัจจุบันไว้ภายใต้ชื่อในไฟล์ไซด์คาร์ เพื่อให้คุณกลับมาใช้ได้ภายหลัง</translation>
+    </message>
+    <message>
+        <source>Restore</source>
+        <translation>คืนค่า</translation>
+    </message>
+</context>
+<context>
     <name>HslMixer</name>
     <message>
         <source>Red</source>
@@ -1653,6 +1680,42 @@
     <message>
         <source>Redo</source>
         <translation>ทำซ้ำ</translation>
+    </message>
+    <message>
+        <source>Gamut compression</source>
+        <translation>การบีบอัดขอบเขตสี</translation>
+    </message>
+    <message>
+        <source>ACES tone curve</source>
+        <translation>เส้นโค้งโทน ACES</translation>
+    </message>
+    <message>
+        <source>Skin tone</source>
+        <translation>สีผิว</translation>
+    </message>
+    <message>
+        <source>Crop</source>
+        <translation>ครอป</translation>
+    </message>
+    <message>
+        <source>Edit</source>
+        <translation>แก้ไข</translation>
+    </message>
+    <message>
+        <source>Start</source>
+        <translation>เริ่มต้น</translation>
+    </message>
+    <message>
+        <source>Snapshot %1</source>
+        <translation>สแนปช็อต %1</translation>
+    </message>
+    <message>
+        <source>Snapshot saved</source>
+        <translation>บันทึกสแนปช็อตแล้ว</translation>
+    </message>
+    <message>
+        <source>Snapshot restored</source>
+        <translation>คืนค่าสแนปช็อตแล้ว</translation>
     </message>
     <message>
         <source>Settings copied</source>

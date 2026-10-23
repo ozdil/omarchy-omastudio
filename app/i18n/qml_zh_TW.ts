@@ -1071,6 +1071,33 @@
     </message>
 </context>
 <context>
+    <name>HistoryPanel</name>
+    <message>
+        <source>History</source>
+        <translation>歷史記錄</translation>
+    </message>
+    <message>
+        <source>Click a step to go back to it. A new edit from there replaces the later steps.</source>
+        <translation>點按某一步即可回到該步。從那裡進行新的編輯會取代之後的步驟。</translation>
+    </message>
+    <message>
+        <source>Snapshots</source>
+        <translation>快照</translation>
+    </message>
+    <message>
+        <source>New snapshot</source>
+        <translation>新增快照</translation>
+    </message>
+    <message>
+        <source>A snapshot keeps the current edit under a name, in the sidecar, so you can come back to it later.</source>
+        <translation>快照會以名稱將目前的編輯儲存在附屬檔案中，方便日後回到它。</translation>
+    </message>
+    <message>
+        <source>Restore</source>
+        <translation>還原</translation>
+    </message>
+</context>
+<context>
     <name>HslMixer</name>
     <message>
         <source>Red</source>
@@ -1653,6 +1680,42 @@
     <message>
         <source>Redo</source>
         <translation>重做</translation>
+    </message>
+    <message>
+        <source>Gamut compression</source>
+        <translation>色域壓縮</translation>
+    </message>
+    <message>
+        <source>ACES tone curve</source>
+        <translation>ACES 色調曲線</translation>
+    </message>
+    <message>
+        <source>Skin tone</source>
+        <translation>膚色</translation>
+    </message>
+    <message>
+        <source>Crop</source>
+        <translation>裁剪</translation>
+    </message>
+    <message>
+        <source>Edit</source>
+        <translation>編輯</translation>
+    </message>
+    <message>
+        <source>Start</source>
+        <translation>開始</translation>
+    </message>
+    <message>
+        <source>Snapshot %1</source>
+        <translation>快照 %1</translation>
+    </message>
+    <message>
+        <source>Snapshot saved</source>
+        <translation>快照已儲存</translation>
+    </message>
+    <message>
+        <source>Snapshot restored</source>
+        <translation>快照已還原</translation>
     </message>
     <message>
         <source>Settings copied</source>
