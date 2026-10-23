@@ -4,6 +4,7 @@ pub mod dng;
 pub mod ffi;
 pub mod lens;
 pub mod pixel_shift;
+pub mod raster;
 
 use crate::pipeline::transfer::Transfer;
 use ffi::*;
@@ -274,15 +275,34 @@ pub struct RawImage {
 // SAFETY: RawImage handle/backend is managed exclusively by Rust wrapper
 unsafe impl Send for RawImage {}
 
+/// Camera RAW extensions LibRaw reads (by file contents; the list decides what
+/// folder scans, the file dialog and the desktop entry offer).
+pub const RAW_EXTENSIONS: &[&str] = &[
+    "3fr", "ari", "arw", "bay", "cap", "cr2", "cr3", "crw", "cs1", "dc2", "dcr", "dcs", "dng", "drf", "eip", "erf",
+    "fff", "gpr", "iiq", "k25", "kc2", "kdc", "mdc", "mef", "mfw", "mos", "mrw", "nef", "nrw", "orf", "ori", "pef",
+    "ptx", "pxn", "qtk", "raf", "raw", "rdc", "rw2", "rwl", "rwz", "sr2", "srf", "srw", "sti", "x3f",
+];
+
+/// RAW or raster extension that OmaStudio opens.
+/// Cameras the linked LibRaw can read, as "Make Model".
+pub fn supported_cameras() -> Vec<String> {
+    // SAFETY: the shim returns LibRaw's static, NUL-terminated camera names
+    let n = unsafe { ffi::omaraw_camera_count() }.max(0);
+    (0..n)
+        .filter_map(|i| {
+            let p = unsafe { ffi::omaraw_camera_name(i) };
+            (!p.is_null()).then(|| unsafe { std::ffi::CStr::from_ptr(p) }.to_string_lossy().into_owned())
+        })
+        .collect()
+}
+
+pub fn is_supported_extension(ext: &str) -> bool {
+    let ext = ext.to_lowercase();
+    RAW_EXTENSIONS.contains(&ext.as_str()) || raster::RASTER_EXTENSIONS.contains(&ext.as_str())
+}
+
 fn is_raster_extension(path: &Path) -> bool {
-    if let Some(ext) = path.extension().and_then(|e| e.to_str()) {
-        matches!(
-            ext.to_lowercase().as_str(),
-            "jpg" | "jpeg" | "png" | "webp" | "tif" | "tiff"
-        )
-    } else {
-        false
-    }
+    raster::is_raster(path)
 }
 
 impl RawImage {
@@ -292,8 +312,7 @@ impl RawImage {
             .map_err(|e| format!("Security check failed for {}: {}", path_ref.display(), e))?;
 
         if is_raster_extension(path_ref) {
-            let img = image::open(path_ref)
-                .map_err(|e| format!("Failed to open raster image {}: {}", path_ref.display(), e))?;
+            let img = raster::decode(path_ref)?;
             return Ok(Self {
                 backend: RawBackend::Raster { img },
                 path: path_ref.to_path_buf(),
@@ -311,8 +330,8 @@ impl RawImage {
         let handle = unsafe { omaraw_open(c_path.as_ptr(), &mut errcode) };
 
         if handle.is_null() {
-            // Fallback: try loading with standard image reader if LibRaw fails
-            if let Ok(img) = image::open(path_ref) {
+            // Not a RAW after all: try it as an image
+            if let Ok(img) = raster::decode(path_ref) {
                 return Ok(Self {
                     backend: RawBackend::Raster { img },
                     path: path_ref.to_path_buf(),
@@ -682,8 +701,26 @@ impl RawImage {
         unsafe { develop::CfaFrame::from_libraw(raw, &info) }
     }
 
+    /// Monochrome or linear (already demosaiced) sensor data, or None for mosaic
+    /// sensors and raster files.
+    pub fn linear_frame(&self) -> Option<develop::LinearFrame> {
+        let RawBackend::LibRaw(handle) = &self.backend else {
+            return None;
+        };
+        // SAFETY: COmaRawCfaInfo is plain old data; all-zero is a valid value
+        let mut info: COmaRawCfaInfo = unsafe { std::mem::zeroed() };
+        let mut stride = 0;
+        // SAFETY: handle is a valid open LibRaw handle owned by self; pointers are valid
+        let raw = unsafe { omaraw_unpack_linear(*handle, &mut info, &mut stride) };
+        // SAFETY: the shim returns the handle's pixel plane (raw_pitch * raw_height * stride
+        // values), which stays valid while self (and so the handle) is alive
+        unsafe { develop::LinearFrame::from_libraw(raw, &info, stride.max(0) as usize) }
+    }
+
     fn develop_own(&self, half_size: bool) -> Option<ProcessedBuffer> {
-        let frame = self.cfa_frame()?;
+        let Some(frame) = self.cfa_frame() else {
+            return self.develop_linear(half_size);
+        };
         // Binning an X-Trans sensor gives a 1/3-size preview; LibRaw's half-size decode
         // is larger and renders the same colours, so previews keep using it
         if half_size && matches!(frame.pattern, demosaic::CfaPattern::XTrans(_)) {
@@ -705,6 +742,23 @@ impl RawImage {
             bits_per_sample: 16,
             data_size,
             // Linear data; the pipeline encodes it with the output space's curve
+            transfer: space.transfer(),
+        })
+    }
+
+    fn develop_linear(&self, half_size: bool) -> Option<ProcessedBuffer> {
+        let frame = self.linear_frame()?;
+        let space = self.output_space.get();
+        self.developed_flip.set(frame.flip);
+        let (data, width, height) = frame.develop(space, half_size);
+        let data_size = data.len() * 2;
+        Some(ProcessedBuffer {
+            storage: BufferStorage::OwnedU16(data),
+            width,
+            height,
+            channels: 3,
+            bits_per_sample: 16,
+            data_size,
             transfer: space.transfer(),
         })
     }

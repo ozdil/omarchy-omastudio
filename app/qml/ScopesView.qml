@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
+import QtQuick.Controls
 
 Rectangle {
     id: root
@@ -23,8 +24,9 @@ Rectangle {
         anchors.margins: 8
         spacing: 6
 
-        // Top Control Bar: Mode Tabs + Clipping Toggles
-        RowLayout {
+        // Top Control Bar: Mode Tabs + Clipping Toggles (the toggles wrap to a second
+        // line when the column is narrow)
+        Flow {
             Layout.fillWidth: true
             spacing: 4
 
@@ -42,7 +44,7 @@ Rectangle {
                     model: parent.modes
                     delegate: Rectangle {
                         implicitWidth: modeText.implicitWidth + 8
-                        implicitHeight: 18
+                        implicitHeight: Theme.px(11) + 8
                         radius: Theme.r(3)
                         property bool isCur: root.activeScope === modelData.idx
                         color: isCur ? Qt.rgba(Theme.accent.r, Theme.accent.g, Theme.accent.b, 0.25) : Theme.bgCard
@@ -54,7 +56,7 @@ Rectangle {
                             anchors.centerIn: parent
                             text: modelData.name
                             textFormat: Text.PlainText
-                            font.pixelSize: Theme.px(8)
+                            font.pixelSize: Theme.px(11)
                             font.weight: Font.Bold
                             font.family: Theme.monoFont
                             color: parent.isCur ? Theme.accent : Theme.textDim
@@ -72,12 +74,10 @@ Rectangle {
                 }
             }
 
-            Item { Layout.fillWidth: true }
-
             // Shadow clipping button
             Rectangle {
                 implicitWidth: shadowText.implicitWidth + 8
-                implicitHeight: 18
+                implicitHeight: Theme.px(11) + 8
                 radius: Theme.r(3)
                 color: root.showClippingShadows ? Theme.shadowClip : Qt.rgba(0.2, 0.5, 1.0, 0.15)
                 border.color: Theme.shadowClip
@@ -87,7 +87,7 @@ Rectangle {
                     anchors.centerIn: parent
                     text: qsTr("[S] %1%", "S: shadow clipping").arg(root.histData ? root.histData.shadow_clipping_percent.toFixed(1) : "0.0")
                     textFormat: Text.PlainText
-                    font.pixelSize: Theme.px(8)
+                    font.pixelSize: Theme.px(11)
                     font.family: Theme.monoFont
                     color: root.showClippingShadows ? "#ffffff" : Theme.shadowClip
                 }
@@ -95,6 +95,10 @@ Rectangle {
                 MouseArea {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
+                    hoverEnabled: true
+                    ToolTip.visible: containsMouse
+                    ToolTip.delay: 500
+                    ToolTip.text: qsTr("Clipped shadows. Click to show them on the photo.")
                     onClicked: {
                         root.showClippingShadows = !root.showClippingShadows;
                         root.toggleShadowMask();
@@ -105,7 +109,7 @@ Rectangle {
             // Highlight clipping button
             Rectangle {
                 implicitWidth: highText.implicitWidth + 8
-                implicitHeight: 18
+                implicitHeight: Theme.px(11) + 8
                 radius: Theme.r(3)
                 color: root.showClippingHighlights ? Theme.highlightClip : Qt.rgba(1.0, 0.3, 0.4, 0.15)
                 border.color: Theme.highlightClip
@@ -115,7 +119,7 @@ Rectangle {
                     anchors.centerIn: parent
                     text: qsTr("[H] %1%", "H: highlight clipping").arg(root.histData ? root.histData.highlight_clipping_percent.toFixed(1) : "0.0")
                     textFormat: Text.PlainText
-                    font.pixelSize: Theme.px(8)
+                    font.pixelSize: Theme.px(11)
                     font.family: Theme.monoFont
                     color: root.showClippingHighlights ? "#ffffff" : Theme.highlightClip
                 }
@@ -123,6 +127,10 @@ Rectangle {
                 MouseArea {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
+                    hoverEnabled: true
+                    ToolTip.visible: containsMouse
+                    ToolTip.delay: 500
+                    ToolTip.text: qsTr("Clipped highlights. Click to show them on the photo.")
                     onClicked: {
                         root.showClippingHighlights = !root.showClippingHighlights;
                         root.toggleHighlightMask();

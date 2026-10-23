@@ -127,6 +127,115 @@ impl CfaFrame {
     }
 }
 
+/// Sensor data that needs no demosaicing: monochrome sensors (Leica Monochrom,
+/// Phase One Achromatic, Pentax K-3 Mark III Monochrome) and linear DNGs (pixel-shift
+/// merges, scans and files from other converters).
+pub struct LinearFrame {
+    pub width: usize,
+    pub height: usize,
+    /// Black-subtracted, white-balanced values, 1.0 = clipping point; one sample per
+    /// pixel for monochrome, three (camera RGB) otherwise.
+    pub data: Vec<f32>,
+    pub channels: usize,
+    /// Camera RGB (white balanced) -> linear sRGB; unused for monochrome.
+    pub rgb_cam: [[f32; 3]; 3],
+    pub flip: i32,
+}
+
+impl LinearFrame {
+    /// Builds the frame from LibRaw's unpacked pixel plane (`stride` samples per pixel:
+    /// 1 monochrome, 3 or 4 linear RGB).
+    ///
+    /// # Safety
+    /// `raw` must point to at least `raw_pitch * raw_height * stride` values that stay
+    /// valid for the duration of the call.
+    pub unsafe fn from_libraw(raw: *const u16, info: &COmaRawCfaInfo, stride: usize) -> Option<Self> {
+        let (width, height) = (info.width.max(0) as usize, info.height.max(0) as usize);
+        let pitch = info.raw_pitch.max(0) as usize;
+        let (top, left) = (info.top_margin.max(0) as usize, info.left_margin.max(0) as usize);
+        if raw.is_null() || !matches!(stride, 1 | 3 | 4) || width < 2 || height < 2
+            || top + height > info.raw_height as usize || left + width > pitch
+        {
+            return None;
+        }
+        // SAFETY: the caller guarantees raw_pitch * raw_height * stride readable values
+        let plane = unsafe { std::slice::from_raw_parts(raw, pitch * info.raw_height as usize * stride) };
+        let channels = if stride == 1 { 1 } else { 3 };
+
+        // Monochrome has no white balance; colour uses the as-shot balance normalised so
+        // the weakest channel is 1, as for mosaic sensors
+        let mul = if channels == 1 {
+            [1.0; 3]
+        } else {
+            let m = if info.cam_mul[0] > 0.0 && info.cam_mul[1] > 0.0 { info.cam_mul } else { info.pre_mul };
+            let min = m[..3].iter().copied().fold(f32::MAX, f32::min);
+            if min <= 0.0 {
+                [1.0; 3]
+            } else {
+                [m[0] / min, m[1] / min, m[2] / min]
+            }
+        };
+        let white = info.white;
+        if white <= 0.0 {
+            return None;
+        }
+        let (ph, pw) = (info.black_pattern_h.max(0) as usize, info.black_pattern_w.max(0) as usize);
+        let mut data = vec![0f32; width * height * channels];
+        data.par_chunks_mut(width * channels).enumerate().for_each(|(y, row)| {
+            let base = ((y + top) * pitch + left) * stride;
+            for x in 0..width {
+                let mut pattern = 0.0;
+                if ph > 0 && pw > 0 {
+                    pattern = info.black_pattern[(y % ph) * pw + x % pw];
+                }
+                for c in 0..channels {
+                    let black = info.black[c] + pattern;
+                    let range = (white - black).max(1.0);
+                    let v = plane[base + x * stride + c] as f32;
+                    row[x * channels + c] = ((v - black) / range * mul[c]).clamp(0.0, 1.0);
+                }
+            }
+        });
+
+        let rgb_cam = std::array::from_fn(|r| std::array::from_fn(|c| info.rgb_cam[r][c]));
+        Some(Self { width, height, data, channels, rgb_cam, flip: info.flip })
+    }
+
+    /// Develops the frame into interleaved 16-bit linear RGB in `space`; `half_size`
+    /// averages 2x2 blocks.
+    pub fn develop(self, space: OutputColorSpace, half_size: bool) -> (Vec<u16>, u32, u32) {
+        let ch = self.channels;
+        let (w, h) = if half_size { ((self.width / 2).max(1), (self.height / 2).max(1)) } else { (self.width, self.height) };
+        let m = if ch == 1 { [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]] } else { mul3(&srgb_to(space), &self.rgb_cam) };
+        let src = &self.data;
+        let sw = self.width;
+        let sample = |x: usize, y: usize, c: usize| -> f32 {
+            let c = if ch == 1 { 0 } else { c };
+            if !half_size {
+                return src[(y * sw + x) * ch + c];
+            }
+            let (x0, y0) = (x * 2, y * 2);
+            let at = |xx: usize, yy: usize| src[(yy * sw + xx) * ch + c];
+            (at(x0, y0) + at(x0 + 1, y0) + at(x0, y0 + 1) + at(x0 + 1, y0 + 1)) * 0.25
+        };
+        let mut out = vec![0u16; w * h * 3];
+        out.par_chunks_mut(w * 3).enumerate().for_each(|(y, row)| {
+            for x in 0..w {
+                let p = [sample(x, y, 0), sample(x, y, 1), sample(x, y, 2)];
+                for r in 0..3 {
+                    // A neutral grey stays neutral in every space, so monochrome needs no matrix
+                    let v = if ch == 1 { p[0] } else { m[r][0] * p[0] + m[r][1] * p[1] + m[r][2] * p[2] };
+                    row[x * 3 + r] = (v.clamp(0.0, 1.0) * 65535.0).round() as u16;
+                }
+            }
+        });
+        let flip = self.flip;
+        drop(self);
+        let (out, w, h) = rotate(out, w, h, flip);
+        (out, w as u32, h as u32)
+    }
+}
+
 /// Applies LibRaw's `flip` to interleaved RGB (for images merged outside `develop`).
 pub fn rotate_rgb(src: Vec<u16>, w: usize, h: usize, flip: i32) -> (Vec<u16>, usize, usize) {
     rotate(src, w, h, flip)
@@ -265,6 +374,53 @@ mod tests {
                 assert!((row.iter().sum::<f32>() - 1.0).abs() < 1e-3, "{space:?} {m:?}");
             }
         }
+    }
+
+    fn linear_info(width: i32, height: i32) -> COmaRawCfaInfo {
+        // SAFETY: plain old data; all-zero is valid
+        let mut info: COmaRawCfaInfo = unsafe { std::mem::zeroed() };
+        info.raw_width = width;
+        info.raw_height = height;
+        info.raw_pitch = width;
+        info.width = width;
+        info.height = height;
+        info.white = 4095.0;
+        info.black = [100.0; 4];
+        info.cam_mul = [2.0, 1.0, 1.5, 1.0];
+        info.rgb_cam = [[1.0, 0.0, 0.0, 0.0], [0.0, 1.0, 0.0, 0.0], [0.0, 0.0, 1.0, 0.0]];
+        info
+    }
+
+    #[test]
+    fn monochrome_develops_to_neutral_grey() {
+        let info = linear_info(4, 2);
+        let plane = [2097u16; 8];
+        // SAFETY: plane holds raw_pitch * raw_height values
+        let frame = unsafe { LinearFrame::from_libraw(plane.as_ptr(), &info, 1) }.unwrap();
+        for space in [OutputColorSpace::Srgb, OutputColorSpace::ProPhotoRgb] {
+            let (out, w, h) = LinearFrame { data: frame.data.clone(), ..frame_clone(&frame) }.develop(space, false);
+            assert_eq!((w, h), (4, 2));
+            // (2097 - 100) / (4095 - 100) = 0.5
+            assert!(out.chunks(3).all(|p| p[0] == p[1] && p[1] == p[2] && (p[0] as i32 - 32768).abs() < 20), "{out:?}");
+        }
+    }
+
+    fn frame_clone(f: &LinearFrame) -> LinearFrame {
+        LinearFrame { width: f.width, height: f.height, data: f.data.clone(), channels: f.channels, rgb_cam: f.rgb_cam, flip: f.flip }
+    }
+
+    #[test]
+    fn linear_rgb_is_white_balanced_and_binned() {
+        let info = linear_info(2, 2);
+        // stride 4 (color4_image): R, G, B, unused
+        let px = [1097u16, 2097, 1430, 0];
+        let plane: Vec<u16> = px.iter().copied().cycle().take(16).collect();
+        // SAFETY: plane holds raw_pitch * raw_height * 4 values
+        let frame = unsafe { LinearFrame::from_libraw(plane.as_ptr(), &info, 4) }.unwrap();
+        let (out, w, h) = frame.develop(OutputColorSpace::Srgb, true);
+        assert_eq!((w, h), (1, 1));
+        // Multipliers 2 / 1 / 1.5 bring all three channels to 0.5
+        assert!(out.iter().all(|&v| (v as i32 - 32768).abs() < 80), "{out:?}");
     }
 
     #[test]

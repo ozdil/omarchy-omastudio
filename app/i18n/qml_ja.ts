@@ -320,38 +320,6 @@
 <context>
     <name>ColorSpaceSelector</name>
     <message>
-        <source>Standard SDR web gamut</source>
-        <translation>標準 SDR Web 色域</translation>
-    </message>
-    <message>
-        <source>100% sRGB</source>
-        <translation>100% sRGB</translation>
-    </message>
-    <message>
-        <source>Wide gamut, Apple Retina displays</source>
-        <translation>広色域、Apple Retina ディスプレイ</translation>
-    </message>
-    <message>
-        <source>125% sRGB</source>
-        <translation>125% sRGB</translation>
-    </message>
-    <message>
-        <source>Ultra-wide gamut HDR master</source>
-        <translation>超広色域 HDR マスター</translation>
-    </message>
-    <message>
-        <source>150% sRGB</source>
-        <translation>150% sRGB</translation>
-    </message>
-    <message>
-        <source>Academy linear working space</source>
-        <translation>アカデミーのリニア作業空間</translation>
-    </message>
-    <message>
-        <source>Wide AP1</source>
-        <translation>広色域 AP1</translation>
-    </message>
-    <message>
         <source>Colour management</source>
         <translation>カラーマネジメント</translation>
     </message>
@@ -360,16 +328,20 @@
         <translation>色域圧縮</translation>
     </message>
     <message>
-        <source>%1 (%2)</source>
-        <translation>%1 (%2)</translation>
+        <source>Brings colours pushed outside the gamut back in smoothly instead of clipping them.</source>
+        <translation>色域外に出た色を切り捨てずに滑らかに色域内へ戻します。</translation>
     </message>
     <message>
-        <source>ACES 1.3 RRT/ODT Tonemapper</source>
-        <translation>ACES 1.3 RRT/ODT トーンマッパー</translation>
+        <source>ACES tone curve</source>
+        <translation>ACES トーンカーブ</translation>
     </message>
     <message>
-        <source>Filmic shoulder roll-off &amp; dynamic range mapping</source>
-        <translation>柔らかなフィルム調ショルダーとダイナミックレンジのマッピング</translation>
+        <source>Filmic highlight roll-off, a fitted approximation of the ACES output transform.</source>
+        <translation>ハイライトをなめらかに丸めます。ACES 出力変換の近似です。</translation>
+    </message>
+    <message>
+        <source>The output colour space is set in the Export window.</source>
+        <translation>出力の色空間は書き出しウィンドウで設定します。</translation>
     </message>
 </context>
 <context>
@@ -393,36 +365,60 @@
         <translation>知覚的</translation>
     </message>
     <message>
-        <source>8-bit · universal</source>
-        <translation>8 ビット · 汎用</translation>
+        <source>Export folder</source>
+        <translation>書き出し先フォルダー</translation>
     </message>
     <message>
-        <source>16-bit · lossless</source>
-        <translation>16 ビット · ロスレス</translation>
+        <source>8-bit</source>
+        <translation>8 ビット</translation>
     </message>
     <message>
-        <source>16-bit · print, archive</source>
-        <translation>16 ビット · 印刷、アーカイブ</translation>
+        <source>Opens everywhere</source>
+        <translation>どこでも開ける</translation>
     </message>
     <message>
-        <source>8-bit · web</source>
-        <translation>8 ビット · Web</translation>
+        <source>16-bit</source>
+        <translation>16 ビット</translation>
     </message>
     <message>
-        <source>12-bit · HDR-ready</source>
-        <translation>12 ビット · HDR 対応</translation>
+        <source>Lossless</source>
+        <translation>ロスレス</translation>
     </message>
     <message>
-        <source>10-bit · HEVC</source>
-        <translation>10 ビット · HEVC</translation>
+        <source>For print and archive</source>
+        <translation>印刷・保存用</translation>
     </message>
     <message>
-        <source>16-bit · modern</source>
-        <translation>16 ビット · 最新</translation>
+        <source>Small files for the web</source>
+        <translation>Web 向けの小さなファイル</translation>
     </message>
     <message>
-        <source>Float · scene-linear</source>
-        <translation>浮動小数点 · シーンリニア</translation>
+        <source>12-bit</source>
+        <translation>12 ビット</translation>
+    </message>
+    <message>
+        <source>Small files with high bit depth</source>
+        <translation>高ビット深度の小さなファイル</translation>
+    </message>
+    <message>
+        <source>10-bit</source>
+        <translation>10 ビット</translation>
+    </message>
+    <message>
+        <source>HEVC, as used by phones</source>
+        <translation>HEVC(スマートフォンで使われる形式)</translation>
+    </message>
+    <message>
+        <source>Small files, lossless at quality 100</source>
+        <translation>小さなファイル、品質 100 でロスレス</translation>
+    </message>
+    <message>
+        <source>Float</source>
+        <translation>浮動小数点</translation>
+    </message>
+    <message>
+        <source>Scene-linear, for compositing and grading</source>
+        <translation>シーンリニア、合成やグレーディング用</translation>
     </message>
     <message numerus="yes">
         <source>Export %n photos</source>
@@ -507,8 +503,8 @@
         <translation>Web、ディスプレイ</translation>
     </message>
     <message>
-        <source>Wide-gamut screens</source>
-        <translation>広色域ディスプレイ</translation>
+        <source>Modern screens</source>
+        <translation>最新のディスプレイ</translation>
     </message>
     <message>
         <source>Print</source>
@@ -579,8 +575,8 @@
         <translation>用途</translation>
     </message>
     <message>
-        <source>Sets the crop and output sharpening for a platform. Reset restores your own.</source>
-        <translation>プラットフォームに合わせて切り抜きと出力シャープネスを設定します。リセットで自分の設定に戻ります。</translation>
+        <source>Sets the crop and output sharpening for a platform. Click it again to go back to your own.</source>
+        <translation>プラットフォーム向けの切り抜きと出力シャープを設定します。もう一度クリックすると元の設定に戻ります。</translation>
     </message>
     <message>
         <source>Watermark</source>
@@ -589,6 +585,18 @@
     <message>
         <source>Folder</source>
         <translation>フォルダー</translation>
+    </message>
+    <message>
+        <source>Choose…</source>
+        <translation>選択…</translation>
+    </message>
+    <message>
+        <source>File name</source>
+        <translation>ファイル名</translation>
+    </message>
+    <message>
+        <source>Saved as %1</source>
+        <translation>%1 として保存</translation>
     </message>
     <message>
         <source>Hide</source>
@@ -806,10 +814,6 @@
     <message>
         <source>No photos found in this directory.</source>
         <translation>このフォルダに写真がありません。</translation>
-    </message>
-    <message>
-        <source>Folder</source>
-        <translation>フォルダー</translation>
     </message>
     <message>
         <source>Downloading</source>
@@ -1305,14 +1309,6 @@
         <translation>%1 を書き込みました</translation>
     </message>
     <message>
-        <source>Open RAW Photo</source>
-        <translation>RAW 写真を開く</translation>
-    </message>
-    <message>
-        <source>RAW Photos</source>
-        <translation>RAW 写真</translation>
-    </message>
-    <message>
         <source>Export finished without a result</source>
         <translation>書き出しは結果なしで終了しました</translation>
     </message>
@@ -1343,14 +1339,6 @@
     <message>
         <source>Contrast</source>
         <translation>コントラスト</translation>
-    </message>
-    <message>
-        <source>Temp (Kelvin)</source>
-        <translation>色温度（ケルビン）</translation>
-    </message>
-    <message>
-        <source>Tint (Green / Magenta)</source>
-        <translation>色かぶり補正（グリーン / マゼンタ）</translation>
     </message>
     <message>
         <source>Exposure</source>
@@ -1391,6 +1379,10 @@
     <message>
         <source>Texture</source>
         <translation>テクスチャ</translation>
+    </message>
+    <message>
+        <source>Suggested scene</source>
+        <translation>推定シーン</translation>
     </message>
     <message>
         <source>Clarity (Midtone Contrast)</source>
@@ -1493,6 +1485,22 @@
         <translation>自動: 写真を解析中…</translation>
     </message>
     <message>
+        <source>Open photo</source>
+        <translation>写真を開く</translation>
+    </message>
+    <message>
+        <source>Photos</source>
+        <translation>写真</translation>
+    </message>
+    <message>
+        <source>RAW</source>
+        <translation>RAW</translation>
+    </message>
+    <message>
+        <source>Images</source>
+        <translation>画像</translation>
+    </message>
+    <message>
         <source>Saved to %1</source>
         <translation>%1 に保存しました</translation>
     </message>
@@ -1545,10 +1553,6 @@
         <translation>不採用</translation>
     </message>
     <message>
-        <source>Scene</source>
-        <translation>シーン</translation>
-    </message>
-    <message>
         <source>Adjust</source>
         <translation>調整</translation>
     </message>
@@ -1565,6 +1569,14 @@
         <translation>AI 機能</translation>
     </message>
     <message>
+        <source>Read the photo&apos;s .xmp sidecar written by another editor</source>
+        <translation>他の編集ソフトが書いた .xmp ファイルを読み込む</translation>
+    </message>
+    <message>
+        <source>Write the edit, rating and label to an .xmp sidecar for other editors</source>
+        <translation>編集内容・レーティング・ラベルを他の編集ソフト用の .xmp ファイルに書き出す</translation>
+    </message>
+    <message>
         <source>Profile</source>
         <translation>プロファイル</translation>
     </message>
@@ -1579,6 +1591,14 @@
     <message>
         <source>White balance</source>
         <translation>ホワイトバランス</translation>
+    </message>
+    <message>
+        <source>Temperature</source>
+        <translation>色温度</translation>
+    </message>
+    <message>
+        <source>Tint</source>
+        <translation>色かぶり補正</translation>
     </message>
     <message>
         <source>Tone</source>
@@ -1649,16 +1669,8 @@
         <translation>XMP を読み込む</translation>
     </message>
     <message>
-        <source>Read DSCF0001.xmp from Lightroom, Capture One or darktable</source>
-        <translation>Lightroom、Capture One、darktable の DSCF0001.xmp を読み込む</translation>
-    </message>
-    <message>
         <source>Write XMP</source>
         <translation>XMP を書き込む</translation>
-    </message>
-    <message>
-        <source>Write the edit, rating and label to DSCF0001.xmp for other editors</source>
-        <translation>ほかの編集ソフト向けに編集・レーティング・ラベルを DSCF0001.xmp に書き込む</translation>
     </message>
     <message>
         <source>Opening %1</source>
@@ -1688,10 +1700,6 @@
     <message>
         <source>Navigator</source>
         <translation>ナビゲーター</translation>
-    </message>
-    <message>
-        <source>FIT</source>
-        <translation>全体表示</translation>
     </message>
 </context>
 <context>
@@ -1851,9 +1859,17 @@
         <translation>[暗] %1%</translation>
     </message>
     <message>
+        <source>Clipped shadows. Click to show them on the photo.</source>
+        <translation>黒つぶれ。クリックすると写真上に表示します。</translation>
+    </message>
+    <message>
         <source>[H] %1%</source>
         <comment>H: highlight clipping</comment>
         <translation>[明] %1%</translation>
+    </message>
+    <message>
+        <source>Clipped highlights. Click to show them on the photo.</source>
+        <translation>白とび。クリックすると写真上に表示します。</translation>
     </message>
     <message>
         <source>No photo</source>
@@ -1952,9 +1968,26 @@
 <context>
     <name>TopBar</name>
     <message>
-        <source>P</source>
-        <comment>pick flag, first letter of Pick</comment>
-        <translation>採</translation>
+        <source>Pick (P)</source>
+        <translation>採用 (P)</translation>
+    </message>
+    <message>
+        <source>Pick</source>
+        <translation>採用</translation>
+    </message>
+    <message>
+        <source>Reject (X)</source>
+        <translation>不採用 (X)</translation>
+    </message>
+    <message>
+        <source>Reject</source>
+        <translation>不採用</translation>
+    </message>
+    <message numerus="yes">
+        <source>%n star(s)</source>
+        <translation>
+            <numerusform>星 %n</numerusform>
+        </translation>
     </message>
     <message>
         <source>Connecting…</source>
@@ -2005,10 +2038,6 @@
         <translation>切り抜き</translation>
     </message>
     <message>
-        <source>Fit</source>
-        <translation>全体表示</translation>
-    </message>
-    <message>
         <source>Open RAW</source>
         <translation>RAW を開く</translation>
     </message>
@@ -2024,8 +2053,36 @@
         <translation>0° にリセット</translation>
     </message>
     <message>
+        <source>Rotate left</source>
+        <translation>左に回転</translation>
+    </message>
+    <message>
+        <source>Rotate right</source>
+        <translation>右に回転</translation>
+    </message>
+    <message>
         <source>Fit</source>
         <translation>全体表示</translation>
+    </message>
+    <message>
+        <source>Surround: %1</source>
+        <translation>背景: %1</translation>
+    </message>
+    <message>
+        <source>middle grey</source>
+        <translation>ミドルグレー</translation>
+    </message>
+    <message>
+        <source>theme colour</source>
+        <translation>テーマの色</translation>
+    </message>
+    <message>
+        <source>dark grey</source>
+        <translation>ダークグレー</translation>
+    </message>
+    <message>
+        <source>Surround colour</source>
+        <translation>背景色</translation>
     </message>
     <message>
         <source>Crop</source>
@@ -2093,6 +2150,10 @@
     <message>
         <source>Watermark</source>
         <translation>透かし</translation>
+    </message>
+    <message>
+        <source>Add a watermark</source>
+        <translation>透かしを追加</translation>
     </message>
     <message>
         <source>Text / EXIF Tag</source>

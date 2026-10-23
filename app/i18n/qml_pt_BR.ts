@@ -320,38 +320,6 @@
 <context>
     <name>ColorSpaceSelector</name>
     <message>
-        <source>Standard SDR web gamut</source>
-        <translation>Gama web SDR padrão</translation>
-    </message>
-    <message>
-        <source>100% sRGB</source>
-        <translation>100% sRGB</translation>
-    </message>
-    <message>
-        <source>Wide gamut, Apple Retina displays</source>
-        <translation>Gama ampla, telas Retina da Apple</translation>
-    </message>
-    <message>
-        <source>125% sRGB</source>
-        <translation>125% sRGB</translation>
-    </message>
-    <message>
-        <source>Ultra-wide gamut HDR master</source>
-        <translation>Master HDR de gama ultra-ampla</translation>
-    </message>
-    <message>
-        <source>150% sRGB</source>
-        <translation>150% sRGB</translation>
-    </message>
-    <message>
-        <source>Academy linear working space</source>
-        <translation>Espaço de trabalho linear da Academia</translation>
-    </message>
-    <message>
-        <source>Wide AP1</source>
-        <translation>AP1 amplo</translation>
-    </message>
-    <message>
         <source>Colour management</source>
         <translation>Gerenciamento de cor</translation>
     </message>
@@ -360,16 +328,20 @@
         <translation>Compressão de gama</translation>
     </message>
     <message>
-        <source>%1 (%2)</source>
-        <translation>%1 (%2)</translation>
+        <source>Brings colours pushed outside the gamut back in smoothly instead of clipping them.</source>
+        <translation>Traz de volta suavemente as cores fora da gama em vez de cortá-las.</translation>
     </message>
     <message>
-        <source>ACES 1.3 RRT/ODT Tonemapper</source>
-        <translation>Mapeador de tons ACES 1.3 RRT/ODT</translation>
+        <source>ACES tone curve</source>
+        <translation>Curva de tons ACES</translation>
     </message>
     <message>
-        <source>Filmic shoulder roll-off &amp; dynamic range mapping</source>
-        <translation>Ombro fílmico suave e mapeamento da faixa dinâmica</translation>
+        <source>Filmic highlight roll-off, a fitted approximation of the ACES output transform.</source>
+        <translation>Suavização das altas luzes, uma aproximação da transformação de saída ACES.</translation>
+    </message>
+    <message>
+        <source>The output colour space is set in the Export window.</source>
+        <translation>O espaço de cor de saída é definido na janela Exportar.</translation>
     </message>
 </context>
 <context>
@@ -393,36 +365,60 @@
         <translation>Perceptiva</translation>
     </message>
     <message>
-        <source>8-bit · universal</source>
-        <translation>8 bits · universal</translation>
+        <source>Export folder</source>
+        <translation>Pasta de exportação</translation>
     </message>
     <message>
-        <source>16-bit · lossless</source>
-        <translation>16 bits · sem perdas</translation>
+        <source>8-bit</source>
+        <translation>8 bits</translation>
     </message>
     <message>
-        <source>16-bit · print, archive</source>
-        <translation>16 bits · impressão, arquivo</translation>
+        <source>Opens everywhere</source>
+        <translation>Abre em qualquer lugar</translation>
     </message>
     <message>
-        <source>8-bit · web</source>
-        <translation>8 bits · web</translation>
+        <source>16-bit</source>
+        <translation>16 bits</translation>
     </message>
     <message>
-        <source>12-bit · HDR-ready</source>
-        <translation>12 bits · pronto para HDR</translation>
+        <source>Lossless</source>
+        <translation>Sem perda</translation>
     </message>
     <message>
-        <source>10-bit · HEVC</source>
-        <translation>10 bits · HEVC</translation>
+        <source>For print and archive</source>
+        <translation>Para impressão e arquivo</translation>
     </message>
     <message>
-        <source>16-bit · modern</source>
-        <translation>16 bits · moderno</translation>
+        <source>Small files for the web</source>
+        <translation>Arquivos pequenos para a web</translation>
     </message>
     <message>
-        <source>Float · scene-linear</source>
-        <translation>Ponto flutuante · linear de cena</translation>
+        <source>12-bit</source>
+        <translation>12 bits</translation>
+    </message>
+    <message>
+        <source>Small files with high bit depth</source>
+        <translation>Arquivos pequenos com alta profundidade de bits</translation>
+    </message>
+    <message>
+        <source>10-bit</source>
+        <translation>10 bits</translation>
+    </message>
+    <message>
+        <source>HEVC, as used by phones</source>
+        <translation>HEVC, como nos celulares</translation>
+    </message>
+    <message>
+        <source>Small files, lossless at quality 100</source>
+        <translation>Arquivos pequenos, sem perda na qualidade 100</translation>
+    </message>
+    <message>
+        <source>Float</source>
+        <translation>Ponto flutuante</translation>
+    </message>
+    <message>
+        <source>Scene-linear, for compositing and grading</source>
+        <translation>Linear de cena, para composição e correção de cor</translation>
     </message>
     <message numerus="yes">
         <source>Export %n photos</source>
@@ -508,8 +504,8 @@
         <translation>Web, telas</translation>
     </message>
     <message>
-        <source>Wide-gamut screens</source>
-        <translation>Telas de gama ampla</translation>
+        <source>Modern screens</source>
+        <translation>Telas modernas</translation>
     </message>
     <message>
         <source>Print</source>
@@ -580,8 +576,8 @@
         <translation>Preparar para</translation>
     </message>
     <message>
-        <source>Sets the crop and output sharpening for a platform. Reset restores your own.</source>
-        <translation>Define o corte e a nitidez de saída para uma plataforma. Redefinir restaura os seus próprios ajustes.</translation>
+        <source>Sets the crop and output sharpening for a platform. Click it again to go back to your own.</source>
+        <translation>Aplica o corte e a nitidez de saída de uma plataforma. Clique de novo para voltar às suas configurações.</translation>
     </message>
     <message>
         <source>Watermark</source>
@@ -590,6 +586,18 @@
     <message>
         <source>Folder</source>
         <translation>Pasta</translation>
+    </message>
+    <message>
+        <source>Choose…</source>
+        <translation>Escolher…</translation>
+    </message>
+    <message>
+        <source>File name</source>
+        <translation>Nome do arquivo</translation>
+    </message>
+    <message>
+        <source>Saved as %1</source>
+        <translation>Salvo como %1</translation>
     </message>
     <message>
         <source>Hide</source>
@@ -807,10 +815,6 @@
     <message>
         <source>No photos found in this directory.</source>
         <translation>Nenhuma foto encontrada nesta pasta.</translation>
-    </message>
-    <message>
-        <source>Folder</source>
-        <translation>Pasta</translation>
     </message>
     <message>
         <source>Downloading</source>
@@ -1309,14 +1313,6 @@
         <translation>Gravado %1</translation>
     </message>
     <message>
-        <source>Open RAW Photo</source>
-        <translation>Abrir foto RAW</translation>
-    </message>
-    <message>
-        <source>RAW Photos</source>
-        <translation>Fotos RAW</translation>
-    </message>
-    <message>
         <source>Export finished without a result</source>
         <translation>A exportação terminou sem resultado</translation>
     </message>
@@ -1347,14 +1343,6 @@
     <message>
         <source>Contrast</source>
         <translation>Contraste</translation>
-    </message>
-    <message>
-        <source>Temp (Kelvin)</source>
-        <translation>Temperatura (Kelvin)</translation>
-    </message>
-    <message>
-        <source>Tint (Green / Magenta)</source>
-        <translation>Matiz (verde / magenta)</translation>
     </message>
     <message>
         <source>Exposure</source>
@@ -1395,6 +1383,10 @@
     <message>
         <source>Texture</source>
         <translation>Textura</translation>
+    </message>
+    <message>
+        <source>Suggested scene</source>
+        <translation>Cena sugerida</translation>
     </message>
     <message>
         <source>Clarity (Midtone Contrast)</source>
@@ -1497,6 +1489,22 @@
         <translation>Automático: analisando a foto…</translation>
     </message>
     <message>
+        <source>Open photo</source>
+        <translation>Abrir foto</translation>
+    </message>
+    <message>
+        <source>Photos</source>
+        <translation>Fotos</translation>
+    </message>
+    <message>
+        <source>RAW</source>
+        <translation>RAW</translation>
+    </message>
+    <message>
+        <source>Images</source>
+        <translation>Imagens</translation>
+    </message>
+    <message>
         <source>Saved to %1</source>
         <translation>Salvo em %1</translation>
     </message>
@@ -1549,10 +1557,6 @@
         <translation>Rejeitada</translation>
     </message>
     <message>
-        <source>Scene</source>
-        <translation>Cena</translation>
-    </message>
-    <message>
         <source>Adjust</source>
         <translation>Ajustar</translation>
     </message>
@@ -1569,6 +1573,14 @@
         <translation>IA</translation>
     </message>
     <message>
+        <source>Read the photo&apos;s .xmp sidecar written by another editor</source>
+        <translation>Ler o arquivo .xmp gravado por outro editor</translation>
+    </message>
+    <message>
+        <source>Write the edit, rating and label to an .xmp sidecar for other editors</source>
+        <translation>Gravar a edição, a classificação e o rótulo em um arquivo .xmp para outros editores</translation>
+    </message>
+    <message>
         <source>Profile</source>
         <translation>Perfil</translation>
     </message>
@@ -1583,6 +1595,14 @@
     <message>
         <source>White balance</source>
         <translation>Balanço de branco</translation>
+    </message>
+    <message>
+        <source>Temperature</source>
+        <translation>Temperatura</translation>
+    </message>
+    <message>
+        <source>Tint</source>
+        <translation>Matiz</translation>
     </message>
     <message>
         <source>Tone</source>
@@ -1653,16 +1673,8 @@
         <translation>Importar XMP</translation>
     </message>
     <message>
-        <source>Read DSCF0001.xmp from Lightroom, Capture One or darktable</source>
-        <translation>Ler DSCF0001.xmp do Lightroom, Capture One ou darktable</translation>
-    </message>
-    <message>
         <source>Write XMP</source>
         <translation>Gravar XMP</translation>
-    </message>
-    <message>
-        <source>Write the edit, rating and label to DSCF0001.xmp for other editors</source>
-        <translation>Gravar a edição, a classificação e o rótulo em DSCF0001.xmp para outros editores</translation>
     </message>
     <message>
         <source>Opening %1</source>
@@ -1693,10 +1705,6 @@
     <message>
         <source>Navigator</source>
         <translation>Navegador</translation>
-    </message>
-    <message>
-        <source>FIT</source>
-        <translation>AJUSTAR</translation>
     </message>
 </context>
 <context>
@@ -1856,9 +1864,17 @@
         <translation>[S] %1%</translation>
     </message>
     <message>
+        <source>Clipped shadows. Click to show them on the photo.</source>
+        <translation>Sombras cortadas. Clique para mostrá-las na foto.</translation>
+    </message>
+    <message>
         <source>[H] %1%</source>
         <comment>H: highlight clipping</comment>
         <translation>[R] %1%</translation>
+    </message>
+    <message>
+        <source>Clipped highlights. Click to show them on the photo.</source>
+        <translation>Realces cortados. Clique para mostrá-los na foto.</translation>
     </message>
     <message>
         <source>No photo</source>
@@ -1957,9 +1973,27 @@
 <context>
     <name>TopBar</name>
     <message>
-        <source>P</source>
-        <comment>pick flag, first letter of Pick</comment>
-        <translation>E</translation>
+        <source>Pick (P)</source>
+        <translation>Escolher (P)</translation>
+    </message>
+    <message>
+        <source>Pick</source>
+        <translation>Escolhida</translation>
+    </message>
+    <message>
+        <source>Reject (X)</source>
+        <translation>Rejeitar (X)</translation>
+    </message>
+    <message>
+        <source>Reject</source>
+        <translation>Rejeitar</translation>
+    </message>
+    <message numerus="yes">
+        <source>%n star(s)</source>
+        <translation>
+            <numerusform>%n estrela</numerusform>
+            <numerusform>%n estrelas</numerusform>
+        </translation>
     </message>
     <message>
         <source>Connecting…</source>
@@ -2010,10 +2044,6 @@
         <translation>Cortar</translation>
     </message>
     <message>
-        <source>Fit</source>
-        <translation>Ajustar</translation>
-    </message>
-    <message>
         <source>Open RAW</source>
         <translation>Abrir RAW</translation>
     </message>
@@ -2029,8 +2059,36 @@
         <translation>Redefinir para 0°</translation>
     </message>
     <message>
+        <source>Rotate left</source>
+        <translation>Girar para a esquerda</translation>
+    </message>
+    <message>
+        <source>Rotate right</source>
+        <translation>Girar para a direita</translation>
+    </message>
+    <message>
         <source>Fit</source>
         <translation>Ajustar</translation>
+    </message>
+    <message>
+        <source>Surround: %1</source>
+        <translation>Entorno: %1</translation>
+    </message>
+    <message>
+        <source>middle grey</source>
+        <translation>cinza médio</translation>
+    </message>
+    <message>
+        <source>theme colour</source>
+        <translation>cor do tema</translation>
+    </message>
+    <message>
+        <source>dark grey</source>
+        <translation>cinza escuro</translation>
+    </message>
+    <message>
+        <source>Surround colour</source>
+        <translation>Cor do entorno</translation>
     </message>
     <message>
         <source>Crop</source>
@@ -2098,6 +2156,10 @@
     <message>
         <source>Watermark</source>
         <translation>Marca d&apos;água</translation>
+    </message>
+    <message>
+        <source>Add a watermark</source>
+        <translation>Adicionar marca d’água</translation>
     </message>
     <message>
         <source>Text / EXIF Tag</source>

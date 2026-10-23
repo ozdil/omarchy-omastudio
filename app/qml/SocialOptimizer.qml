@@ -15,6 +15,7 @@ ColumnLayout {
     signal resetSocial()
 
     RowLayout {
+        visible: !root.embedded
         Layout.fillWidth: true
         spacing: 4
 
@@ -32,7 +33,7 @@ ColumnLayout {
 
         // Reset social preset button (always accessible)
         Rectangle {
-            visible: true
+            visible: !root.embedded
             implicitWidth: Math.max(46, label33.implicitWidth + 16)
             implicitHeight: 18
             radius: Theme.radiusSm
@@ -133,7 +134,13 @@ ColumnLayout {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
                     hoverEnabled: true
+                    // Clicking the active preset again clears it
                     onClicked: {
+                        if (root.activePlatform === modelData.id) {
+                            root.activePlatform = "";
+                            root.resetSocial();
+                            return;
+                        }
                         root.activePlatform = modelData.id;
                         root.triggerSocialOptimize(modelData.id);
                     }

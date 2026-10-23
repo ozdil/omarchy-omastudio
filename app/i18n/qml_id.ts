@@ -320,38 +320,6 @@
 <context>
     <name>ColorSpaceSelector</name>
     <message>
-        <source>Standard SDR web gamut</source>
-        <translation>Gamut web SDR standar</translation>
-    </message>
-    <message>
-        <source>100% sRGB</source>
-        <translation>100% sRGB</translation>
-    </message>
-    <message>
-        <source>Wide gamut, Apple Retina displays</source>
-        <translation>Gamut lebar, layar Apple Retina</translation>
-    </message>
-    <message>
-        <source>125% sRGB</source>
-        <translation>125% sRGB</translation>
-    </message>
-    <message>
-        <source>Ultra-wide gamut HDR master</source>
-        <translation>Master HDR gamut sangat lebar</translation>
-    </message>
-    <message>
-        <source>150% sRGB</source>
-        <translation>150% sRGB</translation>
-    </message>
-    <message>
-        <source>Academy linear working space</source>
-        <translation>Ruang kerja linear Academy</translation>
-    </message>
-    <message>
-        <source>Wide AP1</source>
-        <translation>AP1 lebar</translation>
-    </message>
-    <message>
         <source>Colour management</source>
         <translation>Manajemen warna</translation>
     </message>
@@ -360,16 +328,20 @@
         <translation>Kompresi gamut</translation>
     </message>
     <message>
-        <source>%1 (%2)</source>
-        <translation>%1 (%2)</translation>
+        <source>Brings colours pushed outside the gamut back in smoothly instead of clipping them.</source>
+        <translation>Mengembalikan warna di luar gamut secara halus alih-alih memotongnya.</translation>
     </message>
     <message>
-        <source>ACES 1.3 RRT/ODT Tonemapper</source>
-        <translation>Pemetaan nada ACES 1.3 RRT/ODT</translation>
+        <source>ACES tone curve</source>
+        <translation>Kurva nada ACES</translation>
     </message>
     <message>
-        <source>Filmic shoulder roll-off &amp; dynamic range mapping</source>
-        <translation>Bahu filmis lembut dan pemetaan rentang dinamis</translation>
+        <source>Filmic highlight roll-off, a fitted approximation of the ACES output transform.</source>
+        <translation>Peredaman sorotan yang halus, pendekatan transformasi keluaran ACES.</translation>
+    </message>
+    <message>
+        <source>The output colour space is set in the Export window.</source>
+        <translation>Ruang warna keluaran diatur di jendela Ekspor.</translation>
     </message>
 </context>
 <context>
@@ -393,36 +365,60 @@
         <translation>Perseptual</translation>
     </message>
     <message>
-        <source>8-bit · universal</source>
-        <translation>8-bit · umum</translation>
+        <source>Export folder</source>
+        <translation>Folder ekspor</translation>
     </message>
     <message>
-        <source>16-bit · lossless</source>
-        <translation>16-bit · tanpa kehilangan</translation>
+        <source>8-bit</source>
+        <translation>8-bit</translation>
     </message>
     <message>
-        <source>16-bit · print, archive</source>
-        <translation>16-bit · cetak, arsip</translation>
+        <source>Opens everywhere</source>
+        <translation>Terbuka di mana saja</translation>
     </message>
     <message>
-        <source>8-bit · web</source>
-        <translation>8-bit · web</translation>
+        <source>16-bit</source>
+        <translation>16-bit</translation>
     </message>
     <message>
-        <source>12-bit · HDR-ready</source>
-        <translation>12-bit · siap HDR</translation>
+        <source>Lossless</source>
+        <translation>Tanpa kehilangan</translation>
     </message>
     <message>
-        <source>10-bit · HEVC</source>
-        <translation>10-bit · HEVC</translation>
+        <source>For print and archive</source>
+        <translation>Untuk cetak dan arsip</translation>
     </message>
     <message>
-        <source>16-bit · modern</source>
-        <translation>16-bit · modern</translation>
+        <source>Small files for the web</source>
+        <translation>File kecil untuk web</translation>
     </message>
     <message>
-        <source>Float · scene-linear</source>
-        <translation>Floating point · linear adegan</translation>
+        <source>12-bit</source>
+        <translation>12-bit</translation>
+    </message>
+    <message>
+        <source>Small files with high bit depth</source>
+        <translation>File kecil dengan kedalaman bit tinggi</translation>
+    </message>
+    <message>
+        <source>10-bit</source>
+        <translation>10-bit</translation>
+    </message>
+    <message>
+        <source>HEVC, as used by phones</source>
+        <translation>HEVC, seperti di ponsel</translation>
+    </message>
+    <message>
+        <source>Small files, lossless at quality 100</source>
+        <translation>File kecil, lossless pada kualitas 100</translation>
+    </message>
+    <message>
+        <source>Float</source>
+        <translation>Floating point</translation>
+    </message>
+    <message>
+        <source>Scene-linear, for compositing and grading</source>
+        <translation>Linier adegan, untuk compositing dan grading</translation>
     </message>
     <message numerus="yes">
         <source>Export %n photos</source>
@@ -507,8 +503,8 @@
         <translation>Web, layar</translation>
     </message>
     <message>
-        <source>Wide-gamut screens</source>
-        <translation>Layar gamut lebar</translation>
+        <source>Modern screens</source>
+        <translation>Layar modern</translation>
     </message>
     <message>
         <source>Print</source>
@@ -579,8 +575,8 @@
         <translation>Siapkan untuk</translation>
     </message>
     <message>
-        <source>Sets the crop and output sharpening for a platform. Reset restores your own.</source>
-        <translation>Mengatur pemangkasan dan penajaman keluaran untuk sebuah platform. Atur ulang mengembalikan pengaturan Anda sendiri.</translation>
+        <source>Sets the crop and output sharpening for a platform. Click it again to go back to your own.</source>
+        <translation>Mengatur potongan dan penajaman keluaran untuk sebuah platform. Klik lagi untuk kembali ke pengaturan Anda.</translation>
     </message>
     <message>
         <source>Watermark</source>
@@ -589,6 +585,18 @@
     <message>
         <source>Folder</source>
         <translation>Folder</translation>
+    </message>
+    <message>
+        <source>Choose…</source>
+        <translation>Pilih…</translation>
+    </message>
+    <message>
+        <source>File name</source>
+        <translation>Nama file</translation>
+    </message>
+    <message>
+        <source>Saved as %1</source>
+        <translation>Disimpan sebagai %1</translation>
     </message>
     <message>
         <source>Hide</source>
@@ -806,10 +814,6 @@
     <message>
         <source>No photos found in this directory.</source>
         <translation>Tidak ada foto di folder ini.</translation>
-    </message>
-    <message>
-        <source>Folder</source>
-        <translation>Folder</translation>
     </message>
     <message>
         <source>Downloading</source>
@@ -1305,14 +1309,6 @@
         <translation>Menulis %1</translation>
     </message>
     <message>
-        <source>Open RAW Photo</source>
-        <translation>Buka foto RAW</translation>
-    </message>
-    <message>
-        <source>RAW Photos</source>
-        <translation>Foto RAW</translation>
-    </message>
-    <message>
         <source>Export finished without a result</source>
         <translation>Ekspor selesai tanpa hasil</translation>
     </message>
@@ -1343,14 +1339,6 @@
     <message>
         <source>Contrast</source>
         <translation>Kontras</translation>
-    </message>
-    <message>
-        <source>Temp (Kelvin)</source>
-        <translation>Suhu (Kelvin)</translation>
-    </message>
-    <message>
-        <source>Tint (Green / Magenta)</source>
-        <translation>Rona (hijau / magenta)</translation>
     </message>
     <message>
         <source>Exposure</source>
@@ -1391,6 +1379,10 @@
     <message>
         <source>Texture</source>
         <translation>Tekstur</translation>
+    </message>
+    <message>
+        <source>Suggested scene</source>
+        <translation>Adegan yang disarankan</translation>
     </message>
     <message>
         <source>Clarity (Midtone Contrast)</source>
@@ -1493,6 +1485,22 @@
         <translation>Otomatis: menganalisis foto…</translation>
     </message>
     <message>
+        <source>Open photo</source>
+        <translation>Buka foto</translation>
+    </message>
+    <message>
+        <source>Photos</source>
+        <translation>Foto</translation>
+    </message>
+    <message>
+        <source>RAW</source>
+        <translation>RAW</translation>
+    </message>
+    <message>
+        <source>Images</source>
+        <translation>Gambar</translation>
+    </message>
+    <message>
         <source>Saved to %1</source>
         <translation>Disimpan ke %1</translation>
     </message>
@@ -1545,10 +1553,6 @@
         <translation>Ditolak</translation>
     </message>
     <message>
-        <source>Scene</source>
-        <translation>Adegan</translation>
-    </message>
-    <message>
         <source>Adjust</source>
         <translation>Sesuaikan</translation>
     </message>
@@ -1565,6 +1569,14 @@
         <translation>AI</translation>
     </message>
     <message>
+        <source>Read the photo&apos;s .xmp sidecar written by another editor</source>
+        <translation>Baca berkas .xmp yang ditulis editor lain</translation>
+    </message>
+    <message>
+        <source>Write the edit, rating and label to an .xmp sidecar for other editors</source>
+        <translation>Tulis suntingan, peringkat, dan label ke berkas .xmp untuk editor lain</translation>
+    </message>
+    <message>
         <source>Profile</source>
         <translation>Profil</translation>
     </message>
@@ -1579,6 +1591,14 @@
     <message>
         <source>White balance</source>
         <translation>Keseimbangan putih</translation>
+    </message>
+    <message>
+        <source>Temperature</source>
+        <translation>Suhu</translation>
+    </message>
+    <message>
+        <source>Tint</source>
+        <translation>Rona</translation>
     </message>
     <message>
         <source>Tone</source>
@@ -1649,16 +1669,8 @@
         <translation>Impor XMP</translation>
     </message>
     <message>
-        <source>Read DSCF0001.xmp from Lightroom, Capture One or darktable</source>
-        <translation>Baca DSCF0001.xmp dari Lightroom, Capture One, atau darktable</translation>
-    </message>
-    <message>
         <source>Write XMP</source>
         <translation>Tulis XMP</translation>
-    </message>
-    <message>
-        <source>Write the edit, rating and label to DSCF0001.xmp for other editors</source>
-        <translation>Tulis edit, peringkat, dan label ke DSCF0001.xmp untuk editor lain</translation>
     </message>
     <message>
         <source>Opening %1</source>
@@ -1688,10 +1700,6 @@
     <message>
         <source>Navigator</source>
         <translation>Navigator</translation>
-    </message>
-    <message>
-        <source>FIT</source>
-        <translation>PAS</translation>
     </message>
 </context>
 <context>
@@ -1851,9 +1859,17 @@
         <translation>[B] %1%</translation>
     </message>
     <message>
+        <source>Clipped shadows. Click to show them on the photo.</source>
+        <translation>Bayangan terpotong. Klik untuk menampilkannya pada foto.</translation>
+    </message>
+    <message>
         <source>[H] %1%</source>
         <comment>H: highlight clipping</comment>
         <translation>[S] %1%</translation>
+    </message>
+    <message>
+        <source>Clipped highlights. Click to show them on the photo.</source>
+        <translation>Sorotan terpotong. Klik untuk menampilkannya pada foto.</translation>
     </message>
     <message>
         <source>No photo</source>
@@ -1952,9 +1968,26 @@
 <context>
     <name>TopBar</name>
     <message>
-        <source>P</source>
-        <comment>pick flag, first letter of Pick</comment>
-        <translation>P</translation>
+        <source>Pick (P)</source>
+        <translation>Pilih (P)</translation>
+    </message>
+    <message>
+        <source>Pick</source>
+        <translation>Dipilih</translation>
+    </message>
+    <message>
+        <source>Reject (X)</source>
+        <translation>Tolak (X)</translation>
+    </message>
+    <message>
+        <source>Reject</source>
+        <translation>Tolak</translation>
+    </message>
+    <message numerus="yes">
+        <source>%n star(s)</source>
+        <translation>
+            <numerusform>%n bintang</numerusform>
+        </translation>
     </message>
     <message>
         <source>Connecting…</source>
@@ -2005,10 +2038,6 @@
         <translation>Pangkas</translation>
     </message>
     <message>
-        <source>Fit</source>
-        <translation>Pas</translation>
-    </message>
-    <message>
         <source>Open RAW</source>
         <translation>Buka RAW</translation>
     </message>
@@ -2024,8 +2053,36 @@
         <translation>Atur ulang ke 0°</translation>
     </message>
     <message>
+        <source>Rotate left</source>
+        <translation>Putar ke kiri</translation>
+    </message>
+    <message>
+        <source>Rotate right</source>
+        <translation>Putar ke kanan</translation>
+    </message>
+    <message>
         <source>Fit</source>
         <translation>Pas</translation>
+    </message>
+    <message>
+        <source>Surround: %1</source>
+        <translation>Sekitar: %1</translation>
+    </message>
+    <message>
+        <source>middle grey</source>
+        <translation>abu-abu sedang</translation>
+    </message>
+    <message>
+        <source>theme colour</source>
+        <translation>warna tema</translation>
+    </message>
+    <message>
+        <source>dark grey</source>
+        <translation>abu-abu gelap</translation>
+    </message>
+    <message>
+        <source>Surround colour</source>
+        <translation>Warna sekitar</translation>
     </message>
     <message>
         <source>Crop</source>
@@ -2093,6 +2150,10 @@
     <message>
         <source>Watermark</source>
         <translation>Tanda air</translation>
+    </message>
+    <message>
+        <source>Add a watermark</source>
+        <translation>Tambahkan tanda air</translation>
     </message>
     <message>
         <source>Text / EXIF Tag</source>

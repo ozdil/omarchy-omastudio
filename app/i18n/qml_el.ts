@@ -320,38 +320,6 @@
 <context>
     <name>ColorSpaceSelector</name>
     <message>
-        <source>Standard SDR web gamut</source>
-        <translation>Τυπική γκάμα SDR για τον ιστό</translation>
-    </message>
-    <message>
-        <source>100% sRGB</source>
-        <translation>100% sRGB</translation>
-    </message>
-    <message>
-        <source>Wide gamut, Apple Retina displays</source>
-        <translation>Ευρεία γκάμα, οθόνες Apple Retina</translation>
-    </message>
-    <message>
-        <source>125% sRGB</source>
-        <translation>125% sRGB</translation>
-    </message>
-    <message>
-        <source>Ultra-wide gamut HDR master</source>
-        <translation>HDR master με εξαιρετικά ευρεία γκάμα</translation>
-    </message>
-    <message>
-        <source>150% sRGB</source>
-        <translation>150% sRGB</translation>
-    </message>
-    <message>
-        <source>Academy linear working space</source>
-        <translation>Γραμμικός χώρος εργασίας της Ακαδημίας</translation>
-    </message>
-    <message>
-        <source>Wide AP1</source>
-        <translation>Ευρύ AP1</translation>
-    </message>
-    <message>
         <source>Colour management</source>
         <translation>Διαχείριση χρώματος</translation>
     </message>
@@ -360,16 +328,20 @@
         <translation>Συμπίεση γκάμας</translation>
     </message>
     <message>
-        <source>%1 (%2)</source>
-        <translation>%1 (%2)</translation>
+        <source>Brings colours pushed outside the gamut back in smoothly instead of clipping them.</source>
+        <translation>Επαναφέρει ομαλά τα χρώματα εκτός γκάμας αντί να τα αποκόπτει.</translation>
     </message>
     <message>
-        <source>ACES 1.3 RRT/ODT Tonemapper</source>
-        <translation>Αντιστοίχιση τόνων ACES 1.3 RRT/ODT</translation>
+        <source>ACES tone curve</source>
+        <translation>Καμπύλη τόνων ACES</translation>
     </message>
     <message>
-        <source>Filmic shoulder roll-off &amp; dynamic range mapping</source>
-        <translation>Ήπιος κινηματογραφικός ώμος και αντιστοίχιση δυναμικού εύρους</translation>
+        <source>Filmic highlight roll-off, a fitted approximation of the ACES output transform.</source>
+        <translation>Ομαλή μετάβαση στους φωτεινούς τόνους, προσέγγιση του μετασχηματισμού εξόδου ACES.</translation>
+    </message>
+    <message>
+        <source>The output colour space is set in the Export window.</source>
+        <translation>Ο χρωματικός χώρος εξόδου ορίζεται στο παράθυρο Εξαγωγής.</translation>
     </message>
 </context>
 <context>
@@ -393,36 +365,60 @@
         <translation>Αντιληπτική</translation>
     </message>
     <message>
-        <source>8-bit · universal</source>
-        <translation>8 bit · καθολικό</translation>
+        <source>Export folder</source>
+        <translation>Φάκελος εξαγωγής</translation>
     </message>
     <message>
-        <source>16-bit · lossless</source>
-        <translation>16 bit · χωρίς απώλειες</translation>
+        <source>8-bit</source>
+        <translation>8 bit</translation>
     </message>
     <message>
-        <source>16-bit · print, archive</source>
-        <translation>16 bit · εκτύπωση, αρχείο</translation>
+        <source>Opens everywhere</source>
+        <translation>Ανοίγει παντού</translation>
     </message>
     <message>
-        <source>8-bit · web</source>
-        <translation>8 bit · διαδίκτυο</translation>
+        <source>16-bit</source>
+        <translation>16 bit</translation>
     </message>
     <message>
-        <source>12-bit · HDR-ready</source>
-        <translation>12 bit · έτοιμο για HDR</translation>
+        <source>Lossless</source>
+        <translation>Χωρίς απώλειες</translation>
     </message>
     <message>
-        <source>10-bit · HEVC</source>
-        <translation>10 bit · HEVC</translation>
+        <source>For print and archive</source>
+        <translation>Για εκτύπωση και αρχείο</translation>
     </message>
     <message>
-        <source>16-bit · modern</source>
-        <translation>16 bit · σύγχρονο</translation>
+        <source>Small files for the web</source>
+        <translation>Μικρά αρχεία για το διαδίκτυο</translation>
     </message>
     <message>
-        <source>Float · scene-linear</source>
-        <translation>Κινητή υποδιαστολή · γραμμικό σκηνής</translation>
+        <source>12-bit</source>
+        <translation>12 bit</translation>
+    </message>
+    <message>
+        <source>Small files with high bit depth</source>
+        <translation>Μικρά αρχεία με μεγάλο βάθος bit</translation>
+    </message>
+    <message>
+        <source>10-bit</source>
+        <translation>10 bit</translation>
+    </message>
+    <message>
+        <source>HEVC, as used by phones</source>
+        <translation>HEVC, όπως στα κινητά</translation>
+    </message>
+    <message>
+        <source>Small files, lossless at quality 100</source>
+        <translation>Μικρά αρχεία, χωρίς απώλειες στην ποιότητα 100</translation>
+    </message>
+    <message>
+        <source>Float</source>
+        <translation>Κινητής υποδιαστολής</translation>
+    </message>
+    <message>
+        <source>Scene-linear, for compositing and grading</source>
+        <translation>Γραμμικό σκηνής, για σύνθεση και χρωματική διόρθωση</translation>
     </message>
     <message numerus="yes">
         <source>Export %n photos</source>
@@ -508,8 +504,8 @@
         <translation>Διαδίκτυο, οθόνες</translation>
     </message>
     <message>
-        <source>Wide-gamut screens</source>
-        <translation>Οθόνες ευρείας γκάμας</translation>
+        <source>Modern screens</source>
+        <translation>Σύγχρονες οθόνες</translation>
     </message>
     <message>
         <source>Print</source>
@@ -580,8 +576,8 @@
         <translation>Προετοιμασία για</translation>
     </message>
     <message>
-        <source>Sets the crop and output sharpening for a platform. Reset restores your own.</source>
-        <translation>Ορίζει την περικοπή και την όξυνση εξόδου για μια πλατφόρμα. Η Επαναφορά επαναφέρει τις δικές σας ρυθμίσεις.</translation>
+        <source>Sets the crop and output sharpening for a platform. Click it again to go back to your own.</source>
+        <translation>Ορίζει την περικοπή και την όξυνση εξόδου για μια πλατφόρμα. Πατήστε ξανά για να επιστρέψετε στις δικές σας ρυθμίσεις.</translation>
     </message>
     <message>
         <source>Watermark</source>
@@ -590,6 +586,18 @@
     <message>
         <source>Folder</source>
         <translation>Φάκελος</translation>
+    </message>
+    <message>
+        <source>Choose…</source>
+        <translation>Επιλογή…</translation>
+    </message>
+    <message>
+        <source>File name</source>
+        <translation>Όνομα αρχείου</translation>
+    </message>
+    <message>
+        <source>Saved as %1</source>
+        <translation>Θα αποθηκευτεί ως %1</translation>
     </message>
     <message>
         <source>Hide</source>
@@ -807,10 +815,6 @@
     <message>
         <source>No photos found in this directory.</source>
         <translation>Δεν βρέθηκαν φωτογραφίες σε αυτόν τον φάκελο.</translation>
-    </message>
-    <message>
-        <source>Folder</source>
-        <translation>Φάκελος</translation>
     </message>
     <message>
         <source>Downloading</source>
@@ -1309,14 +1313,6 @@
         <translation>Γράφτηκε %1</translation>
     </message>
     <message>
-        <source>Open RAW Photo</source>
-        <translation>Άνοιγμα φωτογραφίας RAW</translation>
-    </message>
-    <message>
-        <source>RAW Photos</source>
-        <translation>Φωτογραφίες RAW</translation>
-    </message>
-    <message>
         <source>Export finished without a result</source>
         <translation>Η εξαγωγή ολοκληρώθηκε χωρίς αποτέλεσμα</translation>
     </message>
@@ -1347,14 +1343,6 @@
     <message>
         <source>Contrast</source>
         <translation>Αντίθεση</translation>
-    </message>
-    <message>
-        <source>Temp (Kelvin)</source>
-        <translation>Θερμοκρασία (Kelvin)</translation>
-    </message>
-    <message>
-        <source>Tint (Green / Magenta)</source>
-        <translation>Απόχρωση (πράσινο / ματζέντα)</translation>
     </message>
     <message>
         <source>Exposure</source>
@@ -1395,6 +1383,10 @@
     <message>
         <source>Texture</source>
         <translation>Υφή</translation>
+    </message>
+    <message>
+        <source>Suggested scene</source>
+        <translation>Προτεινόμενη σκηνή</translation>
     </message>
     <message>
         <source>Clarity (Midtone Contrast)</source>
@@ -1497,6 +1489,22 @@
         <translation>Αυτόματο: ανάλυση της φωτογραφίας…</translation>
     </message>
     <message>
+        <source>Open photo</source>
+        <translation>Άνοιγμα φωτογραφίας</translation>
+    </message>
+    <message>
+        <source>Photos</source>
+        <translation>Φωτογραφίες</translation>
+    </message>
+    <message>
+        <source>RAW</source>
+        <translation>RAW</translation>
+    </message>
+    <message>
+        <source>Images</source>
+        <translation>Εικόνες</translation>
+    </message>
+    <message>
         <source>Saved to %1</source>
         <translation>Αποθηκεύτηκε στο %1</translation>
     </message>
@@ -1549,10 +1557,6 @@
         <translation>Απορριφθείσα</translation>
     </message>
     <message>
-        <source>Scene</source>
-        <translation>Σκηνή</translation>
-    </message>
-    <message>
         <source>Adjust</source>
         <translation>Ρυθμίσεις</translation>
     </message>
@@ -1569,6 +1573,14 @@
         <translation>ΤΝ</translation>
     </message>
     <message>
+        <source>Read the photo&apos;s .xmp sidecar written by another editor</source>
+        <translation>Ανάγνωση του αρχείου .xmp που έγραψε άλλος επεξεργαστής</translation>
+    </message>
+    <message>
+        <source>Write the edit, rating and label to an .xmp sidecar for other editors</source>
+        <translation>Εγγραφή της επεξεργασίας, της βαθμολογίας και της ετικέτας σε αρχείο .xmp για άλλους επεξεργαστές</translation>
+    </message>
+    <message>
         <source>Profile</source>
         <translation>Προφίλ</translation>
     </message>
@@ -1583,6 +1595,14 @@
     <message>
         <source>White balance</source>
         <translation>Ισορροπία λευκού</translation>
+    </message>
+    <message>
+        <source>Temperature</source>
+        <translation>Θερμοκρασία</translation>
+    </message>
+    <message>
+        <source>Tint</source>
+        <translation>Απόχρωση</translation>
     </message>
     <message>
         <source>Tone</source>
@@ -1653,16 +1673,8 @@
         <translation>Εισαγωγή XMP</translation>
     </message>
     <message>
-        <source>Read DSCF0001.xmp from Lightroom, Capture One or darktable</source>
-        <translation>Ανάγνωση του DSCF0001.xmp από Lightroom, Capture One ή darktable</translation>
-    </message>
-    <message>
         <source>Write XMP</source>
         <translation>Εγγραφή XMP</translation>
-    </message>
-    <message>
-        <source>Write the edit, rating and label to DSCF0001.xmp for other editors</source>
-        <translation>Εγγραφή της επεξεργασίας, της βαθμολογίας και της ετικέτας στο DSCF0001.xmp για άλλα προγράμματα</translation>
     </message>
     <message>
         <source>Opening %1</source>
@@ -1693,10 +1705,6 @@
     <message>
         <source>Navigator</source>
         <translation>Πλοηγός</translation>
-    </message>
-    <message>
-        <source>FIT</source>
-        <translation>ΠΡΟΣΑΡΜΟΓΗ</translation>
     </message>
 </context>
 <context>
@@ -1856,9 +1864,17 @@
         <translation>[Σ] %1%</translation>
     </message>
     <message>
+        <source>Clipped shadows. Click to show them on the photo.</source>
+        <translation>Αποκομμένες σκιές. Πατήστε για να εμφανιστούν στη φωτογραφία.</translation>
+    </message>
+    <message>
         <source>[H] %1%</source>
         <comment>H: highlight clipping</comment>
         <translation>[Φ] %1%</translation>
+    </message>
+    <message>
+        <source>Clipped highlights. Click to show them on the photo.</source>
+        <translation>Αποκομμένα φωτεινά. Πατήστε για να εμφανιστούν στη φωτογραφία.</translation>
     </message>
     <message>
         <source>No photo</source>
@@ -1957,9 +1973,27 @@
 <context>
     <name>TopBar</name>
     <message>
-        <source>P</source>
-        <comment>pick flag, first letter of Pick</comment>
-        <translation>Ε</translation>
+        <source>Pick (P)</source>
+        <translation>Επιλογή (P)</translation>
+    </message>
+    <message>
+        <source>Pick</source>
+        <translation>Επιλογή</translation>
+    </message>
+    <message>
+        <source>Reject (X)</source>
+        <translation>Απόρριψη (X)</translation>
+    </message>
+    <message>
+        <source>Reject</source>
+        <translation>Απόρριψη</translation>
+    </message>
+    <message numerus="yes">
+        <source>%n star(s)</source>
+        <translation>
+            <numerusform>%n αστέρι</numerusform>
+            <numerusform>%n αστέρια</numerusform>
+        </translation>
     </message>
     <message>
         <source>Connecting…</source>
@@ -2010,10 +2044,6 @@
         <translation>Περικοπή</translation>
     </message>
     <message>
-        <source>Fit</source>
-        <translation>Προσαρμογή</translation>
-    </message>
-    <message>
         <source>Open RAW</source>
         <translation>Άνοιγμα RAW</translation>
     </message>
@@ -2029,8 +2059,36 @@
         <translation>Επαναφορά στις 0°</translation>
     </message>
     <message>
+        <source>Rotate left</source>
+        <translation>Περιστροφή αριστερά</translation>
+    </message>
+    <message>
+        <source>Rotate right</source>
+        <translation>Περιστροφή δεξιά</translation>
+    </message>
+    <message>
         <source>Fit</source>
         <translation>Προσαρμογή</translation>
+    </message>
+    <message>
+        <source>Surround: %1</source>
+        <translation>Περιβάλλον: %1</translation>
+    </message>
+    <message>
+        <source>middle grey</source>
+        <translation>μεσαίο γκρι</translation>
+    </message>
+    <message>
+        <source>theme colour</source>
+        <translation>χρώμα θέματος</translation>
+    </message>
+    <message>
+        <source>dark grey</source>
+        <translation>σκούρο γκρι</translation>
+    </message>
+    <message>
+        <source>Surround colour</source>
+        <translation>Χρώμα περιβάλλοντος</translation>
     </message>
     <message>
         <source>Crop</source>
@@ -2098,6 +2156,10 @@
     <message>
         <source>Watermark</source>
         <translation>Υδατογράφημα</translation>
+    </message>
+    <message>
+        <source>Add a watermark</source>
+        <translation>Προσθήκη υδατογραφήματος</translation>
     </message>
     <message>
         <source>Text / EXIF Tag</source>

@@ -320,38 +320,6 @@
 <context>
     <name>ColorSpaceSelector</name>
     <message>
-        <source>Standard SDR web gamut</source>
-        <translation>Szabványos SDR webes színtartomány</translation>
-    </message>
-    <message>
-        <source>100% sRGB</source>
-        <translation>100% sRGB</translation>
-    </message>
-    <message>
-        <source>Wide gamut, Apple Retina displays</source>
-        <translation>Széles színtartomány, Apple Retina kijelzők</translation>
-    </message>
-    <message>
-        <source>125% sRGB</source>
-        <translation>125% sRGB</translation>
-    </message>
-    <message>
-        <source>Ultra-wide gamut HDR master</source>
-        <translation>Rendkívül széles színtartományú HDR mester</translation>
-    </message>
-    <message>
-        <source>150% sRGB</source>
-        <translation>150% sRGB</translation>
-    </message>
-    <message>
-        <source>Academy linear working space</source>
-        <translation>Az Akadémia lineáris munkatere</translation>
-    </message>
-    <message>
-        <source>Wide AP1</source>
-        <translation>Széles AP1</translation>
-    </message>
-    <message>
         <source>Colour management</source>
         <translation>Színkezelés</translation>
     </message>
@@ -360,16 +328,20 @@
         <translation>Színtartomány-tömörítés</translation>
     </message>
     <message>
-        <source>%1 (%2)</source>
-        <translation>%1 (%2)</translation>
+        <source>Brings colours pushed outside the gamut back in smoothly instead of clipping them.</source>
+        <translation>A színtartományon kívülre került színeket levágás helyett finoman visszahozza.</translation>
     </message>
     <message>
-        <source>ACES 1.3 RRT/ODT Tonemapper</source>
-        <translation>ACES 1.3 RRT/ODT tónusleképező</translation>
+        <source>ACES tone curve</source>
+        <translation>ACES tónusgörbe</translation>
     </message>
     <message>
-        <source>Filmic shoulder roll-off &amp; dynamic range mapping</source>
-        <translation>Lágy filmes váll és a dinamikatartomány leképezése</translation>
+        <source>Filmic highlight roll-off, a fitted approximation of the ACES output transform.</source>
+        <translation>Lágy csúcsfény-lekerekítés, az ACES kimeneti transzformáció közelítése.</translation>
+    </message>
+    <message>
+        <source>The output colour space is set in the Export window.</source>
+        <translation>A kimeneti színteret az Exportálás ablakban kell beállítani.</translation>
     </message>
 </context>
 <context>
@@ -393,36 +365,60 @@
         <translation>Érzékelési</translation>
     </message>
     <message>
-        <source>8-bit · universal</source>
-        <translation>8 bites · általános</translation>
+        <source>Export folder</source>
+        <translation>Exportmappa</translation>
     </message>
     <message>
-        <source>16-bit · lossless</source>
-        <translation>16 bites · veszteségmentes</translation>
+        <source>8-bit</source>
+        <translation>8 bites</translation>
     </message>
     <message>
-        <source>16-bit · print, archive</source>
-        <translation>16 bites · nyomtatás, archívum</translation>
+        <source>Opens everywhere</source>
+        <translation>Mindenhol megnyílik</translation>
     </message>
     <message>
-        <source>8-bit · web</source>
-        <translation>8 bites · web</translation>
+        <source>16-bit</source>
+        <translation>16 bites</translation>
     </message>
     <message>
-        <source>12-bit · HDR-ready</source>
-        <translation>12 bites · HDR-kompatibilis</translation>
+        <source>Lossless</source>
+        <translation>Veszteségmentes</translation>
     </message>
     <message>
-        <source>10-bit · HEVC</source>
-        <translation>10 bites · HEVC</translation>
+        <source>For print and archive</source>
+        <translation>Nyomtatáshoz és archiváláshoz</translation>
     </message>
     <message>
-        <source>16-bit · modern</source>
-        <translation>16 bites · modern</translation>
+        <source>Small files for the web</source>
+        <translation>Kis fájlok a webre</translation>
     </message>
     <message>
-        <source>Float · scene-linear</source>
-        <translation>Lebegőpontos · jelenetlineáris</translation>
+        <source>12-bit</source>
+        <translation>12 bites</translation>
+    </message>
+    <message>
+        <source>Small files with high bit depth</source>
+        <translation>Kis fájlok nagy bitmélységgel</translation>
+    </message>
+    <message>
+        <source>10-bit</source>
+        <translation>10 bites</translation>
+    </message>
+    <message>
+        <source>HEVC, as used by phones</source>
+        <translation>HEVC, mint a telefonokon</translation>
+    </message>
+    <message>
+        <source>Small files, lossless at quality 100</source>
+        <translation>Kis fájlok, veszteségmentes 100-as minőségnél</translation>
+    </message>
+    <message>
+        <source>Float</source>
+        <translation>Lebegőpontos</translation>
+    </message>
+    <message>
+        <source>Scene-linear, for compositing and grading</source>
+        <translation>Jelenetlineáris, kompozitáláshoz és színkorrekcióhoz</translation>
     </message>
     <message numerus="yes">
         <source>Export %n photos</source>
@@ -507,8 +503,8 @@
         <translation>Web, képernyők</translation>
     </message>
     <message>
-        <source>Wide-gamut screens</source>
-        <translation>Széles színtartományú képernyők</translation>
+        <source>Modern screens</source>
+        <translation>Modern kijelzők</translation>
     </message>
     <message>
         <source>Print</source>
@@ -579,8 +575,8 @@
         <translation>Előkészítés ehhez:</translation>
     </message>
     <message>
-        <source>Sets the crop and output sharpening for a platform. Reset restores your own.</source>
-        <translation>Beállítja a vágást és a kimeneti élesítést egy platformhoz. A Visszaállítás visszahozza a saját beállításait.</translation>
+        <source>Sets the crop and output sharpening for a platform. Click it again to go back to your own.</source>
+        <translation>Beállítja egy platform vágását és kimeneti élesítését. Kattints újra a saját beállításaidhoz való visszatéréshez.</translation>
     </message>
     <message>
         <source>Watermark</source>
@@ -589,6 +585,18 @@
     <message>
         <source>Folder</source>
         <translation>Mappa</translation>
+    </message>
+    <message>
+        <source>Choose…</source>
+        <translation>Tallózás…</translation>
+    </message>
+    <message>
+        <source>File name</source>
+        <translation>Fájlnév</translation>
+    </message>
+    <message>
+        <source>Saved as %1</source>
+        <translation>Mentve mint %1</translation>
     </message>
     <message>
         <source>Hide</source>
@@ -806,10 +814,6 @@
     <message>
         <source>No photos found in this directory.</source>
         <translation>Nem található fotó ebben a mappában.</translation>
-    </message>
-    <message>
-        <source>Folder</source>
-        <translation>Mappa</translation>
     </message>
     <message>
         <source>Downloading</source>
@@ -1305,14 +1309,6 @@
         <translation>Kiírva: %1</translation>
     </message>
     <message>
-        <source>Open RAW Photo</source>
-        <translation>RAW fotó megnyitása</translation>
-    </message>
-    <message>
-        <source>RAW Photos</source>
-        <translation>RAW fotók</translation>
-    </message>
-    <message>
         <source>Export finished without a result</source>
         <translation>Az exportálás eredmény nélkül ért véget</translation>
     </message>
@@ -1343,14 +1339,6 @@
     <message>
         <source>Contrast</source>
         <translation>Kontraszt</translation>
-    </message>
-    <message>
-        <source>Temp (Kelvin)</source>
-        <translation>Hőmérséklet (Kelvin)</translation>
-    </message>
-    <message>
-        <source>Tint (Green / Magenta)</source>
-        <translation>Színárnyalat (zöld / bíbor)</translation>
     </message>
     <message>
         <source>Exposure</source>
@@ -1391,6 +1379,10 @@
     <message>
         <source>Texture</source>
         <translation>Textúra</translation>
+    </message>
+    <message>
+        <source>Suggested scene</source>
+        <translation>Javasolt jelenet</translation>
     </message>
     <message>
         <source>Clarity (Midtone Contrast)</source>
@@ -1493,6 +1485,22 @@
         <translation>Automatikus: a fotó elemzése…</translation>
     </message>
     <message>
+        <source>Open photo</source>
+        <translation>Fotó megnyitása</translation>
+    </message>
+    <message>
+        <source>Photos</source>
+        <translation>Fotók</translation>
+    </message>
+    <message>
+        <source>RAW</source>
+        <translation>RAW</translation>
+    </message>
+    <message>
+        <source>Images</source>
+        <translation>Képek</translation>
+    </message>
+    <message>
         <source>Saved to %1</source>
         <translation>Mentve ide: %1</translation>
     </message>
@@ -1545,10 +1553,6 @@
         <translation>Elutasítva</translation>
     </message>
     <message>
-        <source>Scene</source>
-        <translation>Jelenet</translation>
-    </message>
-    <message>
         <source>Adjust</source>
         <translation>Beállítások</translation>
     </message>
@@ -1565,6 +1569,14 @@
         <translation>MI</translation>
     </message>
     <message>
+        <source>Read the photo&apos;s .xmp sidecar written by another editor</source>
+        <translation>Egy másik szerkesztő által írt .xmp fájl beolvasása</translation>
+    </message>
+    <message>
+        <source>Write the edit, rating and label to an .xmp sidecar for other editors</source>
+        <translation>A szerkesztés, értékelés és címke írása .xmp fájlba más szerkesztők számára</translation>
+    </message>
+    <message>
         <source>Profile</source>
         <translation>Profil</translation>
     </message>
@@ -1579,6 +1591,14 @@
     <message>
         <source>White balance</source>
         <translation>Fehéregyensúly</translation>
+    </message>
+    <message>
+        <source>Temperature</source>
+        <translation>Színhőmérséklet</translation>
+    </message>
+    <message>
+        <source>Tint</source>
+        <translation>Színárnyalat</translation>
     </message>
     <message>
         <source>Tone</source>
@@ -1649,16 +1669,8 @@
         <translation>XMP importálása</translation>
     </message>
     <message>
-        <source>Read DSCF0001.xmp from Lightroom, Capture One or darktable</source>
-        <translation>DSCF0001.xmp beolvasása a Lightroomból, Capture One-ból vagy a darktable-ből</translation>
-    </message>
-    <message>
         <source>Write XMP</source>
         <translation>XMP írása</translation>
-    </message>
-    <message>
-        <source>Write the edit, rating and label to DSCF0001.xmp for other editors</source>
-        <translation>A szerkesztés, az értékelés és a címke kiírása a DSCF0001.xmp fájlba más szerkesztők számára</translation>
     </message>
     <message>
         <source>Opening %1</source>
@@ -1688,10 +1700,6 @@
     <message>
         <source>Navigator</source>
         <translation>Navigátor</translation>
-    </message>
-    <message>
-        <source>FIT</source>
-        <translation>IGAZÍTÁS</translation>
     </message>
 </context>
 <context>
@@ -1851,9 +1859,17 @@
         <translation>[Á] %1%</translation>
     </message>
     <message>
+        <source>Clipped shadows. Click to show them on the photo.</source>
+        <translation>Levágott árnyékok. Kattints, hogy megjelenjenek a fotón.</translation>
+    </message>
+    <message>
         <source>[H] %1%</source>
         <comment>H: highlight clipping</comment>
         <translation>[Cs] %1%</translation>
+    </message>
+    <message>
+        <source>Clipped highlights. Click to show them on the photo.</source>
+        <translation>Levágott csúcsfények. Kattints, hogy megjelenjenek a fotón.</translation>
     </message>
     <message>
         <source>No photo</source>
@@ -1952,9 +1968,26 @@
 <context>
     <name>TopBar</name>
     <message>
-        <source>P</source>
-        <comment>pick flag, first letter of Pick</comment>
-        <translation>K</translation>
+        <source>Pick (P)</source>
+        <translation>Kiválasztás (P)</translation>
+    </message>
+    <message>
+        <source>Pick</source>
+        <translation>Kiválasztva</translation>
+    </message>
+    <message>
+        <source>Reject (X)</source>
+        <translation>Elutasítás (X)</translation>
+    </message>
+    <message>
+        <source>Reject</source>
+        <translation>Elutasítás</translation>
+    </message>
+    <message numerus="yes">
+        <source>%n star(s)</source>
+        <translation>
+            <numerusform>%n csillag</numerusform>
+        </translation>
     </message>
     <message>
         <source>Connecting…</source>
@@ -2005,10 +2038,6 @@
         <translation>Vágás</translation>
     </message>
     <message>
-        <source>Fit</source>
-        <translation>Igazítás</translation>
-    </message>
-    <message>
         <source>Open RAW</source>
         <translation>RAW megnyitása</translation>
     </message>
@@ -2024,8 +2053,36 @@
         <translation>Visszaállítás 0°-ra</translation>
     </message>
     <message>
+        <source>Rotate left</source>
+        <translation>Forgatás balra</translation>
+    </message>
+    <message>
+        <source>Rotate right</source>
+        <translation>Forgatás jobbra</translation>
+    </message>
+    <message>
         <source>Fit</source>
         <translation>Igazítás</translation>
+    </message>
+    <message>
+        <source>Surround: %1</source>
+        <translation>Környezet: %1</translation>
+    </message>
+    <message>
+        <source>middle grey</source>
+        <translation>középszürke</translation>
+    </message>
+    <message>
+        <source>theme colour</source>
+        <translation>téma színe</translation>
+    </message>
+    <message>
+        <source>dark grey</source>
+        <translation>sötétszürke</translation>
+    </message>
+    <message>
+        <source>Surround colour</source>
+        <translation>Környezet színe</translation>
     </message>
     <message>
         <source>Crop</source>
@@ -2093,6 +2150,10 @@
     <message>
         <source>Watermark</source>
         <translation>Vízjel</translation>
+    </message>
+    <message>
+        <source>Add a watermark</source>
+        <translation>Vízjel hozzáadása</translation>
     </message>
     <message>
         <source>Text / EXIF Tag</source>

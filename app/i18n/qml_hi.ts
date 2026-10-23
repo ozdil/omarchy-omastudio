@@ -320,38 +320,6 @@
 <context>
     <name>ColorSpaceSelector</name>
     <message>
-        <source>Standard SDR web gamut</source>
-        <translation>मानक SDR वेब रंग सीमा</translation>
-    </message>
-    <message>
-        <source>100% sRGB</source>
-        <translation>100% sRGB</translation>
-    </message>
-    <message>
-        <source>Wide gamut, Apple Retina displays</source>
-        <translation>विस्तृत रंग सीमा, Apple Retina डिस्प्ले</translation>
-    </message>
-    <message>
-        <source>125% sRGB</source>
-        <translation>125% sRGB</translation>
-    </message>
-    <message>
-        <source>Ultra-wide gamut HDR master</source>
-        <translation>अति विस्तृत रंग सीमा वाला HDR मास्टर</translation>
-    </message>
-    <message>
-        <source>150% sRGB</source>
-        <translation>150% sRGB</translation>
-    </message>
-    <message>
-        <source>Academy linear working space</source>
-        <translation>अकादमी का रैखिक कार्य स्थान</translation>
-    </message>
-    <message>
-        <source>Wide AP1</source>
-        <translation>विस्तृत AP1</translation>
-    </message>
-    <message>
         <source>Colour management</source>
         <translation>रंग प्रबंधन</translation>
     </message>
@@ -360,16 +328,20 @@
         <translation>गैमट संपीड़न</translation>
     </message>
     <message>
-        <source>%1 (%2)</source>
-        <translation>%1 (%2)</translation>
+        <source>Brings colours pushed outside the gamut back in smoothly instead of clipping them.</source>
+        <translation>गैमट से बाहर गए रंगों को काटने के बजाय सहजता से वापस लाता है।</translation>
     </message>
     <message>
-        <source>ACES 1.3 RRT/ODT Tonemapper</source>
-        <translation>ACES 1.3 RRT/ODT टोन मैपर</translation>
+        <source>ACES tone curve</source>
+        <translation>ACES टोन कर्व</translation>
     </message>
     <message>
-        <source>Filmic shoulder roll-off &amp; dynamic range mapping</source>
-        <translation>नरम फ़िल्मी कंधा और डायनामिक रेंज मैपिंग</translation>
+        <source>Filmic highlight roll-off, a fitted approximation of the ACES output transform.</source>
+        <translation>हाइलाइट में सहज ढलान, ACES आउटपुट ट्रांसफ़ॉर्म का अनुमानित रूप।</translation>
+    </message>
+    <message>
+        <source>The output colour space is set in the Export window.</source>
+        <translation>आउटपुट कलर स्पेस निर्यात विंडो में चुना जाता है।</translation>
     </message>
 </context>
 <context>
@@ -393,36 +365,60 @@
         <translation>बोधात्मक</translation>
     </message>
     <message>
-        <source>8-bit · universal</source>
-        <translation>8-बिट · सार्वभौमिक</translation>
+        <source>Export folder</source>
+        <translation>एक्सपोर्ट फ़ोल्डर</translation>
     </message>
     <message>
-        <source>16-bit · lossless</source>
-        <translation>16-बिट · लॉसलेस</translation>
+        <source>8-bit</source>
+        <translation>8-बिट</translation>
     </message>
     <message>
-        <source>16-bit · print, archive</source>
-        <translation>16-बिट · प्रिंट, संग्रह</translation>
+        <source>Opens everywhere</source>
+        <translation>हर जगह खुलता है</translation>
     </message>
     <message>
-        <source>8-bit · web</source>
-        <translation>8-बिट · वेब</translation>
+        <source>16-bit</source>
+        <translation>16-बिट</translation>
     </message>
     <message>
-        <source>12-bit · HDR-ready</source>
-        <translation>12-बिट · HDR के लिए तैयार</translation>
+        <source>Lossless</source>
+        <translation>लॉसलेस</translation>
     </message>
     <message>
-        <source>10-bit · HEVC</source>
-        <translation>10-बिट · HEVC</translation>
+        <source>For print and archive</source>
+        <translation>प्रिंट और संग्रह के लिए</translation>
     </message>
     <message>
-        <source>16-bit · modern</source>
-        <translation>16-बिट · आधुनिक</translation>
+        <source>Small files for the web</source>
+        <translation>वेब के लिए छोटी फ़ाइलें</translation>
     </message>
     <message>
-        <source>Float · scene-linear</source>
-        <translation>फ़्लोटिंग पॉइंट · दृश्य-रैखिक</translation>
+        <source>12-bit</source>
+        <translation>12-बिट</translation>
+    </message>
+    <message>
+        <source>Small files with high bit depth</source>
+        <translation>उच्च बिट डेप्थ वाली छोटी फ़ाइलें</translation>
+    </message>
+    <message>
+        <source>10-bit</source>
+        <translation>10-बिट</translation>
+    </message>
+    <message>
+        <source>HEVC, as used by phones</source>
+        <translation>HEVC, जैसा फ़ोन में</translation>
+    </message>
+    <message>
+        <source>Small files, lossless at quality 100</source>
+        <translation>छोटी फ़ाइलें, गुणवत्ता 100 पर लॉसलेस</translation>
+    </message>
+    <message>
+        <source>Float</source>
+        <translation>फ़्लोटिंग पॉइंट</translation>
+    </message>
+    <message>
+        <source>Scene-linear, for compositing and grading</source>
+        <translation>सीन-लीनियर, कंपोज़िटिंग और ग्रेडिंग के लिए</translation>
     </message>
     <message numerus="yes">
         <source>Export %n photos</source>
@@ -508,8 +504,8 @@
         <translation>वेब, स्क्रीन</translation>
     </message>
     <message>
-        <source>Wide-gamut screens</source>
-        <translation>वाइड-गैमट स्क्रीन</translation>
+        <source>Modern screens</source>
+        <translation>आधुनिक स्क्रीन</translation>
     </message>
     <message>
         <source>Print</source>
@@ -580,8 +576,8 @@
         <translation>इसके लिए तैयार करें</translation>
     </message>
     <message>
-        <source>Sets the crop and output sharpening for a platform. Reset restores your own.</source>
-        <translation>किसी प्लेटफ़ॉर्म के लिए क्रॉप और आउटपुट शार्पनिंग सेट करता है। रीसेट आपकी अपनी सेटिंग वापस लाता है।</translation>
+        <source>Sets the crop and output sharpening for a platform. Click it again to go back to your own.</source>
+        <translation>किसी प्लेटफ़ॉर्म के लिए क्रॉप और आउटपुट शार्पनिंग सेट करता है। अपनी सेटिंग पर लौटने के लिए फिर से क्लिक करें।</translation>
     </message>
     <message>
         <source>Watermark</source>
@@ -590,6 +586,18 @@
     <message>
         <source>Folder</source>
         <translation>फ़ोल्डर</translation>
+    </message>
+    <message>
+        <source>Choose…</source>
+        <translation>चुनें…</translation>
+    </message>
+    <message>
+        <source>File name</source>
+        <translation>फ़ाइल नाम</translation>
+    </message>
+    <message>
+        <source>Saved as %1</source>
+        <translation>%1 के रूप में सहेजा जाएगा</translation>
     </message>
     <message>
         <source>Hide</source>
@@ -807,10 +815,6 @@
     <message>
         <source>No photos found in this directory.</source>
         <translation>इस फ़ोल्डर में कोई फ़ोटो नहीं मिली।</translation>
-    </message>
-    <message>
-        <source>Folder</source>
-        <translation>फ़ोल्डर</translation>
     </message>
     <message>
         <source>Downloading</source>
@@ -1309,14 +1313,6 @@
         <translation>%1 लिखा गया</translation>
     </message>
     <message>
-        <source>Open RAW Photo</source>
-        <translation>RAW फ़ोटो खोलें</translation>
-    </message>
-    <message>
-        <source>RAW Photos</source>
-        <translation>RAW फ़ोटो</translation>
-    </message>
-    <message>
         <source>Export finished without a result</source>
         <translation>निर्यात बिना परिणाम के समाप्त हुआ</translation>
     </message>
@@ -1347,14 +1343,6 @@
     <message>
         <source>Contrast</source>
         <translation>कंट्रास्ट</translation>
-    </message>
-    <message>
-        <source>Temp (Kelvin)</source>
-        <translation>तापमान (केल्विन)</translation>
-    </message>
-    <message>
-        <source>Tint (Green / Magenta)</source>
-        <translation>टिंट (हरा / मैजेंटा)</translation>
     </message>
     <message>
         <source>Exposure</source>
@@ -1395,6 +1383,10 @@
     <message>
         <source>Texture</source>
         <translation>बनावट</translation>
+    </message>
+    <message>
+        <source>Suggested scene</source>
+        <translation>सुझाया गया दृश्य</translation>
     </message>
     <message>
         <source>Clarity (Midtone Contrast)</source>
@@ -1497,6 +1489,22 @@
         <translation>स्वचालित: फ़ोटो का विश्लेषण हो रहा है…</translation>
     </message>
     <message>
+        <source>Open photo</source>
+        <translation>फ़ोटो खोलें</translation>
+    </message>
+    <message>
+        <source>Photos</source>
+        <translation>फ़ोटो</translation>
+    </message>
+    <message>
+        <source>RAW</source>
+        <translation>RAW</translation>
+    </message>
+    <message>
+        <source>Images</source>
+        <translation>छवियाँ</translation>
+    </message>
+    <message>
         <source>Saved to %1</source>
         <translation>%1 में सहेजा गया</translation>
     </message>
@@ -1549,10 +1557,6 @@
         <translation>अस्वीकृत</translation>
     </message>
     <message>
-        <source>Scene</source>
-        <translation>दृश्य</translation>
-    </message>
-    <message>
         <source>Adjust</source>
         <translation>समायोजन</translation>
     </message>
@@ -1569,6 +1573,14 @@
         <translation>AI</translation>
     </message>
     <message>
+        <source>Read the photo&apos;s .xmp sidecar written by another editor</source>
+        <translation>दूसरे एडिटर की लिखी .xmp फ़ाइल पढ़ें</translation>
+    </message>
+    <message>
+        <source>Write the edit, rating and label to an .xmp sidecar for other editors</source>
+        <translation>दूसरे एडिटरों के लिए संपादन, रेटिंग और लेबल को .xmp फ़ाइल में लिखें</translation>
+    </message>
+    <message>
         <source>Profile</source>
         <translation>प्रोफ़ाइल</translation>
     </message>
@@ -1583,6 +1595,14 @@
     <message>
         <source>White balance</source>
         <translation>व्हाइट बैलेंस</translation>
+    </message>
+    <message>
+        <source>Temperature</source>
+        <translation>तापमान</translation>
+    </message>
+    <message>
+        <source>Tint</source>
+        <translation>टिंट</translation>
     </message>
     <message>
         <source>Tone</source>
@@ -1653,16 +1673,8 @@
         <translation>XMP आयात करें</translation>
     </message>
     <message>
-        <source>Read DSCF0001.xmp from Lightroom, Capture One or darktable</source>
-        <translation>Lightroom, Capture One या darktable से DSCF0001.xmp पढ़ें</translation>
-    </message>
-    <message>
         <source>Write XMP</source>
         <translation>XMP लिखें</translation>
-    </message>
-    <message>
-        <source>Write the edit, rating and label to DSCF0001.xmp for other editors</source>
-        <translation>अन्य संपादकों के लिए संपादन, रेटिंग और लेबल DSCF0001.xmp में लिखें</translation>
     </message>
     <message>
         <source>Opening %1</source>
@@ -1693,10 +1705,6 @@
     <message>
         <source>Navigator</source>
         <translation>नेविगेटर</translation>
-    </message>
-    <message>
-        <source>FIT</source>
-        <translation>फ़िट</translation>
     </message>
 </context>
 <context>
@@ -1856,9 +1864,17 @@
         <translation>[छ] %1%</translation>
     </message>
     <message>
+        <source>Clipped shadows. Click to show them on the photo.</source>
+        <translation>कटी हुई छायाएँ। फ़ोटो पर दिखाने के लिए क्लिक करें।</translation>
+    </message>
+    <message>
         <source>[H] %1%</source>
         <comment>H: highlight clipping</comment>
         <translation>[हा] %1%</translation>
+    </message>
+    <message>
+        <source>Clipped highlights. Click to show them on the photo.</source>
+        <translation>कटी हुई हाइलाइट्स। फ़ोटो पर दिखाने के लिए क्लिक करें।</translation>
     </message>
     <message>
         <source>No photo</source>
@@ -1957,9 +1973,27 @@
 <context>
     <name>TopBar</name>
     <message>
-        <source>P</source>
-        <comment>pick flag, first letter of Pick</comment>
-        <translation>च</translation>
+        <source>Pick (P)</source>
+        <translation>चुनें (P)</translation>
+    </message>
+    <message>
+        <source>Pick</source>
+        <translation>चुना गया</translation>
+    </message>
+    <message>
+        <source>Reject (X)</source>
+        <translation>अस्वीकार (X)</translation>
+    </message>
+    <message>
+        <source>Reject</source>
+        <translation>अस्वीकार</translation>
+    </message>
+    <message numerus="yes">
+        <source>%n star(s)</source>
+        <translation>
+            <numerusform>%n स्टार</numerusform>
+            <numerusform>%n स्टार</numerusform>
+        </translation>
     </message>
     <message>
         <source>Connecting…</source>
@@ -2010,10 +2044,6 @@
         <translation>क्रॉप</translation>
     </message>
     <message>
-        <source>Fit</source>
-        <translation>फ़िट</translation>
-    </message>
-    <message>
         <source>Open RAW</source>
         <translation>RAW खोलें</translation>
     </message>
@@ -2029,8 +2059,36 @@
         <translation>0° पर रीसेट करें</translation>
     </message>
     <message>
+        <source>Rotate left</source>
+        <translation>बाईं ओर घुमाएँ</translation>
+    </message>
+    <message>
+        <source>Rotate right</source>
+        <translation>दाईं ओर घुमाएँ</translation>
+    </message>
+    <message>
         <source>Fit</source>
         <translation>फ़िट</translation>
+    </message>
+    <message>
+        <source>Surround: %1</source>
+        <translation>आसपास: %1</translation>
+    </message>
+    <message>
+        <source>middle grey</source>
+        <translation>मध्यम धूसर</translation>
+    </message>
+    <message>
+        <source>theme colour</source>
+        <translation>थीम का रंग</translation>
+    </message>
+    <message>
+        <source>dark grey</source>
+        <translation>गहरा धूसर</translation>
+    </message>
+    <message>
+        <source>Surround colour</source>
+        <translation>आसपास का रंग</translation>
     </message>
     <message>
         <source>Crop</source>
@@ -2098,6 +2156,10 @@
     <message>
         <source>Watermark</source>
         <translation>वॉटरमार्क</translation>
+    </message>
+    <message>
+        <source>Add a watermark</source>
+        <translation>वॉटरमार्क जोड़ें</translation>
     </message>
     <message>
         <source>Text / EXIF Tag</source>

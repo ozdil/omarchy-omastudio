@@ -75,22 +75,35 @@ fn exported_icc(format: &str, profile: &str) -> (Vec<u8>, image::DynamicImage) {
     let src = dir.join("source.png");
     let img = image::RgbImage::from_fn(16, 8, |x, y| image::Rgb([(x * 16) as u8, (y * 32) as u8, 200]));
     img.save(&src).unwrap();
-    let opts = ExportOptions {
+    let mut opts = ExportOptions {
         format: format.to_string(),
         output_dir: dir.to_string_lossy().to_string(),
         preserve_exif: false,
         icc_profile: Some(profile.to_string()),
         ..Default::default()
     };
+    // Lossy WebP needs cwebp; the built-in lossless encoder covers the ICC check
+    if format == "webp" {
+        opts.quality = 100;
+    }
     let out = export_photo(&src, &Recipe::default(), &opts).expect("export succeeds");
+    {
+        use std::os::unix::fs::PermissionsExt;
+        let mode = std::fs::metadata(&out).unwrap().permissions().mode() & 0o777;
+        assert_eq!(mode, 0o644, "{format}: exports are readable by others");
+    }
     let file = std::fs::read(&out).unwrap();
     let reader = image::ImageReader::open(&out).unwrap().with_guessed_format().unwrap();
     let mut decoder = reader.into_decoder().unwrap();
-    // image's TIFF decoder skips ICC tags written as BYTE; find the profile in the file instead
+    // image's TIFF decoder skips ICC tags written as BYTE; find the profile in the file instead.
+    // The 128-byte header holds the creation time, which differs when the export and this
+    // lookup fall in different seconds, so match the tag table and data after it.
     let icc = decoder.icc_profile().unwrap().or_else(|| {
         let space = builtin_space(profile)?;
         let bytes = builtin_profile(space).icc().ok()?;
-        file.windows(bytes.len()).any(|w| w == bytes.as_slice()).then_some(bytes)
+        let body = &bytes[128..];
+        let at = file.windows(body.len()).position(|w| w == body)?.checked_sub(128)?;
+        Some(file[at..at + bytes.len()].to_vec())
     });
     let icc = icc.unwrap_or_else(|| panic!("ICC embedded in {format}"));
     let pixels = image::DynamicImage::from_decoder(decoder).unwrap();

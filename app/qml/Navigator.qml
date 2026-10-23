@@ -56,7 +56,7 @@ Rectangle {
                 font.family: Theme.fontFamily
                 text: qsTr("Navigator")
                 textFormat: Text.PlainText
-                font.pixelSize: Theme.px(10)
+                font.pixelSize: Theme.px(11)
                 font.weight: Font.DemiBold
                 font.letterSpacing: 1
                 color: Theme.textDim
@@ -64,41 +64,8 @@ Rectangle {
                 elide: Text.ElideRight
             }
 
-            // Preset Zoom Buttons: FIT, 100%, 200%, 300%
-            Repeater {
-                model: [
-                    { label: qsTr("FIT"), val: 0.0 },
-                    { label: "100%", val: 1.0 },
-                    { label: "200%", val: 2.0 },
-                    { label: "300%", val: 3.0 }
-                ]
+            Item { Layout.fillWidth: true }
 
-                delegate: Rectangle {
-                    implicitWidth: lbl.implicitWidth + 10
-                    implicitHeight: 18
-                    radius: Theme.r(3)
-                    property bool isCur: (modelData.val === 0.0 && root.zoomFactor <= 1.05) || (modelData.val !== 0.0 && Math.abs(root.zoomFactor - modelData.val) < 0.1 && root.zoomFactor > 1.05)
-                    color: isCur ? Theme.accent : Theme.bgCard
-                    border.color: isCur ? Theme.accent : Theme.border
-
-                    Text {
-                        id: lbl
-                        anchors.centerIn: parent
-                        text: modelData.label
-                        textFormat: Text.PlainText
-                        font.pixelSize: Theme.px(9)
-                        font.family: Theme.monoFont
-                        font.weight: Font.Bold
-                        color: parent.isCur ? Theme.bgBase : Theme.textMuted
-                    }
-
-                    MouseArea {
-                        anchors.fill: parent
-                        cursorShape: Qt.PointingHandCursor
-                        onClicked: root.zoomRequested(modelData.val)
-                    }
-                }
-            }
         }
 
         // Mini Canvas Area

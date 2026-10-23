@@ -320,38 +320,6 @@
 <context>
     <name>ColorSpaceSelector</name>
     <message>
-        <source>Standard SDR web gamut</source>
-        <translation>نطاق ألوان SDR القياسي للويب</translation>
-    </message>
-    <message>
-        <source>100% sRGB</source>
-        <translation>100% sRGB</translation>
-    </message>
-    <message>
-        <source>Wide gamut, Apple Retina displays</source>
-        <translation>نطاق ألوان واسع، شاشات Apple Retina</translation>
-    </message>
-    <message>
-        <source>125% sRGB</source>
-        <translation>125% sRGB</translation>
-    </message>
-    <message>
-        <source>Ultra-wide gamut HDR master</source>
-        <translation>ماستر HDR بنطاق ألوان فائق الاتساع</translation>
-    </message>
-    <message>
-        <source>150% sRGB</source>
-        <translation>150% sRGB</translation>
-    </message>
-    <message>
-        <source>Academy linear working space</source>
-        <translation>مساحة العمل الخطية للأكاديمية</translation>
-    </message>
-    <message>
-        <source>Wide AP1</source>
-        <translation>AP1 واسع</translation>
-    </message>
-    <message>
         <source>Colour management</source>
         <translation>إدارة الألوان</translation>
     </message>
@@ -360,16 +328,20 @@
         <translation>ضغط النطاق اللوني</translation>
     </message>
     <message>
-        <source>%1 (%2)</source>
-        <translation>%1 (%2)</translation>
+        <source>Brings colours pushed outside the gamut back in smoothly instead of clipping them.</source>
+        <translation>يعيد الألوان الخارجة عن النطاق اللوني بسلاسة بدلًا من قصّها.</translation>
     </message>
     <message>
-        <source>ACES 1.3 RRT/ODT Tonemapper</source>
-        <translation>مُعيّن الدرجات ACES 1.3 RRT/ODT</translation>
+        <source>ACES tone curve</source>
+        <translation>منحنى درجات ACES</translation>
     </message>
     <message>
-        <source>Filmic shoulder roll-off &amp; dynamic range mapping</source>
-        <translation>كتف سينمائي ناعم وتعيين النطاق الديناميكي</translation>
+        <source>Filmic highlight roll-off, a fitted approximation of the ACES output transform.</source>
+        <translation>انحدار ناعم في المناطق الساطعة، تقريب لتحويل الإخراج في ACES.</translation>
+    </message>
+    <message>
+        <source>The output colour space is set in the Export window.</source>
+        <translation>يُحدَّد فضاء ألوان الإخراج في نافذة التصدير.</translation>
     </message>
 </context>
 <context>
@@ -393,36 +365,60 @@
         <translation>إدراكية</translation>
     </message>
     <message>
-        <source>8-bit · universal</source>
-        <translation>8 بت · عام</translation>
+        <source>Export folder</source>
+        <translation>مجلد التصدير</translation>
     </message>
     <message>
-        <source>16-bit · lossless</source>
-        <translation>16 بت · بلا فقد</translation>
+        <source>8-bit</source>
+        <translation>8 بت</translation>
     </message>
     <message>
-        <source>16-bit · print, archive</source>
-        <translation>16 بت · طباعة، أرشفة</translation>
+        <source>Opens everywhere</source>
+        <translation>يُفتح في كل مكان</translation>
     </message>
     <message>
-        <source>8-bit · web</source>
-        <translation>8 بت · ويب</translation>
+        <source>16-bit</source>
+        <translation>16 بت</translation>
     </message>
     <message>
-        <source>12-bit · HDR-ready</source>
-        <translation>12 بت · جاهز لـ HDR</translation>
+        <source>Lossless</source>
+        <translation>بلا فقدان</translation>
     </message>
     <message>
-        <source>10-bit · HEVC</source>
-        <translation>10 بت · HEVC</translation>
+        <source>For print and archive</source>
+        <translation>للطباعة والأرشفة</translation>
     </message>
     <message>
-        <source>16-bit · modern</source>
-        <translation>16 بت · حديث</translation>
+        <source>Small files for the web</source>
+        <translation>ملفات صغيرة للويب</translation>
     </message>
     <message>
-        <source>Float · scene-linear</source>
-        <translation>فاصلة عائمة · خطي للمشهد</translation>
+        <source>12-bit</source>
+        <translation>12 بت</translation>
+    </message>
+    <message>
+        <source>Small files with high bit depth</source>
+        <translation>ملفات صغيرة بعمق بت عالٍ</translation>
+    </message>
+    <message>
+        <source>10-bit</source>
+        <translation>10 بت</translation>
+    </message>
+    <message>
+        <source>HEVC, as used by phones</source>
+        <translation>HEVC، كما في الهواتف</translation>
+    </message>
+    <message>
+        <source>Small files, lossless at quality 100</source>
+        <translation>ملفات صغيرة، بلا فقدان عند الجودة 100</translation>
+    </message>
+    <message>
+        <source>Float</source>
+        <translation>فاصلة عائمة</translation>
+    </message>
+    <message>
+        <source>Scene-linear, for compositing and grading</source>
+        <translation>خطي للمشهد، للتركيب وتصحيح الألوان</translation>
     </message>
     <message numerus="yes">
         <source>Export %n photos</source>
@@ -512,8 +508,8 @@
         <translation>الويب، الشاشات</translation>
     </message>
     <message>
-        <source>Wide-gamut screens</source>
-        <translation>شاشات واسعة النطاق اللوني</translation>
+        <source>Modern screens</source>
+        <translation>الشاشات الحديثة</translation>
     </message>
     <message>
         <source>Print</source>
@@ -584,8 +580,8 @@
         <translation>التجهيز لـ</translation>
     </message>
     <message>
-        <source>Sets the crop and output sharpening for a platform. Reset restores your own.</source>
-        <translation>يضبط القص وزيادة الحدة عند الإخراج لمنصة ما. تعيد «إعادة الضبط» إعداداتك الخاصة.</translation>
+        <source>Sets the crop and output sharpening for a platform. Click it again to go back to your own.</source>
+        <translation>يضبط القص وحدّة الإخراج لمنصة ما. انقر مرة أخرى للعودة إلى إعداداتك.</translation>
     </message>
     <message>
         <source>Watermark</source>
@@ -594,6 +590,18 @@
     <message>
         <source>Folder</source>
         <translation>المجلد</translation>
+    </message>
+    <message>
+        <source>Choose…</source>
+        <translation>اختيار…</translation>
+    </message>
+    <message>
+        <source>File name</source>
+        <translation>اسم الملف</translation>
+    </message>
+    <message>
+        <source>Saved as %1</source>
+        <translation>سيُحفظ باسم %1</translation>
     </message>
     <message>
         <source>Hide</source>
@@ -811,10 +819,6 @@
     <message>
         <source>No photos found in this directory.</source>
         <translation>لا توجد صور في هذا المجلد.</translation>
-    </message>
-    <message>
-        <source>Folder</source>
-        <translation>المجلد</translation>
     </message>
     <message>
         <source>Downloading</source>
@@ -1325,14 +1329,6 @@
         <translation>كُتب %1</translation>
     </message>
     <message>
-        <source>Open RAW Photo</source>
-        <translation>فتح صورة RAW</translation>
-    </message>
-    <message>
-        <source>RAW Photos</source>
-        <translation>صور RAW</translation>
-    </message>
-    <message>
         <source>Export finished without a result</source>
         <translation>انتهى التصدير دون نتيجة</translation>
     </message>
@@ -1363,14 +1359,6 @@
     <message>
         <source>Contrast</source>
         <translation>التباين</translation>
-    </message>
-    <message>
-        <source>Temp (Kelvin)</source>
-        <translation>الحرارة (كلفن)</translation>
-    </message>
-    <message>
-        <source>Tint (Green / Magenta)</source>
-        <translation>الصبغة (أخضر / أرجواني)</translation>
     </message>
     <message>
         <source>Exposure</source>
@@ -1411,6 +1399,10 @@
     <message>
         <source>Texture</source>
         <translation>الملمس</translation>
+    </message>
+    <message>
+        <source>Suggested scene</source>
+        <translation>مشهد مقترح</translation>
     </message>
     <message>
         <source>Clarity (Midtone Contrast)</source>
@@ -1513,6 +1505,22 @@
         <translation>تلقائي: جارٍ تحليل الصورة…</translation>
     </message>
     <message>
+        <source>Open photo</source>
+        <translation>فتح صورة</translation>
+    </message>
+    <message>
+        <source>Photos</source>
+        <translation>الصور</translation>
+    </message>
+    <message>
+        <source>RAW</source>
+        <translation>RAW</translation>
+    </message>
+    <message>
+        <source>Images</source>
+        <translation>صور نقطية</translation>
+    </message>
+    <message>
         <source>Saved to %1</source>
         <translation>حُفظ في %1</translation>
     </message>
@@ -1565,10 +1573,6 @@
         <translation>مرفوضة</translation>
     </message>
     <message>
-        <source>Scene</source>
-        <translation>المشهد</translation>
-    </message>
-    <message>
         <source>Adjust</source>
         <translation>ضبط</translation>
     </message>
@@ -1585,6 +1589,14 @@
         <translation>الذكاء الاصطناعي</translation>
     </message>
     <message>
+        <source>Read the photo&apos;s .xmp sidecar written by another editor</source>
+        <translation>قراءة ملف ‎.xmp الذي كتبه محرر آخر</translation>
+    </message>
+    <message>
+        <source>Write the edit, rating and label to an .xmp sidecar for other editors</source>
+        <translation>كتابة التعديل والتقييم والتسمية في ملف ‎.xmp للمحررات الأخرى</translation>
+    </message>
+    <message>
         <source>Profile</source>
         <translation>ملف التعريف</translation>
     </message>
@@ -1599,6 +1611,14 @@
     <message>
         <source>White balance</source>
         <translation>توازن البياض</translation>
+    </message>
+    <message>
+        <source>Temperature</source>
+        <translation>درجة الحرارة</translation>
+    </message>
+    <message>
+        <source>Tint</source>
+        <translation>الصبغة</translation>
     </message>
     <message>
         <source>Tone</source>
@@ -1669,16 +1689,8 @@
         <translation>استيراد XMP</translation>
     </message>
     <message>
-        <source>Read DSCF0001.xmp from Lightroom, Capture One or darktable</source>
-        <translation>قراءة DSCF0001.xmp من Lightroom أو Capture One أو darktable</translation>
-    </message>
-    <message>
         <source>Write XMP</source>
         <translation>كتابة XMP</translation>
-    </message>
-    <message>
-        <source>Write the edit, rating and label to DSCF0001.xmp for other editors</source>
-        <translation>كتابة التحرير والتقييم والتسمية في DSCF0001.xmp للمحررات الأخرى</translation>
     </message>
     <message>
         <source>Opening %1</source>
@@ -1713,10 +1725,6 @@
     <message>
         <source>Navigator</source>
         <translation>المتصفح</translation>
-    </message>
-    <message>
-        <source>FIT</source>
-        <translation>ملاءمة</translation>
     </message>
 </context>
 <context>
@@ -1876,9 +1884,17 @@
         <translation>[ظ] %1%</translation>
     </message>
     <message>
+        <source>Clipped shadows. Click to show them on the photo.</source>
+        <translation>ظلال مقطوعة. انقر لإظهارها على الصورة.</translation>
+    </message>
+    <message>
         <source>[H] %1%</source>
         <comment>H: highlight clipping</comment>
         <translation>[إ] %1%</translation>
+    </message>
+    <message>
+        <source>Clipped highlights. Click to show them on the photo.</source>
+        <translation>إضاءات مقطوعة. انقر لإظهارها على الصورة.</translation>
     </message>
     <message>
         <source>No photo</source>
@@ -1977,9 +1993,31 @@
 <context>
     <name>TopBar</name>
     <message>
-        <source>P</source>
-        <comment>pick flag, first letter of Pick</comment>
-        <translation>خ</translation>
+        <source>Pick (P)</source>
+        <translation>اختيار (P)</translation>
+    </message>
+    <message>
+        <source>Pick</source>
+        <translation>اختيار</translation>
+    </message>
+    <message>
+        <source>Reject (X)</source>
+        <translation>رفض (X)</translation>
+    </message>
+    <message>
+        <source>Reject</source>
+        <translation>رفض</translation>
+    </message>
+    <message numerus="yes">
+        <source>%n star(s)</source>
+        <translation>
+            <numerusform>بلا نجوم</numerusform>
+            <numerusform>نجمة واحدة</numerusform>
+            <numerusform>نجمتان</numerusform>
+            <numerusform>%n نجوم</numerusform>
+            <numerusform>%n نجمة</numerusform>
+            <numerusform>%n نجمة</numerusform>
+        </translation>
     </message>
     <message>
         <source>Connecting…</source>
@@ -2030,10 +2068,6 @@
         <translation>قص</translation>
     </message>
     <message>
-        <source>Fit</source>
-        <translation>ملاءمة</translation>
-    </message>
-    <message>
         <source>Open RAW</source>
         <translation>فتح RAW</translation>
     </message>
@@ -2049,8 +2083,36 @@
         <translation>إعادة الضبط إلى 0°</translation>
     </message>
     <message>
+        <source>Rotate left</source>
+        <translation>تدوير لليسار</translation>
+    </message>
+    <message>
+        <source>Rotate right</source>
+        <translation>تدوير لليمين</translation>
+    </message>
+    <message>
         <source>Fit</source>
         <translation>ملاءمة</translation>
+    </message>
+    <message>
+        <source>Surround: %1</source>
+        <translation>المحيط: %1</translation>
+    </message>
+    <message>
+        <source>middle grey</source>
+        <translation>رمادي متوسط</translation>
+    </message>
+    <message>
+        <source>theme colour</source>
+        <translation>لون السمة</translation>
+    </message>
+    <message>
+        <source>dark grey</source>
+        <translation>رمادي داكن</translation>
+    </message>
+    <message>
+        <source>Surround colour</source>
+        <translation>لون المحيط</translation>
     </message>
     <message>
         <source>Crop</source>
@@ -2118,6 +2180,10 @@
     <message>
         <source>Watermark</source>
         <translation>علامة مائية</translation>
+    </message>
+    <message>
+        <source>Add a watermark</source>
+        <translation>إضافة علامة مائية</translation>
     </message>
     <message>
         <source>Text / EXIF Tag</source>

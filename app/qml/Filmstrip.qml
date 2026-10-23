@@ -385,25 +385,6 @@ Rectangle {
                                 }
                             }
 
-                            // DIR Badge
-                            Rectangle {
-                                anchors.top: parent.top
-                                anchors.right: parent.right
-                                anchors.margins: 2
-                                width: 22
-                                height: 14
-                                radius: Theme.r(3)
-                                color: Qt.rgba(0, 0, 0, 0.75)
-                                Text {
-                                    font.family: Theme.fontFamily
-                                    anchors.centerIn: parent
-                                    text: qsTr("Folder")
-                                    textFormat: Text.PlainText
-                                    font.pixelSize: Theme.px(8)
-                                    font.weight: Font.Bold
-                                    color: Theme.accentCyan
-                                }
-                            }
                         }
 
                         // If Photo: Show Thumbnail or Cloud Placeholder
@@ -481,7 +462,7 @@ Rectangle {
                                 anchors.right: parent.right
                                 anchors.margins: 2
                                 width: fmtText.implicitWidth + 6
-                                height: 14
+                                height: Theme.px(10) + 4
                                 radius: Theme.r(3)
                                 color: Qt.rgba(0, 0, 0, 0.75)
 

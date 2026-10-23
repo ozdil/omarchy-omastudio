@@ -136,10 +136,11 @@ Rectangle {
         implicitWidth: btnText.implicitWidth + 16
         implicitHeight: 24
         radius: Theme.r(4)
-        opacity: enabled ? 1.0 : 0.4
-        color: primary ? (btnMouse.containsMouse ? Theme.accentHover : Theme.accent)
-                       : (btnMouse.containsMouse ? Theme.bgCardHover : Theme.bgCard)
-        border.color: primary ? Theme.accent : Theme.border
+        // A disabled button is an outline, never a filled accent bar
+        readonly property bool filled: primary && enabled
+        color: filled ? (btnMouse.containsMouse ? Theme.accentHover : Theme.accent)
+                      : (btnMouse.containsMouse && enabled ? Theme.bgCardHover : "transparent")
+        border.color: filled ? Theme.accent : Theme.border
         border.width: 1
 
         Text {
@@ -150,7 +151,7 @@ Rectangle {
             font.family: Theme.fontFamily
             font.pixelSize: Theme.px(9)
             font.weight: Font.Bold
-            color: btn.primary ? Theme.bgBase : Theme.textMain
+            color: btn.filled ? Theme.onAccent : (btn.enabled ? Theme.textMain : Theme.textDim)
         }
 
         MouseArea {

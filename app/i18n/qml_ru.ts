@@ -320,38 +320,6 @@
 <context>
     <name>ColorSpaceSelector</name>
     <message>
-        <source>Standard SDR web gamut</source>
-        <translation>Стандартный веб-охват SDR</translation>
-    </message>
-    <message>
-        <source>100% sRGB</source>
-        <translation>100% sRGB</translation>
-    </message>
-    <message>
-        <source>Wide gamut, Apple Retina displays</source>
-        <translation>Широкий охват, дисплеи Apple Retina</translation>
-    </message>
-    <message>
-        <source>125% sRGB</source>
-        <translation>125% sRGB</translation>
-    </message>
-    <message>
-        <source>Ultra-wide gamut HDR master</source>
-        <translation>HDR-мастер со сверхшироким охватом</translation>
-    </message>
-    <message>
-        <source>150% sRGB</source>
-        <translation>150% sRGB</translation>
-    </message>
-    <message>
-        <source>Academy linear working space</source>
-        <translation>Линейное рабочее пространство Академии</translation>
-    </message>
-    <message>
-        <source>Wide AP1</source>
-        <translation>Широкий AP1</translation>
-    </message>
-    <message>
         <source>Colour management</source>
         <translation>Управление цветом</translation>
     </message>
@@ -360,16 +328,20 @@
         <translation>Сжатие охвата</translation>
     </message>
     <message>
-        <source>%1 (%2)</source>
-        <translation>%1 (%2)</translation>
+        <source>Brings colours pushed outside the gamut back in smoothly instead of clipping them.</source>
+        <translation>Плавно возвращает цвета, вышедшие за пределы охвата, вместо обрезки.</translation>
     </message>
     <message>
-        <source>ACES 1.3 RRT/ODT Tonemapper</source>
-        <translation>Тональное отображение ACES 1.3 RRT/ODT</translation>
+        <source>ACES tone curve</source>
+        <translation>Тональная кривая ACES</translation>
     </message>
     <message>
-        <source>Filmic shoulder roll-off &amp; dynamic range mapping</source>
-        <translation>Мягкое плёночное плечо и отображение динамического диапазона</translation>
+        <source>Filmic highlight roll-off, a fitted approximation of the ACES output transform.</source>
+        <translation>Мягкий спад в светах, приближение выходного преобразования ACES.</translation>
+    </message>
+    <message>
+        <source>The output colour space is set in the Export window.</source>
+        <translation>Выходное цветовое пространство задаётся в окне экспорта.</translation>
     </message>
 </context>
 <context>
@@ -393,36 +365,60 @@
         <translation>Перцепционный</translation>
     </message>
     <message>
-        <source>8-bit · universal</source>
-        <translation>8 бит · универсальный</translation>
+        <source>Export folder</source>
+        <translation>Папка экспорта</translation>
     </message>
     <message>
-        <source>16-bit · lossless</source>
-        <translation>16 бит · без потерь</translation>
+        <source>8-bit</source>
+        <translation>8 бит</translation>
     </message>
     <message>
-        <source>16-bit · print, archive</source>
-        <translation>16 бит · печать, архив</translation>
+        <source>Opens everywhere</source>
+        <translation>Открывается везде</translation>
     </message>
     <message>
-        <source>8-bit · web</source>
-        <translation>8 бит · веб</translation>
+        <source>16-bit</source>
+        <translation>16 бит</translation>
     </message>
     <message>
-        <source>12-bit · HDR-ready</source>
-        <translation>12 бит · готов к HDR</translation>
+        <source>Lossless</source>
+        <translation>Без потерь</translation>
     </message>
     <message>
-        <source>10-bit · HEVC</source>
-        <translation>10 бит · HEVC</translation>
+        <source>For print and archive</source>
+        <translation>Для печати и архива</translation>
     </message>
     <message>
-        <source>16-bit · modern</source>
-        <translation>16 бит · современный</translation>
+        <source>Small files for the web</source>
+        <translation>Небольшие файлы для веба</translation>
     </message>
     <message>
-        <source>Float · scene-linear</source>
-        <translation>С плавающей точкой · линейный сцены</translation>
+        <source>12-bit</source>
+        <translation>12 бит</translation>
+    </message>
+    <message>
+        <source>Small files with high bit depth</source>
+        <translation>Небольшие файлы с большой разрядностью</translation>
+    </message>
+    <message>
+        <source>10-bit</source>
+        <translation>10 бит</translation>
+    </message>
+    <message>
+        <source>HEVC, as used by phones</source>
+        <translation>HEVC, как в телефонах</translation>
+    </message>
+    <message>
+        <source>Small files, lossless at quality 100</source>
+        <translation>Небольшие файлы, без потерь при качестве 100</translation>
+    </message>
+    <message>
+        <source>Float</source>
+        <translation>С плавающей точкой</translation>
+    </message>
+    <message>
+        <source>Scene-linear, for compositing and grading</source>
+        <translation>Линейный по сцене, для композитинга и цветокоррекции</translation>
     </message>
     <message numerus="yes">
         <source>Export %n photos</source>
@@ -509,8 +505,8 @@
         <translation>Веб, экраны</translation>
     </message>
     <message>
-        <source>Wide-gamut screens</source>
-        <translation>Экраны с широким охватом</translation>
+        <source>Modern screens</source>
+        <translation>Современные экраны</translation>
     </message>
     <message>
         <source>Print</source>
@@ -581,8 +577,8 @@
         <translation>Подготовить для</translation>
     </message>
     <message>
-        <source>Sets the crop and output sharpening for a platform. Reset restores your own.</source>
-        <translation>Задаёт кадрирование и выходную резкость для платформы. «Сбросить» возвращает ваши собственные настройки.</translation>
+        <source>Sets the crop and output sharpening for a platform. Click it again to go back to your own.</source>
+        <translation>Задаёт кадрирование и выходную резкость для платформы. Нажмите ещё раз, чтобы вернуться к своим настройкам.</translation>
     </message>
     <message>
         <source>Watermark</source>
@@ -591,6 +587,18 @@
     <message>
         <source>Folder</source>
         <translation>Папка</translation>
+    </message>
+    <message>
+        <source>Choose…</source>
+        <translation>Выбрать…</translation>
+    </message>
+    <message>
+        <source>File name</source>
+        <translation>Имя файла</translation>
+    </message>
+    <message>
+        <source>Saved as %1</source>
+        <translation>Будет сохранено как %1</translation>
     </message>
     <message>
         <source>Hide</source>
@@ -808,10 +816,6 @@
     <message>
         <source>No photos found in this directory.</source>
         <translation>В этой папке нет фотографий.</translation>
-    </message>
-    <message>
-        <source>Folder</source>
-        <translation>Папка</translation>
     </message>
     <message>
         <source>Downloading</source>
@@ -1313,14 +1317,6 @@
         <translation>Записано: %1</translation>
     </message>
     <message>
-        <source>Open RAW Photo</source>
-        <translation>Открыть фото RAW</translation>
-    </message>
-    <message>
-        <source>RAW Photos</source>
-        <translation>Фото RAW</translation>
-    </message>
-    <message>
         <source>Export finished without a result</source>
         <translation>Экспорт завершился без результата</translation>
     </message>
@@ -1351,14 +1347,6 @@
     <message>
         <source>Contrast</source>
         <translation>Контраст</translation>
-    </message>
-    <message>
-        <source>Temp (Kelvin)</source>
-        <translation>Температура (Кельвин)</translation>
-    </message>
-    <message>
-        <source>Tint (Green / Magenta)</source>
-        <translation>Оттенок (зелёный / пурпурный)</translation>
     </message>
     <message>
         <source>Exposure</source>
@@ -1399,6 +1387,10 @@
     <message>
         <source>Texture</source>
         <translation>Текстура</translation>
+    </message>
+    <message>
+        <source>Suggested scene</source>
+        <translation>Предполагаемая сцена</translation>
     </message>
     <message>
         <source>Clarity (Midtone Contrast)</source>
@@ -1501,6 +1493,22 @@
         <translation>Авто: анализ фото…</translation>
     </message>
     <message>
+        <source>Open photo</source>
+        <translation>Открыть фото</translation>
+    </message>
+    <message>
+        <source>Photos</source>
+        <translation>Фото</translation>
+    </message>
+    <message>
+        <source>RAW</source>
+        <translation>RAW</translation>
+    </message>
+    <message>
+        <source>Images</source>
+        <translation>Изображения</translation>
+    </message>
+    <message>
         <source>Saved to %1</source>
         <translation>Сохранено в %1</translation>
     </message>
@@ -1553,10 +1561,6 @@
         <translation>Отклонено</translation>
     </message>
     <message>
-        <source>Scene</source>
-        <translation>Сцена</translation>
-    </message>
-    <message>
         <source>Adjust</source>
         <translation>Настройка</translation>
     </message>
@@ -1573,6 +1577,14 @@
         <translation>ИИ</translation>
     </message>
     <message>
+        <source>Read the photo&apos;s .xmp sidecar written by another editor</source>
+        <translation>Прочитать файл .xmp, записанный другим редактором</translation>
+    </message>
+    <message>
+        <source>Write the edit, rating and label to an .xmp sidecar for other editors</source>
+        <translation>Записать правку, оценку и метку в файл .xmp для других редакторов</translation>
+    </message>
+    <message>
         <source>Profile</source>
         <translation>Профиль</translation>
     </message>
@@ -1587,6 +1599,14 @@
     <message>
         <source>White balance</source>
         <translation>Баланс белого</translation>
+    </message>
+    <message>
+        <source>Temperature</source>
+        <translation>Температура</translation>
+    </message>
+    <message>
+        <source>Tint</source>
+        <translation>Оттенок</translation>
     </message>
     <message>
         <source>Tone</source>
@@ -1657,16 +1677,8 @@
         <translation>Импорт XMP</translation>
     </message>
     <message>
-        <source>Read DSCF0001.xmp from Lightroom, Capture One or darktable</source>
-        <translation>Прочитать DSCF0001.xmp из Lightroom, Capture One или darktable</translation>
-    </message>
-    <message>
         <source>Write XMP</source>
         <translation>Запись XMP</translation>
-    </message>
-    <message>
-        <source>Write the edit, rating and label to DSCF0001.xmp for other editors</source>
-        <translation>Записать правку, оценку и метку в DSCF0001.xmp для других редакторов</translation>
     </message>
     <message>
         <source>Opening %1</source>
@@ -1698,10 +1710,6 @@
     <message>
         <source>Navigator</source>
         <translation>Навигатор</translation>
-    </message>
-    <message>
-        <source>FIT</source>
-        <translation>ВПИСАТЬ</translation>
     </message>
 </context>
 <context>
@@ -1861,9 +1869,17 @@
         <translation>[Т] %1%</translation>
     </message>
     <message>
+        <source>Clipped shadows. Click to show them on the photo.</source>
+        <translation>Обрезанные тени. Нажмите, чтобы показать их на фото.</translation>
+    </message>
+    <message>
         <source>[H] %1%</source>
         <comment>H: highlight clipping</comment>
         <translation>[С] %1%</translation>
+    </message>
+    <message>
+        <source>Clipped highlights. Click to show them on the photo.</source>
+        <translation>Обрезанные света. Нажмите, чтобы показать их на фото.</translation>
     </message>
     <message>
         <source>No photo</source>
@@ -1962,9 +1978,28 @@
 <context>
     <name>TopBar</name>
     <message>
-        <source>P</source>
-        <comment>pick flag, first letter of Pick</comment>
-        <translation>О</translation>
+        <source>Pick (P)</source>
+        <translation>Отобрать (P)</translation>
+    </message>
+    <message>
+        <source>Pick</source>
+        <translation>Отобрать</translation>
+    </message>
+    <message>
+        <source>Reject (X)</source>
+        <translation>Отклонить (X)</translation>
+    </message>
+    <message>
+        <source>Reject</source>
+        <translation>Отклонить</translation>
+    </message>
+    <message numerus="yes">
+        <source>%n star(s)</source>
+        <translation>
+            <numerusform>%n звезда</numerusform>
+            <numerusform>%n звезды</numerusform>
+            <numerusform>%n звёзд</numerusform>
+        </translation>
     </message>
     <message>
         <source>Connecting…</source>
@@ -2015,10 +2050,6 @@
         <translation>Кадрировать</translation>
     </message>
     <message>
-        <source>Fit</source>
-        <translation>Вписать</translation>
-    </message>
-    <message>
         <source>Open RAW</source>
         <translation>Открыть RAW</translation>
     </message>
@@ -2034,8 +2065,36 @@
         <translation>Сбросить до 0°</translation>
     </message>
     <message>
+        <source>Rotate left</source>
+        <translation>Повернуть влево</translation>
+    </message>
+    <message>
+        <source>Rotate right</source>
+        <translation>Повернуть вправо</translation>
+    </message>
+    <message>
         <source>Fit</source>
         <translation>Вписать</translation>
+    </message>
+    <message>
+        <source>Surround: %1</source>
+        <translation>Окружение: %1</translation>
+    </message>
+    <message>
+        <source>middle grey</source>
+        <translation>средне-серый</translation>
+    </message>
+    <message>
+        <source>theme colour</source>
+        <translation>цвет темы</translation>
+    </message>
+    <message>
+        <source>dark grey</source>
+        <translation>тёмно-серый</translation>
+    </message>
+    <message>
+        <source>Surround colour</source>
+        <translation>Цвет окружения</translation>
     </message>
     <message>
         <source>Crop</source>
@@ -2103,6 +2162,10 @@
     <message>
         <source>Watermark</source>
         <translation>Водяной знак</translation>
+    </message>
+    <message>
+        <source>Add a watermark</source>
+        <translation>Добавить водяной знак</translation>
     </message>
     <message>
         <source>Text / EXIF Tag</source>

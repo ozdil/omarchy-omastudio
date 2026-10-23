@@ -238,3 +238,15 @@ id:+ Linear
 id:+ Radial
 id:Navigator
 vi:HDR, video
+RAW
+el:8-bit
+el:10-bit
+el:12-bit
+el:16-bit
+id:8-bit
+id:10-bit
+id:12-bit
+id:16-bit
+fr:Photos
+fr:Images
+nl:Tint

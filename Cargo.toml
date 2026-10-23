@@ -22,7 +22,7 @@ path = "src/main.rs"
 rayon = "1.10"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
-image = { version = "0.25", default-features = false, features = ["png", "jpeg", "webp", "tiff", "pnm", "exr"] }
+image = { version = "0.25", default-features = false, features = ["png", "jpeg", "webp", "tiff", "pnm", "exr", "hdr"] }
 tiff = { version = "0.11", default-features = false, features = ["deflate", "lzw"] }
 exr = { version = "1.74", default-features = false }
 libc = "0.2"

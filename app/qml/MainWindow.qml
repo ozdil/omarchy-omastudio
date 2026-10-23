@@ -13,6 +13,8 @@ Rectangle {
     property string activePhotoPath: ""
     property string currentRenderPath: "/dev/shm/omastudio_viewport.ppm"
     property var activeMetadata: null
+    readonly property bool isFujifilm: activeMetadata !== null && activeMetadata !== undefined
+        && /fujifilm/i.test(activeMetadata.make || "")
     property var activeHistogram: null
     property var activeScene: null
     property var photoList: []
@@ -25,12 +27,18 @@ Rectangle {
     property bool showLeftPanel: true
 
     property bool showRightPanel: true
+    // Same lists as RAW_EXTENSIONS and RASTER_EXTENSIONS in the engine
+    readonly property var rawExtensions: ["3fr", "ari", "arw", "bay", "cap", "cr2", "cr3", "crw", "cs1", "dc2", "dcr", "dcs", "dng", "drf", "eip", "erf", "fff", "gpr", "iiq", "k25", "kc2", "kdc", "mdc", "mef", "mfw", "mos", "mrw", "nef", "nrw", "orf", "ori", "pef", "ptx", "pxn", "qtk", "raf", "raw", "rdc", "rw2", "rwl", "rwz", "sr2", "srf", "srw", "sti", "x3f"]
+    readonly property var imageExtensions: ["jpg", "jpeg", "jpe", "png", "webp", "tif", "tiff", "heic", "heif", "hif", "avif", "jxl", "exr", "hdr", "pnm", "ppm", "pgm", "pam"]
+    function globs(exts) {
+        return exts.map(function(e) { return "*." + e + " *." + e.toUpperCase(); }).join(" ");
+    }
     property bool showFilmstrip: true
     // Right panel tab: adjust, masks, looks, ai, output
     property string rightTab: "adjust"
     // Section key -> true when the section is collapsed
     property var collapsedSections: ({})
-    // Photo surround: "dark", "grey" (18 %) or "light"; independent of the theme
+    // Photo surround: "dark", "grey" (middle grey) or "theme"
     property string surround: "dark"
     property bool uiStateLoaded: false
     property int photoRating: 0
@@ -93,8 +101,8 @@ Rectangle {
     property string activeFilmSimulation: "none"
     property real activeFilmSimIntensity: 1.0
 
-    // ACES 1.3 & Color Space Management
-    property string activeColorSpace: "sRGB"
+    // Gamut compression and ACES tone curve (output space is chosen at export)
+    property bool gamutCompression: false
     property bool activeAcesTonemap: false
 
     // Capture One Pro Skin Tone Uniformity Engine
@@ -395,7 +403,7 @@ Rectangle {
         root.activeLutPath = "";
         root.activeFilmSimulation = "none";
         root.activeFilmSimIntensity = 1.0;
-        root.activeColorSpace = "sRGB";
+        root.gamutCompression = false;
         root.activeAcesTonemap = false;
         root.skinToneEnabled = false;
         root.skinTargetHue = 50.0;
@@ -506,7 +514,7 @@ Rectangle {
             "lut_name": root.activeLutName !== "" ? root.activeLutName : null,
             "lut_intensity": root.activeLutIntensity,
             "lut_path": root.activeLutPath !== "" ? root.activeLutPath : null,
-            "color_space": root.activeColorSpace,
+            "gamut_compression": root.gamutCompression,
             "aces_tonemap": root.activeAcesTonemap,
             "film_simulation": root.activeFilmSimulation,
             "film_sim_intensity": root.activeFilmSimIntensity,
@@ -642,8 +650,10 @@ Rectangle {
         if (r.lut_intensity !== undefined) root.activeLutIntensity = root.num(r.lut_intensity, 1.0);
         if (r.lut_path !== undefined) root.activeLutPath = r.lut_path || "";
 
-        // ACES 1.3 & Film Simulations
-        if (r.color_space !== undefined) root.activeColorSpace = r.color_space || "sRGB";
+        // Gamut compression, ACES tone curve & Film Simulations
+        // Recipes from earlier versions stored "ACEScg" for gamut compression
+        if (r.gamut_compression !== undefined || r.color_space !== undefined)
+            root.gamutCompression = Boolean(r.gamut_compression) || String(r.color_space || "").toLowerCase() === "acescg";
         if (r.aces_tonemap !== undefined) root.activeAcesTonemap = Boolean(r.aces_tonemap);
         if (r.film_simulation !== undefined) root.activeFilmSimulation = r.film_simulation || "none";
         if (r.film_sim_intensity !== undefined) root.activeFilmSimIntensity = root.num(r.film_sim_intensity, 1.0);
@@ -766,7 +776,7 @@ Rectangle {
 
         layersPanel.layersList = Qt.binding(function() { return root.adjustmentLayers; });
 
-        colorSpaceSelector.activeColorSpace = Qt.binding(function() { return root.activeColorSpace; });
+        colorSpaceSelector.gamutCompression = Qt.binding(function() { return root.gamutCompression; });
         colorSpaceSelector.acesTonemap = Qt.binding(function() { return root.activeAcesTonemap; });
     }
 
@@ -985,7 +995,10 @@ Rectangle {
     // Process: File picker
     Process {
         id: openFileProc
-        command: ["zenity", "--file-selection", "--title=" + qsTr("Open RAW Photo"), "--file-filter=" + qsTr("RAW Photos") + " | *.RAF *.raf *.NEF *.nef *.CR2 *.cr2 *.CR3 *.cr3 *.ARW *.arw *.DNG *.dng *.3FR *.3fr *.FFF *.fff *.IIQ *.iiq *.MOS *.mos *.MEF *.mef *.PEF *.pef"]
+        command: ["zenity", "--file-selection", "--title=" + qsTr("Open photo"),
+                  "--file-filter=" + qsTr("Photos") + " | " + root.globs(root.rawExtensions.concat(root.imageExtensions)),
+                  "--file-filter=" + qsTr("RAW") + " | " + root.globs(root.rawExtensions),
+                  "--file-filter=" + qsTr("Images") + " | " + root.globs(root.imageExtensions)]
         onFinished: function(exitCode, output) {
             var p = String(output || "").trim();
             if (exitCode === 0 && p.length > 0) {
@@ -1227,7 +1240,7 @@ Rectangle {
     // Collapses every section of the current tab except `key`
     function soloSection(key) {
         var keys = ["profile", "wb", "tone", "presence", "curve", "hsl", "grading", "detail", "grain",
-                    "colour", "layers", "looks", "lut", "assistant"];
+                    "colour", "layers", "looks", "lut", "assistant", "fujifilm"];
         var m = {};
         for (var i = 0; i < keys.length; i++) if (keys[i] !== key) m[keys[i]] = true;
         root.collapsedSections = m;
@@ -1241,7 +1254,7 @@ Rectangle {
         if (typeof st.showFilmstrip === "boolean") root.showFilmstrip = st.showFilmstrip;
         if (["adjust", "masks", "looks", "ai"].indexOf(st.rightTab) >= 0) root.rightTab = st.rightTab;
         if (st.collapsedSections && typeof st.collapsedSections === "object") root.collapsedSections = st.collapsedSections;
-        if (["dark", "grey", "light"].indexOf(st.surround) >= 0) root.surround = st.surround;
+        if (["dark", "grey", "theme"].indexOf(st.surround) >= 0) root.surround = st.surround;
         root.uiStateLoaded = true;
     }
 
@@ -1437,9 +1450,6 @@ Rectangle {
                 viewport.isCropMode = !viewport.isCropMode;
                 root.showToast(viewport.isCropMode ? qsTr("Crop mode: on (C)") : qsTr("Crop mode: off"), Theme.accentYellow);
             }
-            onZoomFit: viewport.resetZoomFit()
-            onZoom100: viewport.setZoomAbsolute(1.0)
-            onZoom200: viewport.setZoomAbsolute(2.0)
             onExportClicked: {
                 exportDialog.isBatchMode = false;
                 exportDialog.batchCount = 0;
@@ -1523,7 +1533,8 @@ Rectangle {
 
                         // 4. Scene analysis (after Auto)
                         Rectangle {
-                            visible: root.activeScene !== null
+                            // A guess from simple image statistics: shown only when it is fairly sure
+                            visible: root.activeScene !== null && root.activeScene.confidence >= 0.9
                             Layout.fillWidth: true
                             implicitHeight: 70
                             radius: Theme.radiusMd
@@ -1544,7 +1555,7 @@ Rectangle {
                                         color: Theme.accentPurple
                                     }
                                     Text {
-                                        text: qsTr("Scene")
+                                        text: qsTr("Suggested scene")
                                         textFormat: Text.PlainText
                                         font.family: Theme.fontFamily
                                         font.pixelSize: Theme.px(9)
@@ -1626,6 +1637,8 @@ Rectangle {
 
                 Viewport {
                     id: viewport
+                    surround: root.surround
+                    onSurroundCycled: function(next) { root.surround = next }
                     Layout.fillWidth: true
                     Layout.fillHeight: true
                     isSplitView: root.isSplitView
@@ -1746,11 +1759,159 @@ Rectangle {
                     color: Theme.border
                 }
 
+                // Copy, paste and reset the edit, and XMP sidecars: the same in every tab
+                Rectangle {
+                    id: editActionsLine
+                    anchors.bottom: editActions.top
+                    anchors.bottomMargin: 10
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    height: 1
+                    color: Theme.border
+                }
+                ColumnLayout {
+                    id: editActions
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.bottom: parent.bottom
+                    anchors.margins: 12
+                    spacing: 6
+                    enabled: root.activePhotoPath !== ""
+                    opacity: enabled ? 1.0 : 0.45
+
+                        RowLayout {
+                            Layout.fillWidth: true
+                            spacing: 6
+
+                            Rectangle {
+                                Layout.fillWidth: true
+                                implicitHeight: 28
+                                radius: Theme.radiusSm
+                                color: copyBtnMouse.containsMouse ? Theme.bgCardHover : Theme.bgCard
+                                border.color: Theme.border
+
+                                RowLayout {
+                                    anchors.centerIn: parent
+                                    spacing: 4
+                                    Text {
+                                        text: qsTr("Copy")
+                                        textFormat: Text.PlainText
+                                        font.family: Theme.monoFont
+                                        font.pixelSize: Theme.px(10)
+                                        font.weight: Font.Medium
+                                        color: Theme.textMain
+                                    }
+                                }
+                                MouseArea {
+                                    id: copyBtnMouse
+                                    anchors.fill: parent
+                                    cursorShape: Qt.PointingHandCursor
+                                    hoverEnabled: true
+                                    onClicked: root.copyRecipe()
+                                }
+                            }
+
+                            Rectangle {
+                                Layout.fillWidth: true
+                                implicitHeight: 28
+                                radius: Theme.radiusSm
+                                color: pasteBtnMouse.containsMouse ? Theme.bgCardHover : Theme.bgCard
+                                border.color: Theme.border
+
+                                RowLayout {
+                                    anchors.centerIn: parent
+                                    spacing: 4
+                                    Text {
+                                        text: qsTr("Paste")
+                                        textFormat: Text.PlainText
+                                        font.family: Theme.monoFont
+                                        font.pixelSize: Theme.px(10)
+                                        font.weight: Font.Medium
+                                        color: Theme.textMain
+                                    }
+                                }
+                                MouseArea {
+                                    id: pasteBtnMouse
+                                    anchors.fill: parent
+                                    cursorShape: Qt.PointingHandCursor
+                                    hoverEnabled: true
+                                    onClicked: root.pasteRecipe()
+                                }
+                            }
+
+                            Rectangle {
+                                implicitWidth: 70
+                                implicitHeight: 28
+                                radius: Theme.radiusSm
+                                color: resetBtnMouse.containsMouse ? Theme.bgCardHover : Theme.bgCard
+                                border.color: Theme.border
+
+                                Text {
+                                    anchors.centerIn: parent
+                                    text: qsTr("Reset")
+                                    textFormat: Text.PlainText
+                                    font.family: Theme.monoFont
+                                    font.pixelSize: Theme.px(10)
+                                    font.weight: Font.Bold
+                                    color: Theme.highlightClip
+                                }
+                                MouseArea {
+                                    id: resetBtnMouse
+                                    anchors.fill: parent
+                                    cursorShape: Qt.PointingHandCursor
+                                    hoverEnabled: true
+                                    onClicked: root.resetRecipe()
+                                }
+                            }
+                        }
+
+                        // Edits exchanged with other editors as XMP sidecars
+                        RowLayout {
+                            Layout.fillWidth: true
+                            spacing: 6
+
+                            Repeater {
+                                model: [
+                                    { "label": qsTr("Import XMP"), "tip": qsTr("Read the photo's .xmp sidecar written by another editor") },
+                                    { "label": qsTr("Write XMP"), "tip": qsTr("Write the edit, rating and label to an .xmp sidecar for other editors") }
+                                ]
+                                delegate: Rectangle {
+                                    Layout.fillWidth: true
+                                    implicitHeight: 28
+                                    radius: Theme.radiusSm
+                                    opacity: root.activePhotoPath !== "" ? 1.0 : 0.4
+                                    color: xmpBtnMouse.containsMouse ? Theme.bgCardHover : Theme.bgCard
+                                    border.color: Theme.border
+
+                                    Text {
+                                        anchors.centerIn: parent
+                                        text: modelData.label
+                                        textFormat: Text.PlainText
+                                        font.family: Theme.monoFont
+                                        font.pixelSize: Theme.px(10)
+                                        font.weight: Font.Medium
+                                        color: Theme.textMain
+                                    }
+                                    MouseArea {
+                                        id: xmpBtnMouse
+                                        anchors.fill: parent
+                                        cursorShape: Qt.PointingHandCursor
+                                        hoverEnabled: true
+                                        onClicked: index === 0 ? root.importXmp() : root.writeXmp(false)
+                                    }
+                                    ToolTip.visible: xmpBtnMouse.containsMouse
+                                    ToolTip.delay: 500
+                                    ToolTip.text: modelData.tip
+                                }
+                            }
+                        }
+                }
+
                 ScrollView {
                     anchors.top: rightTabsLine.bottom
                     anchors.left: parent.left
                     anchors.right: parent.right
-                    anchors.bottom: parent.bottom
+                    anchors.bottom: editActionsLine.top
                     anchors.margins: 12
                     clip: true
                     contentWidth: availableWidth
@@ -1768,7 +1929,7 @@ Rectangle {
                                 key: "profile"
                                 title: qsTr("Profile")
                                 host: root
-                                resettable: false
+                                onReset: filmSimPanel.reset()
 
                                 FilmSimulationPanel {
                                     embedded: true
@@ -1782,7 +1943,23 @@ Rectangle {
                                         root.requestRender();
                                     }
                                 }
+                            }
+                            // Recipes, the camera over USB and Pixel Shift: for Fujifilm photos,
+                            // and with no photo open so a camera can be connected
+                            PanelSection {
+                                key: "fujifilm"
+                                title: "Fujifilm"
+                                host: root
+                                needsPhoto: false
+                                visible: root.isFujifilm || root.activePhotoPath === ""
+                                onReset: {
+                                    root.colorChrome = 0.0;
+                                    root.colorChromeBlue = 0.0;
+                                    root.requestRender();
+                                }
+
                                 SliderGroup {
+                                    visible: root.isFujifilm
                                     title: qsTr("Color Chrome Effect")
                                     from: 0.0
                                     to: 100.0
@@ -1793,6 +1970,7 @@ Rectangle {
                                     onSliderMoved: function(v) { root.colorChrome = v; root.requestRender() }
                                 }
                                 SliderGroup {
+                                    visible: root.isFujifilm
                                     title: qsTr("Color Chrome FX Blue")
                                     from: 0.0
                                     to: 100.0
@@ -1836,7 +2014,7 @@ Rectangle {
                                 }
 
                                 SliderGroup {
-                                    title: qsTr("Temp (Kelvin)")
+                                    title: qsTr("Temperature")
                                     from: 2000.0
                                     to: 12000.0
                                     value: root.wbTemp
@@ -1847,7 +2025,7 @@ Rectangle {
                                     onSliderMoved: function(v) { root.wbTemp = v; root.requestRender() }
                                 }
                                 SliderGroup {
-                                    title: qsTr("Tint (Green / Magenta)")
+                                    title: qsTr("Tint")
                                     from: -100.0
                                     to: 100.0
                                     value: root.wbTint
@@ -2244,10 +2422,10 @@ Rectangle {
                                     embedded: true
                                     id: colorSpaceSelector
                                     Layout.fillWidth: true
-                                    activeColorSpace: root.activeColorSpace
+                                    gamutCompression: root.gamutCompression
                                     acesTonemap: root.activeAcesTonemap
-                                    onColorSpaceSelected: function(space) {
-                                        root.activeColorSpace = space;
+                                    onGamutCompressionToggled: function(enabled) {
+                                        root.gamutCompression = enabled;
                                         root.requestRender();
                                     }
                                     onAcesTonemapToggled: function(enabled) {
@@ -2315,7 +2493,7 @@ Rectangle {
                                 key: "lut"
                                 title: qsTr("LUT")
                                 host: root
-                                resettable: false
+                                onReset: lutSelector.reset()
 
                                 LutSelector {
                                     embedded: true
@@ -2364,135 +2542,6 @@ Rectangle {
                             }
                         }
 
-                        // Persistent Lightroom Workflow Action Bar (Copy / Paste / Reset)
-                        Rectangle { Layout.fillWidth: true; height: 1; color: Theme.border }
-                        RowLayout {
-                            Layout.fillWidth: true
-                            spacing: 6
-
-                            Rectangle {
-                                Layout.fillWidth: true
-                                implicitHeight: 28
-                                radius: Theme.radiusSm
-                                color: copyBtnMouse.containsMouse ? Theme.bgCardHover : Theme.bgCard
-                                border.color: Theme.border
-
-                                RowLayout {
-                                    anchors.centerIn: parent
-                                    spacing: 4
-                                    Text {
-                                        text: qsTr("Copy")
-                                        textFormat: Text.PlainText
-                                        font.family: Theme.monoFont
-                                        font.pixelSize: Theme.px(10)
-                                        font.weight: Font.Medium
-                                        color: Theme.textMain
-                                    }
-                                }
-                                MouseArea {
-                                    id: copyBtnMouse
-                                    anchors.fill: parent
-                                    cursorShape: Qt.PointingHandCursor
-                                    hoverEnabled: true
-                                    onClicked: root.copyRecipe()
-                                }
-                            }
-
-                            Rectangle {
-                                Layout.fillWidth: true
-                                implicitHeight: 28
-                                radius: Theme.radiusSm
-                                color: pasteBtnMouse.containsMouse ? Theme.bgCardHover : Theme.bgCard
-                                border.color: Theme.border
-
-                                RowLayout {
-                                    anchors.centerIn: parent
-                                    spacing: 4
-                                    Text {
-                                        text: qsTr("Paste")
-                                        textFormat: Text.PlainText
-                                        font.family: Theme.monoFont
-                                        font.pixelSize: Theme.px(10)
-                                        font.weight: Font.Medium
-                                        color: Theme.textMain
-                                    }
-                                }
-                                MouseArea {
-                                    id: pasteBtnMouse
-                                    anchors.fill: parent
-                                    cursorShape: Qt.PointingHandCursor
-                                    hoverEnabled: true
-                                    onClicked: root.pasteRecipe()
-                                }
-                            }
-
-                            Rectangle {
-                                implicitWidth: Math.max(70, label2674.implicitWidth + 16)
-                                implicitHeight: 28
-                                radius: Theme.radiusSm
-                                color: resetBtnMouse.containsMouse ? Theme.bgCardHover : Theme.bgCard
-                                border.color: Theme.border
-
-                                Text {
-                                    id: label2674
-                                    anchors.centerIn: parent
-                                    text: qsTr("Reset")
-                                    textFormat: Text.PlainText
-                                    font.family: Theme.monoFont
-                                    font.pixelSize: Theme.px(10)
-                                    font.weight: Font.Bold
-                                    color: Theme.highlightClip
-                                }
-                                MouseArea {
-                                    id: resetBtnMouse
-                                    anchors.fill: parent
-                                    cursorShape: Qt.PointingHandCursor
-                                    hoverEnabled: true
-                                    onClicked: root.resetRecipe()
-                                }
-                            }
-                        }
-
-                        // Edits exchanged with other editors as XMP sidecars
-                        RowLayout {
-                            Layout.fillWidth: true
-                            spacing: 6
-
-                            Repeater {
-                                model: [
-                                    { "label": qsTr("Import XMP"), "tip": qsTr("Read DSCF0001.xmp from Lightroom, Capture One or darktable") },
-                                    { "label": qsTr("Write XMP"), "tip": qsTr("Write the edit, rating and label to DSCF0001.xmp for other editors") }
-                                ]
-                                delegate: Rectangle {
-                                    Layout.fillWidth: true
-                                    implicitHeight: 28
-                                    radius: Theme.radiusSm
-                                    opacity: root.activePhotoPath !== "" ? 1.0 : 0.4
-                                    color: xmpBtnMouse.containsMouse ? Theme.bgCardHover : Theme.bgCard
-                                    border.color: Theme.border
-
-                                    Text {
-                                        anchors.centerIn: parent
-                                        text: modelData.label
-                                        textFormat: Text.PlainText
-                                        font.family: Theme.monoFont
-                                        font.pixelSize: Theme.px(10)
-                                        font.weight: Font.Medium
-                                        color: Theme.textMain
-                                    }
-                                    MouseArea {
-                                        id: xmpBtnMouse
-                                        anchors.fill: parent
-                                        cursorShape: Qt.PointingHandCursor
-                                        hoverEnabled: true
-                                        onClicked: index === 0 ? root.importXmp() : root.writeXmp(false)
-                                    }
-                                    ToolTip.visible: xmpBtnMouse.containsMouse
-                                    ToolTip.delay: 500
-                                    ToolTip.text: modelData.tip
-                                }
-                            }
-                        }
                     }
                 }
             }

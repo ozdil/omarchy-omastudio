@@ -320,38 +320,6 @@
 <context>
     <name>ColorSpaceSelector</name>
     <message>
-        <source>Standard SDR web gamut</source>
-        <translation>ขอบเขตสี SDR มาตรฐานสำหรับเว็บ</translation>
-    </message>
-    <message>
-        <source>100% sRGB</source>
-        <translation>100% sRGB</translation>
-    </message>
-    <message>
-        <source>Wide gamut, Apple Retina displays</source>
-        <translation>ขอบเขตสีกว้าง จอ Apple Retina</translation>
-    </message>
-    <message>
-        <source>125% sRGB</source>
-        <translation>125% sRGB</translation>
-    </message>
-    <message>
-        <source>Ultra-wide gamut HDR master</source>
-        <translation>มาสเตอร์ HDR ขอบเขตสีกว้างพิเศษ</translation>
-    </message>
-    <message>
-        <source>150% sRGB</source>
-        <translation>150% sRGB</translation>
-    </message>
-    <message>
-        <source>Academy linear working space</source>
-        <translation>พื้นที่ทำงานเชิงเส้นของ Academy</translation>
-    </message>
-    <message>
-        <source>Wide AP1</source>
-        <translation>AP1 กว้าง</translation>
-    </message>
-    <message>
         <source>Colour management</source>
         <translation>การจัดการสี</translation>
     </message>
@@ -360,16 +328,20 @@
         <translation>การบีบอัดขอบเขตสี</translation>
     </message>
     <message>
-        <source>%1 (%2)</source>
-        <translation>%1 (%2)</translation>
+        <source>Brings colours pushed outside the gamut back in smoothly instead of clipping them.</source>
+        <translation>นำสีที่เกินขอบเขตกามุตกลับมาอย่างนุ่มนวลแทนการตัดทิ้ง</translation>
     </message>
     <message>
-        <source>ACES 1.3 RRT/ODT Tonemapper</source>
-        <translation>การแมปโทน ACES 1.3 RRT/ODT</translation>
+        <source>ACES tone curve</source>
+        <translation>เส้นโค้งโทน ACES</translation>
     </message>
     <message>
-        <source>Filmic shoulder roll-off &amp; dynamic range mapping</source>
-        <translation>ไหล่ฟิล์มนุ่มนวลและการแมปช่วงไดนามิก</translation>
+        <source>Filmic highlight roll-off, a fitted approximation of the ACES output transform.</source>
+        <translation>การไล่ระดับส่วนสว่างอย่างนุ่มนวล ค่าประมาณของการแปลงเอาต์พุต ACES</translation>
+    </message>
+    <message>
+        <source>The output colour space is set in the Export window.</source>
+        <translation>เลือกปริภูมิสีของเอาต์พุตได้ในหน้าต่างส่งออก</translation>
     </message>
 </context>
 <context>
@@ -393,36 +365,60 @@
         <translation>ตามการรับรู้</translation>
     </message>
     <message>
-        <source>8-bit · universal</source>
-        <translation>8 บิต · ใช้ได้ทั่วไป</translation>
+        <source>Export folder</source>
+        <translation>โฟลเดอร์ส่งออก</translation>
     </message>
     <message>
-        <source>16-bit · lossless</source>
-        <translation>16 บิต · ไม่สูญเสียข้อมูล</translation>
+        <source>8-bit</source>
+        <translation>8 บิต</translation>
     </message>
     <message>
-        <source>16-bit · print, archive</source>
-        <translation>16 บิต · งานพิมพ์ เก็บถาวร</translation>
+        <source>Opens everywhere</source>
+        <translation>เปิดได้ทุกที่</translation>
     </message>
     <message>
-        <source>8-bit · web</source>
-        <translation>8 บิต · เว็บ</translation>
+        <source>16-bit</source>
+        <translation>16 บิต</translation>
     </message>
     <message>
-        <source>12-bit · HDR-ready</source>
-        <translation>12 บิต · พร้อมสำหรับ HDR</translation>
+        <source>Lossless</source>
+        <translation>ไม่สูญเสียคุณภาพ</translation>
     </message>
     <message>
-        <source>10-bit · HEVC</source>
-        <translation>10 บิต · HEVC</translation>
+        <source>For print and archive</source>
+        <translation>สำหรับงานพิมพ์และเก็บถาวร</translation>
     </message>
     <message>
-        <source>16-bit · modern</source>
-        <translation>16 บิต · ทันสมัย</translation>
+        <source>Small files for the web</source>
+        <translation>ไฟล์เล็กสำหรับเว็บ</translation>
     </message>
     <message>
-        <source>Float · scene-linear</source>
-        <translation>ทศนิยมลอยตัว · เชิงเส้นตามฉาก</translation>
+        <source>12-bit</source>
+        <translation>12 บิต</translation>
+    </message>
+    <message>
+        <source>Small files with high bit depth</source>
+        <translation>ไฟล์เล็กที่มีความลึกบิตสูง</translation>
+    </message>
+    <message>
+        <source>10-bit</source>
+        <translation>10 บิต</translation>
+    </message>
+    <message>
+        <source>HEVC, as used by phones</source>
+        <translation>HEVC แบบที่ใช้ในโทรศัพท์</translation>
+    </message>
+    <message>
+        <source>Small files, lossless at quality 100</source>
+        <translation>ไฟล์เล็ก ไม่สูญเสียคุณภาพที่คุณภาพ 100</translation>
+    </message>
+    <message>
+        <source>Float</source>
+        <translation>ทศนิยมลอยตัว</translation>
+    </message>
+    <message>
+        <source>Scene-linear, for compositing and grading</source>
+        <translation>เชิงเส้นตามฉาก สำหรับคอมโพสิตและเกรดสี</translation>
     </message>
     <message numerus="yes">
         <source>Export %n photos</source>
@@ -507,8 +503,8 @@
         <translation>เว็บ หน้าจอ</translation>
     </message>
     <message>
-        <source>Wide-gamut screens</source>
-        <translation>หน้าจอขอบเขตสีกว้าง</translation>
+        <source>Modern screens</source>
+        <translation>หน้าจอรุ่นใหม่</translation>
     </message>
     <message>
         <source>Print</source>
@@ -579,8 +575,8 @@
         <translation>เตรียมสำหรับ</translation>
     </message>
     <message>
-        <source>Sets the crop and output sharpening for a platform. Reset restores your own.</source>
-        <translation>ตั้งค่าการครอปและความคมชัดของผลลัพธ์สำหรับแพลตฟอร์ม รีเซ็ตจะคืนค่าการตั้งค่าของคุณเอง</translation>
+        <source>Sets the crop and output sharpening for a platform. Click it again to go back to your own.</source>
+        <translation>ตั้งค่าการครอปและความคมชัดของผลลัพธ์สำหรับแพลตฟอร์ม คลิกอีกครั้งเพื่อกลับไปใช้ค่าของคุณเอง</translation>
     </message>
     <message>
         <source>Watermark</source>
@@ -589,6 +585,18 @@
     <message>
         <source>Folder</source>
         <translation>โฟลเดอร์</translation>
+    </message>
+    <message>
+        <source>Choose…</source>
+        <translation>เลือก…</translation>
+    </message>
+    <message>
+        <source>File name</source>
+        <translation>ชื่อไฟล์</translation>
+    </message>
+    <message>
+        <source>Saved as %1</source>
+        <translation>จะบันทึกเป็น %1</translation>
     </message>
     <message>
         <source>Hide</source>
@@ -806,10 +814,6 @@
     <message>
         <source>No photos found in this directory.</source>
         <translation>ไม่พบภาพในโฟลเดอร์นี้</translation>
-    </message>
-    <message>
-        <source>Folder</source>
-        <translation>โฟลเดอร์</translation>
     </message>
     <message>
         <source>Downloading</source>
@@ -1305,14 +1309,6 @@
         <translation>เขียน %1 แล้ว</translation>
     </message>
     <message>
-        <source>Open RAW Photo</source>
-        <translation>เปิดภาพ RAW</translation>
-    </message>
-    <message>
-        <source>RAW Photos</source>
-        <translation>ภาพ RAW</translation>
-    </message>
-    <message>
         <source>Export finished without a result</source>
         <translation>การส่งออกสิ้นสุดโดยไม่มีผลลัพธ์</translation>
     </message>
@@ -1343,14 +1339,6 @@
     <message>
         <source>Contrast</source>
         <translation>คอนทราสต์</translation>
-    </message>
-    <message>
-        <source>Temp (Kelvin)</source>
-        <translation>อุณหภูมิ (เคลวิน)</translation>
-    </message>
-    <message>
-        <source>Tint (Green / Magenta)</source>
-        <translation>ทินต์ (เขียว / ม่วงแดง)</translation>
     </message>
     <message>
         <source>Exposure</source>
@@ -1391,6 +1379,10 @@
     <message>
         <source>Texture</source>
         <translation>พื้นผิว</translation>
+    </message>
+    <message>
+        <source>Suggested scene</source>
+        <translation>ฉากที่แนะนำ</translation>
     </message>
     <message>
         <source>Clarity (Midtone Contrast)</source>
@@ -1493,6 +1485,22 @@
         <translation>อัตโนมัติ: กำลังวิเคราะห์ภาพ…</translation>
     </message>
     <message>
+        <source>Open photo</source>
+        <translation>เปิดรูปภาพ</translation>
+    </message>
+    <message>
+        <source>Photos</source>
+        <translation>รูปถ่าย</translation>
+    </message>
+    <message>
+        <source>RAW</source>
+        <translation>RAW</translation>
+    </message>
+    <message>
+        <source>Images</source>
+        <translation>รูปภาพ</translation>
+    </message>
+    <message>
         <source>Saved to %1</source>
         <translation>บันทึกไปยัง %1 แล้ว</translation>
     </message>
@@ -1545,10 +1553,6 @@
         <translation>ปฏิเสธ</translation>
     </message>
     <message>
-        <source>Scene</source>
-        <translation>ฉาก</translation>
-    </message>
-    <message>
         <source>Adjust</source>
         <translation>ปรับ</translation>
     </message>
@@ -1565,6 +1569,14 @@
         <translation>ปัญญาประดิษฐ์</translation>
     </message>
     <message>
+        <source>Read the photo&apos;s .xmp sidecar written by another editor</source>
+        <translation>อ่านไฟล์ .xmp ที่โปรแกรมแก้ไขอื่นเขียนไว้</translation>
+    </message>
+    <message>
+        <source>Write the edit, rating and label to an .xmp sidecar for other editors</source>
+        <translation>เขียนการแก้ไข คะแนน และป้ายกำกับลงในไฟล์ .xmp สำหรับโปรแกรมแก้ไขอื่น</translation>
+    </message>
+    <message>
         <source>Profile</source>
         <translation>โปรไฟล์</translation>
     </message>
@@ -1579,6 +1591,14 @@
     <message>
         <source>White balance</source>
         <translation>สมดุลแสงขาว</translation>
+    </message>
+    <message>
+        <source>Temperature</source>
+        <translation>อุณหภูมิสี</translation>
+    </message>
+    <message>
+        <source>Tint</source>
+        <translation>โทนสี</translation>
     </message>
     <message>
         <source>Tone</source>
@@ -1649,16 +1669,8 @@
         <translation>นำเข้า XMP</translation>
     </message>
     <message>
-        <source>Read DSCF0001.xmp from Lightroom, Capture One or darktable</source>
-        <translation>อ่าน DSCF0001.xmp จาก Lightroom, Capture One หรือ darktable</translation>
-    </message>
-    <message>
         <source>Write XMP</source>
         <translation>เขียน XMP</translation>
-    </message>
-    <message>
-        <source>Write the edit, rating and label to DSCF0001.xmp for other editors</source>
-        <translation>เขียนการแก้ไข คะแนน และป้ายกำกับลงใน DSCF0001.xmp สำหรับโปรแกรมแก้ไขอื่น</translation>
     </message>
     <message>
         <source>Opening %1</source>
@@ -1688,10 +1700,6 @@
     <message>
         <source>Navigator</source>
         <translation>ตัวนำทาง</translation>
-    </message>
-    <message>
-        <source>FIT</source>
-        <translation>พอดี</translation>
     </message>
 </context>
 <context>
@@ -1851,9 +1859,17 @@
         <translation>[ง] %1%</translation>
     </message>
     <message>
+        <source>Clipped shadows. Click to show them on the photo.</source>
+        <translation>เงาที่ถูกตัด คลิกเพื่อแสดงบนรูปภาพ</translation>
+    </message>
+    <message>
         <source>[H] %1%</source>
         <comment>H: highlight clipping</comment>
         <translation>[ฮ] %1%</translation>
+    </message>
+    <message>
+        <source>Clipped highlights. Click to show them on the photo.</source>
+        <translation>ส่วนสว่างที่ถูกตัด คลิกเพื่อแสดงบนรูปภาพ</translation>
     </message>
     <message>
         <source>No photo</source>
@@ -1952,9 +1968,26 @@
 <context>
     <name>TopBar</name>
     <message>
-        <source>P</source>
-        <comment>pick flag, first letter of Pick</comment>
-        <translation>ล</translation>
+        <source>Pick (P)</source>
+        <translation>เลือก (P)</translation>
+    </message>
+    <message>
+        <source>Pick</source>
+        <translation>เลือก</translation>
+    </message>
+    <message>
+        <source>Reject (X)</source>
+        <translation>ปฏิเสธ (X)</translation>
+    </message>
+    <message>
+        <source>Reject</source>
+        <translation>ปฏิเสธ</translation>
+    </message>
+    <message numerus="yes">
+        <source>%n star(s)</source>
+        <translation>
+            <numerusform>%n ดาว</numerusform>
+        </translation>
     </message>
     <message>
         <source>Connecting…</source>
@@ -2005,10 +2038,6 @@
         <translation>ครอป</translation>
     </message>
     <message>
-        <source>Fit</source>
-        <translation>พอดี</translation>
-    </message>
-    <message>
         <source>Open RAW</source>
         <translation>เปิด RAW</translation>
     </message>
@@ -2024,8 +2053,36 @@
         <translation>รีเซ็ตเป็น 0°</translation>
     </message>
     <message>
+        <source>Rotate left</source>
+        <translation>หมุนซ้าย</translation>
+    </message>
+    <message>
+        <source>Rotate right</source>
+        <translation>หมุนขวา</translation>
+    </message>
+    <message>
         <source>Fit</source>
         <translation>พอดี</translation>
+    </message>
+    <message>
+        <source>Surround: %1</source>
+        <translation>พื้นรอบภาพ: %1</translation>
+    </message>
+    <message>
+        <source>middle grey</source>
+        <translation>เทากลาง</translation>
+    </message>
+    <message>
+        <source>theme colour</source>
+        <translation>สีของธีม</translation>
+    </message>
+    <message>
+        <source>dark grey</source>
+        <translation>เทาเข้ม</translation>
+    </message>
+    <message>
+        <source>Surround colour</source>
+        <translation>สีพื้นรอบภาพ</translation>
     </message>
     <message>
         <source>Crop</source>
@@ -2093,6 +2150,10 @@
     <message>
         <source>Watermark</source>
         <translation>ลายน้ำ</translation>
+    </message>
+    <message>
+        <source>Add a watermark</source>
+        <translation>เพิ่มลายน้ำ</translation>
     </message>
     <message>
         <source>Text / EXIF Tag</source>

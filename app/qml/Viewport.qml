@@ -1,10 +1,17 @@
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Window
+import QtQuick.Controls
 
 Rectangle {
     id: root
-    color: Theme.bgDark
+    // Neutral surround so the theme's tint does not shift how colours are judged:
+    // "dark" (default), "grey" (middle grey) or "theme"
+    property string surround: "dark"
+    signal surroundCycled(string next)
+    readonly property color surroundColor: surround === "grey" ? "#5a5a5a"
+        : surround === "theme" ? Theme.bgDark : "#1c1c1c"
+    color: surroundColor
     clip: true
 
     property string imageSource: ""
@@ -379,7 +386,7 @@ Rectangle {
         // Solid opaque studio canvas backdrop (Guarantees zero compositor leak)
         Rectangle {
             anchors.fill: parent
-            color: Theme.bgDark
+            color: root.surroundColor
             z: -100
         }
 
@@ -397,7 +404,7 @@ Rectangle {
             // 100% Solid Underlay directly under photo bounding box
             Rectangle {
                 anchors.fill: parent
-                color: Theme.bgDark
+                color: root.surroundColor
                 z: -10
             }
 
@@ -917,6 +924,7 @@ Rectangle {
         border.color: Theme.borderLight
         border.width: 1
         z: 25
+        visible: root.imageSource !== ""
 
         RowLayout {
             id: transformRow
@@ -924,16 +932,18 @@ Rectangle {
             spacing: 6
 
             // Rotate 90° CCW
+            // Labelled "90°" so it does not read as undo / redo
             Rectangle {
-                implicitWidth: 28
+                implicitWidth: ccwMouseLabel.implicitWidth + 12
                 implicitHeight: 24
                 radius: Theme.r(4)
                 color: ccwMouse.containsMouse ? Theme.bgCardHover : "transparent"
                 Text {
+                    id: ccwMouseLabel
                     anchors.centerIn: parent
-                    text: Theme.iconRotateLeft
+                    text: Theme.iconRotateLeft + " 90°"
                     font.family: Theme.iconFont
-                    font.pixelSize: Theme.px(12)
+                    font.pixelSize: Theme.px(11)
                     color: ccwMouse.containsMouse ? Theme.accent : Theme.textMain
                 }
                 MouseArea {
@@ -941,21 +951,26 @@ Rectangle {
                     anchors.fill: parent
                     hoverEnabled: true
                     cursorShape: Qt.PointingHandCursor
+                    ToolTip.visible: containsMouse
+                    ToolTip.delay: 500
+                    ToolTip.text: qsTr("Rotate left")
                     onClicked: root.rotateStep(-90)
                 }
             }
 
             // Rotate 90° CW
+            // Labelled "90°" so it does not read as undo / redo
             Rectangle {
-                implicitWidth: 28
+                implicitWidth: cwMouseLabel.implicitWidth + 12
                 implicitHeight: 24
                 radius: Theme.r(4)
                 color: cwMouse.containsMouse ? Theme.bgCardHover : "transparent"
                 Text {
+                    id: cwMouseLabel
                     anchors.centerIn: parent
-                    text: Theme.iconRotateRight
+                    text: Theme.iconRotateRight + " 90°"
                     font.family: Theme.iconFont
-                    font.pixelSize: Theme.px(12)
+                    font.pixelSize: Theme.px(11)
                     color: cwMouse.containsMouse ? Theme.accent : Theme.textMain
                 }
                 MouseArea {
@@ -963,6 +978,9 @@ Rectangle {
                     anchors.fill: parent
                     hoverEnabled: true
                     cursorShape: Qt.PointingHandCursor
+                    ToolTip.visible: containsMouse
+                    ToolTip.delay: 500
+                    ToolTip.text: qsTr("Rotate right")
                     onClicked: root.rotateStep(90)
                 }
             }
@@ -1054,52 +1072,49 @@ Rectangle {
                 color: Theme.borderLight
             }
 
-            // Split View Toggle
-            Rectangle {
-                implicitWidth: 28
-                implicitHeight: 24
-                radius: Theme.r(4)
-                color: root.isSplitView ? Theme.accentCyan : (splitMouse.containsMouse ? Theme.bgCardHover : "transparent")
-                Text {
-                    anchors.centerIn: parent
-                    text: Theme.iconSplit
-                    font.family: Theme.iconFont
-                    font.pixelSize: Theme.px(12)
-                    color: root.isSplitView ? Theme.onAccent : Theme.textMain
-                }
-                MouseArea {
-                    id: splitMouse
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    cursorShape: Qt.PointingHandCursor
-                    onClicked: {
-                        root.isSplitView = !root.isSplitView;
-                        root.splitRatioChangedByUser(root.splitRatio);
-                    }
-                }
+            // Current zoom
+            Text {
+                Layout.minimumWidth: Theme.px(34)
+                horizontalAlignment: Text.AlignHCenter
+                text: Math.round(root.pixelScale * 100) + "%"
+                textFormat: Text.PlainText
+                font.pixelSize: Theme.px(10)
+                font.family: Theme.monoFont
+                color: Theme.textMuted
             }
 
-            // Crop Mode Toggle
+            Rectangle {
+                implicitWidth: 1
+                implicitHeight: 16
+                color: Theme.borderLight
+            }
+
+            // Surround: dark, middle grey or theme colour
             Rectangle {
                 implicitWidth: 28
                 implicitHeight: 24
                 radius: Theme.r(4)
-                color: root.isCropMode ? Theme.accentYellow : (cropBtnMouse.containsMouse ? Theme.bgCardHover : "transparent")
+                color: surroundMouse.containsMouse ? Theme.bgCardHover : "transparent"
                 Text {
                     anchors.centerIn: parent
-                    text: Theme.iconCrop
+                    text: "\uf042"
                     font.family: Theme.iconFont
                     font.pixelSize: Theme.px(12)
-                    color: root.isCropMode ? Theme.onAccent : Theme.textMain
+                    color: surroundMouse.containsMouse ? Theme.accent : Theme.textMain
                 }
                 MouseArea {
-                    id: cropBtnMouse
+                    id: surroundMouse
                     anchors.fill: parent
                     hoverEnabled: true
                     cursorShape: Qt.PointingHandCursor
-                    onClicked: {
-                        root.isCropMode = !root.isCropMode;
-                    }
+                    ToolTip.visible: containsMouse
+                    ToolTip.delay: 500
+                    ToolTip.text: qsTr("Surround: %1").arg(root.surround === "grey" ? qsTr("middle grey")
+                        : root.surround === "theme" ? qsTr("theme colour") : qsTr("dark grey"))
+                    Accessible.role: Accessible.Button
+                    Accessible.name: qsTr("Surround colour")
+                    onClicked: root.surroundCycled(root.surround === "dark" ? "grey"
+                        : root.surround === "grey" ? "theme" : "dark")
                 }
             }
         }
@@ -1353,36 +1368,6 @@ Rectangle {
         }
     }
 
-    // Zoom Indicator Pill
-    Rectangle {
-        anchors.bottom: parent.bottom
-        anchors.left: parent.left
-        anchors.margins: 12
-        implicitWidth: zoomText.implicitWidth + 14
-        implicitHeight: 22
-        radius: Theme.r(4)
-        color: Qt.rgba(0, 0, 0, 0.75)
-        border.color: Theme.border
-        border.width: 1
-        z: 20
-
-        Text {
-            id: zoomText
-            anchors.centerIn: parent
-            text: Math.round(root.pixelScale * 100) + "%"
-            textFormat: Text.PlainText
-            font.pixelSize: Theme.px(10)
-            font.family: Theme.monoFont
-            color: Theme.accent
-        }
-
-        MouseArea {
-            anchors.fill: parent
-            cursorShape: Qt.PointingHandCursor
-            onClicked: root.resetZoomFit()
-        }
-    }
-
     // Empty state: guide first-time users instead of showing a blank canvas
     Column {
         anchors.centerIn: parent
@@ -1427,7 +1412,7 @@ Rectangle {
             if (!path || path.trim() === "") return;
 
             var lower = path.toLowerCase();
-            var rawExts = [".nef", ".nrw", ".raf", ".cr2", ".cr3", ".arw", ".dng", ".rwl", ".orf", ".rw2", ".3fr", ".fff", ".iiq", ".mos", ".mef", ".pef", ".jpg", ".jpeg", ".png", ".webp", ".tiff", ".tif"];
+            var rawExts = [".3fr", ".ari", ".arw", ".bay", ".cap", ".cr2", ".cr3", ".crw", ".cs1", ".dc2", ".dcr", ".dcs", ".dng", ".drf", ".eip", ".erf", ".fff", ".gpr", ".iiq", ".k25", ".kc2", ".kdc", ".mdc", ".mef", ".mfw", ".mos", ".mrw", ".nef", ".nrw", ".orf", ".ori", ".pef", ".ptx", ".pxn", ".qtk", ".raf", ".raw", ".rdc", ".rw2", ".rwl", ".rwz", ".sr2", ".srf", ".srw", ".sti", ".x3f", ".jpg", ".jpeg", ".jpe", ".png", ".webp", ".tif", ".tiff", ".heic", ".heif", ".hif", ".avif", ".jxl", ".exr", ".hdr", ".pnm", ".ppm", ".pgm", ".pam"];
             var isFile = false;
             for (var i = 0; i < rawExts.length; i++) {
                 if (lower.endsWith(rawExts[i])) {

@@ -4,6 +4,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+static int largest_thumb_index(libraw_data_t *lr);
+
 void* omaraw_open(const char *path, int *errcode) {
     if (!path) {
         if (errcode) *errcode = -1;
@@ -65,7 +67,9 @@ int omaraw_extract_thumb_file(void *handle, const char *dest_path) {
     if (!handle || !dest_path) return -1;
     libraw_data_t *lr = (libraw_data_t*)handle;
 
-    int ret = libraw_unpack_thumb(lr);
+    int idx = largest_thumb_index(lr);
+    int ret = idx >= 0 ? libraw_unpack_thumb_ex(lr, idx) : LIBRAW_UNSPECIFIED_ERROR;
+    if (ret != LIBRAW_SUCCESS) ret = libraw_unpack_thumb(lr);
     if (ret != LIBRAW_SUCCESS) {
         return ret;
     }
@@ -196,17 +200,9 @@ static const unsigned short* phase_one_cfa(libraw_data_t *lr, OmaRawCfaInfo *inf
     return plane;
 }
 
-const unsigned short* omaraw_unpack_cfa(void *handle, OmaRawCfaInfo *info) {
-    if (!handle || !info) return NULL;
-    libraw_data_t *lr = (libraw_data_t*)handle;
-
-    if (!(lr->progress_flags & LIBRAW_PROGRESS_LOAD_RAW) && libraw_unpack(lr) != LIBRAW_SUCCESS)
-        return NULL;
-    if (!lr->rawdata.raw_image) return NULL;
-    if (lr->idata.filters == 0 || lr->idata.colors != 3) return NULL;
-    if (lr->rawdata.ioparams.fuji_width != 0) return NULL;
-    if (lr->sizes.pixel_aspect < 0.999 || lr->sizes.pixel_aspect > 1.001) return NULL;
-
+// Sizes, levels and colour data shared by mosaic and linear sensors. Returns 0 when
+// the layout is not one the developer can read safely.
+static int fill_info(libraw_data_t *lr, OmaRawCfaInfo *info) {
     memset(info, 0, sizeof(OmaRawCfaInfo));
     info->raw_width = lr->sizes.raw_width;
     info->raw_height = lr->sizes.raw_height;
@@ -220,9 +216,9 @@ const unsigned short* omaraw_unpack_cfa(void *handle, OmaRawCfaInfo *info) {
     info->colors = lr->idata.colors;
     info->flip = lr->sizes.flip;
 
-    if (info->raw_pitch < info->raw_width) return NULL;
-    if (info->top_margin + info->height > info->raw_height) return NULL;
-    if (info->left_margin + info->width > info->raw_width) return NULL;
+    if (info->raw_pitch < info->raw_width) return 0;
+    if (info->top_margin + info->height > info->raw_height) return 0;
+    if (info->left_margin + info->width > info->raw_width) return 0;
 
     for (int c = 0; c < 4; c++) {
         info->black[c] = (float)(lr->color.black + lr->color.cblack[c]);
@@ -231,7 +227,7 @@ const unsigned short* omaraw_unpack_cfa(void *handle, OmaRawCfaInfo *info) {
     }
     unsigned ph = lr->color.cblack[4], pw = lr->color.cblack[5];
     if (ph && pw) {
-        if (ph * pw > 36) return NULL;
+        if (ph * pw > 36) return 0;
         info->black_pattern_h = (int)ph;
         info->black_pattern_w = (int)pw;
         for (unsigned i = 0; i < ph * pw; i++) info->black_pattern[i] = (float)lr->color.cblack[6 + i];
@@ -239,9 +235,83 @@ const unsigned short* omaraw_unpack_cfa(void *handle, OmaRawCfaInfo *info) {
     info->white = (float)lr->color.maximum;
     memcpy(info->rgb_cam, lr->color.rgb_cam, sizeof(info->rgb_cam));
 
+    return 1;
+}
+
+const unsigned short* omaraw_unpack_cfa(void *handle, OmaRawCfaInfo *info) {
+    if (!handle || !info) return NULL;
+    libraw_data_t *lr = (libraw_data_t*)handle;
+
+    if (!(lr->progress_flags & LIBRAW_PROGRESS_LOAD_RAW) && libraw_unpack(lr) != LIBRAW_SUCCESS)
+        return NULL;
+    if (!lr->rawdata.raw_image) return NULL;
+    if (lr->idata.filters == 0 || lr->idata.colors != 3) return NULL;
+    if (lr->rawdata.ioparams.fuji_width != 0) return NULL;
+    if (lr->sizes.pixel_aspect < 0.999 || lr->sizes.pixel_aspect > 1.001) return NULL;
+
+    if (!fill_info(lr, info)) return NULL;
+
     if (is_phase_one_decoder(lr))
         return phase_one_cfa(lr, info);
     return lr->rawdata.raw_image;
+}
+
+const unsigned short* omaraw_unpack_linear(void *handle, OmaRawCfaInfo *info, int *stride) {
+    if (!handle || !info || !stride) return NULL;
+    libraw_data_t *lr = (libraw_data_t*)handle;
+
+    if (!(lr->progress_flags & LIBRAW_PROGRESS_LOAD_RAW) && libraw_unpack(lr) != LIBRAW_SUCCESS)
+        return NULL;
+    if (lr->idata.filters != 0) return NULL;
+    if (lr->rawdata.ioparams.fuji_width != 0) return NULL;
+    if (lr->sizes.pixel_aspect < 0.999 || lr->sizes.pixel_aspect > 1.001) return NULL;
+    if (!fill_info(lr, info)) return NULL;
+
+    const unsigned short *plane = NULL;
+    int n = 0;
+    if (lr->idata.colors == 1 && lr->rawdata.raw_image) {
+        plane = lr->rawdata.raw_image;
+        n = 1;
+    } else if (lr->idata.colors == 3 && lr->rawdata.color3_image) {
+        plane = (const unsigned short*)lr->rawdata.color3_image;
+        n = 3;
+    } else if (lr->idata.colors == 3 && lr->rawdata.color4_image) {
+        plane = (const unsigned short*)lr->rawdata.color4_image;
+        n = 4;
+    }
+    if (!plane) return NULL;
+
+    // raw_pitch is in bytes; one pixel holds n samples
+    info->raw_pitch = (int)(lr->sizes.raw_pitch / (2 * n));
+    if (info->raw_pitch < info->raw_width) return NULL;
+    *stride = n;
+    return plane;
+}
+
+/* The largest embedded preview: medium format files carry several (a small EXIF
+   thumbnail and a full-size JPEG), and LibRaw's default pick is not always the biggest. */
+static int largest_thumb_index(libraw_data_t *lr) {
+    int best = -1;
+    long long best_area = 0;
+    for (int i = 0; i < lr->thumbs_list.thumbcount && i < LIBRAW_THUMBNAIL_MAXCOUNT; i++) {
+        libraw_thumbnail_item_t *t = &lr->thumbs_list.thumblist[i];
+        if (t->tformat != LIBRAW_INTERNAL_THUMBNAIL_JPEG) continue;
+        long long area = (long long)t->twidth * t->theight;
+        if (area > best_area) {
+            best_area = area;
+            best = i;
+        }
+    }
+    return best;
+}
+
+int omaraw_camera_count(void) {
+    return libraw_cameraCount();
+}
+
+const char* omaraw_camera_name(int index) {
+    if (index < 0 || index >= libraw_cameraCount()) return NULL;
+    return libraw_cameraList()[index];
 }
 
 void omaraw_free_image(unsigned char *ptr) {

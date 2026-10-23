@@ -320,38 +320,6 @@
 <context>
     <name>ColorSpaceSelector</name>
     <message>
-        <source>Standard SDR web gamut</source>
-        <translation>Standard SDR-färgomfång för webben</translation>
-    </message>
-    <message>
-        <source>100% sRGB</source>
-        <translation>100 % sRGB</translation>
-    </message>
-    <message>
-        <source>Wide gamut, Apple Retina displays</source>
-        <translation>Brett färgomfång, Apple Retina-skärmar</translation>
-    </message>
-    <message>
-        <source>125% sRGB</source>
-        <translation>125 % sRGB</translation>
-    </message>
-    <message>
-        <source>Ultra-wide gamut HDR master</source>
-        <translation>HDR-master med ultrabrett färgomfång</translation>
-    </message>
-    <message>
-        <source>150% sRGB</source>
-        <translation>150 % sRGB</translation>
-    </message>
-    <message>
-        <source>Academy linear working space</source>
-        <translation>Akademiens linjära arbetsrymd</translation>
-    </message>
-    <message>
-        <source>Wide AP1</source>
-        <translation>Brett AP1</translation>
-    </message>
-    <message>
         <source>Colour management</source>
         <translation>Färghantering</translation>
     </message>
@@ -360,16 +328,20 @@
         <translation>Gamutkomprimering</translation>
     </message>
     <message>
-        <source>%1 (%2)</source>
-        <translation>%1 (%2)</translation>
+        <source>Brings colours pushed outside the gamut back in smoothly instead of clipping them.</source>
+        <translation>För mjukt tillbaka färger utanför färgomfånget i stället för att klippa dem.</translation>
     </message>
     <message>
-        <source>ACES 1.3 RRT/ODT Tonemapper</source>
-        <translation>ACES 1.3 RRT/ODT-tonmappning</translation>
+        <source>ACES tone curve</source>
+        <translation>ACES-tonkurva</translation>
     </message>
     <message>
-        <source>Filmic shoulder roll-off &amp; dynamic range mapping</source>
-        <translation>Mjuk filmisk skuldra och mappning av dynamiskt omfång</translation>
+        <source>Filmic highlight roll-off, a fitted approximation of the ACES output transform.</source>
+        <translation>Mjuk avrundning av högdagrar, en approximation av ACES-utdatatransformen.</translation>
+    </message>
+    <message>
+        <source>The output colour space is set in the Export window.</source>
+        <translation>Utdatafärgrymden väljs i exportfönstret.</translation>
     </message>
 </context>
 <context>
@@ -393,36 +365,60 @@
         <translation>Perceptuell</translation>
     </message>
     <message>
-        <source>8-bit · universal</source>
-        <translation>8 bitar · universellt</translation>
+        <source>Export folder</source>
+        <translation>Exportmapp</translation>
     </message>
     <message>
-        <source>16-bit · lossless</source>
-        <translation>16 bitar · förlustfritt</translation>
+        <source>8-bit</source>
+        <translation>8 bitar</translation>
     </message>
     <message>
-        <source>16-bit · print, archive</source>
-        <translation>16 bitar · utskrift, arkiv</translation>
+        <source>Opens everywhere</source>
+        <translation>Öppnas överallt</translation>
     </message>
     <message>
-        <source>8-bit · web</source>
-        <translation>8 bitar · webb</translation>
+        <source>16-bit</source>
+        <translation>16 bitar</translation>
     </message>
     <message>
-        <source>12-bit · HDR-ready</source>
-        <translation>12 bitar · redo för HDR</translation>
+        <source>Lossless</source>
+        <translation>Förlustfri</translation>
     </message>
     <message>
-        <source>10-bit · HEVC</source>
-        <translation>10 bitar · HEVC</translation>
+        <source>For print and archive</source>
+        <translation>För tryck och arkiv</translation>
     </message>
     <message>
-        <source>16-bit · modern</source>
-        <translation>16 bitar · modernt</translation>
+        <source>Small files for the web</source>
+        <translation>Små filer för webben</translation>
     </message>
     <message>
-        <source>Float · scene-linear</source>
-        <translation>Flyttal · scenlinjärt</translation>
+        <source>12-bit</source>
+        <translation>12 bitar</translation>
+    </message>
+    <message>
+        <source>Small files with high bit depth</source>
+        <translation>Små filer med hög bitdjup</translation>
+    </message>
+    <message>
+        <source>10-bit</source>
+        <translation>10 bitar</translation>
+    </message>
+    <message>
+        <source>HEVC, as used by phones</source>
+        <translation>HEVC, som i mobiler</translation>
+    </message>
+    <message>
+        <source>Small files, lossless at quality 100</source>
+        <translation>Små filer, förlustfria vid kvalitet 100</translation>
+    </message>
+    <message>
+        <source>Float</source>
+        <translation>Flyttal</translation>
+    </message>
+    <message>
+        <source>Scene-linear, for compositing and grading</source>
+        <translation>Scenlinjär, för compositing och färgkorrigering</translation>
     </message>
     <message numerus="yes">
         <source>Export %n photos</source>
@@ -508,8 +504,8 @@
         <translation>Webb, skärmar</translation>
     </message>
     <message>
-        <source>Wide-gamut screens</source>
-        <translation>Skärmar med stort färgomfång</translation>
+        <source>Modern screens</source>
+        <translation>Moderna skärmar</translation>
     </message>
     <message>
         <source>Print</source>
@@ -580,8 +576,8 @@
         <translation>Förbered för</translation>
     </message>
     <message>
-        <source>Sets the crop and output sharpening for a platform. Reset restores your own.</source>
-        <translation>Ställer in beskärning och utdataskärpa för en plattform. Återställ tar tillbaka dina egna inställningar.</translation>
+        <source>Sets the crop and output sharpening for a platform. Click it again to go back to your own.</source>
+        <translation>Ställer in beskärning och utskärpa för en plattform. Klicka igen för att återgå till dina egna inställningar.</translation>
     </message>
     <message>
         <source>Watermark</source>
@@ -590,6 +586,18 @@
     <message>
         <source>Folder</source>
         <translation>Mapp</translation>
+    </message>
+    <message>
+        <source>Choose…</source>
+        <translation>Välj…</translation>
+    </message>
+    <message>
+        <source>File name</source>
+        <translation>Filnamn</translation>
+    </message>
+    <message>
+        <source>Saved as %1</source>
+        <translation>Sparad som %1</translation>
     </message>
     <message>
         <source>Hide</source>
@@ -807,10 +815,6 @@
     <message>
         <source>No photos found in this directory.</source>
         <translation>Inga foton hittades i den här mappen.</translation>
-    </message>
-    <message>
-        <source>Folder</source>
-        <translation>Mapp</translation>
     </message>
     <message>
         <source>Downloading</source>
@@ -1309,14 +1313,6 @@
         <translation>Skrev %1</translation>
     </message>
     <message>
-        <source>Open RAW Photo</source>
-        <translation>Öppna RAW-foto</translation>
-    </message>
-    <message>
-        <source>RAW Photos</source>
-        <translation>RAW-foton</translation>
-    </message>
-    <message>
         <source>Export finished without a result</source>
         <translation>Exporten avslutades utan resultat</translation>
     </message>
@@ -1347,14 +1343,6 @@
     <message>
         <source>Contrast</source>
         <translation>Kontrast</translation>
-    </message>
-    <message>
-        <source>Temp (Kelvin)</source>
-        <translation>Temperatur (Kelvin)</translation>
-    </message>
-    <message>
-        <source>Tint (Green / Magenta)</source>
-        <translation>Färgton (grön / magenta)</translation>
     </message>
     <message>
         <source>Exposure</source>
@@ -1395,6 +1383,10 @@
     <message>
         <source>Texture</source>
         <translation>Struktur</translation>
+    </message>
+    <message>
+        <source>Suggested scene</source>
+        <translation>Föreslagen scen</translation>
     </message>
     <message>
         <source>Clarity (Midtone Contrast)</source>
@@ -1497,6 +1489,22 @@
         <translation>Automatiskt: fotot analyseras…</translation>
     </message>
     <message>
+        <source>Open photo</source>
+        <translation>Öppna foto</translation>
+    </message>
+    <message>
+        <source>Photos</source>
+        <translation>Foton</translation>
+    </message>
+    <message>
+        <source>RAW</source>
+        <translation>RAW</translation>
+    </message>
+    <message>
+        <source>Images</source>
+        <translation>Bilder</translation>
+    </message>
+    <message>
         <source>Saved to %1</source>
         <translation>Sparat i %1</translation>
     </message>
@@ -1549,10 +1557,6 @@
         <translation>Avvisad</translation>
     </message>
     <message>
-        <source>Scene</source>
-        <translation>Scen</translation>
-    </message>
-    <message>
         <source>Adjust</source>
         <translation>Justera</translation>
     </message>
@@ -1569,6 +1573,14 @@
         <translation>AI</translation>
     </message>
     <message>
+        <source>Read the photo&apos;s .xmp sidecar written by another editor</source>
+        <translation>Läs .xmp-filen som en annan redigerare har skrivit</translation>
+    </message>
+    <message>
+        <source>Write the edit, rating and label to an .xmp sidecar for other editors</source>
+        <translation>Skriv redigeringen, betyget och etiketten till en .xmp-fil för andra redigerare</translation>
+    </message>
+    <message>
         <source>Profile</source>
         <translation>Profil</translation>
     </message>
@@ -1583,6 +1595,14 @@
     <message>
         <source>White balance</source>
         <translation>Vitbalans</translation>
+    </message>
+    <message>
+        <source>Temperature</source>
+        <translation>Temperatur</translation>
+    </message>
+    <message>
+        <source>Tint</source>
+        <translation>Färgton</translation>
     </message>
     <message>
         <source>Tone</source>
@@ -1653,16 +1673,8 @@
         <translation>Importera XMP</translation>
     </message>
     <message>
-        <source>Read DSCF0001.xmp from Lightroom, Capture One or darktable</source>
-        <translation>Läs DSCF0001.xmp från Lightroom, Capture One eller darktable</translation>
-    </message>
-    <message>
         <source>Write XMP</source>
         <translation>Skriv XMP</translation>
-    </message>
-    <message>
-        <source>Write the edit, rating and label to DSCF0001.xmp for other editors</source>
-        <translation>Skriv redigering, betyg och etikett till DSCF0001.xmp för andra program</translation>
     </message>
     <message>
         <source>Opening %1</source>
@@ -1693,10 +1705,6 @@
     <message>
         <source>Navigator</source>
         <translation>Navigator</translation>
-    </message>
-    <message>
-        <source>FIT</source>
-        <translation>ANPASSA</translation>
     </message>
 </context>
 <context>
@@ -1856,9 +1864,17 @@
         <translation>[S] %1%</translation>
     </message>
     <message>
+        <source>Clipped shadows. Click to show them on the photo.</source>
+        <translation>Klippta skuggor. Klicka för att visa dem på fotot.</translation>
+    </message>
+    <message>
         <source>[H] %1%</source>
         <comment>H: highlight clipping</comment>
         <translation>[H] %1%</translation>
+    </message>
+    <message>
+        <source>Clipped highlights. Click to show them on the photo.</source>
+        <translation>Klippta högdagrar. Klicka för att visa dem på fotot.</translation>
     </message>
     <message>
         <source>No photo</source>
@@ -1957,9 +1973,27 @@
 <context>
     <name>TopBar</name>
     <message>
-        <source>P</source>
-        <comment>pick flag, first letter of Pick</comment>
-        <translation>V</translation>
+        <source>Pick (P)</source>
+        <translation>Välj (P)</translation>
+    </message>
+    <message>
+        <source>Pick</source>
+        <translation>Vald</translation>
+    </message>
+    <message>
+        <source>Reject (X)</source>
+        <translation>Avvisa (X)</translation>
+    </message>
+    <message>
+        <source>Reject</source>
+        <translation>Avvisa</translation>
+    </message>
+    <message numerus="yes">
+        <source>%n star(s)</source>
+        <translation>
+            <numerusform>%n stjärna</numerusform>
+            <numerusform>%n stjärnor</numerusform>
+        </translation>
     </message>
     <message>
         <source>Connecting…</source>
@@ -2010,10 +2044,6 @@
         <translation>Beskär</translation>
     </message>
     <message>
-        <source>Fit</source>
-        <translation>Anpassa</translation>
-    </message>
-    <message>
         <source>Open RAW</source>
         <translation>Öppna RAW</translation>
     </message>
@@ -2029,8 +2059,36 @@
         <translation>Återställ till 0°</translation>
     </message>
     <message>
+        <source>Rotate left</source>
+        <translation>Rotera åt vänster</translation>
+    </message>
+    <message>
+        <source>Rotate right</source>
+        <translation>Rotera åt höger</translation>
+    </message>
+    <message>
         <source>Fit</source>
         <translation>Anpassa</translation>
+    </message>
+    <message>
+        <source>Surround: %1</source>
+        <translation>Omgivning: %1</translation>
+    </message>
+    <message>
+        <source>middle grey</source>
+        <translation>mellangrå</translation>
+    </message>
+    <message>
+        <source>theme colour</source>
+        <translation>temafärg</translation>
+    </message>
+    <message>
+        <source>dark grey</source>
+        <translation>mörkgrå</translation>
+    </message>
+    <message>
+        <source>Surround colour</source>
+        <translation>Omgivningsfärg</translation>
     </message>
     <message>
         <source>Crop</source>
@@ -2098,6 +2156,10 @@
     <message>
         <source>Watermark</source>
         <translation>Vattenstämpel</translation>
+    </message>
+    <message>
+        <source>Add a watermark</source>
+        <translation>Lägg till vattenstämpel</translation>
     </message>
     <message>
         <source>Text / EXIF Tag</source>

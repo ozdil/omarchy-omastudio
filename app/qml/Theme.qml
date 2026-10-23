@@ -54,7 +54,8 @@ QtObject {
     property string systemFont: "JetBrainsMono Nerd Font"
     property real fontBase: 10
     readonly property real fontScale: Math.max(0.8, Math.min(2.0, fontBase / 10))
-    function px(n) { return Math.round(n * root.fontScale); }
+    // Nothing is drawn below 10 px at the base size: smaller text is not legible
+    function px(n) { return Math.round(Math.max(n, 10) * root.fontScale); }
     readonly property string fontFamily: systemFont
     readonly property string monoFont: systemFont
     // Nerd Font glyphs stay available whatever the text font is
@@ -71,6 +72,9 @@ QtObject {
     readonly property string iconSearch: "\uf002"
     readonly property string iconAi: "\uf0e7"
     readonly property string iconStar: "\uf005"
+    readonly property string iconStarEmpty: "\uf006"
+    readonly property string iconFlag: "\uf024"
+    readonly property string iconBan: "\uf05e"
     readonly property string iconImage: "\uf03e"
     readonly property string iconUndo: "\uf0e2"
     readonly property string iconRedo: "\uf01e"

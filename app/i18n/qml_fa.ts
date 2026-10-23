@@ -320,38 +320,6 @@
 <context>
     <name>ColorSpaceSelector</name>
     <message>
-        <source>Standard SDR web gamut</source>
-        <translation>گسترهٔ رنگ استاندارد SDR برای وب</translation>
-    </message>
-    <message>
-        <source>100% sRGB</source>
-        <translation>100% sRGB</translation>
-    </message>
-    <message>
-        <source>Wide gamut, Apple Retina displays</source>
-        <translation>گسترهٔ رنگ وسیع، نمایشگرهای Apple Retina</translation>
-    </message>
-    <message>
-        <source>125% sRGB</source>
-        <translation>125% sRGB</translation>
-    </message>
-    <message>
-        <source>Ultra-wide gamut HDR master</source>
-        <translation>مستر HDR با گسترهٔ رنگ بسیار وسیع</translation>
-    </message>
-    <message>
-        <source>150% sRGB</source>
-        <translation>150% sRGB</translation>
-    </message>
-    <message>
-        <source>Academy linear working space</source>
-        <translation>فضای کاری خطی آکادمی</translation>
-    </message>
-    <message>
-        <source>Wide AP1</source>
-        <translation>AP1 وسیع</translation>
-    </message>
-    <message>
         <source>Colour management</source>
         <translation>مدیریت رنگ</translation>
     </message>
@@ -360,16 +328,20 @@
         <translation>فشرده‌سازی گستره</translation>
     </message>
     <message>
-        <source>%1 (%2)</source>
-        <translation>%1 (%2)</translation>
+        <source>Brings colours pushed outside the gamut back in smoothly instead of clipping them.</source>
+        <translation>رنگ‌های خارج از گستره را به‌جای بریدن، به‌نرمی بازمی‌گرداند.</translation>
     </message>
     <message>
-        <source>ACES 1.3 RRT/ODT Tonemapper</source>
-        <translation>نگاشت تُن ACES 1.3 RRT/ODT</translation>
+        <source>ACES tone curve</source>
+        <translation>منحنی تونال ACES</translation>
     </message>
     <message>
-        <source>Filmic shoulder roll-off &amp; dynamic range mapping</source>
-        <translation>شانهٔ سینمایی نرم و نگاشت محدودهٔ دینامیکی</translation>
+        <source>Filmic highlight roll-off, a fitted approximation of the ACES output transform.</source>
+        <translation>افت نرم در روشنایی‌ها، تقریبی از تبدیل خروجی ACES.</translation>
+    </message>
+    <message>
+        <source>The output colour space is set in the Export window.</source>
+        <translation>فضای رنگی خروجی در پنجرهٔ برون‌بری تعیین می‌شود.</translation>
     </message>
 </context>
 <context>
@@ -393,36 +365,60 @@
         <translation>ادراکی</translation>
     </message>
     <message>
-        <source>8-bit · universal</source>
-        <translation>۸ بیت · همه‌کاره</translation>
+        <source>Export folder</source>
+        <translation>پوشهٔ خروجی</translation>
     </message>
     <message>
-        <source>16-bit · lossless</source>
-        <translation>۱۶ بیت · بدون افت</translation>
+        <source>8-bit</source>
+        <translation>۸ بیت</translation>
     </message>
     <message>
-        <source>16-bit · print, archive</source>
-        <translation>۱۶ بیت · چاپ، بایگانی</translation>
+        <source>Opens everywhere</source>
+        <translation>همه‌جا باز می‌شود</translation>
     </message>
     <message>
-        <source>8-bit · web</source>
-        <translation>۸ بیت · وب</translation>
+        <source>16-bit</source>
+        <translation>۸ بیت</translation>
     </message>
     <message>
-        <source>12-bit · HDR-ready</source>
-        <translation>۱۲ بیت · آماده برای HDR</translation>
+        <source>Lossless</source>
+        <translation>بدون اتلاف</translation>
     </message>
     <message>
-        <source>10-bit · HEVC</source>
-        <translation>۱۰ بیت · HEVC</translation>
+        <source>For print and archive</source>
+        <translation>برای چاپ و بایگانی</translation>
     </message>
     <message>
-        <source>16-bit · modern</source>
-        <translation>۱۶ بیت · مدرن</translation>
+        <source>Small files for the web</source>
+        <translation>فایل‌های کوچک برای وب</translation>
     </message>
     <message>
-        <source>Float · scene-linear</source>
-        <translation>ممیز شناور · خطی صحنه</translation>
+        <source>12-bit</source>
+        <translation>۸ بیت</translation>
+    </message>
+    <message>
+        <source>Small files with high bit depth</source>
+        <translation>فایل‌های کوچک با عمق بیت بالا</translation>
+    </message>
+    <message>
+        <source>10-bit</source>
+        <translation>۸ بیت</translation>
+    </message>
+    <message>
+        <source>HEVC, as used by phones</source>
+        <translation>HEVC، مانند گوشی‌ها</translation>
+    </message>
+    <message>
+        <source>Small files, lossless at quality 100</source>
+        <translation>فایل‌های کوچک، بدون اتلاف در کیفیت ۱۰۰</translation>
+    </message>
+    <message>
+        <source>Float</source>
+        <translation>ممیز شناور</translation>
+    </message>
+    <message>
+        <source>Scene-linear, for compositing and grading</source>
+        <translation>خطیِ صحنه، برای ترکیب و اصلاح رنگ</translation>
     </message>
     <message numerus="yes">
         <source>Export %n photos</source>
@@ -507,8 +503,8 @@
         <translation>وب، نمایشگرها</translation>
     </message>
     <message>
-        <source>Wide-gamut screens</source>
-        <translation>نمایشگرهای با گسترهٔ رنگی وسیع</translation>
+        <source>Modern screens</source>
+        <translation>نمایشگرهای جدید</translation>
     </message>
     <message>
         <source>Print</source>
@@ -579,8 +575,8 @@
         <translation>آماده‌سازی برای</translation>
     </message>
     <message>
-        <source>Sets the crop and output sharpening for a platform. Reset restores your own.</source>
-        <translation>برش و وضوح‌دهی خروجی را برای یک بستر تنظیم می‌کند. بازنشانی تنظیمات خودتان را برمی‌گرداند.</translation>
+        <source>Sets the crop and output sharpening for a platform. Click it again to go back to your own.</source>
+        <translation>برش و وضوح خروجی را برای یک پلتفرم تنظیم می‌کند. برای بازگشت به تنظیمات خودتان دوباره کلیک کنید.</translation>
     </message>
     <message>
         <source>Watermark</source>
@@ -589,6 +585,18 @@
     <message>
         <source>Folder</source>
         <translation>پوشه</translation>
+    </message>
+    <message>
+        <source>Choose…</source>
+        <translation>انتخاب…</translation>
+    </message>
+    <message>
+        <source>File name</source>
+        <translation>نام فایل</translation>
+    </message>
+    <message>
+        <source>Saved as %1</source>
+        <translation>ذخیره با نام %1</translation>
     </message>
     <message>
         <source>Hide</source>
@@ -806,10 +814,6 @@
     <message>
         <source>No photos found in this directory.</source>
         <translation>هیچ عکسی در این پوشه پیدا نشد.</translation>
-    </message>
-    <message>
-        <source>Folder</source>
-        <translation>پوشه</translation>
     </message>
     <message>
         <source>Downloading</source>
@@ -1305,14 +1309,6 @@
         <translation>%1 نوشته شد</translation>
     </message>
     <message>
-        <source>Open RAW Photo</source>
-        <translation>باز کردن عکس RAW</translation>
-    </message>
-    <message>
-        <source>RAW Photos</source>
-        <translation>عکس‌های RAW</translation>
-    </message>
-    <message>
         <source>Export finished without a result</source>
         <translation>خروجی بدون نتیجه پایان یافت</translation>
     </message>
@@ -1343,14 +1339,6 @@
     <message>
         <source>Contrast</source>
         <translation>کنتراست</translation>
-    </message>
-    <message>
-        <source>Temp (Kelvin)</source>
-        <translation>دما (کلوین)</translation>
-    </message>
-    <message>
-        <source>Tint (Green / Magenta)</source>
-        <translation>ته‌رنگ (سبز / سرخابی)</translation>
     </message>
     <message>
         <source>Exposure</source>
@@ -1391,6 +1379,10 @@
     <message>
         <source>Texture</source>
         <translation>بافت</translation>
+    </message>
+    <message>
+        <source>Suggested scene</source>
+        <translation>صحنهٔ پیشنهادی</translation>
     </message>
     <message>
         <source>Clarity (Midtone Contrast)</source>
@@ -1493,6 +1485,22 @@
         <translation>خودکار: در حال تحلیل عکس…</translation>
     </message>
     <message>
+        <source>Open photo</source>
+        <translation>باز کردن عکس</translation>
+    </message>
+    <message>
+        <source>Photos</source>
+        <translation>عکس‌ها</translation>
+    </message>
+    <message>
+        <source>RAW</source>
+        <translation>RAW</translation>
+    </message>
+    <message>
+        <source>Images</source>
+        <translation>تصاویر</translation>
+    </message>
+    <message>
         <source>Saved to %1</source>
         <translation>ذخیره شد در %1</translation>
     </message>
@@ -1545,10 +1553,6 @@
         <translation>ردشده</translation>
     </message>
     <message>
-        <source>Scene</source>
-        <translation>صحنه</translation>
-    </message>
-    <message>
         <source>Adjust</source>
         <translation>تنظیم</translation>
     </message>
@@ -1565,6 +1569,14 @@
         <translation>هوش مصنوعی</translation>
     </message>
     <message>
+        <source>Read the photo&apos;s .xmp sidecar written by another editor</source>
+        <translation>خواندن فایل ‎.xmp نوشته‌شده توسط ویرایشگر دیگر</translation>
+    </message>
+    <message>
+        <source>Write the edit, rating and label to an .xmp sidecar for other editors</source>
+        <translation>نوشتن ویرایش، امتیاز و برچسب در فایل ‎.xmp برای ویرایشگرهای دیگر</translation>
+    </message>
+    <message>
         <source>Profile</source>
         <translation>نمایه</translation>
     </message>
@@ -1579,6 +1591,14 @@
     <message>
         <source>White balance</source>
         <translation>تراز سفیدی</translation>
+    </message>
+    <message>
+        <source>Temperature</source>
+        <translation>دما</translation>
+    </message>
+    <message>
+        <source>Tint</source>
+        <translation>ته‌رنگ</translation>
     </message>
     <message>
         <source>Tone</source>
@@ -1649,16 +1669,8 @@
         <translation>وارد کردن XMP</translation>
     </message>
     <message>
-        <source>Read DSCF0001.xmp from Lightroom, Capture One or darktable</source>
-        <translation>خواندن DSCF0001.xmp از Lightroom،‏ Capture One یا darktable</translation>
-    </message>
-    <message>
         <source>Write XMP</source>
         <translation>نوشتن XMP</translation>
-    </message>
-    <message>
-        <source>Write the edit, rating and label to DSCF0001.xmp for other editors</source>
-        <translation>نوشتن ویرایش، امتیاز و برچسب در DSCF0001.xmp برای ویرایشگرهای دیگر</translation>
     </message>
     <message>
         <source>Opening %1</source>
@@ -1688,10 +1700,6 @@
     <message>
         <source>Navigator</source>
         <translation>ناوبر</translation>
-    </message>
-    <message>
-        <source>FIT</source>
-        <translation>جاگیری</translation>
     </message>
 </context>
 <context>
@@ -1851,9 +1859,17 @@
         <translation>[س] %1%</translation>
     </message>
     <message>
+        <source>Clipped shadows. Click to show them on the photo.</source>
+        <translation>سایه‌های بریده. برای نمایش روی عکس کلیک کنید.</translation>
+    </message>
+    <message>
         <source>[H] %1%</source>
         <comment>H: highlight clipping</comment>
         <translation>[ر] %1%</translation>
+    </message>
+    <message>
+        <source>Clipped highlights. Click to show them on the photo.</source>
+        <translation>روشنی‌های بریده. برای نمایش روی عکس کلیک کنید.</translation>
     </message>
     <message>
         <source>No photo</source>
@@ -1952,9 +1968,26 @@
 <context>
     <name>TopBar</name>
     <message>
-        <source>P</source>
-        <comment>pick flag, first letter of Pick</comment>
-        <translation>ب</translation>
+        <source>Pick (P)</source>
+        <translation>انتخاب (P)</translation>
+    </message>
+    <message>
+        <source>Pick</source>
+        <translation>انتخاب</translation>
+    </message>
+    <message>
+        <source>Reject (X)</source>
+        <translation>رد (X)</translation>
+    </message>
+    <message>
+        <source>Reject</source>
+        <translation>رد</translation>
+    </message>
+    <message numerus="yes">
+        <source>%n star(s)</source>
+        <translation>
+            <numerusform>%n ستاره</numerusform>
+        </translation>
     </message>
     <message>
         <source>Connecting…</source>
@@ -2005,10 +2038,6 @@
         <translation>برش</translation>
     </message>
     <message>
-        <source>Fit</source>
-        <translation>جاگیری</translation>
-    </message>
-    <message>
         <source>Open RAW</source>
         <translation>باز کردن RAW</translation>
     </message>
@@ -2024,8 +2053,36 @@
         <translation>بازنشانی به ۰°</translation>
     </message>
     <message>
+        <source>Rotate left</source>
+        <translation>چرخش به چپ</translation>
+    </message>
+    <message>
+        <source>Rotate right</source>
+        <translation>چرخش به راست</translation>
+    </message>
+    <message>
         <source>Fit</source>
         <translation>جاگیری</translation>
+    </message>
+    <message>
+        <source>Surround: %1</source>
+        <translation>پیرامون: %1</translation>
+    </message>
+    <message>
+        <source>middle grey</source>
+        <translation>خاکستری میانه</translation>
+    </message>
+    <message>
+        <source>theme colour</source>
+        <translation>رنگ پوسته</translation>
+    </message>
+    <message>
+        <source>dark grey</source>
+        <translation>خاکستری تیره</translation>
+    </message>
+    <message>
+        <source>Surround colour</source>
+        <translation>رنگ پیرامون</translation>
     </message>
     <message>
         <source>Crop</source>
@@ -2093,6 +2150,10 @@
     <message>
         <source>Watermark</source>
         <translation>واترمارک</translation>
+    </message>
+    <message>
+        <source>Add a watermark</source>
+        <translation>افزودن واترمارک</translation>
     </message>
     <message>
         <source>Text / EXIF Tag</source>

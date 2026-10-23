@@ -131,11 +131,12 @@ pub fn apply_tone_pixel(
         luma_adj += (ch + cl + cd + cs) * 0.25;
     }
 
-    // Apply AgX Filmic Tone Curve or ACES 1.3 Tonemapper if requested
+    // One tone mapper at most: AgX takes precedence over the ACES curve. Both
+    // are applied to luminance only, so hue and chroma follow the code below.
     if recipe.filmic_agx {
         luma_adj = apply_agx_filmic_curve(luma_adj.max(0.0));
     } else if recipe.aces_tonemap {
-        luma_adj = crate::pipeline::aces::apply_aces_tonemap(luma_adj.max(0.0));
+        luma_adj = crate::pipeline::aces::apply_aces_tonemap_encoded(luma_adj);
     } else {
         luma_adj = luma_adj.clamp(0.0, 1.5);
     }

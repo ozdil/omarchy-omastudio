@@ -45,4 +45,14 @@
         </translation>
     </message>
 </context>
+<context>
+    <name>TopBar</name>
+    <message numerus="yes">
+        <source>%n star(s)</source>
+        <translation>
+            <numerusform>%n star</numerusform>
+            <numerusform>%n stars</numerusform>
+        </translation>
+    </message>
+</context>
 </TS>

@@ -320,38 +320,6 @@
 <context>
     <name>ColorSpaceSelector</name>
     <message>
-        <source>Standard SDR web gamut</source>
-        <translation>Gamă web SDR standard</translation>
-    </message>
-    <message>
-        <source>100% sRGB</source>
-        <translation>100% sRGB</translation>
-    </message>
-    <message>
-        <source>Wide gamut, Apple Retina displays</source>
-        <translation>Gamă largă, ecrane Apple Retina</translation>
-    </message>
-    <message>
-        <source>125% sRGB</source>
-        <translation>125% sRGB</translation>
-    </message>
-    <message>
-        <source>Ultra-wide gamut HDR master</source>
-        <translation>Master HDR cu gamă ultralargă</translation>
-    </message>
-    <message>
-        <source>150% sRGB</source>
-        <translation>150% sRGB</translation>
-    </message>
-    <message>
-        <source>Academy linear working space</source>
-        <translation>Spațiul de lucru liniar al Academiei</translation>
-    </message>
-    <message>
-        <source>Wide AP1</source>
-        <translation>AP1 larg</translation>
-    </message>
-    <message>
         <source>Colour management</source>
         <translation>Gestionarea culorii</translation>
     </message>
@@ -360,16 +328,20 @@
         <translation>Comprimarea gamei</translation>
     </message>
     <message>
-        <source>%1 (%2)</source>
-        <translation>%1 (%2)</translation>
+        <source>Brings colours pushed outside the gamut back in smoothly instead of clipping them.</source>
+        <translation>Readuce lin culorile ieșite din gamă în loc să le taie.</translation>
     </message>
     <message>
-        <source>ACES 1.3 RRT/ODT Tonemapper</source>
-        <translation>Mapare tonală ACES 1.3 RRT/ODT</translation>
+        <source>ACES tone curve</source>
+        <translation>Curbă de tonuri ACES</translation>
     </message>
     <message>
-        <source>Filmic shoulder roll-off &amp; dynamic range mapping</source>
-        <translation>Umăr cinematografic moale și maparea gamei dinamice</translation>
+        <source>Filmic highlight roll-off, a fitted approximation of the ACES output transform.</source>
+        <translation>Atenuare lină a luminilor, o aproximare a transformării de ieșire ACES.</translation>
+    </message>
+    <message>
+        <source>The output colour space is set in the Export window.</source>
+        <translation>Spațiul de culoare de ieșire se setează în fereastra Export.</translation>
     </message>
 </context>
 <context>
@@ -393,36 +365,60 @@
         <translation>Perceptuală</translation>
     </message>
     <message>
-        <source>8-bit · universal</source>
-        <translation>8 biți · universal</translation>
+        <source>Export folder</source>
+        <translation>Dosar de export</translation>
     </message>
     <message>
-        <source>16-bit · lossless</source>
-        <translation>16 biți · fără pierderi</translation>
+        <source>8-bit</source>
+        <translation>8 biți</translation>
     </message>
     <message>
-        <source>16-bit · print, archive</source>
-        <translation>16 biți · tipar, arhivă</translation>
+        <source>Opens everywhere</source>
+        <translation>Se deschide oriunde</translation>
     </message>
     <message>
-        <source>8-bit · web</source>
-        <translation>8 biți · web</translation>
+        <source>16-bit</source>
+        <translation>16 biți</translation>
     </message>
     <message>
-        <source>12-bit · HDR-ready</source>
-        <translation>12 biți · pregătit pentru HDR</translation>
+        <source>Lossless</source>
+        <translation>Fără pierderi</translation>
     </message>
     <message>
-        <source>10-bit · HEVC</source>
-        <translation>10 biți · HEVC</translation>
+        <source>For print and archive</source>
+        <translation>Pentru tipar și arhivă</translation>
     </message>
     <message>
-        <source>16-bit · modern</source>
-        <translation>16 biți · modern</translation>
+        <source>Small files for the web</source>
+        <translation>Fișiere mici pentru web</translation>
     </message>
     <message>
-        <source>Float · scene-linear</source>
-        <translation>Virgulă mobilă · liniar de scenă</translation>
+        <source>12-bit</source>
+        <translation>12 biți</translation>
+    </message>
+    <message>
+        <source>Small files with high bit depth</source>
+        <translation>Fișiere mici cu adâncime mare de biți</translation>
+    </message>
+    <message>
+        <source>10-bit</source>
+        <translation>10 biți</translation>
+    </message>
+    <message>
+        <source>HEVC, as used by phones</source>
+        <translation>HEVC, ca pe telefoane</translation>
+    </message>
+    <message>
+        <source>Small files, lossless at quality 100</source>
+        <translation>Fișiere mici, fără pierderi la calitatea 100</translation>
+    </message>
+    <message>
+        <source>Float</source>
+        <translation>Virgulă mobilă</translation>
+    </message>
+    <message>
+        <source>Scene-linear, for compositing and grading</source>
+        <translation>Liniar de scenă, pentru compoziție și grading</translation>
     </message>
     <message numerus="yes">
         <source>Export %n photos</source>
@@ -509,8 +505,8 @@
         <translation>Web, ecrane</translation>
     </message>
     <message>
-        <source>Wide-gamut screens</source>
-        <translation>Ecrane cu gamă largă</translation>
+        <source>Modern screens</source>
+        <translation>Ecrane moderne</translation>
     </message>
     <message>
         <source>Print</source>
@@ -581,8 +577,8 @@
         <translation>Pregătește pentru</translation>
     </message>
     <message>
-        <source>Sets the crop and output sharpening for a platform. Reset restores your own.</source>
-        <translation>Setează decuparea și clarificarea la ieșire pentru o platformă. Resetează readuce propriile setări.</translation>
+        <source>Sets the crop and output sharpening for a platform. Click it again to go back to your own.</source>
+        <translation>Setează decuparea și clarificarea de ieșire pentru o platformă. Apasă din nou pentru a reveni la setările tale.</translation>
     </message>
     <message>
         <source>Watermark</source>
@@ -591,6 +587,18 @@
     <message>
         <source>Folder</source>
         <translation>Dosar</translation>
+    </message>
+    <message>
+        <source>Choose…</source>
+        <translation>Alege…</translation>
+    </message>
+    <message>
+        <source>File name</source>
+        <translation>Nume fișier</translation>
+    </message>
+    <message>
+        <source>Saved as %1</source>
+        <translation>Salvat ca %1</translation>
     </message>
     <message>
         <source>Hide</source>
@@ -808,10 +816,6 @@
     <message>
         <source>No photos found in this directory.</source>
         <translation>Nu s-au găsit fotografii în acest dosar.</translation>
-    </message>
-    <message>
-        <source>Folder</source>
-        <translation>Dosar</translation>
     </message>
     <message>
         <source>Downloading</source>
@@ -1313,14 +1317,6 @@
         <translation>Scris %1</translation>
     </message>
     <message>
-        <source>Open RAW Photo</source>
-        <translation>Deschide fotografie RAW</translation>
-    </message>
-    <message>
-        <source>RAW Photos</source>
-        <translation>Fotografii RAW</translation>
-    </message>
-    <message>
         <source>Export finished without a result</source>
         <translation>Exportul s-a încheiat fără rezultat</translation>
     </message>
@@ -1351,14 +1347,6 @@
     <message>
         <source>Contrast</source>
         <translation>Contrast</translation>
-    </message>
-    <message>
-        <source>Temp (Kelvin)</source>
-        <translation>Temperatură (Kelvin)</translation>
-    </message>
-    <message>
-        <source>Tint (Green / Magenta)</source>
-        <translation>Nuanță (verde / magenta)</translation>
     </message>
     <message>
         <source>Exposure</source>
@@ -1399,6 +1387,10 @@
     <message>
         <source>Texture</source>
         <translation>Textură</translation>
+    </message>
+    <message>
+        <source>Suggested scene</source>
+        <translation>Scenă sugerată</translation>
     </message>
     <message>
         <source>Clarity (Midtone Contrast)</source>
@@ -1501,6 +1493,22 @@
         <translation>Automat: se analizează fotografia…</translation>
     </message>
     <message>
+        <source>Open photo</source>
+        <translation>Deschide fotografia</translation>
+    </message>
+    <message>
+        <source>Photos</source>
+        <translation>Fotografii</translation>
+    </message>
+    <message>
+        <source>RAW</source>
+        <translation>RAW</translation>
+    </message>
+    <message>
+        <source>Images</source>
+        <translation>Imagini</translation>
+    </message>
+    <message>
         <source>Saved to %1</source>
         <translation>Salvat în %1</translation>
     </message>
@@ -1553,10 +1561,6 @@
         <translation>Respinsă</translation>
     </message>
     <message>
-        <source>Scene</source>
-        <translation>Scenă</translation>
-    </message>
-    <message>
         <source>Adjust</source>
         <translation>Ajustează</translation>
     </message>
@@ -1573,6 +1577,14 @@
         <translation>IA</translation>
     </message>
     <message>
+        <source>Read the photo&apos;s .xmp sidecar written by another editor</source>
+        <translation>Citește fișierul .xmp scris de alt editor</translation>
+    </message>
+    <message>
+        <source>Write the edit, rating and label to an .xmp sidecar for other editors</source>
+        <translation>Scrie editarea, nota și eticheta într-un fișier .xmp pentru alte editoare</translation>
+    </message>
+    <message>
         <source>Profile</source>
         <translation>Profil</translation>
     </message>
@@ -1587,6 +1599,14 @@
     <message>
         <source>White balance</source>
         <translation>Balansul de alb</translation>
+    </message>
+    <message>
+        <source>Temperature</source>
+        <translation>Temperatură</translation>
+    </message>
+    <message>
+        <source>Tint</source>
+        <translation>Nuanță</translation>
     </message>
     <message>
         <source>Tone</source>
@@ -1657,16 +1677,8 @@
         <translation>Importă XMP</translation>
     </message>
     <message>
-        <source>Read DSCF0001.xmp from Lightroom, Capture One or darktable</source>
-        <translation>Citește DSCF0001.xmp din Lightroom, Capture One sau darktable</translation>
-    </message>
-    <message>
         <source>Write XMP</source>
         <translation>Scrie XMP</translation>
-    </message>
-    <message>
-        <source>Write the edit, rating and label to DSCF0001.xmp for other editors</source>
-        <translation>Scrie editarea, evaluarea și eticheta în DSCF0001.xmp pentru alte editoare</translation>
     </message>
     <message>
         <source>Opening %1</source>
@@ -1698,10 +1710,6 @@
     <message>
         <source>Navigator</source>
         <translation>Navigator</translation>
-    </message>
-    <message>
-        <source>FIT</source>
-        <translation>POTRIVEȘTE</translation>
     </message>
 </context>
 <context>
@@ -1861,9 +1869,17 @@
         <translation>[U] %1%</translation>
     </message>
     <message>
+        <source>Clipped shadows. Click to show them on the photo.</source>
+        <translation>Umbre tăiate. Apasă pentru a le arăta pe fotografie.</translation>
+    </message>
+    <message>
         <source>[H] %1%</source>
         <comment>H: highlight clipping</comment>
         <translation>[L] %1%</translation>
+    </message>
+    <message>
+        <source>Clipped highlights. Click to show them on the photo.</source>
+        <translation>Lumini tăiate. Apasă pentru a le arăta pe fotografie.</translation>
     </message>
     <message>
         <source>No photo</source>
@@ -1962,9 +1978,28 @@
 <context>
     <name>TopBar</name>
     <message>
-        <source>P</source>
-        <comment>pick flag, first letter of Pick</comment>
-        <translation>A</translation>
+        <source>Pick (P)</source>
+        <translation>Alege (P)</translation>
+    </message>
+    <message>
+        <source>Pick</source>
+        <translation>Aleasă</translation>
+    </message>
+    <message>
+        <source>Reject (X)</source>
+        <translation>Respinge (X)</translation>
+    </message>
+    <message>
+        <source>Reject</source>
+        <translation>Respinge</translation>
+    </message>
+    <message numerus="yes">
+        <source>%n star(s)</source>
+        <translation>
+            <numerusform>%n stea</numerusform>
+            <numerusform>%n stele</numerusform>
+            <numerusform>%n de stele</numerusform>
+        </translation>
     </message>
     <message>
         <source>Connecting…</source>
@@ -2015,10 +2050,6 @@
         <translation>Decupează</translation>
     </message>
     <message>
-        <source>Fit</source>
-        <translation>Potrivește</translation>
-    </message>
-    <message>
         <source>Open RAW</source>
         <translation>Deschide RAW</translation>
     </message>
@@ -2034,8 +2065,36 @@
         <translation>Resetează la 0°</translation>
     </message>
     <message>
+        <source>Rotate left</source>
+        <translation>Rotește la stânga</translation>
+    </message>
+    <message>
+        <source>Rotate right</source>
+        <translation>Rotește la dreapta</translation>
+    </message>
+    <message>
         <source>Fit</source>
         <translation>Potrivește</translation>
+    </message>
+    <message>
+        <source>Surround: %1</source>
+        <translation>Împrejurimi: %1</translation>
+    </message>
+    <message>
+        <source>middle grey</source>
+        <translation>gri mediu</translation>
+    </message>
+    <message>
+        <source>theme colour</source>
+        <translation>culoarea temei</translation>
+    </message>
+    <message>
+        <source>dark grey</source>
+        <translation>gri închis</translation>
+    </message>
+    <message>
+        <source>Surround colour</source>
+        <translation>Culoarea împrejurimilor</translation>
     </message>
     <message>
         <source>Crop</source>
@@ -2103,6 +2162,10 @@
     <message>
         <source>Watermark</source>
         <translation>Filigran</translation>
+    </message>
+    <message>
+        <source>Add a watermark</source>
+        <translation>Adaugă filigran</translation>
     </message>
     <message>
         <source>Text / EXIF Tag</source>

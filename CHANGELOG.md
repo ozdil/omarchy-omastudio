@@ -25,12 +25,38 @@
 - 3D LUTs: **Load .cube file…** opens your own LUT. The four built-in named looks are no longer offered; edits that use them still render.
 - Auto is a single action (the separate "Jev" auto was not reachable from the interface and has been folded in).
 - The gesture hint over the photo and the "DaVinci Color Engine" line are gone.
+- Each control has one place: zoom (with the current percentage) and rotate are on the bar under the photo; undo, redo, before/after and crop are in the top bar. Copy, paste, reset and XMP are a fixed row under the panel, the same in every tab.
+- Fujifilm has its own section: Color Chrome for Fujifilm photos, and recipes, the camera over USB and Pixel Shift. It is also shown with no photo open, so a camera can be connected.
+- With no photo open, editing sections and buttons are dimmed and inactive.
+- The area around the photo is neutral dark grey by default. The button under the photo switches to middle grey or the theme colour; the choice is remembered.
+- Rating and flags use star, flag and reject icons with tooltips. Nothing is drawn smaller than 10 px at the base font size.
+- Section reset buttons sit in the section header only. Disabled buttons look disabled.
+- "Temperature" and "Tint" instead of "Temp (Kelvin)" and "Tint (Green / Magenta)".
+- The scene guess is shown only when it is at least 90 % sure, labelled as a suggestion.
+
+### Colour management
+- **Gamut compression** is now a switch of its own and follows the ACES 1.3 reference gamut compression: colours pushed outside the gamut by grading come back in smoothly, colours inside it are left alone. The previous version clipped negative values outright and desaturated every strongly saturated colour.
+- The working colour space list (sRGB, Display P3, Rec. 2020, ACEScg) is gone: the choice did not change the rendering (ACEScg only switched gamut compression on), and its coverage figures were wrong. The output colour space is chosen in the Export window, which converts with ICC profiles. Edits saved with ACEScg open with gamut compression on.
+- **ACES tone curve** (formerly "ACES 1.3 RRT/ODT Tonemapper") is applied in linear light with the fit's own scaling. It was applied to display-encoded values, which flattened the image and capped white at 80 %. It no longer switches on gamut compression by itself, and it is named for what it is: a fitted approximation of the ACES tone scale.
+- The `AcesColorManagement` processing node converts back from ACEScg after its work instead of leaving the buffer in ACEScg primaries.
+
+### Sensors
+- Monochrome sensors and linear (already demosaiced) DNG files, such as pixel-shift composites, are developed by OmaStudio's own pipeline: black level, white balance and colour matrix are applied as for Bayer and X-Trans files, instead of handing the file to LibRaw's rendering.
+- Previews use the largest embedded JPEG when a file carries several.
+- `omastudio-engine cameras [FILTER]` lists the cameras the RAW decoder supports; `status` reports their number.
+
+### Opening photos
+- Every RAW format LibRaw reads opens from the dialog, by drag and drop and from the folder view (Fujifilm, Hasselblad, Phase One, Leica, Pentax, Mamiya/Leaf, Canon, Nikon, Sony, Panasonic, Olympus, Sigma, DNG and others), plus JPEG, PNG, WebP, TIFF (8/16-bit and float), HEIF/HEIC, AVIF, JPEG XL, OpenEXR, Radiance HDR and PNM.
+- Images with a wide-gamut ICC profile (Display P3, Adobe RGB, ProPhoto) are converted correctly instead of being read as sRGB; scene-linear EXR and HDR files are shown with the sRGB curve.
+- The open dialog filters by Photos, RAW or Images, and OmaStudio is offered as an app for these file types.
 
 ### Export
 - New Export window. Left: format, quality, bit depth, TIFF compression, size, colour profile, rendering intent and metadata. Right: platform presets (crop and output sharpening for Instagram, Stories, X, Facebook, YouTube) and the watermark, which moved here from the side panel, plus the output folder. Enter exports, Esc closes.
-- Formats: JPEG, PNG (8/16-bit), TIFF (8/16-bit; none, LZW or ZIP compression), WebP (lossy with `cwebp`, lossless at 100), AVIF (8/10/12-bit; lossless at 100), HEIF (8/10/12-bit with `heif-enc`), JPEG XL (8/16-bit; lossless at 100) and OpenEXR (half or full float, scene-linear, with the colour space's chromaticities). Every format except EXR carries the ICC profile.
+- Formats: JPEG, PNG (8/16-bit), TIFF (8/16-bit; none, LZW or ZIP compression), WebP (lossy with `cwebp` from libwebp-utils, lossless at 100; a missing `cwebp` is reported instead of silently writing a lossless file), AVIF (8/10/12-bit; lossless at 100), HEIF (8/10/12-bit with `heif-enc`), JPEG XL (8/16-bit; lossless at 100; written in the container format so camera EXIF is kept) and OpenEXR (half or full float, scene-linear, with the colour space's chromaticities). Every format except EXR carries the ICC profile.
+- Exported files are readable by other users (`rw-r--r--`) whichever encoder wrote them.
 - ACEScg is a working export profile (it needed an ICC file on disk before).
 - Exported JPEG and TIFF files use the `.jpg` and `.tif` extensions.
+- Export window: **Choose…** picks the folder; **File name** adds a tag to the name, with a preview of the result. Format tiles show the bit depth, with the use in the tooltip. Clicking an active platform preset again clears it.
 - `omastudio ipc showExport` opens the Export window; `setRightTab <adjust|masks|looks|ai>` switches the panel tab.
 
 ### AI

@@ -320,38 +320,6 @@
 <context>
     <name>ColorSpaceSelector</name>
     <message>
-        <source>Standard SDR web gamut</source>
-        <translation>Standaard SDR-webgamma</translation>
-    </message>
-    <message>
-        <source>100% sRGB</source>
-        <translation>100% sRGB</translation>
-    </message>
-    <message>
-        <source>Wide gamut, Apple Retina displays</source>
-        <translation>Breed gamma, Apple Retina-schermen</translation>
-    </message>
-    <message>
-        <source>125% sRGB</source>
-        <translation>125% sRGB</translation>
-    </message>
-    <message>
-        <source>Ultra-wide gamut HDR master</source>
-        <translation>Ultrabreed HDR-master</translation>
-    </message>
-    <message>
-        <source>150% sRGB</source>
-        <translation>150% sRGB</translation>
-    </message>
-    <message>
-        <source>Academy linear working space</source>
-        <translation>Lineaire werkruimte van de Academy</translation>
-    </message>
-    <message>
-        <source>Wide AP1</source>
-        <translation>Breed AP1</translation>
-    </message>
-    <message>
         <source>Colour management</source>
         <translation>Kleurbeheer</translation>
     </message>
@@ -360,16 +328,20 @@
         <translation>Gamutcompressie</translation>
     </message>
     <message>
-        <source>%1 (%2)</source>
-        <translation>%1 (%2)</translation>
+        <source>Brings colours pushed outside the gamut back in smoothly instead of clipping them.</source>
+        <translation>Brengt kleuren buiten het gamut vloeiend terug in plaats van ze af te kappen.</translation>
     </message>
     <message>
-        <source>ACES 1.3 RRT/ODT Tonemapper</source>
-        <translation>ACES 1.3 RRT/ODT-tonemapper</translation>
+        <source>ACES tone curve</source>
+        <translation>ACES-toonkromme</translation>
     </message>
     <message>
-        <source>Filmic shoulder roll-off &amp; dynamic range mapping</source>
-        <translation>Zachte filmische schouder en mapping van het dynamisch bereik</translation>
+        <source>Filmic highlight roll-off, a fitted approximation of the ACES output transform.</source>
+        <translation>Zachte afloop van de hooglichten, een benadering van de ACES-uitvoertransformatie.</translation>
+    </message>
+    <message>
+        <source>The output colour space is set in the Export window.</source>
+        <translation>De uitvoerkleurruimte stel je in het exportvenster in.</translation>
     </message>
 </context>
 <context>
@@ -393,36 +365,60 @@
         <translation>Perceptueel</translation>
     </message>
     <message>
-        <source>8-bit · universal</source>
-        <translation>8-bits · universeel</translation>
+        <source>Export folder</source>
+        <translation>Exportmap</translation>
     </message>
     <message>
-        <source>16-bit · lossless</source>
-        <translation>16-bits · verliesvrij</translation>
+        <source>8-bit</source>
+        <translation>8-bits</translation>
     </message>
     <message>
-        <source>16-bit · print, archive</source>
-        <translation>16-bits · afdrukken, archief</translation>
+        <source>Opens everywhere</source>
+        <translation>Opent overal</translation>
     </message>
     <message>
-        <source>8-bit · web</source>
-        <translation>8-bits · web</translation>
+        <source>16-bit</source>
+        <translation>16-bits</translation>
     </message>
     <message>
-        <source>12-bit · HDR-ready</source>
-        <translation>12-bits · geschikt voor HDR</translation>
+        <source>Lossless</source>
+        <translation>Verliesvrij</translation>
     </message>
     <message>
-        <source>10-bit · HEVC</source>
-        <translation>10-bits · HEVC</translation>
+        <source>For print and archive</source>
+        <translation>Voor print en archief</translation>
     </message>
     <message>
-        <source>16-bit · modern</source>
-        <translation>16-bits · modern</translation>
+        <source>Small files for the web</source>
+        <translation>Kleine bestanden voor het web</translation>
     </message>
     <message>
-        <source>Float · scene-linear</source>
-        <translation>Drijvende komma · scènelineair</translation>
+        <source>12-bit</source>
+        <translation>12-bits</translation>
+    </message>
+    <message>
+        <source>Small files with high bit depth</source>
+        <translation>Kleine bestanden met hoge bitdiepte</translation>
+    </message>
+    <message>
+        <source>10-bit</source>
+        <translation>10-bits</translation>
+    </message>
+    <message>
+        <source>HEVC, as used by phones</source>
+        <translation>HEVC, zoals op telefoons</translation>
+    </message>
+    <message>
+        <source>Small files, lossless at quality 100</source>
+        <translation>Kleine bestanden, verliesvrij bij kwaliteit 100</translation>
+    </message>
+    <message>
+        <source>Float</source>
+        <translation>Drijvende komma</translation>
+    </message>
+    <message>
+        <source>Scene-linear, for compositing and grading</source>
+        <translation>Scènelineair, voor compositing en kleurcorrectie</translation>
     </message>
     <message numerus="yes">
         <source>Export %n photos</source>
@@ -508,8 +504,8 @@
         <translation>Web, schermen</translation>
     </message>
     <message>
-        <source>Wide-gamut screens</source>
-        <translation>Schermen met groot kleurbereik</translation>
+        <source>Modern screens</source>
+        <translation>Moderne schermen</translation>
     </message>
     <message>
         <source>Print</source>
@@ -580,8 +576,8 @@
         <translation>Voorbereiden voor</translation>
     </message>
     <message>
-        <source>Sets the crop and output sharpening for a platform. Reset restores your own.</source>
-        <translation>Stelt de uitsnede en uitvoerverscherping voor een platform in. Herstellen zet je eigen instellingen terug.</translation>
+        <source>Sets the crop and output sharpening for a platform. Click it again to go back to your own.</source>
+        <translation>Stelt de uitsnede en uitvoerverscherping voor een platform in. Klik nogmaals om terug te gaan naar je eigen instellingen.</translation>
     </message>
     <message>
         <source>Watermark</source>
@@ -590,6 +586,18 @@
     <message>
         <source>Folder</source>
         <translation>Map</translation>
+    </message>
+    <message>
+        <source>Choose…</source>
+        <translation>Kiezen…</translation>
+    </message>
+    <message>
+        <source>File name</source>
+        <translation>Bestandsnaam</translation>
+    </message>
+    <message>
+        <source>Saved as %1</source>
+        <translation>Opgeslagen als %1</translation>
     </message>
     <message>
         <source>Hide</source>
@@ -807,10 +815,6 @@
     <message>
         <source>No photos found in this directory.</source>
         <translation>Geen foto&apos;s gevonden in deze map.</translation>
-    </message>
-    <message>
-        <source>Folder</source>
-        <translation>Map</translation>
     </message>
     <message>
         <source>Downloading</source>
@@ -1309,14 +1313,6 @@
         <translation>%1 geschreven</translation>
     </message>
     <message>
-        <source>Open RAW Photo</source>
-        <translation>RAW-foto openen</translation>
-    </message>
-    <message>
-        <source>RAW Photos</source>
-        <translation>RAW-foto&apos;s</translation>
-    </message>
-    <message>
         <source>Export finished without a result</source>
         <translation>Export beëindigd zonder resultaat</translation>
     </message>
@@ -1347,14 +1343,6 @@
     <message>
         <source>Contrast</source>
         <translation>Contrast</translation>
-    </message>
-    <message>
-        <source>Temp (Kelvin)</source>
-        <translation>Temperatuur (Kelvin)</translation>
-    </message>
-    <message>
-        <source>Tint (Green / Magenta)</source>
-        <translation>Tint (groen / magenta)</translation>
     </message>
     <message>
         <source>Exposure</source>
@@ -1395,6 +1383,10 @@
     <message>
         <source>Texture</source>
         <translation>Textuur</translation>
+    </message>
+    <message>
+        <source>Suggested scene</source>
+        <translation>Voorgestelde scène</translation>
     </message>
     <message>
         <source>Clarity (Midtone Contrast)</source>
@@ -1497,6 +1489,22 @@
         <translation>Automatisch: foto wordt geanalyseerd…</translation>
     </message>
     <message>
+        <source>Open photo</source>
+        <translation>Foto openen</translation>
+    </message>
+    <message>
+        <source>Photos</source>
+        <translation>Foto’s</translation>
+    </message>
+    <message>
+        <source>RAW</source>
+        <translation>RAW</translation>
+    </message>
+    <message>
+        <source>Images</source>
+        <translation>Afbeeldingen</translation>
+    </message>
+    <message>
         <source>Saved to %1</source>
         <translation>Opgeslagen in %1</translation>
     </message>
@@ -1549,10 +1557,6 @@
         <translation>Afgewezen</translation>
     </message>
     <message>
-        <source>Scene</source>
-        <translation>Scène</translation>
-    </message>
-    <message>
         <source>Adjust</source>
         <translation>Aanpassen</translation>
     </message>
@@ -1569,6 +1573,14 @@
         <translation>AI</translation>
     </message>
     <message>
+        <source>Read the photo&apos;s .xmp sidecar written by another editor</source>
+        <translation>Het .xmp-bestand van een andere editor lezen</translation>
+    </message>
+    <message>
+        <source>Write the edit, rating and label to an .xmp sidecar for other editors</source>
+        <translation>Bewerking, waardering en label naar een .xmp-bestand schrijven voor andere editors</translation>
+    </message>
+    <message>
         <source>Profile</source>
         <translation>Profiel</translation>
     </message>
@@ -1583,6 +1595,14 @@
     <message>
         <source>White balance</source>
         <translation>Witbalans</translation>
+    </message>
+    <message>
+        <source>Temperature</source>
+        <translation>Temperatuur</translation>
+    </message>
+    <message>
+        <source>Tint</source>
+        <translation>Tint</translation>
     </message>
     <message>
         <source>Tone</source>
@@ -1653,16 +1673,8 @@
         <translation>XMP importeren</translation>
     </message>
     <message>
-        <source>Read DSCF0001.xmp from Lightroom, Capture One or darktable</source>
-        <translation>DSCF0001.xmp uit Lightroom, Capture One of darktable lezen</translation>
-    </message>
-    <message>
         <source>Write XMP</source>
         <translation>XMP schrijven</translation>
-    </message>
-    <message>
-        <source>Write the edit, rating and label to DSCF0001.xmp for other editors</source>
-        <translation>Bewerking, waardering en label naar DSCF0001.xmp schrijven voor andere editors</translation>
     </message>
     <message>
         <source>Opening %1</source>
@@ -1693,10 +1705,6 @@
     <message>
         <source>Navigator</source>
         <translation>Navigator</translation>
-    </message>
-    <message>
-        <source>FIT</source>
-        <translation>PASSEND</translation>
     </message>
 </context>
 <context>
@@ -1856,9 +1864,17 @@
         <translation>[S] %1%</translation>
     </message>
     <message>
+        <source>Clipped shadows. Click to show them on the photo.</source>
+        <translation>Afgekapte schaduwen. Klik om ze op de foto te tonen.</translation>
+    </message>
+    <message>
         <source>[H] %1%</source>
         <comment>H: highlight clipping</comment>
         <translation>[H] %1%</translation>
+    </message>
+    <message>
+        <source>Clipped highlights. Click to show them on the photo.</source>
+        <translation>Afgekapte hoge lichten. Klik om ze op de foto te tonen.</translation>
     </message>
     <message>
         <source>No photo</source>
@@ -1957,9 +1973,27 @@
 <context>
     <name>TopBar</name>
     <message>
-        <source>P</source>
-        <comment>pick flag, first letter of Pick</comment>
-        <translation>G</translation>
+        <source>Pick (P)</source>
+        <translation>Kiezen (P)</translation>
+    </message>
+    <message>
+        <source>Pick</source>
+        <translation>Gekozen</translation>
+    </message>
+    <message>
+        <source>Reject (X)</source>
+        <translation>Afwijzen (X)</translation>
+    </message>
+    <message>
+        <source>Reject</source>
+        <translation>Afwijzen</translation>
+    </message>
+    <message numerus="yes">
+        <source>%n star(s)</source>
+        <translation>
+            <numerusform>%n ster</numerusform>
+            <numerusform>%n sterren</numerusform>
+        </translation>
     </message>
     <message>
         <source>Connecting…</source>
@@ -2010,10 +2044,6 @@
         <translation>Uitsnijden</translation>
     </message>
     <message>
-        <source>Fit</source>
-        <translation>Passend</translation>
-    </message>
-    <message>
         <source>Open RAW</source>
         <translation>RAW openen</translation>
     </message>
@@ -2029,8 +2059,36 @@
         <translation>Terug naar 0°</translation>
     </message>
     <message>
+        <source>Rotate left</source>
+        <translation>Linksom draaien</translation>
+    </message>
+    <message>
+        <source>Rotate right</source>
+        <translation>Rechtsom draaien</translation>
+    </message>
+    <message>
         <source>Fit</source>
         <translation>Passend</translation>
+    </message>
+    <message>
+        <source>Surround: %1</source>
+        <translation>Omgeving: %1</translation>
+    </message>
+    <message>
+        <source>middle grey</source>
+        <translation>middengrijs</translation>
+    </message>
+    <message>
+        <source>theme colour</source>
+        <translation>themakleur</translation>
+    </message>
+    <message>
+        <source>dark grey</source>
+        <translation>donkergrijs</translation>
+    </message>
+    <message>
+        <source>Surround colour</source>
+        <translation>Omgevingskleur</translation>
     </message>
     <message>
         <source>Crop</source>
@@ -2098,6 +2156,10 @@
     <message>
         <source>Watermark</source>
         <translation>Watermerk</translation>
+    </message>
+    <message>
+        <source>Add a watermark</source>
+        <translation>Watermerk toevoegen</translation>
     </message>
     <message>
         <source>Text / EXIF Tag</source>

@@ -231,7 +231,10 @@ pub fn export_photo<P: AsRef<Path>>(
             // distance 0 is mathematically lossless
             let distance = if quality >= 100 { "0".to_string() } else { ((100 - quality) as f32 / 10.0).to_string() };
             let mut cmd = secure_command("cjxl");
-            cmd.arg("-d").arg(&distance).arg("-e").arg("7").arg("--").arg(&tmp.0).arg(&final_dest);
+            // The ISOBMFF container lets exiftool add the camera's Exif box below; a bare
+            // codestream cannot carry metadata
+            cmd.arg("-d").arg(&distance).arg("-e").arg("7").arg("--container=1")
+                .arg("--").arg(&tmp.0).arg(&final_dest);
             run_encoder(cmd, "cjxl", 120)?;
         }
         "avif" => {
@@ -275,18 +278,18 @@ pub fn export_photo<P: AsRef<Path>>(
             run_encoder(cmd, "heif-enc", 180)?;
         }
         "webp" => {
-            // Lossy WebP comes from cwebp (libwebp), which keeps the ICC profile. Without
-            // it, or at quality 100, the built-in lossless encoder is used.
-            let lossy = if quality < 100 {
+            // Lossy WebP comes from cwebp (libwebp-utils), which keeps the ICC profile.
+            // Quality 100 uses the built-in lossless encoder. A missing cwebp is an error:
+            // falling back to lossless would silently write files many times larger.
+            if quality < 100 {
                 let tmp = TempPng::write(&expanded_dir, stem, &dyn_img, icc_bytes)?;
                 let mut cmd = secure_command("cwebp");
                 cmd.arg("-q").arg(quality.to_string()).arg("-m").arg("6").arg("-metadata").arg("icc")
                     .arg("-o").arg(&final_dest).arg("--").arg(&tmp.0);
-                run_encoder(cmd, "cwebp", 120).is_ok()
+                run_encoder(cmd, "cwebp", 120).map_err(|e| {
+                    format!("{}. Install libwebp-utils, or export at quality 100 for lossless WebP.", e)
+                })?;
             } else {
-                false
-            };
-            if !lossy {
                 let mut buf = Vec::new();
                 let mut encoder = image::codecs::webp::WebPEncoder::new_lossless(&mut buf);
                 set_icc(&mut encoder, icc_bytes)?;
@@ -360,6 +363,12 @@ pub fn export_photo<P: AsRef<Path>>(
 
         // Run exiftool with bounded timeout (safe failover if format doesn't support tags)
         let _ = run_bounded_command(exif_cmd, Duration::from_secs(20));
+    }
+
+    // Exports are ordinary files to share: rw-r--r-- whichever encoder wrote them
+    {
+        use std::os::unix::fs::PermissionsExt;
+        let _ = fs::set_permissions(&final_dest, fs::Permissions::from_mode(0o644));
     }
 
     Ok(final_dest)
@@ -513,7 +522,7 @@ fn encode_png(img: &DynamicImage, icc: Option<&[u8]>) -> Result<Vec<u8>, String>
 
 /// Keeps only ASCII alphanumerics so a tag can never inject separators into the name.
 fn sanitize_name_tag(tag: &str) -> String {
-    tag.chars().filter(|c| c.is_ascii_alphanumeric()).take(16).collect::<String>().to_lowercase()
+    tag.chars().filter(|c| c.is_ascii_alphanumeric()).take(24).collect::<String>().to_lowercase()
 }
 
 /// Name tags for a batch: sources sharing a file stem (DSC_0001.NEF + DSC_0001.JPG,

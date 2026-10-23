@@ -110,11 +110,15 @@ pub struct Recipe {
     pub rating: u8, // 0 to 5 stars
     pub flag: String, // "none", "pick", "reject"
 
-    // ACES 1.3 & Wide Gamut Color Spaces
+    // Colour management. `color_space` is kept for recipes written by earlier
+    // versions: "ACEScg" there meant gamut compression on. The output colour
+    // space is chosen at export.
     #[serde(default = "default_color_space")]
-    pub color_space: String, // "sRGB", "DisplayP3", "Rec2020", "ACEScg"
+    pub color_space: String,
     #[serde(default)]
-    pub aces_tonemap: bool,
+    pub gamut_compression: bool, // ACES reference gamut compression
+    #[serde(default)]
+    pub aces_tonemap: bool, // ACES filmic tone curve (fitted)
 
     // Authentic Film Simulations & Medium Format Color Science
     #[serde(default)]
@@ -203,6 +207,14 @@ fn default_fifty() -> f32 {
     50.0
 }
 
+impl Recipe {
+    /// Gamut compression is on when asked for, or for a recipe saved with the
+    /// former "ACEScg" working-space option.
+    pub fn gamut_compression_active(&self) -> bool {
+        self.gamut_compression || self.color_space.eq_ignore_ascii_case("ACEScg")
+    }
+}
+
 fn default_color_space() -> String {
     "sRGB".to_string()
 }
@@ -284,6 +296,7 @@ impl Default for Recipe {
             rating: 0,
             flag: "none".to_string(),
             color_space: "sRGB".to_string(),
+            gamut_compression: false,
             aces_tonemap: false,
             film_simulation: String::new(),
             film_sim_intensity: 1.0,

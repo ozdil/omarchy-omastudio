@@ -351,7 +351,7 @@ fn scan_directory(dir_path: &str) -> Result<Vec<FolderScanItem>, String> {
                 && let Some(ext) = path.extension().and_then(|e| e.to_str())
             {
                 let ext_lower = ext.to_lowercase();
-                let is_supported = ["nef", "nrw", "raf", "cr2", "cr3", "arw", "dng", "rwl", "orf", "rw2", "3fr", "fff", "iiq", "mos", "mef", "pef", "jpg", "jpeg", "png", "webp", "tif", "tiff", "heic"].contains(&ext_lower.as_str());
+                let is_supported = omastudio_engine::raw::is_supported_extension(&ext_lower);
                 if is_supported {
                     let thumb_path = thumbnail_path_for(&path);
                     if !thumb_path.exists() {
@@ -694,6 +694,15 @@ fn main() {
             };
             print_json(&ResponseWrapper::ok(dag_info));
         }
+        "cameras" => {
+            // Cameras the linked LibRaw build decodes, optionally filtered by a substring.
+            let filter = args.get(2).map(|f| f.to_lowercase());
+            let cameras: Vec<String> = omastudio_engine::raw::supported_cameras()
+                .into_iter()
+                .filter(|c| filter.as_ref().is_none_or(|f| c.to_lowercase().contains(f)))
+                .collect();
+            print_json(&ResponseWrapper::ok(cameras));
+        }
         "status" | "--status" => {
             #[derive(Serialize)]
             struct StatusInfo {
@@ -703,6 +712,7 @@ fn main() {
                 active_mode: String,
                 active_theme: String,
                 supported_raw_formats: Vec<String>,
+                supported_cameras_count: usize,
                 icc_profiles_count: usize,
                 local_only_mode: bool,
                 gpu: gpu::GpuStatus,
@@ -721,12 +731,8 @@ fn main() {
                 status: "ready".to_string(),
                 active_mode: "studio".to_string(),
                 active_theme,
-                supported_raw_formats: vec![
-                    "RAF".into(), "NEF".into(), "NRW".into(), "CR2".into(), "CR3".into(),
-                    "ARW".into(), "SR2".into(), "DNG".into(), "RWL".into(), "ORF".into(),
-                    "RW2".into(), "3FR".into(), "FFF".into(), "IIQ".into(), "MOS".into(),
-                    "MEF".into(), "PEF".into(),
-                ],
+                supported_raw_formats: omastudio_engine::raw::RAW_EXTENSIONS.iter().map(|e| e.to_uppercase()).collect(),
+                supported_cameras_count: omastudio_engine::raw::supported_cameras().len(),
                 icc_profiles_count: icc_count,
                 local_only_mode: true,
                 gpu: gpu::status(),
@@ -743,7 +749,7 @@ fn main() {
                     "crop_and_straighten".into(),
                     "film_simulations".into(),
                     "hasselblad_profiles".into(),
-                    "aces_1_3".into(),
+                    "aces_tone_curve".into(),
                     "gamut_compression".into(),
                     "icc_export".into(),
                     "watermark".into(),
@@ -788,6 +794,7 @@ fn main() {
             println!("\nUsage: omastudio-engine <command> [arguments]\n");
             println!("Commands for Omarchy Agents & CLI:");
             println!("  status                                Output engine and feature status as JSON");
+            println!("  cameras [FILTER]                      List cameras the RAW decoder supports");
             println!("  inspect <raw_file>                    Parse EXIF, dynamic range, AI scene classification, histogram");
             println!("  ai-auto <raw_file>                    Calculate optimal tone, white balance, and contrast via AI");
             println!("  ai-jev <raw_file>                     Auto, refined by a configured decision model when one is set up");
@@ -1913,7 +1920,12 @@ fn run_daemon() {
                     .map(|(item, tag)| {
                         let recipe = item.recipe.clone().unwrap_or_else(|| Recipe::load_initial(&item.path));
                         let mut item_options = options.clone();
-                        item_options.name_tag = tag.clone();
+                        // The user's tag stays; the disambiguating tag is added after it
+                        item_options.name_tag = match (&options.name_tag, tag) {
+                            (Some(user), Some(t)) if !user.is_empty() => Some(format!("{}{}", user, t)),
+                            (Some(user), _) if !user.is_empty() => Some(user.clone()),
+                            (_, t) => t.clone(),
+                        };
                         match export_photo(&item.path, &recipe, &item_options) {
                             Ok(dest) => BatchExportItemResult {
                                 path: item.path.clone(),

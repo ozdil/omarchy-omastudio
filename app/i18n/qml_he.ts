@@ -320,38 +320,6 @@
 <context>
     <name>ColorSpaceSelector</name>
     <message>
-        <source>Standard SDR web gamut</source>
-        <translation>מרחב צבע SDR סטנדרטי לרשת</translation>
-    </message>
-    <message>
-        <source>100% sRGB</source>
-        <translation>100% sRGB</translation>
-    </message>
-    <message>
-        <source>Wide gamut, Apple Retina displays</source>
-        <translation>מרחב צבע רחב, מסכי Apple Retina</translation>
-    </message>
-    <message>
-        <source>125% sRGB</source>
-        <translation>125% sRGB</translation>
-    </message>
-    <message>
-        <source>Ultra-wide gamut HDR master</source>
-        <translation>מאסטר HDR במרחב צבע רחב במיוחד</translation>
-    </message>
-    <message>
-        <source>150% sRGB</source>
-        <translation>150% sRGB</translation>
-    </message>
-    <message>
-        <source>Academy linear working space</source>
-        <translation>מרחב העבודה הליניארי של האקדמיה</translation>
-    </message>
-    <message>
-        <source>Wide AP1</source>
-        <translation>AP1 רחב</translation>
-    </message>
-    <message>
         <source>Colour management</source>
         <translation>ניהול צבע</translation>
     </message>
@@ -360,16 +328,20 @@
         <translation>דחיסת סולם צבעים</translation>
     </message>
     <message>
-        <source>%1 (%2)</source>
-        <translation>%1 (%2)</translation>
+        <source>Brings colours pushed outside the gamut back in smoothly instead of clipping them.</source>
+        <translation>מחזיר בעדינות צבעים שחרגו מהסולם במקום לקטום אותם.</translation>
     </message>
     <message>
-        <source>ACES 1.3 RRT/ODT Tonemapper</source>
-        <translation>מיפוי גוונים ACES 1.3 RRT/ODT</translation>
+        <source>ACES tone curve</source>
+        <translation>עקומת טונים ACES</translation>
     </message>
     <message>
-        <source>Filmic shoulder roll-off &amp; dynamic range mapping</source>
-        <translation>כתף קולנועית רכה ומיפוי טווח דינמי</translation>
+        <source>Filmic highlight roll-off, a fitted approximation of the ACES output transform.</source>
+        <translation>ריכוך הדרגתי באזורים הבהירים, קירוב של טרנספורמציית הפלט של ACES.</translation>
+    </message>
+    <message>
+        <source>The output colour space is set in the Export window.</source>
+        <translation>מרחב הצבע של הפלט נקבע בחלון הייצוא.</translation>
     </message>
 </context>
 <context>
@@ -393,36 +365,60 @@
         <translation>תפיסתית</translation>
     </message>
     <message>
-        <source>8-bit · universal</source>
-        <translation>8 סיביות · אוניברסלי</translation>
+        <source>Export folder</source>
+        <translation>תיקיית ייצוא</translation>
     </message>
     <message>
-        <source>16-bit · lossless</source>
-        <translation>16 סיביות · ללא אובדן</translation>
+        <source>8-bit</source>
+        <translation>8 סיביות</translation>
     </message>
     <message>
-        <source>16-bit · print, archive</source>
-        <translation>16 סיביות · הדפסה, ארכיון</translation>
+        <source>Opens everywhere</source>
+        <translation>נפתח בכל מקום</translation>
     </message>
     <message>
-        <source>8-bit · web</source>
-        <translation>8 סיביות · רשת</translation>
+        <source>16-bit</source>
+        <translation>16 סיביות</translation>
     </message>
     <message>
-        <source>12-bit · HDR-ready</source>
-        <translation>12 סיביות · מוכן ל־HDR</translation>
+        <source>Lossless</source>
+        <translation>ללא אובדן</translation>
     </message>
     <message>
-        <source>10-bit · HEVC</source>
-        <translation>10 סיביות · HEVC</translation>
+        <source>For print and archive</source>
+        <translation>להדפסה ולארכיון</translation>
     </message>
     <message>
-        <source>16-bit · modern</source>
-        <translation>16 סיביות · מודרני</translation>
+        <source>Small files for the web</source>
+        <translation>קבצים קטנים לאינטרנט</translation>
     </message>
     <message>
-        <source>Float · scene-linear</source>
-        <translation>נקודה צפה · ליניארי לסצנה</translation>
+        <source>12-bit</source>
+        <translation>12 סיביות</translation>
+    </message>
+    <message>
+        <source>Small files with high bit depth</source>
+        <translation>קבצים קטנים בעומק סיביות גבוה</translation>
+    </message>
+    <message>
+        <source>10-bit</source>
+        <translation>10 סיביות</translation>
+    </message>
+    <message>
+        <source>HEVC, as used by phones</source>
+        <translation>HEVC, כמו בטלפונים</translation>
+    </message>
+    <message>
+        <source>Small files, lossless at quality 100</source>
+        <translation>קבצים קטנים, ללא אובדן באיכות 100</translation>
+    </message>
+    <message>
+        <source>Float</source>
+        <translation>נקודה צפה</translation>
+    </message>
+    <message>
+        <source>Scene-linear, for compositing and grading</source>
+        <translation>ליניארי לסצנה, לקומפוזיטינג ולתיקון צבע</translation>
     </message>
     <message numerus="yes">
         <source>Export %n photos</source>
@@ -508,8 +504,8 @@
         <translation>רשת, מסכים</translation>
     </message>
     <message>
-        <source>Wide-gamut screens</source>
-        <translation>מסכים עם סולם צבעים רחב</translation>
+        <source>Modern screens</source>
+        <translation>מסכים מודרניים</translation>
     </message>
     <message>
         <source>Print</source>
@@ -580,8 +576,8 @@
         <translation>הכנה עבור</translation>
     </message>
     <message>
-        <source>Sets the crop and output sharpening for a platform. Reset restores your own.</source>
-        <translation>מגדיר חיתוך וחידוד פלט לפלטפורמה. איפוס משחזר את ההגדרות שלך.</translation>
+        <source>Sets the crop and output sharpening for a platform. Click it again to go back to your own.</source>
+        <translation>מגדיר את החיתוך ואת חידוד הפלט לפלטפורמה. לחצו שוב כדי לחזור להגדרות שלכם.</translation>
     </message>
     <message>
         <source>Watermark</source>
@@ -590,6 +586,18 @@
     <message>
         <source>Folder</source>
         <translation>תיקייה</translation>
+    </message>
+    <message>
+        <source>Choose…</source>
+        <translation>בחירה…</translation>
+    </message>
+    <message>
+        <source>File name</source>
+        <translation>שם הקובץ</translation>
+    </message>
+    <message>
+        <source>Saved as %1</source>
+        <translation>יישמר בשם %1</translation>
     </message>
     <message>
         <source>Hide</source>
@@ -807,10 +815,6 @@
     <message>
         <source>No photos found in this directory.</source>
         <translation>לא נמצאו תמונות בתיקייה זו.</translation>
-    </message>
-    <message>
-        <source>Folder</source>
-        <translation>תיקייה</translation>
     </message>
     <message>
         <source>Downloading</source>
@@ -1309,14 +1313,6 @@
         <translation>נכתב %1</translation>
     </message>
     <message>
-        <source>Open RAW Photo</source>
-        <translation>פתיחת תמונת RAW</translation>
-    </message>
-    <message>
-        <source>RAW Photos</source>
-        <translation>תמונות RAW</translation>
-    </message>
-    <message>
         <source>Export finished without a result</source>
         <translation>הייצוא הסתיים ללא תוצאה</translation>
     </message>
@@ -1347,14 +1343,6 @@
     <message>
         <source>Contrast</source>
         <translation>ניגודיות</translation>
-    </message>
-    <message>
-        <source>Temp (Kelvin)</source>
-        <translation>טמפרטורה (קלווין)</translation>
-    </message>
-    <message>
-        <source>Tint (Green / Magenta)</source>
-        <translation>גוון (ירוק / מג׳נטה)</translation>
     </message>
     <message>
         <source>Exposure</source>
@@ -1395,6 +1383,10 @@
     <message>
         <source>Texture</source>
         <translation>מרקם</translation>
+    </message>
+    <message>
+        <source>Suggested scene</source>
+        <translation>סצנה מוצעת</translation>
     </message>
     <message>
         <source>Clarity (Midtone Contrast)</source>
@@ -1497,6 +1489,22 @@
         <translation>אוטומטי: מנתח את התמונה…</translation>
     </message>
     <message>
+        <source>Open photo</source>
+        <translation>פתיחת תמונה</translation>
+    </message>
+    <message>
+        <source>Photos</source>
+        <translation>תמונות</translation>
+    </message>
+    <message>
+        <source>RAW</source>
+        <translation>RAW</translation>
+    </message>
+    <message>
+        <source>Images</source>
+        <translation>קובצי תמונה</translation>
+    </message>
+    <message>
         <source>Saved to %1</source>
         <translation>נשמר ב־%1</translation>
     </message>
@@ -1549,10 +1557,6 @@
         <translation>נדחתה</translation>
     </message>
     <message>
-        <source>Scene</source>
-        <translation>סצנה</translation>
-    </message>
-    <message>
         <source>Adjust</source>
         <translation>כוונון</translation>
     </message>
@@ -1569,6 +1573,14 @@
         <translation>בינה מלאכותית</translation>
     </message>
     <message>
+        <source>Read the photo&apos;s .xmp sidecar written by another editor</source>
+        <translation>קריאת קובץ ‎.xmp שנכתב בעורך אחר</translation>
+    </message>
+    <message>
+        <source>Write the edit, rating and label to an .xmp sidecar for other editors</source>
+        <translation>כתיבת העריכה, הדירוג והתווית לקובץ ‎.xmp לעורכים אחרים</translation>
+    </message>
+    <message>
         <source>Profile</source>
         <translation>פרופיל</translation>
     </message>
@@ -1583,6 +1595,14 @@
     <message>
         <source>White balance</source>
         <translation>איזון לבן</translation>
+    </message>
+    <message>
+        <source>Temperature</source>
+        <translation>טמפרטורה</translation>
+    </message>
+    <message>
+        <source>Tint</source>
+        <translation>גוון</translation>
     </message>
     <message>
         <source>Tone</source>
@@ -1653,16 +1673,8 @@
         <translation>ייבוא XMP</translation>
     </message>
     <message>
-        <source>Read DSCF0001.xmp from Lightroom, Capture One or darktable</source>
-        <translation>קריאת DSCF0001.xmp מ-Lightroom‏, Capture One או darktable</translation>
-    </message>
-    <message>
         <source>Write XMP</source>
         <translation>כתיבת XMP</translation>
-    </message>
-    <message>
-        <source>Write the edit, rating and label to DSCF0001.xmp for other editors</source>
-        <translation>כתיבת העריכה, הדירוג והתווית ל-DSCF0001.xmp עבור עורכים אחרים</translation>
     </message>
     <message>
         <source>Opening %1</source>
@@ -1693,10 +1705,6 @@
     <message>
         <source>Navigator</source>
         <translation>נווט</translation>
-    </message>
-    <message>
-        <source>FIT</source>
-        <translation>התאמה</translation>
     </message>
 </context>
 <context>
@@ -1856,9 +1864,17 @@
         <translation>[צ] %1%</translation>
     </message>
     <message>
+        <source>Clipped shadows. Click to show them on the photo.</source>
+        <translation>צללים קטומים. לחצו כדי להציג אותם בתמונה.</translation>
+    </message>
+    <message>
         <source>[H] %1%</source>
         <comment>H: highlight clipping</comment>
         <translation>[ב] %1%</translation>
+    </message>
+    <message>
+        <source>Clipped highlights. Click to show them on the photo.</source>
+        <translation>בהירויות קטומות. לחצו כדי להציג אותן בתמונה.</translation>
     </message>
     <message>
         <source>No photo</source>
@@ -1957,9 +1973,27 @@
 <context>
     <name>TopBar</name>
     <message>
-        <source>P</source>
-        <comment>pick flag, first letter of Pick</comment>
-        <translation>נ</translation>
+        <source>Pick (P)</source>
+        <translation>בחירה (P)</translation>
+    </message>
+    <message>
+        <source>Pick</source>
+        <translation>בחירה</translation>
+    </message>
+    <message>
+        <source>Reject (X)</source>
+        <translation>דחייה (X)</translation>
+    </message>
+    <message>
+        <source>Reject</source>
+        <translation>דחייה</translation>
+    </message>
+    <message numerus="yes">
+        <source>%n star(s)</source>
+        <translation>
+            <numerusform>כוכב %n</numerusform>
+            <numerusform>%n כוכבים</numerusform>
+        </translation>
     </message>
     <message>
         <source>Connecting…</source>
@@ -2010,10 +2044,6 @@
         <translation>חיתוך</translation>
     </message>
     <message>
-        <source>Fit</source>
-        <translation>התאמה</translation>
-    </message>
-    <message>
         <source>Open RAW</source>
         <translation>פתיחת RAW</translation>
     </message>
@@ -2029,8 +2059,36 @@
         <translation>איפוס ל־0°</translation>
     </message>
     <message>
+        <source>Rotate left</source>
+        <translation>סיבוב שמאלה</translation>
+    </message>
+    <message>
+        <source>Rotate right</source>
+        <translation>סיבוב ימינה</translation>
+    </message>
+    <message>
         <source>Fit</source>
         <translation>התאמה</translation>
+    </message>
+    <message>
+        <source>Surround: %1</source>
+        <translation>סביבה: %1</translation>
+    </message>
+    <message>
+        <source>middle grey</source>
+        <translation>אפור בינוני</translation>
+    </message>
+    <message>
+        <source>theme colour</source>
+        <translation>צבע ערכת הנושא</translation>
+    </message>
+    <message>
+        <source>dark grey</source>
+        <translation>אפור כהה</translation>
+    </message>
+    <message>
+        <source>Surround colour</source>
+        <translation>צבע הסביבה</translation>
     </message>
     <message>
         <source>Crop</source>
@@ -2098,6 +2156,10 @@
     <message>
         <source>Watermark</source>
         <translation>סימן מים</translation>
+    </message>
+    <message>
+        <source>Add a watermark</source>
+        <translation>הוספת סימן מים</translation>
     </message>
     <message>
         <source>Text / EXIF Tag</source>

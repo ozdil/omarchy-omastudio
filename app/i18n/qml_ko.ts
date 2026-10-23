@@ -320,38 +320,6 @@
 <context>
     <name>ColorSpaceSelector</name>
     <message>
-        <source>Standard SDR web gamut</source>
-        <translation>표준 SDR 웹 색역</translation>
-    </message>
-    <message>
-        <source>100% sRGB</source>
-        <translation>100% sRGB</translation>
-    </message>
-    <message>
-        <source>Wide gamut, Apple Retina displays</source>
-        <translation>넓은 색역, Apple Retina 디스플레이</translation>
-    </message>
-    <message>
-        <source>125% sRGB</source>
-        <translation>125% sRGB</translation>
-    </message>
-    <message>
-        <source>Ultra-wide gamut HDR master</source>
-        <translation>초광색역 HDR 마스터</translation>
-    </message>
-    <message>
-        <source>150% sRGB</source>
-        <translation>150% sRGB</translation>
-    </message>
-    <message>
-        <source>Academy linear working space</source>
-        <translation>아카데미 선형 작업 공간</translation>
-    </message>
-    <message>
-        <source>Wide AP1</source>
-        <translation>넓은 AP1</translation>
-    </message>
-    <message>
         <source>Colour management</source>
         <translation>색상 관리</translation>
     </message>
@@ -360,16 +328,20 @@
         <translation>색 영역 압축</translation>
     </message>
     <message>
-        <source>%1 (%2)</source>
-        <translation>%1 (%2)</translation>
+        <source>Brings colours pushed outside the gamut back in smoothly instead of clipping them.</source>
+        <translation>색역을 벗어난 색을 잘라내지 않고 부드럽게 되돌립니다.</translation>
     </message>
     <message>
-        <source>ACES 1.3 RRT/ODT Tonemapper</source>
-        <translation>ACES 1.3 RRT/ODT 톤 매퍼</translation>
+        <source>ACES tone curve</source>
+        <translation>ACES 톤 커브</translation>
     </message>
     <message>
-        <source>Filmic shoulder roll-off &amp; dynamic range mapping</source>
-        <translation>부드러운 필름 숄더와 다이내믹 레인지 매핑</translation>
+        <source>Filmic highlight roll-off, a fitted approximation of the ACES output transform.</source>
+        <translation>하이라이트를 부드럽게 줄입니다. ACES 출력 변환의 근사입니다.</translation>
+    </message>
+    <message>
+        <source>The output colour space is set in the Export window.</source>
+        <translation>출력 색 공간은 내보내기 창에서 설정합니다.</translation>
     </message>
 </context>
 <context>
@@ -393,36 +365,60 @@
         <translation>지각적</translation>
     </message>
     <message>
-        <source>8-bit · universal</source>
-        <translation>8비트 · 범용</translation>
+        <source>Export folder</source>
+        <translation>내보내기 폴더</translation>
     </message>
     <message>
-        <source>16-bit · lossless</source>
-        <translation>16비트 · 무손실</translation>
+        <source>8-bit</source>
+        <translation>8비트</translation>
     </message>
     <message>
-        <source>16-bit · print, archive</source>
-        <translation>16비트 · 인쇄, 보관</translation>
+        <source>Opens everywhere</source>
+        <translation>어디서나 열림</translation>
     </message>
     <message>
-        <source>8-bit · web</source>
-        <translation>8비트 · 웹</translation>
+        <source>16-bit</source>
+        <translation>16비트</translation>
     </message>
     <message>
-        <source>12-bit · HDR-ready</source>
-        <translation>12비트 · HDR 지원</translation>
+        <source>Lossless</source>
+        <translation>무손실</translation>
     </message>
     <message>
-        <source>10-bit · HEVC</source>
-        <translation>10비트 · HEVC</translation>
+        <source>For print and archive</source>
+        <translation>인쇄 및 보관용</translation>
     </message>
     <message>
-        <source>16-bit · modern</source>
-        <translation>16비트 · 최신</translation>
+        <source>Small files for the web</source>
+        <translation>웹용 작은 파일</translation>
     </message>
     <message>
-        <source>Float · scene-linear</source>
-        <translation>부동 소수점 · 장면 선형</translation>
+        <source>12-bit</source>
+        <translation>12비트</translation>
+    </message>
+    <message>
+        <source>Small files with high bit depth</source>
+        <translation>높은 비트 심도의 작은 파일</translation>
+    </message>
+    <message>
+        <source>10-bit</source>
+        <translation>10비트</translation>
+    </message>
+    <message>
+        <source>HEVC, as used by phones</source>
+        <translation>HEVC, 휴대폰에서 쓰는 형식</translation>
+    </message>
+    <message>
+        <source>Small files, lossless at quality 100</source>
+        <translation>작은 파일, 품질 100에서 무손실</translation>
+    </message>
+    <message>
+        <source>Float</source>
+        <translation>부동소수점</translation>
+    </message>
+    <message>
+        <source>Scene-linear, for compositing and grading</source>
+        <translation>장면 선형, 합성 및 그레이딩용</translation>
     </message>
     <message numerus="yes">
         <source>Export %n photos</source>
@@ -507,8 +503,8 @@
         <translation>웹, 화면</translation>
     </message>
     <message>
-        <source>Wide-gamut screens</source>
-        <translation>광색역 화면</translation>
+        <source>Modern screens</source>
+        <translation>최신 디스플레이</translation>
     </message>
     <message>
         <source>Print</source>
@@ -579,8 +575,8 @@
         <translation>용도</translation>
     </message>
     <message>
-        <source>Sets the crop and output sharpening for a platform. Reset restores your own.</source>
-        <translation>플랫폼에 맞게 자르기와 출력 선명도를 설정합니다. 재설정하면 내 설정으로 돌아갑니다.</translation>
+        <source>Sets the crop and output sharpening for a platform. Click it again to go back to your own.</source>
+        <translation>플랫폼에 맞게 자르기와 출력 선명도를 설정합니다. 다시 클릭하면 원래 설정으로 돌아갑니다.</translation>
     </message>
     <message>
         <source>Watermark</source>
@@ -589,6 +585,18 @@
     <message>
         <source>Folder</source>
         <translation>폴더</translation>
+    </message>
+    <message>
+        <source>Choose…</source>
+        <translation>선택…</translation>
+    </message>
+    <message>
+        <source>File name</source>
+        <translation>파일 이름</translation>
+    </message>
+    <message>
+        <source>Saved as %1</source>
+        <translation>%1(으)로 저장</translation>
     </message>
     <message>
         <source>Hide</source>
@@ -806,10 +814,6 @@
     <message>
         <source>No photos found in this directory.</source>
         <translation>이 폴더에 사진이 없습니다.</translation>
-    </message>
-    <message>
-        <source>Folder</source>
-        <translation>폴더</translation>
     </message>
     <message>
         <source>Downloading</source>
@@ -1305,14 +1309,6 @@
         <translation>%1을(를) 썼습니다</translation>
     </message>
     <message>
-        <source>Open RAW Photo</source>
-        <translation>RAW 사진 열기</translation>
-    </message>
-    <message>
-        <source>RAW Photos</source>
-        <translation>RAW 사진</translation>
-    </message>
-    <message>
         <source>Export finished without a result</source>
         <translation>결과 없이 내보내기가 끝났습니다</translation>
     </message>
@@ -1343,14 +1339,6 @@
     <message>
         <source>Contrast</source>
         <translation>대비</translation>
-    </message>
-    <message>
-        <source>Temp (Kelvin)</source>
-        <translation>색온도 (켈빈)</translation>
-    </message>
-    <message>
-        <source>Tint (Green / Magenta)</source>
-        <translation>색조 (녹색 / 마젠타)</translation>
     </message>
     <message>
         <source>Exposure</source>
@@ -1391,6 +1379,10 @@
     <message>
         <source>Texture</source>
         <translation>텍스처</translation>
+    </message>
+    <message>
+        <source>Suggested scene</source>
+        <translation>추천 장면</translation>
     </message>
     <message>
         <source>Clarity (Midtone Contrast)</source>
@@ -1493,6 +1485,22 @@
         <translation>자동: 사진 분석 중…</translation>
     </message>
     <message>
+        <source>Open photo</source>
+        <translation>사진 열기</translation>
+    </message>
+    <message>
+        <source>Photos</source>
+        <translation>사진</translation>
+    </message>
+    <message>
+        <source>RAW</source>
+        <translation>RAW</translation>
+    </message>
+    <message>
+        <source>Images</source>
+        <translation>이미지</translation>
+    </message>
+    <message>
         <source>Saved to %1</source>
         <translation>%1에 저장됨</translation>
     </message>
@@ -1545,10 +1553,6 @@
         <translation>거부됨</translation>
     </message>
     <message>
-        <source>Scene</source>
-        <translation>장면</translation>
-    </message>
-    <message>
         <source>Adjust</source>
         <translation>조정</translation>
     </message>
@@ -1565,6 +1569,14 @@
         <translation>AI 기능</translation>
     </message>
     <message>
+        <source>Read the photo&apos;s .xmp sidecar written by another editor</source>
+        <translation>다른 편집기가 쓴 .xmp 파일 읽기</translation>
+    </message>
+    <message>
+        <source>Write the edit, rating and label to an .xmp sidecar for other editors</source>
+        <translation>편집, 등급, 레이블을 다른 편집기용 .xmp 파일에 쓰기</translation>
+    </message>
+    <message>
         <source>Profile</source>
         <translation>프로필</translation>
     </message>
@@ -1579,6 +1591,14 @@
     <message>
         <source>White balance</source>
         <translation>화이트 밸런스</translation>
+    </message>
+    <message>
+        <source>Temperature</source>
+        <translation>색온도</translation>
+    </message>
+    <message>
+        <source>Tint</source>
+        <translation>색조</translation>
     </message>
     <message>
         <source>Tone</source>
@@ -1649,16 +1669,8 @@
         <translation>XMP 가져오기</translation>
     </message>
     <message>
-        <source>Read DSCF0001.xmp from Lightroom, Capture One or darktable</source>
-        <translation>Lightroom, Capture One 또는 darktable의 DSCF0001.xmp 읽기</translation>
-    </message>
-    <message>
         <source>Write XMP</source>
         <translation>XMP 쓰기</translation>
-    </message>
-    <message>
-        <source>Write the edit, rating and label to DSCF0001.xmp for other editors</source>
-        <translation>다른 편집기를 위해 편집, 별점, 레이블을 DSCF0001.xmp에 쓰기</translation>
     </message>
     <message>
         <source>Opening %1</source>
@@ -1688,10 +1700,6 @@
     <message>
         <source>Navigator</source>
         <translation>탐색기</translation>
-    </message>
-    <message>
-        <source>FIT</source>
-        <translation>맞춤</translation>
     </message>
 </context>
 <context>
@@ -1851,9 +1859,17 @@
         <translation>[암] %1%</translation>
     </message>
     <message>
+        <source>Clipped shadows. Click to show them on the photo.</source>
+        <translation>잘린 어두운 영역. 클릭하면 사진에 표시합니다.</translation>
+    </message>
+    <message>
         <source>[H] %1%</source>
         <comment>H: highlight clipping</comment>
         <translation>[명] %1%</translation>
+    </message>
+    <message>
+        <source>Clipped highlights. Click to show them on the photo.</source>
+        <translation>잘린 밝은 영역. 클릭하면 사진에 표시합니다.</translation>
     </message>
     <message>
         <source>No photo</source>
@@ -1952,9 +1968,26 @@
 <context>
     <name>TopBar</name>
     <message>
-        <source>P</source>
-        <comment>pick flag, first letter of Pick</comment>
-        <translation>선</translation>
+        <source>Pick (P)</source>
+        <translation>선택 (P)</translation>
+    </message>
+    <message>
+        <source>Pick</source>
+        <translation>선택</translation>
+    </message>
+    <message>
+        <source>Reject (X)</source>
+        <translation>거부 (X)</translation>
+    </message>
+    <message>
+        <source>Reject</source>
+        <translation>거부</translation>
+    </message>
+    <message numerus="yes">
+        <source>%n star(s)</source>
+        <translation>
+            <numerusform>%n개</numerusform>
+        </translation>
     </message>
     <message>
         <source>Connecting…</source>
@@ -2005,10 +2038,6 @@
         <translation>자르기</translation>
     </message>
     <message>
-        <source>Fit</source>
-        <translation>맞춤</translation>
-    </message>
-    <message>
         <source>Open RAW</source>
         <translation>RAW 열기</translation>
     </message>
@@ -2024,8 +2053,36 @@
         <translation>0°로 재설정</translation>
     </message>
     <message>
+        <source>Rotate left</source>
+        <translation>왼쪽으로 회전</translation>
+    </message>
+    <message>
+        <source>Rotate right</source>
+        <translation>오른쪽으로 회전</translation>
+    </message>
+    <message>
         <source>Fit</source>
         <translation>맞춤</translation>
+    </message>
+    <message>
+        <source>Surround: %1</source>
+        <translation>배경: %1</translation>
+    </message>
+    <message>
+        <source>middle grey</source>
+        <translation>중간 회색</translation>
+    </message>
+    <message>
+        <source>theme colour</source>
+        <translation>테마 색상</translation>
+    </message>
+    <message>
+        <source>dark grey</source>
+        <translation>진한 회색</translation>
+    </message>
+    <message>
+        <source>Surround colour</source>
+        <translation>배경 색상</translation>
     </message>
     <message>
         <source>Crop</source>
@@ -2093,6 +2150,10 @@
     <message>
         <source>Watermark</source>
         <translation>워터마크</translation>
+    </message>
+    <message>
+        <source>Add a watermark</source>
+        <translation>워터마크 추가</translation>
     </message>
     <message>
         <source>Text / EXIF Tag</source>

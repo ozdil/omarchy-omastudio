@@ -320,38 +320,6 @@
 <context>
     <name>ColorSpaceSelector</name>
     <message>
-        <source>Standard SDR web gamut</source>
-        <translation>Standart SDR web gamı</translation>
-    </message>
-    <message>
-        <source>100% sRGB</source>
-        <translation>%100 sRGB</translation>
-    </message>
-    <message>
-        <source>Wide gamut, Apple Retina displays</source>
-        <translation>Geniş gam, Apple Retina ekranlar</translation>
-    </message>
-    <message>
-        <source>125% sRGB</source>
-        <translation>%125 sRGB</translation>
-    </message>
-    <message>
-        <source>Ultra-wide gamut HDR master</source>
-        <translation>Çok geniş gam, HDR master</translation>
-    </message>
-    <message>
-        <source>150% sRGB</source>
-        <translation>%150 sRGB</translation>
-    </message>
-    <message>
-        <source>Academy linear working space</source>
-        <translation>Academy doğrusal çalışma alanı</translation>
-    </message>
-    <message>
-        <source>Wide AP1</source>
-        <translation>Geniş AP1</translation>
-    </message>
-    <message>
         <source>Colour management</source>
         <translation>Renk yönetimi</translation>
     </message>
@@ -360,16 +328,20 @@
         <translation>Gam sıkıştırma</translation>
     </message>
     <message>
-        <source>%1 (%2)</source>
-        <translation>%1 (%2)</translation>
+        <source>Brings colours pushed outside the gamut back in smoothly instead of clipping them.</source>
+        <translation>Gamut dışına çıkan renkleri kırpmak yerine yumuşakça geri getirir.</translation>
     </message>
     <message>
-        <source>ACES 1.3 RRT/ODT Tonemapper</source>
-        <translation>ACES 1.3 RRT/ODT ton eşleyici</translation>
+        <source>ACES tone curve</source>
+        <translation>ACES ton eğrisi</translation>
     </message>
     <message>
-        <source>Filmic shoulder roll-off &amp; dynamic range mapping</source>
-        <translation>Filmik omuz yumuşatma ve dinamik aralık eşleme</translation>
+        <source>Filmic highlight roll-off, a fitted approximation of the ACES output transform.</source>
+        <translation>Parlak tonlarda yumuşak geçiş; ACES çıkış dönüşümünün yaklaşık bir karşılığı.</translation>
+    </message>
+    <message>
+        <source>The output colour space is set in the Export window.</source>
+        <translation>Çıkış renk uzayı Dışa aktar penceresinde seçilir.</translation>
     </message>
 </context>
 <context>
@@ -393,36 +365,60 @@
         <translation>Algısal</translation>
     </message>
     <message>
-        <source>8-bit · universal</source>
-        <translation>8 bit · evrensel</translation>
+        <source>Export folder</source>
+        <translation>Dışa aktarma klasörü</translation>
     </message>
     <message>
-        <source>16-bit · lossless</source>
-        <translation>16 bit · kayıpsız</translation>
+        <source>8-bit</source>
+        <translation>8 bit</translation>
     </message>
     <message>
-        <source>16-bit · print, archive</source>
-        <translation>16 bit · baskı, arşiv</translation>
+        <source>Opens everywhere</source>
+        <translation>Her yerde açılır</translation>
     </message>
     <message>
-        <source>8-bit · web</source>
-        <translation>8 bit · web</translation>
+        <source>16-bit</source>
+        <translation>16 bit</translation>
     </message>
     <message>
-        <source>12-bit · HDR-ready</source>
-        <translation>12 bit · HDR&apos;ye hazır</translation>
+        <source>Lossless</source>
+        <translation>Kayıpsız</translation>
     </message>
     <message>
-        <source>10-bit · HEVC</source>
-        <translation>10 bit · HEVC</translation>
+        <source>For print and archive</source>
+        <translation>Baskı ve arşiv için</translation>
     </message>
     <message>
-        <source>16-bit · modern</source>
-        <translation>16 bit · modern</translation>
+        <source>Small files for the web</source>
+        <translation>Web için küçük dosyalar</translation>
     </message>
     <message>
-        <source>Float · scene-linear</source>
-        <translation>Kayan nokta · sahne doğrusal</translation>
+        <source>12-bit</source>
+        <translation>12 bit</translation>
+    </message>
+    <message>
+        <source>Small files with high bit depth</source>
+        <translation>Yüksek bit derinliğinde küçük dosyalar</translation>
+    </message>
+    <message>
+        <source>10-bit</source>
+        <translation>10 bit</translation>
+    </message>
+    <message>
+        <source>HEVC, as used by phones</source>
+        <translation>HEVC, telefonlardaki gibi</translation>
+    </message>
+    <message>
+        <source>Small files, lossless at quality 100</source>
+        <translation>Küçük dosyalar, 100 kalitede kayıpsız</translation>
+    </message>
+    <message>
+        <source>Float</source>
+        <translation>Kayan nokta</translation>
+    </message>
+    <message>
+        <source>Scene-linear, for compositing and grading</source>
+        <translation>Sahne doğrusal, birleştirme ve renk düzenleme için</translation>
     </message>
     <message numerus="yes">
         <source>Export %n photos</source>
@@ -507,8 +503,8 @@
         <translation>Web, ekranlar</translation>
     </message>
     <message>
-        <source>Wide-gamut screens</source>
-        <translation>Geniş gamlı ekranlar</translation>
+        <source>Modern screens</source>
+        <translation>Modern ekranlar</translation>
     </message>
     <message>
         <source>Print</source>
@@ -579,8 +575,8 @@
         <translation>Hazırla:</translation>
     </message>
     <message>
-        <source>Sets the crop and output sharpening for a platform. Reset restores your own.</source>
-        <translation>Kırpmayı ve çıktı keskinleştirmesini bir platforma göre ayarlar. Sıfırla kendi ayarlarınızı geri getirir.</translation>
+        <source>Sets the crop and output sharpening for a platform. Click it again to go back to your own.</source>
+        <translation>Bir platform için kırpma ve çıkış keskinleştirmesini ayarlar. Kendi ayarlarına dönmek için yeniden tıkla.</translation>
     </message>
     <message>
         <source>Watermark</source>
@@ -589,6 +585,18 @@
     <message>
         <source>Folder</source>
         <translation>Klasör</translation>
+    </message>
+    <message>
+        <source>Choose…</source>
+        <translation>Seç…</translation>
+    </message>
+    <message>
+        <source>File name</source>
+        <translation>Dosya adı</translation>
+    </message>
+    <message>
+        <source>Saved as %1</source>
+        <translation>%1 olarak kaydedilecek</translation>
     </message>
     <message>
         <source>Hide</source>
@@ -806,10 +814,6 @@
     <message>
         <source>No photos found in this directory.</source>
         <translation>Bu klasörde fotoğraf bulunamadı.</translation>
-    </message>
-    <message>
-        <source>Folder</source>
-        <translation>Klasör</translation>
     </message>
     <message>
         <source>Downloading</source>
@@ -1305,14 +1309,6 @@
         <translation>%1 yazıldı</translation>
     </message>
     <message>
-        <source>Open RAW Photo</source>
-        <translation>RAW fotoğraf aç</translation>
-    </message>
-    <message>
-        <source>RAW Photos</source>
-        <translation>RAW fotoğraflar</translation>
-    </message>
-    <message>
         <source>Export finished without a result</source>
         <translation>Dışa aktarma sonuçsuz bitti</translation>
     </message>
@@ -1343,14 +1339,6 @@
     <message>
         <source>Contrast</source>
         <translation>Kontrast</translation>
-    </message>
-    <message>
-        <source>Temp (Kelvin)</source>
-        <translation>Sıcaklık (Kelvin)</translation>
-    </message>
-    <message>
-        <source>Tint (Green / Magenta)</source>
-        <translation>Ton (yeşil / macenta)</translation>
     </message>
     <message>
         <source>Exposure</source>
@@ -1391,6 +1379,10 @@
     <message>
         <source>Texture</source>
         <translation>Doku</translation>
+    </message>
+    <message>
+        <source>Suggested scene</source>
+        <translation>Önerilen sahne</translation>
     </message>
     <message>
         <source>Clarity (Midtone Contrast)</source>
@@ -1493,6 +1485,22 @@
         <translation>Otomatik: fotoğraf inceleniyor…</translation>
     </message>
     <message>
+        <source>Open photo</source>
+        <translation>Fotoğraf aç</translation>
+    </message>
+    <message>
+        <source>Photos</source>
+        <translation>Fotoğraflar</translation>
+    </message>
+    <message>
+        <source>RAW</source>
+        <translation>RAW</translation>
+    </message>
+    <message>
+        <source>Images</source>
+        <translation>Görüntüler</translation>
+    </message>
+    <message>
         <source>Saved to %1</source>
         <translation>Kaydedildi: %1</translation>
     </message>
@@ -1545,10 +1553,6 @@
         <translation>Reddedildi</translation>
     </message>
     <message>
-        <source>Scene</source>
-        <translation>Sahne</translation>
-    </message>
-    <message>
         <source>Adjust</source>
         <translation>Ayarla</translation>
     </message>
@@ -1565,6 +1569,14 @@
         <translation>Yapay zekâ</translation>
     </message>
     <message>
+        <source>Read the photo&apos;s .xmp sidecar written by another editor</source>
+        <translation>Başka bir düzenleyicinin yazdığı .xmp dosyasını oku</translation>
+    </message>
+    <message>
+        <source>Write the edit, rating and label to an .xmp sidecar for other editors</source>
+        <translation>Düzenlemeyi, puanı ve etiketi diğer düzenleyiciler için bir .xmp dosyasına yaz</translation>
+    </message>
+    <message>
         <source>Profile</source>
         <translation>Profil</translation>
     </message>
@@ -1579,6 +1591,14 @@
     <message>
         <source>White balance</source>
         <translation>Beyaz dengesi</translation>
+    </message>
+    <message>
+        <source>Temperature</source>
+        <translation>Sıcaklık</translation>
+    </message>
+    <message>
+        <source>Tint</source>
+        <translation>Ton</translation>
     </message>
     <message>
         <source>Tone</source>
@@ -1649,16 +1669,8 @@
         <translation>XMP içe aktar</translation>
     </message>
     <message>
-        <source>Read DSCF0001.xmp from Lightroom, Capture One or darktable</source>
-        <translation>Lightroom, Capture One veya darktable&apos;dan DSCF0001.xmp dosyasını oku</translation>
-    </message>
-    <message>
         <source>Write XMP</source>
         <translation>XMP yaz</translation>
-    </message>
-    <message>
-        <source>Write the edit, rating and label to DSCF0001.xmp for other editors</source>
-        <translation>Düzenlemeyi, puanı ve etiketi diğer düzenleyiciler için DSCF0001.xmp dosyasına yaz</translation>
     </message>
     <message>
         <source>Opening %1</source>
@@ -1688,10 +1700,6 @@
     <message>
         <source>Navigator</source>
         <translation>Gezgin</translation>
-    </message>
-    <message>
-        <source>FIT</source>
-        <translation>SIĞDIR</translation>
     </message>
 </context>
 <context>
@@ -1851,9 +1859,17 @@
         <translation>[G] %%1</translation>
     </message>
     <message>
+        <source>Clipped shadows. Click to show them on the photo.</source>
+        <translation>Kırpılan gölgeler. Fotoğrafta göstermek için tıkla.</translation>
+    </message>
+    <message>
         <source>[H] %1%</source>
         <comment>H: highlight clipping</comment>
         <translation>[V] %%1</translation>
+    </message>
+    <message>
+        <source>Clipped highlights. Click to show them on the photo.</source>
+        <translation>Kırpılan parlak alanlar. Fotoğrafta göstermek için tıkla.</translation>
     </message>
     <message>
         <source>No photo</source>
@@ -1952,9 +1968,26 @@
 <context>
     <name>TopBar</name>
     <message>
-        <source>P</source>
-        <comment>pick flag, first letter of Pick</comment>
-        <translation>S</translation>
+        <source>Pick (P)</source>
+        <translation>Seç (P)</translation>
+    </message>
+    <message>
+        <source>Pick</source>
+        <translation>Seçildi</translation>
+    </message>
+    <message>
+        <source>Reject (X)</source>
+        <translation>Reddet (X)</translation>
+    </message>
+    <message>
+        <source>Reject</source>
+        <translation>Reddet</translation>
+    </message>
+    <message numerus="yes">
+        <source>%n star(s)</source>
+        <translation>
+            <numerusform>%n yıldız</numerusform>
+        </translation>
     </message>
     <message>
         <source>Connecting…</source>
@@ -2005,10 +2038,6 @@
         <translation>Kırp</translation>
     </message>
     <message>
-        <source>Fit</source>
-        <translation>Sığdır</translation>
-    </message>
-    <message>
         <source>Open RAW</source>
         <translation>RAW aç</translation>
     </message>
@@ -2024,8 +2053,36 @@
         <translation>0°&apos;ye sıfırla</translation>
     </message>
     <message>
+        <source>Rotate left</source>
+        <translation>Sola döndür</translation>
+    </message>
+    <message>
+        <source>Rotate right</source>
+        <translation>Sağa döndür</translation>
+    </message>
+    <message>
         <source>Fit</source>
         <translation>Sığdır</translation>
+    </message>
+    <message>
+        <source>Surround: %1</source>
+        <translation>Çevre: %1</translation>
+    </message>
+    <message>
+        <source>middle grey</source>
+        <translation>orta gri</translation>
+    </message>
+    <message>
+        <source>theme colour</source>
+        <translation>tema rengi</translation>
+    </message>
+    <message>
+        <source>dark grey</source>
+        <translation>koyu gri</translation>
+    </message>
+    <message>
+        <source>Surround colour</source>
+        <translation>Çevre rengi</translation>
     </message>
     <message>
         <source>Crop</source>
@@ -2093,6 +2150,10 @@
     <message>
         <source>Watermark</source>
         <translation>Filigran</translation>
+    </message>
+    <message>
+        <source>Add a watermark</source>
+        <translation>Filigran ekle</translation>
     </message>
     <message>
         <source>Text / EXIF Tag</source>

@@ -320,38 +320,6 @@
 <context>
     <name>ColorSpaceSelector</name>
     <message>
-        <source>Standard SDR web gamut</source>
-        <translation>Tavallinen SDR-väriavaruus verkkoon</translation>
-    </message>
-    <message>
-        <source>100% sRGB</source>
-        <translation>100 % sRGB</translation>
-    </message>
-    <message>
-        <source>Wide gamut, Apple Retina displays</source>
-        <translation>Laaja väriavaruus, Apple Retina -näytöt</translation>
-    </message>
-    <message>
-        <source>125% sRGB</source>
-        <translation>125 % sRGB</translation>
-    </message>
-    <message>
-        <source>Ultra-wide gamut HDR master</source>
-        <translation>Erittäin laajan väriavaruuden HDR-master</translation>
-    </message>
-    <message>
-        <source>150% sRGB</source>
-        <translation>150 % sRGB</translation>
-    </message>
-    <message>
-        <source>Academy linear working space</source>
-        <translation>Akatemian lineaarinen työtila</translation>
-    </message>
-    <message>
-        <source>Wide AP1</source>
-        <translation>Laaja AP1</translation>
-    </message>
-    <message>
         <source>Colour management</source>
         <translation>Värinhallinta</translation>
     </message>
@@ -360,16 +328,20 @@
         <translation>Värialueen pakkaus</translation>
     </message>
     <message>
-        <source>%1 (%2)</source>
-        <translation>%1 (%2)</translation>
+        <source>Brings colours pushed outside the gamut back in smoothly instead of clipping them.</source>
+        <translation>Palauttaa väriavaruuden ulkopuolelle joutuneet värit pehmeästi leikkaamatta niitä.</translation>
     </message>
     <message>
-        <source>ACES 1.3 RRT/ODT Tonemapper</source>
-        <translation>ACES 1.3 RRT/ODT -sävykartoitus</translation>
+        <source>ACES tone curve</source>
+        <translation>ACES-sävykäyrä</translation>
     </message>
     <message>
-        <source>Filmic shoulder roll-off &amp; dynamic range mapping</source>
-        <translation>Pehmeä filmimäinen olka ja dynamiikka-alueen kartoitus</translation>
+        <source>Filmic highlight roll-off, a fitted approximation of the ACES output transform.</source>
+        <translation>Pehmeä kirkkaiden sävyjen pyöristys, ACES-tulostemuunnoksen likiarvo.</translation>
+    </message>
+    <message>
+        <source>The output colour space is set in the Export window.</source>
+        <translation>Tulosteen väriavaruus valitaan vientiikkunassa.</translation>
     </message>
 </context>
 <context>
@@ -393,36 +365,60 @@
         <translation>Havainnollinen</translation>
     </message>
     <message>
-        <source>8-bit · universal</source>
-        <translation>8-bittinen · yleinen</translation>
+        <source>Export folder</source>
+        <translation>Vientikansio</translation>
     </message>
     <message>
-        <source>16-bit · lossless</source>
-        <translation>16-bittinen · häviötön</translation>
+        <source>8-bit</source>
+        <translation>8-bittinen</translation>
     </message>
     <message>
-        <source>16-bit · print, archive</source>
-        <translation>16-bittinen · tulostus, arkisto</translation>
+        <source>Opens everywhere</source>
+        <translation>Aukeaa kaikkialla</translation>
     </message>
     <message>
-        <source>8-bit · web</source>
-        <translation>8-bittinen · verkko</translation>
+        <source>16-bit</source>
+        <translation>16-bittinen</translation>
     </message>
     <message>
-        <source>12-bit · HDR-ready</source>
-        <translation>12-bittinen · HDR-valmis</translation>
+        <source>Lossless</source>
+        <translation>Häviötön</translation>
     </message>
     <message>
-        <source>10-bit · HEVC</source>
-        <translation>10-bittinen · HEVC</translation>
+        <source>For print and archive</source>
+        <translation>Tulostukseen ja arkistointiin</translation>
     </message>
     <message>
-        <source>16-bit · modern</source>
-        <translation>16-bittinen · moderni</translation>
+        <source>Small files for the web</source>
+        <translation>Pienet tiedostot verkkoon</translation>
     </message>
     <message>
-        <source>Float · scene-linear</source>
-        <translation>Liukuluku · näkymälineaarinen</translation>
+        <source>12-bit</source>
+        <translation>12-bittinen</translation>
+    </message>
+    <message>
+        <source>Small files with high bit depth</source>
+        <translation>Pienet tiedostot suurella bittisyvyydellä</translation>
+    </message>
+    <message>
+        <source>10-bit</source>
+        <translation>10-bittinen</translation>
+    </message>
+    <message>
+        <source>HEVC, as used by phones</source>
+        <translation>HEVC, kuten puhelimissa</translation>
+    </message>
+    <message>
+        <source>Small files, lossless at quality 100</source>
+        <translation>Pienet tiedostot, häviötön laadulla 100</translation>
+    </message>
+    <message>
+        <source>Float</source>
+        <translation>Liukuluku</translation>
+    </message>
+    <message>
+        <source>Scene-linear, for compositing and grading</source>
+        <translation>Näkymälineaarinen, kompositointiin ja värimäärittelyyn</translation>
     </message>
     <message numerus="yes">
         <source>Export %n photos</source>
@@ -508,8 +504,8 @@
         <translation>Verkko, näytöt</translation>
     </message>
     <message>
-        <source>Wide-gamut screens</source>
-        <translation>Laajan värialueen näytöt</translation>
+        <source>Modern screens</source>
+        <translation>Nykyaikaiset näytöt</translation>
     </message>
     <message>
         <source>Print</source>
@@ -580,8 +576,8 @@
         <translation>Valmistele kohteelle</translation>
     </message>
     <message>
-        <source>Sets the crop and output sharpening for a platform. Reset restores your own.</source>
-        <translation>Asettaa rajauksen ja tulosteen terävöinnin alustalle. Palauta tuo omat asetuksesi takaisin.</translation>
+        <source>Sets the crop and output sharpening for a platform. Click it again to go back to your own.</source>
+        <translation>Asettaa rajauksen ja tulosteen terävöinnin alustalle. Napsauta uudelleen palataksesi omiin asetuksiisi.</translation>
     </message>
     <message>
         <source>Watermark</source>
@@ -590,6 +586,18 @@
     <message>
         <source>Folder</source>
         <translation>Kansio</translation>
+    </message>
+    <message>
+        <source>Choose…</source>
+        <translation>Valitse…</translation>
+    </message>
+    <message>
+        <source>File name</source>
+        <translation>Tiedostonimi</translation>
+    </message>
+    <message>
+        <source>Saved as %1</source>
+        <translation>Tallennettu nimellä %1</translation>
     </message>
     <message>
         <source>Hide</source>
@@ -807,10 +815,6 @@
     <message>
         <source>No photos found in this directory.</source>
         <translation>Tästä kansiosta ei löytynyt kuvia.</translation>
-    </message>
-    <message>
-        <source>Folder</source>
-        <translation>Kansio</translation>
     </message>
     <message>
         <source>Downloading</source>
@@ -1309,14 +1313,6 @@
         <translation>Kirjoitettu %1</translation>
     </message>
     <message>
-        <source>Open RAW Photo</source>
-        <translation>Avaa RAW-kuva</translation>
-    </message>
-    <message>
-        <source>RAW Photos</source>
-        <translation>RAW-kuvat</translation>
-    </message>
-    <message>
         <source>Export finished without a result</source>
         <translation>Vienti päättyi ilman tulosta</translation>
     </message>
@@ -1347,14 +1343,6 @@
     <message>
         <source>Contrast</source>
         <translation>Kontrasti</translation>
-    </message>
-    <message>
-        <source>Temp (Kelvin)</source>
-        <translation>Lämpötila (kelvin)</translation>
-    </message>
-    <message>
-        <source>Tint (Green / Magenta)</source>
-        <translation>Sävy (vihreä / magenta)</translation>
     </message>
     <message>
         <source>Exposure</source>
@@ -1395,6 +1383,10 @@
     <message>
         <source>Texture</source>
         <translation>Rakenne</translation>
+    </message>
+    <message>
+        <source>Suggested scene</source>
+        <translation>Ehdotettu näkymä</translation>
     </message>
     <message>
         <source>Clarity (Midtone Contrast)</source>
@@ -1497,6 +1489,22 @@
         <translation>Automaattinen: kuvaa analysoidaan…</translation>
     </message>
     <message>
+        <source>Open photo</source>
+        <translation>Avaa kuva</translation>
+    </message>
+    <message>
+        <source>Photos</source>
+        <translation>Valokuvat</translation>
+    </message>
+    <message>
+        <source>RAW</source>
+        <translation>RAW</translation>
+    </message>
+    <message>
+        <source>Images</source>
+        <translation>Kuvat</translation>
+    </message>
+    <message>
         <source>Saved to %1</source>
         <translation>Tallennettu: %1</translation>
     </message>
@@ -1549,10 +1557,6 @@
         <translation>Hylätty</translation>
     </message>
     <message>
-        <source>Scene</source>
-        <translation>Näkymä</translation>
-    </message>
-    <message>
         <source>Adjust</source>
         <translation>Säädä</translation>
     </message>
@@ -1569,6 +1573,14 @@
         <translation>Tekoäly</translation>
     </message>
     <message>
+        <source>Read the photo&apos;s .xmp sidecar written by another editor</source>
+        <translation>Lue toisen editorin kirjoittama .xmp-tiedosto</translation>
+    </message>
+    <message>
+        <source>Write the edit, rating and label to an .xmp sidecar for other editors</source>
+        <translation>Kirjoita muokkaus, arvio ja merkintä .xmp-tiedostoon muita editoreja varten</translation>
+    </message>
+    <message>
         <source>Profile</source>
         <translation>Profiili</translation>
     </message>
@@ -1583,6 +1595,14 @@
     <message>
         <source>White balance</source>
         <translation>Valkotasapaino</translation>
+    </message>
+    <message>
+        <source>Temperature</source>
+        <translation>Lämpötila</translation>
+    </message>
+    <message>
+        <source>Tint</source>
+        <translation>Sävy</translation>
     </message>
     <message>
         <source>Tone</source>
@@ -1653,16 +1673,8 @@
         <translation>Tuo XMP</translation>
     </message>
     <message>
-        <source>Read DSCF0001.xmp from Lightroom, Capture One or darktable</source>
-        <translation>Lue DSCF0001.xmp Lightroomista, Capture Onesta tai darktablesta</translation>
-    </message>
-    <message>
         <source>Write XMP</source>
         <translation>Kirjoita XMP</translation>
-    </message>
-    <message>
-        <source>Write the edit, rating and label to DSCF0001.xmp for other editors</source>
-        <translation>Kirjoita muokkaus, arvio ja nimike tiedostoon DSCF0001.xmp muita ohjelmia varten</translation>
     </message>
     <message>
         <source>Opening %1</source>
@@ -1693,10 +1705,6 @@
     <message>
         <source>Navigator</source>
         <translation>Navigaattori</translation>
-    </message>
-    <message>
-        <source>FIT</source>
-        <translation>SOVITA</translation>
     </message>
 </context>
 <context>
@@ -1856,9 +1864,17 @@
         <translation>[V] %1%</translation>
     </message>
     <message>
+        <source>Clipped shadows. Click to show them on the photo.</source>
+        <translation>Leikkautuneet varjot. Napsauta näyttääksesi ne kuvassa.</translation>
+    </message>
+    <message>
         <source>[H] %1%</source>
         <comment>H: highlight clipping</comment>
         <translation>[K] %1%</translation>
+    </message>
+    <message>
+        <source>Clipped highlights. Click to show them on the photo.</source>
+        <translation>Leikkautuneet huippuvalot. Napsauta näyttääksesi ne kuvassa.</translation>
     </message>
     <message>
         <source>No photo</source>
@@ -1957,9 +1973,27 @@
 <context>
     <name>TopBar</name>
     <message>
-        <source>P</source>
-        <comment>pick flag, first letter of Pick</comment>
-        <translation>V</translation>
+        <source>Pick (P)</source>
+        <translation>Valitse (P)</translation>
+    </message>
+    <message>
+        <source>Pick</source>
+        <translation>Valittu</translation>
+    </message>
+    <message>
+        <source>Reject (X)</source>
+        <translation>Hylkää (X)</translation>
+    </message>
+    <message>
+        <source>Reject</source>
+        <translation>Hylkää</translation>
+    </message>
+    <message numerus="yes">
+        <source>%n star(s)</source>
+        <translation>
+            <numerusform>%n tähti</numerusform>
+            <numerusform>%n tähteä</numerusform>
+        </translation>
     </message>
     <message>
         <source>Connecting…</source>
@@ -2010,10 +2044,6 @@
         <translation>Rajaa</translation>
     </message>
     <message>
-        <source>Fit</source>
-        <translation>Sovita</translation>
-    </message>
-    <message>
         <source>Open RAW</source>
         <translation>Avaa RAW</translation>
     </message>
@@ -2029,8 +2059,36 @@
         <translation>Palauta 0°:een</translation>
     </message>
     <message>
+        <source>Rotate left</source>
+        <translation>Kierrä vasemmalle</translation>
+    </message>
+    <message>
+        <source>Rotate right</source>
+        <translation>Kierrä oikealle</translation>
+    </message>
+    <message>
         <source>Fit</source>
         <translation>Sovita</translation>
+    </message>
+    <message>
+        <source>Surround: %1</source>
+        <translation>Ympäristö: %1</translation>
+    </message>
+    <message>
+        <source>middle grey</source>
+        <translation>keskiharmaa</translation>
+    </message>
+    <message>
+        <source>theme colour</source>
+        <translation>teeman väri</translation>
+    </message>
+    <message>
+        <source>dark grey</source>
+        <translation>tummanharmaa</translation>
+    </message>
+    <message>
+        <source>Surround colour</source>
+        <translation>Ympäristön väri</translation>
     </message>
     <message>
         <source>Crop</source>
@@ -2098,6 +2156,10 @@
     <message>
         <source>Watermark</source>
         <translation>Vesileima</translation>
+    </message>
+    <message>
+        <source>Add a watermark</source>
+        <translation>Lisää vesileima</translation>
     </message>
     <message>
         <source>Text / EXIF Tag</source>

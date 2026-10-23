@@ -67,6 +67,16 @@ Rectangle {
                 elide: Text.ElideRight
             }
 
+            Text {
+                visible: root.embedded
+                text: qsTr("Add a watermark")
+                textFormat: Text.PlainText
+                font.family: Theme.fontFamily
+                font.pixelSize: Theme.px(11)
+                color: Theme.textMain
+                Layout.fillWidth: true
+            }
+
             CustomSwitch {
                 checked: root.watermarkEnabled
                 activeColor: Theme.accent

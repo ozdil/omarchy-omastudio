@@ -320,38 +320,6 @@
 <context>
     <name>ColorSpaceSelector</name>
     <message>
-        <source>Standard SDR web gamut</source>
-        <translation>标准 SDR 网页色域</translation>
-    </message>
-    <message>
-        <source>100% sRGB</source>
-        <translation>100% sRGB</translation>
-    </message>
-    <message>
-        <source>Wide gamut, Apple Retina displays</source>
-        <translation>广色域，Apple Retina 显示屏</translation>
-    </message>
-    <message>
-        <source>125% sRGB</source>
-        <translation>125% sRGB</translation>
-    </message>
-    <message>
-        <source>Ultra-wide gamut HDR master</source>
-        <translation>超广色域 HDR 母版</translation>
-    </message>
-    <message>
-        <source>150% sRGB</source>
-        <translation>150% sRGB</translation>
-    </message>
-    <message>
-        <source>Academy linear working space</source>
-        <translation>学院线性工作空间</translation>
-    </message>
-    <message>
-        <source>Wide AP1</source>
-        <translation>宽色域 AP1</translation>
-    </message>
-    <message>
         <source>Colour management</source>
         <translation>色彩管理</translation>
     </message>
@@ -360,16 +328,20 @@
         <translation>色域压缩</translation>
     </message>
     <message>
-        <source>%1 (%2)</source>
-        <translation>%1 (%2)</translation>
+        <source>Brings colours pushed outside the gamut back in smoothly instead of clipping them.</source>
+        <translation>将超出色域的颜色平滑地拉回，而不是直接裁切。</translation>
     </message>
     <message>
-        <source>ACES 1.3 RRT/ODT Tonemapper</source>
-        <translation>ACES 1.3 RRT/ODT 色调映射</translation>
+        <source>ACES tone curve</source>
+        <translation>ACES 色调曲线</translation>
     </message>
     <message>
-        <source>Filmic shoulder roll-off &amp; dynamic range mapping</source>
-        <translation>柔和的胶片肩部与动态范围映射</translation>
+        <source>Filmic highlight roll-off, a fitted approximation of the ACES output transform.</source>
+        <translation>高光柔和过渡，是 ACES 输出变换的近似。</translation>
+    </message>
+    <message>
+        <source>The output colour space is set in the Export window.</source>
+        <translation>输出色彩空间在导出窗口中设置。</translation>
     </message>
 </context>
 <context>
@@ -393,36 +365,60 @@
         <translation>可感知</translation>
     </message>
     <message>
-        <source>8-bit · universal</source>
-        <translation>8 位 · 通用</translation>
+        <source>Export folder</source>
+        <translation>导出文件夹</translation>
     </message>
     <message>
-        <source>16-bit · lossless</source>
-        <translation>16 位 · 无损</translation>
+        <source>8-bit</source>
+        <translation>8 位</translation>
     </message>
     <message>
-        <source>16-bit · print, archive</source>
-        <translation>16 位 · 打印、存档</translation>
+        <source>Opens everywhere</source>
+        <translation>随处可打开</translation>
     </message>
     <message>
-        <source>8-bit · web</source>
-        <translation>8 位 · 网页</translation>
+        <source>16-bit</source>
+        <translation>16 位</translation>
     </message>
     <message>
-        <source>12-bit · HDR-ready</source>
-        <translation>12 位 · 支持 HDR</translation>
+        <source>Lossless</source>
+        <translation>无损</translation>
     </message>
     <message>
-        <source>10-bit · HEVC</source>
-        <translation>10 位 · HEVC</translation>
+        <source>For print and archive</source>
+        <translation>适合打印和存档</translation>
     </message>
     <message>
-        <source>16-bit · modern</source>
-        <translation>16 位 · 现代</translation>
+        <source>Small files for the web</source>
+        <translation>适合网页的小文件</translation>
     </message>
     <message>
-        <source>Float · scene-linear</source>
-        <translation>浮点 · 场景线性</translation>
+        <source>12-bit</source>
+        <translation>12 位</translation>
+    </message>
+    <message>
+        <source>Small files with high bit depth</source>
+        <translation>高位深的小文件</translation>
+    </message>
+    <message>
+        <source>10-bit</source>
+        <translation>10 位</translation>
+    </message>
+    <message>
+        <source>HEVC, as used by phones</source>
+        <translation>HEVC,手机常用格式</translation>
+    </message>
+    <message>
+        <source>Small files, lossless at quality 100</source>
+        <translation>小文件,质量 100 时无损</translation>
+    </message>
+    <message>
+        <source>Float</source>
+        <translation>浮点</translation>
+    </message>
+    <message>
+        <source>Scene-linear, for compositing and grading</source>
+        <translation>场景线性,适合合成与调色</translation>
     </message>
     <message numerus="yes">
         <source>Export %n photos</source>
@@ -507,8 +503,8 @@
         <translation>网页、屏幕</translation>
     </message>
     <message>
-        <source>Wide-gamut screens</source>
-        <translation>广色域屏幕</translation>
+        <source>Modern screens</source>
+        <translation>现代屏幕</translation>
     </message>
     <message>
         <source>Print</source>
@@ -579,8 +575,8 @@
         <translation>准备用于</translation>
     </message>
     <message>
-        <source>Sets the crop and output sharpening for a platform. Reset restores your own.</source>
-        <translation>为平台设置裁剪和输出锐化。重置会恢复您自己的设置。</translation>
+        <source>Sets the crop and output sharpening for a platform. Click it again to go back to your own.</source>
+        <translation>为某个平台设置裁剪和输出锐化。再次点击可恢复你自己的设置。</translation>
     </message>
     <message>
         <source>Watermark</source>
@@ -589,6 +585,18 @@
     <message>
         <source>Folder</source>
         <translation>文件夹</translation>
+    </message>
+    <message>
+        <source>Choose…</source>
+        <translation>选择…</translation>
+    </message>
+    <message>
+        <source>File name</source>
+        <translation>文件名</translation>
+    </message>
+    <message>
+        <source>Saved as %1</source>
+        <translation>将保存为 %1</translation>
     </message>
     <message>
         <source>Hide</source>
@@ -806,10 +814,6 @@
     <message>
         <source>No photos found in this directory.</source>
         <translation>此文件夹中没有照片。</translation>
-    </message>
-    <message>
-        <source>Folder</source>
-        <translation>文件夹</translation>
     </message>
     <message>
         <source>Downloading</source>
@@ -1305,14 +1309,6 @@
         <translation>已写入 %1</translation>
     </message>
     <message>
-        <source>Open RAW Photo</source>
-        <translation>打开 RAW 照片</translation>
-    </message>
-    <message>
-        <source>RAW Photos</source>
-        <translation>RAW 照片</translation>
-    </message>
-    <message>
         <source>Export finished without a result</source>
         <translation>导出结束但没有结果</translation>
     </message>
@@ -1343,14 +1339,6 @@
     <message>
         <source>Contrast</source>
         <translation>对比度</translation>
-    </message>
-    <message>
-        <source>Temp (Kelvin)</source>
-        <translation>色温（开尔文）</translation>
-    </message>
-    <message>
-        <source>Tint (Green / Magenta)</source>
-        <translation>色调（绿 / 洋红）</translation>
     </message>
     <message>
         <source>Exposure</source>
@@ -1391,6 +1379,10 @@
     <message>
         <source>Texture</source>
         <translation>纹理</translation>
+    </message>
+    <message>
+        <source>Suggested scene</source>
+        <translation>推测场景</translation>
     </message>
     <message>
         <source>Clarity (Midtone Contrast)</source>
@@ -1493,6 +1485,22 @@
         <translation>自动：正在分析照片…</translation>
     </message>
     <message>
+        <source>Open photo</source>
+        <translation>打开照片</translation>
+    </message>
+    <message>
+        <source>Photos</source>
+        <translation>照片</translation>
+    </message>
+    <message>
+        <source>RAW</source>
+        <translation>RAW</translation>
+    </message>
+    <message>
+        <source>Images</source>
+        <translation>图像</translation>
+    </message>
+    <message>
         <source>Saved to %1</source>
         <translation>已保存到 %1</translation>
     </message>
@@ -1545,10 +1553,6 @@
         <translation>已排除</translation>
     </message>
     <message>
-        <source>Scene</source>
-        <translation>场景</translation>
-    </message>
-    <message>
         <source>Adjust</source>
         <translation>调整</translation>
     </message>
@@ -1565,6 +1569,14 @@
         <translation>AI 功能</translation>
     </message>
     <message>
+        <source>Read the photo&apos;s .xmp sidecar written by another editor</source>
+        <translation>读取其他编辑器写入的 .xmp 文件</translation>
+    </message>
+    <message>
+        <source>Write the edit, rating and label to an .xmp sidecar for other editors</source>
+        <translation>将编辑、评级和标签写入 .xmp 文件供其他编辑器使用</translation>
+    </message>
+    <message>
         <source>Profile</source>
         <translation>配置文件</translation>
     </message>
@@ -1579,6 +1591,14 @@
     <message>
         <source>White balance</source>
         <translation>白平衡</translation>
+    </message>
+    <message>
+        <source>Temperature</source>
+        <translation>色温</translation>
+    </message>
+    <message>
+        <source>Tint</source>
+        <translation>色调</translation>
     </message>
     <message>
         <source>Tone</source>
@@ -1649,16 +1669,8 @@
         <translation>导入 XMP</translation>
     </message>
     <message>
-        <source>Read DSCF0001.xmp from Lightroom, Capture One or darktable</source>
-        <translation>从 Lightroom、Capture One 或 darktable 读取 DSCF0001.xmp</translation>
-    </message>
-    <message>
         <source>Write XMP</source>
         <translation>写入 XMP</translation>
-    </message>
-    <message>
-        <source>Write the edit, rating and label to DSCF0001.xmp for other editors</source>
-        <translation>将编辑、评级和标签写入 DSCF0001.xmp，供其他编辑器使用</translation>
     </message>
     <message>
         <source>Opening %1</source>
@@ -1688,10 +1700,6 @@
     <message>
         <source>Navigator</source>
         <translation>导航器</translation>
-    </message>
-    <message>
-        <source>FIT</source>
-        <translation>适合</translation>
     </message>
 </context>
 <context>
@@ -1851,9 +1859,17 @@
         <translation>[暗] %1%</translation>
     </message>
     <message>
+        <source>Clipped shadows. Click to show them on the photo.</source>
+        <translation>暗部溢出。点击在照片上显示。</translation>
+    </message>
+    <message>
         <source>[H] %1%</source>
         <comment>H: highlight clipping</comment>
         <translation>[亮] %1%</translation>
+    </message>
+    <message>
+        <source>Clipped highlights. Click to show them on the photo.</source>
+        <translation>高光溢出。点击在照片上显示。</translation>
     </message>
     <message>
         <source>No photo</source>
@@ -1952,9 +1968,26 @@
 <context>
     <name>TopBar</name>
     <message>
-        <source>P</source>
-        <comment>pick flag, first letter of Pick</comment>
-        <translation>选</translation>
+        <source>Pick (P)</source>
+        <translation>选中 (P)</translation>
+    </message>
+    <message>
+        <source>Pick</source>
+        <translation>选中</translation>
+    </message>
+    <message>
+        <source>Reject (X)</source>
+        <translation>排除 (X)</translation>
+    </message>
+    <message>
+        <source>Reject</source>
+        <translation>排除</translation>
+    </message>
+    <message numerus="yes">
+        <source>%n star(s)</source>
+        <translation>
+            <numerusform>%n 星</numerusform>
+        </translation>
     </message>
     <message>
         <source>Connecting…</source>
@@ -2005,10 +2038,6 @@
         <translation>裁剪</translation>
     </message>
     <message>
-        <source>Fit</source>
-        <translation>适合</translation>
-    </message>
-    <message>
         <source>Open RAW</source>
         <translation>打开 RAW</translation>
     </message>
@@ -2024,8 +2053,36 @@
         <translation>重置为 0°</translation>
     </message>
     <message>
+        <source>Rotate left</source>
+        <translation>向左旋转</translation>
+    </message>
+    <message>
+        <source>Rotate right</source>
+        <translation>向右旋转</translation>
+    </message>
+    <message>
         <source>Fit</source>
         <translation>适合</translation>
+    </message>
+    <message>
+        <source>Surround: %1</source>
+        <translation>背景:%1</translation>
+    </message>
+    <message>
+        <source>middle grey</source>
+        <translation>中灰</translation>
+    </message>
+    <message>
+        <source>theme colour</source>
+        <translation>主题颜色</translation>
+    </message>
+    <message>
+        <source>dark grey</source>
+        <translation>深灰</translation>
+    </message>
+    <message>
+        <source>Surround colour</source>
+        <translation>背景颜色</translation>
     </message>
     <message>
         <source>Crop</source>
@@ -2093,6 +2150,10 @@
     <message>
         <source>Watermark</source>
         <translation>水印</translation>
+    </message>
+    <message>
+        <source>Add a watermark</source>
+        <translation>添加水印</translation>
     </message>
     <message>
         <source>Text / EXIF Tag</source>

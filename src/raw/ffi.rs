@@ -47,6 +47,9 @@ pub struct COmaRawCfaInfo {
 unsafe extern "C" {
     pub fn omaraw_open(path: *const c_char, errcode: *mut c_int) -> *mut c_void;
     pub fn omaraw_unpack_cfa(handle: *mut c_void, info: *mut COmaRawCfaInfo) -> *const u16;
+    pub fn omaraw_unpack_linear(handle: *mut c_void, info: *mut COmaRawCfaInfo, stride: *mut c_int) -> *const u16;
+    pub fn omaraw_camera_count() -> c_int;
+    pub fn omaraw_camera_name(index: c_int) -> *const c_char;
     pub fn omaraw_get_metadata(handle: *mut c_void, meta: *mut COmaRawMetadata) -> c_int;
     pub fn omaraw_extract_thumb_file(handle: *mut c_void, dest_path: *const c_char) -> c_int;
     pub fn omaraw_set_output_space(

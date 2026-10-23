@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
+import OmaStudio.Host
 
 // Export window: file format, bit depth, size, colour, metadata, and on the right
 // the platform crop presets and the watermark. `host` is the main window, which owns
@@ -17,6 +18,26 @@ Rectangle {
     readonly property int pad: Theme.px(18)
 
     property var host: null
+    // Added to the file name: photo_<tag>_omastudio.jpg
+    property string nameTag: ""
+    readonly property string exampleName: {
+        var stem = host && host.activePhotoPath ? host.activePhotoPath.split("/").pop().replace(/\.[^.]*$/, "") : "photo";
+        // Same rule as the engine: letters and digits, at most 24, lower case
+        var tag = nameTag.replace(/[^A-Za-z0-9]/g, "").slice(0, 24).toLowerCase();
+        var ext = selectedFormat === "jpeg" ? "jpg" : selectedFormat === "tiff" ? "tif" : selectedFormat;
+        var suffix = "_omastudio.";
+        var name = stem + (tag ? "_" + tag : "") + suffix + ext;
+        return name;
+    }
+
+    Process {
+        id: folderPick
+        command: ["zenity", "--file-selection", "--directory", "--title=" + qsTr("Export folder")]
+        onFinished: function(exitCode, output) {
+            var p = String(output || "").trim();
+            if (exitCode === 0 && p.length > 0) root.localOutputDir = p;
+        }
+    }
     property string selectedFormat: "jpeg"
     property int quality: 90
     // 0 = the format's best depth
@@ -42,14 +63,14 @@ Rectangle {
     signal doExport(var options)
 
     readonly property var formats: [
-        { id: "jpeg", name: "JPEG", note: qsTr("8-bit · universal") },
-        { id: "png", name: "PNG", note: qsTr("16-bit · lossless") },
-        { id: "tiff", name: "TIFF", note: qsTr("16-bit · print, archive") },
-        { id: "webp", name: "WebP", note: qsTr("8-bit · web") },
-        { id: "avif", name: "AVIF", note: qsTr("12-bit · HDR-ready") },
-        { id: "heic", name: "HEIF", note: qsTr("10-bit · HEVC") },
-        { id: "jxl", name: "JPEG XL", note: qsTr("16-bit · modern") },
-        { id: "exr", name: "OpenEXR", note: qsTr("Float · scene-linear") }
+        { id: "jpeg", name: "JPEG", note: qsTr("8-bit"), tip: qsTr("Opens everywhere") },
+        { id: "png", name: "PNG", note: qsTr("16-bit"), tip: qsTr("Lossless") },
+        { id: "tiff", name: "TIFF", note: qsTr("16-bit"), tip: qsTr("For print and archive") },
+        { id: "webp", name: "WebP", note: qsTr("8-bit"), tip: qsTr("Small files for the web") },
+        { id: "avif", name: "AVIF", note: qsTr("12-bit"), tip: qsTr("Small files with high bit depth") },
+        { id: "heic", name: "HEIF", note: qsTr("10-bit"), tip: qsTr("HEVC, as used by phones") },
+        { id: "jxl", name: "JPEG XL", note: qsTr("16-bit"), tip: qsTr("Small files, lossless at quality 100") },
+        { id: "exr", name: "OpenEXR", note: qsTr("Float"), tip: qsTr("Scene-linear, for compositing and grading") }
     ]
 
     // Mirrors effective_bit_depth() in the engine
@@ -92,6 +113,7 @@ Rectangle {
             "icc_profile": root.selectedIcc,
             "rendering_intent": root.renderingIntent,
             "output_dir": root.localOutputDir,
+            "name_tag": root.nameTag.length > 0 ? root.nameTag : null,
             // The options object carries the global "enabled" flag; force it on so
             // the watermark switch actually takes effect.
             "watermark": root.watermarkEnabled ? Object.assign({}, root.watermarkOptions, { "enabled": true }) : null
@@ -291,6 +313,9 @@ Rectangle {
                                     anchors.fill: parent
                                     hoverEnabled: true
                                     cursorShape: Qt.PointingHandCursor
+                                    ToolTip.visible: containsMouse
+                                    ToolTip.delay: 500
+                                    ToolTip.text: modelData.tip
                                     onClicked: root.selectedFormat = modelData.id
                                 }
                             }
@@ -354,7 +379,7 @@ Rectangle {
                         Repeater {
                             model: [
                                 { id: "sRGB", name: "sRGB", desc: qsTr("Web, screens") },
-                                { id: "DisplayP3", name: "Display P3", desc: qsTr("Wide-gamut screens") },
+                                { id: "DisplayP3", name: "Display P3", desc: qsTr("Modern screens") },
                                 { id: "AdobeRGB1998", name: "Adobe RGB", desc: qsTr("Print") },
                                 { id: "ProPhotoRGB", name: "ProPhoto RGB", desc: qsTr("Editing, archive") },
                                 { id: "Rec2020", name: "Rec. 2020", desc: qsTr("HDR, video") },
@@ -446,11 +471,12 @@ Rectangle {
                     spacing: Theme.px(10)
 
                     Caption { text: qsTr("Prepare for") }
-                    Hint { text: qsTr("Sets the crop and output sharpening for a platform. Reset restores your own.") }
+                    Hint { text: qsTr("Sets the crop and output sharpening for a platform. Click it again to go back to your own.") }
                     SocialOptimizer {
                         id: socialOpt
                         embedded: true
                         Layout.fillWidth: true
+                        Layout.fillHeight: false
                         onTriggerSocialOptimize: function(code) { if (root.host) root.host.triggerSocial(code) }
                         onResetSocial: if (root.host) root.host.resetSocialOptimization()
                     }
@@ -459,6 +485,7 @@ Rectangle {
                     WatermarkConfig {
                         embedded: true
                         Layout.fillWidth: true
+                        Layout.fillHeight: false
                         watermarkEnabled: root.host ? root.host.watermarkEnabled : false
                         watermarkType: root.host ? root.host.watermarkType : "text"
                         text: root.host ? root.host.watermarkText : ""
@@ -486,6 +513,9 @@ Rectangle {
                     }
 
                     Caption { text: qsTr("Folder") }
+                    RowLayout {
+                    Layout.fillWidth: true
+                    spacing: Theme.px(6)
                     Rectangle {
                         Layout.fillWidth: true
                         implicitHeight: Theme.px(30)
@@ -505,6 +535,57 @@ Rectangle {
                             onTextChanged: if (text.length > 0) root.localOutputDir = text
                         }
                     }
+                    Rectangle {
+                        implicitWidth: browseText.implicitWidth + Theme.px(20)
+                        implicitHeight: Theme.px(30)
+                        radius: Theme.radiusSm
+                        color: browseMouse.containsMouse ? Theme.bgCardHover : Theme.bgCard
+                        border.color: Theme.border
+                        Text {
+                            id: browseText
+                            anchors.centerIn: parent
+                            text: qsTr("Choose…")
+                            textFormat: Text.PlainText
+                            font.family: Theme.fontFamily
+                            font.pixelSize: Theme.px(11)
+                            color: Theme.textMain
+                        }
+                        MouseArea {
+                            id: browseMouse
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: if (!folderPick.running) folderPick.running = true
+                        }
+                    }
+                    }
+
+                    Caption { text: qsTr("File name") }
+                    Rectangle {
+                        Layout.fillWidth: true
+                        implicitHeight: Theme.px(30)
+                        radius: Theme.radiusSm
+                        color: Theme.bgCard
+                        border.color: nameTagInput.activeFocus ? Theme.accent : Theme.border
+                        BoundedTextInput {
+                            id: nameTagInput
+                            anchors.fill: parent
+                            anchors.leftMargin: Theme.px(8)
+                            anchors.rightMargin: Theme.px(8)
+                            verticalAlignment: TextEdit.AlignVCenter
+                            font.pixelSize: Theme.px(11)
+                            color: Theme.textMain
+                            maxLength: 64
+                            text: root.nameTag
+                            onTextChanged: root.nameTag = text
+                        }
+                    }
+                    Hint {
+                        text: qsTr("Saved as %1").arg(root.exampleName)
+                        Layout.fillWidth: true
+                        elide: Text.ElideMiddle
+                    }
+                    Item { Layout.fillHeight: true }
                 }
             }
         }
