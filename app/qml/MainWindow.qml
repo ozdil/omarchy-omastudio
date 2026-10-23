@@ -1339,15 +1339,22 @@ Rectangle {
     // Process: Export
     Process {
         id: exportProc
+        // The recipe goes in on stdin (`--recipe -`): with brush masks it can be larger
+        // than one command line argument may be
+        stdinEnabled: true
+        property string recipeJson: ""
+        onStarted: exportProc.write(exportProc.recipeJson + "\n")
         onFinished: function(exitCode, output) {
             exportDialog.isExporting = false;
             try {
                 var resp = JSON.parse(output);
                 if (resp.success && resp.data) {
-                    exportDialog.exportStatusText = "[OK] " + qsTr("Saved to %1").arg(resp.data.exported_path);
+                    exportDialog.exportStatusIsError = false;
+                    exportDialog.exportStatusText = qsTr("Saved to %1").arg(resp.data.exported_path);
                     root.uploadExported([resp.data.exported_path]);
                 } else {
-                    exportDialog.exportStatusText = "[ERR] " + (resp.error || qsTr("Export failed"));
+                    exportDialog.exportStatusIsError = true;
+                    exportDialog.exportStatusText = resp.error || qsTr("Export failed");
                 }
             } catch(e) {
                 exportDialog.exportStatusIsError = true;
@@ -3553,13 +3560,13 @@ Rectangle {
                 } else {
                     exportDialog.exportStatusIsError = false;
                     exportDialog.exportStatusText = qsTr("Developing at full resolution…");
-                    var recipeJson = JSON.stringify(root.buildRecipeObject());
+                    exportProc.recipeJson = JSON.stringify(root.buildRecipeObject());
                     var optsJson = JSON.stringify(opts);
                     exportProc.command = [
                         root.resolveEnginePath(),
                         "export",
                         root.activePhotoPath,
-                        "--recipe", recipeJson,
+                        "--recipe", "-",
                         "--options", optsJson
                     ];
                     exportProc.running = true;

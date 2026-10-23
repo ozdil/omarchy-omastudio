@@ -25,8 +25,10 @@ if [ "${OMASTUDIO_SECURE_ENV:-0}" != "1" ]; then
     if [ -n "${SYSTEM_LANG}" ]; then
         SESSION_ENV+=("OMASTUDIO_SYSTEM_LANG=${SYSTEM_LANG}")
     fi
+    # Omarchy's own commands and mise-installed tools (gh, codex) are found as in the
+    # user's shell
     exec /usr/bin/env -i \
-        PATH="/usr/bin:/bin:${HOME}/.local/bin:${HOME}/.cargo/bin" \
+        PATH="/usr/bin:/bin:${HOME}/.local/bin:${HOME}/.local/share/omarchy/bin:${HOME}/.local/share/mise/shims:${HOME}/.cargo/bin" \
         HOME="${HOME}" \
         USER="${USER:-$(/usr/bin/id -un 2>/dev/null || echo "user")}" \
         LANG="${LANG:-C.UTF-8}" \
@@ -127,7 +129,7 @@ case "${1:-}" in
         echo "SKILL.md not found" >&2
         exit 1
         ;;
-    inspect|render|export|ai-auto|ai-social|ai-jev|icc|scan|catalog|dag|daemon|gpu|npu|ai-mask|mcp|ai|xmp|cloud|fuji-*)
+    inspect|render|export|ai-auto|ai-social|ai-jev|icc|scan|catalog|dag|daemon|gpu|npu|ai-mask|mcp|ai|xmp|cloud|cameras|medium-format|fuji-*)
         exec "${BIN}" "$@"
         ;;
 esac

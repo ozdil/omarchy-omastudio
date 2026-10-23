@@ -4,7 +4,7 @@ version = "3.0.0"
 edition = "2024"
 rust-version = "1.99"
 authors = ["Ozan Özdil"]
-description = "High-performance Lightroom-grade RAW photo engine for Omarchy Linux"
+description = "RAW development engine of OmaStudio, the complete medium format RAW editor for Omarchy"
 license = "MIT"
 
 [workspace]

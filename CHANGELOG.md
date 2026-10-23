@@ -12,6 +12,16 @@
 - New engine commands: `cloud status|connect|list|fetch|upload|disconnect`. New control-socket calls: `showCloud`, `cloudAccounts`, `openCloud <account> [folder]`.
 
 ### Fixes
+- The engine process behind the window is no longer stopped after a long editing session. The window counted everything the engine had printed since it started against a 64 MB limit meant for one reply; after some thousands of previews it closed the engine, and the next edit had to load the photo again. The limit now applies to each line.
+- Stepping quickly through large photos no longer starts one full-resolution decode per photo passed. Decodes run one at a time and skip photos that are no longer open, so a folder of 100 MP GFX files no longer runs out of memory.
+- Batch export runs beside the editor instead of blocking it: previews keep updating while the batch works. Photos are exported one after another, each using every core, instead of side by side; side by side needed about 1.7 GB per 100 MP photo at once.
+- Exporting a photo with long brush strokes no longer fails: the recipe reaches the engine on stdin (`export <photo> --recipe -`) instead of as one command-line argument, which Linux limits to 128 KiB.
+- `export` stops with an error when the recipe or the options cannot be read. Before, it exported the photo without its edits.
+- The Export window shows export errors in red and no longer puts "[OK]" and "[ERR]" in front of the message.
+- `omastudio cameras` and `omastudio medium-format ...` reach the engine instead of opening the window.
+- The launcher keeps Omarchy's own commands (`~/.local/share/omarchy/bin`) and mise-installed tools such as `gh` and `codex` on the path, so the GitHub account and the Codex agent are found when OmaStudio is started from the app menu.
+- Release archives include the desktop entry, both icons, the udev rule, `omastudio-dashboard`, `omastudio-status` and the documentation, and the release build installs `qt6-tools`, which the translations need.
+- CodeQL also checks the Rust code.
 - Focus peaking follows the photo and looks at it at about the size the window shows it: high-ISO noise and fine fabric prints no longer outshine the eyes of a portrait, a soft portrait or a fitted view still shows its sharpest edges, and the marks stay visible when the photo is scaled down. Detailed photos look as before.
 - The About window's icon is built into the program, so it shows for local installs too (it only looked in /usr/share). The package now depends on `qt6-svg`.
 - `omastudio ipc applyPreset` (and the MCP `apply_preset` tool) take the names the Looks panel shows (Muted, Vivid, Warm portrait, Black and white, Teal and orange) and report an unknown name as an error instead of answering OK.
