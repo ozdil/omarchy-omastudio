@@ -93,3 +93,5 @@ pl:Sepia
 pl:+ GRADIENT
 pl:Color Chrome FX Blue
 pl:HIST
+cs:AI
+cs:HIST
