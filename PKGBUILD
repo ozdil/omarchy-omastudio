@@ -37,6 +37,7 @@ package() {
     install -m644 assets/icc/*.icc "$pkgdir/usr/share/omastudio/icc/"
     install -Dm644 omastudio.desktop "$pkgdir/usr/share/applications/omastudio.desktop"
     install -Dm644 assets/icon.svg "$pkgdir/usr/share/icons/hicolor/scalable/apps/omastudio.svg"
+    install -Dm644 assets/icon-symbolic.svg "$pkgdir/usr/share/icons/hicolor/symbolic/apps/omastudio-symbolic.svg"
     ln -sf "omastudio.desktop" "$pkgdir/usr/share/applications/omaraw.desktop"
     install -Dm644 Panel.qml "$pkgdir/usr/share/omastudio/Panel.qml"
     install -Dm644 manifest.json "$pkgdir/usr/share/omastudio/manifest.json"
