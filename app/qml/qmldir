@@ -18,6 +18,7 @@ Filmstrip 1.0 Filmstrip.qml
 FujiPanel 1.0 FujiPanel.qml
 GradeVersionsBar 1.0 GradeVersionsBar.qml
 HistogramView 1.0 HistogramView.qml
+HistoryPanel 1.0 HistoryPanel.qml
 HslMixer 1.0 HslMixer.qml
 LanguageMenu 1.0 LanguageMenu.qml
 LayersPanel 1.0 LayersPanel.qml

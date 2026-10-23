@@ -1074,6 +1074,33 @@
     </message>
 </context>
 <context>
+    <name>HistoryPanel</name>
+    <message>
+        <source>History</source>
+        <translation>היסטוריה</translation>
+    </message>
+    <message>
+        <source>Click a step to go back to it. A new edit from there replaces the later steps.</source>
+        <translation>לחצו על שלב כדי לחזור אליו. עריכה חדשה משם מחליפה את השלבים שאחריו.</translation>
+    </message>
+    <message>
+        <source>Snapshots</source>
+        <translation>תמונות מצב</translation>
+    </message>
+    <message>
+        <source>New snapshot</source>
+        <translation>תמונת מצב חדשה</translation>
+    </message>
+    <message>
+        <source>A snapshot keeps the current edit under a name, in the sidecar, so you can come back to it later.</source>
+        <translation>תמונת מצב שומרת את העריכה הנוכחית תחת שם, בקובץ הנלווה, כדי שתוכלו לחזור אליה מאוחר יותר.</translation>
+    </message>
+    <message>
+        <source>Restore</source>
+        <translation>שחזור</translation>
+    </message>
+</context>
+<context>
     <name>HslMixer</name>
     <message>
         <source>Red</source>
@@ -1657,6 +1684,42 @@
     <message>
         <source>Redo</source>
         <translation>ביצוע חוזר</translation>
+    </message>
+    <message>
+        <source>Gamut compression</source>
+        <translation>דחיסת סולם צבעים</translation>
+    </message>
+    <message>
+        <source>ACES tone curve</source>
+        <translation>עקומת טונים ACES</translation>
+    </message>
+    <message>
+        <source>Skin tone</source>
+        <translation>גוון עור</translation>
+    </message>
+    <message>
+        <source>Crop</source>
+        <translation>חיתוך</translation>
+    </message>
+    <message>
+        <source>Edit</source>
+        <translation>עריכה</translation>
+    </message>
+    <message>
+        <source>Start</source>
+        <translation>התחלה</translation>
+    </message>
+    <message>
+        <source>Snapshot %1</source>
+        <translation>תמונת מצב %1</translation>
+    </message>
+    <message>
+        <source>Snapshot saved</source>
+        <translation>תמונת המצב נשמרה</translation>
+    </message>
+    <message>
+        <source>Snapshot restored</source>
+        <translation>תמונת המצב שוחזרה</translation>
     </message>
     <message>
         <source>Settings copied</source>

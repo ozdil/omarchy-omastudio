@@ -1071,6 +1071,33 @@
     </message>
 </context>
 <context>
+    <name>HistoryPanel</name>
+    <message>
+        <source>History</source>
+        <translation>Geçmiş</translation>
+    </message>
+    <message>
+        <source>Click a step to go back to it. A new edit from there replaces the later steps.</source>
+        <translation>Bir adıma geri dönmek için ona tıklayın. Oradan yapılan yeni bir düzenleme sonraki adımların yerini alır.</translation>
+    </message>
+    <message>
+        <source>Snapshots</source>
+        <translation>Anlık görüntüler</translation>
+    </message>
+    <message>
+        <source>New snapshot</source>
+        <translation>Yeni anlık görüntü</translation>
+    </message>
+    <message>
+        <source>A snapshot keeps the current edit under a name, in the sidecar, so you can come back to it later.</source>
+        <translation>Anlık görüntü, mevcut düzenlemeyi bir adla yan dosyada saklar; böylece daha sonra ona dönebilirsiniz.</translation>
+    </message>
+    <message>
+        <source>Restore</source>
+        <translation>Geri yükle</translation>
+    </message>
+</context>
+<context>
     <name>HslMixer</name>
     <message>
         <source>Red</source>
@@ -1653,6 +1680,42 @@
     <message>
         <source>Redo</source>
         <translation>Yinele</translation>
+    </message>
+    <message>
+        <source>Gamut compression</source>
+        <translation>Gam sıkıştırma</translation>
+    </message>
+    <message>
+        <source>ACES tone curve</source>
+        <translation>ACES ton eğrisi</translation>
+    </message>
+    <message>
+        <source>Skin tone</source>
+        <translation>Ten rengi</translation>
+    </message>
+    <message>
+        <source>Crop</source>
+        <translation>Kırp</translation>
+    </message>
+    <message>
+        <source>Edit</source>
+        <translation>Düzenle</translation>
+    </message>
+    <message>
+        <source>Start</source>
+        <translation>Başlangıç</translation>
+    </message>
+    <message>
+        <source>Snapshot %1</source>
+        <translation>Anlık görüntü %1</translation>
+    </message>
+    <message>
+        <source>Snapshot saved</source>
+        <translation>Anlık görüntü kaydedildi</translation>
+    </message>
+    <message>
+        <source>Snapshot restored</source>
+        <translation>Anlık görüntü geri yüklendi</translation>
     </message>
     <message>
         <source>Settings copied</source>

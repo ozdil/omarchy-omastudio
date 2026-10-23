@@ -1074,6 +1074,33 @@
     </message>
 </context>
 <context>
+    <name>HistoryPanel</name>
+    <message>
+        <source>History</source>
+        <translation>Histórico</translation>
+    </message>
+    <message>
+        <source>Click a step to go back to it. A new edit from there replaces the later steps.</source>
+        <translation>Clique em uma etapa para voltar a ela. Uma nova edição a partir dali substitui as etapas seguintes.</translation>
+    </message>
+    <message>
+        <source>Snapshots</source>
+        <translation>Instantâneos</translation>
+    </message>
+    <message>
+        <source>New snapshot</source>
+        <translation>Novo instantâneo</translation>
+    </message>
+    <message>
+        <source>A snapshot keeps the current edit under a name, in the sidecar, so you can come back to it later.</source>
+        <translation>Um instantâneo guarda a edição atual com um nome, no arquivo auxiliar, para você voltar a ela depois.</translation>
+    </message>
+    <message>
+        <source>Restore</source>
+        <translation>Restaurar</translation>
+    </message>
+</context>
+<context>
     <name>HslMixer</name>
     <message>
         <source>Red</source>
@@ -1657,6 +1684,42 @@
     <message>
         <source>Redo</source>
         <translation>Refazer</translation>
+    </message>
+    <message>
+        <source>Gamut compression</source>
+        <translation>Compressão de gama</translation>
+    </message>
+    <message>
+        <source>ACES tone curve</source>
+        <translation>Curva de tons ACES</translation>
+    </message>
+    <message>
+        <source>Skin tone</source>
+        <translation>Tom de pele</translation>
+    </message>
+    <message>
+        <source>Crop</source>
+        <translation>Cortar</translation>
+    </message>
+    <message>
+        <source>Edit</source>
+        <translation>Editar</translation>
+    </message>
+    <message>
+        <source>Start</source>
+        <translation>Início</translation>
+    </message>
+    <message>
+        <source>Snapshot %1</source>
+        <translation>Instantâneo %1</translation>
+    </message>
+    <message>
+        <source>Snapshot saved</source>
+        <translation>Instantâneo salvo</translation>
+    </message>
+    <message>
+        <source>Snapshot restored</source>
+        <translation>Instantâneo restaurado</translation>
     </message>
     <message>
         <source>Settings copied</source>

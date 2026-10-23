@@ -1077,6 +1077,33 @@
     </message>
 </context>
 <context>
+    <name>HistoryPanel</name>
+    <message>
+        <source>History</source>
+        <translation>Історія</translation>
+    </message>
+    <message>
+        <source>Click a step to go back to it. A new edit from there replaces the later steps.</source>
+        <translation>Клацніть крок, щоб повернутися до нього. Нове редагування з цього місця замінить наступні кроки.</translation>
+    </message>
+    <message>
+        <source>Snapshots</source>
+        <translation>Знімки</translation>
+    </message>
+    <message>
+        <source>New snapshot</source>
+        <translation>Новий знімок</translation>
+    </message>
+    <message>
+        <source>A snapshot keeps the current edit under a name, in the sidecar, so you can come back to it later.</source>
+        <translation>Знімок зберігає поточне редагування під назвою у файлі-супутнику, щоб до нього можна було повернутися пізніше.</translation>
+    </message>
+    <message>
+        <source>Restore</source>
+        <translation>Відновити</translation>
+    </message>
+</context>
+<context>
     <name>HslMixer</name>
     <message>
         <source>Red</source>
@@ -1661,6 +1688,42 @@
     <message>
         <source>Redo</source>
         <translation>Повторити</translation>
+    </message>
+    <message>
+        <source>Gamut compression</source>
+        <translation>Стиснення охоплення</translation>
+    </message>
+    <message>
+        <source>ACES tone curve</source>
+        <translation>Тональна крива ACES</translation>
+    </message>
+    <message>
+        <source>Skin tone</source>
+        <translation>Тон шкіри</translation>
+    </message>
+    <message>
+        <source>Crop</source>
+        <translation>Кадрувати</translation>
+    </message>
+    <message>
+        <source>Edit</source>
+        <translation>Змінити</translation>
+    </message>
+    <message>
+        <source>Start</source>
+        <translation>Початок</translation>
+    </message>
+    <message>
+        <source>Snapshot %1</source>
+        <translation>Знімок %1</translation>
+    </message>
+    <message>
+        <source>Snapshot saved</source>
+        <translation>Знімок збережено</translation>
+    </message>
+    <message>
+        <source>Snapshot restored</source>
+        <translation>Знімок відновлено</translation>
     </message>
     <message>
         <source>Settings copied</source>

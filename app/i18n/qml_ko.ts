@@ -1071,6 +1071,33 @@
     </message>
 </context>
 <context>
+    <name>HistoryPanel</name>
+    <message>
+        <source>History</source>
+        <translation>기록</translation>
+    </message>
+    <message>
+        <source>Click a step to go back to it. A new edit from there replaces the later steps.</source>
+        <translation>단계를 클릭하면 그 상태로 돌아갑니다. 거기서 새로 편집하면 이후 단계가 대체됩니다.</translation>
+    </message>
+    <message>
+        <source>Snapshots</source>
+        <translation>스냅숏</translation>
+    </message>
+    <message>
+        <source>New snapshot</source>
+        <translation>새 스냅숏</translation>
+    </message>
+    <message>
+        <source>A snapshot keeps the current edit under a name, in the sidecar, so you can come back to it later.</source>
+        <translation>스냅숏은 현재 편집을 이름과 함께 사이드카 파일에 저장해 나중에 다시 돌아올 수 있게 합니다.</translation>
+    </message>
+    <message>
+        <source>Restore</source>
+        <translation>복원</translation>
+    </message>
+</context>
+<context>
     <name>HslMixer</name>
     <message>
         <source>Red</source>
@@ -1653,6 +1680,42 @@
     <message>
         <source>Redo</source>
         <translation>다시 실행</translation>
+    </message>
+    <message>
+        <source>Gamut compression</source>
+        <translation>색 영역 압축</translation>
+    </message>
+    <message>
+        <source>ACES tone curve</source>
+        <translation>ACES 톤 커브</translation>
+    </message>
+    <message>
+        <source>Skin tone</source>
+        <translation>피부 톤</translation>
+    </message>
+    <message>
+        <source>Crop</source>
+        <translation>자르기</translation>
+    </message>
+    <message>
+        <source>Edit</source>
+        <translation>편집</translation>
+    </message>
+    <message>
+        <source>Start</source>
+        <translation>시작</translation>
+    </message>
+    <message>
+        <source>Snapshot %1</source>
+        <translation>스냅숏 %1</translation>
+    </message>
+    <message>
+        <source>Snapshot saved</source>
+        <translation>스냅숏을 저장했습니다</translation>
+    </message>
+    <message>
+        <source>Snapshot restored</source>
+        <translation>스냅숏을 복원했습니다</translation>
     </message>
     <message>
         <source>Settings copied</source>

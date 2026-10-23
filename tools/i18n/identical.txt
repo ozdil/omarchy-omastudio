@@ -276,3 +276,8 @@ id:Horizontal
 pt_BR:Vertical
 pt_BR:Horizontal
 ro:Vertical
+da:Snapshots
+da:Start
+da:Snapshot %1
+id:Snapshot %1
+nb:Start

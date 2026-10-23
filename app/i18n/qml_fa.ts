@@ -1071,6 +1071,33 @@
     </message>
 </context>
 <context>
+    <name>HistoryPanel</name>
+    <message>
+        <source>History</source>
+        <translation>تاریخچه</translation>
+    </message>
+    <message>
+        <source>Click a step to go back to it. A new edit from there replaces the later steps.</source>
+        <translation>برای بازگشت به یک مرحله روی آن کلیک کنید. ویرایش تازه از آن‌جا جای مراحل بعدی را می‌گیرد.</translation>
+    </message>
+    <message>
+        <source>Snapshots</source>
+        <translation>اسنپ‌شات‌ها</translation>
+    </message>
+    <message>
+        <source>New snapshot</source>
+        <translation>اسنپ‌شات تازه</translation>
+    </message>
+    <message>
+        <source>A snapshot keeps the current edit under a name, in the sidecar, so you can come back to it later.</source>
+        <translation>اسنپ‌شات ویرایش فعلی را با یک نام در فایل همراه نگه می‌دارد تا بعداً به آن برگردید.</translation>
+    </message>
+    <message>
+        <source>Restore</source>
+        <translation>بازیابی</translation>
+    </message>
+</context>
+<context>
     <name>HslMixer</name>
     <message>
         <source>Red</source>
@@ -1653,6 +1680,42 @@
     <message>
         <source>Redo</source>
         <translation>ازنو</translation>
+    </message>
+    <message>
+        <source>Gamut compression</source>
+        <translation>فشرده‌سازی گستره</translation>
+    </message>
+    <message>
+        <source>ACES tone curve</source>
+        <translation>منحنی تونال ACES</translation>
+    </message>
+    <message>
+        <source>Skin tone</source>
+        <translation>رنگ پوست</translation>
+    </message>
+    <message>
+        <source>Crop</source>
+        <translation>برش</translation>
+    </message>
+    <message>
+        <source>Edit</source>
+        <translation>ویرایش</translation>
+    </message>
+    <message>
+        <source>Start</source>
+        <translation>آغاز</translation>
+    </message>
+    <message>
+        <source>Snapshot %1</source>
+        <translation>اسنپ‌شات %1</translation>
+    </message>
+    <message>
+        <source>Snapshot saved</source>
+        <translation>اسنپ‌شات ذخیره شد</translation>
+    </message>
+    <message>
+        <source>Snapshot restored</source>
+        <translation>اسنپ‌شات بازیابی شد</translation>
     </message>
     <message>
         <source>Settings copied</source>

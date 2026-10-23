@@ -1086,6 +1086,33 @@
     </message>
 </context>
 <context>
+    <name>HistoryPanel</name>
+    <message>
+        <source>History</source>
+        <translation>السجل</translation>
+    </message>
+    <message>
+        <source>Click a step to go back to it. A new edit from there replaces the later steps.</source>
+        <translation>انقر على خطوة للعودة إليها. أي تعديل جديد من هناك يحل محل الخطوات اللاحقة.</translation>
+    </message>
+    <message>
+        <source>Snapshots</source>
+        <translation>اللقطات</translation>
+    </message>
+    <message>
+        <source>New snapshot</source>
+        <translation>لقطة جديدة</translation>
+    </message>
+    <message>
+        <source>A snapshot keeps the current edit under a name, in the sidecar, so you can come back to it later.</source>
+        <translation>تحفظ اللقطة التعديل الحالي باسم في الملف المرافق، لتعود إليه لاحقًا.</translation>
+    </message>
+    <message>
+        <source>Restore</source>
+        <translation>استعادة</translation>
+    </message>
+</context>
+<context>
     <name>HslMixer</name>
     <message>
         <source>Red</source>
@@ -1673,6 +1700,42 @@
     <message>
         <source>Redo</source>
         <translation>إعادة</translation>
+    </message>
+    <message>
+        <source>Gamut compression</source>
+        <translation>ضغط النطاق اللوني</translation>
+    </message>
+    <message>
+        <source>ACES tone curve</source>
+        <translation>منحنى درجات ACES</translation>
+    </message>
+    <message>
+        <source>Skin tone</source>
+        <translation>لون البشرة</translation>
+    </message>
+    <message>
+        <source>Crop</source>
+        <translation>قص</translation>
+    </message>
+    <message>
+        <source>Edit</source>
+        <translation>تحرير</translation>
+    </message>
+    <message>
+        <source>Start</source>
+        <translation>البداية</translation>
+    </message>
+    <message>
+        <source>Snapshot %1</source>
+        <translation>لقطة %1</translation>
+    </message>
+    <message>
+        <source>Snapshot saved</source>
+        <translation>تم حفظ اللقطة</translation>
+    </message>
+    <message>
+        <source>Snapshot restored</source>
+        <translation>تمت استعادة اللقطة</translation>
     </message>
     <message>
         <source>Settings copied</source>

@@ -1074,6 +1074,33 @@
     </message>
 </context>
 <context>
+    <name>HistoryPanel</name>
+    <message>
+        <source>History</source>
+        <translation>Historique</translation>
+    </message>
+    <message>
+        <source>Click a step to go back to it. A new edit from there replaces the later steps.</source>
+        <translation>Cliquez sur une étape pour y revenir. Une nouvelle modification à partir de là remplace les étapes suivantes.</translation>
+    </message>
+    <message>
+        <source>Snapshots</source>
+        <translation>Instantanés</translation>
+    </message>
+    <message>
+        <source>New snapshot</source>
+        <translation>Nouvel instantané</translation>
+    </message>
+    <message>
+        <source>A snapshot keeps the current edit under a name, in the sidecar, so you can come back to it later.</source>
+        <translation>Un instantané conserve la retouche actuelle sous un nom, dans le fichier annexe, pour y revenir plus tard.</translation>
+    </message>
+    <message>
+        <source>Restore</source>
+        <translation>Rétablir</translation>
+    </message>
+</context>
+<context>
     <name>HslMixer</name>
     <message>
         <source>Red</source>
@@ -1659,6 +1686,42 @@
         <translation>Rétablir</translation>
     </message>
     <message>
+        <source>Gamut compression</source>
+        <translation>Compression de gamut</translation>
+    </message>
+    <message>
+        <source>ACES tone curve</source>
+        <translation>Courbe de tons ACES</translation>
+    </message>
+    <message>
+        <source>Skin tone</source>
+        <translation>Teint de peau</translation>
+    </message>
+    <message>
+        <source>Crop</source>
+        <translation>Recadrer</translation>
+    </message>
+    <message>
+        <source>Edit</source>
+        <translation>Modifier</translation>
+    </message>
+    <message>
+        <source>Start</source>
+        <translation>Début</translation>
+    </message>
+    <message>
+        <source>Snapshot %1</source>
+        <translation>Instantané %1</translation>
+    </message>
+    <message>
+        <source>Snapshot saved</source>
+        <translation>Instantané enregistré</translation>
+    </message>
+    <message>
+        <source>Snapshot restored</source>
+        <translation>Instantané rétabli</translation>
+    </message>
+    <message>
         <source>Settings copied</source>
         <translation>Réglages copiés</translation>
     </message>
@@ -1848,7 +1911,7 @@
     </message>
     <message>
         <source>Vertical straightens converging lines, such as buildings photographed from below. Crop afterwards to remove the empty edges.</source>
-        <translation>Vertical redresse les lignes convergentes, comme les bâtiments photographiés d'en bas. Recadrez ensuite pour supprimer les bords vides.</translation>
+        <translation>Vertical redresse les lignes convergentes, comme les bâtiments photographiés d&apos;en bas. Recadrez ensuite pour supprimer les bords vides.</translation>
     </message>
     <message>
         <source>Grain</source>

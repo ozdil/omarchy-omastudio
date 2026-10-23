@@ -1074,6 +1074,33 @@
     </message>
 </context>
 <context>
+    <name>HistoryPanel</name>
+    <message>
+        <source>History</source>
+        <translation>Historia</translation>
+    </message>
+    <message>
+        <source>Click a step to go back to it. A new edit from there replaces the later steps.</source>
+        <translation>Palaa vaiheeseen napsauttamalla sitä. Uusi muokkaus siitä eteenpäin korvaa myöhemmät vaiheet.</translation>
+    </message>
+    <message>
+        <source>Snapshots</source>
+        <translation>Tilannekuvat</translation>
+    </message>
+    <message>
+        <source>New snapshot</source>
+        <translation>Uusi tilannekuva</translation>
+    </message>
+    <message>
+        <source>A snapshot keeps the current edit under a name, in the sidecar, so you can come back to it later.</source>
+        <translation>Tilannekuva tallentaa nykyisen muokkauksen nimellä sivutiedostoon, jotta voit palata siihen myöhemmin.</translation>
+    </message>
+    <message>
+        <source>Restore</source>
+        <translation>Palauta</translation>
+    </message>
+</context>
+<context>
     <name>HslMixer</name>
     <message>
         <source>Red</source>
@@ -1657,6 +1684,42 @@
     <message>
         <source>Redo</source>
         <translation>Tee uudelleen</translation>
+    </message>
+    <message>
+        <source>Gamut compression</source>
+        <translation>Värialueen pakkaus</translation>
+    </message>
+    <message>
+        <source>ACES tone curve</source>
+        <translation>ACES-sävykäyrä</translation>
+    </message>
+    <message>
+        <source>Skin tone</source>
+        <translation>Ihon sävy</translation>
+    </message>
+    <message>
+        <source>Crop</source>
+        <translation>Rajaa</translation>
+    </message>
+    <message>
+        <source>Edit</source>
+        <translation>Muokkaa</translation>
+    </message>
+    <message>
+        <source>Start</source>
+        <translation>Alku</translation>
+    </message>
+    <message>
+        <source>Snapshot %1</source>
+        <translation>Tilannekuva %1</translation>
+    </message>
+    <message>
+        <source>Snapshot saved</source>
+        <translation>Tilannekuva tallennettu</translation>
+    </message>
+    <message>
+        <source>Snapshot restored</source>
+        <translation>Tilannekuva palautettu</translation>
     </message>
     <message>
         <source>Settings copied</source>
