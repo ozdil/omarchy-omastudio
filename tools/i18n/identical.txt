@@ -135,3 +135,12 @@ nb:Original
 fi:Magenta
 fi:HIST
 hu:Platform
+ro:Sepia
+ro:Magenta
+ro:Standard
+ro:+ GRADIENT
+ro:+ RADIAL
+ro:Contrast
+ro:NAVIGATOR
+ro:VECTOR
+ro:Original
