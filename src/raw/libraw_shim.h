@@ -49,6 +49,13 @@ void* omaraw_open(const char *path, int *errcode);
    valid until omaraw_close). Returns NULL when the file is not a plain 1-sample CFA
    (Foveon, linear DNG, Fuji SuperCCD, 4-colour sensors...); use omaraw_process_image then. */
 const unsigned short* omaraw_unpack_cfa(void *handle, OmaRawCfaInfo *info);
+/* Sensors without a mosaic: monochrome (1 sample per pixel) and linear DNG (3 or 4).
+   Returns the pixel plane (owned by the handle) and its samples per pixel in *stride,
+   or NULL for mosaic and other sensors. info->raw_pitch is in pixels. */
+const unsigned short* omaraw_unpack_linear(void *handle, OmaRawCfaInfo *info, int *stride);
+/* Cameras the linked LibRaw supports ("Make Model"). */
+int omaraw_camera_count(void);
+const char* omaraw_camera_name(int index);
 int omaraw_get_metadata(void *handle, OmaRawMetadata *meta);
 int omaraw_extract_thumb_file(void *handle, const char *dest_path);
 /* output_color: LibRaw -o value (1 sRGB, 2 Adobe, 4 ProPhoto, 7 DCI-P3 D65, 8 Rec.2020);

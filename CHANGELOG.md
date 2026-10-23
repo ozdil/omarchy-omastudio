@@ -34,6 +34,17 @@
 - "Temperature" and "Tint" instead of "Temp (Kelvin)" and "Tint (Green / Magenta)".
 - The scene guess is shown only when it is at least 90 % sure, labelled as a suggestion.
 
+### Colour management
+- **Gamut compression** is now a switch of its own and follows the ACES 1.3 reference gamut compression: colours pushed outside the gamut by grading come back in smoothly, colours inside it are left alone. The previous version clipped negative values outright and desaturated every strongly saturated colour.
+- The working colour space list (sRGB, Display P3, Rec. 2020, ACEScg) is gone: the choice did not change the rendering (ACEScg only switched gamut compression on), and its coverage figures were wrong. The output colour space is chosen in the Export window, which converts with ICC profiles. Edits saved with ACEScg open with gamut compression on.
+- **ACES tone curve** (formerly "ACES 1.3 RRT/ODT Tonemapper") is applied in linear light with the fit's own scaling. It was applied to display-encoded values, which flattened the image and capped white at 80 %. It no longer switches on gamut compression by itself, and it is named for what it is: a fitted approximation of the ACES tone scale.
+- The `AcesColorManagement` processing node converts back from ACEScg after its work instead of leaving the buffer in ACEScg primaries.
+
+### Sensors
+- Monochrome sensors and linear (already demosaiced) DNG files, such as pixel-shift composites, are developed by OmaStudio's own pipeline: black level, white balance and colour matrix are applied as for Bayer and X-Trans files, instead of handing the file to LibRaw's rendering.
+- Previews use the largest embedded JPEG when a file carries several.
+- `omastudio-engine cameras [FILTER]` lists the cameras the RAW decoder supports; `status` reports their number.
+
 ### Opening photos
 - Every RAW format LibRaw reads opens from the dialog, by drag and drop and from the folder view (Fujifilm, Hasselblad, Phase One, Leica, Pentax, Mamiya/Leaf, Canon, Nikon, Sony, Panasonic, Olympus, Sigma, DNG and others), plus JPEG, PNG, WebP, TIFF (8/16-bit and float), HEIF/HEIC, AVIF, JPEG XL, OpenEXR, Radiance HDR and PNM.
 - Images with a wide-gamut ICC profile (Display P3, Adobe RGB, ProPhoto) are converted correctly instead of being read as sRGB; scene-linear EXR and HDR files are shown with the sRGB curve.

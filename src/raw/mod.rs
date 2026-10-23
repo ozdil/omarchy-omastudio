@@ -284,6 +284,18 @@ pub const RAW_EXTENSIONS: &[&str] = &[
 ];
 
 /// RAW or raster extension that OmaStudio opens.
+/// Cameras the linked LibRaw can read, as "Make Model".
+pub fn supported_cameras() -> Vec<String> {
+    // SAFETY: the shim returns LibRaw's static, NUL-terminated camera names
+    let n = unsafe { ffi::omaraw_camera_count() }.max(0);
+    (0..n)
+        .filter_map(|i| {
+            let p = unsafe { ffi::omaraw_camera_name(i) };
+            (!p.is_null()).then(|| unsafe { std::ffi::CStr::from_ptr(p) }.to_string_lossy().into_owned())
+        })
+        .collect()
+}
+
 pub fn is_supported_extension(ext: &str) -> bool {
     let ext = ext.to_lowercase();
     RAW_EXTENSIONS.contains(&ext.as_str()) || raster::RASTER_EXTENSIONS.contains(&ext.as_str())
@@ -689,8 +701,26 @@ impl RawImage {
         unsafe { develop::CfaFrame::from_libraw(raw, &info) }
     }
 
+    /// Monochrome or linear (already demosaiced) sensor data, or None for mosaic
+    /// sensors and raster files.
+    pub fn linear_frame(&self) -> Option<develop::LinearFrame> {
+        let RawBackend::LibRaw(handle) = &self.backend else {
+            return None;
+        };
+        // SAFETY: COmaRawCfaInfo is plain old data; all-zero is a valid value
+        let mut info: COmaRawCfaInfo = unsafe { std::mem::zeroed() };
+        let mut stride = 0;
+        // SAFETY: handle is a valid open LibRaw handle owned by self; pointers are valid
+        let raw = unsafe { omaraw_unpack_linear(*handle, &mut info, &mut stride) };
+        // SAFETY: the shim returns the handle's pixel plane (raw_pitch * raw_height * stride
+        // values), which stays valid while self (and so the handle) is alive
+        unsafe { develop::LinearFrame::from_libraw(raw, &info, stride.max(0) as usize) }
+    }
+
     fn develop_own(&self, half_size: bool) -> Option<ProcessedBuffer> {
-        let frame = self.cfa_frame()?;
+        let Some(frame) = self.cfa_frame() else {
+            return self.develop_linear(half_size);
+        };
         // Binning an X-Trans sensor gives a 1/3-size preview; LibRaw's half-size decode
         // is larger and renders the same colours, so previews keep using it
         if half_size && matches!(frame.pattern, demosaic::CfaPattern::XTrans(_)) {
@@ -712,6 +742,23 @@ impl RawImage {
             bits_per_sample: 16,
             data_size,
             // Linear data; the pipeline encodes it with the output space's curve
+            transfer: space.transfer(),
+        })
+    }
+
+    fn develop_linear(&self, half_size: bool) -> Option<ProcessedBuffer> {
+        let frame = self.linear_frame()?;
+        let space = self.output_space.get();
+        self.developed_flip.set(frame.flip);
+        let (data, width, height) = frame.develop(space, half_size);
+        let data_size = data.len() * 2;
+        Some(ProcessedBuffer {
+            storage: BufferStorage::OwnedU16(data),
+            width,
+            height,
+            channels: 3,
+            bits_per_sample: 16,
+            data_size,
             transfer: space.transfer(),
         })
     }

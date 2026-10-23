@@ -694,6 +694,15 @@ fn main() {
             };
             print_json(&ResponseWrapper::ok(dag_info));
         }
+        "cameras" => {
+            // Cameras the linked LibRaw build decodes, optionally filtered by a substring.
+            let filter = args.get(2).map(|f| f.to_lowercase());
+            let cameras: Vec<String> = omastudio_engine::raw::supported_cameras()
+                .into_iter()
+                .filter(|c| filter.as_ref().is_none_or(|f| c.to_lowercase().contains(f)))
+                .collect();
+            print_json(&ResponseWrapper::ok(cameras));
+        }
         "status" | "--status" => {
             #[derive(Serialize)]
             struct StatusInfo {
@@ -703,6 +712,7 @@ fn main() {
                 active_mode: String,
                 active_theme: String,
                 supported_raw_formats: Vec<String>,
+                supported_cameras_count: usize,
                 icc_profiles_count: usize,
                 local_only_mode: bool,
                 gpu: gpu::GpuStatus,
@@ -722,6 +732,7 @@ fn main() {
                 active_mode: "studio".to_string(),
                 active_theme,
                 supported_raw_formats: omastudio_engine::raw::RAW_EXTENSIONS.iter().map(|e| e.to_uppercase()).collect(),
+                supported_cameras_count: omastudio_engine::raw::supported_cameras().len(),
                 icc_profiles_count: icc_count,
                 local_only_mode: true,
                 gpu: gpu::status(),
@@ -738,7 +749,7 @@ fn main() {
                     "crop_and_straighten".into(),
                     "film_simulations".into(),
                     "hasselblad_profiles".into(),
-                    "aces_1_3".into(),
+                    "aces_tone_curve".into(),
                     "gamut_compression".into(),
                     "icc_export".into(),
                     "watermark".into(),
@@ -783,6 +794,7 @@ fn main() {
             println!("\nUsage: omastudio-engine <command> [arguments]\n");
             println!("Commands for Omarchy Agents & CLI:");
             println!("  status                                Output engine and feature status as JSON");
+            println!("  cameras [FILTER]                      List cameras the RAW decoder supports");
             println!("  inspect <raw_file>                    Parse EXIF, dynamic range, AI scene classification, histogram");
             println!("  ai-auto <raw_file>                    Calculate optimal tone, white balance, and contrast via AI");
             println!("  ai-jev <raw_file>                     Auto, refined by a configured decision model when one is set up");
