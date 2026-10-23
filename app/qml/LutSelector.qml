@@ -31,9 +31,10 @@ Rectangle {
             spacing: 6
 
             Text {
+                font.family: Theme.fontFamily
                 text: "DAVINCI 3D LUT ENGINE (.CUBE)"
                 textFormat: Text.PlainText
-                font.pixelSize: 10
+                font.pixelSize: Theme.px(10)
                 font.weight: Font.DemiBold
                 font.letterSpacing: 1
                 color: Theme.textDim
@@ -44,17 +45,18 @@ Rectangle {
             Rectangle {
                 implicitWidth: resetText.implicitWidth + 10
                 implicitHeight: 18
-                radius: 4
+                radius: Theme.r(4)
                 color: resetMouse.containsMouse ? Theme.bgCardHover : "transparent"
                 border.color: Theme.border
                 border.width: 1
 
                 Text {
+                    font.family: Theme.fontFamily
                     id: resetText
                     anchors.centerIn: parent
                     text: "RESET"
                     textFormat: Text.PlainText
-                    font.pixelSize: 8
+                    font.pixelSize: Theme.px(8)
                     font.weight: Font.Bold
                     color: Theme.textDim
                 }
@@ -93,7 +95,7 @@ Rectangle {
                 delegate: Rectangle {
                     Layout.fillWidth: true
                     implicitHeight: 32
-                    radius: 4
+                    radius: Theme.r(4)
                     property bool isCur: root.activeLut === modelData.name
                     color: isCur ? Qt.rgba(Theme.accent.r, Theme.accent.g, Theme.accent.b, 0.2) : (mouseArea.containsMouse ? Theme.bgCardHover : Theme.bgCard)
                     border.color: isCur ? modelData.col : Theme.border
@@ -107,7 +109,7 @@ Rectangle {
                         Rectangle {
                             implicitWidth: 6
                             implicitHeight: 6
-                            radius: 3
+                            radius: Theme.r(3)
                             color: modelData.col
                         }
 
@@ -117,7 +119,7 @@ Rectangle {
                             Text {
                                 text: modelData.name
                                 textFormat: Text.PlainText
-                                font.pixelSize: 9
+                                font.pixelSize: Theme.px(9)
                                 font.weight: Font.Bold
                                 font.family: Theme.monoFont
                                 color: parent.parent.parent.isCur ? modelData.col : Theme.textMain
@@ -125,9 +127,10 @@ Rectangle {
                                 Layout.fillWidth: true
                             }
                             Text {
+                                font.family: Theme.fontFamily
                                 text: modelData.sub
                                 textFormat: Text.PlainText
-                                font.pixelSize: 7
+                                font.pixelSize: Theme.px(7)
                                 color: Theme.textDim
                                 elide: Text.ElideRight
                                 Layout.fillWidth: true
@@ -163,16 +166,17 @@ Rectangle {
             RowLayout {
                 Layout.fillWidth: true
                 Text {
+                    font.family: Theme.fontFamily
                     text: "LUT Intensity (Mix)"
                     textFormat: Text.PlainText
-                    font.pixelSize: 9
+                    font.pixelSize: Theme.px(9)
                     color: Theme.textDim
                     Layout.fillWidth: true
                 }
                 Text {
                     text: Math.round(root.lutIntensity * 100) + "%"
                     textFormat: Text.PlainText
-                    font.pixelSize: 9
+                    font.pixelSize: Theme.px(9)
                     font.family: Theme.monoFont
                     color: Theme.accentCyan
                 }
@@ -193,14 +197,14 @@ Rectangle {
                     implicitHeight: 3
                     width: intensitySlider.availableWidth
                     height: implicitHeight
-                    radius: 1.5
+                    radius: Theme.r(1.5)
                     color: Qt.rgba(Theme.textMain.r, Theme.textMain.g, Theme.textMain.b, 0.12)
 
                     Rectangle {
                         width: intensitySlider.visualPosition * parent.width
                         height: parent.height
                         color: Theme.accentCyan
-                        radius: 1.5
+                        radius: Theme.r(1.5)
                     }
                 }
 
@@ -209,7 +213,7 @@ Rectangle {
                     y: intensitySlider.topPadding + intensitySlider.availableHeight / 2 - height / 2
                     implicitWidth: 12
                     implicitHeight: 12
-                    radius: 6
+                    radius: Theme.r(6)
                     color: intensitySlider.pressed ? Theme.accentCyan : (intensitySlider.hovered ? Theme.accent : Theme.textMain)
                     border.color: Theme.bgDark
                     border.width: 1.5

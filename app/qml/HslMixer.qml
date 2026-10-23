@@ -78,7 +78,7 @@ ColumnLayout {
             delegate: Rectangle {
                 Layout.fillWidth: true
                 implicitHeight: 24
-                radius: 4
+                radius: Theme.r(4)
                 color: root.activeChannel === index ? root.channelColors[index] : Theme.bgCard
                 border.color: root.channelColors[index]
                 border.width: root.activeChannel === index ? 0 : 1
@@ -86,7 +86,7 @@ ColumnLayout {
                 Rectangle {
                     width: 8
                     height: 8
-                    radius: 4
+                    radius: Theme.r(4)
                     anchors.centerIn: parent
                     color: root.activeChannel === index ? Theme.bgBase : root.channelColors[index]
                 }
@@ -108,9 +108,10 @@ ColumnLayout {
         spacing: 6
 
         Text {
+            font.family: Theme.fontFamily
             text: root.channelNames[root.activeChannel] + " Channel"
             textFormat: Text.PlainText
-            font.pixelSize: 11
+            font.pixelSize: Theme.px(11)
             font.weight: Font.DemiBold
             color: root.channelColors[root.activeChannel]
             Layout.fillWidth: true
@@ -120,17 +121,18 @@ ColumnLayout {
         Rectangle {
             implicitWidth: resetChText.implicitWidth + 10
             implicitHeight: 18
-            radius: 4
+            radius: Theme.r(4)
             color: resetChMouse.containsMouse ? Theme.bgCardHover : "transparent"
             border.color: Theme.border
             border.width: 1
 
             Text {
+                font.family: Theme.fontFamily
                 id: resetChText
                 anchors.centerIn: parent
                 text: "RESET CH"
                 textFormat: Text.PlainText
-                font.pixelSize: 8
+                font.pixelSize: Theme.px(8)
                 font.weight: Font.Bold
                 color: Theme.textDim
             }
@@ -148,17 +150,18 @@ ColumnLayout {
         Rectangle {
             implicitWidth: resetAllHslText.implicitWidth + 10
             implicitHeight: 18
-            radius: 4
+            radius: Theme.r(4)
             color: resetAllHslMouse.containsMouse ? Theme.bgCardHover : "transparent"
             border.color: Theme.border
             border.width: 1
 
             Text {
+                font.family: Theme.fontFamily
                 id: resetAllHslText
                 anchors.centerIn: parent
                 text: "RESET ALL"
                 textFormat: Text.PlainText
-                font.pixelSize: 8
+                font.pixelSize: Theme.px(8)
                 font.weight: Font.Bold
                 color: Theme.textDim
             }

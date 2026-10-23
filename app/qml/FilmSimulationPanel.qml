@@ -62,7 +62,7 @@ Rectangle {
                 text: "FILM SIMULATION & SENSOR PROFILES"
                 textFormat: Text.PlainText
                 font.family: Theme.fontFamily
-                font.pixelSize: 10
+                font.pixelSize: Theme.px(10)
                 font.weight: Font.DemiBold
                 font.letterSpacing: 1
                 color: Theme.textDim
@@ -72,7 +72,7 @@ Rectangle {
             Rectangle {
                 implicitWidth: resetSimText.implicitWidth + 10
                 implicitHeight: 18
-                radius: 4
+                radius: Theme.r(4)
                 color: resetSimMouse.containsMouse ? Theme.bgCardHover : "transparent"
                 border.color: Theme.border
                 border.width: 1
@@ -83,7 +83,7 @@ Rectangle {
                     text: "RESET"
                     textFormat: Text.PlainText
                     font.family: Theme.fontFamily
-                    font.pixelSize: 8
+                    font.pixelSize: Theme.px(8)
                     font.weight: Font.Bold
                     color: Theme.textDim
                 }
@@ -112,7 +112,7 @@ Rectangle {
                 Rectangle {
                     implicitWidth: brandText.implicitWidth + 12
                     implicitHeight: 20
-                    radius: 4
+                    radius: Theme.r(4)
                     color: root.selectedBrand === modelData ? Theme.accent : Theme.bgCard
                     border.color: root.selectedBrand === modelData ? Theme.accent : Theme.border
                     border.width: 1
@@ -123,7 +123,7 @@ Rectangle {
                         text: modelData
                         textFormat: Text.PlainText
                         font.family: Theme.fontFamily
-                        font.pixelSize: 9
+                        font.pixelSize: Theme.px(9)
                         font.weight: root.selectedBrand === modelData ? Font.Bold : Font.Normal
                         color: root.selectedBrand === modelData ? Theme.bgBase : Theme.textMain
                     }
@@ -166,7 +166,7 @@ Rectangle {
                         Rectangle {
                             width: 10
                             height: 10
-                            radius: 5
+                            radius: Theme.r(5)
                             color: modelData.color
                             Layout.alignment: Qt.AlignVCenter
                         }
@@ -179,7 +179,7 @@ Rectangle {
                                 text: modelData.name
                                 textFormat: Text.PlainText
                                 font.family: Theme.fontFamily
-                                font.pixelSize: 10
+                                font.pixelSize: Theme.px(10)
                                 font.weight: root.activeSimulation === modelData.id ? Font.Bold : Font.Normal
                                 color: root.activeSimulation === modelData.id ? Theme.accent : Theme.textMain
                                 elide: Text.ElideRight
@@ -190,7 +190,7 @@ Rectangle {
                                 text: modelData.desc
                                 textFormat: Text.PlainText
                                 font.family: Theme.fontFamily
-                                font.pixelSize: 8
+                                font.pixelSize: Theme.px(8)
                                 color: Theme.textDim
                                 elide: Text.ElideRight
                                 Layout.fillWidth: true
@@ -200,7 +200,7 @@ Rectangle {
                         Text {
                             text: Theme.iconCheck
                             font.family: Theme.iconFont
-                            font.pixelSize: 10
+                            font.pixelSize: Theme.px(10)
                             color: Theme.accent
                             visible: root.activeSimulation === modelData.id
                         }
@@ -230,7 +230,7 @@ Rectangle {
                     text: "SIMULATION INTENSITY"
                     textFormat: Text.PlainText
                     font.family: Theme.fontFamily
-                    font.pixelSize: 9
+                    font.pixelSize: Theme.px(9)
                     color: Theme.textDim
                     Layout.fillWidth: true
                 }
@@ -238,7 +238,7 @@ Rectangle {
                     text: Math.round(root.intensity * 100) + "%"
                     textFormat: Text.PlainText
                     font.family: Theme.fontFamily
-                    font.pixelSize: 9
+                    font.pixelSize: Theme.px(9)
                     font.weight: Font.Bold
                     color: Theme.accent
                 }
@@ -259,14 +259,14 @@ Rectangle {
                     implicitHeight: 3
                     width: intensitySlider.availableWidth
                     height: implicitHeight
-                    radius: 1.5
+                    radius: Theme.r(1.5)
                     color: Qt.rgba(Theme.textMain.r, Theme.textMain.g, Theme.textMain.b, 0.12)
 
                     Rectangle {
                         width: intensitySlider.visualPosition * parent.width
                         height: parent.height
                         color: Theme.accent
-                        radius: 1.5
+                        radius: Theme.r(1.5)
                     }
                 }
 
@@ -275,7 +275,7 @@ Rectangle {
                     y: intensitySlider.topPadding + intensitySlider.availableHeight / 2 - height / 2
                     implicitWidth: 12
                     implicitHeight: 12
-                    radius: 6
+                    radius: Theme.r(6)
                     color: intensitySlider.pressed ? Theme.accent : (intensitySlider.hovered ? Theme.accentHover : Theme.textMain)
                     border.color: Theme.bgDark
                     border.width: 1.5

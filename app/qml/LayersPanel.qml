@@ -76,7 +76,7 @@ Rectangle {
         property string kind: ""
         Layout.fillWidth: true
         implicitHeight: 20
-        radius: 4
+        radius: Theme.r(4)
         enabled: root.activePhotoPath !== "" && !aiProc.running
         opacity: enabled ? 1.0 : 0.4
         color: abMouse.containsMouse ? Theme.bgCardHover : Theme.bgCard
@@ -87,7 +87,7 @@ Rectangle {
             text: aiProc.running && root.aiKind === ab.kind ? "DETECTING..." : ab.label
             textFormat: Text.PlainText
             font.family: Theme.monoFont
-            font.pixelSize: 8
+            font.pixelSize: Theme.px(8)
             font.weight: Font.Bold
             color: Theme.accentGreen
         }
@@ -115,7 +115,7 @@ Rectangle {
                 text: "LOCAL ADJUSTMENT LAYERS"
                 textFormat: Text.PlainText
                 font.family: Theme.fontFamily
-                font.pixelSize: 10
+                font.pixelSize: Theme.px(10)
                 font.weight: Font.DemiBold
                 font.letterSpacing: 1
                 color: Theme.textDim
@@ -126,7 +126,7 @@ Rectangle {
             Rectangle {
                 implicitWidth: addLinText.implicitWidth + 10
                 implicitHeight: 20
-                radius: 4
+                radius: Theme.r(4)
                 color: addLinMouse.containsMouse ? Theme.bgCardHover : Theme.bgCard
                 border.color: Theme.border
                 border.width: 1
@@ -137,7 +137,7 @@ Rectangle {
                     text: "+ GRADIENT"
                     textFormat: Text.PlainText
                     font.family: Theme.monoFont
-                    font.pixelSize: 8
+                    font.pixelSize: Theme.px(8)
                     font.weight: Font.Bold
                     color: Theme.accentCyan
                 }
@@ -186,7 +186,7 @@ Rectangle {
             Rectangle {
                 implicitWidth: addRadText.implicitWidth + 10
                 implicitHeight: 20
-                radius: 4
+                radius: Theme.r(4)
                 color: addRadMouse.containsMouse ? Theme.bgCardHover : Theme.bgCard
                 border.color: Theme.border
                 border.width: 1
@@ -197,7 +197,7 @@ Rectangle {
                     text: "+ RADIAL"
                     textFormat: Text.PlainText
                     font.family: Theme.monoFont
-                    font.pixelSize: 8
+                    font.pixelSize: Theme.px(8)
                     font.weight: Font.Bold
                     color: Theme.accentOrange
                 }
@@ -247,7 +247,7 @@ Rectangle {
             Rectangle {
                 implicitWidth: addLumaText.implicitWidth + 10
                 implicitHeight: 20
-                radius: 4
+                radius: Theme.r(4)
                 color: addLumaMouse.containsMouse ? Theme.bgCardHover : Theme.bgCard
                 border.color: Theme.border
                 border.width: 1
@@ -258,7 +258,7 @@ Rectangle {
                     text: "+ LUMA"
                     textFormat: Text.PlainText
                     font.family: Theme.monoFont
-                    font.pixelSize: 8
+                    font.pixelSize: Theme.px(8)
                     font.weight: Font.Bold
                     color: Theme.accentYellow
                 }
@@ -324,7 +324,7 @@ Rectangle {
                     id: layerItem
                     Layout.fillWidth: true
                     implicitHeight: 28
-                    radius: 4
+                    radius: Theme.r(4)
                     color: root.selectedLayerIndex === index ? Theme.bgCardHover : Theme.bgCard
                     border.color: root.selectedLayerIndex === index ? Theme.accent : Theme.border
                     border.width: 1
@@ -352,7 +352,7 @@ Rectangle {
                             text: layerItem.curLayer ? layerItem.curLayer.name : ""
                             textFormat: Text.PlainText
                             font.family: Theme.fontFamily
-                            font.pixelSize: 11
+                            font.pixelSize: Theme.px(11)
                             font.weight: root.selectedLayerIndex === index ? Font.Bold : Font.Medium
                             color: layerItem.curLayer && layerItem.curLayer.enabled ? Theme.textMain : Theme.textDim
                             Layout.fillWidth: true
@@ -363,7 +363,7 @@ Rectangle {
                         Rectangle {
                             implicitWidth: 16
                             implicitHeight: 16
-                            radius: 3
+                            radius: Theme.r(3)
                             color: layerItem.curLayer && layerItem.curLayer.invert ? Theme.accentCyan : "transparent"
                             border.color: Theme.border
                             border.width: 1
@@ -373,7 +373,7 @@ Rectangle {
                                 text: "I"
                                 textFormat: Text.PlainText
                                 font.family: Theme.monoFont
-                                font.pixelSize: 8
+                                font.pixelSize: Theme.px(8)
                                 font.weight: Font.Bold
                                 color: layerItem.curLayer && layerItem.curLayer.invert ? "#ffffff" : Theme.textDim
                             }
@@ -394,7 +394,7 @@ Rectangle {
                         Rectangle {
                             implicitWidth: 16
                             implicitHeight: 16
-                            radius: 3
+                            radius: Theme.r(3)
                             color: "transparent"
 
                             Text {
@@ -402,7 +402,7 @@ Rectangle {
                                 text: "X"
                                 textFormat: Text.PlainText
                                 font.family: Theme.monoFont
-                                font.pixelSize: 9
+                                font.pixelSize: Theme.px(9)
                                 font.weight: Font.Bold
                                 color: Theme.accentRed
                             }
@@ -450,7 +450,7 @@ Rectangle {
                 text: "SELECTED LAYER CONTROLS (" + (activeL ? activeL.name : "") + ")"
                 textFormat: Text.PlainText
                 font.family: Theme.fontFamily
-                font.pixelSize: 9
+                font.pixelSize: Theme.px(9)
                 font.weight: Font.Bold
                 color: Theme.accent
             }

@@ -1402,7 +1402,9 @@ Rectangle {
             // LEFT PANEL: NAVIGATOR & HISTOGRAM & METADATA (Lightroom Studio Layout)
             Rectangle {
                 visible: root.showLeftPanel
-                implicitWidth: root.showLeftPanel ? 280 : 0
+                implicitWidth: root.showLeftPanel ? Theme.px(280) : 0
+                Layout.minimumWidth: implicitWidth
+                Layout.preferredWidth: implicitWidth
                 Layout.fillHeight: true
                 color: Theme.bgBase
                 border.color: Theme.border
@@ -1478,14 +1480,14 @@ Rectangle {
                                     Text {
                                         text: Theme.iconAi
                                         font.family: Theme.iconFont
-                                        font.pixelSize: 11
+                                        font.pixelSize: Theme.px(11)
                                         color: Theme.accentPurple
                                     }
                                     Text {
                                         text: "AI SCENE INSIGHT"
                                         textFormat: Text.PlainText
                                         font.family: Theme.fontFamily
-                                        font.pixelSize: 9
+                                        font.pixelSize: Theme.px(9)
                                         font.weight: Font.Bold
                                         color: Theme.accentPurple
                                     }
@@ -1494,7 +1496,7 @@ Rectangle {
                                         text: root.activeScene ? Math.round(root.activeScene.confidence * 100) + "%" : ""
                                         textFormat: Text.PlainText
                                         font.family: Theme.monoFont
-                                        font.pixelSize: 9
+                                        font.pixelSize: Theme.px(9)
                                         color: Theme.textDim
                                     }
                                 }
@@ -1503,7 +1505,7 @@ Rectangle {
                                     text: root.activeScene ? root.activeScene.scene_type : "Analyzing..."
                                     textFormat: Text.PlainText
                                     font.family: Theme.fontFamily
-                                    font.pixelSize: 11
+                                    font.pixelSize: Theme.px(11)
                                     font.weight: Font.Bold
                                     color: Theme.textMain
                                 }
@@ -1512,7 +1514,7 @@ Rectangle {
                                     text: root.activeScene ? root.activeScene.description : "Extracting dynamic range..."
                                     textFormat: Text.PlainText
                                     font.family: Theme.fontFamily
-                                    font.pixelSize: 9
+                                    font.pixelSize: Theme.px(9)
                                     color: Theme.textMuted
                                     elide: Text.ElideRight
                                     Layout.fillWidth: true
@@ -1562,7 +1564,7 @@ Rectangle {
                         Text {
                             text: "DaVinci Color Engine • [Alt+1..4] Switch Version"
                             textFormat: Text.PlainText
-                            font.pixelSize: 8
+                            font.pixelSize: Theme.px(8)
                             font.family: Theme.monoFont
                             color: Theme.textDim
                         }
@@ -1624,7 +1626,9 @@ Rectangle {
             // RIGHT ADJUSTMENT INSPECTOR (Dedicated Pure Tone & Color Controls)
             Rectangle {
                 visible: root.showRightPanel
-                implicitWidth: root.showRightPanel ? 320 : 0
+                implicitWidth: root.showRightPanel ? Theme.px(320) : 0
+                Layout.minimumWidth: implicitWidth
+                Layout.preferredWidth: implicitWidth
                 Layout.fillHeight: true
                 color: Theme.bgSurface
                 border.color: Theme.border
@@ -1702,7 +1706,7 @@ Rectangle {
                                     text: "ESSENTIAL ADJUSTMENTS"
                                     textFormat: Text.PlainText
                                     font.family: Theme.fontFamily
-                                    font.pixelSize: 10
+                                    font.pixelSize: Theme.px(10)
                                     font.weight: Font.DemiBold
                                     font.letterSpacing: 1
                                     color: Theme.textDim
@@ -1712,7 +1716,7 @@ Rectangle {
                                 Rectangle {
                                     implicitWidth: resetEssentialText.implicitWidth + 10
                                     implicitHeight: 18
-                                    radius: 4
+                                    radius: Theme.r(4)
                                     color: resetEssentialMouse.containsMouse ? Theme.bgCardHover : "transparent"
                                     border.color: Theme.border
                                     border.width: 1
@@ -1723,7 +1727,7 @@ Rectangle {
                                         text: "RESET"
                                         textFormat: Text.PlainText
                                         font.family: Theme.monoFont
-                                        font.pixelSize: 8
+                                        font.pixelSize: Theme.px(8)
                                         font.weight: Font.Bold
                                         color: Theme.textDim
                                     }
@@ -1805,7 +1809,7 @@ Rectangle {
                                     text: "WHITE BALANCE"
                                     textFormat: Text.PlainText
                                     font.family: Theme.fontFamily
-                                    font.pixelSize: 10
+                                    font.pixelSize: Theme.px(10)
                                     font.weight: Font.DemiBold
                                     font.letterSpacing: 1
                                     color: Theme.textDim
@@ -1815,7 +1819,7 @@ Rectangle {
                                 Rectangle {
                                     implicitWidth: resetWbText.implicitWidth + 10
                                     implicitHeight: 18
-                                    radius: 4
+                                    radius: Theme.r(4)
                                     color: resetWbMouse.containsMouse ? Theme.bgCardHover : "transparent"
                                     border.color: Theme.border
                                     border.width: 1
@@ -1826,7 +1830,7 @@ Rectangle {
                                         text: "RESET"
                                         textFormat: Text.PlainText
                                         font.family: Theme.monoFont
-                                        font.pixelSize: 8
+                                        font.pixelSize: Theme.px(8)
                                         font.weight: Font.Bold
                                         color: Theme.textDim
                                     }
@@ -1877,7 +1881,7 @@ Rectangle {
                                     text: "LIGHT & DYNAMIC RANGE"
                                     textFormat: Text.PlainText
                                     font.family: Theme.fontFamily
-                                    font.pixelSize: 10
+                                    font.pixelSize: Theme.px(10)
                                     font.weight: Font.DemiBold
                                     font.letterSpacing: 1
                                     color: Theme.textDim
@@ -1887,7 +1891,7 @@ Rectangle {
                                 Rectangle {
                                     implicitWidth: resetLightText.implicitWidth + 10
                                     implicitHeight: 18
-                                    radius: 4
+                                    radius: Theme.r(4)
                                     color: resetLightMouse.containsMouse ? Theme.bgCardHover : "transparent"
                                     border.color: Theme.border
                                     border.width: 1
@@ -1898,7 +1902,7 @@ Rectangle {
                                         text: "RESET"
                                         textFormat: Text.PlainText
                                         font.family: Theme.monoFont
-                                        font.pixelSize: 8
+                                        font.pixelSize: Theme.px(8)
                                         font.weight: Font.Bold
                                         color: Theme.textDim
                                     }
@@ -1988,7 +1992,7 @@ Rectangle {
                                     text: "TONE CURVE (PARAMETRIC)"
                                     textFormat: Text.PlainText
                                     font.family: Theme.fontFamily
-                                    font.pixelSize: 10
+                                    font.pixelSize: Theme.px(10)
                                     font.weight: Font.DemiBold
                                     font.letterSpacing: 1
                                     color: Theme.textDim
@@ -1998,7 +2002,7 @@ Rectangle {
                                 Rectangle {
                                     implicitWidth: resetCurveText.implicitWidth + 10
                                     implicitHeight: 18
-                                    radius: 4
+                                    radius: Theme.r(4)
                                     color: resetCurveMouse.containsMouse ? Theme.bgCardHover : "transparent"
                                     border.color: Theme.border
                                     border.width: 1
@@ -2009,7 +2013,7 @@ Rectangle {
                                         text: "RESET"
                                         textFormat: Text.PlainText
                                         font.family: Theme.monoFont
-                                        font.pixelSize: 8
+                                        font.pixelSize: Theme.px(8)
                                         font.weight: Font.Bold
                                         color: Theme.textDim
                                     }
@@ -2081,7 +2085,7 @@ Rectangle {
                                     text: "PRESENCE & TEXTURE"
                                     textFormat: Text.PlainText
                                     font.family: Theme.fontFamily
-                                    font.pixelSize: 10
+                                    font.pixelSize: Theme.px(10)
                                     font.weight: Font.DemiBold
                                     font.letterSpacing: 1
                                     color: Theme.textDim
@@ -2091,7 +2095,7 @@ Rectangle {
                                 Rectangle {
                                     implicitWidth: resetPresenceText.implicitWidth + 10
                                     implicitHeight: 18
-                                    radius: 4
+                                    radius: Theme.r(4)
                                     color: resetPresenceMouse.containsMouse ? Theme.bgCardHover : "transparent"
                                     border.color: Theme.border
                                     border.width: 1
@@ -2102,7 +2106,7 @@ Rectangle {
                                         text: "RESET"
                                         textFormat: Text.PlainText
                                         font.family: Theme.monoFont
-                                        font.pixelSize: 8
+                                        font.pixelSize: Theme.px(8)
                                         font.weight: Font.Bold
                                         color: Theme.textDim
                                     }
@@ -2179,7 +2183,7 @@ Rectangle {
                                     text: "COLOR MIXER (8-BAND HSL)"
                                     textFormat: Text.PlainText
                                     font.family: Theme.fontFamily
-                                    font.pixelSize: 10
+                                    font.pixelSize: Theme.px(10)
                                     font.weight: Font.DemiBold
                                     font.letterSpacing: 1
                                     color: Theme.textDim
@@ -2189,7 +2193,7 @@ Rectangle {
                                 Rectangle {
                                     implicitWidth: resetHslText.implicitWidth + 10
                                     implicitHeight: 18
-                                    radius: 4
+                                    radius: Theme.r(4)
                                     color: resetHslMouse.containsMouse ? Theme.bgCardHover : "transparent"
                                     border.color: Theme.border
                                     border.width: 1
@@ -2200,7 +2204,7 @@ Rectangle {
                                         text: "RESET"
                                         textFormat: Text.PlainText
                                         font.family: Theme.monoFont
-                                        font.pixelSize: 8
+                                        font.pixelSize: Theme.px(8)
                                         font.weight: Font.Bold
                                         color: Theme.textDim
                                     }
@@ -2293,7 +2297,7 @@ Rectangle {
                                     text: "DETAIL & OPTICS"
                                     textFormat: Text.PlainText
                                     font.family: Theme.fontFamily
-                                    font.pixelSize: 10
+                                    font.pixelSize: Theme.px(10)
                                     font.weight: Font.DemiBold
                                     font.letterSpacing: 1
                                     color: Theme.textDim
@@ -2303,7 +2307,7 @@ Rectangle {
                                 Rectangle {
                                     implicitWidth: resetDetailText.implicitWidth + 10
                                     implicitHeight: 18
-                                    radius: 4
+                                    radius: Theme.r(4)
                                     color: resetDetailMouse.containsMouse ? Theme.bgCardHover : "transparent"
                                     border.color: Theme.border
                                     border.width: 1
@@ -2314,7 +2318,7 @@ Rectangle {
                                         text: "RESET"
                                         textFormat: Text.PlainText
                                         font.family: Theme.monoFont
-                                        font.pixelSize: 8
+                                        font.pixelSize: Theme.px(8)
                                         font.weight: Font.Bold
                                         color: Theme.textDim
                                     }
@@ -2610,7 +2614,7 @@ Rectangle {
                                         text: "Copy"
                                         textFormat: Text.PlainText
                                         font.family: Theme.monoFont
-                                        font.pixelSize: 10
+                                        font.pixelSize: Theme.px(10)
                                         font.weight: Font.Medium
                                         color: Theme.textMain
                                     }
@@ -2638,7 +2642,7 @@ Rectangle {
                                         text: "Paste"
                                         textFormat: Text.PlainText
                                         font.family: Theme.monoFont
-                                        font.pixelSize: 10
+                                        font.pixelSize: Theme.px(10)
                                         font.weight: Font.Medium
                                         color: Theme.textMain
                                     }
@@ -2664,7 +2668,7 @@ Rectangle {
                                     text: "Reset"
                                     textFormat: Text.PlainText
                                     font.family: Theme.monoFont
-                                    font.pixelSize: 10
+                                    font.pixelSize: Theme.px(10)
                                     font.weight: Font.Bold
                                     color: Theme.highlightClip
                                 }
@@ -2701,7 +2705,7 @@ Rectangle {
                                         text: modelData.label
                                         textFormat: Text.PlainText
                                         font.family: Theme.monoFont
-                                        font.pixelSize: 10
+                                        font.pixelSize: Theme.px(10)
                                         font.weight: Font.Medium
                                         color: Theme.textMain
                                     }
@@ -2787,7 +2791,7 @@ Rectangle {
         anchors.horizontalCenter: parent.horizontalCenter
         implicitWidth: Math.min(root.width - 64, toastContent.implicitWidth + 28)
         implicitHeight: 32
-        radius: 16
+        radius: Theme.r(16)
         color: Theme.bgDark
         border.color: root.toastColor
         border.width: 1
@@ -2802,7 +2806,7 @@ Rectangle {
             Text {
                 text: root.toastMessage
                 textFormat: Text.PlainText
-                font.pixelSize: 11
+                font.pixelSize: Theme.px(11)
                 font.family: Theme.monoFont
                 font.weight: Font.DemiBold
                 color: root.toastColor

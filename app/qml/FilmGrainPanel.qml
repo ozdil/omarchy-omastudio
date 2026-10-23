@@ -32,7 +32,7 @@ Rectangle {
                 text: "SILVER-HALIDE FILM GRAIN"
                 textFormat: Text.PlainText
                 font.family: Theme.fontFamily
-                font.pixelSize: 10
+                font.pixelSize: Theme.px(10)
                 font.weight: Font.DemiBold
                 font.letterSpacing: 1
                 color: Theme.textDim
@@ -42,7 +42,7 @@ Rectangle {
             Rectangle {
                 implicitWidth: resetGrainText.implicitWidth + 10
                 implicitHeight: 18
-                radius: 4
+                radius: Theme.r(4)
                 color: resetGrainMouse.containsMouse ? Theme.bgCardHover : "transparent"
                 border.color: Theme.border
                 border.width: 1
@@ -53,7 +53,7 @@ Rectangle {
                     text: "RESET"
                     textFormat: Text.PlainText
                     font.family: Theme.monoFont
-                    font.pixelSize: 8
+                    font.pixelSize: Theme.px(8)
                     font.weight: Font.Bold
                     color: Theme.textDim
                 }

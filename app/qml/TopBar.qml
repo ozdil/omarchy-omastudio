@@ -50,7 +50,7 @@ Rectangle {
             Rectangle {
                 width: 26
                 height: 26
-                radius: 6
+                radius: Theme.r(6)
                 color: Qt.rgba(Theme.accent.r, Theme.accent.g, Theme.accent.b, 0.15)
                 border.color: Theme.accent
                 border.width: 1
@@ -59,14 +59,15 @@ Rectangle {
                     anchors.centerIn: parent
                     text: Theme.iconCamera
                     font.family: Theme.iconFont
-                    font.pixelSize: 13
+                    font.pixelSize: Theme.px(13)
                     color: Theme.accent
                 }
             }
             Text {
+                font.family: Theme.fontFamily
                 text: "OmaStudio"
                 textFormat: Text.PlainText
-                font.pixelSize: 14
+                font.pixelSize: Theme.px(14)
                 font.weight: Font.Black
                 color: Theme.textMain
             }
@@ -78,7 +79,7 @@ Rectangle {
             // Cap the badge so long camera filenames don't push the toolbar off-screen
             implicitWidth: Math.min(photoNameText.implicitWidth + 14, 280)
             implicitHeight: 22
-            radius: 4
+            radius: Theme.r(4)
             color: Theme.bgCard
             border.color: Theme.border
             Text {
@@ -91,7 +92,7 @@ Rectangle {
                 verticalAlignment: Text.AlignVCenter
                 text: root.activePhotoName
                 textFormat: Text.PlainText
-                font.pixelSize: 10
+                font.pixelSize: Theme.px(10)
                 font.family: Theme.monoFont
                 color: Theme.textMain
             }
@@ -106,7 +107,7 @@ Rectangle {
             Rectangle {
                 implicitWidth: 20
                 implicitHeight: 20
-                radius: 3
+                radius: Theme.r(3)
                 color: root.photoFlag === "pick" ? Theme.accentGreen : Theme.bgCard
                 border.color: root.photoFlag === "pick" ? Theme.accentGreen : Theme.border
                 Text {
@@ -114,7 +115,7 @@ Rectangle {
                     text: "P"
                     textFormat: Text.PlainText
                     font.family: Theme.monoFont
-                    font.pixelSize: 9
+                    font.pixelSize: Theme.px(9)
                     font.weight: Font.Bold
                     color: root.photoFlag === "pick" ? Theme.bgBase : Theme.accentGreen
                 }
@@ -129,7 +130,7 @@ Rectangle {
             Rectangle {
                 implicitWidth: 20
                 implicitHeight: 20
-                radius: 3
+                radius: Theme.r(3)
                 color: root.photoFlag === "reject" ? Theme.highlightClip : Theme.bgCard
                 border.color: root.photoFlag === "reject" ? Theme.highlightClip : Theme.border
                 Text {
@@ -137,7 +138,7 @@ Rectangle {
                     text: "X"
                     textFormat: Text.PlainText
                     font.family: Theme.monoFont
-                    font.pixelSize: 9
+                    font.pixelSize: Theme.px(9)
                     font.weight: Font.Bold
                     color: root.photoFlag === "reject" ? "#ffffff" : Theme.highlightClip
                 }
@@ -156,14 +157,14 @@ Rectangle {
                     Rectangle {
                         implicitWidth: 16
                         implicitHeight: 20
-                        radius: 2
+                        radius: Theme.r(2)
                         color: "transparent"
                         Text {
                             anchors.centerIn: parent
                             text: (index + 1) <= root.photoRating ? "*" : "-"
                             textFormat: Text.PlainText
                             font.family: Theme.monoFont
-                            font.pixelSize: 11
+                            font.pixelSize: Theme.px(11)
                             font.weight: Font.Bold
                             color: (index + 1) <= root.photoRating ? Theme.accentYellow : Theme.textDim
                         }
@@ -197,14 +198,15 @@ Rectangle {
                 Text {
                     text: Theme.iconAi
                     font.family: Theme.iconFont
-                    font.pixelSize: 10
+                    font.pixelSize: Theme.px(10)
                     color: root.aiConnected ? Theme.accentGreen : Theme.textMuted
                 }
                 Text {
+                    font.family: Theme.fontFamily
                     text: root.aiBusy ? qsTr("Connecting…")
                         : root.aiConnected ? qsTr("Local AI") : qsTr("Connect local AI")
                     textFormat: Text.PlainText
-                    font.pixelSize: 10
+                    font.pixelSize: Theme.px(10)
                     font.weight: Font.DemiBold
                     color: root.aiConnected ? Theme.textMain : Theme.textMuted
                 }
@@ -228,7 +230,7 @@ Rectangle {
 
         // Mode Switcher: Essentials vs Pro Studio
         Rectangle {
-            implicitWidth: 170
+            implicitWidth: Theme.px(170)
             implicitHeight: 28
             radius: Theme.radiusSm
             color: Theme.bgCard
@@ -250,13 +252,14 @@ Rectangle {
                         Text {
                             text: Theme.iconImage
                             font.family: Theme.iconFont
-                            font.pixelSize: 10
+                            font.pixelSize: Theme.px(10)
                             color: !root.isProMode ? Theme.bgBase : Theme.textMuted
                         }
                         Text {
+                            font.family: Theme.fontFamily
                             text: qsTr("Essentials")
                             textFormat: Text.PlainText
-                            font.pixelSize: 10
+                            font.pixelSize: Theme.px(10)
                             font.weight: Font.DemiBold
                             color: !root.isProMode ? Theme.bgBase : Theme.textMuted
                         }
@@ -281,13 +284,14 @@ Rectangle {
                         Text {
                             text: Theme.iconSliders
                             font.family: Theme.iconFont
-                            font.pixelSize: 10
+                            font.pixelSize: Theme.px(10)
                             color: root.isProMode ? Theme.bgBase : Theme.textMuted
                         }
                         Text {
+                            font.family: Theme.fontFamily
                             text: "Pro Studio"
                             textFormat: Text.PlainText
-                            font.pixelSize: 10
+                            font.pixelSize: Theme.px(10)
                             font.weight: Font.DemiBold
                             color: root.isProMode ? Theme.bgBase : Theme.textMuted
                         }
@@ -309,7 +313,7 @@ Rectangle {
             Rectangle {
                 implicitWidth: 28
                 implicitHeight: 28
-                radius: 4
+                radius: Theme.r(4)
                 color: undoMouse.containsMouse ? Theme.bgCardHover : Theme.bgCard
                 border.color: Theme.border
 
@@ -317,7 +321,7 @@ Rectangle {
                     anchors.centerIn: parent
                     text: Theme.iconUndo
                     font.family: Theme.iconFont
-                    font.pixelSize: 11
+                    font.pixelSize: Theme.px(11)
                     color: undoMouse.containsMouse ? Theme.accent : Theme.textMain
                 }
 
@@ -338,7 +342,7 @@ Rectangle {
             Rectangle {
                 implicitWidth: 28
                 implicitHeight: 28
-                radius: 4
+                radius: Theme.r(4)
                 color: redoMouse.containsMouse ? Theme.bgCardHover : Theme.bgCard
                 border.color: Theme.border
 
@@ -346,7 +350,7 @@ Rectangle {
                     anchors.centerIn: parent
                     text: Theme.iconRedo
                     font.family: Theme.iconFont
-                    font.pixelSize: 11
+                    font.pixelSize: Theme.px(11)
                     color: redoMouse.containsMouse ? Theme.accent : Theme.textMain
                 }
 
@@ -379,13 +383,14 @@ Rectangle {
                 Text {
                     text: Theme.iconSplit
                     font.family: Theme.iconFont
-                    font.pixelSize: 10
+                    font.pixelSize: Theme.px(10)
                     color: root.isSplitView ? Theme.accent : Theme.textMuted
                 }
                 Text {
+                    font.family: Theme.fontFamily
                     text: "A | B"
                     textFormat: Text.PlainText
-                    font.pixelSize: 10
+                    font.pixelSize: Theme.px(10)
                     font.weight: Font.DemiBold
                     color: root.isSplitView ? Theme.accent : Theme.textMain
                 }
@@ -412,13 +417,14 @@ Rectangle {
                 Text {
                     text: Theme.iconCrop
                     font.family: Theme.iconFont
-                    font.pixelSize: 10
+                    font.pixelSize: Theme.px(10)
                     color: root.isCropMode ? Theme.accent : Theme.textMuted
                 }
                 Text {
+                    font.family: Theme.fontFamily
                     text: "Crop"
                     textFormat: Text.PlainText
-                    font.pixelSize: 10
+                    font.pixelSize: Theme.px(10)
                     font.weight: Font.DemiBold
                     color: root.isCropMode ? Theme.accent : Theme.textMain
                 }
@@ -437,14 +443,15 @@ Rectangle {
             Rectangle {
                 width: 28
                 height: 28
-                radius: 4
+                radius: Theme.r(4)
                 color: Theme.bgCard
                 border.color: Theme.border
                 Text {
+                    font.family: Theme.fontFamily
                     anchors.centerIn: parent
                     text: "Fit"
                     textFormat: Text.PlainText
-                    font.pixelSize: 9
+                    font.pixelSize: Theme.px(9)
                     color: Theme.textMain
                 }
                 MouseArea {
@@ -456,14 +463,15 @@ Rectangle {
             Rectangle {
                 width: 32
                 height: 28
-                radius: 4
+                radius: Theme.r(4)
                 color: Theme.bgCard
                 border.color: Theme.border
                 Text {
+                    font.family: Theme.fontFamily
                     anchors.centerIn: parent
                     text: "1:1"
                     textFormat: Text.PlainText
-                    font.pixelSize: 9
+                    font.pixelSize: Theme.px(9)
                     color: Theme.textMain
                 }
                 MouseArea {
@@ -475,14 +483,15 @@ Rectangle {
             Rectangle {
                 width: 32
                 height: 28
-                radius: 4
+                radius: Theme.r(4)
                 color: Theme.bgCard
                 border.color: Theme.border
                 Text {
+                    font.family: Theme.fontFamily
                     anchors.centerIn: parent
                     text: "2:1"
                     textFormat: Text.PlainText
-                    font.pixelSize: 9
+                    font.pixelSize: Theme.px(9)
                     color: Theme.textMain
                 }
                 MouseArea {
@@ -508,7 +517,7 @@ Rectangle {
                 anchors.centerIn: parent
                 text: Theme.iconInfo
                 font.family: Theme.iconFont
-                font.pixelSize: 13
+                font.pixelSize: Theme.px(13)
                 color: mouseInfo.containsMouse ? Theme.accent : Theme.textDim
             }
 
@@ -536,13 +545,14 @@ Rectangle {
                 Text {
                     text: Theme.iconFolder
                     font.family: Theme.iconFont
-                    font.pixelSize: 11
+                    font.pixelSize: Theme.px(11)
                     color: Theme.textMain
                 }
                 Text {
+                    font.family: Theme.fontFamily
                     text: "Open RAW"
                     textFormat: Text.PlainText
-                    font.pixelSize: 11
+                    font.pixelSize: Theme.px(11)
                     font.weight: Font.Medium
                     color: Theme.textMain
                 }
@@ -568,13 +578,14 @@ Rectangle {
                 Text {
                     text: Theme.iconExport
                     font.family: Theme.iconFont
-                    font.pixelSize: 11
+                    font.pixelSize: Theme.px(11)
                     color: Theme.bgBase
                 }
                 Text {
+                    font.family: Theme.fontFamily
                     text: "Export"
                     textFormat: Text.PlainText
-                    font.pixelSize: 11
+                    font.pixelSize: Theme.px(11)
                     font.weight: Font.Bold
                     color: Theme.bgBase
                 }

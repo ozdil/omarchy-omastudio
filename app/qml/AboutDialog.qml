@@ -81,7 +81,7 @@ Rectangle {
                     anchors.centerIn: parent
                     text: Theme.iconCamera
                     font.family: Theme.iconFont
-                    font.pixelSize: 18
+                    font.pixelSize: Theme.px(18)
                     color: Theme.accent
                 }
             }
@@ -96,7 +96,7 @@ Rectangle {
                         text: root.pluginName
                         textFormat: Text.PlainText
                         font.family: Theme.fontFamily
-                        font.pixelSize: 16
+                        font.pixelSize: Theme.px(16)
                         font.weight: Font.Bold
                         color: Theme.textMain
                     }
@@ -104,7 +104,7 @@ Rectangle {
                     Rectangle {
                         implicitWidth: verText.implicitWidth + 10
                         implicitHeight: 18
-                        radius: 4
+                        radius: Theme.r(4)
                         color: Qt.rgba(Theme.accentGreen.r, Theme.accentGreen.g, Theme.accentGreen.b, 0.18)
                         border.color: Theme.accentGreen
                         border.width: 1
@@ -115,7 +115,7 @@ Rectangle {
                             text: root.pluginVersion
                             textFormat: Text.PlainText
                             font.family: Theme.monoFont
-                            font.pixelSize: 9
+                            font.pixelSize: Theme.px(9)
                             font.weight: Font.Bold
                             color: Theme.accentGreen
                         }
@@ -126,7 +126,7 @@ Rectangle {
                     text: root.pluginDescription
                     textFormat: Text.PlainText
                     font.family: Theme.fontFamily
-                    font.pixelSize: 10
+                    font.pixelSize: Theme.px(10)
                     color: Theme.textMuted
                     Layout.fillWidth: true
                     wrapMode: Text.WordWrap
@@ -146,7 +146,7 @@ Rectangle {
                     text: "\u2715"
                     textFormat: Text.PlainText
                     font.family: Theme.monoFont
-                    font.pixelSize: 11
+                    font.pixelSize: Theme.px(11)
                     color: closeMouse.containsMouse ? Theme.highlightClip : Theme.textDim
                 }
 
@@ -189,7 +189,7 @@ Rectangle {
                         Layout.alignment: Qt.AlignTop
                         text: "\u2022"
                         font.family: Theme.monoFont
-                        font.pixelSize: 12
+                        font.pixelSize: Theme.px(12)
                         color: Theme.accent
                     }
                     Text {
@@ -198,7 +198,7 @@ Rectangle {
                         textFormat: Text.PlainText
                         wrapMode: Text.WordWrap
                         font.family: Theme.fontFamily
-                        font.pixelSize: 10
+                        font.pixelSize: Theme.px(10)
                         color: Theme.textMain
                     }
                 }
@@ -221,7 +221,7 @@ Rectangle {
                     text: "Developer:"
                     textFormat: Text.PlainText
                     font.family: Theme.fontFamily
-                    font.pixelSize: 10
+                    font.pixelSize: Theme.px(10)
                     font.weight: Font.DemiBold
                     color: Theme.textDim
                 }
@@ -231,7 +231,7 @@ Rectangle {
                     text: root.pluginAuthor
                     textFormat: Text.PlainText
                     font.family: Theme.monoFont
-                    font.pixelSize: 10
+                    font.pixelSize: Theme.px(10)
                     font.weight: Font.Bold
                     color: Theme.textMain
                 }
@@ -242,7 +242,7 @@ Rectangle {
                     text: "License:"
                     textFormat: Text.PlainText
                     font.family: Theme.fontFamily
-                    font.pixelSize: 10
+                    font.pixelSize: Theme.px(10)
                     font.weight: Font.DemiBold
                     color: Theme.textDim
                 }
@@ -252,7 +252,7 @@ Rectangle {
                     text: root.pluginLicense
                     textFormat: Text.PlainText
                     font.family: Theme.monoFont
-                    font.pixelSize: 10
+                    font.pixelSize: Theme.px(10)
                     color: Theme.textMuted
                 }
             }
@@ -262,7 +262,7 @@ Rectangle {
                     text: "Platform:"
                     textFormat: Text.PlainText
                     font.family: Theme.fontFamily
-                    font.pixelSize: 10
+                    font.pixelSize: Theme.px(10)
                     font.weight: Font.DemiBold
                     color: Theme.textDim
                 }
@@ -272,7 +272,7 @@ Rectangle {
                     text: "Omarchy Linux (Wayland / Hyprland)"
                     textFormat: Text.PlainText
                     font.family: Theme.monoFont
-                    font.pixelSize: 10
+                    font.pixelSize: Theme.px(10)
                     color: Theme.textMuted
                 }
             }
@@ -301,7 +301,7 @@ Rectangle {
                     text: "GitHub"
                     textFormat: Text.PlainText
                     font.family: Theme.monoFont
-                    font.pixelSize: 10
+                    font.pixelSize: Theme.px(10)
                     font.weight: Font.Medium
                     color: Theme.accent
                 }
@@ -332,14 +332,14 @@ Rectangle {
                     Text {
                         text: "\uf004"
                         font.family: Theme.iconFont
-                        font.pixelSize: 11
+                        font.pixelSize: Theme.px(11)
                         color: "#ea4aaa"
                     }
                     Text {
                         text: "Sponsor"
                         textFormat: Text.PlainText
                         font.family: Theme.monoFont
-                        font.pixelSize: 10
+                        font.pixelSize: Theme.px(10)
                         font.weight: Font.Bold
                         color: "#ea4aaa"
                     }
@@ -371,14 +371,14 @@ Rectangle {
                     Text {
                         text: "\uf0f4"
                         font.family: Theme.iconFont
-                        font.pixelSize: 11
+                        font.pixelSize: Theme.px(11)
                         color: "#000000"
                     }
                     Text {
                         text: "Buy Me a Coffee"
                         textFormat: Text.PlainText
                         font.family: Theme.monoFont
-                        font.pixelSize: 10
+                        font.pixelSize: Theme.px(10)
                         font.weight: Font.Bold
                         color: "#000000"
                     }
@@ -404,7 +404,7 @@ Rectangle {
                     text: "OK"
                     textFormat: Text.PlainText
                     font.family: Theme.monoFont
-                    font.pixelSize: 11
+                    font.pixelSize: Theme.px(11)
                     font.weight: Font.Bold
                     color: Theme.bgBase
                 }

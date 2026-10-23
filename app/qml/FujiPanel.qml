@@ -133,7 +133,7 @@ Rectangle {
         signal clicked()
         implicitWidth: btnText.implicitWidth + 16
         implicitHeight: 24
-        radius: 4
+        radius: Theme.r(4)
         opacity: enabled ? 1.0 : 0.4
         color: primary ? (btnMouse.containsMouse ? Theme.accentHover : Theme.accent)
                        : (btnMouse.containsMouse ? Theme.bgCardHover : Theme.bgCard)
@@ -146,7 +146,7 @@ Rectangle {
             text: btn.busy ? "..." : btn.label
             textFormat: Text.PlainText
             font.family: Theme.fontFamily
-            font.pixelSize: 9
+            font.pixelSize: Theme.px(9)
             font.weight: Font.Bold
             color: btn.primary ? Theme.bgBase : Theme.textMain
         }
@@ -163,7 +163,7 @@ Rectangle {
     component SectionTitle: Text {
         textFormat: Text.PlainText
         font.family: Theme.fontFamily
-        font.pixelSize: 10
+        font.pixelSize: Theme.px(10)
         font.weight: Font.DemiBold
         font.letterSpacing: 1
         color: Theme.textDim
@@ -214,12 +214,13 @@ Rectangle {
         }
 
         Text {
+            font.family: Theme.fontFamily
             visible: root.recipes.length === 0
             Layout.fillWidth: true
             wrapMode: Text.WordWrap
             text: "No saved recipes. Import an X RAW Studio profile, recipe text or a Fujifilm photo."
             textFormat: Text.PlainText
-            font.pixelSize: 10
+            font.pixelSize: Theme.px(10)
             color: Theme.textMuted
         }
 
@@ -245,20 +246,22 @@ Rectangle {
                         anchors.rightMargin: 8
                         spacing: 0
                         Text {
+                            font.family: Theme.fontFamily
                             Layout.fillWidth: true
                             text: modelData.recipe.label
                             elide: Text.ElideRight
                             textFormat: Text.PlainText
-                            font.pixelSize: 11
+                            font.pixelSize: Theme.px(11)
                             font.weight: Font.Bold
                             color: parent.parent.isCur ? Theme.accent : Theme.textMain
                         }
                         Text {
+                            font.family: Theme.fontFamily
                             Layout.fillWidth: true
                             text: modelData.recipe.recipe.film_simulation_name + (modelData.recipe.device ? "  ·  " + modelData.recipe.device : "")
                             elide: Text.ElideRight
                             textFormat: Text.PlainText
-                            font.pixelSize: 9
+                            font.pixelSize: Theme.px(9)
                             color: Theme.textMuted
                         }
                     }
@@ -302,10 +305,11 @@ Rectangle {
         }
 
         Text {
+            font.family: Theme.fontFamily
             Layout.fillWidth: true
             wrapMode: Text.WordWrap
             textFormat: Text.PlainText
-            font.pixelSize: 10
+            font.pixelSize: Theme.px(10)
             color: root.camera ? Theme.textMain : Theme.textMuted
             text: root.camera
                 ? (root.camera.device.model || "Fujifilm camera") + (root.camera.raw_conversion ? "  ·  in-camera RAW conversion" : "")
@@ -345,7 +349,7 @@ Rectangle {
                 delegate: Rectangle {
                     Layout.fillWidth: true
                     implicitHeight: 26
-                    radius: 4
+                    radius: Theme.r(4)
                     color: presetMouse.containsMouse ? Theme.bgCardHover : Theme.bgCard
                     border.color: Theme.border
                     border.width: 1
@@ -356,18 +360,20 @@ Rectangle {
                         anchors.rightMargin: 8
                         spacing: 8
                         Text {
+                            font.family: Theme.fontFamily
                             text: "C" + modelData.slot
                             textFormat: Text.PlainText
-                            font.pixelSize: 10
+                            font.pixelSize: Theme.px(10)
                             font.weight: Font.Bold
                             color: Theme.accent
                         }
                         Text {
+                            font.family: Theme.fontFamily
                             Layout.fillWidth: true
                             text: (modelData.name || "Unnamed") + "  ·  " + modelData.recipe.film_simulation_name
                             elide: Text.ElideRight
                             textFormat: Text.PlainText
-                            font.pixelSize: 10
+                            font.pixelSize: Theme.px(10)
                             color: Theme.textMain
                         }
                     }
@@ -393,16 +399,17 @@ Rectangle {
                     delegate: Rectangle {
                         Layout.fillWidth: true
                         implicitHeight: 22
-                        radius: 4
+                        radius: Theme.r(4)
                         property bool isCur: root.targetSlot === index + 1
                         color: isCur ? Theme.accent : Theme.bgCard
                         border.color: isCur ? Theme.accent : Theme.border
                         border.width: 1
                         Text {
+                            font.family: Theme.fontFamily
                             anchors.centerIn: parent
                             text: "C" + (index + 1)
                             textFormat: Text.PlainText
-                            font.pixelSize: 9
+                            font.pixelSize: Theme.px(9)
                             font.weight: Font.Bold
                             color: parent.isCur ? Theme.bgBase : Theme.textMain
                         }
@@ -431,10 +438,11 @@ Rectangle {
         SectionTitle { text: "PIXEL SHIFT MULTI-SHOT" }
 
         Text {
+            font.family: Theme.fontFamily
             Layout.fillWidth: true
             wrapMode: Text.WordWrap
             textFormat: Text.PlainText
-            font.pixelSize: 10
+            font.pixelSize: Theme.px(10)
             color: Theme.textMuted
             text: root.shiftFrames.length >= 2
                 ? root.shiftFrames.length + " RAF frames selected. 4 frames give full colour per pixel, 16 frames double the resolution."

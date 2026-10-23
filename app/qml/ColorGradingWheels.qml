@@ -66,9 +66,10 @@ ColumnLayout {
         spacing: 4
 
         Text {
+            font.family: Theme.fontFamily
             text: "DAVINCI PRIMARIES WHEELS"
             textFormat: Text.PlainText
-            font.pixelSize: 10
+            font.pixelSize: Theme.px(10)
             font.weight: Font.DemiBold
             font.letterSpacing: 1
             color: Theme.textDim
@@ -79,7 +80,7 @@ ColumnLayout {
         Rectangle {
             implicitWidth: viewToggleText.implicitWidth + 8
             implicitHeight: 18
-            radius: 4
+            radius: Theme.r(4)
             color: viewToggleMouse.containsMouse ? Theme.bgCardHover : "transparent"
             border.color: Theme.border
             border.width: 1
@@ -89,7 +90,7 @@ ColumnLayout {
                 anchors.centerIn: parent
                 text: root.fourWheelsMode ? "4-WHEEL" : "TABBED"
                 textFormat: Text.PlainText
-                font.pixelSize: 8
+                font.pixelSize: Theme.px(8)
                 font.weight: Font.Bold
                 font.family: Theme.monoFont
                 color: root.fourWheelsMode ? Theme.accentCyan : Theme.textDim
@@ -108,7 +109,7 @@ ColumnLayout {
         Rectangle {
             implicitWidth: resetAllText.implicitWidth + 8
             implicitHeight: 18
-            radius: 4
+            radius: Theme.r(4)
             color: resetAllMouse.containsMouse ? Theme.bgCardHover : "transparent"
             border.color: Theme.border
             border.width: 1
@@ -118,7 +119,7 @@ ColumnLayout {
                 anchors.centerIn: parent
                 text: "RESET"
                 textFormat: Text.PlainText
-                font.pixelSize: 8
+                font.pixelSize: Theme.px(8)
                 font.weight: Font.Bold
                 font.family: Theme.monoFont
                 color: Theme.textDim
@@ -152,7 +153,7 @@ ColumnLayout {
             delegate: Rectangle {
                 Layout.fillWidth: true
                 implicitHeight: 26
-                radius: 4
+                radius: Theme.r(4)
                 property bool isCur: root.activeTab === index
                 color: isCur ? Qt.rgba(Theme.accent.r, Theme.accent.g, Theme.accent.b, 0.2) : Theme.bgCard
                 border.color: isCur ? Theme.accent : Theme.border
@@ -162,7 +163,7 @@ ColumnLayout {
                     anchors.centerIn: parent
                     text: modelData.name
                     textFormat: Text.PlainText
-                    font.pixelSize: 9
+                    font.pixelSize: Theme.px(9)
                     font.weight: Font.Bold
                     font.family: Theme.monoFont
                     color: parent.isCur ? Theme.accent : Theme.textMain

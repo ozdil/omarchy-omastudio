@@ -43,7 +43,7 @@ ColumnLayout {
             textFormat: Text.PlainText
             font.family: Theme.fontFamily
             color: root.effectiveValue !== root.defaultValue ? Theme.textMain : Theme.textMuted
-            font.pixelSize: 12
+            font.pixelSize: Theme.px(12)
             font.weight: root.effectiveValue !== root.defaultValue ? Font.DemiBold : Font.Medium
             Layout.fillWidth: true
             elide: Text.ElideRight
@@ -66,7 +66,7 @@ ColumnLayout {
                 visible: Math.abs(root.effectiveValue - root.defaultValue) > 0.001
                 implicitWidth: 18
                 implicitHeight: 18
-                radius: 4
+                radius: Theme.r(4)
                 color: sliderResetMouse.containsMouse ? root.accentColor : "transparent"
                 border.color: root.accentColor
                 border.width: 1
@@ -75,7 +75,7 @@ ColumnLayout {
                     anchors.centerIn: parent
                     text: Theme.iconRotateLeft
                     font.family: Theme.iconFont
-                    font.pixelSize: 9
+                    font.pixelSize: Theme.px(9)
                     color: sliderResetMouse.containsMouse ? Theme.bgBase : root.accentColor
                 }
 
@@ -105,7 +105,7 @@ ColumnLayout {
                     text: (root.decimals === 0 ? Math.round(root.effectiveValue) : root.effectiveValue.toFixed(root.decimals)) + root.suffix
                     textFormat: Text.PlainText
                     color: root.effectiveValue !== root.defaultValue ? root.accentColor : Theme.textMuted
-                    font.pixelSize: 10
+                    font.pixelSize: Theme.px(10)
                     font.family: Theme.monoFont
                     font.weight: Font.DemiBold
                 }
@@ -138,7 +138,7 @@ ColumnLayout {
             implicitHeight: 3
             width: slider.availableWidth
             height: implicitHeight
-            radius: 1.5
+            radius: Theme.r(1.5)
             color: Qt.rgba(Theme.textMain.r, Theme.textMain.g, Theme.textMain.b, 0.12)
 
             Rectangle {
@@ -150,7 +150,7 @@ ColumnLayout {
                 width: Math.abs(curPos - zeroPos)
                 height: parent.height
                 color: root.accentColor
-                radius: 1.5
+                radius: Theme.r(1.5)
             }
         }
 
@@ -159,7 +159,7 @@ ColumnLayout {
             y: slider.topPadding + slider.availableHeight / 2 - height / 2
             implicitWidth: 12
             implicitHeight: 12
-            radius: 6
+            radius: Theme.r(6)
             color: slider.pressed ? root.accentColor : (slider.hovered ? Theme.accent : Theme.textMain)
             border.color: Theme.bgDark
             border.width: 1.5

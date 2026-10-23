@@ -43,7 +43,7 @@ Rectangle {
                     delegate: Rectangle {
                         implicitWidth: modeText.implicitWidth + 8
                         implicitHeight: 18
-                        radius: 3
+                        radius: Theme.r(3)
                         property bool isCur: root.activeScope === modelData.idx
                         color: isCur ? Qt.rgba(Theme.accent.r, Theme.accent.g, Theme.accent.b, 0.25) : Theme.bgCard
                         border.color: isCur ? Theme.accent : Theme.border
@@ -54,7 +54,7 @@ Rectangle {
                             anchors.centerIn: parent
                             text: modelData.name
                             textFormat: Text.PlainText
-                            font.pixelSize: 8
+                            font.pixelSize: Theme.px(8)
                             font.weight: Font.Bold
                             font.family: Theme.monoFont
                             color: parent.isCur ? Theme.accent : Theme.textDim
@@ -78,7 +78,7 @@ Rectangle {
             Rectangle {
                 implicitWidth: shadowText.implicitWidth + 8
                 implicitHeight: 18
-                radius: 3
+                radius: Theme.r(3)
                 color: root.showClippingShadows ? Theme.shadowClip : Qt.rgba(0.2, 0.5, 1.0, 0.15)
                 border.color: Theme.shadowClip
 
@@ -87,7 +87,7 @@ Rectangle {
                     anchors.centerIn: parent
                     text: "[S] " + (root.histData ? root.histData.shadow_clipping_percent.toFixed(1) + "%" : "0.0%")
                     textFormat: Text.PlainText
-                    font.pixelSize: 8
+                    font.pixelSize: Theme.px(8)
                     font.family: Theme.monoFont
                     color: root.showClippingShadows ? "#ffffff" : Theme.shadowClip
                 }
@@ -106,7 +106,7 @@ Rectangle {
             Rectangle {
                 implicitWidth: highText.implicitWidth + 8
                 implicitHeight: 18
-                radius: 3
+                radius: Theme.r(3)
                 color: root.showClippingHighlights ? Theme.highlightClip : Qt.rgba(1.0, 0.3, 0.4, 0.15)
                 border.color: Theme.highlightClip
 
@@ -115,7 +115,7 @@ Rectangle {
                     anchors.centerIn: parent
                     text: "[H] " + (root.histData ? root.histData.highlight_clipping_percent.toFixed(1) + "%" : "0.0%")
                     textFormat: Text.PlainText
-                    font.pixelSize: 8
+                    font.pixelSize: Theme.px(8)
                     font.family: Theme.monoFont
                     color: root.showClippingHighlights ? "#ffffff" : Theme.highlightClip
                 }
@@ -136,7 +136,7 @@ Rectangle {
             Layout.fillWidth: true
             Layout.fillHeight: true
             radius: Theme.radiusSm
-            color: "#0d0e14"
+            color: Theme.bgDark
             border.color: Theme.border
             border.width: 1
             clip: true
@@ -152,8 +152,8 @@ Rectangle {
                     ctx.clearRect(0, 0, width, height);
 
                     if (!root.histData) {
-                        ctx.fillStyle = "#545c7e";
-                        ctx.font = "9px " + Theme.monoFont;
+                        ctx.fillStyle = String(Theme.textDim);
+                        ctx.font = "" + Theme.px(9) + "px '" + Theme.monoFont + "'";
                         ctx.textAlign = "center";
                         ctx.textBaseline = "middle";
                         ctx.fillText("NO SIGNAL / LOAD RAW", width / 2, height / 2);
@@ -180,7 +180,7 @@ Rectangle {
                     var luma = root.histData.luma || [];
 
                     // Grid lines (25%, 50%, 75%)
-                    ctx.strokeStyle = "#1f2335";
+                    ctx.strokeStyle = String(Theme.border);
                     ctx.lineWidth = 1;
                     for (var g = 1; g < 4; g++) {
                         var gx = (w * g) / 4;
@@ -225,10 +225,10 @@ Rectangle {
                     if (wf.length < 64 * 32) return;
 
                     // Draw IRE grid lines (0, 20, 40, 60, 80, 100 IRE)
-                    ctx.strokeStyle = "#1b1d28";
+                    ctx.strokeStyle = String(Theme.border);
                     ctx.lineWidth = 1;
-                    ctx.fillStyle = "#414868";
-                    ctx.font = "7px " + Theme.monoFont;
+                    ctx.fillStyle = String(Theme.textDim);
+                    ctx.font = "" + Theme.px(7) + "px '" + Theme.monoFont + "'";
                     ctx.textAlign = "left";
 
                     var ireLabels = [100, 80, 60, 40, 20, 0];
@@ -270,14 +270,14 @@ Rectangle {
                     var rowH = (h - 10) / 32.0;
 
                     // Channel dividers and labels
-                    ctx.strokeStyle = "#2f354a";
+                    ctx.strokeStyle = String(Theme.border);
                     ctx.lineWidth = 1;
                     ctx.beginPath();
                     ctx.moveTo(channelW, 0); ctx.lineTo(channelW, h);
                     ctx.moveTo(channelW * 2, 0); ctx.lineTo(channelW * 2, h);
                     ctx.stroke();
 
-                    ctx.font = "8px " + Theme.monoFont;
+                    ctx.font = "" + Theme.px(8) + "px '" + Theme.monoFont + "'";
                     ctx.textAlign = "center";
                     ctx.fillStyle = "#f7768e"; ctx.fillText("RED", channelW * 0.5, 9);
                     ctx.fillStyle = "#9ece6a"; ctx.fillText("GREEN", channelW * 1.5, 9);
@@ -312,7 +312,7 @@ Rectangle {
                     var maxRadius = Math.min(cx, cy) - 8;
 
                     // Draw outer reticle and target circles
-                    ctx.strokeStyle = "#222538";
+                    ctx.strokeStyle = String(Theme.border);
                     ctx.lineWidth = 1;
                     ctx.beginPath();
                     ctx.arc(cx, cy, maxRadius, 0, 2 * Math.PI);
@@ -338,7 +338,7 @@ Rectangle {
 
                     // Target label for skin line
                     ctx.fillStyle = "rgba(255, 180, 100, 0.85)";
-                    ctx.font = "7px " + Theme.monoFont;
+                    ctx.font = "" + Theme.px(7) + "px '" + Theme.monoFont + "'";
                     ctx.textAlign = "left";
                     ctx.fillText("SKIN", cx + Math.cos(skinAngle) * (maxRadius - 14), cy + Math.sin(skinAngle) * (maxRadius - 14));
 
@@ -387,5 +387,14 @@ Rectangle {
 
     onHistDataChanged: {
         scopeCanvas.requestPaint();
+    }
+
+    // Repaint in the new colours and font when the Omarchy theme or font changes
+    Connections {
+        target: Theme
+        function onBgDarkChanged() { scopeCanvas.requestPaint(); }
+        function onTextDimChanged() { scopeCanvas.requestPaint(); }
+        function onSystemFontChanged() { scopeCanvas.requestPaint(); }
+        function onFontBaseChanged() { scopeCanvas.requestPaint(); }
     }
 }

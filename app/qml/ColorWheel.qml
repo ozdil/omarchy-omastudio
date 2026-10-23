@@ -82,10 +82,11 @@ ColumnLayout {
         spacing: 6
 
         Text {
+            font.family: Theme.fontFamily
             text: root.title
             textFormat: Text.PlainText
             color: root.wheelAccent
-            font.pixelSize: 11
+            font.pixelSize: Theme.px(11)
             font.weight: Font.DemiBold
             Layout.fillWidth: true
         }
@@ -100,7 +101,7 @@ ColumnLayout {
                 anchors.centerIn: parent
                 text: Theme.iconRotateLeft
                 font.family: Theme.iconFont
-                font.pixelSize: 10
+                font.pixelSize: Theme.px(10)
                 color: resetMouse.containsMouse ? root.wheelAccent : Theme.textDim
             }
             MouseArea {
@@ -182,7 +183,7 @@ ColumnLayout {
             id: puck
             width: 12
             height: 12
-            radius: 6
+            radius: Theme.r(6)
             x: wheelContainer.width / 2 - width / 2
             y: wheelContainer.height / 2 - height / 2
             color: "#ffffff"
@@ -242,9 +243,10 @@ ColumnLayout {
         spacing: 4
 
         Text {
+            font.family: Theme.fontFamily
             text: "Y"
             textFormat: Text.PlainText
-            font.pixelSize: 10
+            font.pixelSize: Theme.px(10)
             font.weight: Font.Bold
             color: Theme.textDim
         }
@@ -262,7 +264,7 @@ ColumnLayout {
                 y: lumaSlider.topPadding + lumaSlider.availableHeight / 2 - height / 2
                 width: lumaSlider.availableWidth
                 height: 3
-                radius: 1.5
+                radius: Theme.r(1.5)
                 color: Theme.bgCard
 
                 Rectangle {
@@ -272,7 +274,7 @@ ColumnLayout {
                     width: Math.abs(curPos - zeroPos)
                     height: parent.height
                     color: root.wheelAccent
-                    radius: 1.5
+                    radius: Theme.r(1.5)
                 }
             }
 
@@ -281,7 +283,7 @@ ColumnLayout {
                 y: lumaSlider.topPadding + lumaSlider.availableHeight / 2 - height / 2
                 width: 10
                 height: 10
-                radius: 5
+                radius: Theme.r(5)
                 color: lumaSlider.pressed ? root.wheelAccent : Theme.textMain
                 border.color: Theme.bgDark
                 border.width: 1
@@ -303,7 +305,7 @@ ColumnLayout {
         Text {
             text: (root.lumaOffset >= 0 ? "+" : "") + Math.round(root.lumaOffset * 100)
             textFormat: Text.PlainText
-            font.pixelSize: 9
+            font.pixelSize: Theme.px(9)
             font.family: Theme.monoFont
             color: root.lumaOffset !== 0.0 ? root.wheelAccent : Theme.textDim
         }

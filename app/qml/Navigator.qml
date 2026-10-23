@@ -53,9 +53,10 @@ Rectangle {
             spacing: 4
 
             Text {
+                font.family: Theme.fontFamily
                 text: "NAVIGATOR"
                 textFormat: Text.PlainText
-                font.pixelSize: 10
+                font.pixelSize: Theme.px(10)
                 font.weight: Font.DemiBold
                 font.letterSpacing: 1
                 color: Theme.textDim
@@ -75,7 +76,7 @@ Rectangle {
                 delegate: Rectangle {
                     implicitWidth: lbl.implicitWidth + 10
                     implicitHeight: 18
-                    radius: 3
+                    radius: Theme.r(3)
                     property bool isCur: (modelData.label === "FIT" && root.zoomFactor <= 1.05) || (modelData.label !== "FIT" && Math.abs(root.zoomFactor - modelData.val) < 0.1 && root.zoomFactor > 1.05)
                     color: isCur ? Theme.accent : Theme.bgCard
                     border.color: isCur ? Theme.accent : Theme.border
@@ -85,7 +86,7 @@ Rectangle {
                         anchors.centerIn: parent
                         text: modelData.label
                         textFormat: Text.PlainText
-                        font.pixelSize: 9
+                        font.pixelSize: Theme.px(9)
                         font.family: Theme.monoFont
                         font.weight: Font.Bold
                         color: parent.isCur ? Theme.bgBase : Theme.textMuted
@@ -105,7 +106,7 @@ Rectangle {
             id: miniContainer
             Layout.fillWidth: true
             Layout.fillHeight: true
-            radius: 4
+            radius: Theme.r(4)
             color: Theme.bgDark
             clip: true
 
@@ -181,14 +182,14 @@ Rectangle {
                     color: Qt.rgba(Theme.accent.r, Theme.accent.g, Theme.accent.b, 0.2)
                     border.color: Theme.accent
                     border.width: 1.5
-                    radius: 2
+                    radius: Theme.r(2)
 
                     // Crosshair in center of viewfinder
                     Rectangle {
                         anchors.centerIn: parent
                         width: 4
                         height: 4
-                        radius: 2
+                        radius: Theme.r(2)
                         color: Theme.accent
                     }
 

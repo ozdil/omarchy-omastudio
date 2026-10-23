@@ -50,13 +50,14 @@ Rectangle {
                 Text {
                     text: Theme.iconExport
                     font.family: Theme.iconFont
-                    font.pixelSize: 14
+                    font.pixelSize: Theme.px(14)
                     color: Theme.accent
                 }
                 Text {
+                    font.family: Theme.fontFamily
                     text: root.isBatchMode ? ("Batch Export (" + root.batchCount + " Photos)") : "Export Master Photo"
                     textFormat: Text.PlainText
-                    font.pixelSize: 15
+                    font.pixelSize: Theme.px(15)
                     font.weight: Font.Bold
                     color: Theme.textMain
                 }
@@ -73,7 +74,7 @@ Rectangle {
                     text: Theme.iconTimes
                     font.family: Theme.iconFont
                     color: Theme.textMuted
-                    font.pixelSize: 10
+                    font.pixelSize: Theme.px(10)
                 }
                 MouseArea {
                     anchors.fill: parent
@@ -94,9 +95,10 @@ Rectangle {
             spacing: 6
             Layout.fillWidth: true
             Text {
+                font.family: Theme.fontFamily
                 text: "MODERN OPEN FORMAT"
                 textFormat: Text.PlainText
-                font.pixelSize: 10
+                font.pixelSize: Theme.px(10)
                 font.weight: Font.DemiBold
                 color: Theme.textDim
             }
@@ -131,16 +133,18 @@ Rectangle {
                             anchors.margins: 6
                             spacing: 1
                             Text {
+                                font.family: Theme.fontFamily
                                 text: modelData.name
                                 textFormat: Text.PlainText
-                                font.pixelSize: 11
+                                font.pixelSize: Theme.px(11)
                                 font.weight: Font.Bold
                                 color: root.selectedFormat === modelData.id ? Theme.accent : Theme.textMain
                             }
                             Text {
+                                font.family: Theme.fontFamily
                                 text: modelData.badge
                                 textFormat: Text.PlainText
-                                font.pixelSize: 9
+                                font.pixelSize: Theme.px(9)
                                 color: Theme.textMuted
                             }
                         }
@@ -171,9 +175,10 @@ Rectangle {
             spacing: 6
             Layout.fillWidth: true
             Text {
+                font.family: Theme.fontFamily
                 text: "RESOLUTION & SCALING"
                 textFormat: Text.PlainText
-                font.pixelSize: 10
+                font.pixelSize: Theme.px(10)
                 font.weight: Font.DemiBold
                 color: Theme.textDim
             }
@@ -195,17 +200,18 @@ Rectangle {
                     delegate: Rectangle {
                         Layout.fillWidth: true
                         implicitHeight: 28
-                        radius: 4
+                        radius: Theme.r(4)
                         property bool isCur: root.scalePercent === modelData.pct && root.maxDimension === modelData.maxD
                         color: isCur ? Theme.accent : Theme.bgCard
                         border.color: isCur ? Theme.accent : Theme.border
                         border.width: 1
 
                         Text {
+                            font.family: Theme.fontFamily
                             anchors.centerIn: parent
                             text: modelData.label
                             textFormat: Text.PlainText
-                            font.pixelSize: 10
+                            font.pixelSize: Theme.px(10)
                             font.weight: Font.Medium
                             color: parent.isCur ? Theme.bgBase : Theme.textMain
                         }
@@ -228,9 +234,10 @@ Rectangle {
             spacing: 6
             Layout.fillWidth: true
             Text {
+                font.family: Theme.fontFamily
                 text: "COLOR SPACE & ICC PROFILE"
                 textFormat: Text.PlainText
-                font.pixelSize: 10
+                font.pixelSize: Theme.px(10)
                 font.weight: Font.DemiBold
                 color: Theme.textDim
             }
@@ -266,17 +273,19 @@ Rectangle {
                             anchors.margins: 6
                             spacing: 6
                             Text {
+                                font.family: Theme.fontFamily
                                 text: modelData.name
                                 textFormat: Text.PlainText
-                                font.pixelSize: 11
+                                font.pixelSize: Theme.px(11)
                                 font.weight: Font.Bold
                                 color: parent.parent.isCur ? Theme.accent : Theme.textMain
                             }
                             Item { Layout.fillWidth: true }
                             Text {
+                                font.family: Theme.fontFamily
                                 text: modelData.desc
                                 textFormat: Text.PlainText
-                                font.pixelSize: 9
+                                font.pixelSize: Theme.px(9)
                                 color: Theme.textMuted
                             }
                         }
@@ -296,9 +305,10 @@ Rectangle {
                 spacing: 6
 
                 Text {
+                    font.family: Theme.fontFamily
                     text: "Intent"
                     textFormat: Text.PlainText
-                    font.pixelSize: 10
+                    font.pixelSize: Theme.px(10)
                     color: Theme.textDim
                     Layout.preferredWidth: 44
                 }
@@ -320,10 +330,11 @@ Rectangle {
                         border.width: 1
 
                         Text {
+                            font.family: Theme.fontFamily
                             anchors.centerIn: parent
                             text: modelData.name
                             textFormat: Text.PlainText
-                            font.pixelSize: 10
+                            font.pixelSize: Theme.px(10)
                             font.weight: parent.isCur ? Font.Bold : Font.Normal
                             color: parent.isCur ? Theme.accent : Theme.textMain
                         }
@@ -364,13 +375,14 @@ Rectangle {
                     Text {
                         text: Theme.iconCamera
                         font.family: Theme.iconFont
-                        font.pixelSize: 12
+                        font.pixelSize: Theme.px(12)
                         color: Theme.accent
                     }
                     Text {
+                        font.family: Theme.fontFamily
                         text: "Preserve Camera EXIF"
                         textFormat: Text.PlainText
-                        font.pixelSize: 10
+                        font.pixelSize: Theme.px(10)
                         color: Theme.textMain
                         Layout.fillWidth: true
                     }
@@ -397,13 +409,14 @@ Rectangle {
                     Text {
                         text: Theme.iconShield
                         font.family: Theme.iconFont
-                        font.pixelSize: 12
+                        font.pixelSize: Theme.px(12)
                         color: Theme.accentGreen
                     }
                     Text {
+                        font.family: Theme.fontFamily
                         text: "Strip GPS (Privacy)"
                         textFormat: Text.PlainText
-                        font.pixelSize: 10
+                        font.pixelSize: Theme.px(10)
                         color: Theme.textMain
                         Layout.fillWidth: true
                     }
@@ -431,13 +444,14 @@ Rectangle {
                 Text {
                     text: Theme.iconImage
                     font.family: Theme.iconFont
-                    font.pixelSize: 12
+                    font.pixelSize: Theme.px(12)
                     color: root.watermarkEnabled ? Theme.accent : Theme.textDim
                 }
                 Text {
+                    font.family: Theme.fontFamily
                     text: "Apply Photography Watermark / EXIF Signature"
                     textFormat: Text.PlainText
-                    font.pixelSize: 11
+                    font.pixelSize: Theme.px(11)
                     color: Theme.textMain
                     Layout.fillWidth: true
                 }
@@ -463,13 +477,14 @@ Rectangle {
                 Text {
                     text: root.isExporting ? Theme.iconRefresh : Theme.iconExport
                     font.family: Theme.iconFont
-                    font.pixelSize: 13
+                    font.pixelSize: Theme.px(13)
                     color: root.isExporting ? Theme.textMuted : Theme.bgBase
                 }
                 Text {
+                    font.family: Theme.fontFamily
                     text: root.isExporting ? (root.isBatchMode ? "Exporting Batch..." : "Exporting Full Resolution...") : (root.isBatchMode ? ("Start Parallel Batch Export (" + root.batchCount + " Photos)") : ("Start Export (" + root.selectedFormat.toUpperCase() + " / " + root.selectedIcc + ")"))
                     textFormat: Text.PlainText
-                    font.pixelSize: 13
+                    font.pixelSize: Theme.px(13)
                     font.weight: Font.Bold
                     color: root.isExporting ? Theme.textMuted : Theme.bgBase
                 }
@@ -500,9 +515,10 @@ Rectangle {
         }
 
         Text {
+            font.family: Theme.fontFamily
             text: root.exportStatusText
             textFormat: Text.PlainText
-            font.pixelSize: 11
+            font.pixelSize: Theme.px(11)
             color: root.exportStatusText.indexOf("[ERR]") === 0 ? Theme.highlightClip : Theme.accentGreen
             visible: root.exportStatusText !== ""
             wrapMode: Text.WrapAnywhere

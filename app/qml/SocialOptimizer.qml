@@ -17,9 +17,10 @@ ColumnLayout {
         spacing: 4
 
         Text {
+            font.family: Theme.fontFamily
             text: "AI SOCIAL MEDIA OPTIMIZER"
             textFormat: Text.PlainText
-            font.pixelSize: 10
+            font.pixelSize: Theme.px(10)
             font.weight: Font.DemiBold
             font.letterSpacing: 1
             color: Theme.accentCyan
@@ -37,10 +38,11 @@ ColumnLayout {
             border.width: 1
 
             Text {
+                font.family: Theme.fontFamily
                 anchors.centerIn: parent
                 text: "RESET"
                 textFormat: Text.PlainText
-                font.pixelSize: 8
+                font.pixelSize: Theme.px(8)
                 font.weight: Font.DemiBold
                 color: root.activePlatform !== "" ? Theme.accentCyan : Theme.textDim
             }
@@ -103,7 +105,7 @@ ColumnLayout {
                             text: modelData.name
                             textFormat: Text.PlainText
                             font.family: Theme.fontFamily
-                            font.pixelSize: 10
+                            font.pixelSize: Theme.px(10)
                             font.weight: root.activePlatform === modelData.id ? Font.Bold : Font.DemiBold
                             color: root.activePlatform === modelData.id ? Theme.accent : Theme.textMain
                             Layout.fillWidth: true
@@ -112,7 +114,7 @@ ColumnLayout {
                         Rectangle {
                             implicitWidth: tagText.implicitWidth + 6
                             implicitHeight: 14
-                            radius: 3
+                            radius: Theme.r(3)
                             color: root.activePlatform === modelData.id ? Qt.rgba(Theme.accent.r, Theme.accent.g, Theme.accent.b, 0.25) : Qt.rgba(Theme.textMain.r, Theme.textMain.g, Theme.textMain.b, 0.06)
                             border.color: root.activePlatform === modelData.id ? Theme.accent : Theme.border
                             border.width: 1
@@ -122,7 +124,7 @@ ColumnLayout {
                                 text: modelData.tag
                                 textFormat: Text.PlainText
                                 font.family: Theme.fontFamily
-                                font.pixelSize: 8
+                                font.pixelSize: Theme.px(8)
                                 font.weight: Font.DemiBold
                                 color: root.activePlatform === modelData.id ? Theme.accent : Theme.textDim
                             }
@@ -132,7 +134,7 @@ ColumnLayout {
                     Text {
                         text: modelData.aspect
                         textFormat: Text.PlainText
-                        font.pixelSize: 8
+                        font.pixelSize: Theme.px(8)
                         font.family: Theme.monoFont
                         color: Theme.textDim
                         elide: Text.ElideRight

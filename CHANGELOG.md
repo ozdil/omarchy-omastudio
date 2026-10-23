@@ -2,6 +2,16 @@
 
 ## Unreleased
 
+### Omarchy integration
+- The interface follows Omarchy live, without a restart: every colour comes from the active theme (scopes, the area around the photo and text on accent buttons included); the font is Omarchy's (`omarchy-font-set`, read from fontconfig); text sizes scale from the Omarchy shell's base size; corners follow Hyprland's rounding, so they are square on a default Omarchy setup.
+- Clipping warnings stay red (highlights) and blue (shadows) in every theme.
+- OmaStudio has its own icon instead of the generic camera icon.
+- The top bar no longer repeats "STUDIO" next to the name; the About dialog no longer clips its text and has no "VERIFIED" badge.
+
+### AI
+- **Connect local AI** in the top bar uses the AI set up on this computer: Omarchy's default agent (`omarchy-default-agent`; Claude Code or Codex, with their own sign-in), else Ollama, else LM Studio. The edit assistant can use it like any other provider (`omastudio-engine ai local`, provider `omarchy`). With Claude Code or Codex the photo preview is sent to that service.
+- The "Basit (AI)" mode is now called "Essentials".
+
 ## v3.0.0 — 2026-10-22
 
 OmaStudio 3 is a new RAW engine and a standalone Qt 6 application: its own Bayer and X-Trans development on linear light, GPU demosaicing, colour management with Little CMS 2, full Fujifilm support (recipes, film simulations, lens corrections, Pixel Shift, cameras over USB), Hasselblad and other medium-format cameras, AI agents over MCP, and local AI masks.

@@ -17,9 +17,10 @@ ColumnLayout {
         spacing: 4
 
         Text {
+            font.family: Theme.fontFamily
             text: "FILM LOOKS & STYLES"
             textFormat: Text.PlainText
-            font.pixelSize: 10
+            font.pixelSize: Theme.px(10)
             font.weight: Font.DemiBold
             font.letterSpacing: 1
             color: Theme.textDim
@@ -37,10 +38,11 @@ ColumnLayout {
             border.width: 1
 
             Text {
+                font.family: Theme.fontFamily
                 anchors.centerIn: parent
                 text: "RESET"
                 textFormat: Text.PlainText
-                font.pixelSize: 8
+                font.pixelSize: Theme.px(8)
                 font.weight: Font.DemiBold
                 color: root.activePreset !== "" ? Theme.accentMagenta : Theme.textDim
             }
@@ -76,7 +78,7 @@ ColumnLayout {
             Text {
                 text: Theme.iconAi
                 font.family: Theme.iconFont
-                font.pixelSize: 11
+                font.pixelSize: Theme.px(11)
                 color: Theme.accent
             }
 
@@ -84,7 +86,7 @@ ColumnLayout {
                 text: "AI Auto Enhance"
                 textFormat: Text.PlainText
                 font.family: Theme.fontFamily
-                font.pixelSize: 11
+                font.pixelSize: Theme.px(11)
                 font.weight: Font.DemiBold
                 color: Theme.textMain
                 Layout.fillWidth: true
@@ -94,7 +96,7 @@ ColumnLayout {
                 text: "RUN"
                 textFormat: Text.PlainText
                 font.family: Theme.fontFamily
-                font.pixelSize: 9
+                font.pixelSize: Theme.px(9)
                 font.weight: Font.Bold
                 color: Theme.accent
             }
@@ -152,7 +154,7 @@ ColumnLayout {
                         text: modelData.name
                         textFormat: Text.PlainText
                         font.family: Theme.fontFamily
-                        font.pixelSize: 10
+                        font.pixelSize: Theme.px(10)
                         font.weight: root.activePreset === modelData.name ? Font.Bold : Font.DemiBold
                         color: root.activePreset === modelData.name ? Theme.accent : Theme.textMain
                         elide: Text.ElideRight
@@ -163,7 +165,7 @@ ColumnLayout {
                         text: modelData.sub
                         textFormat: Text.PlainText
                         font.family: Theme.fontFamily
-                        font.pixelSize: 8
+                        font.pixelSize: Theme.px(8)
                         color: Theme.textDim
                         elide: Text.ElideRight
                         Layout.fillWidth: true

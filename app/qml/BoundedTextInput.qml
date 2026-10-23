@@ -3,10 +3,11 @@ import QtQuick.Controls
 import OmaStudio.Host
 
 TextEdit {
+    font.family: Theme.fontFamily
     id: control
 
     property string placeholderText: ""
-    property color placeholderTextColor: "#666666"
+    property color placeholderTextColor: Theme.textDim
     property int maxLength: 300
     property int maxPasteBytes: 4096
     property string pasteNotice: ""

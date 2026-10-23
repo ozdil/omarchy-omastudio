@@ -39,7 +39,7 @@ Rectangle {
                 text: "COLOR MANAGEMENT & ACES 1.3"
                 textFormat: Text.PlainText
                 font.family: Theme.fontFamily
-                font.pixelSize: 10
+                font.pixelSize: Theme.px(10)
                 font.weight: Font.DemiBold
                 font.letterSpacing: 1
                 color: Theme.textDim
@@ -49,7 +49,7 @@ Rectangle {
             Rectangle {
                 implicitWidth: acesBadgeText.implicitWidth + 8
                 implicitHeight: 16
-                radius: 3
+                radius: Theme.r(3)
                 color: Theme.bgCard
                 border.color: Theme.accentYellow
                 border.width: 1
@@ -60,7 +60,7 @@ Rectangle {
                     text: "ACES RGC"
                     textFormat: Text.PlainText
                     font.family: Theme.fontFamily
-                    font.pixelSize: 8
+                    font.pixelSize: Theme.px(8)
                     font.weight: Font.Bold
                     color: Theme.accentYellow
                 }
@@ -91,7 +91,7 @@ Rectangle {
                         Rectangle {
                             width: 8
                             height: 8
-                            radius: 4
+                            radius: Theme.r(4)
                             color: modelData.badgeColor
                             Layout.alignment: Qt.AlignVCenter
                         }
@@ -104,7 +104,7 @@ Rectangle {
                                 text: modelData.name
                                 textFormat: Text.PlainText
                                 font.family: Theme.fontFamily
-                                font.pixelSize: 10
+                                font.pixelSize: Theme.px(10)
                                 font.weight: root.activeColorSpace === modelData.id ? Font.Bold : Font.Normal
                                 color: root.activeColorSpace === modelData.id ? Theme.accent : Theme.textMain
                                 elide: Text.ElideRight
@@ -115,7 +115,7 @@ Rectangle {
                                 text: modelData.desc + " (" + modelData.coverage + ")"
                                 textFormat: Text.PlainText
                                 font.family: Theme.fontFamily
-                                font.pixelSize: 8
+                                font.pixelSize: Theme.px(8)
                                 color: Theme.textDim
                                 elide: Text.ElideRight
                                 Layout.fillWidth: true
@@ -125,7 +125,7 @@ Rectangle {
                         Text {
                             text: Theme.iconCheck
                             font.family: Theme.iconFont
-                            font.pixelSize: 10
+                            font.pixelSize: Theme.px(10)
                             color: Theme.accent
                             visible: root.activeColorSpace === modelData.id
                         }
@@ -163,7 +163,7 @@ Rectangle {
                 Text {
                     text: Theme.iconAi
                     font.family: Theme.iconFont
-                    font.pixelSize: 12
+                    font.pixelSize: Theme.px(12)
                     color: root.acesTonemap ? Theme.accentYellow : Theme.textDim
                     Layout.alignment: Qt.AlignVCenter
                 }
@@ -178,7 +178,7 @@ Rectangle {
                         text: "ACES 1.3 RRT/ODT Tonemapper"
                         textFormat: Text.PlainText
                         font.family: Theme.fontFamily
-                        font.pixelSize: 10
+                        font.pixelSize: Theme.px(10)
                         font.weight: root.acesTonemap ? Font.Bold : Font.Normal
                         color: root.acesTonemap ? Theme.accentYellow : Theme.textMain
                         Layout.fillWidth: true
@@ -189,7 +189,7 @@ Rectangle {
                         text: "Filmic shoulder roll-off & dynamic range mapping"
                         textFormat: Text.PlainText
                         font.family: Theme.fontFamily
-                        font.pixelSize: 8
+                        font.pixelSize: Theme.px(8)
                         color: Theme.textDim
                         Layout.fillWidth: true
                         elide: Text.ElideRight

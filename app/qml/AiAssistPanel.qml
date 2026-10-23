@@ -151,7 +151,7 @@ ColumnLayout {
         signal clicked()
         implicitWidth: sbText.implicitWidth + 16
         implicitHeight: 24
-        radius: 4
+        radius: Theme.r(4)
         opacity: enabled ? 1.0 : 0.4
         color: primary ? (sbMouse.containsMouse ? Theme.accentHover : Theme.accent) : (sbMouse.containsMouse ? Theme.bgCardHover : Theme.bgCard)
         border.color: primary ? Theme.accent : Theme.border
@@ -162,7 +162,7 @@ ColumnLayout {
             text: sb.label
             textFormat: Text.PlainText
             font.family: Theme.fontFamily
-            font.pixelSize: 9
+            font.pixelSize: Theme.px(9)
             font.weight: Font.Bold
             color: sb.primary ? Theme.bgBase : Theme.textMain
         }
@@ -178,7 +178,7 @@ ColumnLayout {
     component InputBox: Rectangle {
         Layout.fillWidth: true
         implicitHeight: 28
-        radius: 4
+        radius: Theme.r(4)
         color: Theme.bgCard
         border.color: Theme.border
         border.width: 1
@@ -188,9 +188,10 @@ ColumnLayout {
         Layout.fillWidth: true
         spacing: 4
         Text {
+            font.family: Theme.fontFamily
             text: "AI EDIT ASSISTANT"
             textFormat: Text.PlainText
-            font.pixelSize: 10
+            font.pixelSize: Theme.px(10)
             font.weight: Font.DemiBold
             font.letterSpacing: 1
             color: Theme.textDim
@@ -206,11 +207,12 @@ ColumnLayout {
     }
 
     Text {
+        font.family: Theme.fontFamily
         Layout.fillWidth: true
         text: root.statusText
         elide: Text.ElideRight
         textFormat: Text.PlainText
-        font.pixelSize: 9
+        font.pixelSize: Theme.px(9)
         color: Theme.textMuted
     }
 
@@ -222,7 +224,7 @@ ColumnLayout {
             verticalAlignment: TextEdit.AlignVCenter
             maxLength: 400
             font.family: Theme.fontFamily
-            font.pixelSize: 10
+            font.pixelSize: Theme.px(10)
             color: Theme.textMain
             placeholderText: "e.g. warmer, moody evening light, recover the sky"
             placeholderTextColor: Theme.textDim
@@ -239,12 +241,13 @@ ColumnLayout {
     }
 
     Text {
+        font.family: Theme.fontFamily
         visible: root.explanation !== ""
         Layout.fillWidth: true
         wrapMode: Text.WordWrap
         text: root.explanation
         textFormat: Text.PlainText
-        font.pixelSize: 10
+        font.pixelSize: Theme.px(10)
         color: Theme.textMain
     }
 
@@ -263,16 +266,17 @@ ColumnLayout {
                     property bool isCur: root.setupProvider === modelData.id
                     implicitWidth: pText.implicitWidth + 14
                     implicitHeight: 22
-                    radius: 4
+                    radius: Theme.r(4)
                     color: isCur ? Theme.accent : Theme.bgCard
                     border.color: modelData.ready ? Theme.accentGreen : Theme.border
                     border.width: 1
                     Text {
+                        font.family: Theme.fontFamily
                         id: pText
                         anchors.centerIn: parent
                         text: modelData.name
                         textFormat: Text.PlainText
-                        font.pixelSize: 9
+                        font.pixelSize: Theme.px(9)
                         font.weight: parent.isCur ? Font.Bold : Font.Normal
                         color: parent.isCur ? Theme.bgBase : Theme.textMain
                     }
@@ -289,11 +293,12 @@ ColumnLayout {
         }
 
         Text {
+            font.family: Theme.fontFamily
             visible: root.setupProvider !== ""
             Layout.fillWidth: true
             wrapMode: Text.WordWrap
             textFormat: Text.PlainText
-            font.pixelSize: 9
+            font.pixelSize: Theme.px(9)
             color: Theme.textMuted
             text: {
                 for (var i = 0; i < root.providers.length; i++) {
@@ -315,7 +320,7 @@ ColumnLayout {
                 verticalAlignment: TextEdit.AlignVCenter
                 maxLength: 120
                 font.family: Theme.fontFamily
-                font.pixelSize: 10
+                font.pixelSize: Theme.px(10)
                 color: Theme.textMain
                 placeholderText: "Model (empty: provider default or first local model)"
                 placeholderTextColor: Theme.textDim
@@ -340,15 +345,16 @@ ColumnLayout {
                     maximumLength: 512
                     clip: true
                     font.family: Theme.fontFamily
-                    font.pixelSize: 10
+                    font.pixelSize: Theme.px(10)
                     color: Theme.textMain
                     onAccepted: root.storeKey()
                     Text {
+                        font.family: Theme.fontFamily
                         visible: keyInput.text.length === 0
                         anchors.verticalCenter: parent.verticalCenter
                         text: "API key"
                         textFormat: Text.PlainText
-                        font.pixelSize: 10
+                        font.pixelSize: Theme.px(10)
                         color: Theme.textDim
                     }
                 }
