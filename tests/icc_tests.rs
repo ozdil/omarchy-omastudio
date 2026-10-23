@@ -95,11 +95,15 @@ fn exported_icc(format: &str, profile: &str) -> (Vec<u8>, image::DynamicImage) {
     let file = std::fs::read(&out).unwrap();
     let reader = image::ImageReader::open(&out).unwrap().with_guessed_format().unwrap();
     let mut decoder = reader.into_decoder().unwrap();
-    // image's TIFF decoder skips ICC tags written as BYTE; find the profile in the file instead
+    // image's TIFF decoder skips ICC tags written as BYTE; find the profile in the file instead.
+    // The 128-byte header holds the creation time, which differs when the export and this
+    // lookup fall in different seconds, so match the tag table and data after it.
     let icc = decoder.icc_profile().unwrap().or_else(|| {
         let space = builtin_space(profile)?;
         let bytes = builtin_profile(space).icc().ok()?;
-        file.windows(bytes.len()).any(|w| w == bytes.as_slice()).then_some(bytes)
+        let body = &bytes[128..];
+        let at = file.windows(body.len()).position(|w| w == body)?.checked_sub(128)?;
+        Some(file[at..at + bytes.len()].to_vec())
     });
     let icc = icc.unwrap_or_else(|| panic!("ICC embedded in {format}"));
     let pixels = image::DynamicImage::from_decoder(decoder).unwrap();
