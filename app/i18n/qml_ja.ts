@@ -1706,6 +1706,10 @@
         <translation>開始</translation>
     </message>
     <message>
+        <source>Soft proof not applied: %1</source>
+        <translation>ソフトプルーフを適用できませんでした: %1</translation>
+    </message>
+    <message>
         <source>Snapshot %1</source>
         <translation>スナップショット %1</translation>
     </message>
@@ -1776,6 +1780,14 @@
     <message>
         <source>The scan did not respond.</source>
         <translation>フォルダーのスキャンが応答しませんでした。</translation>
+    </message>
+    <message>
+        <source>Soft proof: %1</source>
+        <translation>ソフトプルーフ: %1</translation>
+    </message>
+    <message>
+        <source>Soft proof off</source>
+        <translation>ソフトプルーフ オフ</translation>
     </message>
     <message>
         <source>Rating: ★</source>
@@ -2319,6 +2331,45 @@
     <message>
         <source>YouTube thumbnail</source>
         <translation>YouTube サムネイル</translation>
+    </message>
+</context>
+<context>
+    <name>SoftProofPanel</name>
+    <message>
+        <source>Soft proof (S)</source>
+        <translation>ソフトプルーフ (S)</translation>
+    </message>
+    <message>
+        <source>Shows the photo as it will look with the profile below, for example a printer and paper profile. The edit and the export do not change.</source>
+        <translation>下のプロファイル（プリンターと用紙のプロファイルなど）で出力したときの見え方で写真を表示します。編集と書き出しは変わりません。</translation>
+    </message>
+    <message>
+        <source>Rendering intent</source>
+        <translation>レンダリングインテント</translation>
+    </message>
+    <message>
+        <source>Perceptual</source>
+        <translation>知覚的</translation>
+    </message>
+    <message>
+        <source>Relative</source>
+        <translation>相対的</translation>
+    </message>
+    <message>
+        <source>Saturation</source>
+        <translation>彩度</translation>
+    </message>
+    <message>
+        <source>Absolute</source>
+        <translation>絶対的</translation>
+    </message>
+    <message>
+        <source>Gamut warning</source>
+        <translation>色域外警告</translation>
+    </message>
+    <message>
+        <source>Magenta marks colours the profile cannot reproduce. The preview is sRGB, so wider spaces such as Adobe RGB show no warnings.</source>
+        <translation>マゼンタはプロファイルで再現できない色を示します。プレビューは sRGB のため、Adobe RGB などのより広い色空間では警告は表示されません。</translation>
     </message>
 </context>
 <context>

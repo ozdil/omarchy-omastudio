@@ -1706,6 +1706,10 @@
         <translation>Awal</translation>
     </message>
     <message>
+        <source>Soft proof not applied: %1</source>
+        <translation>Soft proof tidak diterapkan: %1</translation>
+    </message>
+    <message>
         <source>Snapshot %1</source>
         <translation>Snapshot %1</translation>
     </message>
@@ -1776,6 +1780,14 @@
     <message>
         <source>The scan did not respond.</source>
         <translation>Pemindaian folder tidak merespons.</translation>
+    </message>
+    <message>
+        <source>Soft proof: %1</source>
+        <translation>Soft proof: %1</translation>
+    </message>
+    <message>
+        <source>Soft proof off</source>
+        <translation>Soft proof mati</translation>
     </message>
     <message>
         <source>Rating: ★</source>
@@ -2319,6 +2331,45 @@
     <message>
         <source>YouTube thumbnail</source>
         <translation>Thumbnail YouTube</translation>
+    </message>
+</context>
+<context>
+    <name>SoftProofPanel</name>
+    <message>
+        <source>Soft proof (S)</source>
+        <translation>Soft proof (S)</translation>
+    </message>
+    <message>
+        <source>Shows the photo as it will look with the profile below, for example a printer and paper profile. The edit and the export do not change.</source>
+        <translation>Menampilkan foto seperti hasilnya dengan profil di bawah, misalnya profil printer dan kertas. Edit dan ekspor tidak berubah.</translation>
+    </message>
+    <message>
+        <source>Rendering intent</source>
+        <translation>Tujuan rendering</translation>
+    </message>
+    <message>
+        <source>Perceptual</source>
+        <translation>Perseptual</translation>
+    </message>
+    <message>
+        <source>Relative</source>
+        <translation>Relatif</translation>
+    </message>
+    <message>
+        <source>Saturation</source>
+        <translation>Saturasi</translation>
+    </message>
+    <message>
+        <source>Absolute</source>
+        <translation>Absolut</translation>
+    </message>
+    <message>
+        <source>Gamut warning</source>
+        <translation>Peringatan gamut</translation>
+    </message>
+    <message>
+        <source>Magenta marks colours the profile cannot reproduce. The preview is sRGB, so wider spaces such as Adobe RGB show no warnings.</source>
+        <translation>Magenta menandai warna yang tidak dapat dihasilkan profil. Pratinjau berupa sRGB, jadi ruang yang lebih luas seperti Adobe RGB tidak menampilkan peringatan.</translation>
     </message>
 </context>
 <context>

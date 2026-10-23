@@ -1726,6 +1726,10 @@
         <translation>البداية</translation>
     </message>
     <message>
+        <source>Soft proof not applied: %1</source>
+        <translation>لم يُطبَّق التدقيق على الشاشة: %1</translation>
+    </message>
+    <message>
         <source>Snapshot %1</source>
         <translation>لقطة %1</translation>
     </message>
@@ -1796,6 +1800,14 @@
     <message>
         <source>The scan did not respond.</source>
         <translation>لم يستجب فحص المجلد.</translation>
+    </message>
+    <message>
+        <source>Soft proof: %1</source>
+        <translation>التدقيق على الشاشة: %1</translation>
+    </message>
+    <message>
+        <source>Soft proof off</source>
+        <translation>التدقيق على الشاشة متوقف</translation>
     </message>
     <message>
         <source>Rating: ★</source>
@@ -2344,6 +2356,45 @@
     <message>
         <source>YouTube thumbnail</source>
         <translation>صورة مصغرة ليوتيوب</translation>
+    </message>
+</context>
+<context>
+    <name>SoftProofPanel</name>
+    <message>
+        <source>Soft proof (S)</source>
+        <translation>التدقيق على الشاشة (S)</translation>
+    </message>
+    <message>
+        <source>Shows the photo as it will look with the profile below, for example a printer and paper profile. The edit and the export do not change.</source>
+        <translation>يعرض الصورة كما ستبدو بالملف الشخصي أدناه، مثل ملف طابعة وورق. لا يتغير التعديل ولا التصدير.</translation>
+    </message>
+    <message>
+        <source>Rendering intent</source>
+        <translation>هدف العرض</translation>
+    </message>
+    <message>
+        <source>Perceptual</source>
+        <translation>إدراكية</translation>
+    </message>
+    <message>
+        <source>Relative</source>
+        <translation>نسبية</translation>
+    </message>
+    <message>
+        <source>Saturation</source>
+        <translation>التشبع</translation>
+    </message>
+    <message>
+        <source>Absolute</source>
+        <translation>مطلقة</translation>
+    </message>
+    <message>
+        <source>Gamut warning</source>
+        <translation>تحذير النطاق اللوني</translation>
+    </message>
+    <message>
+        <source>Magenta marks colours the profile cannot reproduce. The preview is sRGB, so wider spaces such as Adobe RGB show no warnings.</source>
+        <translation>يُعلِّم اللون الأرجواني الألوان التي لا يستطيع الملف الشخصي إنتاجها. المعاينة بنظام sRGB، لذا لا تُظهر المساحات الأوسع مثل Adobe RGB أي تحذيرات.</translation>
     </message>
 </context>
 <context>

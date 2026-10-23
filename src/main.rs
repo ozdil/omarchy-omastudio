@@ -110,6 +110,27 @@ struct JevInspectResult {
 struct RenderResult {
     image: String,
     histogram: pipeline::histogram::HistogramData,
+    /// Why the soft proof could not be applied (the preview is then shown unproofed)
+    #[serde(skip_serializing_if = "Option::is_none")]
+    proof_error: Option<String>,
+}
+
+/// Soft-proofing settings sent with `adjust` and `detail`: a view option, not part of the edit
+#[derive(Deserialize)]
+struct ProofRequest {
+    profile: String,
+    #[serde(default)]
+    intent: icc::RenderingIntent,
+    #[serde(default)]
+    gamut_warning: bool,
+}
+
+/// Applies the soft proof, if one was asked for, to an 8-bit sRGB preview
+fn apply_proof(rgb: &mut [u8], proof: Option<&ProofRequest>) -> Option<String> {
+    let proof = proof?;
+    icc::proof_profile_bytes(&proof.profile)
+        .and_then(|bytes| icc::soft_proof_rgb8(rgb, &bytes, proof.intent, proof.gamut_warning))
+        .err()
 }
 
 #[derive(Serialize)]
@@ -180,6 +201,8 @@ struct FullReady {
 #[derive(Serialize)]
 struct DetailResult {
     image: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    proof_error: Option<String>,
     /// The rendered part of the photo, normalised: x, y, width, height.
     region: [f64; 4],
     width: usize,
@@ -1038,6 +1061,7 @@ fn render_file(raw_path: &str, recipe: &Recipe, split: f32, out_path: &str) -> R
     Ok(RenderResult {
         image: out_path.to_string(),
         histogram: hist,
+        proof_error: None,
     })
 }
 
@@ -1143,6 +1167,9 @@ struct DaemonCommand {
     out_width: Option<u32>,
     #[serde(default)]
     out_height: Option<u32>,
+    /// `adjust`, `detail`: soft-proof the preview against an output profile
+    #[serde(default)]
+    proof: Option<ProofRequest>,
 }
 
 #[derive(Serialize)]
@@ -1614,6 +1641,9 @@ fn run_daemon() {
             "ping" => {
                 print_json(&ResponseWrapper::ok_action("ping", "pong"));
             }
+            "icc_profiles" => {
+                print_json(&ResponseWrapper::ok_action("icc_profiles", icc::list_icc_profiles()));
+            }
             "load" => {
                 let p = match cmd_obj.path {
                     Some(ref path) => path,
@@ -1730,7 +1760,7 @@ fn run_daemon() {
                 let highlight_mask = cmd_obj.highlight_mask.unwrap_or(false);
                 let shadow_mask = cmd_obj.shadow_mask.unwrap_or(false);
 
-                let (final_buf, hist) = if split > 0.001 {
+                let (mut final_buf, hist) = if split > 0.001 {
                     process_split_comparison_16_to_8_ex(
                         buffer,
                         width,
@@ -1754,6 +1784,8 @@ fn run_daemon() {
                         shadow_mask,
                     )
                 };
+
+                let proof_error = apply_proof(&mut final_buf, cmd_obj.proof.as_ref());
 
                 let dest_path = Path::new(&out_dest);
                 let write_result: Result<(), String> = if out_dest.ends_with(".ppm") {
@@ -1786,6 +1818,7 @@ fn run_daemon() {
                 print_json(&ResponseWrapper::ok_action("adjust", RenderResult {
                     image: out_dest,
                     histogram: hist,
+                    proof_error,
                 }));
             }
             "detail" => {
@@ -1816,7 +1849,8 @@ fn run_daemon() {
                 let full = retouched_full(&cache, full, &recipe.retouch);
                 let input = resample_rect(&full, scale, src);
                 let window = pipeline::Window { x0: src.0, y0: src.1, frame_w: vw, frame_h: vh };
-                let rgb = pipeline::render_region_8(&input, src.2, src.3, window, out, &recipe, full.transfer);
+                let mut rgb = pipeline::render_region_8(&input, src.2, src.3, window, out, &recipe, full.transfer);
+                let proof_error = apply_proof(&mut rgb, cmd_obj.proof.as_ref());
 
                 let dest = security::get_secure_preview_dir().join(format!("omastudio_detail_{}.ppm", slot));
                 let mut ppm = format!("P6\n{} {}\n255\n", ow, oh).into_bytes();
@@ -1827,6 +1861,7 @@ fn run_daemon() {
                 }
                 print_json(&ResponseWrapper::ok_action("detail", DetailResult {
                     image: dest.to_string_lossy().to_string(),
+                    proof_error,
                     region: [ox as f64 / vw as f64, oy as f64 / vh as f64, ow as f64 / vw as f64, oh as f64 / vh as f64],
                     width: ow,
                     height: oh,

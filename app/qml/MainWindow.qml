@@ -458,6 +458,41 @@ Rectangle {
     // Snapshots: named states of the edit, kept in the sidecar
     property var snapshots: []
 
+    // Soft proofing: a view setting sent with every render, never part of the edit
+    property bool softProof: false
+    property string proofProfile: "sRGB"
+    property string proofIntent: "relative_colorimetric"
+    property bool gamutWarning: false
+    property var iccProfiles: []
+    property string lastProofError: ""
+
+    function proofRequest() {
+        if (!root.softProof) return null;
+        return { "profile": root.proofProfile, "intent": root.proofIntent, "gamut_warning": root.gamutWarning };
+    }
+
+    function proofProfileName() {
+        for (var i = 0; i < root.iccProfiles.length; ++i)
+            if (root.iccProfiles[i].id === root.proofProfile) return root.iccProfiles[i].name;
+        return root.proofProfile;
+    }
+
+    function reportProofError(error) {
+        if (!error) {
+            root.lastProofError = "";
+            return;
+        }
+        // Once per problem, not on every render
+        if (error === root.lastProofError) return;
+        root.lastProofError = error;
+        root.showToast(qsTr("Soft proof not applied: %1").arg(error), Theme.highlightClip);
+    }
+
+    onSoftProofChanged: { root.requestRender(); root.saveUiStateSoon(); }
+    onProofProfileChanged: { if (root.softProof) root.requestRender(); root.saveUiStateSoon(); }
+    onProofIntentChanged: { if (root.softProof) root.requestRender(); root.saveUiStateSoon(); }
+    onGamutWarningChanged: { if (root.softProof) root.requestRender(); root.saveUiStateSoon(); }
+
     function takeSnapshot() {
         root.commitPendingUndo();
         var r = root.buildRecipeObject();
@@ -1009,6 +1044,7 @@ Rectangle {
                     root.activeHistogram = data.histogram;
                     viewport.imageSource = data.image;
                     navigator.imageSource = data.image;
+                    root.reportProofError(data.proof_error);
                 }
             } else if (act === "full_ready") {
                 if (data && data.path === root.activePhotoPath) {
@@ -1017,6 +1053,8 @@ Rectangle {
                 }
             } else if (act === "detail") {
                 if (data) viewport.showDetail(data.image, data.region);
+            } else if (act === "icc_profiles") {
+                if (Array.isArray(data)) root.iccProfiles = data;
             } else if (act === "ai_auto") {
                 if (data) {
                     root.applyRecipeObject(data.recipe);
@@ -1155,7 +1193,8 @@ Rectangle {
                     recipe: root.buildRecipeObject(),
                     split: splitVal,
                     highlight_mask: viewport.showHighlightMask,
-                    shadow_mask: viewport.showShadowMask
+                    shadow_mask: viewport.showShadowMask,
+                    proof: root.proofRequest()
                 });
             }
         }
@@ -1316,6 +1355,13 @@ Rectangle {
         }
     }
     Shortcut {
+        sequence: "S"
+        onActivated: {
+            root.softProof = !root.softProof;
+            root.showToast(root.softProof ? qsTr("Soft proof: %1").arg(root.proofProfileName()) : qsTr("Soft proof off"), Theme.accentYellow);
+        }
+    }
+    Shortcut {
         sequence: "Y"
         onActivated: {
             root.isSplitView = !root.isSplitView;
@@ -1468,6 +1514,10 @@ Rectangle {
         if (st.collapsedSections && typeof st.collapsedSections === "object") root.collapsedSections = st.collapsedSections;
         if (["dark", "grey", "theme"].indexOf(st.surround) >= 0) root.surround = st.surround;
         if (typeof st.proMode === "boolean") root.isProMode = st.proMode;
+        if (typeof st.proofProfile === "string" && st.proofProfile !== "") root.proofProfile = st.proofProfile;
+        if (["perceptual", "relative_colorimetric", "saturation", "absolute_colorimetric"].indexOf(st.proofIntent) >= 0)
+            root.proofIntent = st.proofIntent;
+        if (typeof st.gamutWarning === "boolean") root.gamutWarning = st.gamutWarning;
         root.uiStateLoaded = true;
     }
 
@@ -1485,7 +1535,10 @@ Rectangle {
             "rightTab": root.rightTab,
             "collapsedSections": root.collapsedSections,
             "surround": root.surround,
-            "proMode": root.isProMode
+            "proMode": root.isProMode,
+            "proofProfile": root.proofProfile,
+            "proofIntent": root.proofIntent,
+            "gamutWarning": root.gamutWarning
         }))
     }
 
@@ -1893,6 +1946,32 @@ Rectangle {
                         }
 
                         Item { Layout.fillWidth: true }
+
+                        // The preview is simulated while soft proofing is on; a click turns it off
+                        Rectangle {
+                            visible: root.softProof
+                            implicitWidth: proofBadge.implicitWidth + 14
+                            implicitHeight: 20
+                            radius: Theme.r(4)
+                            color: Qt.rgba(Theme.accentYellow.r, Theme.accentYellow.g, Theme.accentYellow.b, 0.15)
+                            border.color: Theme.accentYellow
+                            border.width: 1
+                            Text {
+                                id: proofBadge
+                                anchors.centerIn: parent
+                                text: qsTr("Soft proof: %1").arg(root.proofProfileName())
+                                textFormat: Text.PlainText
+                                font.family: Theme.monoFont
+                                font.pixelSize: Theme.px(9)
+                                font.weight: Font.Bold
+                                color: Theme.accentYellow
+                            }
+                            MouseArea {
+                                anchors.fill: parent
+                                cursorShape: Qt.PointingHandCursor
+                                onClicked: root.softProof = false
+                            }
+                        }
                     }
                 }
 
@@ -1952,7 +2031,8 @@ Rectangle {
                             recipe: root.buildRecipeObject(),
                             region: region,
                             out_width: outWidth,
-                            out_height: outHeight
+                            out_height: outHeight,
+                            proof: root.proofRequest()
                         });
                     }
                     onCropChangedByUser: function(cx, cy, cw, ch, aspect) {
@@ -2795,6 +2875,20 @@ Rectangle {
                                         root.requestRender();
                                     }
                                 }
+
+                                SoftProofPanel {
+                                    Layout.fillWidth: true
+                                    Layout.topMargin: 6
+                                    active: root.softProof
+                                    profile: root.proofProfile
+                                    intent: root.proofIntent
+                                    gamutWarning: root.gamutWarning
+                                    profiles: root.iccProfiles
+                                    onActiveToggled: function(on) { root.softProof = on }
+                                    onProfilePicked: function(id) { root.proofProfile = id }
+                                    onIntentPicked: function(id) { root.proofIntent = id }
+                                    onGamutWarningToggled: function(on) { root.gamutWarning = on }
+                                }
                             }
                         }
 
@@ -3101,6 +3195,7 @@ Rectangle {
 
     Component.onCompleted: {
         loadUiState();
+        root.sendDaemonCommand({ cmd: "icc_profiles" });
         scanLocalFolder("~/Pictures");
         // Photo passed on the command line (`omastudio photo.NEF`, desktop "Open with")
         var openPath = Host.openPath;

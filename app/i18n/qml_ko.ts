@@ -1706,6 +1706,10 @@
         <translation>시작</translation>
     </message>
     <message>
+        <source>Soft proof not applied: %1</source>
+        <translation>소프트 프루프를 적용하지 못했습니다: %1</translation>
+    </message>
+    <message>
         <source>Snapshot %1</source>
         <translation>스냅숏 %1</translation>
     </message>
@@ -1776,6 +1780,14 @@
     <message>
         <source>The scan did not respond.</source>
         <translation>폴더 검색이 응답하지 않았습니다.</translation>
+    </message>
+    <message>
+        <source>Soft proof: %1</source>
+        <translation>소프트 프루프: %1</translation>
+    </message>
+    <message>
+        <source>Soft proof off</source>
+        <translation>소프트 프루프 끔</translation>
     </message>
     <message>
         <source>Rating: ★</source>
@@ -2319,6 +2331,45 @@
     <message>
         <source>YouTube thumbnail</source>
         <translation>YouTube 썸네일</translation>
+    </message>
+</context>
+<context>
+    <name>SoftProofPanel</name>
+    <message>
+        <source>Soft proof (S)</source>
+        <translation>소프트 프루프 (S)</translation>
+    </message>
+    <message>
+        <source>Shows the photo as it will look with the profile below, for example a printer and paper profile. The edit and the export do not change.</source>
+        <translation>아래 프로파일(예: 프린터와 용지 프로파일)로 출력했을 때의 모습으로 사진을 보여 줍니다. 편집과 내보내기는 바뀌지 않습니다.</translation>
+    </message>
+    <message>
+        <source>Rendering intent</source>
+        <translation>렌더링 의도</translation>
+    </message>
+    <message>
+        <source>Perceptual</source>
+        <translation>지각적</translation>
+    </message>
+    <message>
+        <source>Relative</source>
+        <translation>상대적</translation>
+    </message>
+    <message>
+        <source>Saturation</source>
+        <translation>채도</translation>
+    </message>
+    <message>
+        <source>Absolute</source>
+        <translation>절대적</translation>
+    </message>
+    <message>
+        <source>Gamut warning</source>
+        <translation>색역 경고</translation>
+    </message>
+    <message>
+        <source>Magenta marks colours the profile cannot reproduce. The preview is sRGB, so wider spaces such as Adobe RGB show no warnings.</source>
+        <translation>마젠타는 프로파일이 재현할 수 없는 색을 표시합니다. 미리 보기는 sRGB이므로 Adobe RGB 같은 더 넓은 공간에서는 경고가 나타나지 않습니다.</translation>
     </message>
 </context>
 <context>

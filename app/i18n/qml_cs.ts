@@ -1714,6 +1714,10 @@
         <translation>Začátek</translation>
     </message>
     <message>
+        <source>Soft proof not applied: %1</source>
+        <translation>Softproof nebyl použit: %1</translation>
+    </message>
+    <message>
         <source>Snapshot %1</source>
         <translation>Snímek stavu %1</translation>
     </message>
@@ -1784,6 +1788,14 @@
     <message>
         <source>The scan did not respond.</source>
         <translation>Prohledávání složky neodpovědělo.</translation>
+    </message>
+    <message>
+        <source>Soft proof: %1</source>
+        <translation>Softproof: %1</translation>
+    </message>
+    <message>
+        <source>Soft proof off</source>
+        <translation>Softproof vypnut</translation>
     </message>
     <message>
         <source>Rating: ★</source>
@@ -2329,6 +2341,45 @@
     <message>
         <source>YouTube thumbnail</source>
         <translation>Miniatura YouTube</translation>
+    </message>
+</context>
+<context>
+    <name>SoftProofPanel</name>
+    <message>
+        <source>Soft proof (S)</source>
+        <translation>Softproof (S)</translation>
+    </message>
+    <message>
+        <source>Shows the photo as it will look with the profile below, for example a printer and paper profile. The edit and the export do not change.</source>
+        <translation>Zobrazí fotografii tak, jak bude vypadat s profilem níže, například s profilem tiskárny a papíru. Úprava ani export se nemění.</translation>
+    </message>
+    <message>
+        <source>Rendering intent</source>
+        <translation>Způsob vykreslení</translation>
+    </message>
+    <message>
+        <source>Perceptual</source>
+        <translation>Perceptuální</translation>
+    </message>
+    <message>
+        <source>Relative</source>
+        <translation>Relativní</translation>
+    </message>
+    <message>
+        <source>Saturation</source>
+        <translation>Sytost</translation>
+    </message>
+    <message>
+        <source>Absolute</source>
+        <translation>Absolutní</translation>
+    </message>
+    <message>
+        <source>Gamut warning</source>
+        <translation>Varování gamutu</translation>
+    </message>
+    <message>
+        <source>Magenta marks colours the profile cannot reproduce. The preview is sRGB, so wider spaces such as Adobe RGB show no warnings.</source>
+        <translation>Purpurová označuje barvy, které profil nedokáže reprodukovat. Náhled je v sRGB, takže širší prostory jako Adobe RGB žádná varování neukazují.</translation>
     </message>
 </context>
 <context>

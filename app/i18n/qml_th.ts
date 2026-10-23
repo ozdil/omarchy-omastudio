@@ -1706,6 +1706,10 @@
         <translation>เริ่มต้น</translation>
     </message>
     <message>
+        <source>Soft proof not applied: %1</source>
+        <translation>ไม่ได้ใช้การพรูฟบนจอ: %1</translation>
+    </message>
+    <message>
         <source>Snapshot %1</source>
         <translation>สแนปช็อต %1</translation>
     </message>
@@ -1776,6 +1780,14 @@
     <message>
         <source>The scan did not respond.</source>
         <translation>การสแกนโฟลเดอร์ไม่ตอบสนอง</translation>
+    </message>
+    <message>
+        <source>Soft proof: %1</source>
+        <translation>พรูฟบนจอ: %1</translation>
+    </message>
+    <message>
+        <source>Soft proof off</source>
+        <translation>ปิดการพรูฟบนจอ</translation>
     </message>
     <message>
         <source>Rating: ★</source>
@@ -2319,6 +2331,45 @@
     <message>
         <source>YouTube thumbnail</source>
         <translation>ภาพขนาดย่อ YouTube</translation>
+    </message>
+</context>
+<context>
+    <name>SoftProofPanel</name>
+    <message>
+        <source>Soft proof (S)</source>
+        <translation>พรูฟบนจอ (S)</translation>
+    </message>
+    <message>
+        <source>Shows the photo as it will look with the profile below, for example a printer and paper profile. The edit and the export do not change.</source>
+        <translation>แสดงภาพตามที่จะออกมากับโปรไฟล์ด้านล่าง เช่น โปรไฟล์เครื่องพิมพ์และกระดาษ การแก้ไขและการส่งออกไม่เปลี่ยนแปลง</translation>
+    </message>
+    <message>
+        <source>Rendering intent</source>
+        <translation>วิธีการเรนเดอร์</translation>
+    </message>
+    <message>
+        <source>Perceptual</source>
+        <translation>ตามการรับรู้</translation>
+    </message>
+    <message>
+        <source>Relative</source>
+        <translation>สัมพัทธ์</translation>
+    </message>
+    <message>
+        <source>Saturation</source>
+        <translation>ความอิ่มตัว</translation>
+    </message>
+    <message>
+        <source>Absolute</source>
+        <translation>สัมบูรณ์</translation>
+    </message>
+    <message>
+        <source>Gamut warning</source>
+        <translation>เตือนขอบเขตสี</translation>
+    </message>
+    <message>
+        <source>Magenta marks colours the profile cannot reproduce. The preview is sRGB, so wider spaces such as Adobe RGB show no warnings.</source>
+        <translation>สีม่วงแดงแสดงสีที่โปรไฟล์ไม่สามารถสร้างได้ ภาพตัวอย่างเป็น sRGB ดังนั้นพื้นที่สีที่กว้างกว่า เช่น Adobe RGB จะไม่แสดงคำเตือน</translation>
     </message>
 </context>
 <context>

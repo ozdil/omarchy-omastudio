@@ -1714,6 +1714,10 @@
         <translation>Початок</translation>
     </message>
     <message>
+        <source>Soft proof not applied: %1</source>
+        <translation>Кольоропробу не застосовано: %1</translation>
+    </message>
+    <message>
         <source>Snapshot %1</source>
         <translation>Знімок %1</translation>
     </message>
@@ -1784,6 +1788,14 @@
     <message>
         <source>The scan did not respond.</source>
         <translation>Сканування теки не відповіло.</translation>
+    </message>
+    <message>
+        <source>Soft proof: %1</source>
+        <translation>Кольоропроба: %1</translation>
+    </message>
+    <message>
+        <source>Soft proof off</source>
+        <translation>Кольоропробу вимкнено</translation>
     </message>
     <message>
         <source>Rating: ★</source>
@@ -2329,6 +2341,45 @@
     <message>
         <source>YouTube thumbnail</source>
         <translation>Обкладинка YouTube</translation>
+    </message>
+</context>
+<context>
+    <name>SoftProofPanel</name>
+    <message>
+        <source>Soft proof (S)</source>
+        <translation>Кольоропроба (S)</translation>
+    </message>
+    <message>
+        <source>Shows the photo as it will look with the profile below, for example a printer and paper profile. The edit and the export do not change.</source>
+        <translation>Показує фото таким, яким воно буде з профілем нижче, наприклад із профілем принтера й паперу. Редагування та експорт не змінюються.</translation>
+    </message>
+    <message>
+        <source>Rendering intent</source>
+        <translation>Метод рендерингу</translation>
+    </message>
+    <message>
+        <source>Perceptual</source>
+        <translation>Перцептивний</translation>
+    </message>
+    <message>
+        <source>Relative</source>
+        <translation>Відносний</translation>
+    </message>
+    <message>
+        <source>Saturation</source>
+        <translation>Насиченість</translation>
+    </message>
+    <message>
+        <source>Absolute</source>
+        <translation>Абсолютний</translation>
+    </message>
+    <message>
+        <source>Gamut warning</source>
+        <translation>Попередження про охоплення</translation>
+    </message>
+    <message>
+        <source>Magenta marks colours the profile cannot reproduce. The preview is sRGB, so wider spaces such as Adobe RGB show no warnings.</source>
+        <translation>Пурпуровим позначено кольори, які профіль не може відтворити. Перегляд у sRGB, тому ширші простори, як-от Adobe RGB, попереджень не показують.</translation>
     </message>
 </context>
 <context>

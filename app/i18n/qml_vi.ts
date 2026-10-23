@@ -1706,6 +1706,10 @@
         <translation>Bắt đầu</translation>
     </message>
     <message>
+        <source>Soft proof not applied: %1</source>
+        <translation>Không áp dụng được soft proof: %1</translation>
+    </message>
+    <message>
         <source>Snapshot %1</source>
         <translation>Ảnh chụp trạng thái %1</translation>
     </message>
@@ -1776,6 +1780,14 @@
     <message>
         <source>The scan did not respond.</source>
         <translation>Quét thư mục không phản hồi.</translation>
+    </message>
+    <message>
+        <source>Soft proof: %1</source>
+        <translation>Soft proof: %1</translation>
+    </message>
+    <message>
+        <source>Soft proof off</source>
+        <translation>Đã tắt soft proof</translation>
     </message>
     <message>
         <source>Rating: ★</source>
@@ -2319,6 +2331,45 @@
     <message>
         <source>YouTube thumbnail</source>
         <translation>Ảnh thu nhỏ YouTube</translation>
+    </message>
+</context>
+<context>
+    <name>SoftProofPanel</name>
+    <message>
+        <source>Soft proof (S)</source>
+        <translation>Soft proof (S)</translation>
+    </message>
+    <message>
+        <source>Shows the photo as it will look with the profile below, for example a printer and paper profile. The edit and the export do not change.</source>
+        <translation>Hiển thị ảnh như khi dùng hồ sơ bên dưới, ví dụ hồ sơ máy in và giấy. Bản chỉnh sửa và bản xuất không thay đổi.</translation>
+    </message>
+    <message>
+        <source>Rendering intent</source>
+        <translation>Mục đích kết xuất</translation>
+    </message>
+    <message>
+        <source>Perceptual</source>
+        <translation>Cảm nhận</translation>
+    </message>
+    <message>
+        <source>Relative</source>
+        <translation>Tương đối</translation>
+    </message>
+    <message>
+        <source>Saturation</source>
+        <translation>Độ bão hòa</translation>
+    </message>
+    <message>
+        <source>Absolute</source>
+        <translation>Tuyệt đối</translation>
+    </message>
+    <message>
+        <source>Gamut warning</source>
+        <translation>Cảnh báo gam màu</translation>
+    </message>
+    <message>
+        <source>Magenta marks colours the profile cannot reproduce. The preview is sRGB, so wider spaces such as Adobe RGB show no warnings.</source>
+        <translation>Màu đỏ tím đánh dấu những màu hồ sơ không tái tạo được. Bản xem trước là sRGB, nên các không gian rộng hơn như Adobe RGB không hiện cảnh báo.</translation>
     </message>
 </context>
 <context>

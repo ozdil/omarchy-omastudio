@@ -1710,6 +1710,10 @@
         <translation>Början</translation>
     </message>
     <message>
+        <source>Soft proof not applied: %1</source>
+        <translation>Skärmkorrektur inte tillämpad: %1</translation>
+    </message>
+    <message>
         <source>Snapshot %1</source>
         <translation>Ögonblicksbild %1</translation>
     </message>
@@ -1780,6 +1784,14 @@
     <message>
         <source>The scan did not respond.</source>
         <translation>Mappgenomsökningen svarade inte.</translation>
+    </message>
+    <message>
+        <source>Soft proof: %1</source>
+        <translation>Skärmkorrektur: %1</translation>
+    </message>
+    <message>
+        <source>Soft proof off</source>
+        <translation>Skärmkorrektur av</translation>
     </message>
     <message>
         <source>Rating: ★</source>
@@ -2324,6 +2336,45 @@
     <message>
         <source>YouTube thumbnail</source>
         <translation>YouTube-miniatyr</translation>
+    </message>
+</context>
+<context>
+    <name>SoftProofPanel</name>
+    <message>
+        <source>Soft proof (S)</source>
+        <translation>Skärmkorrektur (S)</translation>
+    </message>
+    <message>
+        <source>Shows the photo as it will look with the profile below, for example a printer and paper profile. The edit and the export do not change.</source>
+        <translation>Visar fotot som det kommer att se ut med profilen nedan, till exempel en skrivar- och pappersprofil. Redigeringen och exporten ändras inte.</translation>
+    </message>
+    <message>
+        <source>Rendering intent</source>
+        <translation>Återgivningsavsikt</translation>
+    </message>
+    <message>
+        <source>Perceptual</source>
+        <translation>Perceptuell</translation>
+    </message>
+    <message>
+        <source>Relative</source>
+        <translation>Relativ</translation>
+    </message>
+    <message>
+        <source>Saturation</source>
+        <translation>Mättnad</translation>
+    </message>
+    <message>
+        <source>Absolute</source>
+        <translation>Absolut</translation>
+    </message>
+    <message>
+        <source>Gamut warning</source>
+        <translation>Färgomfångsvarning</translation>
+    </message>
+    <message>
+        <source>Magenta marks colours the profile cannot reproduce. The preview is sRGB, so wider spaces such as Adobe RGB show no warnings.</source>
+        <translation>Magenta markerar färger som profilen inte kan återge. Förhandsvisningen är sRGB, så större färgrymder som Adobe RGB visar inga varningar.</translation>
     </message>
 </context>
 <context>

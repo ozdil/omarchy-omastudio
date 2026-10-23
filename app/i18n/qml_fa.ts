@@ -1706,6 +1706,10 @@
         <translation>آغاز</translation>
     </message>
     <message>
+        <source>Soft proof not applied: %1</source>
+        <translation>پیش‌نمایش چاپ اعمال نشد: %1</translation>
+    </message>
+    <message>
         <source>Snapshot %1</source>
         <translation>اسنپ‌شات %1</translation>
     </message>
@@ -1776,6 +1780,14 @@
     <message>
         <source>The scan did not respond.</source>
         <translation>پویش پوشه پاسخ نداد.</translation>
+    </message>
+    <message>
+        <source>Soft proof: %1</source>
+        <translation>پیش‌نمایش چاپ: %1</translation>
+    </message>
+    <message>
+        <source>Soft proof off</source>
+        <translation>پیش‌نمایش چاپ خاموش</translation>
     </message>
     <message>
         <source>Rating: ★</source>
@@ -2319,6 +2331,45 @@
     <message>
         <source>YouTube thumbnail</source>
         <translation>تصویر بندانگشتی یوتیوب</translation>
+    </message>
+</context>
+<context>
+    <name>SoftProofPanel</name>
+    <message>
+        <source>Soft proof (S)</source>
+        <translation>پیش‌نمایش چاپ (S)</translation>
+    </message>
+    <message>
+        <source>Shows the photo as it will look with the profile below, for example a printer and paper profile. The edit and the export do not change.</source>
+        <translation>عکس را همان‌طور که با پروفایل زیر خواهد بود نشان می‌دهد، مثلاً پروفایل چاپگر و کاغذ. ویرایش و خروجی تغییر نمی‌کنند.</translation>
+    </message>
+    <message>
+        <source>Rendering intent</source>
+        <translation>هدف رندر</translation>
+    </message>
+    <message>
+        <source>Perceptual</source>
+        <translation>ادراکی</translation>
+    </message>
+    <message>
+        <source>Relative</source>
+        <translation>نسبی</translation>
+    </message>
+    <message>
+        <source>Saturation</source>
+        <translation>اشباع</translation>
+    </message>
+    <message>
+        <source>Absolute</source>
+        <translation>مطلق</translation>
+    </message>
+    <message>
+        <source>Gamut warning</source>
+        <translation>هشدار گستره رنگ</translation>
+    </message>
+    <message>
+        <source>Magenta marks colours the profile cannot reproduce. The preview is sRGB, so wider spaces such as Adobe RGB show no warnings.</source>
+        <translation>سرخابی رنگ‌هایی را نشان می‌دهد که پروفایل نمی‌تواند بازتولید کند. پیش‌نمایش sRGB است، پس فضاهای گسترده‌تر مانند Adobe RGB هشداری نشان نمی‌دهند.</translation>
     </message>
 </context>
 <context>

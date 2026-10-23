@@ -1710,6 +1710,10 @@
         <translation>Inicio</translation>
     </message>
     <message>
+        <source>Soft proof not applied: %1</source>
+        <translation>Prueba en pantalla no aplicada: %1</translation>
+    </message>
+    <message>
         <source>Snapshot %1</source>
         <translation>Instantánea %1</translation>
     </message>
@@ -1780,6 +1784,14 @@
     <message>
         <source>The scan did not respond.</source>
         <translation>El análisis de la carpeta no respondió.</translation>
+    </message>
+    <message>
+        <source>Soft proof: %1</source>
+        <translation>Prueba en pantalla: %1</translation>
+    </message>
+    <message>
+        <source>Soft proof off</source>
+        <translation>Prueba en pantalla desactivada</translation>
     </message>
     <message>
         <source>Rating: ★</source>
@@ -2324,6 +2336,45 @@
     <message>
         <source>YouTube thumbnail</source>
         <translation>Miniatura de YouTube</translation>
+    </message>
+</context>
+<context>
+    <name>SoftProofPanel</name>
+    <message>
+        <source>Soft proof (S)</source>
+        <translation>Prueba en pantalla (S)</translation>
+    </message>
+    <message>
+        <source>Shows the photo as it will look with the profile below, for example a printer and paper profile. The edit and the export do not change.</source>
+        <translation>Muestra la foto como se verá con el perfil de abajo, por ejemplo un perfil de impresora y papel. La edición y la exportación no cambian.</translation>
+    </message>
+    <message>
+        <source>Rendering intent</source>
+        <translation>Propósito de interpretación</translation>
+    </message>
+    <message>
+        <source>Perceptual</source>
+        <translation>Perceptual</translation>
+    </message>
+    <message>
+        <source>Relative</source>
+        <translation>Relativa</translation>
+    </message>
+    <message>
+        <source>Saturation</source>
+        <translation>Saturación</translation>
+    </message>
+    <message>
+        <source>Absolute</source>
+        <translation>Absoluta</translation>
+    </message>
+    <message>
+        <source>Gamut warning</source>
+        <translation>Aviso de gama</translation>
+    </message>
+    <message>
+        <source>Magenta marks colours the profile cannot reproduce. The preview is sRGB, so wider spaces such as Adobe RGB show no warnings.</source>
+        <translation>El magenta marca los colores que el perfil no puede reproducir. La vista previa es sRGB, así que espacios más amplios como Adobe RGB no muestran avisos.</translation>
     </message>
 </context>
 <context>

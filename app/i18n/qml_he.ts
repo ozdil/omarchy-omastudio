@@ -1710,6 +1710,10 @@
         <translation>התחלה</translation>
     </message>
     <message>
+        <source>Soft proof not applied: %1</source>
+        <translation>הגהה על המסך לא הוחלה: %1</translation>
+    </message>
+    <message>
         <source>Snapshot %1</source>
         <translation>תמונת מצב %1</translation>
     </message>
@@ -1780,6 +1784,14 @@
     <message>
         <source>The scan did not respond.</source>
         <translation>סריקת התיקייה לא הגיבה.</translation>
+    </message>
+    <message>
+        <source>Soft proof: %1</source>
+        <translation>הגהה על המסך: %1</translation>
+    </message>
+    <message>
+        <source>Soft proof off</source>
+        <translation>הגהה על המסך כבויה</translation>
     </message>
     <message>
         <source>Rating: ★</source>
@@ -2324,6 +2336,45 @@
     <message>
         <source>YouTube thumbnail</source>
         <translation>תמונה ממוזערת ל־YouTube</translation>
+    </message>
+</context>
+<context>
+    <name>SoftProofPanel</name>
+    <message>
+        <source>Soft proof (S)</source>
+        <translation>הגהה על המסך (S)</translation>
+    </message>
+    <message>
+        <source>Shows the photo as it will look with the profile below, for example a printer and paper profile. The edit and the export do not change.</source>
+        <translation>מציג את התמונה כפי שתיראה עם הפרופיל שלמטה, למשל פרופיל של מדפסת ונייר. העריכה והייצוא אינם משתנים.</translation>
+    </message>
+    <message>
+        <source>Rendering intent</source>
+        <translation>כוונת עיבוד</translation>
+    </message>
+    <message>
+        <source>Perceptual</source>
+        <translation>תפיסתית</translation>
+    </message>
+    <message>
+        <source>Relative</source>
+        <translation>יחסית</translation>
+    </message>
+    <message>
+        <source>Saturation</source>
+        <translation>רוויה</translation>
+    </message>
+    <message>
+        <source>Absolute</source>
+        <translation>מוחלטת</translation>
+    </message>
+    <message>
+        <source>Gamut warning</source>
+        <translation>אזהרת טווח צבעים</translation>
+    </message>
+    <message>
+        <source>Magenta marks colours the profile cannot reproduce. The preview is sRGB, so wider spaces such as Adobe RGB show no warnings.</source>
+        <translation>מגנטה מסמנת צבעים שהפרופיל אינו יכול לשחזר. התצוגה המקדימה היא sRGB, ולכן מרחבים רחבים יותר כמו Adobe RGB אינם מציגים אזהרות.</translation>
     </message>
 </context>
 <context>

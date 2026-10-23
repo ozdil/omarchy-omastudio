@@ -1706,6 +1706,10 @@
         <translation>Başlangıç</translation>
     </message>
     <message>
+        <source>Soft proof not applied: %1</source>
+        <translation>Ekran provası uygulanmadı: %1</translation>
+    </message>
+    <message>
         <source>Snapshot %1</source>
         <translation>Anlık görüntü %1</translation>
     </message>
@@ -1776,6 +1780,14 @@
     <message>
         <source>The scan did not respond.</source>
         <translation>Tarama yanıt vermedi.</translation>
+    </message>
+    <message>
+        <source>Soft proof: %1</source>
+        <translation>Ekran provası: %1</translation>
+    </message>
+    <message>
+        <source>Soft proof off</source>
+        <translation>Ekran provası kapalı</translation>
     </message>
     <message>
         <source>Rating: ★</source>
@@ -2319,6 +2331,45 @@
     <message>
         <source>YouTube thumbnail</source>
         <translation>YouTube küçük resmi</translation>
+    </message>
+</context>
+<context>
+    <name>SoftProofPanel</name>
+    <message>
+        <source>Soft proof (S)</source>
+        <translation>Ekran provası (S)</translation>
+    </message>
+    <message>
+        <source>Shows the photo as it will look with the profile below, for example a printer and paper profile. The edit and the export do not change.</source>
+        <translation>Fotoğrafı aşağıdaki profille, örneğin bir yazıcı ve kâğıt profiliyle nasıl görüneceği gibi gösterir. Düzenleme ve dışa aktarma değişmez.</translation>
+    </message>
+    <message>
+        <source>Rendering intent</source>
+        <translation>İşleme amacı</translation>
+    </message>
+    <message>
+        <source>Perceptual</source>
+        <translation>Algısal</translation>
+    </message>
+    <message>
+        <source>Relative</source>
+        <translation>Göreli</translation>
+    </message>
+    <message>
+        <source>Saturation</source>
+        <translation>Doygunluk</translation>
+    </message>
+    <message>
+        <source>Absolute</source>
+        <translation>Mutlak</translation>
+    </message>
+    <message>
+        <source>Gamut warning</source>
+        <translation>Gamut uyarısı</translation>
+    </message>
+    <message>
+        <source>Magenta marks colours the profile cannot reproduce. The preview is sRGB, so wider spaces such as Adobe RGB show no warnings.</source>
+        <translation>Macenta, profilin üretemediği renkleri işaretler. Önizleme sRGB olduğundan Adobe RGB gibi daha geniş alanlarda uyarı görünmez.</translation>
     </message>
 </context>
 <context>

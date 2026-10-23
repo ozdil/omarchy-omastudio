@@ -1706,6 +1706,10 @@
         <translation>开始</translation>
     </message>
     <message>
+        <source>Soft proof not applied: %1</source>
+        <translation>未应用软打样：%1</translation>
+    </message>
+    <message>
         <source>Snapshot %1</source>
         <translation>快照 %1</translation>
     </message>
@@ -1776,6 +1780,14 @@
     <message>
         <source>The scan did not respond.</source>
         <translation>文件夹扫描没有响应。</translation>
+    </message>
+    <message>
+        <source>Soft proof: %1</source>
+        <translation>软打样：%1</translation>
+    </message>
+    <message>
+        <source>Soft proof off</source>
+        <translation>软打样已关闭</translation>
     </message>
     <message>
         <source>Rating: ★</source>
@@ -2319,6 +2331,45 @@
     <message>
         <source>YouTube thumbnail</source>
         <translation>YouTube 缩略图</translation>
+    </message>
+</context>
+<context>
+    <name>SoftProofPanel</name>
+    <message>
+        <source>Soft proof (S)</source>
+        <translation>软打样 (S)</translation>
+    </message>
+    <message>
+        <source>Shows the photo as it will look with the profile below, for example a printer and paper profile. The edit and the export do not change.</source>
+        <translation>按下方配置文件（例如打印机和纸张配置文件）显示照片的效果。编辑和导出不会改变。</translation>
+    </message>
+    <message>
+        <source>Rendering intent</source>
+        <translation>渲染意图</translation>
+    </message>
+    <message>
+        <source>Perceptual</source>
+        <translation>可感知</translation>
+    </message>
+    <message>
+        <source>Relative</source>
+        <translation>相对</translation>
+    </message>
+    <message>
+        <source>Saturation</source>
+        <translation>饱和度</translation>
+    </message>
+    <message>
+        <source>Absolute</source>
+        <translation>绝对</translation>
+    </message>
+    <message>
+        <source>Gamut warning</source>
+        <translation>色域警告</translation>
+    </message>
+    <message>
+        <source>Magenta marks colours the profile cannot reproduce. The preview is sRGB, so wider spaces such as Adobe RGB show no warnings.</source>
+        <translation>洋红色标出配置文件无法再现的颜色。预览为 sRGB，因此 Adobe RGB 等更宽的色彩空间不会显示警告。</translation>
     </message>
 </context>
 <context>

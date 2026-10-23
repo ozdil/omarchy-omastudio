@@ -281,3 +281,7 @@ da:Start
 da:Snapshot %1
 id:Snapshot %1
 nb:Start
+id:Soft proof: %1
+id:Soft proof (S)
+vi:Soft proof: %1
+vi:Soft proof (S)

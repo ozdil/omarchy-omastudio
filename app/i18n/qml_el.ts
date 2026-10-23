@@ -1710,6 +1710,10 @@
         <translation>Αρχή</translation>
     </message>
     <message>
+        <source>Soft proof not applied: %1</source>
+        <translation>Η δοκιμή οθόνης δεν εφαρμόστηκε: %1</translation>
+    </message>
+    <message>
         <source>Snapshot %1</source>
         <translation>Στιγμιότυπο %1</translation>
     </message>
@@ -1780,6 +1784,14 @@
     <message>
         <source>The scan did not respond.</source>
         <translation>Η σάρωση του φακέλου δεν απάντησε.</translation>
+    </message>
+    <message>
+        <source>Soft proof: %1</source>
+        <translation>Δοκιμή οθόνης: %1</translation>
+    </message>
+    <message>
+        <source>Soft proof off</source>
+        <translation>Δοκιμή οθόνης ανενεργή</translation>
     </message>
     <message>
         <source>Rating: ★</source>
@@ -2324,6 +2336,45 @@
     <message>
         <source>YouTube thumbnail</source>
         <translation>Μικρογραφία YouTube</translation>
+    </message>
+</context>
+<context>
+    <name>SoftProofPanel</name>
+    <message>
+        <source>Soft proof (S)</source>
+        <translation>Δοκιμή οθόνης (S)</translation>
+    </message>
+    <message>
+        <source>Shows the photo as it will look with the profile below, for example a printer and paper profile. The edit and the export do not change.</source>
+        <translation>Δείχνει τη φωτογραφία όπως θα είναι με το παρακάτω προφίλ, π.χ. ένα προφίλ εκτυπωτή και χαρτιού. Η επεξεργασία και η εξαγωγή δεν αλλάζουν.</translation>
+    </message>
+    <message>
+        <source>Rendering intent</source>
+        <translation>Πρόθεση απόδοσης</translation>
+    </message>
+    <message>
+        <source>Perceptual</source>
+        <translation>Αντιληπτική</translation>
+    </message>
+    <message>
+        <source>Relative</source>
+        <translation>Σχετική</translation>
+    </message>
+    <message>
+        <source>Saturation</source>
+        <translation>Κορεσμός</translation>
+    </message>
+    <message>
+        <source>Absolute</source>
+        <translation>Απόλυτη</translation>
+    </message>
+    <message>
+        <source>Gamut warning</source>
+        <translation>Προειδοποίηση γκάμας</translation>
+    </message>
+    <message>
+        <source>Magenta marks colours the profile cannot reproduce. The preview is sRGB, so wider spaces such as Adobe RGB show no warnings.</source>
+        <translation>Το ματζέντα σημειώνει χρώματα που το προφίλ δεν μπορεί να αναπαραγάγει. Η προεπισκόπηση είναι sRGB, οπότε ευρύτεροι χώροι όπως το Adobe RGB δεν δείχνουν προειδοποιήσεις.</translation>
     </message>
 </context>
 <context>

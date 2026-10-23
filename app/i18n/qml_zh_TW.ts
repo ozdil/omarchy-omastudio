@@ -1706,6 +1706,10 @@
         <translation>開始</translation>
     </message>
     <message>
+        <source>Soft proof not applied: %1</source>
+        <translation>未套用螢幕校樣：%1</translation>
+    </message>
+    <message>
         <source>Snapshot %1</source>
         <translation>快照 %1</translation>
     </message>
@@ -1776,6 +1780,14 @@
     <message>
         <source>The scan did not respond.</source>
         <translation>資料夾掃描沒有回應。</translation>
+    </message>
+    <message>
+        <source>Soft proof: %1</source>
+        <translation>螢幕校樣：%1</translation>
+    </message>
+    <message>
+        <source>Soft proof off</source>
+        <translation>螢幕校樣已關閉</translation>
     </message>
     <message>
         <source>Rating: ★</source>
@@ -2319,6 +2331,45 @@
     <message>
         <source>YouTube thumbnail</source>
         <translation>YouTube 縮圖</translation>
+    </message>
+</context>
+<context>
+    <name>SoftProofPanel</name>
+    <message>
+        <source>Soft proof (S)</source>
+        <translation>螢幕校樣 (S)</translation>
+    </message>
+    <message>
+        <source>Shows the photo as it will look with the profile below, for example a printer and paper profile. The edit and the export do not change.</source>
+        <translation>依下方描述檔（例如印表機和紙張描述檔）顯示照片的效果。編輯和匯出不會改變。</translation>
+    </message>
+    <message>
+        <source>Rendering intent</source>
+        <translation>渲染意圖</translation>
+    </message>
+    <message>
+        <source>Perceptual</source>
+        <translation>可感知</translation>
+    </message>
+    <message>
+        <source>Relative</source>
+        <translation>相對</translation>
+    </message>
+    <message>
+        <source>Saturation</source>
+        <translation>飽和度</translation>
+    </message>
+    <message>
+        <source>Absolute</source>
+        <translation>絕對</translation>
+    </message>
+    <message>
+        <source>Gamut warning</source>
+        <translation>色域警告</translation>
+    </message>
+    <message>
+        <source>Magenta marks colours the profile cannot reproduce. The preview is sRGB, so wider spaces such as Adobe RGB show no warnings.</source>
+        <translation>洋紅色標示描述檔無法重現的顏色。預覽為 sRGB，因此 Adobe RGB 等更寬的色彩空間不會顯示警告。</translation>
     </message>
 </context>
 <context>

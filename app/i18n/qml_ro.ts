@@ -1714,6 +1714,10 @@
         <translation>Început</translation>
     </message>
     <message>
+        <source>Soft proof not applied: %1</source>
+        <translation>Probă pe ecran neaplicată: %1</translation>
+    </message>
+    <message>
         <source>Snapshot %1</source>
         <translation>Instantaneu %1</translation>
     </message>
@@ -1784,6 +1788,14 @@
     <message>
         <source>The scan did not respond.</source>
         <translation>Scanarea dosarului nu a răspuns.</translation>
+    </message>
+    <message>
+        <source>Soft proof: %1</source>
+        <translation>Probă pe ecran: %1</translation>
+    </message>
+    <message>
+        <source>Soft proof off</source>
+        <translation>Probă pe ecran oprită</translation>
     </message>
     <message>
         <source>Rating: ★</source>
@@ -2329,6 +2341,45 @@
     <message>
         <source>YouTube thumbnail</source>
         <translation>Miniatură YouTube</translation>
+    </message>
+</context>
+<context>
+    <name>SoftProofPanel</name>
+    <message>
+        <source>Soft proof (S)</source>
+        <translation>Probă pe ecran (S)</translation>
+    </message>
+    <message>
+        <source>Shows the photo as it will look with the profile below, for example a printer and paper profile. The edit and the export do not change.</source>
+        <translation>Arată fotografia așa cum va arăta cu profilul de mai jos, de exemplu un profil de imprimantă și hârtie. Editarea și exportul nu se schimbă.</translation>
+    </message>
+    <message>
+        <source>Rendering intent</source>
+        <translation>Intenție de randare</translation>
+    </message>
+    <message>
+        <source>Perceptual</source>
+        <translation>Perceptuală</translation>
+    </message>
+    <message>
+        <source>Relative</source>
+        <translation>Relativă</translation>
+    </message>
+    <message>
+        <source>Saturation</source>
+        <translation>Saturație</translation>
+    </message>
+    <message>
+        <source>Absolute</source>
+        <translation>Absolută</translation>
+    </message>
+    <message>
+        <source>Gamut warning</source>
+        <translation>Avertizare gamă</translation>
+    </message>
+    <message>
+        <source>Magenta marks colours the profile cannot reproduce. The preview is sRGB, so wider spaces such as Adobe RGB show no warnings.</source>
+        <translation>Magenta marchează culorile pe care profilul nu le poate reda. Previzualizarea este sRGB, deci spațiile mai largi, ca Adobe RGB, nu arată avertizări.</translation>
     </message>
 </context>
 <context>

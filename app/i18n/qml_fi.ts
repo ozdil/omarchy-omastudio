@@ -1710,6 +1710,10 @@
         <translation>Alku</translation>
     </message>
     <message>
+        <source>Soft proof not applied: %1</source>
+        <translation>Näyttövedosta ei käytetty: %1</translation>
+    </message>
+    <message>
         <source>Snapshot %1</source>
         <translation>Tilannekuva %1</translation>
     </message>
@@ -1780,6 +1784,14 @@
     <message>
         <source>The scan did not respond.</source>
         <translation>Kansion tarkistus ei vastannut.</translation>
+    </message>
+    <message>
+        <source>Soft proof: %1</source>
+        <translation>Näyttövedos: %1</translation>
+    </message>
+    <message>
+        <source>Soft proof off</source>
+        <translation>Näyttövedos pois</translation>
     </message>
     <message>
         <source>Rating: ★</source>
@@ -2324,6 +2336,45 @@
     <message>
         <source>YouTube thumbnail</source>
         <translation>YouTube-pikkukuva</translation>
+    </message>
+</context>
+<context>
+    <name>SoftProofPanel</name>
+    <message>
+        <source>Soft proof (S)</source>
+        <translation>Näyttövedos (S)</translation>
+    </message>
+    <message>
+        <source>Shows the photo as it will look with the profile below, for example a printer and paper profile. The edit and the export do not change.</source>
+        <translation>Näyttää kuvan sellaisena kuin se näyttää alla olevalla profiililla, esimerkiksi tulostimen ja paperin profiililla. Muokkaus ja vienti eivät muutu.</translation>
+    </message>
+    <message>
+        <source>Rendering intent</source>
+        <translation>Toistotapa</translation>
+    </message>
+    <message>
+        <source>Perceptual</source>
+        <translation>Havainnollinen</translation>
+    </message>
+    <message>
+        <source>Relative</source>
+        <translation>Suhteellinen</translation>
+    </message>
+    <message>
+        <source>Saturation</source>
+        <translation>Kylläisyys</translation>
+    </message>
+    <message>
+        <source>Absolute</source>
+        <translation>Absoluuttinen</translation>
+    </message>
+    <message>
+        <source>Gamut warning</source>
+        <translation>Väriavaruusvaroitus</translation>
+    </message>
+    <message>
+        <source>Magenta marks colours the profile cannot reproduce. The preview is sRGB, so wider spaces such as Adobe RGB show no warnings.</source>
+        <translation>Magenta merkitsee värit, joita profiili ei pysty toistamaan. Esikatselu on sRGB, joten laajemmat avaruudet kuten Adobe RGB eivät näytä varoituksia.</translation>
     </message>
 </context>
 <context>

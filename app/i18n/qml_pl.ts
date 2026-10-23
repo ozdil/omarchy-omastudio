@@ -1714,6 +1714,10 @@
         <translation>Początek</translation>
     </message>
     <message>
+        <source>Soft proof not applied: %1</source>
+        <translation>Nie zastosowano próby ekranowej: %1</translation>
+    </message>
+    <message>
         <source>Snapshot %1</source>
         <translation>Migawka %1</translation>
     </message>
@@ -1784,6 +1788,14 @@
     <message>
         <source>The scan did not respond.</source>
         <translation>Skanowanie folderu nie odpowiedziało.</translation>
+    </message>
+    <message>
+        <source>Soft proof: %1</source>
+        <translation>Próba ekranowa: %1</translation>
+    </message>
+    <message>
+        <source>Soft proof off</source>
+        <translation>Próba ekranowa wyłączona</translation>
     </message>
     <message>
         <source>Rating: ★</source>
@@ -2329,6 +2341,45 @@
     <message>
         <source>YouTube thumbnail</source>
         <translation>Miniatura YouTube</translation>
+    </message>
+</context>
+<context>
+    <name>SoftProofPanel</name>
+    <message>
+        <source>Soft proof (S)</source>
+        <translation>Próba ekranowa (S)</translation>
+    </message>
+    <message>
+        <source>Shows the photo as it will look with the profile below, for example a printer and paper profile. The edit and the export do not change.</source>
+        <translation>Pokazuje zdjęcie tak, jak będzie wyglądać z profilem poniżej, np. profilem drukarki i papieru. Edycja i eksport się nie zmieniają.</translation>
+    </message>
+    <message>
+        <source>Rendering intent</source>
+        <translation>Metoda odwzorowania</translation>
+    </message>
+    <message>
+        <source>Perceptual</source>
+        <translation>Percepcyjna</translation>
+    </message>
+    <message>
+        <source>Relative</source>
+        <translation>Względna</translation>
+    </message>
+    <message>
+        <source>Saturation</source>
+        <translation>Nasycenie</translation>
+    </message>
+    <message>
+        <source>Absolute</source>
+        <translation>Bezwzględna</translation>
+    </message>
+    <message>
+        <source>Gamut warning</source>
+        <translation>Ostrzeżenie o gamucie</translation>
+    </message>
+    <message>
+        <source>Magenta marks colours the profile cannot reproduce. The preview is sRGB, so wider spaces such as Adobe RGB show no warnings.</source>
+        <translation>Magenta oznacza kolory, których profil nie odtworzy. Podgląd jest w sRGB, więc szersze przestrzenie, jak Adobe RGB, nie pokazują ostrzeżeń.</translation>
     </message>
 </context>
 <context>
