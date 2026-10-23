@@ -6,7 +6,8 @@
 - The interface follows Omarchy live, without a restart: every colour comes from the active theme (scopes, the area around the photo and text on accent buttons included); the font is Omarchy's (`omarchy-font-set`, read from fontconfig); text sizes scale from the Omarchy shell's base size; corners follow Hyprland's rounding, so they are square on a default Omarchy setup.
 - Clipping warnings stay red (highlights) and blue (shadows) in every theme.
 - OmaStudio has its own icon instead of the generic camera icon.
-- The top bar no longer repeats "STUDIO" next to the name; the About dialog no longer clips its text and has no "VERIFIED" badge.
+- The top bar no longer repeats "STUDIO" next to the name.
+- New About window: application icon, version, capabilities, graphics and appearance details, a privacy note, third-party licences, project links, and **Copy system info** for bug reports. Esc closes it.
 
 ### AI
 - **Connect local AI** in the top bar uses the AI set up on this computer: Omarchy's default agent (`omarchy-default-agent`; Claude Code or Codex, with their own sign-in), else Ollama, else LM Studio. The edit assistant can use it like any other provider (`omastudio-engine ai local`, provider `omarchy`). With Claude Code or Codex the photo preview is sent to that service.
