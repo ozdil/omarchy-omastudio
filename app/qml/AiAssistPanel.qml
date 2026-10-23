@@ -37,6 +37,9 @@ ColumnLayout {
 
     signal recipeSuggested(var recipe, string explanation)
     signal notify(string text, bool isError)
+    signal editFailed(string error)
+    // A local AI answered the connect request
+    signal localConnectedNow()
 
     Component.onCompleted: refresh()
 
@@ -96,7 +99,9 @@ ColumnLayout {
                 root.explanation = resp.data.explanation || "";
                 root.recipeSuggested(resp.data.recipe, root.explanation);
             } else {
-                root.notify(String(resp.error || qsTr("AI edit failed")).split("\n")[0], true);
+                var err = String(resp.error || qsTr("AI edit failed")).split("\n")[0];
+                root.notify(err, true);
+                root.editFailed(err);
             }
         }
     }
@@ -118,6 +123,7 @@ ColumnLayout {
                    : setupProc.action === "local" ? qsTr("Connected to local AI: %1").arg(resp.success ? resp.data.model : "")
                    : qsTr("Provider saved");
             root.notify(resp.success ? ok : String(resp.error || qsTr("Failed")).split("\n")[0], !resp.success);
+            if (resp.success && setupProc.action === "local") root.localConnectedNow();
             root.refresh();
         }
     }

@@ -20,6 +20,8 @@ Rectangle {
     property var photoList: []
 
     property bool isProMode: false
+    // The AI chat over the viewport; opens on connect, toggled from the top bar
+    property bool aiChatOpen: false
     property bool isSplitView: false
     property real splitRatio: 0.5
     property bool showExportModal: false
@@ -1255,6 +1257,7 @@ Rectangle {
         if (["adjust", "masks", "looks", "ai"].indexOf(st.rightTab) >= 0) root.rightTab = st.rightTab;
         if (st.collapsedSections && typeof st.collapsedSections === "object") root.collapsedSections = st.collapsedSections;
         if (["dark", "grey", "theme"].indexOf(st.surround) >= 0) root.surround = st.surround;
+        if (typeof st.proMode === "boolean") root.isProMode = st.proMode;
         root.uiStateLoaded = true;
     }
 
@@ -1271,7 +1274,8 @@ Rectangle {
             "showFilmstrip": root.showFilmstrip,
             "rightTab": root.rightTab,
             "collapsedSections": root.collapsedSections,
-            "surround": root.surround
+            "surround": root.surround,
+            "proMode": root.isProMode
         }))
     }
 
@@ -1279,7 +1283,35 @@ Rectangle {
     onShowRightPanelChanged: saveUiStateSoon()
     onShowFilmstripChanged: saveUiStateSoon()
     onRightTabChanged: saveUiStateSoon()
-    onIsProModeChanged: if (!root.isProMode && root.rightTab === "masks") root.rightTab = "adjust"
+    onIsProModeChanged: {
+        if (!root.isProMode && root.rightTab === "masks") root.rightTab = "adjust";
+        saveUiStateSoon();
+    }
+
+    // Switching from the top bar: say what changed and bring the first Pro section into view,
+    // since the Pro sections sit below the Essentials ones and are easy to miss
+    function setProMode(on) {
+        if (root.isProMode === on) return;
+        root.isProMode = on;
+        if (on) {
+            root.rightTab = "adjust";
+            if (root.collapsedSections["curve"] === true) root.toggleSection("curve");
+            proScrollTimer.restart();
+            root.showToast(qsTr("Pro: tone curve, colour mixer, colour grading, detail, grain, colour management and the Masks tab are shown"), Theme.accent);
+        } else {
+            root.showToast(qsTr("Essentials: Pro sections are hidden. Settings made in them stay applied."), Theme.accent);
+        }
+    }
+
+    Timer {
+        id: proScrollTimer
+        interval: 50
+        onTriggered: {
+            var flick = adjustScroll.contentItem;
+            var y = curveSection.mapToItem(flick.contentItem, 0, 0).y;
+            flick.contentY = Math.max(0, Math.min(y, flick.contentHeight - flick.height));
+        }
+    }
 
     onCollapsedSectionsChanged: saveUiStateSoon()
     onSurroundChanged: saveUiStateSoon()
@@ -1414,6 +1446,7 @@ Rectangle {
 
         // TOP BAR
         TopBar {
+            id: topBar
             Layout.fillWidth: true
             isProMode: root.isProMode
             isSplitView: root.isSplitView
@@ -1434,11 +1467,15 @@ Rectangle {
                 root.showToast(f === "pick" ? qsTr("Picked") : (f === "reject" ? qsTr("Rejected") : qsTr("Flag cleared")), f === "pick" ? Theme.accentGreen : (f === "reject" ? Theme.highlightClip : Theme.textDim));
                 root.saveSidecar();
             }
-            onToggleMode: root.isProMode = !root.isProMode
+            onToggleMode: root.setProMode(!root.isProMode)
             aiConnected: aiAssist.localConnected
             aiBusy: aiAssist.connecting
             aiModel: aiAssist.choice.model || ""
+            aiProvider: aiAssist.choice.provider || ""
+            aiProviderName: aiAssist.providerName(aiAssist.choice.provider || "")
             onConnectLocalAi: aiAssist.connectLocal()
+            aiChatOpen: root.aiChatOpen
+            onToggleAiChat: root.aiChatOpen = !root.aiChatOpen
             onUndoClicked: root.undo()
             onRedoClicked: root.redo()
             onOpenFileClicked: openFileProc.running = true
@@ -1908,6 +1945,7 @@ Rectangle {
                 }
 
                 ScrollView {
+                    id: adjustScroll
                     anchors.top: rightTabsLine.bottom
                     anchors.left: parent.left
                     anchors.right: parent.right
@@ -2155,10 +2193,12 @@ Rectangle {
                                 }
                             }
                             PanelSection {
+                                id: curveSection
                                 key: "curve"
                                 title: qsTr("Tone curve")
                                 host: root
                                 visible: root.isProMode
+                                pro: true
                                 onReset: {
                                     root.pushUndoState();
                                     root.curveHighlights = 0.0;
@@ -2210,6 +2250,7 @@ Rectangle {
                                 title: qsTr("Colour mixer")
                                 host: root
                                 visible: root.isProMode
+                                pro: true
                                 onReset: {
                                     root.hslH = [0, 0, 0, 0, 0, 0, 0, 0];
                                     root.hslS = [0, 0, 0, 0, 0, 0, 0, 0];
@@ -2237,6 +2278,7 @@ Rectangle {
                                 title: qsTr("Colour grading")
                                 host: root
                                 visible: root.isProMode
+                                pro: true
                                 resettable: false
 
                                 ColorGradingWheels {
@@ -2327,6 +2369,7 @@ Rectangle {
                                 title: qsTr("Detail and optics")
                                 host: root
                                 visible: root.isProMode
+                                pro: true
                                 onReset: {
                                     root.sharpnessVal = 25.0;
                                     root.denoiseLumVal = 0.0;
@@ -2394,6 +2437,7 @@ Rectangle {
                                 title: qsTr("Grain")
                                 host: root
                                 visible: root.isProMode
+                                pro: true
                                 resettable: false
 
                                 FilmGrainPanel {
@@ -2416,6 +2460,7 @@ Rectangle {
                                 title: qsTr("Colour management")
                                 host: root
                                 visible: root.isProMode
+                                pro: true
                                 resettable: false
 
                                 ColorSpaceSelector {
@@ -2538,6 +2583,7 @@ Rectangle {
                                 onNotify: function(text, isError) {
                                     root.showToast(text, isError ? Theme.accentMagenta : Theme.accentGreen);
                                 }
+                                onLocalConnectedNow: root.aiChatOpen = true
                             }
                             }
                         }
@@ -2729,5 +2775,23 @@ Rectangle {
         if (exportProc.running) exportProc.running = false;
         if (listProc.running) listProc.running = false;
         if (openFileProc.running) openFileProc.running = false;
+    }
+
+    AiChatPanel {
+        id: aiChat
+        parent: viewport
+        visible: root.aiChatOpen && aiAssist.localConnected
+        z: 50
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
+        anchors.margins: Theme.px(12)
+        width: Math.min(Theme.px(360), parent.width - Theme.px(24))
+        height: Math.min(Theme.px(440), parent.height - Theme.px(24))
+        assistant: aiAssist
+        activePhotoPath: root.activePhotoPath
+        label: topBar.aiLabel
+        onCloseRequested: root.aiChatOpen = false
+        onReconnectRequested: aiAssist.connectLocal()
+        onVisibleChanged: if (visible) focusInput()
     }
 }
