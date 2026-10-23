@@ -24,7 +24,7 @@ Rectangle {
     signal simulationChanged(string id, real intensity)
 
     readonly property var filmSimulations: [
-        { "id": "none", "name": qsTr("Standard / Off"), "brand": "Standard", "desc": qsTr("Neutral camera linear profile"), "color": "#7982a9" },
+        { "id": "none", "name": qsTr("Standard / Off"), "brand": "Standard", "desc": qsTr("No film simulation"), "color": "#7982a9" },
         // Fujifilm Color
         { "id": "fuji_provia", "name": "Provia 100F", "brand": "Fujifilm", "desc": qsTr("Standard natural daylight color"), "color": "#7aa2f7" },
         { "id": "fuji_velvia", "name": "Velvia 50", "brand": "Fujifilm", "desc": qsTr("Ultra-vivid landscapes & high saturation"), "color": "#f7768e" },

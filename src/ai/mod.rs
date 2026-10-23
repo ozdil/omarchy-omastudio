@@ -421,6 +421,14 @@ pub fn ai_optimize_for_social(
         ),
     };
 
+    let ratio_str = match p_lower.as_str() {
+        "ig_square" | "square" => "1:1",
+        "story" | "reel" | "tiktok" => "9:16",
+        "x" | "twitter" | "yt" | "youtube" => "16:9",
+        "fb" | "facebook" => "1.91:1",
+        _ => "4:5",
+    };
+
     // 2. Multi-cue Saliency Detection (Gradient Energy + Chroma + Skin Locus)
     let ch = channels as usize;
     let mut center_x = 0.5f32;
@@ -473,7 +481,11 @@ pub fn ai_optimize_for_social(
         }
     }
 
-    // 3. Calculate smart crop rectangle fitting target aspect ratio
+    // 3. Calculate smart crop rectangle fitting target aspect ratio. The crop is taken
+    // from the unrotated frame (see export::apply_geometry), so a quarter turn swaps
+    // the aspect the crop needs.
+    let quarter_turns = (base_recipe.rotation / 90.0).round() as i32;
+    let target_aspect = if quarter_turns.rem_euclid(2) == 1 { 1.0 / target_aspect } else { target_aspect };
     let img_aspect = (width as f32) / (height as f32);
     let (crop_w, crop_h) = if target_aspect > img_aspect {
         (1.0, (img_aspect / target_aspect).clamp(0.1, 1.0))
@@ -488,28 +500,22 @@ pub fn ai_optimize_for_social(
     recipe.crop_y = crop_y;
     recipe.crop_w = crop_w;
     recipe.crop_h = crop_h;
-    recipe.crop_aspect = plat_name.to_string();
+    recipe.crop_aspect = ratio_str.to_string();
 
-    // 4. Mobile Compression Resilience Tuning
-    recipe.sharpness = (recipe.sharpness + 12.0).clamp(25.0, 60.0);
-    recipe.clarity = (recipe.clarity + 8.0).clamp(0.0, 30.0);
-    recipe.vibrance = (recipe.vibrance + 10.0).clamp(5.0, 35.0);
-    recipe.shadows = (recipe.shadows + 6.0).clamp(-10.0, 40.0);
-    recipe.whites = (recipe.whites - 5.0).clamp(-20.0, 20.0);
+    // 4. Mobile Compression Resilience Tuning: each value moves by the step toward its
+    // limit and never past it, and a value already beyond the limit is left alone
+    fn nudge(v: f32, step: f32, limit: f32) -> f32 {
+        if step > 0.0 { (v + step).min(limit.max(v)) } else { (v + step).max(limit.min(v)) }
+    }
+    recipe.sharpness = nudge(recipe.sharpness, 12.0, 60.0);
+    recipe.clarity = nudge(recipe.clarity, 8.0, 30.0);
+    recipe.vibrance = nudge(recipe.vibrance, 10.0, 35.0);
+    recipe.shadows = nudge(recipe.shadows, 6.0, 40.0);
+    recipe.whites = nudge(recipe.whites, -5.0, -20.0);
 
     SocialOptimizationResult {
         platform: plat_name.to_string(),
-        aspect_ratio_str: if (target_aspect - 0.8).abs() < 0.05 {
-            "4:5".to_string()
-        } else if (target_aspect - 1.0).abs() < 0.05 {
-            "1:1".to_string()
-        } else if (target_aspect - (9.0 / 16.0)).abs() < 0.05 {
-            "9:16".to_string()
-        } else if (target_aspect - (16.0 / 9.0)).abs() < 0.05 {
-            "16:9".to_string()
-        } else {
-            "1.91:1".to_string()
-        },
+        aspect_ratio_str: ratio_str.to_string(),
         target_resolution: res_str.to_string(),
         max_dimension: max_dim,
         quality,
@@ -517,5 +523,37 @@ pub fn ai_optimize_for_social(
         color_profile: "sRGB".to_string(),
         recipe,
         description: desc.to_string(),
+    }
+}
+
+#[cfg(test)]
+mod social_tests {
+    use super::*;
+
+    fn grey(w: u32, h: u32) -> Vec<u8> {
+        vec![128u8; (w * h * 3) as usize]
+    }
+
+    #[test]
+    fn social_tuning_never_lowers_a_stronger_edit() {
+        let mut base = Recipe::default();
+        base.vibrance = 50.0;
+        base.clarity = -20.0;
+        let r = ai_optimize_for_social(&grey(300, 200), 300, 200, 3, "ig", &base).recipe;
+        assert_eq!(r.vibrance, 50.0);
+        assert_eq!(r.clarity, -12.0);
+    }
+
+    #[test]
+    fn social_crop_follows_a_quarter_turn() {
+        let mut base = Recipe::default();
+        base.rotation = 90.0;
+        // 3:2 landscape frame shown upright as 2:3 portrait; 4:5 portrait output
+        let res = ai_optimize_for_social(&grey(300, 200), 300, 200, 3, "ig", &base);
+        let r = res.recipe;
+        let shown_aspect = (r.crop_h * 200.0) / (r.crop_w * 300.0);
+        assert!((shown_aspect - 0.8).abs() < 0.01, "{shown_aspect}");
+        assert_eq!(res.aspect_ratio_str, "4:5");
+        assert_eq!(r.crop_aspect, "4:5");
     }
 }

@@ -1853,16 +1853,17 @@ fn run_daemon() {
                 let platform = cmd_obj.platform.unwrap_or_else(|| "ig".to_string());
                 let c = cache.lock().unwrap();
                 if let Some(ref buffer) = c.raw_buffer_8 {
-                    let sidecar = c.current_path.as_ref()
-                        .map(Recipe::load_initial)
-                        .unwrap_or_default();
+                    // The edit on screen, so unsaved changes are kept
+                    let base = cmd_obj.recipe.clone().unwrap_or_else(|| {
+                        c.current_path.as_ref().map(Recipe::load_initial).unwrap_or_default()
+                    });
                     let result = ai_optimize_for_social(
                         buffer,
                         c.width,
                         c.height,
                         c.channels,
                         &platform,
-                        &sidecar,
+                        &base,
                     );
                     print_json(&ResponseWrapper::ok_action("ai_social", result));
                 } else {

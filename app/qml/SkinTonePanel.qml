@@ -116,7 +116,7 @@ Rectangle {
             }
 
             Text {
-                text: qsTr("Vectorscope 123° flesh line (target: %1°)").arg(root.skinTargetHue.toFixed(0))
+                text: qsTr("Target skin hue: %1° (Oklab)").arg(root.skinTargetHue.toFixed(0))
                 textFormat: Text.PlainText
                 font.family: Theme.fontFamily
                 font.pixelSize: Theme.px(11)
