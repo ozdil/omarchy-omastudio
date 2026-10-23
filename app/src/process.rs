@@ -2,8 +2,9 @@
 //! Qt thread. Replaces Quickshell's Process for the standalone application.
 //!
 //! Output is delivered either line by line (`lineRead`, for the engine daemon) or in
-//! one piece when the process ends (`finished`); `maxOutputBytes` bounds both, and a
-//! process that exceeds it is killed.
+//! one piece when the process ends (`finished`). `maxOutputBytes` bounds the whole
+//! output, or each line when `splitLines` is set (a long-running daemon prints far more
+//! than that over a session); a process that exceeds it is killed.
 
 use std::io::{BufRead, BufReader, Read, Write};
 use std::pin::Pin;
@@ -187,7 +188,6 @@ impl qobject::HostProcess {
                 })
                 .is_ok()
             };
-            let mut total = 0usize;
             let mut overflow = false;
             let mut output = Vec::new();
             if split {
@@ -195,11 +195,10 @@ impl qobject::HostProcess {
                 let mut line = Vec::new();
                 loop {
                     line.clear();
-                    match reader.read_until(b'\n', &mut line) {
+                    match (&mut reader).take(limit as u64 + 1).read_until(b'\n', &mut line) {
                         Ok(0) | Err(_) => break,
                         Ok(n) => {
-                            total += n;
-                            if total > limit {
+                            if n > limit {
                                 overflow = true;
                                 break;
                             }

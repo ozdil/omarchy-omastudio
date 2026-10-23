@@ -9,5 +9,6 @@ Briefly describe the purpose of this PR and architectural changes made.
 
 ## Verification Checklist
 - [ ] Follows the security rules in SECURITY.md (bounded reads, no symlinks, no secrets on the command line)
-- [ ] JetBrainsMono Nerd Font typography preserved
+- [ ] User-facing text goes through qsTr() and `python3 tools/i18n/check.py` passes
+- [ ] CHANGELOG.md updated under Unreleased
 - [ ] Tested locally on Omarchy Linux

@@ -81,6 +81,16 @@ impl<T: Serialize> ResponseWrapper<T> {
     }
 }
 
+/// One line from stdin, at most `limit` bytes, without the newline.
+fn read_stdin_line(limit: u64) -> Result<String, String> {
+    let mut buf = Vec::new();
+    io::Read::take(io::stdin().lock(), limit + 1).read_until(b'\n', &mut buf).map_err(|e| e.to_string())?;
+    if buf.len() as u64 > limit {
+        return Err(format!("longer than {limit} bytes"));
+    }
+    String::from_utf8(buf).map(|s| s.trim_end().to_string()).map_err(|_| "not valid UTF-8".to_string())
+}
+
 fn print_json<T: Serialize>(resp: &ResponseWrapper<T>) {
     if let Ok(json) = serde_json::to_string(resp) {
         print_line(&json);
@@ -251,7 +261,15 @@ fn cap_preview(data: &[u16], width: u32, height: u32, channels: u32) -> (Vec<u16
 }
 
 fn spawn_full_decode(cache: Arc<Mutex<DaemonCache>>, path: String) {
+    // One full-resolution decode at a time: a 100 MP frame needs over a gigabyte, and
+    // stepping through a folder must not start one per photo passed on the way
+    static FULL_DECODE: Mutex<()> = Mutex::new(());
     std::thread::spawn(move || {
+        let still_current = || cache.lock().is_ok_and(|c| c.current_path.as_deref() == Some(path.as_str()));
+        let _turn = FULL_DECODE.lock().unwrap_or_else(|e| e.into_inner());
+        if !still_current() {
+            return;
+        }
         let Ok(raw) = RawImage::open(&path) else { return };
         let Ok(full) = raw.process_full_16(3) else { return };
         let baseline_exposure = raw.baseline_exposure_from(&full);
@@ -446,7 +464,7 @@ fn scan_directory(dir_path: &str) -> Result<Vec<FolderScanItem>, String> {
 fn main() {
     let args: Vec<String> = env::args().collect();
     if args.len() < 2 {
-        eprintln!("OmaStudio Engine v{} - Lightroom-Grade Photo RAW Engine for Omarchy Linux", env!("CARGO_PKG_VERSION"));
+        eprintln!("OmaStudio Engine v{}: The Complete Medium Format RAW Editor for Omarchy", env!("CARGO_PKG_VERSION"));
         eprintln!("Usage: omastudio-engine <command> [arguments]");
         eprintln!("Commands:");
         eprintln!("  inspect <raw_file>");
@@ -558,15 +576,37 @@ fn main() {
             let mut idx = 3;
             while idx < args.len() {
                 match args[idx].as_str() {
+                    // `--recipe -` reads the recipe as one line from stdin: a recipe with
+                    // long brush strokes is larger than a single argument may be (128 KiB)
                     "--recipe" if idx + 1 < args.len() => {
-                        if let Ok(r) = serde_json::from_str::<Recipe>(&args[idx + 1]) {
-                            recipe = r;
+                        let text = if args[idx + 1] == "-" {
+                            match read_stdin_line(16 << 20) {
+                                Ok(t) => t,
+                                Err(e) => {
+                                    print_json::<()>(&ResponseWrapper::err(format!("Cannot read the recipe from stdin: {e}")));
+                                    return;
+                                }
+                            }
+                        } else {
+                            args[idx + 1].clone()
+                        };
+                        // A broken recipe must not export the photo without its edits
+                        match serde_json::from_str::<Recipe>(&text) {
+                            Ok(r) => recipe = r,
+                            Err(e) => {
+                                print_json::<()>(&ResponseWrapper::err(format!("Invalid recipe: {e}")));
+                                return;
+                            }
                         }
                         idx += 2;
                     }
                     "--options" if idx + 1 < args.len() => {
-                        if let Ok(o) = serde_json::from_str::<ExportOptions>(&args[idx + 1]) {
-                            options = o;
+                        match serde_json::from_str::<ExportOptions>(&args[idx + 1]) {
+                            Ok(o) => options = o,
+                            Err(e) => {
+                                print_json::<()>(&ResponseWrapper::err(format!("Invalid export options: {e}")));
+                                return;
+                            }
                         }
                         idx += 2;
                     }
@@ -2157,48 +2197,51 @@ fn run_daemon() {
                     continue;
                 }
                 let options = cmd_obj.options.unwrap_or_default();
-                let item_paths: Vec<&str> = items.iter().map(|i| i.path.as_str()).collect();
-                let name_tags = export::batch_name_tags(&item_paths);
+                // On its own thread, so the editor keeps rendering while the batch runs.
+                // One photo at a time: each export already uses every core, and running
+                // them side by side multiplied the memory (about 1.7 GB per 100 MP frame).
+                std::thread::spawn(move || {
+                    let item_paths: Vec<&str> = items.iter().map(|i| i.path.as_str()).collect();
+                    let name_tags = export::batch_name_tags(&item_paths);
+                    let results: Vec<BatchExportItemResult> = items
+                        .iter()
+                        .zip(name_tags.iter())
+                        .map(|(item, tag)| {
+                            let recipe = item.recipe.clone().unwrap_or_else(|| Recipe::load_initial(&item.path));
+                            let mut item_options = options.clone();
+                            // The user's tag stays; the disambiguating tag is added after it
+                            item_options.name_tag = match (&options.name_tag, tag) {
+                                (Some(user), Some(t)) if !user.is_empty() => Some(format!("{}{}", user, t)),
+                                (Some(user), _) if !user.is_empty() => Some(user.clone()),
+                                (_, t) => t.clone(),
+                            };
+                            match export_photo(&item.path, &recipe, &item_options) {
+                                Ok(dest) => BatchExportItemResult {
+                                    path: item.path.clone(),
+                                    success: true,
+                                    exported_path: Some(dest.to_string_lossy().to_string()),
+                                    error: None,
+                                },
+                                Err(e) => BatchExportItemResult {
+                                    path: item.path.clone(),
+                                    success: false,
+                                    exported_path: None,
+                                    error: Some(e),
+                                },
+                            }
+                        })
+                        .collect();
 
-                // Multi-threaded parallel batch export using Rayon
-                let results: Vec<BatchExportItemResult> = items
-                    .par_iter()
-                    .zip(name_tags.par_iter())
-                    .map(|(item, tag)| {
-                        let recipe = item.recipe.clone().unwrap_or_else(|| Recipe::load_initial(&item.path));
-                        let mut item_options = options.clone();
-                        // The user's tag stays; the disambiguating tag is added after it
-                        item_options.name_tag = match (&options.name_tag, tag) {
-                            (Some(user), Some(t)) if !user.is_empty() => Some(format!("{}{}", user, t)),
-                            (Some(user), _) if !user.is_empty() => Some(user.clone()),
-                            (_, t) => t.clone(),
-                        };
-                        match export_photo(&item.path, &recipe, &item_options) {
-                            Ok(dest) => BatchExportItemResult {
-                                path: item.path.clone(),
-                                success: true,
-                                exported_path: Some(dest.to_string_lossy().to_string()),
-                                error: None,
-                            },
-                            Err(e) => BatchExportItemResult {
-                                path: item.path.clone(),
-                                success: false,
-                                exported_path: None,
-                                error: Some(e),
-                            },
-                        }
-                    })
-                    .collect();
+                    let succeeded = results.iter().filter(|r| r.success).count();
+                    let failed = results.len() - succeeded;
 
-                let succeeded = results.iter().filter(|r| r.success).count();
-                let failed = results.len() - succeeded;
-
-                print_json(&ResponseWrapper::ok_action("batch_export", BatchExportResult {
-                    total: results.len(),
-                    succeeded,
-                    failed,
-                    results,
-                }));
+                    print_json(&ResponseWrapper::ok_action("batch_export", BatchExportResult {
+                        total: results.len(),
+                        succeeded,
+                        failed,
+                        results,
+                    }));
+                });
             }
             "fuji_recipes" => {
                 let list: Vec<_> = fuji::library::list()

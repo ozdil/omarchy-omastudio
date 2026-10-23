@@ -17,7 +17,7 @@ jobs:
       ARCH: x86_64
     steps:
       - name: Install build dependencies
-        run: pacman -Syu --noconfirm --needed base-devel clang git lcms2 libraw mold pkgconf qt6-base qt6-declarative rustup
+        run: pacman -Syu --noconfirm --needed base-devel clang git lcms2 libraw mold pkgconf qt6-base qt6-declarative qt6-tools rustup
       - uses: actions/checkout@v4
       - name: Install pinned Rust toolchain
         run: rustup toolchain install
@@ -29,10 +29,15 @@ jobs:
           mkdir -p "dist/$package/bin" "dist/$package/share/omastudio"
           install -m755 target/release/omastudio-engine "dist/$package/bin/omastudio-engine"
           install -m755 target/release/omastudio-app "dist/$package/bin/omastudio-app"
-          install -m755 omastudio "dist/$package/bin/omastudio"
+          install -m755 omastudio omastudio-dashboard omastudio-status "dist/$package/bin/"
           install -m644 Panel.qml manifest.json "dist/$package/share/omastudio/"
           cp -r assets/icc skill "dist/$package/share/omastudio/"
-          cp LICENSE README.md "dist/$package/"
+          install -Dm644 omastudio.desktop "dist/$package/share/applications/omastudio.desktop"
+          install -Dm644 assets/icon.svg "dist/$package/share/icons/hicolor/scalable/apps/omastudio.svg"
+          install -Dm644 assets/icon-mono.svg "dist/$package/share/icons/hicolor/scalable/apps/omastudio-mono.svg"
+          install -Dm644 packaging/udev/70-omastudio-cameras.rules "dist/$package/lib/udev/rules.d/70-omastudio-cameras.rules"
+          cp LICENSE README.md README.tr.md CHANGELOG.md "dist/$package/"
+          cp -r docs "dist/$package/"
           tar -C dist -czf "dist/$package.tar.gz" "$package"
           "dist/$package/bin/omastudio-engine" --version
       - uses: actions/upload-artifact@v4
