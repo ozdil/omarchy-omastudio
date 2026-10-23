@@ -1831,6 +1831,26 @@
         <translation>विवरण और ऑप्टिक्स</translation>
     </message>
     <message>
+        <source>Transform</source>
+        <translation>रूपांतरण</translation>
+    </message>
+    <message>
+        <source>Vertical</source>
+        <translation>लंबवत</translation>
+    </message>
+    <message>
+        <source>Horizontal</source>
+        <translation>क्षैतिज</translation>
+    </message>
+    <message>
+        <source>Scale</source>
+        <translation>स्केल</translation>
+    </message>
+    <message>
+        <source>Vertical straightens converging lines, such as buildings photographed from below. Crop afterwards to remove the empty edges.</source>
+        <translation>लंबवत मिलती हुई रेखाओं को सीधा करता है, जैसे नीचे से खींची गई इमारतें। फिर खाली किनारे हटाने के लिए क्रॉप करें।</translation>
+    </message>
+    <message>
         <source>Grain</source>
         <translation>ग्रेन</translation>
     </message>

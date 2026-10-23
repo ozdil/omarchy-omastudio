@@ -1827,6 +1827,26 @@
         <translation>รายละเอียดและออปติก</translation>
     </message>
     <message>
+        <source>Transform</source>
+        <translation>แปลงรูป</translation>
+    </message>
+    <message>
+        <source>Vertical</source>
+        <translation>แนวตั้ง</translation>
+    </message>
+    <message>
+        <source>Horizontal</source>
+        <translation>แนวนอน</translation>
+    </message>
+    <message>
+        <source>Scale</source>
+        <translation>มาตราส่วน</translation>
+    </message>
+    <message>
+        <source>Vertical straightens converging lines, such as buildings photographed from below. Crop afterwards to remove the empty edges.</source>
+        <translation>แนวตั้งช่วยปรับเส้นที่ลู่เข้าหากันให้ตรง เช่น อาคารที่ถ่ายจากด้านล่าง จากนั้นครอปเพื่อตัดขอบว่างออก</translation>
+    </message>
+    <message>
         <source>Grain</source>
         <translation>เกรน</translation>
     </message>

@@ -1831,6 +1831,26 @@
         <translation>Detail en optiek</translation>
     </message>
     <message>
+        <source>Transform</source>
+        <translation>Transformeren</translation>
+    </message>
+    <message>
+        <source>Vertical</source>
+        <translation>Verticaal</translation>
+    </message>
+    <message>
+        <source>Horizontal</source>
+        <translation>Horizontaal</translation>
+    </message>
+    <message>
+        <source>Scale</source>
+        <translation>Schaal</translation>
+    </message>
+    <message>
+        <source>Vertical straightens converging lines, such as buildings photographed from below. Crop afterwards to remove the empty edges.</source>
+        <translation>Verticaal zet convergerende lijnen recht, zoals gebouwen die van onderaf zijn gefotografeerd. Snijd daarna bij om de lege randen te verwijderen.</translation>
+    </message>
+    <message>
         <source>Grain</source>
         <translation>Korrel</translation>
     </message>

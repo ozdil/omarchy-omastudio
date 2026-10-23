@@ -267,3 +267,12 @@ nb:Radial
 pt_BR:Linear
 pt_BR:Radial
 ro:Radial
+de:Horizontal
+es:Vertical
+es:Horizontal
+fr:Vertical
+fr:Horizontal
+id:Horizontal
+pt_BR:Vertical
+pt_BR:Horizontal
+ro:Vertical

@@ -182,6 +182,41 @@ Rectangle {
     signal maskStrokePainted(var points, real aspect)
     signal maskColourPicked(real r, real g, real b)
 
+    // Perspective correction of the recipe. The engine renders the corrected photo;
+    // the mask and spot overlays work in the uncorrected photo's coordinates, so they
+    // are drawn through the same homography to stay on the parts they belong to.
+    property real perspectiveVertical: 0.0
+    property real perspectiveHorizontal: 0.0
+    property real perspectiveScale: 100.0
+
+    // Mirrors detail::perspective_matrix in the engine: row-major 3x3 in centred
+    // pixel coordinates, or null for no correction
+    function perspectiveMatrix(w, h) {
+        var s = Math.max(50, Math.min(150, perspectiveScale)) / 100;
+        if (w <= 0 || h <= 0 || (Math.abs(perspectiveVertical) < 0.05 && Math.abs(perspectiveHorizontal) < 0.05 && Math.abs(s - 1) < 1e-4))
+            return null;
+        var ax = Math.max(-100, Math.min(100, perspectiveVertical)) / 100 * 30 * Math.PI / 180;
+        var ay = Math.max(-100, Math.min(100, perspectiveHorizontal)) / 100 * 30 * Math.PI / 180;
+        var f = 2.0 * Math.sqrt(w * w + h * h) / 2;
+        var sx = Math.sin(ax), cx = Math.cos(ax), sy = Math.sin(ay), cy = Math.cos(ay);
+        return [s * cy, s * sy * sx, 0, 0, s * cx, 0, -sy / f, cy * sx / f, 1];
+    }
+
+    // The homography in item coordinates as a 4x4 transform (identity without one)
+    function overlayTransform(w, h) {
+        var m = perspectiveMatrix(w, h);
+        if (!m) return Qt.matrix4x4();
+        var ox = w / 2, oy = h / 2;
+        // T(o) * H * T(-o)
+        var a = m[0], b = m[1], c = m[3], d = m[4], g = m[6], k = m[7];
+        var wz = 1 - g * ox - k * oy;
+        return Qt.matrix4x4(
+            a + ox * g, b + ox * k, 0, -(a * ox + b * oy) + ox * wz,
+            c + oy * g, d + oy * k, 0, -(c * ox + d * oy) + oy * wz,
+            0, 0, 1, 0,
+            g, k, 0, wz);
+    }
+
     // Heal and clone spots (see RetouchOverlay)
     property bool retouchActive: false
     property var retouchSpots: []
@@ -562,6 +597,7 @@ Rectangle {
                     id: maskOverlay
                     anchors.fill: parent
                     z: 20
+                    transform: Matrix4x4 { matrix: root.overlayTransform(mainImage.width, mainImage.height) }
                     tool: root.isCropMode ? "" : root.maskTool
                     shape: root.maskShape
                     brushSize: root.maskBrushSize
@@ -576,6 +612,7 @@ Rectangle {
                 RetouchOverlay {
                     anchors.fill: parent
                     z: 21
+                    transform: Matrix4x4 { matrix: root.overlayTransform(mainImage.width, mainImage.height) }
                     active: root.retouchActive && !root.isCropMode
                     spots: root.retouchSpots
                     selected: root.retouchSelected

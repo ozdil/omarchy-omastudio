@@ -1827,6 +1827,26 @@
         <translation>細節與光學</translation>
     </message>
     <message>
+        <source>Transform</source>
+        <translation>變形</translation>
+    </message>
+    <message>
+        <source>Vertical</source>
+        <translation>垂直</translation>
+    </message>
+    <message>
+        <source>Horizontal</source>
+        <translation>水平</translation>
+    </message>
+    <message>
+        <source>Scale</source>
+        <translation>縮放</translation>
+    </message>
+    <message>
+        <source>Vertical straightens converging lines, such as buildings photographed from below. Crop afterwards to remove the empty edges.</source>
+        <translation>垂直可校正匯聚的線條，例如從下方拍攝的建築。之後裁切以移除空白邊緣。</translation>
+    </message>
+    <message>
         <source>Grain</source>
         <translation>顆粒</translation>
     </message>

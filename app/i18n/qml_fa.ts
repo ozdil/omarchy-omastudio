@@ -1827,6 +1827,26 @@
         <translation>جزئیات و اپتیک</translation>
     </message>
     <message>
+        <source>Transform</source>
+        <translation>تبدیل</translation>
+    </message>
+    <message>
+        <source>Vertical</source>
+        <translation>عمودی</translation>
+    </message>
+    <message>
+        <source>Horizontal</source>
+        <translation>افقی</translation>
+    </message>
+    <message>
+        <source>Scale</source>
+        <translation>مقیاس</translation>
+    </message>
+    <message>
+        <source>Vertical straightens converging lines, such as buildings photographed from below. Crop afterwards to remove the empty edges.</source>
+        <translation>عمودی خطوط همگرا را صاف می‌کند، مانند ساختمان‌هایی که از پایین عکاسی شده‌اند. سپس برای حذف لبه‌های خالی برش دهید.</translation>
+    </message>
+    <message>
         <source>Grain</source>
         <translation>دانه</translation>
     </message>

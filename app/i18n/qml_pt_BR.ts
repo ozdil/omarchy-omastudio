@@ -1831,6 +1831,26 @@
         <translation>Detalhe e óptica</translation>
     </message>
     <message>
+        <source>Transform</source>
+        <translation>Transformar</translation>
+    </message>
+    <message>
+        <source>Vertical</source>
+        <translation>Vertical</translation>
+    </message>
+    <message>
+        <source>Horizontal</source>
+        <translation>Horizontal</translation>
+    </message>
+    <message>
+        <source>Scale</source>
+        <translation>Escala</translation>
+    </message>
+    <message>
+        <source>Vertical straightens converging lines, such as buildings photographed from below. Crop afterwards to remove the empty edges.</source>
+        <translation>Vertical endireita linhas convergentes, como prédios fotografados de baixo. Recorte depois para remover as bordas vazias.</translation>
+    </message>
+    <message>
         <source>Grain</source>
         <translation>Granulação</translation>
     </message>

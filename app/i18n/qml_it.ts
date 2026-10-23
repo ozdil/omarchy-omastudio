@@ -1831,6 +1831,26 @@
         <translation>Dettaglio e ottica</translation>
     </message>
     <message>
+        <source>Transform</source>
+        <translation>Trasforma</translation>
+    </message>
+    <message>
+        <source>Vertical</source>
+        <translation>Verticale</translation>
+    </message>
+    <message>
+        <source>Horizontal</source>
+        <translation>Orizzontale</translation>
+    </message>
+    <message>
+        <source>Scale</source>
+        <translation>Scala</translation>
+    </message>
+    <message>
+        <source>Vertical straightens converging lines, such as buildings photographed from below. Crop afterwards to remove the empty edges.</source>
+        <translation>Verticale raddrizza le linee convergenti, come gli edifici fotografati dal basso. Ritaglia poi per rimuovere i bordi vuoti.</translation>
+    </message>
+    <message>
         <source>Grain</source>
         <translation>Grana</translation>
     </message>
@@ -2019,7 +2039,7 @@
     </message>
     <message>
         <source>Click a spot on the photo to remove it. Drag the solid circle to move it and the dashed circle to pick another source.</source>
-        <translation>Fai clic su un punto della foto per rimuoverlo. Trascina il cerchio pieno per spostarlo e quello tratteggiato per scegliere un'altra origine.</translation>
+        <translation>Fai clic su un punto della foto per rimuoverlo. Trascina il cerchio pieno per spostarlo e quello tratteggiato per scegliere un&apos;altra origine.</translation>
     </message>
     <message>
         <source>Size</source>

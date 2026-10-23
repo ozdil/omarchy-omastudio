@@ -1831,6 +1831,26 @@
         <translation>Yksityiskohdat ja optiikka</translation>
     </message>
     <message>
+        <source>Transform</source>
+        <translation>Muunna</translation>
+    </message>
+    <message>
+        <source>Vertical</source>
+        <translation>Pystysuunta</translation>
+    </message>
+    <message>
+        <source>Horizontal</source>
+        <translation>Vaakasuunta</translation>
+    </message>
+    <message>
+        <source>Scale</source>
+        <translation>Skaalaus</translation>
+    </message>
+    <message>
+        <source>Vertical straightens converging lines, such as buildings photographed from below. Crop afterwards to remove the empty edges.</source>
+        <translation>Pystysuunta oikaisee suppenevat linjat, kuten alhaalta kuvatut rakennukset. Rajaa jälkeenpäin tyhjät reunat pois.</translation>
+    </message>
+    <message>
         <source>Grain</source>
         <translation>Rakeisuus</translation>
     </message>

@@ -146,9 +146,13 @@ Item {
     }
     onImageSourceChanged: if (tool === "pick") prepareSampler()
 
+    // (u, v) is a position in the photo; the preview shows it where the overlay's
+    // transform (the perspective correction) puts it
     function pickAt(u, v) {
         root.prepareSampler();
-        var c = sampler.sample(u, v);
+        var shown = root.parent ? root.mapToItem(root.parent, u * width, v * height) : Qt.point(u * width, v * height);
+        var pw = root.parent ? root.parent.width : width, ph = root.parent ? root.parent.height : height;
+        var c = sampler.sample(shown.x / Math.max(1, pw), shown.y / Math.max(1, ph));
         if (c) root.colourPicked(c[0], c[1], c[2]);
         else sampler.pending = [u, v];
     }

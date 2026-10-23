@@ -6,6 +6,10 @@ use std::io;
 use std::path::{Path, PathBuf};
 // time
 
+fn default_perspective_scale() -> f32 {
+    100.0
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 #[serde(default)]
 pub struct Recipe {
@@ -86,6 +90,16 @@ pub struct Recipe {
     pub vignette: f32,    // -100.0 to +100.0
     #[serde(default)]
     pub lens_distortion: f32, // -100.0 to +100.0 (Barrel / Pincushion)
+    /// Keystone correction: tilts the photo's plane about its horizontal axis
+    /// (-100..100; positive widens the top, for converging verticals)
+    #[serde(default)]
+    pub perspective_vertical: f32,
+    /// Tilt about the vertical axis (-100..100; positive enlarges the right side)
+    #[serde(default)]
+    pub perspective_horizontal: f32,
+    /// Size of the corrected photo in percent (50..150)
+    #[serde(default = "default_perspective_scale")]
+    pub perspective_scale: f32,
     #[serde(default)]
     pub defringe: f32, // 0.0 to 100.0 (Chromatic Aberration reduction)
 
@@ -296,6 +310,9 @@ impl Default for Recipe {
             denoise_col: 10.0, // Default chromatic cleanup
             vignette: 0.0,
             lens_distortion: 0.0,
+            perspective_vertical: 0.0,
+            perspective_horizontal: 0.0,
+            perspective_scale: 100.0,
             defringe: 0.0,
             rotation: 0.0,
             flip_h: false,

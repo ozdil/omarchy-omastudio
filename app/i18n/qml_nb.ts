@@ -1831,6 +1831,26 @@
         <translation>Detaljer og optikk</translation>
     </message>
     <message>
+        <source>Transform</source>
+        <translation>Transformer</translation>
+    </message>
+    <message>
+        <source>Vertical</source>
+        <translation>Loddrett</translation>
+    </message>
+    <message>
+        <source>Horizontal</source>
+        <translation>Vannrett</translation>
+    </message>
+    <message>
+        <source>Scale</source>
+        <translation>Skala</translation>
+    </message>
+    <message>
+        <source>Vertical straightens converging lines, such as buildings photographed from below. Crop afterwards to remove the empty edges.</source>
+        <translation>Loddrett retter opp konvergerende linjer, for eksempel bygninger fotografert nedenfra. Beskjær etterpå for å fjerne de tomme kantene.</translation>
+    </message>
+    <message>
         <source>Grain</source>
         <translation>Korn</translation>
     </message>

@@ -1827,6 +1827,26 @@
         <translation>Ayrıntı ve optik</translation>
     </message>
     <message>
+        <source>Transform</source>
+        <translation>Dönüştür</translation>
+    </message>
+    <message>
+        <source>Vertical</source>
+        <translation>Dikey</translation>
+    </message>
+    <message>
+        <source>Horizontal</source>
+        <translation>Yatay</translation>
+    </message>
+    <message>
+        <source>Scale</source>
+        <translation>Ölçek</translation>
+    </message>
+    <message>
+        <source>Vertical straightens converging lines, such as buildings photographed from below. Crop afterwards to remove the empty edges.</source>
+        <translation>Dikey, aşağıdan çekilmiş binalar gibi birbirine yaklaşan çizgileri düzeltir. Ardından boş kenarları kaldırmak için kırpın.</translation>
+    </message>
+    <message>
         <source>Grain</source>
         <translation>Gren</translation>
     </message>

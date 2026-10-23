@@ -1827,6 +1827,26 @@
         <translation>Részletek és optika</translation>
     </message>
     <message>
+        <source>Transform</source>
+        <translation>Átalakítás</translation>
+    </message>
+    <message>
+        <source>Vertical</source>
+        <translation>Függőleges</translation>
+    </message>
+    <message>
+        <source>Horizontal</source>
+        <translation>Vízszintes</translation>
+    </message>
+    <message>
+        <source>Scale</source>
+        <translation>Méret</translation>
+    </message>
+    <message>
+        <source>Vertical straightens converging lines, such as buildings photographed from below. Crop afterwards to remove the empty edges.</source>
+        <translation>A függőleges kiegyenesíti az összetartó vonalakat, például az alulról fotózott épületeknél. Utána vágja le az üres széleket.</translation>
+    </message>
+    <message>
         <source>Grain</source>
         <translation>Szemcse</translation>
     </message>

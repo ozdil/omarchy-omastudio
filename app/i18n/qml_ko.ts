@@ -1827,6 +1827,26 @@
         <translation>디테일 및 광학</translation>
     </message>
     <message>
+        <source>Transform</source>
+        <translation>변형</translation>
+    </message>
+    <message>
+        <source>Vertical</source>
+        <translation>세로</translation>
+    </message>
+    <message>
+        <source>Horizontal</source>
+        <translation>가로</translation>
+    </message>
+    <message>
+        <source>Scale</source>
+        <translation>배율</translation>
+    </message>
+    <message>
+        <source>Vertical straightens converging lines, such as buildings photographed from below. Crop afterwards to remove the empty edges.</source>
+        <translation>세로는 아래에서 촬영한 건물처럼 모이는 선을 곧게 폅니다. 그다음 자르기로 빈 가장자리를 없애세요.</translation>
+    </message>
+    <message>
         <source>Grain</source>
         <translation>그레인</translation>
     </message>

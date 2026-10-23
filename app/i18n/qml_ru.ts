@@ -1835,6 +1835,26 @@
         <translation>Детализация и оптика</translation>
     </message>
     <message>
+        <source>Transform</source>
+        <translation>Трансформация</translation>
+    </message>
+    <message>
+        <source>Vertical</source>
+        <translation>По вертикали</translation>
+    </message>
+    <message>
+        <source>Horizontal</source>
+        <translation>По горизонтали</translation>
+    </message>
+    <message>
+        <source>Scale</source>
+        <translation>Масштаб</translation>
+    </message>
+    <message>
+        <source>Vertical straightens converging lines, such as buildings photographed from below. Crop afterwards to remove the empty edges.</source>
+        <translation>Вертикаль выпрямляет сходящиеся линии, например у зданий, снятых снизу. Затем обрежьте пустые края.</translation>
+    </message>
+    <message>
         <source>Grain</source>
         <translation>Зерно</translation>
     </message>
