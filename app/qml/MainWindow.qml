@@ -1595,8 +1595,8 @@ Rectangle {
 
     // Collapses every section of the current tab except `key`
     function soloSection(key) {
-        var keys = ["profile", "wb", "tone", "presence", "curve", "hsl", "grading", "detail", "grain",
-                    "colour", "layers", "looks", "lut", "assistant", "fujifilm"];
+        var keys = ["profile", "wb", "tone", "presence", "curve", "hsl", "grading", "detail", "transform", "grain",
+                    "colour", "retouch", "layers", "looks", "lut", "assistant", "fujifilm"];
         var m = {};
         for (var i = 0; i < keys.length; i++) if (keys[i] !== key) m[keys[i]] = true;
         root.collapsedSections = m;
@@ -1661,6 +1661,39 @@ Rectangle {
             root.showToast(qsTr("Pro: tone curve, colour mixer, colour grading, detail, grain, colour management and the Masks tab are shown"), Theme.accent);
         } else {
             root.showToast(qsTr("Essentials: Pro sections are hidden. Settings made in them stay applied."), Theme.accent);
+        }
+    }
+
+    // Opens one section on its tab, folds the others and scrolls it into view
+    // (control socket `showSection`)
+    function showSection(key) {
+        var tabs = { "retouch": "masks", "layers": "masks", "looks": "looks", "lut": "looks", "assistant": "ai" };
+        root.rightTab = tabs[key] || "adjust";
+        root.soloSection(key);
+        sectionScrollTimer.key = key;
+        sectionScrollTimer.restart();
+    }
+
+    function findSection(item, key) {
+        if (!item) return null;
+        if (item.key === key && item.expanded !== undefined) return item;
+        for (var i = 0; i < item.children.length; i++) {
+            var found = root.findSection(item.children[i], key);
+            if (found) return found;
+        }
+        return null;
+    }
+
+    Timer {
+        id: sectionScrollTimer
+        property string key: ""
+        interval: 50
+        onTriggered: {
+            var flick = adjustScroll.contentItem;
+            var section = root.findSection(flick.contentItem, key);
+            if (!section) return;
+            var y = section.mapToItem(flick.contentItem, 0, 0).y;
+            flick.contentY = Math.max(0, Math.min(y, flick.contentHeight - flick.height));
         }
     }
 
@@ -1941,6 +1974,14 @@ Rectangle {
             } catch (e) {}
             root.refreshCloud();
         }
+    }
+
+    // A folder on this computer in the filmstrip (control socket `openFolder`)
+    function openLocalFolder(dir) {
+        root.leaveCloud();
+        filmstrip.isCatalogMode = false;
+        filmstrip.currentFolder = dir;
+        root.scanLocalFolder(dir);
     }
 
     function scanLocalFolder(dir) {

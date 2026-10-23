@@ -65,6 +65,12 @@ Window {
                 mainWin.loadPhoto(str(a[0]));
                 win.present();
                 return "OK";
+            case "openFolder":
+                // openFolder <dir>: lists a folder in the filmstrip
+                if (str(a[0]).length === 0) return "Error: empty folder path";
+                mainWin.openLocalFolder(str(a[0]));
+                win.present();
+                return "OK";
             case "applyRecipe":
                 if (str(a[0]).length === 0) return "Error: empty recipe json";
                 mainWin.applyRecipeObject(typeof a[0] === "object" ? a[0] : JSON.parse(a[0]));
@@ -106,6 +112,31 @@ Window {
             case "setRightTab":
                 if (["adjust", "masks", "looks", "ai"].indexOf(str(a[0])) < 0) return "Error: unknown tab";
                 mainWin.rightTab = str(a[0]);
+                return "OK";
+            case "setMode":
+                // setMode essentials|pro: the panel set the top bar switches
+                if (["essentials", "pro"].indexOf(str(a[0])) < 0) return "Error: mode is essentials or pro";
+                mainWin.setProMode(str(a[0]) === "pro");
+                return "OK";
+            case "showSection":
+                // showSection <key>: opens one section on its tab, folds the others, scrolls to it
+                if (str(a[0]).length === 0) return "Error: empty section";
+                mainWin.showSection(str(a[0]));
+                return "OK";
+            case "setView":
+                // setView <peaking|compare|softProof|split> [on|off]: view aids
+                var on = str(a[1]) !== "off";
+                switch (str(a[0])) {
+                case "peaking": mainWin.focusPeaking = on; break;
+                case "compare": mainWin.compareMode = on; break;
+                case "softProof": mainWin.softProof = on; break;
+                case "split": mainWin.isSplitView = on; mainWin.requestRender(); break;
+                default: return "Error: unknown view (peaking, compare, softProof, split)";
+                }
+                return "OK";
+            case "showAbout":
+                mainWin.showAboutModal = true;
+                win.present();
                 return "OK";
             case "toggleCrop":
                 return mainWin.toggleCropMode();
