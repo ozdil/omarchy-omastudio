@@ -688,6 +688,18 @@
         <source>Exporting…</source>
         <translation>Exportálás…</translation>
     </message>
+    <message>
+        <source>After export, the files are also copied into the %1 folder of the account (on GitHub: the private %1 repository).</source>
+        <translation>Exportálás után a fájlok a fiók %1 mappájába is átmásolódnak (GitHubon: a privát %1 tárolóba).</translation>
+    </message>
+    <message>
+        <source>This computer only</source>
+        <translation>Csak ez a számítógép</translation>
+    </message>
+    <message>
+        <source>Upload to</source>
+        <translation>Feltöltés ide</translation>
+    </message>
 </context>
 <context>
     <name>FilmGrainPanel</name>
@@ -913,6 +925,18 @@
         <source>P</source>
         <comment>pick flag, first letter of Pick</comment>
         <translation>K</translation>
+    </message>
+    <message>
+        <source>Connect</source>
+        <translation>Csatlakozás</translation>
+    </message>
+    <message>
+        <source>Connect Google Drive, OneDrive, Dropbox, GitHub and other accounts</source>
+        <translation>Google Drive, OneDrive, Dropbox, GitHub és más fiókok csatlakoztatása</translation>
+    </message>
+    <message>
+        <source>No folders or photos here.</source>
+        <translation>Itt nincs mappa vagy fénykép.</translation>
     </message>
 </context>
 <context>
@@ -2007,6 +2031,46 @@
         <source>Platform crop reset</source>
         <translation>Platformvágás visszaállítva</translation>
     </message>
+    <message>
+        <source>%1 connected</source>
+        <translation>%1 csatlakoztatva</translation>
+    </message>
+    <message>
+        <source>Account disconnected</source>
+        <translation>Fiók leválasztva</translation>
+    </message>
+    <message>
+        <source>Download failed</source>
+        <translation>A letöltés sikertelen</translation>
+    </message>
+    <message numerus="yes">
+        <source>Downloading %n photo(s)…</source>
+        <translation>
+            <numerusform>%n fénykép letöltése…</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>Sign-in did not finish.</source>
+        <translation>A bejelentkezés nem fejeződött be.</translation>
+    </message>
+    <message>
+        <source>The folder could not be listed.</source>
+        <translation>A mappa tartalma nem listázható.</translation>
+    </message>
+    <message>
+        <source>Upload failed: %1</source>
+        <translation>A feltöltés sikertelen: %1</translation>
+    </message>
+    <message numerus="yes">
+        <source>Uploaded %n file(s) to %1</source>
+        <translation>
+            <numerusform>%n fájl feltöltve ide: %1</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>no answer from the engine</source>
+        <translation>a motor nem válaszolt</translation>
+    </message>
 </context>
 <context>
     <name>Navigator</name>
@@ -2629,6 +2693,93 @@
     <message>
         <source>Drop Shadow</source>
         <translation>Vetett árnyék</translation>
+    </message>
+</context>
+<context>
+    <name>CloudDialog</name>
+    <message>
+        <source>Add an account</source>
+        <translation>Fiók hozzáadása</translation>
+    </message>
+    <message>
+        <source>Browse</source>
+        <translation>Tallózás</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Mégse</translation>
+    </message>
+    <message>
+        <source>Client ID</source>
+        <translation>Ügyfél-azonosító</translation>
+    </message>
+    <message>
+        <source>Client secret</source>
+        <translation>Ügyféltitok</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>Bezárás</translation>
+    </message>
+    <message>
+        <source>Cloud accounts</source>
+        <translation>Felhőfiókok</translation>
+    </message>
+    <message>
+        <source>Confirm</source>
+        <translation>Megerősítés</translation>
+    </message>
+    <message>
+        <source>Connected</source>
+        <translation>Csatlakoztatva</translation>
+    </message>
+    <message>
+        <source>Disconnect</source>
+        <translation>Leválasztás</translation>
+    </message>
+    <message>
+        <source>Disconnecting removes the account's keys and downloaded copies from this computer. Files in the account stay as they are.</source>
+        <translation>A leválasztás eltávolítja erről a számítógépről a fiók kulcsait és a letöltött másolatokat. A fiókban lévő fájlok változatlanok maradnak.</translation>
+    </message>
+    <message>
+        <source>Enter this code on the GitHub page that opened in your browser:</source>
+        <translation>Írja be ezt a kódot a böngészőben megnyílt GitHub-oldalon:</translation>
+    </message>
+    <message>
+        <source>Finish signing in in your browser. This window updates when you are done.</source>
+        <translation>Fejezze be a bejelentkezést a böngészőben. Az ablak ezután frissül.</translation>
+    </message>
+    <message>
+        <source>Install it with: sudo pacman -S %1</source>
+        <translation>Telepítés: sudo pacman -S %1</translation>
+    </message>
+    <message>
+        <source>Needs %1</source>
+        <translation>Szükséges: %1</translation>
+    </message>
+    <message>
+        <source>No account connected yet.</source>
+        <translation>Még nincs csatlakoztatott fiók.</translation>
+    </message>
+    <message>
+        <source>Open the page again</source>
+        <translation>Oldal újbóli megnyitása</translation>
+    </message>
+    <message>
+        <source>Own Google client ID (optional)</source>
+        <translation>Saját Google-ügyfélazonosító (nem kötelező)</translation>
+    </message>
+    <message>
+        <source>Signing in to %1</source>
+        <translation>Bejelentkezés: %1</translation>
+    </message>
+    <message>
+        <source>The shared client rclone uses for Google Drive is being retired. With a client ID of your own from the Google Cloud Console, Google Drive keeps working. It is used the next time you connect Google Drive.</source>
+        <translation>Az rclone által a Google Drive-hoz használt közös ügyfél megszűnik. A Google Cloud Console-ból kapott saját ügyfél-azonosítóval a Google Drive tovább működik. A Google Drive következő csatlakoztatásakor lesz használva.</translation>
+    </message>
+    <message>
+        <source>You sign in on the service's own page in your browser. OmaStudio keeps the access keys in the system keyring and creates a folder named %1 in each account for uploads.</source>
+        <translation>A szolgáltatás saját oldalán jelentkezik be, a böngészőben. Az OmaStudio a hozzáférési kulcsokat a rendszer kulcstartójában tárolja, és minden fiókban létrehoz egy %1 nevű mappát a feltöltésekhez.</translation>
     </message>
 </context>
 </TS>

@@ -689,6 +689,18 @@
         <source>Exporting…</source>
         <translation>Εξαγωγή…</translation>
     </message>
+    <message>
+        <source>After export, the files are also copied into the %1 folder of the account (on GitHub: the private %1 repository).</source>
+        <translation>Μετά την εξαγωγή, τα αρχεία αντιγράφονται και στον φάκελο %1 του λογαριασμού (στο GitHub: στο ιδιωτικό αποθετήριο %1).</translation>
+    </message>
+    <message>
+        <source>This computer only</source>
+        <translation>Μόνο αυτός ο υπολογιστής</translation>
+    </message>
+    <message>
+        <source>Upload to</source>
+        <translation>Μεταφόρτωση σε</translation>
+    </message>
 </context>
 <context>
     <name>FilmGrainPanel</name>
@@ -914,6 +926,18 @@
         <source>P</source>
         <comment>pick flag, first letter of Pick</comment>
         <translation>Ε</translation>
+    </message>
+    <message>
+        <source>Connect</source>
+        <translation>Σύνδεση</translation>
+    </message>
+    <message>
+        <source>Connect Google Drive, OneDrive, Dropbox, GitHub and other accounts</source>
+        <translation>Σύνδεση Google Drive, OneDrive, Dropbox, GitHub και άλλων λογαριασμών</translation>
+    </message>
+    <message>
+        <source>No folders or photos here.</source>
+        <translation>Δεν υπάρχουν φάκελοι ή φωτογραφίες εδώ.</translation>
     </message>
 </context>
 <context>
@@ -2012,6 +2036,48 @@
         <source>Platform crop reset</source>
         <translation>Η περικοπή πλατφόρμας επαναφέρθηκε</translation>
     </message>
+    <message>
+        <source>%1 connected</source>
+        <translation>%1: συνδέθηκε</translation>
+    </message>
+    <message>
+        <source>Account disconnected</source>
+        <translation>Ο λογαριασμός αποσυνδέθηκε</translation>
+    </message>
+    <message>
+        <source>Download failed</source>
+        <translation>Η λήψη απέτυχε</translation>
+    </message>
+    <message numerus="yes">
+        <source>Downloading %n photo(s)…</source>
+        <translation>
+            <numerusform>Λήψη %n φωτογραφίας…</numerusform>
+            <numerusform>Λήψη %n φωτογραφιών…</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>Sign-in did not finish.</source>
+        <translation>Η σύνδεση δεν ολοκληρώθηκε.</translation>
+    </message>
+    <message>
+        <source>The folder could not be listed.</source>
+        <translation>Δεν ήταν δυνατή η εμφάνιση του φακέλου.</translation>
+    </message>
+    <message>
+        <source>Upload failed: %1</source>
+        <translation>Η μεταφόρτωση απέτυχε: %1</translation>
+    </message>
+    <message numerus="yes">
+        <source>Uploaded %n file(s) to %1</source>
+        <translation>
+            <numerusform>Μεταφορτώθηκε %n αρχείο στο %1</numerusform>
+            <numerusform>Μεταφορτώθηκαν %n αρχεία στο %1</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>no answer from the engine</source>
+        <translation>καμία απάντηση από τη μηχανή</translation>
+    </message>
 </context>
 <context>
     <name>Navigator</name>
@@ -2635,6 +2701,93 @@
     <message>
         <source>Drop Shadow</source>
         <translation>Σκιά</translation>
+    </message>
+</context>
+<context>
+    <name>CloudDialog</name>
+    <message>
+        <source>Add an account</source>
+        <translation>Προσθήκη λογαριασμού</translation>
+    </message>
+    <message>
+        <source>Browse</source>
+        <translation>Περιήγηση</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Ακύρωση</translation>
+    </message>
+    <message>
+        <source>Client ID</source>
+        <translation>Αναγνωριστικό πελάτη</translation>
+    </message>
+    <message>
+        <source>Client secret</source>
+        <translation>Μυστικό πελάτη</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>Κλείσιμο</translation>
+    </message>
+    <message>
+        <source>Cloud accounts</source>
+        <translation>Λογαριασμοί cloud</translation>
+    </message>
+    <message>
+        <source>Confirm</source>
+        <translation>Επιβεβαίωση</translation>
+    </message>
+    <message>
+        <source>Connected</source>
+        <translation>Συνδεδεμένοι</translation>
+    </message>
+    <message>
+        <source>Disconnect</source>
+        <translation>Αποσύνδεση</translation>
+    </message>
+    <message>
+        <source>Disconnecting removes the account's keys and downloaded copies from this computer. Files in the account stay as they are.</source>
+        <translation>Η αποσύνδεση αφαιρεί από αυτόν τον υπολογιστή τα κλειδιά του λογαριασμού και τα αντίγραφα που λήφθηκαν. Τα αρχεία στον λογαριασμό μένουν ως έχουν.</translation>
+    </message>
+    <message>
+        <source>Enter this code on the GitHub page that opened in your browser:</source>
+        <translation>Πληκτρολογήστε αυτόν τον κωδικό στη σελίδα του GitHub που άνοιξε στο πρόγραμμα περιήγησης:</translation>
+    </message>
+    <message>
+        <source>Finish signing in in your browser. This window updates when you are done.</source>
+        <translation>Ολοκληρώστε τη σύνδεση στο πρόγραμμα περιήγησης. Το παράθυρο ενημερώνεται όταν τελειώσετε.</translation>
+    </message>
+    <message>
+        <source>Install it with: sudo pacman -S %1</source>
+        <translation>Εγκατάσταση: sudo pacman -S %1</translation>
+    </message>
+    <message>
+        <source>Needs %1</source>
+        <translation>Απαιτεί %1</translation>
+    </message>
+    <message>
+        <source>No account connected yet.</source>
+        <translation>Δεν έχει συνδεθεί ακόμη λογαριασμός.</translation>
+    </message>
+    <message>
+        <source>Open the page again</source>
+        <translation>Άνοιγμα της σελίδας ξανά</translation>
+    </message>
+    <message>
+        <source>Own Google client ID (optional)</source>
+        <translation>Δικό σας αναγνωριστικό πελάτη Google (προαιρετικό)</translation>
+    </message>
+    <message>
+        <source>Signing in to %1</source>
+        <translation>Σύνδεση σε %1</translation>
+    </message>
+    <message>
+        <source>The shared client rclone uses for Google Drive is being retired. With a client ID of your own from the Google Cloud Console, Google Drive keeps working. It is used the next time you connect Google Drive.</source>
+        <translation>Ο κοινόχρηστος πελάτης που χρησιμοποιεί το rclone για το Google Drive καταργείται. Με δικό σας αναγνωριστικό πελάτη από το Google Cloud Console, το Google Drive συνεχίζει να λειτουργεί. Θα χρησιμοποιηθεί την επόμενη φορά που θα συνδέσετε το Google Drive.</translation>
+    </message>
+    <message>
+        <source>You sign in on the service's own page in your browser. OmaStudio keeps the access keys in the system keyring and creates a folder named %1 in each account for uploads.</source>
+        <translation>Συνδέεστε στη σελίδα της ίδιας της υπηρεσίας, στο πρόγραμμα περιήγησης. Το OmaStudio φυλάσσει τα κλειδιά πρόσβασης στη μπρελόκ κλειδιών του συστήματος και δημιουργεί σε κάθε λογαριασμό έναν φάκελο με όνομα %1 για μεταφορτώσεις.</translation>
     </message>
 </context>
 </TS>

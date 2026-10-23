@@ -688,6 +688,18 @@
         <source>Exporting…</source>
         <translation>Đang xuất…</translation>
     </message>
+    <message>
+        <source>After export, the files are also copied into the %1 folder of the account (on GitHub: the private %1 repository).</source>
+        <translation>Sau khi xuất, tệp cũng được sao chép vào thư mục %1 của tài khoản (trên GitHub: kho riêng tư %1).</translation>
+    </message>
+    <message>
+        <source>This computer only</source>
+        <translation>Chỉ máy tính này</translation>
+    </message>
+    <message>
+        <source>Upload to</source>
+        <translation>Tải lên</translation>
+    </message>
 </context>
 <context>
     <name>FilmGrainPanel</name>
@@ -913,6 +925,18 @@
         <source>P</source>
         <comment>pick flag, first letter of Pick</comment>
         <translation>C</translation>
+    </message>
+    <message>
+        <source>Connect</source>
+        <translation>Kết nối</translation>
+    </message>
+    <message>
+        <source>Connect Google Drive, OneDrive, Dropbox, GitHub and other accounts</source>
+        <translation>Kết nối Google Drive, OneDrive, Dropbox, GitHub và các tài khoản khác</translation>
+    </message>
+    <message>
+        <source>No folders or photos here.</source>
+        <translation>Không có thư mục hay ảnh nào ở đây.</translation>
     </message>
 </context>
 <context>
@@ -2007,6 +2031,46 @@
         <source>Platform crop reset</source>
         <translation>Đã đặt lại khung cắt nền tảng</translation>
     </message>
+    <message>
+        <source>%1 connected</source>
+        <translation>Đã kết nối %1</translation>
+    </message>
+    <message>
+        <source>Account disconnected</source>
+        <translation>Đã ngắt kết nối tài khoản</translation>
+    </message>
+    <message>
+        <source>Download failed</source>
+        <translation>Tải xuống thất bại</translation>
+    </message>
+    <message numerus="yes">
+        <source>Downloading %n photo(s)…</source>
+        <translation>
+            <numerusform>Đang tải xuống %n ảnh…</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>Sign-in did not finish.</source>
+        <translation>Đăng nhập chưa hoàn tất.</translation>
+    </message>
+    <message>
+        <source>The folder could not be listed.</source>
+        <translation>Không thể liệt kê thư mục.</translation>
+    </message>
+    <message>
+        <source>Upload failed: %1</source>
+        <translation>Tải lên thất bại: %1</translation>
+    </message>
+    <message numerus="yes">
+        <source>Uploaded %n file(s) to %1</source>
+        <translation>
+            <numerusform>Đã tải %n tệp lên %1</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>no answer from the engine</source>
+        <translation>không có phản hồi từ bộ máy</translation>
+    </message>
 </context>
 <context>
     <name>Navigator</name>
@@ -2629,6 +2693,93 @@
     <message>
         <source>Drop Shadow</source>
         <translation>Đổ bóng</translation>
+    </message>
+</context>
+<context>
+    <name>CloudDialog</name>
+    <message>
+        <source>Add an account</source>
+        <translation>Thêm tài khoản</translation>
+    </message>
+    <message>
+        <source>Browse</source>
+        <translation>Duyệt</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Hủy</translation>
+    </message>
+    <message>
+        <source>Client ID</source>
+        <translation>ID ứng dụng khách</translation>
+    </message>
+    <message>
+        <source>Client secret</source>
+        <translation>Khóa bí mật ứng dụng khách</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>Đóng</translation>
+    </message>
+    <message>
+        <source>Cloud accounts</source>
+        <translation>Tài khoản đám mây</translation>
+    </message>
+    <message>
+        <source>Confirm</source>
+        <translation>Xác nhận</translation>
+    </message>
+    <message>
+        <source>Connected</source>
+        <translation>Đã kết nối</translation>
+    </message>
+    <message>
+        <source>Disconnect</source>
+        <translation>Ngắt kết nối</translation>
+    </message>
+    <message>
+        <source>Disconnecting removes the account's keys and downloaded copies from this computer. Files in the account stay as they are.</source>
+        <translation>Ngắt kết nối sẽ xóa khóa của tài khoản và các bản sao đã tải xuống khỏi máy tính này. Tệp trong tài khoản vẫn giữ nguyên.</translation>
+    </message>
+    <message>
+        <source>Enter this code on the GitHub page that opened in your browser:</source>
+        <translation>Nhập mã này trên trang GitHub vừa mở trong trình duyệt:</translation>
+    </message>
+    <message>
+        <source>Finish signing in in your browser. This window updates when you are done.</source>
+        <translation>Hoàn tất đăng nhập trong trình duyệt. Cửa sổ này sẽ cập nhật khi xong.</translation>
+    </message>
+    <message>
+        <source>Install it with: sudo pacman -S %1</source>
+        <translation>Cài đặt bằng: sudo pacman -S %1</translation>
+    </message>
+    <message>
+        <source>Needs %1</source>
+        <translation>Cần %1</translation>
+    </message>
+    <message>
+        <source>No account connected yet.</source>
+        <translation>Chưa có tài khoản nào được kết nối.</translation>
+    </message>
+    <message>
+        <source>Open the page again</source>
+        <translation>Mở lại trang</translation>
+    </message>
+    <message>
+        <source>Own Google client ID (optional)</source>
+        <translation>ID ứng dụng khách Google riêng (tùy chọn)</translation>
+    </message>
+    <message>
+        <source>Signing in to %1</source>
+        <translation>Đang đăng nhập vào %1</translation>
+    </message>
+    <message>
+        <source>The shared client rclone uses for Google Drive is being retired. With a client ID of your own from the Google Cloud Console, Google Drive keeps working. It is used the next time you connect Google Drive.</source>
+        <translation>Ứng dụng khách dùng chung mà rclone sử dụng cho Google Drive đang bị ngừng. Với ID ứng dụng khách riêng từ Google Cloud Console, Google Drive vẫn tiếp tục hoạt động. ID này được dùng vào lần kết nối Google Drive tiếp theo.</translation>
+    </message>
+    <message>
+        <source>You sign in on the service's own page in your browser. OmaStudio keeps the access keys in the system keyring and creates a folder named %1 in each account for uploads.</source>
+        <translation>Bạn đăng nhập trên chính trang của dịch vụ trong trình duyệt. OmaStudio giữ khóa truy cập trong chùm khóa của hệ thống và tạo trong mỗi tài khoản một thư mục tên %1 để tải lên.</translation>
     </message>
 </context>
 </TS>

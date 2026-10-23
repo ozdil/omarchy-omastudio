@@ -689,6 +689,18 @@
         <source>Exporting…</source>
         <translation>Eksporterer…</translation>
     </message>
+    <message>
+        <source>After export, the files are also copied into the %1 folder of the account (on GitHub: the private %1 repository).</source>
+        <translation>Etter eksporten kopieres filene også til kontoens mappe %1 (på GitHub: det private depotet %1).</translation>
+    </message>
+    <message>
+        <source>This computer only</source>
+        <translation>Bare denne datamaskinen</translation>
+    </message>
+    <message>
+        <source>Upload to</source>
+        <translation>Last opp til</translation>
+    </message>
 </context>
 <context>
     <name>FilmGrainPanel</name>
@@ -914,6 +926,18 @@
         <source>P</source>
         <comment>pick flag, first letter of Pick</comment>
         <translation>V</translation>
+    </message>
+    <message>
+        <source>Connect</source>
+        <translation>Koble til</translation>
+    </message>
+    <message>
+        <source>Connect Google Drive, OneDrive, Dropbox, GitHub and other accounts</source>
+        <translation>Koble til Google Drive, OneDrive, Dropbox, GitHub og andre kontoer</translation>
+    </message>
+    <message>
+        <source>No folders or photos here.</source>
+        <translation>Ingen mapper eller bilder her.</translation>
     </message>
 </context>
 <context>
@@ -2012,6 +2036,48 @@
         <source>Platform crop reset</source>
         <translation>Plattformbeskjæring tilbakestilt</translation>
     </message>
+    <message>
+        <source>%1 connected</source>
+        <translation>%1 tilkoblet</translation>
+    </message>
+    <message>
+        <source>Account disconnected</source>
+        <translation>Kontoen er koblet fra</translation>
+    </message>
+    <message>
+        <source>Download failed</source>
+        <translation>Nedlastingen mislyktes</translation>
+    </message>
+    <message numerus="yes">
+        <source>Downloading %n photo(s)…</source>
+        <translation>
+            <numerusform>Laster ned %n bilde…</numerusform>
+            <numerusform>Laster ned %n bilder…</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>Sign-in did not finish.</source>
+        <translation>Påloggingen ble ikke fullført.</translation>
+    </message>
+    <message>
+        <source>The folder could not be listed.</source>
+        <translation>Mappen kunne ikke vises.</translation>
+    </message>
+    <message>
+        <source>Upload failed: %1</source>
+        <translation>Opplastingen mislyktes: %1</translation>
+    </message>
+    <message numerus="yes">
+        <source>Uploaded %n file(s) to %1</source>
+        <translation>
+            <numerusform>%n fil lastet opp til %1</numerusform>
+            <numerusform>%n filer lastet opp til %1</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>no answer from the engine</source>
+        <translation>intet svar fra motoren</translation>
+    </message>
 </context>
 <context>
     <name>Navigator</name>
@@ -2635,6 +2701,93 @@
     <message>
         <source>Drop Shadow</source>
         <translation>Skygge</translation>
+    </message>
+</context>
+<context>
+    <name>CloudDialog</name>
+    <message>
+        <source>Add an account</source>
+        <translation>Legg til konto</translation>
+    </message>
+    <message>
+        <source>Browse</source>
+        <translation>Bla gjennom</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Avbryt</translation>
+    </message>
+    <message>
+        <source>Client ID</source>
+        <translation>Klient-ID</translation>
+    </message>
+    <message>
+        <source>Client secret</source>
+        <translation>Klienthemmelighet</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>Lukk</translation>
+    </message>
+    <message>
+        <source>Cloud accounts</source>
+        <translation>Skykontoer</translation>
+    </message>
+    <message>
+        <source>Confirm</source>
+        <translation>Bekreft</translation>
+    </message>
+    <message>
+        <source>Connected</source>
+        <translation>Tilkoblet</translation>
+    </message>
+    <message>
+        <source>Disconnect</source>
+        <translation>Koble fra</translation>
+    </message>
+    <message>
+        <source>Disconnecting removes the account's keys and downloaded copies from this computer. Files in the account stay as they are.</source>
+        <translation>Når du kobler fra, fjernes kontoens nøkler og nedlastede kopier fra denne datamaskinen. Filene i kontoen forblir som de er.</translation>
+    </message>
+    <message>
+        <source>Enter this code on the GitHub page that opened in your browser:</source>
+        <translation>Skriv inn denne koden på GitHub-siden som åpnet seg i nettleseren:</translation>
+    </message>
+    <message>
+        <source>Finish signing in in your browser. This window updates when you are done.</source>
+        <translation>Fullfør påloggingen i nettleseren. Vinduet oppdateres når du er ferdig.</translation>
+    </message>
+    <message>
+        <source>Install it with: sudo pacman -S %1</source>
+        <translation>Installer med: sudo pacman -S %1</translation>
+    </message>
+    <message>
+        <source>Needs %1</source>
+        <translation>Krever %1</translation>
+    </message>
+    <message>
+        <source>No account connected yet.</source>
+        <translation>Ingen konto tilkoblet ennå.</translation>
+    </message>
+    <message>
+        <source>Open the page again</source>
+        <translation>Åpne siden igjen</translation>
+    </message>
+    <message>
+        <source>Own Google client ID (optional)</source>
+        <translation>Egen Google-klient-ID (valgfritt)</translation>
+    </message>
+    <message>
+        <source>Signing in to %1</source>
+        <translation>Logger på %1</translation>
+    </message>
+    <message>
+        <source>The shared client rclone uses for Google Drive is being retired. With a client ID of your own from the Google Cloud Console, Google Drive keeps working. It is used the next time you connect Google Drive.</source>
+        <translation>Den delte klienten rclone bruker for Google Drive fases ut. Med en egen klient-ID fra Google Cloud Console fortsetter Google Drive å virke. Den brukes neste gang du kobler til Google Drive.</translation>
+    </message>
+    <message>
+        <source>You sign in on the service's own page in your browser. OmaStudio keeps the access keys in the system keyring and creates a folder named %1 in each account for uploads.</source>
+        <translation>Du logger på tjenestens egen side i nettleseren. OmaStudio lagrer tilgangsnøklene i systemets nøkkelring og oppretter en mappe kalt %1 i hver konto for opplastinger.</translation>
     </message>
 </context>
 </TS>

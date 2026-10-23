@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+### Cloud accounts
+- **Connect** in the filmstrip bar adds Google Drive, OneDrive, Dropbox, Box, pCloud, Yandex Disk and GitHub accounts. Signing in happens on the service's own page in the browser.
+- Each connected account has a tab next to Folders and Catalog. Its folders can be browsed; a photo is downloaded once into `~/.cache/omastudio/cloud` when it is opened, and photos selected for a batch export are downloaded first.
+- Export can also upload the exported files into the account (**Upload to**).
+- A folder named `OmaStudio` is created in each account on connecting (on GitHub: a private repository `OmaStudio`) and receives the uploads.
+- Storage services use `rclone` with OmaStudio's own config, encrypted with a random key kept in the keyring through `secret-tool`; tokens are never stored in plain text. GitHub uses the GitHub CLI, which keeps its token in the keyring.
+- Google Drive accepts a client ID of your own, as rclone's shared Google client is being retired.
+- New engine commands: `cloud status|connect|list|fetch|upload|disconnect`. New control-socket calls: `showCloud`, `cloudAccounts`, `openCloud <account> [folder]`.
+
 ### Fixes
 - Focus peaking follows the photo: a soft portrait or a photo fitted to the window still shows its sharpest edges, where the fixed threshold marked nothing; detailed photos look as before.
 - The About window's icon is built into the program, so it shows for local installs too (it only looked in /usr/share). The package now depends on `qt6-svg`.

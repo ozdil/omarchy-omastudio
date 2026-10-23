@@ -688,6 +688,18 @@
         <source>Exporting…</source>
         <translation>Dışa aktarılıyor…</translation>
     </message>
+    <message>
+        <source>After export, the files are also copied into the %1 folder of the account (on GitHub: the private %1 repository).</source>
+        <translation>Dışa aktarmadan sonra dosyalar hesabın %1 klasörüne de kopyalanır (GitHub'da: özel %1 deposu).</translation>
+    </message>
+    <message>
+        <source>This computer only</source>
+        <translation>Yalnızca bu bilgisayar</translation>
+    </message>
+    <message>
+        <source>Upload to</source>
+        <translation>Yükleme hedefi</translation>
+    </message>
 </context>
 <context>
     <name>FilmGrainPanel</name>
@@ -913,6 +925,18 @@
         <source>P</source>
         <comment>pick flag, first letter of Pick</comment>
         <translation>S</translation>
+    </message>
+    <message>
+        <source>Connect</source>
+        <translation>Bağlan</translation>
+    </message>
+    <message>
+        <source>Connect Google Drive, OneDrive, Dropbox, GitHub and other accounts</source>
+        <translation>Google Drive, OneDrive, Dropbox, GitHub ve diğer hesapları bağlayın</translation>
+    </message>
+    <message>
+        <source>No folders or photos here.</source>
+        <translation>Burada klasör ya da fotoğraf yok.</translation>
     </message>
 </context>
 <context>
@@ -2007,6 +2031,46 @@
         <source>Platform crop reset</source>
         <translation>Platform kırpması sıfırlandı</translation>
     </message>
+    <message>
+        <source>%1 connected</source>
+        <translation>%1 bağlandı</translation>
+    </message>
+    <message>
+        <source>Account disconnected</source>
+        <translation>Hesabın bağlantısı kesildi</translation>
+    </message>
+    <message>
+        <source>Download failed</source>
+        <translation>İndirme başarısız</translation>
+    </message>
+    <message numerus="yes">
+        <source>Downloading %n photo(s)…</source>
+        <translation>
+            <numerusform>%n fotoğraf indiriliyor…</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>Sign-in did not finish.</source>
+        <translation>Giriş tamamlanmadı.</translation>
+    </message>
+    <message>
+        <source>The folder could not be listed.</source>
+        <translation>Klasör listelenemedi.</translation>
+    </message>
+    <message>
+        <source>Upload failed: %1</source>
+        <translation>Yükleme başarısız: %1</translation>
+    </message>
+    <message numerus="yes">
+        <source>Uploaded %n file(s) to %1</source>
+        <translation>
+            <numerusform>%n dosya %1 klasörüne yüklendi</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>no answer from the engine</source>
+        <translation>motor yanıt vermedi</translation>
+    </message>
 </context>
 <context>
     <name>Navigator</name>
@@ -2629,6 +2693,93 @@
     <message>
         <source>Drop Shadow</source>
         <translation>Gölge efekti</translation>
+    </message>
+</context>
+<context>
+    <name>CloudDialog</name>
+    <message>
+        <source>Add an account</source>
+        <translation>Hesap ekle</translation>
+    </message>
+    <message>
+        <source>Browse</source>
+        <translation>Göz at</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>İptal</translation>
+    </message>
+    <message>
+        <source>Client ID</source>
+        <translation>İstemci kimliği</translation>
+    </message>
+    <message>
+        <source>Client secret</source>
+        <translation>İstemci gizli anahtarı</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>Kapat</translation>
+    </message>
+    <message>
+        <source>Cloud accounts</source>
+        <translation>Bulut hesapları</translation>
+    </message>
+    <message>
+        <source>Confirm</source>
+        <translation>Onayla</translation>
+    </message>
+    <message>
+        <source>Connected</source>
+        <translation>Bağlı</translation>
+    </message>
+    <message>
+        <source>Disconnect</source>
+        <translation>Bağlantıyı kes</translation>
+    </message>
+    <message>
+        <source>Disconnecting removes the account's keys and downloaded copies from this computer. Files in the account stay as they are.</source>
+        <translation>Bağlantıyı kesmek, hesabın anahtarlarını ve indirilen kopyaları bu bilgisayardan kaldırır. Hesaptaki dosyalar olduğu gibi kalır.</translation>
+    </message>
+    <message>
+        <source>Enter this code on the GitHub page that opened in your browser:</source>
+        <translation>Tarayıcınızda açılan GitHub sayfasına bu kodu girin:</translation>
+    </message>
+    <message>
+        <source>Finish signing in in your browser. This window updates when you are done.</source>
+        <translation>Girişi tarayıcınızda tamamlayın. İşlem bitince bu pencere güncellenir.</translation>
+    </message>
+    <message>
+        <source>Install it with: sudo pacman -S %1</source>
+        <translation>Kurulum: sudo pacman -S %1</translation>
+    </message>
+    <message>
+        <source>Needs %1</source>
+        <translation>%1 gerekli</translation>
+    </message>
+    <message>
+        <source>No account connected yet.</source>
+        <translation>Henüz bağlı hesap yok.</translation>
+    </message>
+    <message>
+        <source>Open the page again</source>
+        <translation>Sayfayı yeniden aç</translation>
+    </message>
+    <message>
+        <source>Own Google client ID (optional)</source>
+        <translation>Kendi Google istemci kimliğiniz (isteğe bağlı)</translation>
+    </message>
+    <message>
+        <source>Signing in to %1</source>
+        <translation>%1 hesabına giriş yapılıyor</translation>
+    </message>
+    <message>
+        <source>The shared client rclone uses for Google Drive is being retired. With a client ID of your own from the Google Cloud Console, Google Drive keeps working. It is used the next time you connect Google Drive.</source>
+        <translation>rclone'un Google Drive için kullandığı ortak istemci kullanımdan kaldırılıyor. Google Cloud Console'dan alacağınız kendi istemci kimliğinizle Google Drive çalışmaya devam eder. Google Drive'ı bir sonraki bağlayışınızda kullanılır.</translation>
+    </message>
+    <message>
+        <source>You sign in on the service's own page in your browser. OmaStudio keeps the access keys in the system keyring and creates a folder named %1 in each account for uploads.</source>
+        <translation>Girişi hizmetin kendi sayfasında, tarayıcınızda yaparsınız. OmaStudio erişim anahtarlarını sistem anahtarlığında saklar ve yüklemeler için her hesapta %1 adlı bir klasör oluşturur.</translation>
     </message>
 </context>
 </TS>

@@ -690,6 +690,18 @@
         <source>Exporting…</source>
         <translation>Se exportă…</translation>
     </message>
+    <message>
+        <source>After export, the files are also copied into the %1 folder of the account (on GitHub: the private %1 repository).</source>
+        <translation>După export, fișierele sunt copiate și în dosarul %1 al contului (pe GitHub: depozitul privat %1).</translation>
+    </message>
+    <message>
+        <source>This computer only</source>
+        <translation>Doar acest computer</translation>
+    </message>
+    <message>
+        <source>Upload to</source>
+        <translation>Încarcă în</translation>
+    </message>
 </context>
 <context>
     <name>FilmGrainPanel</name>
@@ -915,6 +927,18 @@
         <source>P</source>
         <comment>pick flag, first letter of Pick</comment>
         <translation>A</translation>
+    </message>
+    <message>
+        <source>Connect</source>
+        <translation>Conectează</translation>
+    </message>
+    <message>
+        <source>Connect Google Drive, OneDrive, Dropbox, GitHub and other accounts</source>
+        <translation>Conectați Google Drive, OneDrive, Dropbox, GitHub și alte conturi</translation>
+    </message>
+    <message>
+        <source>No folders or photos here.</source>
+        <translation>Niciun dosar sau fotografie aici.</translation>
     </message>
 </context>
 <context>
@@ -2017,6 +2041,50 @@
         <source>Platform crop reset</source>
         <translation>Decuparea pentru platformă a fost resetată</translation>
     </message>
+    <message>
+        <source>%1 connected</source>
+        <translation>%1 conectat</translation>
+    </message>
+    <message>
+        <source>Account disconnected</source>
+        <translation>Cont deconectat</translation>
+    </message>
+    <message>
+        <source>Download failed</source>
+        <translation>Descărcarea a eșuat</translation>
+    </message>
+    <message numerus="yes">
+        <source>Downloading %n photo(s)…</source>
+        <translation>
+            <numerusform>Se descarcă %n fotografie…</numerusform>
+            <numerusform>Se descarcă %n fotografii…</numerusform>
+            <numerusform>Se descarcă %n de fotografii…</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>Sign-in did not finish.</source>
+        <translation>Conectarea nu s-a încheiat.</translation>
+    </message>
+    <message>
+        <source>The folder could not be listed.</source>
+        <translation>Dosarul nu a putut fi listat.</translation>
+    </message>
+    <message>
+        <source>Upload failed: %1</source>
+        <translation>Încărcarea a eșuat: %1</translation>
+    </message>
+    <message numerus="yes">
+        <source>Uploaded %n file(s) to %1</source>
+        <translation>
+            <numerusform>%n fișier încărcat în %1</numerusform>
+            <numerusform>%n fișiere încărcate în %1</numerusform>
+            <numerusform>%n de fișiere încărcate în %1</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>no answer from the engine</source>
+        <translation>niciun răspuns de la motor</translation>
+    </message>
 </context>
 <context>
     <name>Navigator</name>
@@ -2641,6 +2709,93 @@
     <message>
         <source>Drop Shadow</source>
         <translation>Umbră</translation>
+    </message>
+</context>
+<context>
+    <name>CloudDialog</name>
+    <message>
+        <source>Add an account</source>
+        <translation>Adaugă un cont</translation>
+    </message>
+    <message>
+        <source>Browse</source>
+        <translation>Răsfoiește</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Anulează</translation>
+    </message>
+    <message>
+        <source>Client ID</source>
+        <translation>ID client</translation>
+    </message>
+    <message>
+        <source>Client secret</source>
+        <translation>Secret client</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>Închide</translation>
+    </message>
+    <message>
+        <source>Cloud accounts</source>
+        <translation>Conturi în cloud</translation>
+    </message>
+    <message>
+        <source>Confirm</source>
+        <translation>Confirmă</translation>
+    </message>
+    <message>
+        <source>Connected</source>
+        <translation>Conectate</translation>
+    </message>
+    <message>
+        <source>Disconnect</source>
+        <translation>Deconectează</translation>
+    </message>
+    <message>
+        <source>Disconnecting removes the account's keys and downloaded copies from this computer. Files in the account stay as they are.</source>
+        <translation>Deconectarea șterge de pe acest computer cheile contului și copiile descărcate. Fișierele din cont rămân neschimbate.</translation>
+    </message>
+    <message>
+        <source>Enter this code on the GitHub page that opened in your browser:</source>
+        <translation>Introduceți acest cod pe pagina GitHub deschisă în browser:</translation>
+    </message>
+    <message>
+        <source>Finish signing in in your browser. This window updates when you are done.</source>
+        <translation>Finalizați conectarea în browser. Fereastra se actualizează după aceea.</translation>
+    </message>
+    <message>
+        <source>Install it with: sudo pacman -S %1</source>
+        <translation>Instalare: sudo pacman -S %1</translation>
+    </message>
+    <message>
+        <source>Needs %1</source>
+        <translation>Necesită %1</translation>
+    </message>
+    <message>
+        <source>No account connected yet.</source>
+        <translation>Niciun cont conectat încă.</translation>
+    </message>
+    <message>
+        <source>Open the page again</source>
+        <translation>Deschide din nou pagina</translation>
+    </message>
+    <message>
+        <source>Own Google client ID (optional)</source>
+        <translation>ID client Google propriu (opțional)</translation>
+    </message>
+    <message>
+        <source>Signing in to %1</source>
+        <translation>Conectare la %1</translation>
+    </message>
+    <message>
+        <source>The shared client rclone uses for Google Drive is being retired. With a client ID of your own from the Google Cloud Console, Google Drive keeps working. It is used the next time you connect Google Drive.</source>
+        <translation>Clientul comun pe care rclone îl folosește pentru Google Drive este retras. Cu un ID client propriu din Google Cloud Console, Google Drive continuă să funcționeze. Va fi folosit la următoarea conectare a Google Drive.</translation>
+    </message>
+    <message>
+        <source>You sign in on the service's own page in your browser. OmaStudio keeps the access keys in the system keyring and creates a folder named %1 in each account for uploads.</source>
+        <translation>Vă conectați pe pagina serviciului, în browser. OmaStudio păstrează cheile de acces în portchei-ul sistemului și creează în fiecare cont un dosar numit %1 pentru încărcări.</translation>
     </message>
 </context>
 </TS>

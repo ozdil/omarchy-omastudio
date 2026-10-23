@@ -693,6 +693,18 @@
         <source>Exporting…</source>
         <translation>جارٍ التصدير…</translation>
     </message>
+    <message>
+        <source>After export, the files are also copied into the %1 folder of the account (on GitHub: the private %1 repository).</source>
+        <translation>بعد التصدير تُنسخ الملفات أيضًا إلى مجلد %1 في الحساب (في GitHub: المستودع الخاص %1).</translation>
+    </message>
+    <message>
+        <source>This computer only</source>
+        <translation>هذا الحاسوب فقط</translation>
+    </message>
+    <message>
+        <source>Upload to</source>
+        <translation>الرفع إلى</translation>
+    </message>
 </context>
 <context>
     <name>FilmGrainPanel</name>
@@ -918,6 +930,18 @@
         <source>P</source>
         <comment>pick flag, first letter of Pick</comment>
         <translation>خ</translation>
+    </message>
+    <message>
+        <source>Connect</source>
+        <translation>اتصال</translation>
+    </message>
+    <message>
+        <source>Connect Google Drive, OneDrive, Dropbox, GitHub and other accounts</source>
+        <translation>توصيل Google Drive وOneDrive وDropbox وGitHub وحسابات أخرى</translation>
+    </message>
+    <message>
+        <source>No folders or photos here.</source>
+        <translation>لا توجد مجلدات أو صور هنا.</translation>
     </message>
 </context>
 <context>
@@ -2032,6 +2056,56 @@
         <source>Platform crop reset</source>
         <translation>أُعيد ضبط قص المنصة</translation>
     </message>
+    <message>
+        <source>%1 connected</source>
+        <translation>تم توصيل %1</translation>
+    </message>
+    <message>
+        <source>Account disconnected</source>
+        <translation>تم قطع اتصال الحساب</translation>
+    </message>
+    <message>
+        <source>Download failed</source>
+        <translation>فشل التنزيل</translation>
+    </message>
+    <message numerus="yes">
+        <source>Downloading %n photo(s)…</source>
+        <translation>
+            <numerusform>جارٍ تنزيل %n صورة…</numerusform>
+            <numerusform>جارٍ تنزيل %n صورة…</numerusform>
+            <numerusform>جارٍ تنزيل %n صورة…</numerusform>
+            <numerusform>جارٍ تنزيل %n صورة…</numerusform>
+            <numerusform>جارٍ تنزيل %n صورة…</numerusform>
+            <numerusform>جارٍ تنزيل %n صورة…</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>Sign-in did not finish.</source>
+        <translation>لم يكتمل تسجيل الدخول.</translation>
+    </message>
+    <message>
+        <source>The folder could not be listed.</source>
+        <translation>تعذّر عرض محتوى المجلد.</translation>
+    </message>
+    <message>
+        <source>Upload failed: %1</source>
+        <translation>فشل الرفع: %1</translation>
+    </message>
+    <message numerus="yes">
+        <source>Uploaded %n file(s) to %1</source>
+        <translation>
+            <numerusform>تم رفع %n ملف إلى %1</numerusform>
+            <numerusform>تم رفع %n ملف إلى %1</numerusform>
+            <numerusform>تم رفع %n ملف إلى %1</numerusform>
+            <numerusform>تم رفع %n ملف إلى %1</numerusform>
+            <numerusform>تم رفع %n ملف إلى %1</numerusform>
+            <numerusform>تم رفع %n ملف إلى %1</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>no answer from the engine</source>
+        <translation>لا استجابة من المحرّك</translation>
+    </message>
 </context>
 <context>
     <name>Navigator</name>
@@ -2659,6 +2733,93 @@
     <message>
         <source>Drop Shadow</source>
         <translation>ظل مُسقط</translation>
+    </message>
+</context>
+<context>
+    <name>CloudDialog</name>
+    <message>
+        <source>Add an account</source>
+        <translation>إضافة حساب</translation>
+    </message>
+    <message>
+        <source>Browse</source>
+        <translation>استعراض</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>إلغاء</translation>
+    </message>
+    <message>
+        <source>Client ID</source>
+        <translation>معرّف العميل</translation>
+    </message>
+    <message>
+        <source>Client secret</source>
+        <translation>سر العميل</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>إغلاق</translation>
+    </message>
+    <message>
+        <source>Cloud accounts</source>
+        <translation>الحسابات السحابية</translation>
+    </message>
+    <message>
+        <source>Confirm</source>
+        <translation>تأكيد</translation>
+    </message>
+    <message>
+        <source>Connected</source>
+        <translation>المتصلة</translation>
+    </message>
+    <message>
+        <source>Disconnect</source>
+        <translation>قطع الاتصال</translation>
+    </message>
+    <message>
+        <source>Disconnecting removes the account's keys and downloaded copies from this computer. Files in the account stay as they are.</source>
+        <translation>يؤدي قطع الاتصال إلى إزالة مفاتيح الحساب والنسخ المنزّلة من هذا الحاسوب. تبقى الملفات في الحساب كما هي.</translation>
+    </message>
+    <message>
+        <source>Enter this code on the GitHub page that opened in your browser:</source>
+        <translation>أدخل هذا الرمز في صفحة GitHub التي فُتحت في المتصفح:</translation>
+    </message>
+    <message>
+        <source>Finish signing in in your browser. This window updates when you are done.</source>
+        <translation>أكمل تسجيل الدخول في المتصفح. تتحدّث هذه النافذة عند الانتهاء.</translation>
+    </message>
+    <message>
+        <source>Install it with: sudo pacman -S %1</source>
+        <translation>ثبّته بالأمر: sudo pacman -S %1</translation>
+    </message>
+    <message>
+        <source>Needs %1</source>
+        <translation>يتطلب %1</translation>
+    </message>
+    <message>
+        <source>No account connected yet.</source>
+        <translation>لا يوجد حساب متصل بعد.</translation>
+    </message>
+    <message>
+        <source>Open the page again</source>
+        <translation>فتح الصفحة مرة أخرى</translation>
+    </message>
+    <message>
+        <source>Own Google client ID (optional)</source>
+        <translation>معرّف عميل Google خاص بك (اختياري)</translation>
+    </message>
+    <message>
+        <source>Signing in to %1</source>
+        <translation>جارٍ تسجيل الدخول إلى %1</translation>
+    </message>
+    <message>
+        <source>The shared client rclone uses for Google Drive is being retired. With a client ID of your own from the Google Cloud Console, Google Drive keeps working. It is used the next time you connect Google Drive.</source>
+        <translation>يجري إيقاف العميل المشترك الذي يستخدمه rclone مع Google Drive. باستخدام معرّف عميل خاص بك من Google Cloud Console يستمر Google Drive في العمل. يُستخدم في المرة القادمة التي توصل فيها Google Drive.</translation>
+    </message>
+    <message>
+        <source>You sign in on the service's own page in your browser. OmaStudio keeps the access keys in the system keyring and creates a folder named %1 in each account for uploads.</source>
+        <translation>تسجّل الدخول في صفحة الخدمة نفسها في المتصفح. يحفظ OmaStudio مفاتيح الوصول في حلقة مفاتيح النظام وينشئ في كل حساب مجلدًا باسم %1 للرفع.</translation>
     </message>
 </context>
 </TS>

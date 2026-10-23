@@ -44,6 +44,20 @@
             <numerusform>Exporting %n photos…</numerusform>
         </translation>
     </message>
+    <message numerus="yes">
+        <source>Downloading %n photo(s)…</source>
+        <translation>
+            <numerusform>Downloading %n photo…</numerusform>
+            <numerusform>Downloading %n photos…</numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <source>Uploaded %n file(s) to %1</source>
+        <translation>
+            <numerusform>Uploaded %n file to %1</numerusform>
+            <numerusform>Uploaded %n files to %1</numerusform>
+        </translation>
+    </message>
 </context>
 <context>
     <name>TopBar</name>

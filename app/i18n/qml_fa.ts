@@ -688,6 +688,18 @@
         <source>Exporting…</source>
         <translation>در حال خروجی گرفتن…</translation>
     </message>
+    <message>
+        <source>After export, the files are also copied into the %1 folder of the account (on GitHub: the private %1 repository).</source>
+        <translation>پس از خروجی گرفتن، فایل‌ها در پوشه %1 حساب هم کپی می‌شوند (در GitHub: مخزن خصوصی %1).</translation>
+    </message>
+    <message>
+        <source>This computer only</source>
+        <translation>فقط این رایانه</translation>
+    </message>
+    <message>
+        <source>Upload to</source>
+        <translation>بارگذاری در</translation>
+    </message>
 </context>
 <context>
     <name>FilmGrainPanel</name>
@@ -913,6 +925,18 @@
         <source>P</source>
         <comment>pick flag, first letter of Pick</comment>
         <translation>ب</translation>
+    </message>
+    <message>
+        <source>Connect</source>
+        <translation>اتصال</translation>
+    </message>
+    <message>
+        <source>Connect Google Drive, OneDrive, Dropbox, GitHub and other accounts</source>
+        <translation>اتصال Google Drive، OneDrive، Dropbox، GitHub و حساب‌های دیگر</translation>
+    </message>
+    <message>
+        <source>No folders or photos here.</source>
+        <translation>اینجا پوشه یا عکسی نیست.</translation>
     </message>
 </context>
 <context>
@@ -2007,6 +2031,46 @@
         <source>Platform crop reset</source>
         <translation>برش بستر بازنشانی شد</translation>
     </message>
+    <message>
+        <source>%1 connected</source>
+        <translation>%1 متصل شد</translation>
+    </message>
+    <message>
+        <source>Account disconnected</source>
+        <translation>اتصال حساب قطع شد</translation>
+    </message>
+    <message>
+        <source>Download failed</source>
+        <translation>دانلود ناموفق بود</translation>
+    </message>
+    <message numerus="yes">
+        <source>Downloading %n photo(s)…</source>
+        <translation>
+            <numerusform>در حال دانلود %n عکس…</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>Sign-in did not finish.</source>
+        <translation>ورود کامل نشد.</translation>
+    </message>
+    <message>
+        <source>The folder could not be listed.</source>
+        <translation>فهرست پوشه دریافت نشد.</translation>
+    </message>
+    <message>
+        <source>Upload failed: %1</source>
+        <translation>بارگذاری ناموفق بود: %1</translation>
+    </message>
+    <message numerus="yes">
+        <source>Uploaded %n file(s) to %1</source>
+        <translation>
+            <numerusform>%n فایل در %1 بارگذاری شد</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>no answer from the engine</source>
+        <translation>پاسخی از موتور نیامد</translation>
+    </message>
 </context>
 <context>
     <name>Navigator</name>
@@ -2629,6 +2693,93 @@
     <message>
         <source>Drop Shadow</source>
         <translation>سایهٔ افتاده</translation>
+    </message>
+</context>
+<context>
+    <name>CloudDialog</name>
+    <message>
+        <source>Add an account</source>
+        <translation>افزودن حساب</translation>
+    </message>
+    <message>
+        <source>Browse</source>
+        <translation>مرور</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>لغو</translation>
+    </message>
+    <message>
+        <source>Client ID</source>
+        <translation>شناسه کلاینت</translation>
+    </message>
+    <message>
+        <source>Client secret</source>
+        <translation>رمز کلاینت</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>بستن</translation>
+    </message>
+    <message>
+        <source>Cloud accounts</source>
+        <translation>حساب‌های ابری</translation>
+    </message>
+    <message>
+        <source>Confirm</source>
+        <translation>تأیید</translation>
+    </message>
+    <message>
+        <source>Connected</source>
+        <translation>متصل</translation>
+    </message>
+    <message>
+        <source>Disconnect</source>
+        <translation>قطع اتصال</translation>
+    </message>
+    <message>
+        <source>Disconnecting removes the account's keys and downloaded copies from this computer. Files in the account stay as they are.</source>
+        <translation>قطع اتصال، کلیدهای حساب و نسخه‌های دانلودشده را از این رایانه حذف می‌کند. فایل‌های داخل حساب دست‌نخورده می‌مانند.</translation>
+    </message>
+    <message>
+        <source>Enter this code on the GitHub page that opened in your browser:</source>
+        <translation>این کد را در صفحه GitHub که در مرورگر باز شد وارد کنید:</translation>
+    </message>
+    <message>
+        <source>Finish signing in in your browser. This window updates when you are done.</source>
+        <translation>ورود را در مرورگر کامل کنید. این پنجره پس از پایان به‌روز می‌شود.</translation>
+    </message>
+    <message>
+        <source>Install it with: sudo pacman -S %1</source>
+        <translation>نصب با: sudo pacman -S %1</translation>
+    </message>
+    <message>
+        <source>Needs %1</source>
+        <translation>نیازمند %1</translation>
+    </message>
+    <message>
+        <source>No account connected yet.</source>
+        <translation>هنوز هیچ حسابی متصل نشده است.</translation>
+    </message>
+    <message>
+        <source>Open the page again</source>
+        <translation>باز کردن دوباره صفحه</translation>
+    </message>
+    <message>
+        <source>Own Google client ID (optional)</source>
+        <translation>شناسه کلاینت Google خودتان (اختیاری)</translation>
+    </message>
+    <message>
+        <source>Signing in to %1</source>
+        <translation>در حال ورود به %1</translation>
+    </message>
+    <message>
+        <source>The shared client rclone uses for Google Drive is being retired. With a client ID of your own from the Google Cloud Console, Google Drive keeps working. It is used the next time you connect Google Drive.</source>
+        <translation>کلاینت مشترکی که rclone برای Google Drive استفاده می‌کند در حال کنار گذاشته شدن است. با شناسه کلاینت خودتان از Google Cloud Console، ‏Google Drive همچنان کار می‌کند. دفعه بعد که Google Drive را متصل کنید استفاده می‌شود.</translation>
+    </message>
+    <message>
+        <source>You sign in on the service's own page in your browser. OmaStudio keeps the access keys in the system keyring and creates a folder named %1 in each account for uploads.</source>
+        <translation>ورود در صفحه خود سرویس و در مرورگر انجام می‌شود. OmaStudio کلیدهای دسترسی را در جاکلیدی سیستم نگه می‌دارد و در هر حساب پوشه‌ای به نام %1 برای بارگذاری‌ها می‌سازد.</translation>
     </message>
 </context>
 </TS>
