@@ -111,7 +111,7 @@ Rectangle {
                         anchors.centerIn: parent
                         width: parent.width - 12
                         horizontalAlignment: Text.AlignHCenter
-                        text: "Text / EXIF Tag"
+                        text: qsTr("Text / EXIF Tag")
                         textFormat: Text.PlainText
                         font.family: Theme.fontFamily
                         font.pixelSize: Theme.px(9)
@@ -143,7 +143,7 @@ Rectangle {
                         anchors.centerIn: parent
                         width: parent.width - 12
                         horizontalAlignment: Text.AlignHCenter
-                        text: "Custom Logo PNG"
+                        text: qsTr("Custom Logo PNG")
                         textFormat: Text.PlainText
                         font.family: Theme.fontFamily
                         font.pixelSize: Theme.px(9)
@@ -368,7 +368,7 @@ Rectangle {
                         Layout.fillWidth: true
                         spacing: 4
                         Text {
-                            text: "Drop Shadow"
+                            text: qsTr("Drop Shadow")
                             textFormat: Text.PlainText
                             font.family: Theme.fontFamily
                             font.pixelSize: Theme.px(9)

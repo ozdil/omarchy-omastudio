@@ -228,6 +228,16 @@ Rectangle {
         toastTimer.restart();
     }
 
+    function ratingMessage(stars) {
+        return stars > 0 ? qsTr("Rating: %n star(s)", "", stars) : qsTr("Rating cleared");
+    }
+
+    function flagMessage(flag) {
+        if (flag === "pick") return qsTr("Flag: pick (P)");
+        if (flag === "reject") return qsTr("Flag: reject (X)");
+        return qsTr("Flag: none (U)");
+    }
+
     Timer {
         id: toastTimer
         interval: 2800
@@ -787,16 +797,17 @@ Rectangle {
             if (!resp.success) {
                 console.warn("Daemon returned error for action " + resp.action + ": " + resp.error);
                 if (resp.action === "load") {
-                    root.showToast("[ERR] Failed to load RAW: " + (resp.error || "Unknown error"), Theme.highlightClip);
+                    root.showToast(qsTr("Failed to load RAW: %1").arg(resp.error || qsTr("Unknown error")), Theme.highlightClip);
                 } else if (resp.action === "ai_auto" || resp.action === "ai_social") {
-                    root.showToast("[ERR] " + (resp.error || "AI action failed"), Theme.highlightClip);
+                    root.showToast(resp.error || qsTr("AI action failed"), Theme.highlightClip);
                 } else if (resp.action === "batch_export") {
                     // Without this the dialog stays stuck on "Exporting Batch..."
                     exportDialog.isExporting = false;
-                    exportDialog.exportStatusText = "[ERR] " + (resp.error || "Batch export failed");
+                    exportDialog.exportStatusIsError = true;
+                    exportDialog.exportStatusText = resp.error || qsTr("Batch export failed");
                 } else if (resp.action === "adjust") {
                     root.renderFinished();
-                    root.showToast("[ERR] " + (resp.error || "Preview render failed"), Theme.highlightClip);
+                    root.showToast((resp.error || qsTr("Preview render failed")), Theme.highlightClip);
                 } else if (resp.action === "detail") {
                     viewport.detailFailed();
                 }
@@ -837,15 +848,15 @@ Rectangle {
                     if (data.recipe) {
                         root.applyRecipeObject(data.recipe);
                     }
-                    root.showToast("[OK] " + data.platform + " applied (" + data.target_resolution + ")", Theme.accentCyan);
+                    root.showToast(qsTr("%1 applied (%2)").arg(data.platform).arg(data.target_resolution), Theme.accentCyan);
                 }
             } else if (act === "save_recipe") {
                 root.showToast(qsTr("Settings saved"), Theme.accentGreen);
             } else if (act === "batch_export") {
                 exportDialog.isExporting = false;
                 if (data) {
-                    exportDialog.exportStatusText = "[OK] " + qsTr("%1 of %2 photos exported").arg(data.succeeded).arg(data.total);
-                    root.showToast("[OK] Batch Export: " + data.succeeded + " succeeded, " + data.failed + " failed", Theme.accentGreen);
+                    exportDialog.exportStatusText = qsTr("%1 of %2 photos exported").arg(data.succeeded).arg(data.total);
+                    root.showToast(qsTr("Batch export: %1 succeeded, %2 failed").arg(data.succeeded).arg(data.failed), Theme.accentGreen);
                 }
             }
         } catch(e) {
@@ -877,15 +888,15 @@ Rectangle {
         property string action: ""
         onFinished: function(exitCode, output) {
             var resp;
-            try { resp = JSON.parse(String(output || "")); } catch (e) { resp = { "success": false, "error": "No answer from the engine" }; }
+            try { resp = JSON.parse(String(output || "")); } catch (e) { resp = { "success": false, "error": qsTr("No answer from the engine") }; }
             if (!resp.success) {
-                root.showToast("[ERR] " + String(resp.error || "XMP failed").split("\n")[0], Theme.accentMagenta);
+                root.showToast(String(resp.error || qsTr("XMP failed")).split("\n")[0], Theme.accentMagenta);
             } else if (xmpProc.action === "import") {
                 root.pushUndoState();
                 root.applyRecipeObject(resp.data.recipe);
-                root.showToast("[OK] Edit read from " + String(resp.data.source).split("/").pop(), Theme.accentGreen);
+                root.showToast(qsTr("Edit read from %1").arg(String(resp.data.source).split("/").pop()), Theme.accentGreen);
             } else {
-                root.showToast("[OK] Wrote " + String(resp.data.path).split("/").pop(), Theme.accentGreen);
+                root.showToast(qsTr("Wrote %1").arg(String(resp.data.path).split("/").pop()), Theme.accentGreen);
             }
         }
     }
@@ -1007,7 +1018,8 @@ Rectangle {
                     exportDialog.exportStatusText = "[ERR] " + (resp.error || qsTr("Export failed"));
                 }
             } catch(e) {
-                exportDialog.exportStatusText = "[ERR] Export finished";
+                exportDialog.exportStatusIsError = true;
+                exportDialog.exportStatusText = qsTr("Export finished without a result");
             }
         }
     }
@@ -1049,7 +1061,7 @@ Rectangle {
                     }
                 } else if (resp.error) {
                     var cleanMsg = String(resp.error || "").split("\n")[0].substring(0, 80);
-                    root.showToast("[ERR] " + cleanMsg, Theme.accentMagenta);
+                    root.showToast(cleanMsg, Theme.accentMagenta);
                 }
             } catch(e) {
                 root.showToast(qsTr("The scan did not respond."), Theme.accentMagenta);
@@ -1086,7 +1098,7 @@ Rectangle {
         sequence: "C"
         onActivated: {
             viewport.isCropMode = !viewport.isCropMode;
-            root.showToast(viewport.isCropMode ? "Crop Mode: ON (C)" : "Crop Mode: OFF", Theme.accentYellow);
+            root.showToast(viewport.isCropMode ? qsTr("Crop mode: on (C)") : qsTr("Crop mode: off"), Theme.accentYellow);
         }
     }
     Shortcut {
@@ -1149,11 +1161,11 @@ Rectangle {
     }
     Shortcut {
         sequence: "X"
-        onActivated: { root.photoFlag = (root.photoFlag === "reject" ? "none" : "reject"); root.showToast(root.photoFlag === "reject" ? "Flag: REJECT (X)" : "Flag: NONE", Theme.highlightClip); root.saveSidecar(); }
+        onActivated: { root.photoFlag = (root.photoFlag === "reject" ? "none" : "reject"); root.showToast(root.flagMessage(root.photoFlag), Theme.highlightClip); root.saveSidecar(); }
     }
     Shortcut {
         sequence: "P"
-        onActivated: { root.photoFlag = (root.photoFlag === "pick" ? "none" : "pick"); root.showToast(root.photoFlag === "pick" ? "Flag: PICK (P)" : "Flag: NONE", Theme.accentGreen); root.saveSidecar(); }
+        onActivated: { root.photoFlag = (root.photoFlag === "pick" ? "none" : "pick"); root.showToast(root.flagMessage(root.photoFlag), Theme.accentGreen); root.saveSidecar(); }
     }
     Shortcut {
         sequence: "U"
@@ -1373,7 +1385,7 @@ Rectangle {
 
     function toggleCropMode() {
         viewport.isCropMode = !viewport.isCropMode;
-        root.showToast(viewport.isCropMode ? "Crop Mode: ON (C)" : "Crop Mode: OFF", Theme.accentYellow);
+        root.showToast(viewport.isCropMode ? qsTr("Crop mode: on (C)") : qsTr("Crop mode: off"), Theme.accentYellow);
         return viewport.isCropMode;
     }
 
@@ -1434,7 +1446,7 @@ Rectangle {
             }
             onToggleCrop: {
                 viewport.isCropMode = !viewport.isCropMode;
-                root.showToast(viewport.isCropMode ? "Crop Mode: ON (C)" : "Crop Mode: OFF", Theme.accentYellow);
+                root.showToast(viewport.isCropMode ? qsTr("Crop mode: on (C)") : qsTr("Crop mode: off"), Theme.accentYellow);
             }
             onExportClicked: {
                 exportDialog.isBatchMode = false;
@@ -1547,8 +1559,9 @@ Rectangle {
                                         font.pixelSize: Theme.px(9)
                                         font.weight: Font.Bold
                                         color: Theme.accentPurple
+                                        Layout.fillWidth: true
+                                        elide: Text.ElideRight
                                     }
-                                    Item { Layout.fillWidth: true }
                                     Text {
                                         text: root.activeScene ? Math.round(root.activeScene.confidence * 100) + "%" : ""
                                         textFormat: Text.PlainText
@@ -1559,7 +1572,7 @@ Rectangle {
                                 }
 
                                 Text {
-                                    text: root.activeScene ? root.activeScene.scene_type : "Analyzing..."
+                                    text: root.activeScene ? I18n.sceneType(root.activeScene.scene_type) : qsTr("Analyzing...")
                                     textFormat: Text.PlainText
                                     font.family: Theme.fontFamily
                                     font.pixelSize: Theme.px(11)
@@ -1568,7 +1581,7 @@ Rectangle {
                                 }
 
                                 Text {
-                                    text: root.activeScene ? root.activeScene.description : "Extracting dynamic range..."
+                                    text: root.activeScene ? I18n.sceneDescription(root.activeScene.scene_type, root.activeScene.description) : qsTr("Extracting dynamic range...")
                                     textFormat: Text.PlainText
                                     font.family: Theme.fontFamily
                                     font.pixelSize: Theme.px(9)
@@ -1664,12 +1677,12 @@ Rectangle {
                     }
                     onFileDropped: function(filePath) {
                         root.loadPhoto(filePath);
-                        root.showToast("[OK] Opened dropped RAW: " + filePath.split("/").pop(), Theme.accentCyan);
+                        root.showToast(qsTr("Opened %1").arg(filePath.split("/").pop()), Theme.accentCyan);
                     }
                     onFolderDropped: function(folderPath) {
                         filmstrip.currentFolder = folderPath;
                         root.scanLocalFolder(folderPath);
-                        root.showToast("[OK] Scanning dropped folder: " + folderPath.split("/").pop(), Theme.accentCyan);
+                        root.showToast(qsTr("Scanning folder %1").arg(folderPath.split("/").pop()), Theme.accentCyan);
                     }
                 }
             }
@@ -1945,7 +1958,7 @@ Rectangle {
 
                                 SliderGroup {
                                     visible: root.isFujifilm
-                                    title: "Color Chrome Effect"
+                                    title: qsTr("Color Chrome Effect")
                                     from: 0.0
                                     to: 100.0
                                     value: root.colorChrome
@@ -1956,7 +1969,7 @@ Rectangle {
                                 }
                                 SliderGroup {
                                     visible: root.isFujifilm
-                                    title: "Color Chrome FX Blue"
+                                    title: qsTr("Color Chrome FX Blue")
                                     from: 0.0
                                     to: 100.0
                                     value: root.colorChromeBlue
@@ -1978,13 +1991,13 @@ Rectangle {
                                         }
                                         root.pushUndoState();
                                         root.applyRecipeObject(recipe);
-                                        root.showToast("[OK] " + label, Theme.accentGreen);
+                                        root.showToast(label, Theme.accentGreen);
                                     }
                                     onFileProduced: function(path, openIt) {
                                         if (openIt) root.loadPhoto(path);
                                     }
                                     onNotify: function(text, isError) {
-                                        root.showToast((isError ? "[ERR] " : "[OK] ") + text, isError ? Theme.accentMagenta : Theme.accentGreen);
+                                        root.showToast(text, isError ? Theme.accentMagenta : Theme.accentGreen);
                                     }
                                 }
                             }
@@ -2034,7 +2047,7 @@ Rectangle {
                                 }
 
                                 SliderGroup {
-                                    title: "Exposure"
+                                    title: qsTr("Exposure")
                                     from: -5.0
                                     to: 5.0
                                     value: root.expValue
@@ -2045,7 +2058,7 @@ Rectangle {
                                     onSliderMoved: function(v) { root.expValue = v; root.requestRender() }
                                 }
                                 SliderGroup {
-                                    title: "Contrast"
+                                    title: qsTr("Contrast")
                                     from: -100.0
                                     to: 100.0
                                     value: root.contrastValue
@@ -2053,7 +2066,7 @@ Rectangle {
                                     onSliderMoved: function(v) { root.contrastValue = v; root.requestRender() }
                                 }
                                 SliderGroup {
-                                    title: "Highlights"
+                                    title: qsTr("Highlights")
                                     from: -100.0
                                     to: 100.0
                                     value: root.highlightsValue
@@ -2061,7 +2074,7 @@ Rectangle {
                                     onSliderMoved: function(v) { root.highlightsValue = v; root.requestRender() }
                                 }
                                 SliderGroup {
-                                    title: "Shadows"
+                                    title: qsTr("Shadows")
                                     from: -100.0
                                     to: 100.0
                                     value: root.shadowsValue
@@ -2069,7 +2082,7 @@ Rectangle {
                                     onSliderMoved: function(v) { root.shadowsValue = v; root.requestRender() }
                                 }
                                 SliderGroup {
-                                    title: "Whites"
+                                    title: qsTr("Whites")
                                     from: -100.0
                                     to: 100.0
                                     value: root.whitesValue
@@ -2077,7 +2090,7 @@ Rectangle {
                                     onSliderMoved: function(v) { root.whitesValue = v; root.requestRender() }
                                 }
                                 SliderGroup {
-                                    title: "Blacks"
+                                    title: qsTr("Blacks")
                                     from: -100.0
                                     to: 100.0
                                     value: root.blacksValue
@@ -2099,7 +2112,7 @@ Rectangle {
                                 }
 
                                 SliderGroup {
-                                    title: "Texture"
+                                    title: qsTr("Texture")
                                     from: -100.0
                                     to: 100.0
                                     value: root.textureValue
@@ -2107,7 +2120,7 @@ Rectangle {
                                     onSliderMoved: function(v) { root.textureValue = v; root.requestRender() }
                                 }
                                 SliderGroup {
-                                    title: "Clarity (Midtone Contrast)"
+                                    title: qsTr("Clarity (Midtone Contrast)")
                                     from: -100.0
                                     to: 100.0
                                     value: root.clarityValue
@@ -2115,7 +2128,7 @@ Rectangle {
                                     onSliderMoved: function(v) { root.clarityValue = v; root.requestRender() }
                                 }
                                 SliderGroup {
-                                    title: "Dehaze"
+                                    title: qsTr("Dehaze")
                                     from: -100.0
                                     to: 100.0
                                     value: root.dehazeValue
@@ -2123,7 +2136,7 @@ Rectangle {
                                     onSliderMoved: function(v) { root.dehazeValue = v; root.requestRender() }
                                 }
                                 SliderGroup {
-                                    title: "Vibrance"
+                                    title: qsTr("Vibrance")
                                     from: -100.0
                                     to: 100.0
                                     value: root.vibranceValue
@@ -2131,7 +2144,7 @@ Rectangle {
                                     onSliderMoved: function(v) { root.vibranceValue = v; root.requestRender() }
                                 }
                                 SliderGroup {
-                                    title: "Saturation"
+                                    title: qsTr("Saturation")
                                     from: -100.0
                                     to: 100.0
                                     value: root.saturationValue
@@ -2154,7 +2167,7 @@ Rectangle {
                                 }
 
                                 SliderGroup {
-                                    title: "Curve Highlights"
+                                    title: qsTr("Curve Highlights")
                                     from: -100.0
                                     to: 100.0
                                     value: root.curveHighlights
@@ -2163,7 +2176,7 @@ Rectangle {
                                     onSliderMoved: function(v) { root.curveHighlights = v; root.requestRender() }
                                 }
                                 SliderGroup {
-                                    title: "Curve Lights (Upper Mids)"
+                                    title: qsTr("Curve Lights (Upper Mids)")
                                     from: -100.0
                                     to: 100.0
                                     value: root.curveLights
@@ -2172,7 +2185,7 @@ Rectangle {
                                     onSliderMoved: function(v) { root.curveLights = v; root.requestRender() }
                                 }
                                 SliderGroup {
-                                    title: "Curve Darks (Lower Mids)"
+                                    title: qsTr("Curve Darks (Lower Mids)")
                                     from: -100.0
                                     to: 100.0
                                     value: root.curveDarks
@@ -2181,7 +2194,7 @@ Rectangle {
                                     onSliderMoved: function(v) { root.curveDarks = v; root.requestRender() }
                                 }
                                 SliderGroup {
-                                    title: "Curve Shadows"
+                                    title: qsTr("Curve Shadows")
                                     from: -100.0
                                     to: 100.0
                                     value: root.curveShadows
@@ -2323,7 +2336,7 @@ Rectangle {
                                 }
 
                                 SliderGroup {
-                                    title: "Sharpening"
+                                    title: qsTr("Sharpening")
                                     from: 0.0
                                     to: 100.0
                                     value: root.sharpnessVal
@@ -2331,7 +2344,7 @@ Rectangle {
                                     onSliderMoved: function(v) { root.sharpnessVal = v; root.requestRender() }
                                 }
                                 SliderGroup {
-                                    title: "Noise Reduction (Luma)"
+                                    title: qsTr("Noise Reduction (Luma)")
                                     from: 0.0
                                     to: 100.0
                                     value: root.denoiseLumVal
@@ -2339,7 +2352,7 @@ Rectangle {
                                     onSliderMoved: function(v) { root.denoiseLumVal = v; root.requestRender() }
                                 }
                                 SliderGroup {
-                                    title: "Noise Reduction (Color)"
+                                    title: qsTr("Noise Reduction (Color)")
                                     from: 0.0
                                     to: 100.0
                                     value: root.denoiseColVal
@@ -2348,7 +2361,7 @@ Rectangle {
                                     onSliderMoved: function(v) { root.denoiseColVal = v; root.requestRender() }
                                 }
                                 SliderGroup {
-                                    title: "Vignette"
+                                    title: qsTr("Vignette")
                                     from: -100.0
                                     to: 100.0
                                     value: root.vignetteVal
@@ -2356,7 +2369,7 @@ Rectangle {
                                     onSliderMoved: function(v) { root.vignetteVal = v; root.requestRender() }
                                 }
                                 SliderGroup {
-                                    title: "Defringe (Chromatic Aberration)"
+                                    title: qsTr("Defringe (Chromatic Aberration)")
                                     from: 0.0
                                     to: 100.0
                                     value: root.defringeVal
@@ -2365,7 +2378,7 @@ Rectangle {
                                     onSliderMoved: function(v) { root.defringeVal = v; root.requestRender() }
                                 }
                                 SliderGroup {
-                                    title: "Lens Distortion Correction"
+                                    title: qsTr("Lens Distortion Correction")
                                     from: -50.0
                                     to: 50.0
                                     value: root.lensDistortionVal
@@ -2440,7 +2453,7 @@ Rectangle {
                                     enginePath: root.resolveEnginePath()
                                     activePhotoPath: root.activePhotoPath
                                     onNotify: function(text, isError) {
-                                        root.showToast((isError ? "[ERR] " : "[OK] ") + text, isError ? Theme.accentMagenta : Theme.accentGreen);
+                                        root.showToast(text, isError ? Theme.accentMagenta : Theme.accentGreen);
                                     }
                                     onLayersChanged: {
                                         root.adjustmentLayers = layersPanel.layersList;
@@ -2521,7 +2534,7 @@ Rectangle {
                                     root.showToast(qsTr("Assistant edit applied"), Theme.accentGreen);
                                 }
                                 onNotify: function(text, isError) {
-                                    root.showToast((isError ? "[ERR] " : "[OK] ") + text, isError ? Theme.accentMagenta : Theme.accentGreen);
+                                    root.showToast(text, isError ? Theme.accentMagenta : Theme.accentGreen);
                                 }
                             }
                             }
@@ -2545,7 +2558,7 @@ Rectangle {
                 root.loadPhoto(path);
             }
             onNavigateFolder: function(remotePath) {
-                root.showToast("[Folder] Navigating: " + remotePath, Theme.accent);
+                root.showToast(qsTr("Opening %1").arg(remotePath), Theme.accent);
                 filmstrip.currentFolder = remotePath;
                 root.scanLocalFolder(remotePath);
             }

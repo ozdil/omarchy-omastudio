@@ -983,11 +983,12 @@ Rectangle {
 
             // Fit Button
             Rectangle {
-                implicitWidth: 34
+                implicitWidth: Math.max(34, label978.implicitWidth + 16)
                 implicitHeight: 24
                 radius: Theme.r(4)
                 color: root.zoomFactor <= 1.05 ? Theme.accent : (fitMouse.containsMouse ? Theme.bgCardHover : "transparent")
                 Text {
+                    id: label978
                     anchors.centerIn: parent
                     text: qsTr("Fit")
                     textFormat: Text.PlainText
@@ -1007,11 +1008,12 @@ Rectangle {
 
             // 100% Button
             Rectangle {
-                implicitWidth: 42
+                implicitWidth: Math.max(42, label1003.implicitWidth + 16)
                 implicitHeight: 24
                 radius: Theme.r(4)
                 color: Math.abs(root.pixelScale - 1.0) < 0.02 ? Theme.accent : (pct100Mouse.containsMouse ? Theme.bgCardHover : "transparent")
                 Text {
+                    id: label1003
                     anchors.centerIn: parent
                     text: "100%"
                     textFormat: Text.PlainText
@@ -1031,11 +1033,12 @@ Rectangle {
 
             // 200% Button
             Rectangle {
-                implicitWidth: 42
+                implicitWidth: Math.max(42, label1028.implicitWidth + 16)
                 implicitHeight: 24
                 radius: Theme.r(4)
                 color: Math.abs(root.pixelScale - 2.0) < 0.04 ? Theme.accent : (pct200Mouse.containsMouse ? Theme.bgCardHover : "transparent")
                 Text {
+                    id: label1028
                     anchors.centerIn: parent
                     text: "200%"
                     textFormat: Text.PlainText
@@ -1159,7 +1162,7 @@ Rectangle {
                         font.family: Theme.fontFamily
                         id: aspText
                         anchors.centerIn: parent
-                        text: modelData
+                        text: modelData === "Original" ? qsTr("Original") : (modelData === "Free" ? qsTr("Free") : modelData)
                         textFormat: Text.PlainText
                         font.pixelSize: Theme.px(9)
                         font.weight: Font.DemiBold
@@ -1190,10 +1193,10 @@ Rectangle {
                     id: guideText
                     anchors.centerIn: parent
                     text: {
-                        if (root.guideMode === 1) return "Grid: 3x3 Thirds";
-                        if (root.guideMode === 2) return "Grid: Golden Ratio";
-                        if (root.guideMode === 3) return "Grid: Golden Spiral";
-                        return "Grid: Off";
+                        if (root.guideMode === 1) return qsTr("Grid: 3x3 Thirds");
+                        if (root.guideMode === 2) return qsTr("Grid: Golden Ratio");
+                        if (root.guideMode === 3) return qsTr("Grid: Golden Spiral");
+                        return qsTr("Grid: Off");
                     }
                     textFormat: Text.PlainText
                     font.pixelSize: Theme.px(9)
@@ -1211,11 +1214,12 @@ Rectangle {
 
             // Reset Crop
             Rectangle {
-                implicitWidth: 46
+                implicitWidth: Math.max(46, label1212.implicitWidth + 16)
                 implicitHeight: 22
                 radius: Theme.r(4)
                 color: rstCropMouse.containsMouse ? Theme.bgCardHover : "transparent"
                 Text {
+                    id: label1212
                     font.family: Theme.fontFamily
                     anchors.centerIn: parent
                     text: qsTr("Reset")
@@ -1234,11 +1238,12 @@ Rectangle {
 
             // Done Button
             Rectangle {
-                implicitWidth: 46
+                implicitWidth: Math.max(46, label1236.implicitWidth + 16)
                 implicitHeight: 22
                 radius: Theme.r(4)
                 color: Theme.accent
                 Text {
+                    id: label1236
                     font.family: Theme.fontFamily
                     anchors.centerIn: parent
                     text: qsTr("Done")
@@ -1274,7 +1279,7 @@ Rectangle {
                 font.family: Theme.fontFamily
                 id: beforeText
                 anchors.centerIn: parent
-                text: "ORIGINAL RAW (Before)"
+                text: qsTr("ORIGINAL RAW (Before)")
                 textFormat: Text.PlainText
                 font.pixelSize: Theme.px(9)
                 font.weight: Font.Bold
@@ -1293,7 +1298,7 @@ Rectangle {
                 font.family: Theme.fontFamily
                 id: afterText
                 anchors.centerIn: parent
-                text: "EDITED RECIPE (After)"
+                text: qsTr("EDITED RECIPE (After)")
                 textFormat: Text.PlainText
                 font.pixelSize: Theme.px(9)
                 font.weight: Font.Bold
@@ -1367,7 +1372,7 @@ Rectangle {
         }
         Text {
             anchors.horizontalCenter: parent.horizontalCenter
-            text: "Open a RAW (Ctrl+O) or drop a photo / folder here"
+            text: qsTr("Open a RAW (Ctrl+O) or drop a photo / folder here")
             textFormat: Text.PlainText
             font.family: Theme.monoFont
             font.pixelSize: Theme.px(12)
@@ -1448,7 +1453,7 @@ Rectangle {
             }
 
             Text {
-                text: "Drop RAW Photo or Folder to Open"
+                text: qsTr("Drop RAW Photo or Folder to Open")
                 textFormat: Text.PlainText
                 font.pixelSize: Theme.px(14)
                 font.weight: Font.Bold

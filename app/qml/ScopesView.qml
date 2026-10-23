@@ -34,10 +34,10 @@ Rectangle {
             RowLayout {
                 spacing: 2
                 property var modes: [
-                    { name: qsTr("Hist"), idx: 0 },
-                    { name: qsTr("Wave"), idx: 1 },
-                    { name: qsTr("Parade"), idx: 2 },
-                    { name: qsTr("Vector"), idx: 3 }
+                    { name: qsTr("HIST"), idx: 0 },
+                    { name: qsTr("WAVE"), idx: 1 },
+                    { name: qsTr("PARADE"), idx: 2 },
+                    { name: qsTr("VECTOR"), idx: 3 }
                 ]
 
                 Repeater {
@@ -85,7 +85,7 @@ Rectangle {
                 Text {
                     id: shadowText
                     anchors.centerIn: parent
-                    text: root.histData ? root.histData.shadow_clipping_percent.toFixed(1) + "%" : "0.0%"
+                    text: qsTr("[S] %1%", "S: shadow clipping").arg(root.histData ? root.histData.shadow_clipping_percent.toFixed(1) : "0.0")
                     textFormat: Text.PlainText
                     font.pixelSize: Theme.px(8)
                     font.family: Theme.monoFont
@@ -117,7 +117,7 @@ Rectangle {
                 Text {
                     id: highText
                     anchors.centerIn: parent
-                    text: root.histData ? root.histData.highlight_clipping_percent.toFixed(1) + "%" : "0.0%"
+                    text: qsTr("[H] %1%", "H: highlight clipping").arg(root.histData ? root.histData.highlight_clipping_percent.toFixed(1) : "0.0")
                     textFormat: Text.PlainText
                     font.pixelSize: Theme.px(8)
                     font.family: Theme.monoFont
@@ -151,6 +151,9 @@ Rectangle {
 
             Canvas {
                 id: scopeCanvas
+                // Labels are drawn, so a language switch repaints
+                property string language: Qt.uiLanguage
+                onLanguageChanged: requestPaint()
                 anchors.fill: parent
                 anchors.margins: 4
                 antialiasing: true
@@ -287,9 +290,9 @@ Rectangle {
 
                     ctx.font = "" + Theme.px(8) + "px '" + Theme.monoFont + "'";
                     ctx.textAlign = "center";
-                    ctx.fillStyle = "#f7768e"; ctx.fillText("RED", channelW * 0.5, 9);
-                    ctx.fillStyle = "#9ece6a"; ctx.fillText("GREEN", channelW * 1.5, 9);
-                    ctx.fillStyle = "#7aa2f7"; ctx.fillText("BLUE", channelW * 2.5, 9);
+                    ctx.fillStyle = "#f7768e"; ctx.fillText(qsTr("RED"), channelW * 0.5, 9);
+                    ctx.fillStyle = "#9ece6a"; ctx.fillText(qsTr("GREEN"), channelW * 1.5, 9);
+                    ctx.fillStyle = "#7aa2f7"; ctx.fillText(qsTr("BLUE"), channelW * 2.5, 9);
 
                     function renderChannelData(data, offsetX, baseCol) {
                         for (var r = 0; r < 32; r++) {
@@ -348,7 +351,7 @@ Rectangle {
                     ctx.fillStyle = "rgba(255, 180, 100, 0.85)";
                     ctx.font = "" + Theme.px(7) + "px '" + Theme.monoFont + "'";
                     ctx.textAlign = "left";
-                    ctx.fillText("SKIN", cx + Math.cos(skinAngle) * (maxRadius - 14), cy + Math.sin(skinAngle) * (maxRadius - 14));
+                    ctx.fillText(qsTr("SKIN"), cx + Math.cos(skinAngle) * (maxRadius - 14), cy + Math.sin(skinAngle) * (maxRadius - 14));
 
                     // Standard 75% broadcast color targets (R, Mg, B, Cy, G, Yl)
                     var targets = [

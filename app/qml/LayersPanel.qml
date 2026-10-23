@@ -57,18 +57,18 @@ Rectangle {
         id: aiProc
         onFinished: function(exitCode, output) {
             var resp;
-            try { resp = JSON.parse(String(output || "")); } catch (e) { resp = { "success": false, "error": "The engine gave no answer" }; }
+            try { resp = JSON.parse(String(output || "")); } catch (e) { resp = { "success": false, "error": qsTr("The engine gave no answer") }; }
             if (!resp.success) {
-                root.notify(String(resp.error || "AI mask failed").split("\n")[0], true);
+                root.notify(String(resp.error || qsTr("AI mask failed")).split("\n")[0], true);
                 return;
             }
             var list = root.cloneLayers();
-            var label = root.aiKind === "sky" ? "AI Sky " : "AI Subject ";
-            list.push(root.newLayer(label + (list.length + 1), { "type": "bitmap", "path": resp.data.path }));
+            var label = root.aiKind === "sky" ? qsTr("AI Sky") : qsTr("AI Subject");
+            list.push(root.newLayer(qsTr("%1 %2").arg(label).arg(list.length + 1), { "type": "bitmap", "path": resp.data.path }));
             root.layersList = list;
             root.selectedLayerIndex = list.length - 1;
             root.layersChanged();
-            root.notify(label.trim() + " mask ready (" + resp.data.provider + ")", false);
+            root.notify(qsTr("%1 mask ready (%2)").arg(label).arg(resp.data.provider), false);
         }
     }
 
@@ -154,7 +154,7 @@ Rectangle {
                         var list = root.cloneLayers();
                         var newL = {
                             "id": "layer_" + Date.now(),
-                            "name": "Linear Gradient " + (list.length + 1),
+                            "name": qsTr("Linear Gradient %1").arg(list.length + 1),
                             "enabled": true,
                             "invert": false,
                             "opacity": 1.0,
@@ -214,7 +214,7 @@ Rectangle {
                         var list = root.cloneLayers();
                         var newL = {
                             "id": "layer_" + Date.now(),
-                            "name": "Radial Mask " + (list.length + 1),
+                            "name": qsTr("Radial Mask %1").arg(list.length + 1),
                             "enabled": true,
                             "invert": false,
                             "opacity": 1.0,
@@ -275,7 +275,7 @@ Rectangle {
                         var list = root.cloneLayers();
                         var newL = {
                             "id": "layer_" + Date.now(),
-                            "name": "Luma Range " + (list.length + 1),
+                            "name": qsTr("Luma Range %1").arg(list.length + 1),
                             "enabled": true,
                             "invert": false,
                             "opacity": 1.0,
@@ -310,8 +310,8 @@ Rectangle {
         RowLayout {
             Layout.fillWidth: true
             spacing: 6
-            AiButton { label: "+ AI SUBJECT"; kind: "subject" }
-            AiButton { label: "+ AI SKY"; kind: "sky" }
+            AiButton { label: qsTr("+ AI SUBJECT"); kind: "subject" }
+            AiButton { label: qsTr("+ AI SKY"); kind: "sky" }
         }
 
         // Layers List View
@@ -373,7 +373,7 @@ Rectangle {
 
                             Text {
                                 anchors.centerIn: parent
-                                text: "I"
+                                text: qsTr("I", "invert mask toggle, first letter of Invert")
                                 textFormat: Text.PlainText
                                 font.family: Theme.monoFont
                                 font.pixelSize: Theme.px(8)
@@ -459,7 +459,7 @@ Rectangle {
             }
 
             SliderGroup {
-                title: "Layer Opacity"
+                title: qsTr("Layer Opacity")
                 from: 0.0
                 to: 1.0
                 value: activeL ? activeL.opacity : 1.0
@@ -477,7 +477,7 @@ Rectangle {
             }
 
             SliderGroup {
-                title: "Target Exposure"
+                title: qsTr("Target Exposure")
                 from: -4.0
                 to: 4.0
                 value: activeL ? activeL.exposure : 0.0
@@ -496,7 +496,7 @@ Rectangle {
             }
 
             SliderGroup {
-                title: "Target Contrast"
+                title: qsTr("Target Contrast")
                 from: -100.0
                 to: 100.0
                 value: activeL ? activeL.contrast : 0.0
@@ -513,7 +513,7 @@ Rectangle {
             }
 
             SliderGroup {
-                title: "Target Saturation"
+                title: qsTr("Target Saturation")
                 from: -100.0
                 to: 100.0
                 value: activeL ? activeL.saturation : 0.0

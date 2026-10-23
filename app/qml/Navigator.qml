@@ -60,6 +60,8 @@ Rectangle {
                 font.weight: Font.DemiBold
                 font.letterSpacing: 1
                 color: Theme.textDim
+                Layout.fillWidth: true
+                elide: Text.ElideRight
             }
 
             Item { Layout.fillWidth: true }

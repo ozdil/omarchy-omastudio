@@ -25,7 +25,9 @@ Rectangle {
         // Same rule as the engine: letters and digits, at most 24, lower case
         var tag = nameTag.replace(/[^A-Za-z0-9]/g, "").slice(0, 24).toLowerCase();
         var ext = selectedFormat === "jpeg" ? "jpg" : selectedFormat === "tiff" ? "tif" : selectedFormat;
-        return stem + (tag ? "_" + tag : "") + "_omastudio." + ext;
+        var suffix = "_omastudio.";
+        var name = stem + (tag ? "_" + tag : "") + suffix + ext;
+        return name;
     }
 
     Process {
@@ -50,6 +52,7 @@ Rectangle {
     property string localOutputDir: "~/Pictures/OmaStudio_Exports"
     property bool isExporting: false
     property string exportStatusText: ""
+    property bool exportStatusIsError: false
     property bool isBatchMode: false
     property int batchCount: 0
     property bool watermarkEnabled: false

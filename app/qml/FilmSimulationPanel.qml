@@ -24,32 +24,32 @@ Rectangle {
     signal simulationChanged(string id, real intensity)
 
     readonly property var filmSimulations: [
-        { "id": "none", "name": "Standard / Off", "brand": "Standard", "desc": "Neutral camera linear profile", "color": "#7982a9" },
+        { "id": "none", "name": qsTr("Standard / Off"), "brand": "Standard", "desc": qsTr("Neutral camera linear profile"), "color": "#7982a9" },
         // Fujifilm Color
-        { "id": "fuji_provia", "name": "Provia 100F", "brand": "Fujifilm", "desc": "Standard natural daylight color", "color": "#7aa2f7" },
-        { "id": "fuji_velvia", "name": "Velvia 50", "brand": "Fujifilm", "desc": "Ultra-vivid landscapes & high saturation", "color": "#f7768e" },
-        { "id": "fuji_astia", "name": "Astia 100F", "brand": "Fujifilm", "desc": "Soft portraits with smooth skin gradations", "color": "#ff9e64" },
-        { "id": "fuji_classic_chrome", "name": "Classic Chrome", "brand": "Fujifilm", "desc": "Documentary tones, muted colors & deep shadows", "color": "#e0af68" },
-        { "id": "fuji_classic_neg", "name": "Classic Neg", "brand": "Fujifilm", "desc": "Superia color negative film nostalgia", "color": "#9ece6a" },
-        { "id": "fuji_eterna", "name": "Eterna Cinema", "brand": "Fujifilm", "desc": "Cinematic flat gamma with soft highlight roll-off", "color": "#7dcfff" },
-        { "id": "fuji_reala_ace", "name": "Reala Ace", "brand": "Fujifilm", "desc": "Faithful colour with slightly firmer contrast", "color": "#7aa2f7" },
-        { "id": "fuji_nostalgic_neg", "name": "Nostalgic Neg.", "brand": "Fujifilm", "desc": "Amber highlights and rich shadows", "color": "#ff9e64" },
-        { "id": "fuji_pro_neg_hi", "name": "PRO Neg. Hi", "brand": "Fujifilm", "desc": "Studio portraits with a little more contrast", "color": "#e0af68" },
-        { "id": "fuji_pro_neg_std", "name": "PRO Neg. Std", "brand": "Fujifilm", "desc": "Soft studio portraits with even skin tones", "color": "#c0caf5" },
-        { "id": "fuji_eterna_bleach_bypass", "name": "Eterna Bleach Bypass", "brand": "Fujifilm", "desc": "Hard contrast with very low saturation", "color": "#545c7e" },
+        { "id": "fuji_provia", "name": "Provia 100F", "brand": "Fujifilm", "desc": qsTr("Standard natural daylight color"), "color": "#7aa2f7" },
+        { "id": "fuji_velvia", "name": "Velvia 50", "brand": "Fujifilm", "desc": qsTr("Ultra-vivid landscapes & high saturation"), "color": "#f7768e" },
+        { "id": "fuji_astia", "name": "Astia 100F", "brand": "Fujifilm", "desc": qsTr("Soft portraits with smooth skin gradations"), "color": "#ff9e64" },
+        { "id": "fuji_classic_chrome", "name": "Classic Chrome", "brand": "Fujifilm", "desc": qsTr("Documentary tones, muted colors & deep shadows"), "color": "#e0af68" },
+        { "id": "fuji_classic_neg", "name": "Classic Neg", "brand": "Fujifilm", "desc": qsTr("Superia color negative film nostalgia"), "color": "#9ece6a" },
+        { "id": "fuji_eterna", "name": "Eterna Cinema", "brand": "Fujifilm", "desc": qsTr("Cinematic flat gamma with soft highlight roll-off"), "color": "#7dcfff" },
+        { "id": "fuji_reala_ace", "name": "Reala Ace", "brand": "Fujifilm", "desc": qsTr("Faithful colour with slightly firmer contrast"), "color": "#7aa2f7" },
+        { "id": "fuji_nostalgic_neg", "name": "Nostalgic Neg.", "brand": "Fujifilm", "desc": qsTr("Amber highlights and rich shadows"), "color": "#ff9e64" },
+        { "id": "fuji_pro_neg_hi", "name": "PRO Neg. Hi", "brand": "Fujifilm", "desc": qsTr("Studio portraits with a little more contrast"), "color": "#e0af68" },
+        { "id": "fuji_pro_neg_std", "name": "PRO Neg. Std", "brand": "Fujifilm", "desc": qsTr("Soft studio portraits with even skin tones"), "color": "#c0caf5" },
+        { "id": "fuji_eterna_bleach_bypass", "name": "Eterna Bleach Bypass", "brand": "Fujifilm", "desc": qsTr("Hard contrast with very low saturation"), "color": "#545c7e" },
         // Fujifilm Monochrome
-        { "id": "fuji_acros_standard", "name": "Acros 100", "brand": "Acros B&W", "desc": "Legendary ultra-fine grain monochrome", "color": "#c0caf5" },
-        { "id": "fuji_acros_yellow", "name": "Acros (+Ye)", "brand": "Acros B&W", "desc": "Slight contrast lift for skies and portraits", "color": "#e0af68" },
-        { "id": "fuji_acros_red", "name": "Acros (+R)", "brand": "Acros B&W", "desc": "Deep dramatic skies and high micro-contrast", "color": "#f7768e" },
-        { "id": "fuji_acros_green", "name": "Acros (+G)", "brand": "Acros B&W", "desc": "Enhanced foliage separation and soft skin tones", "color": "#9ece6a" },
-        { "id": "fuji_monochrome", "name": "Monochrome", "brand": "Acros B&W", "desc": "Standard black and white", "color": "#c0caf5" },
-        { "id": "fuji_monochrome_yellow", "name": "Monochrome (+Ye)", "brand": "Acros B&W", "desc": "Yellow filter: darker skies", "color": "#e0af68" },
-        { "id": "fuji_monochrome_red", "name": "Monochrome (+R)", "brand": "Acros B&W", "desc": "Red filter: dramatic skies", "color": "#f7768e" },
-        { "id": "fuji_monochrome_green", "name": "Monochrome (+G)", "brand": "Acros B&W", "desc": "Green filter: lighter foliage", "color": "#9ece6a" },
-        { "id": "fuji_sepia", "name": "Sepia", "brand": "Acros B&W", "desc": "Warm brown toned monochrome", "color": "#ff9e64" },
+        { "id": "fuji_acros_standard", "name": "Acros 100", "brand": "Acros B&W", "desc": qsTr("Very fine grain black and white"), "color": "#c0caf5" },
+        { "id": "fuji_acros_yellow", "name": "Acros (+Ye)", "brand": "Acros B&W", "desc": qsTr("Slight contrast lift for skies and portraits"), "color": "#e0af68" },
+        { "id": "fuji_acros_red", "name": "Acros (+R)", "brand": "Acros B&W", "desc": qsTr("Deep dramatic skies and high micro-contrast"), "color": "#f7768e" },
+        { "id": "fuji_acros_green", "name": "Acros (+G)", "brand": "Acros B&W", "desc": qsTr("Enhanced foliage separation and soft skin tones"), "color": "#9ece6a" },
+        { "id": "fuji_monochrome", "name": qsTr("Monochrome"), "brand": "Acros B&W", "desc": qsTr("Standard black and white"), "color": "#c0caf5" },
+        { "id": "fuji_monochrome_yellow", "name": qsTr("Monochrome (+Ye)"), "brand": "Acros B&W", "desc": qsTr("Yellow filter: darker skies"), "color": "#e0af68" },
+        { "id": "fuji_monochrome_red", "name": qsTr("Monochrome (+R)"), "brand": "Acros B&W", "desc": qsTr("Red filter: dramatic skies"), "color": "#f7768e" },
+        { "id": "fuji_monochrome_green", "name": qsTr("Monochrome (+G)"), "brand": "Acros B&W", "desc": qsTr("Green filter: lighter foliage"), "color": "#9ece6a" },
+        { "id": "fuji_sepia", "name": qsTr("Sepia"), "brand": "Acros B&W", "desc": qsTr("Warm brown toned monochrome"), "color": "#ff9e64" },
         // Hasselblad
-        { "id": "hasselblad_hncs", "name": "HNCS Neutral", "brand": "Hasselblad", "desc": "Natural Colour Solution 16-bit medium format", "color": "#bb9af7" },
-        { "id": "hasselblad_xpan", "name": "XPan Panoramic", "brand": "Hasselblad", "desc": "35mm panoramic cinematic contrast", "color": "#545c7e" }
+        { "id": "hasselblad_hncs", "name": "HNCS Neutral", "brand": "Hasselblad", "desc": qsTr("Natural Colour Solution 16-bit medium format"), "color": "#bb9af7" },
+        { "id": "hasselblad_xpan", "name": "XPan Panoramic", "brand": "Hasselblad", "desc": qsTr("35mm panoramic cinematic contrast"), "color": "#545c7e" }
     ]
 
     property string selectedBrand: "All"
@@ -113,30 +113,30 @@ Rectangle {
             spacing: 6
 
             Repeater {
-                model: ["All", "Fujifilm", "Acros B&W", "Hasselblad"]
+                model: [{ "key": "All", "label": qsTr("All") }, { "key": "Fujifilm", "label": "Fujifilm" }, { "key": "Acros B&W", "label": qsTr("Acros B&W") }, { "key": "Hasselblad", "label": "Hasselblad" }]
                 Rectangle {
                     implicitWidth: brandText.implicitWidth + 12
                     implicitHeight: 20
                     radius: Theme.r(4)
-                    color: root.selectedBrand === modelData ? Theme.accent : Theme.bgCard
-                    border.color: root.selectedBrand === modelData ? Theme.accent : Theme.border
+                    color: root.selectedBrand === modelData.key ? Theme.accent : Theme.bgCard
+                    border.color: root.selectedBrand === modelData.key ? Theme.accent : Theme.border
                     border.width: 1
 
                     Text {
                         id: brandText
                         anchors.centerIn: parent
-                        text: modelData
+                        text: modelData.label
                         textFormat: Text.PlainText
                         font.family: Theme.fontFamily
                         font.pixelSize: Theme.px(9)
-                        font.weight: root.selectedBrand === modelData ? Font.Bold : Font.Normal
-                        color: root.selectedBrand === modelData ? Theme.bgBase : Theme.textMain
+                        font.weight: root.selectedBrand === modelData.key ? Font.Bold : Font.Normal
+                        color: root.selectedBrand === modelData.key ? Theme.bgBase : Theme.textMain
                     }
 
                     MouseArea {
                         anchors.fill: parent
                         cursorShape: Qt.PointingHandCursor
-                        onClicked: root.selectedBrand = modelData
+                        onClicked: root.selectedBrand = modelData.key
                     }
                 }
             }

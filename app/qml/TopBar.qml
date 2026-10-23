@@ -342,9 +342,9 @@ Rectangle {
                     hoverEnabled: true
                     ToolTip.visible: containsMouse
                     ToolTip.delay: 500
-                    ToolTip.text: "Undo (Ctrl+Z)"
+                    ToolTip.text: qsTr("Undo (Ctrl+Z)")
                     Accessible.role: Accessible.Button
-                    Accessible.name: "Undo"
+                    Accessible.name: qsTr("Undo")
                     onClicked: root.undoClicked()
                 }
             }
@@ -371,9 +371,9 @@ Rectangle {
                     hoverEnabled: true
                     ToolTip.visible: containsMouse
                     ToolTip.delay: 500
-                    ToolTip.text: "Redo (Ctrl+Shift+Z)"
+                    ToolTip.text: qsTr("Redo (Ctrl+Shift+Z)")
                     Accessible.role: Accessible.Button
-                    Accessible.name: "Redo"
+                    Accessible.name: qsTr("Redo")
                     onClicked: root.redoClicked()
                 }
             }
@@ -383,13 +383,14 @@ Rectangle {
         Rectangle {
             enabled: root.hasPhoto
             opacity: enabled ? 1 : 0.4
-            implicitWidth: 70
+            implicitWidth: Math.max(70, label374.implicitWidth + 16)
             implicitHeight: 28
             radius: Theme.radiusSm
             color: root.isSplitView ? Qt.rgba(Theme.accent.r, Theme.accent.g, Theme.accent.b, 0.25) : Theme.bgCard
             border.color: root.isSplitView ? Theme.accent : Theme.border
 
             RowLayout {
+                id: label374
                 anchors.centerIn: parent
                 spacing: 5
                 Text {
@@ -419,13 +420,14 @@ Rectangle {
         Rectangle {
             enabled: root.hasPhoto
             opacity: enabled ? 1 : 0.4
-            implicitWidth: 68
+            implicitWidth: Math.max(68, label409.implicitWidth + 16)
             implicitHeight: 28
             radius: Theme.radiusSm
             color: root.isCropMode ? Qt.rgba(Theme.accent.r, Theme.accent.g, Theme.accent.b, 0.25) : Theme.bgCard
             border.color: root.isCropMode ? Theme.accent : Theme.border
 
             RowLayout {
+                id: label409
                 anchors.centerIn: parent
                 spacing: 5
                 Text {
@@ -436,7 +438,7 @@ Rectangle {
                 }
                 Text {
                     font.family: Theme.fontFamily
-                    text: "Crop"
+                    text: qsTr("Crop")
                     textFormat: Text.PlainText
                     font.pixelSize: Theme.px(10)
                     font.weight: Font.DemiBold
@@ -453,9 +455,11 @@ Rectangle {
 
         Item { Layout.fillWidth: true }
 
+        LanguageMenu {}
+
         // Omarchy Studio Info & About Button
         Rectangle {
-            implicitWidth: 32
+            implicitWidth: Math.max(32, label513.implicitWidth + 16)
             implicitHeight: 28
             radius: Theme.radiusSm
             color: mouseInfo.containsMouse ? Theme.bgCardHover : Theme.bgCard
@@ -463,6 +467,7 @@ Rectangle {
             border.width: 1
 
             Text {
+                id: label513
                 anchors.centerIn: parent
                 text: Theme.iconInfo
                 font.family: Theme.iconFont
@@ -482,13 +487,14 @@ Rectangle {
 
         // Open Photo Button
         Rectangle {
-            implicitWidth: 92
+            implicitWidth: Math.max(92, label541.implicitWidth + 16)
             implicitHeight: 28
             radius: Theme.radiusSm
             color: Theme.bgCard
             border.color: Theme.border
 
             RowLayout {
+                id: label541
                 anchors.centerIn: parent
                 spacing: 6
                 Text {
@@ -499,7 +505,7 @@ Rectangle {
                 }
                 Text {
                     font.family: Theme.fontFamily
-                    text: "Open RAW"
+                    text: qsTr("Open RAW")
                     textFormat: Text.PlainText
                     font.pixelSize: Theme.px(11)
                     font.weight: Font.Medium
@@ -516,12 +522,13 @@ Rectangle {
 
         // Export Button (Bright CTA)
         Rectangle {
-            implicitWidth: 88
+            implicitWidth: Math.max(88, label576.implicitWidth + 16)
             implicitHeight: 28
             radius: Theme.radiusSm
             color: Theme.accent
 
             RowLayout {
+                id: label576
                 anchors.centerIn: parent
                 spacing: 6
                 Text {
@@ -532,7 +539,7 @@ Rectangle {
                 }
                 Text {
                     font.family: Theme.fontFamily
-                    text: "Export"
+                    text: qsTr("Export")
                     textFormat: Text.PlainText
                     font.pixelSize: Theme.px(11)
                     font.weight: Font.Bold

@@ -116,7 +116,7 @@ Rectangle {
             }
 
             Text {
-                text: "Vectorscope 123 Flesh Line (Target: " + root.skinTargetHue.toFixed(0) + " deg)"
+                text: qsTr("Vectorscope 123° flesh line (target: %1°)").arg(root.skinTargetHue.toFixed(0))
                 textFormat: Text.PlainText
                 font.family: Theme.fontFamily
                 font.pixelSize: Theme.px(11)
@@ -133,13 +133,13 @@ Rectangle {
             enabled: root.skinToneEnabled
 
             SliderGroup {
-                title: "Target Skin Hue"
+                title: qsTr("Target Skin Hue")
                 from: 30.0
                 to: 75.0
                 value: root.skinTargetHue
                 defaultValue: 50.0
                 stepSize: 1.0
-                suffix: " deg"
+                suffix: "°"
                 accentColor: Theme.accentOrange
                 onSliderMoved: function(v) {
                     root.skinTargetHue = v;
@@ -148,13 +148,13 @@ Rectangle {
             }
 
             SliderGroup {
-                title: "Hue Tolerance Range"
+                title: qsTr("Hue Tolerance Range")
                 from: 15.0
                 to: 60.0
                 value: root.skinHueRange
                 defaultValue: 32.0
                 stepSize: 1.0
-                suffix: " deg"
+                suffix: "°"
                 accentColor: Theme.accentYellow
                 onSliderMoved: function(v) {
                     root.skinHueRange = v;
@@ -163,7 +163,7 @@ Rectangle {
             }
 
             SliderGroup {
-                title: "Hue Uniformity"
+                title: qsTr("Hue Uniformity")
                 from: 0.0
                 to: 100.0
                 value: root.skinUniformityHue
@@ -177,7 +177,7 @@ Rectangle {
             }
 
             SliderGroup {
-                title: "Saturation Uniformity"
+                title: qsTr("Saturation Uniformity")
                 from: 0.0
                 to: 100.0
                 value: root.skinUniformitySat
@@ -191,7 +191,7 @@ Rectangle {
             }
 
             SliderGroup {
-                title: "Hue Shift"
+                title: qsTr("Hue Shift")
                 from: -100.0
                 to: 100.0
                 value: root.skinAmountHue
@@ -204,7 +204,7 @@ Rectangle {
             }
 
             SliderGroup {
-                title: "Saturation Shift"
+                title: qsTr("Saturation Shift")
                 from: -100.0
                 to: 100.0
                 value: root.skinAmountSat

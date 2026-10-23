@@ -7,7 +7,7 @@ ColumnLayout {
     spacing: 4
     Layout.fillWidth: true
 
-    property string title: "Adjustment"
+    property string title: qsTr("Adjustment")
     property real from: -100.0
     property real to: 100.0
     property real value: 0.0

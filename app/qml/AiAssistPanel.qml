@@ -56,8 +56,8 @@ ColumnLayout {
         if (root.choice.provider)
             return root.providerName(root.choice.provider) + (root.choice.model ? " · " + root.choice.model : "");
         for (var i = 0; i < root.providers.length; i++)
-            if (root.providers[i].ready) return root.providers[i].name + " (automatic)";
-        return "No provider set up";
+            if (root.providers[i].ready) return qsTr("%1 (automatic)").arg(root.providers[i].name);
+        return qsTr("No provider set up");
     }
 
     function runEdit() {
@@ -73,7 +73,7 @@ ColumnLayout {
         try {
             return JSON.parse(String(output || ""));
         } catch (e) {
-            return { "success": false, "error": "The engine gave no answer" };
+            return { "success": false, "error": qsTr("The engine gave no answer") };
         }
     }
 
@@ -96,7 +96,7 @@ ColumnLayout {
                 root.explanation = resp.data.explanation || "";
                 root.recipeSuggested(resp.data.recipe, root.explanation);
             } else {
-                root.notify(String(resp.error || "AI edit failed").split("\n")[0], true);
+                root.notify(String(resp.error || qsTr("AI edit failed")).split("\n")[0], true);
             }
         }
     }
@@ -117,7 +117,7 @@ ColumnLayout {
             var ok = setupProc.action === "key" ? qsTr("API key stored in the keyring")
                    : setupProc.action === "local" ? qsTr("Connected to local AI: %1").arg(resp.success ? resp.data.model : "")
                    : qsTr("Provider saved");
-            root.notify(resp.success ? ok : String(resp.error || "Failed").split("\n")[0], !resp.success);
+            root.notify(resp.success ? ok : String(resp.error || qsTr("Failed")).split("\n")[0], !resp.success);
             root.refresh();
         }
     }
@@ -230,7 +230,7 @@ ColumnLayout {
             font.family: Theme.fontFamily
             font.pixelSize: Theme.px(10)
             color: Theme.textMain
-            placeholderText: "e.g. warmer, moody evening light, recover the sky"
+            placeholderText: qsTr("e.g. warmer, moody evening light, recover the sky")
             placeholderTextColor: Theme.textDim
             onAccepted: root.runEdit()
         }
@@ -308,8 +308,8 @@ ColumnLayout {
                 for (var i = 0; i < root.providers.length; i++) {
                     var p = root.providers[i];
                     if (p.id !== root.setupProvider) continue;
-                    if (p.local) return p.ready ? "Running. Models: " + p.models.join(", ") : "Not running. Start it to use local models.";
-                    return p.ready ? "API key stored." : "No API key stored yet.";
+                    if (p.local) return p.ready ? qsTr("Running. Models: %1").arg(p.models.join(", ")) : qsTr("Not running. Start it to use local models.");
+                    return p.ready ? qsTr("API key stored.") : qsTr("No API key stored yet.");
                 }
                 return "";
             }
@@ -326,7 +326,7 @@ ColumnLayout {
                 font.family: Theme.fontFamily
                 font.pixelSize: Theme.px(10)
                 color: Theme.textMain
-                placeholderText: "Model (empty: provider default or first local model)"
+                placeholderText: qsTr("Model (empty: provider default or first local model)")
                 placeholderTextColor: Theme.textDim
             }
         }
@@ -356,7 +356,7 @@ ColumnLayout {
                         font.family: Theme.fontFamily
                         visible: keyInput.text.length === 0
                         anchors.verticalCenter: parent.verticalCenter
-                        text: "API key"
+                        text: qsTr("API key")
                         textFormat: Text.PlainText
                         font.pixelSize: Theme.px(10)
                         color: Theme.textDim

@@ -1,5 +1,6 @@
 # Types of the OmaStudio interface (one directory, so every file sees all of them)
 singleton Theme 1.0 Theme.qml
+singleton I18n 1.0 I18n.qml
 AboutDialog 1.0 AboutDialog.qml
 AiAssistPanel 1.0 AiAssistPanel.qml
 BoundedTextInput 1.0 BoundedTextInput.qml
@@ -16,6 +17,7 @@ FujiPanel 1.0 FujiPanel.qml
 GradeVersionsBar 1.0 GradeVersionsBar.qml
 HistogramView 1.0 HistogramView.qml
 HslMixer 1.0 HslMixer.qml
+LanguageMenu 1.0 LanguageMenu.qml
 LayersPanel 1.0 LayersPanel.qml
 LutSelector 1.0 LutSelector.qml
 MainWindow 1.0 MainWindow.qml

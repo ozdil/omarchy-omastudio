@@ -138,7 +138,7 @@ Rectangle {
                     }
                     Text {
                         font.family: Theme.fontFamily
-                        text: "Up"
+                        text: qsTr("Up")
                         textFormat: Text.PlainText
                         font.pixelSize: Theme.px(9)
                         font.weight: Font.DemiBold
@@ -154,7 +154,7 @@ Rectangle {
             }
 
             Text {
-                text: root.currentFolder
+                text: root.isCatalogMode ? qsTr("Studio Catalog") : root.currentFolder
                 textFormat: Text.PlainText
                 font.pixelSize: Theme.px(10)
                 font.family: Theme.monoFont
@@ -193,7 +193,7 @@ Rectangle {
                     }
                     Text {
                         font.family: Theme.fontFamily
-                        text: root.isCatalogMode ? "Scanning Catalog..." : "Scanning Folder..."
+                        text: root.isCatalogMode ? qsTr("Scanning Catalog...") : qsTr("Scanning Folder...")
                         textFormat: Text.PlainText
                         font.pixelSize: Theme.px(9)
                         font.weight: Font.Bold
@@ -232,7 +232,7 @@ Rectangle {
                     }
                     Text {
                         font.family: Theme.fontFamily
-                        text: "Downloading RAW..."
+                        text: qsTr("Downloading RAW...")
                         textFormat: Text.PlainText
                         font.pixelSize: Theme.px(9)
                         font.weight: Font.Bold
@@ -262,7 +262,7 @@ Rectangle {
                     }
                     Text {
                         font.family: Theme.fontFamily
-                        text: "Batch (" + root.selectedPaths.length + ")"
+                        text: qsTr("Batch (%1)").arg(root.selectedPaths.length)
                         textFormat: Text.PlainText
                         font.pixelSize: Theme.px(9)
                         font.weight: Font.Bold
@@ -319,7 +319,7 @@ Rectangle {
                         color: Theme.textDim
                     }
                     Text {
-                        text: root.isCatalogMode ? "No photos found in Studio Catalog." : "No photos found in this directory."
+                        text: root.isCatalogMode ? qsTr("No photos found in Studio Catalog.") : qsTr("No photos found in this directory.")
                         textFormat: Text.PlainText
                         font.pixelSize: Theme.px(10)
                         font.family: Theme.monoFont
@@ -446,7 +446,7 @@ Rectangle {
                                         Layout.alignment: Qt.AlignHCenter
                                     }
                                     Text {
-                                        text: "Loading..."
+                                        text: qsTr("Loading...")
                                         textFormat: Text.PlainText
                                         font.pixelSize: Theme.px(8)
                                         font.family: Theme.monoFont
@@ -498,7 +498,7 @@ Rectangle {
                                     Text {
                                         font.family: Theme.fontFamily
                                         anchors.centerIn: parent
-                                        text: "P"
+                                        text: qsTr("P", "pick flag, first letter of Pick")
                                         textFormat: Text.PlainText
                                         font.pixelSize: Theme.px(8)
                                         font.weight: Font.Bold
