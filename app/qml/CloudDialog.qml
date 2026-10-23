@@ -69,15 +69,18 @@ Rectangle {
         id: btn
         property string label
         property bool primary: false
+        property bool danger: false
         property bool enabledButton: true
         signal clicked()
         implicitWidth: btnText.implicitWidth + Theme.px(20)
         implicitHeight: Theme.px(26)
         radius: Theme.radiusSm
         opacity: enabledButton ? 1 : 0.5
-        color: primary ? (btnMouse.containsMouse ? Qt.lighter(Theme.accent, 1.1) : Theme.accent)
-                       : (btnMouse.containsMouse ? Theme.bgCardHover : Theme.bgCard)
-        border.color: primary ? Theme.accent : Theme.border
+        readonly property color fill: danger ? Theme.accentRed : Theme.accent
+        readonly property bool filled: primary || danger
+        color: filled ? (btnMouse.containsMouse ? Qt.lighter(fill, 1.1) : fill)
+                      : (btnMouse.containsMouse ? Theme.bgCardHover : Theme.bgCard)
+        border.color: filled ? fill : Theme.border
         Text {
             id: btnText
             anchors.centerIn: parent
@@ -85,8 +88,8 @@ Rectangle {
             textFormat: Text.PlainText
             font.family: Theme.fontFamily
             font.pixelSize: Theme.px(11)
-            font.weight: btn.primary ? Font.DemiBold : Font.Normal
-            color: btn.primary ? Theme.onAccent : Theme.textMain
+            font.weight: btn.filled ? Font.DemiBold : Font.Normal
+            color: btn.filled ? Theme.onAccent : Theme.textMain
         }
         MouseArea {
             id: btnMouse
@@ -294,12 +297,20 @@ Rectangle {
                             }
                         }
                         SmallButton {
+                            visible: root.confirmDisconnect !== modelData.id
                             label: qsTr("Browse")
                             primary: true
                             onClicked: root.browseRequested(modelData.id)
                         }
                         SmallButton {
+                            visible: root.confirmDisconnect === modelData.id
+                            label: qsTr("Cancel")
+                            onClicked: root.confirmDisconnect = ""
+                        }
+                        SmallButton {
+                            // The first click asks; the red Confirm removes the account
                             label: root.confirmDisconnect === modelData.id ? qsTr("Confirm") : qsTr("Disconnect")
+                            danger: root.confirmDisconnect === modelData.id
                             onClicked: {
                                 if (root.confirmDisconnect === modelData.id) {
                                     root.confirmDisconnect = "";
@@ -314,6 +325,7 @@ Rectangle {
             }
             Hint {
                 visible: root.confirmDisconnect !== ""
+                color: Theme.accentRed
                 text: qsTr("Disconnecting removes the account's keys and downloaded copies from this computer. Files in the account stay as they are.")
             }
 
