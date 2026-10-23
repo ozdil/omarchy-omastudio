@@ -232,6 +232,57 @@
     </message>
 </context>
 <context>
+    <name>AiChatPanel</name>
+    <message>
+        <source>Open a photo first</source>
+        <translation>Åpne et bilde først</translation>
+    </message>
+    <message>
+        <source>Edit applied.</source>
+        <translation>Redigering brukt.</translation>
+    </message>
+    <message>
+        <source>Chat · %1</source>
+        <translation>Samtale · %1</translation>
+    </message>
+    <message>
+        <source>Chat</source>
+        <translation>Samtale</translation>
+    </message>
+    <message>
+        <source>Reconnect</source>
+        <translation>Koble til på nytt</translation>
+    </message>
+    <message>
+        <source>Clear chat</source>
+        <translation>Tøm samtale</translation>
+    </message>
+    <message>
+        <source>Close chat</source>
+        <translation>Lukk samtale</translation>
+    </message>
+    <message>
+        <source>Write below what to change in the photo. The AI sets the adjustments; Ctrl+Z undoes each edit.</source>
+        <translation>Skriv nedenfor hva som skal endres i bildet. KI-en stiller inn glidebryterne; Ctrl+Z angrer hver redigering.</translation>
+    </message>
+    <message>
+        <source>Working…</source>
+        <translation>Arbeider…</translation>
+    </message>
+    <message>
+        <source>e.g. warmer, moody evening light, recover the sky</source>
+        <translation>f.eks. varmere, stemningsfullt kveldslys, gjenopprett himmelen</translation>
+    </message>
+    <message>
+        <source>Message to the AI</source>
+        <translation>Melding til KI</translation>
+    </message>
+    <message>
+        <source>Send</source>
+        <translation>Send</translation>
+    </message>
+</context>
+<context>
     <name>BoundedTextInput</name>
     <message>
         <source>Clipboard content exceeded byte limit or timed out.</source>
@@ -642,10 +693,6 @@
         <translation>Standard / av</translation>
     </message>
     <message>
-        <source>Neutral camera linear profile</source>
-        <translation>Nøytral lineær kameraprofil</translation>
-    </message>
-    <message>
         <source>Standard natural daylight color</source>
         <translation>Naturlig dagslysfarge som standard</translation>
     </message>
@@ -772,6 +819,10 @@
     <message>
         <source>Acros B&amp;W</source>
         <translation>Acros S/H</translation>
+    </message>
+    <message>
+        <source>No film simulation</source>
+        <translation>Ingen filmsimulering</translation>
     </message>
 </context>
 <context>
@@ -1289,10 +1340,6 @@
         <translation>Forhåndsvisningen kunne ikke gjengis</translation>
     </message>
     <message>
-        <source>%1 applied (%2)</source>
-        <translation>%1 brukt (%2)</translation>
-    </message>
-    <message>
         <source>Batch export: %1 succeeded, %2 failed</source>
         <translation>Satsvis eksport: %1 vellykket, %2 mislyktes</translation>
     </message>
@@ -1467,10 +1514,6 @@
     <message>
         <source>Reset to defaults</source>
         <translation>Standardverdier gjenopprettet</translation>
-    </message>
-    <message>
-        <source>Platform crop reset</source>
-        <translation>Plattformbeskjæring tilbakestilt</translation>
     </message>
     <message>
         <source>Auto applied</source>
@@ -1699,6 +1742,22 @@
         <source>Developing at full resolution…</source>
         <translation>Fremkaller i full oppløsning…</translation>
     </message>
+    <message>
+        <source>%1 applied: long edge %2 px, quality %3</source>
+        <translation>%1 brukt: lang side %2 px, kvalitet %3</translation>
+    </message>
+    <message>
+        <source>Pro: tone curve, colour mixer, colour grading, detail, grain, colour management and the Masks tab are shown</source>
+        <translation>Pro: tonekurve, fargemikser, fargegradering, detaljer, korn, fargestyring og fanen Masker vises</translation>
+    </message>
+    <message>
+        <source>Essentials: Pro sections are hidden. Settings made in them stay applied.</source>
+        <translation>Grunnleggende: Pro-seksjoner er skjult. Innstillingene deres gjelder fortsatt.</translation>
+    </message>
+    <message>
+        <source>Platform crop reset</source>
+        <translation>Plattformbeskjæring tilbakestilt</translation>
+    </message>
 </context>
 <context>
     <name>Navigator</name>
@@ -1712,6 +1771,10 @@
     <message>
         <source>Reset %1</source>
         <translation>Tilbakestill %1</translation>
+    </message>
+    <message>
+        <source>Pro</source>
+        <translation>Pro</translation>
     </message>
 </context>
 <context>
@@ -1908,10 +1971,6 @@
         <translation>Tilbakestill</translation>
     </message>
     <message>
-        <source>Vectorscope 123° flesh line (target: %1°)</source>
-        <translation>Vektorskopets hudlinje på 123° (mål: %1°)</translation>
-    </message>
-    <message>
         <source>Target Skin Hue</source>
         <translation>Målfargetone for hud</translation>
     </message>
@@ -1934,6 +1993,10 @@
     <message>
         <source>Saturation Shift</source>
         <translation>Metningsforskyvning</translation>
+    </message>
+    <message>
+        <source>Target skin hue: %1° (Oklab)</source>
+        <translation>Mål for hudtone: %1° (Oklab)</translation>
     </message>
 </context>
 <context>
@@ -2000,16 +2063,8 @@
         <translation>Kobler til…</translation>
     </message>
     <message>
-        <source>Local AI</source>
-        <translation>Lokal AI</translation>
-    </message>
-    <message>
         <source>Connect local AI</source>
         <translation>Koble til lokal AI</translation>
-    </message>
-    <message>
-        <source>Connected: %1. Click to reconnect.</source>
-        <translation>Tilkoblet: %1. Klikk for å koble til på nytt.</translation>
     </message>
     <message>
         <source>Use Omarchy&apos;s default AI agent, or Ollama or LM Studio on this computer</source>
@@ -2050,6 +2105,26 @@
     <message>
         <source>Export</source>
         <translation>Eksporter</translation>
+    </message>
+    <message>
+        <source>Connected: %1. Click to close the chat.</source>
+        <translation>Tilkoblet: %1. Klikk for å lukke samtalen.</translation>
+    </message>
+    <message>
+        <source>Connected: %1. Click to open the chat.</source>
+        <translation>Tilkoblet: %1. Klikk for å åpne samtalen.</translation>
+    </message>
+    <message>
+        <source>AI chat</source>
+        <translation>KI-samtale</translation>
+    </message>
+    <message>
+        <source>Essentials: white balance, tone, presence, film simulation, presets and LUT</source>
+        <translation>Grunnleggende: hvitbalanse, tone, tilstedeværelse, filmsimulering, forhåndsinnstillinger og LUT</translation>
+    </message>
+    <message>
+        <source>Pro adds tone curve, colour mixer, colour grading, detail, grain, colour management and masks</source>
+        <translation>Pro legger til tonekurve, fargemikser, fargegradering, detaljer, korn, fargestyring og masker</translation>
     </message>
 </context>
 <context>

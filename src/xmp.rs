@@ -104,13 +104,16 @@ pub fn write(recipe: &Recipe, culling: &Culling) -> String {
         crs.push((format!("LuminanceAdjustment{color}"), num(recipe.hsl_lum[i])));
     }
     let has_crop = recipe.crop_w > 0.0 && recipe.crop_h > 0.0 && (recipe.crop_w < 1.0 || recipe.crop_h < 1.0 || recipe.crop_x > 0.0 || recipe.crop_y > 0.0);
-    if has_crop || recipe.rotation != 0.0 {
+    // Camera Raw's CropAngle is a straightening angle (at most 45°); quarter turns
+    // only travel in the OmaStudio recipe
+    let straighten = recipe.rotation - (recipe.rotation / 90.0).round() * 90.0;
+    if has_crop || straighten.abs() >= 0.01 {
         let (w, h) = if recipe.crop_w > 0.0 && recipe.crop_h > 0.0 { (recipe.crop_w, recipe.crop_h) } else { (1.0, 1.0) };
         crs.push(("CropTop".into(), format!("{:.6}", recipe.crop_y)));
         crs.push(("CropLeft".into(), format!("{:.6}", recipe.crop_x)));
         crs.push(("CropBottom".into(), format!("{:.6}", (recipe.crop_y + h).min(1.0))));
         crs.push(("CropRight".into(), format!("{:.6}", (recipe.crop_x + w).min(1.0))));
-        crs.push(("CropAngle".into(), num(recipe.rotation)));
+        crs.push(("CropAngle".into(), num(straighten)));
         crs.push(("HasCrop".into(), "True".into()));
     }
     crs.push(("HasSettings".into(), "True".into()));
@@ -271,6 +274,15 @@ mod tests {
         assert_eq!(r.rotation, 1.5);
         assert_eq!(c.rating, -1);
         assert_eq!(r.flag, "reject");
+    }
+
+    #[test]
+    fn quarter_turns_are_not_written_as_crop_angle() {
+        let r = Recipe { rotation: 91.5, ..Recipe::default() };
+        let xmp = write(&r, &Culling::default());
+        assert_eq!(number(&xmp, "crs:CropAngle"), Some(1.5));
+        let r = Recipe { rotation: 90.0, ..Recipe::default() };
+        assert!(!write(&r, &Culling::default()).contains("crs:CropAngle"));
     }
 
     #[test]

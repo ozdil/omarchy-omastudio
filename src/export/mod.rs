@@ -6,6 +6,7 @@ use crate::raw::{OutputColorSpace, RawImage};
 use crate::recipe::Recipe;
 use crate::security::{run_bounded_command, secure_command, secure_command_with_mem_limit};
 use image::{DynamicImage, ImageBuffer, ImageEncoder, Rgb};
+use rayon::prelude::*;
 use serde::{Deserialize, Serialize};
 use std::fs;
 use std::path::{Path, PathBuf};
@@ -140,32 +141,7 @@ pub fn export_photo<P: AsRef<Path>>(
         .ok_or_else(|| "Failed to construct 16-bit ImageBuffer from processed data".to_string())?;
     let mut dyn_img = DynamicImage::ImageRgb16(img);
 
-    // Apply geometric transformations (Rotation / Flip)
-    let rot_norm = ((recipe.rotation.round() as i32) % 360 + 360) % 360;
-    if (45..135).contains(&rot_norm) {
-        dyn_img = dyn_img.rotate90();
-    } else if (135..225).contains(&rot_norm) {
-        dyn_img = dyn_img.rotate180();
-    } else if (225..315).contains(&rot_norm) {
-        dyn_img = dyn_img.rotate270();
-    }
-
-    if recipe.flip_h {
-        dyn_img = dyn_img.fliph();
-    }
-    if recipe.flip_v {
-        dyn_img = dyn_img.flipv();
-    }
-
-    // Apply Crop if active
-    let (cw, ch) = (dyn_img.width(), dyn_img.height());
-    if recipe.crop_w < 0.999 || recipe.crop_h < 0.999 || recipe.crop_x > 0.001 || recipe.crop_y > 0.001 {
-        let cx = ((recipe.crop_x * cw as f32).round() as u32).min(cw.saturating_sub(1));
-        let cy = ((recipe.crop_y * ch as f32).round() as u32).min(ch.saturating_sub(1));
-        let crop_width = ((recipe.crop_w * cw as f32).round() as u32).min(cw - cx).max(1);
-        let crop_height = ((recipe.crop_h * ch as f32).round() as u32).min(ch - cy).max(1);
-        dyn_img = dyn_img.crop_imm(cx, cy, crop_width, crop_height);
-    }
+    dyn_img = apply_geometry(dyn_img, recipe);
 
     // Apply scaling / resizing
     let cur_w = dyn_img.width();
@@ -345,7 +321,13 @@ pub fn export_photo<P: AsRef<Path>>(
                 .arg("-unsafe")
                 // Pixels are already rotated by the decoder; copying the source Orientation
                 // tag would make viewers rotate the export a second time.
-                .arg("-Orientation#=1");
+                .arg("-Orientation#=1")
+                // The export carries its own ICC profile; a profile copied from the
+                // camera file would replace it
+                .arg("--ICC_Profile:all");
+            // EXIF can only name sRGB; any other profile is "uncalibrated" there
+            let srgb = options.icc_profile.as_deref().is_none_or(|p| p.eq_ignore_ascii_case("srgb"));
+            exif_cmd.arg(if srgb { "-ExifIFD:ColorSpace#=1" } else { "-ExifIFD:ColorSpace#=65535" });
 
             if options.strip_gps {
                 exif_cmd.arg("-gps:all=");
@@ -372,6 +354,78 @@ pub fn export_photo<P: AsRef<Path>>(
     }
 
     Ok(final_dest)
+}
+
+/// Crop, rotation and flips of an export, as the viewport shows them.
+///
+/// The viewport draws the crop rectangle on the photo before it is rotated, so the
+/// crop is cut first. The rotation is any angle: whole quarter turns are exact, and
+/// the remaining angle (straightening, at most 45°) is resampled and cropped to the
+/// largest rectangle of the same shape, so no empty corners are exported.
+pub fn apply_geometry(mut img: DynamicImage, recipe: &Recipe) -> DynamicImage {
+    let (w, h) = (img.width(), img.height());
+    if recipe.crop_w < 0.999 || recipe.crop_h < 0.999 || recipe.crop_x > 0.001 || recipe.crop_y > 0.001 {
+        let cx = ((recipe.crop_x.clamp(0.0, 1.0) * w as f32).round() as u32).min(w.saturating_sub(1));
+        let cy = ((recipe.crop_y.clamp(0.0, 1.0) * h as f32).round() as u32).min(h.saturating_sub(1));
+        let cw = ((recipe.crop_w.clamp(0.0, 1.0) * w as f32).round() as u32).min(w - cx).max(1);
+        let ch = ((recipe.crop_h.clamp(0.0, 1.0) * h as f32).round() as u32).min(h - cy).max(1);
+        img = img.crop_imm(cx, cy, cw, ch);
+    }
+
+    let angle = if recipe.rotation.is_finite() { recipe.rotation } else { 0.0 };
+    let quarters = (angle / 90.0).round();
+    let residual = angle - quarters * 90.0;
+    img = match (quarters as i64).rem_euclid(4) {
+        1 => img.rotate90(),
+        2 => img.rotate180(),
+        3 => img.rotate270(),
+        _ => img,
+    };
+    if residual.abs() >= 0.01 {
+        img = straighten(img, residual);
+    }
+
+    if recipe.flip_h {
+        img = img.fliph();
+    }
+    if recipe.flip_v {
+        img = img.flipv();
+    }
+    img
+}
+
+/// Rotates by `degrees` (clockwise, |degrees| <= 45) and keeps the largest centred
+/// rectangle of the original shape that lies inside the rotated photo.
+fn straighten(img: DynamicImage, degrees: f32) -> DynamicImage {
+    let src = img.to_rgb16();
+    let (w, h) = (src.width() as f32, src.height() as f32);
+    let a = degrees.to_radians();
+    let (sin, cos) = (a.sin(), a.cos());
+    let (sa, ca) = (sin.abs(), cos.abs());
+    let scale = (w / (w * ca + h * sa)).min(h / (w * sa + h * ca));
+    let (ow, oh) = (((w * scale).floor() as u32).max(1), ((h * scale).floor() as u32).max(1));
+    let (sw, sh) = (src.width() as usize, src.height() as usize);
+    let data = src.as_raw();
+    let mut out = vec![0u16; ow as usize * oh as usize * 3];
+    out.par_chunks_mut(ow as usize * 3).enumerate().for_each(|(y, row)| {
+        let dy = y as f32 + 0.5 - oh as f32 / 2.0;
+        for x in 0..ow as usize {
+            let dx = x as f32 + 0.5 - ow as f32 / 2.0;
+            // Inverse of a clockwise rotation in y-down coordinates
+            let sx = (dx * cos + dy * sin + w / 2.0 - 0.5).clamp(0.0, w - 1.0);
+            let sy = (-dx * sin + dy * cos + h / 2.0 - 0.5).clamp(0.0, h - 1.0);
+            let (x0, y0) = (sx as usize, sy as usize);
+            let (x1, y1) = ((x0 + 1).min(sw - 1), (y0 + 1).min(sh - 1));
+            let (fx, fy) = (sx - x0 as f32, sy - y0 as f32);
+            for c in 0..3 {
+                let at = |yy: usize, xx: usize| data[(yy * sw + xx) * 3 + c] as f32;
+                let top = at(y0, x0) * (1.0 - fx) + at(y0, x1) * fx;
+                let bottom = at(y1, x0) * (1.0 - fx) + at(y1, x1) * fx;
+                row[x * 3 + c] = (top * (1.0 - fy) + bottom * fy + 0.5) as u16;
+            }
+        }
+    });
+    ImageBuffer::<Rgb<u16>, Vec<u16>>::from_raw(ow, oh, out).map(DynamicImage::ImageRgb16).unwrap_or(DynamicImage::ImageRgb16(src))
 }
 
 /// Bits per channel a format is written with. 0 (or an unsupported request) picks
@@ -566,6 +620,47 @@ pub fn batch_name_tags(paths: &[&str]) -> Vec<Option<String>> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    fn marked(w: u32, h: u32) -> DynamicImage {
+        // Black frame with a white pixel in the top-left quarter
+        let mut img = ImageBuffer::<Rgb<u16>, Vec<u16>>::new(w, h);
+        img.put_pixel(w / 8, h / 8, Rgb([65535, 65535, 65535]));
+        DynamicImage::ImageRgb16(img)
+    }
+
+    fn white_at(img: &DynamicImage) -> (u32, u32) {
+        let rgb = img.to_rgb16();
+        let p = rgb.enumerate_pixels().find(|(_, _, p)| p[0] > 30000).expect("marker kept");
+        (p.0, p.1)
+    }
+
+    /// The crop is drawn on the unrotated photo, so it is cut before the quarter turn.
+    #[test]
+    fn crop_is_cut_before_rotation() {
+        let r = Recipe { crop_x: 0.0, crop_y: 0.0, crop_w: 0.5, crop_h: 0.5, rotation: 90.0, ..Recipe::default() };
+        let out = apply_geometry(marked(80, 40), &r);
+        assert_eq!((out.width(), out.height()), (20, 40));
+        // (10, 5) in the 40x20 crop lands at (20 - 1 - 5, 10) after a clockwise turn
+        assert_eq!(white_at(&out), (14, 10));
+    }
+
+    /// A small angle is applied, not rounded away, and leaves no empty corners.
+    #[test]
+    fn straightening_angle_is_applied() {
+        let mut img = ImageBuffer::<Rgb<u16>, Vec<u16>>::from_pixel(300, 200, Rgb([40000, 40000, 40000]));
+        img.put_pixel(0, 0, Rgb([40000, 40000, 40000]));
+        let r = Recipe { rotation: 3.0, ..Recipe::default() };
+        let out = apply_geometry(DynamicImage::ImageRgb16(img), &r).to_rgb16();
+        assert!(out.width() < 300 && out.width() > 270, "{}", out.width());
+        assert!((out.width() as f32 / out.height() as f32 - 1.5).abs() < 0.02);
+        for (x, y) in [(0, 0), (out.width() - 1, 0), (0, out.height() - 1), (out.width() - 1, out.height() - 1)] {
+            assert!(out.get_pixel(x, y)[0] > 39000, "corner ({x}, {y}) is empty");
+        }
+        // 50 degrees is a quarter turn and 40 degrees back, not a plain quarter turn
+        let r = Recipe { rotation: 50.0, ..Recipe::default() };
+        let out = apply_geometry(marked(300, 200), &r);
+        assert!(out.width() < 200);
+    }
 
     #[test]
     fn bit_depth_follows_format_limits() {

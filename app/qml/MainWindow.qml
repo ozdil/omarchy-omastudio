@@ -20,6 +20,13 @@ Rectangle {
     property var photoList: []
 
     property bool isProMode: false
+    // The edit as last written to (or read from) the photo's sidecar; autosave compares against it
+    property string savedRecipeJson: ""
+    property int quietSaves: 0
+    // The edit before a social platform was applied; reset brings it back
+    property var preSocialRecipe: null
+    // The AI chat over the viewport; opens on connect, toggled from the top bar
+    property bool aiChatOpen: false
     property bool isSplitView: false
     property real splitRatio: 0.5
     property bool showExportModal: false
@@ -442,6 +449,7 @@ Rectangle {
         viewport.flipV = false;
         if (typeof presetSel !== "undefined" && presetSel) presetSel.activePreset = "";
         exportDialog.socialOptimizer.activePlatform = "";
+        root.preSocialRecipe = null;
         if (typeof hslMixer !== "undefined" && hslMixer) hslMixer.resetAll();
         if (typeof colorWheels !== "undefined" && colorWheels) colorWheels.resetAllWheels();
         root.highlightReconstruct = true;
@@ -451,22 +459,23 @@ Rectangle {
         root.requestRender();
     }
 
+    // Undoes the social crop and tuning: the values from before the first platform was
+    // applied come back (not the factory defaults), and the export size returns to full
     function resetSocialOptimization() {
+        var pre = root.preSocialRecipe;
         root.pushUndoState();
-        root.cropX = 0.0;
-        root.cropY = 0.0;
-        root.cropW = 1.0;
-        root.cropH = 1.0;
-        root.cropAspect = "Original";
-        viewport.resetCrop();
-        root.sharpnessVal = 25.0;
-        root.clarityValue = 0.0;
-        root.vibranceValue = 0.0;
-        root.shadowsValue = 0.0;
-        root.whitesValue = 0.0;
+        if (pre) {
+            var r = root.buildRecipeObject();
+            var keys = ["crop_x", "crop_y", "crop_w", "crop_h", "crop_aspect", "sharpness", "clarity", "vibrance", "shadows", "whites"];
+            for (var i = 0; i < keys.length; i++) r[keys[i]] = pre[keys[i]];
+            root.applyRecipeObject(r);
+        }
+        root.preSocialRecipe = null;
+        exportDialog.maxDimension = null;
+        exportDialog.scalePercent = 100;
         exportDialog.socialOptimizer.activePlatform = "";
+        root.showToast(qsTr("Platform crop reset"), Theme.textDim);
         root.requestRender();
-        root.showToast(qsTr("Platform crop reset"), Theme.accentCyan);
     }
 
     function buildRecipeObject() {
@@ -824,6 +833,7 @@ Rectangle {
                     root.activeMetadata = data.metadata;
                     root.activeScene = data.scene;
                     root.applyRecipeObject(data.recipe);
+                    root.savedRecipeJson = JSON.stringify(root.buildRecipeObject());
                 }
             } else if (act === "adjust") {
                 root.renderFinished();
@@ -850,15 +860,24 @@ Rectangle {
                     if (data.recipe) {
                         root.applyRecipeObject(data.recipe);
                     }
-                    root.showToast(qsTr("%1 applied (%2)").arg(data.platform).arg(data.target_resolution), Theme.accentCyan);
+                    // The platform's size and quality go to the export settings
+                    if (data.max_dimension) {
+                        exportDialog.scalePercent = 100;
+                        exportDialog.maxDimension = data.max_dimension;
+                    }
+                    if (data.quality) exportDialog.quality = data.quality;
+                    root.showToast(qsTr("%1 applied: long edge %2 px, quality %3").arg(data.platform).arg(data.max_dimension).arg(data.quality), Theme.accentCyan);
                 }
             } else if (act === "save_recipe") {
-                root.showToast(qsTr("Settings saved"), Theme.accentGreen);
+                if (root.quietSaves > 0) root.quietSaves--;
+                else root.showToast(qsTr("Settings saved"), Theme.accentGreen);
             } else if (act === "batch_export") {
                 exportDialog.isExporting = false;
                 if (data) {
+                    exportDialog.exportStatusIsError = data.failed > 0;
                     exportDialog.exportStatusText = qsTr("%1 of %2 photos exported").arg(data.succeeded).arg(data.total);
-                    root.showToast(qsTr("Batch export: %1 succeeded, %2 failed").arg(data.succeeded).arg(data.failed), Theme.accentGreen);
+                    root.showToast(qsTr("Batch export: %1 succeeded, %2 failed").arg(data.succeeded).arg(data.failed),
+                                   data.failed > 0 ? Theme.highlightClip : Theme.accentGreen);
                 }
             }
         } catch(e) {
@@ -903,11 +922,33 @@ Rectangle {
         }
     }
 
-    function saveSidecar() {
+    // Writes the edit next to the photo. `quiet` skips the "Settings saved" toast, for
+    // autosave and for rating/flag keys that show their own message.
+    function saveSidecar(quiet) {
+        if (root.activePhotoPath === "") return;
+        var recipe = root.buildRecipeObject();
+        root.savedRecipeJson = JSON.stringify(recipe);
+        if (quiet === true) root.quietSaves++;
         root.sendDaemonCommand({
             cmd: "save_recipe",
-            recipe: root.buildRecipeObject()
+            path: root.activePhotoPath,
+            recipe: recipe
         });
+    }
+
+    // Saves the edit when it differs from what the sidecar holds, so switching photos
+    // or closing the window never drops work
+    function autosave() {
+        autosaveTimer.stop();
+        if (root.activePhotoPath === "" || root.savedRecipeJson === "") return;
+        if (JSON.stringify(root.buildRecipeObject()) === root.savedRecipeJson) return;
+        root.saveSidecar(true);
+    }
+
+    Timer {
+        id: autosaveTimer
+        interval: 3000
+        onTriggered: root.autosave()
     }
 
     function triggerAiAuto() {
@@ -918,6 +959,7 @@ Rectangle {
 
     function requestRender() {
         if (!root.isPerformingUndoRedo) undoCommitTimer.restart();
+        if (root.savedRecipeJson !== "") autosaveTimer.restart();
         if (renderDebounce.running) {
             renderDebounce.restart();
         } else {
@@ -1139,39 +1181,39 @@ Rectangle {
     // Lightroom Studio Culling & Ergonomics (1-5 Stars, Flags, Cinematic View)
     Shortcut {
         sequence: "1"
-        onActivated: { root.photoRating = 1; root.showToast(qsTr("Rating: ★"), Theme.accentYellow); root.saveSidecar(); }
+        onActivated: { root.photoRating = 1; root.showToast(qsTr("Rating: ★"), Theme.accentYellow); root.saveSidecar(true); }
     }
     Shortcut {
         sequence: "2"
-        onActivated: { root.photoRating = 2; root.showToast(qsTr("Rating: ★★"), Theme.accentYellow); root.saveSidecar(); }
+        onActivated: { root.photoRating = 2; root.showToast(qsTr("Rating: ★★"), Theme.accentYellow); root.saveSidecar(true); }
     }
     Shortcut {
         sequence: "3"
-        onActivated: { root.photoRating = 3; root.showToast(qsTr("Rating: ★★★"), Theme.accentYellow); root.saveSidecar(); }
+        onActivated: { root.photoRating = 3; root.showToast(qsTr("Rating: ★★★"), Theme.accentYellow); root.saveSidecar(true); }
     }
     Shortcut {
         sequence: "4"
-        onActivated: { root.photoRating = 4; root.showToast(qsTr("Rating: ★★★★"), Theme.accentYellow); root.saveSidecar(); }
+        onActivated: { root.photoRating = 4; root.showToast(qsTr("Rating: ★★★★"), Theme.accentYellow); root.saveSidecar(true); }
     }
     Shortcut {
         sequence: "5"
-        onActivated: { root.photoRating = 5; root.showToast(qsTr("Rating: ★★★★★"), Theme.accentYellow); root.saveSidecar(); }
+        onActivated: { root.photoRating = 5; root.showToast(qsTr("Rating: ★★★★★"), Theme.accentYellow); root.saveSidecar(true); }
     }
     Shortcut {
         sequence: "0"
-        onActivated: { root.photoRating = 0; root.showToast(qsTr("Rating cleared"), Theme.textDim); root.saveSidecar(); }
+        onActivated: { root.photoRating = 0; root.showToast(qsTr("Rating cleared"), Theme.textDim); root.saveSidecar(true); }
     }
     Shortcut {
         sequence: "X"
-        onActivated: { root.photoFlag = (root.photoFlag === "reject" ? "none" : "reject"); root.showToast(root.flagMessage(root.photoFlag), Theme.highlightClip); root.saveSidecar(); }
+        onActivated: { root.photoFlag = (root.photoFlag === "reject" ? "none" : "reject"); root.showToast(root.flagMessage(root.photoFlag), Theme.highlightClip); root.saveSidecar(true); }
     }
     Shortcut {
         sequence: "P"
-        onActivated: { root.photoFlag = (root.photoFlag === "pick" ? "none" : "pick"); root.showToast(root.flagMessage(root.photoFlag), Theme.accentGreen); root.saveSidecar(); }
+        onActivated: { root.photoFlag = (root.photoFlag === "pick" ? "none" : "pick"); root.showToast(root.flagMessage(root.photoFlag), Theme.accentGreen); root.saveSidecar(true); }
     }
     Shortcut {
         sequence: "U"
-        onActivated: { root.photoFlag = "none"; root.showToast(qsTr("Flag cleared"), Theme.textDim); root.saveSidecar(); }
+        onActivated: { root.photoFlag = "none"; root.showToast(qsTr("Flag cleared"), Theme.textDim); root.saveSidecar(true); }
     }
     Shortcut {
         sequence: "E"
@@ -1255,6 +1297,7 @@ Rectangle {
         if (["adjust", "masks", "looks", "ai"].indexOf(st.rightTab) >= 0) root.rightTab = st.rightTab;
         if (st.collapsedSections && typeof st.collapsedSections === "object") root.collapsedSections = st.collapsedSections;
         if (["dark", "grey", "theme"].indexOf(st.surround) >= 0) root.surround = st.surround;
+        if (typeof st.proMode === "boolean") root.isProMode = st.proMode;
         root.uiStateLoaded = true;
     }
 
@@ -1271,7 +1314,8 @@ Rectangle {
             "showFilmstrip": root.showFilmstrip,
             "rightTab": root.rightTab,
             "collapsedSections": root.collapsedSections,
-            "surround": root.surround
+            "surround": root.surround,
+            "proMode": root.isProMode
         }))
     }
 
@@ -1279,7 +1323,35 @@ Rectangle {
     onShowRightPanelChanged: saveUiStateSoon()
     onShowFilmstripChanged: saveUiStateSoon()
     onRightTabChanged: saveUiStateSoon()
-    onIsProModeChanged: if (!root.isProMode && root.rightTab === "masks") root.rightTab = "adjust"
+    onIsProModeChanged: {
+        if (!root.isProMode && root.rightTab === "masks") root.rightTab = "adjust";
+        saveUiStateSoon();
+    }
+
+    // Switching from the top bar: say what changed and bring the first Pro section into view,
+    // since the Pro sections sit below the Essentials ones and are easy to miss
+    function setProMode(on) {
+        if (root.isProMode === on) return;
+        root.isProMode = on;
+        if (on) {
+            root.rightTab = "adjust";
+            if (root.collapsedSections["curve"] === true) root.toggleSection("curve");
+            proScrollTimer.restart();
+            root.showToast(qsTr("Pro: tone curve, colour mixer, colour grading, detail, grain, colour management and the Masks tab are shown"), Theme.accent);
+        } else {
+            root.showToast(qsTr("Essentials: Pro sections are hidden. Settings made in them stay applied."), Theme.accent);
+        }
+    }
+
+    Timer {
+        id: proScrollTimer
+        interval: 50
+        onTriggered: {
+            var flick = adjustScroll.contentItem;
+            var y = curveSection.mapToItem(flick.contentItem, 0, 0).y;
+            flick.contentY = Math.max(0, Math.min(y, flick.contentHeight - flick.height));
+        }
+    }
 
     onCollapsedSectionsChanged: saveUiStateSoon()
     onSurroundChanged: saveUiStateSoon()
@@ -1303,6 +1375,9 @@ Rectangle {
 
     function loadPhoto(path) {
         if (path !== root.activePhotoPath) {
+            root.autosave();
+            root.savedRecipeJson = "";
+            root.preSocialRecipe = null;
             // Undo history and grade versions belong to the previous photo
             undoCommitTimer.stop();
             root.undoBaselineJson = "";
@@ -1327,61 +1402,56 @@ Rectangle {
         listProc.running = true;
     }
 
+    // The looks match the engine's presets (Recipe::fuji_classic_chrome and friends in
+    // src/recipe/mod.rs). Applying one replaces the previous look instead of adding to
+    // it: tone, presence, curve, colour mixer, grading wheels, sharpening and vignette
+    // start from their defaults; white balance, exposure, crop and film simulation stay.
     function applyPresetNamed(name) {
+        var looks = {
+            "Fuji Classic Chrome": { contrast: 15, highlights: -10, shadows: 5, clarity: 12, vibrance: -15, saturation: -8,
+                                     hsl_sat: { 1: 10, 5: -20 }, hsl_hue: { 5: -8 }, vignette: -12 },
+            "Fuji Velvia 50": { contrast: 28, highlights: -15, shadows: 10, vibrance: 30, saturation: 18, clarity: 16,
+                                hsl_sat: { 3: 25, 5: 25 } },
+            "Kodak Portra 400": { wb_temperature: 5700, wb_tint: 4, contrast: -5, highlights: -12, shadows: 18, whites: -8,
+                                  texture: -5, clarity: 6, vibrance: 10, saturation: -4, hsl_lum: { 1: 12 }, hsl_sat: { 1: -5 } },
+            "Leica Monochrom HC": { saturation: -100, vibrance: -100, contrast: 35, highlights: -20, shadows: -10, whites: 15,
+                                    blacks: -25, texture: 15, clarity: 25, sharpness: 40, vignette: -18 },
+            "Cinematic Teal & Orange": { contrast: 20, shadows: -10, highlights: -15, clarity: 15, vibrance: 20,
+                                         lift: [-0.05, 0.04, 0.12], lift_luma: -0.05, gain: [0.14, 0.05, -0.08], gain_luma: 0.02,
+                                         hsl_hue: { 5: -25, 1: -5 }, hsl_sat: { 5: 30, 1: 25 }, vignette: -20 }
+        };
+        var look = looks[name];
+        if (!look) return;
         root.pushUndoState();
-        if (name === "Fuji Classic Chrome") {
-            root.contrastValue = 15.0;
-            root.highlightsValue = -10.0;
-            root.shadowsValue = 5.0;
-            root.clarityValue = 12.0;
-            root.vibranceValue = -15.0;
-            root.saturationValue = -8.0;
-            root.vignetteVal = -12.0;
-        } else if (name === "Fuji Velvia 50") {
-            root.contrastValue = 28.0;
-            root.highlightsValue = -15.0;
-            root.shadowsValue = 10.0;
-            root.vibranceValue = 30.0;
-            root.saturationValue = 18.0;
-            root.clarityValue = 16.0;
-        } else if (name === "Kodak Portra 400") {
-            root.wbTemp = 5700.0;
-            root.wbTint = 4.0;
-            root.contrastValue = -5.0;
-            root.highlightsValue = -12.0;
-            root.shadowsValue = 18.0;
-            root.textureValue = -5.0;
-            root.clarityValue = 6.0;
-            root.vibranceValue = 10.0;
-        } else if (name === "Leica Monochrom HC") {
-            root.saturationValue = -100.0;
-            root.vibranceValue = -100.0;
-            root.contrastValue = 35.0;
-            root.highlightsValue = -20.0;
-            root.shadowsValue = -10.0;
-            root.whitesValue = 15.0;
-            root.blacksValue = -25.0;
-            root.clarityValue = 25.0;
-            root.sharpnessVal = 40.0;
-            root.vignetteVal = -18.0;
-        } else if (name === "Cinematic Teal & Orange") {
-            root.contrastValue = 20.0;
-            root.shadowsValue = -10.0;
-            root.highlightsValue = -15.0;
-            root.clarityValue = 15.0;
-            root.vibranceValue = 20.0;
-            root.vignetteVal = -20.0;
+        var r = root.buildRecipeObject();
+        var zero = ["contrast", "highlights", "shadows", "whites", "blacks", "texture", "clarity", "dehaze", "vibrance",
+                    "saturation", "curve_highlights", "curve_lights", "curve_darks", "curve_shadows", "vignette",
+                    "lift_luma", "gamma_luma", "gain_luma", "offset_luma"];
+        for (var i = 0; i < zero.length; i++) r[zero[i]] = 0.0;
+        r.sharpness = 25.0;
+        r.lift = [0, 0, 0]; r.gamma = [0, 0, 0]; r.gain = [0, 0, 0]; r.offset = [0, 0, 0];
+        r.hsl_hue = [0, 0, 0, 0, 0, 0, 0, 0]; r.hsl_sat = [0, 0, 0, 0, 0, 0, 0, 0]; r.hsl_lum = [0, 0, 0, 0, 0, 0, 0, 0];
+        for (var k in look) {
+            if (k === "hsl_hue" || k === "hsl_sat" || k === "hsl_lum") {
+                for (var band in look[k]) r[k][Number(band)] = look[k][band];
+            } else {
+                r[k] = look[k];
+            }
         }
+        root.applyRecipeObject(r);
         requestRender();
     }
 
     function triggerSocial(platformCode) {
         if (!platformCode || platformCode.length === 0) return;
         root.pushUndoState();
+        // Switching platforms starts again from the edit before the first one
+        if (!root.preSocialRecipe) root.preSocialRecipe = root.buildRecipeObject();
         root.showToast(qsTr("Preparing for %1…").arg(platformCode), Theme.accentCyan);
         root.sendDaemonCommand({
             cmd: "ai_social",
-            platform: String(platformCode)
+            platform: String(platformCode),
+            recipe: root.preSocialRecipe
         });
     }
 
@@ -1414,6 +1484,7 @@ Rectangle {
 
         // TOP BAR
         TopBar {
+            id: topBar
             Layout.fillWidth: true
             isProMode: root.isProMode
             isSplitView: root.isSplitView
@@ -1427,18 +1498,22 @@ Rectangle {
             onRatingChanged: function(r) {
                 root.photoRating = r;
                 root.showToast(r > 0 ? qsTr("Rating: %1").arg("★".repeat(r)) : qsTr("Rating cleared"), Theme.accentYellow);
-                root.saveSidecar();
+                root.saveSidecar(true);
             }
             onFlagChanged: function(f) {
                 root.photoFlag = f;
                 root.showToast(f === "pick" ? qsTr("Picked") : (f === "reject" ? qsTr("Rejected") : qsTr("Flag cleared")), f === "pick" ? Theme.accentGreen : (f === "reject" ? Theme.highlightClip : Theme.textDim));
-                root.saveSidecar();
+                root.saveSidecar(true);
             }
-            onToggleMode: root.isProMode = !root.isProMode
+            onToggleMode: root.setProMode(!root.isProMode)
             aiConnected: aiAssist.localConnected
             aiBusy: aiAssist.connecting
             aiModel: aiAssist.choice.model || ""
+            aiProvider: aiAssist.choice.provider || ""
+            aiProviderName: aiAssist.providerName(aiAssist.choice.provider || "")
             onConnectLocalAi: aiAssist.connectLocal()
+            aiChatOpen: root.aiChatOpen
+            onToggleAiChat: root.aiChatOpen = !root.aiChatOpen
             onUndoClicked: root.undo()
             onRedoClicked: root.redo()
             onOpenFileClicked: openFileProc.running = true
@@ -1454,6 +1529,7 @@ Rectangle {
                 exportDialog.isBatchMode = false;
                 exportDialog.batchCount = 0;
                 exportDialog.exportStatusText = "";
+                exportDialog.exportStatusIsError = false;
                 root.showExportModal = true;
             }
             onInfoClicked: {
@@ -1908,6 +1984,7 @@ Rectangle {
                 }
 
                 ScrollView {
+                    id: adjustScroll
                     anchors.top: rightTabsLine.bottom
                     anchors.left: parent.left
                     anchors.right: parent.right
@@ -2155,10 +2232,12 @@ Rectangle {
                                 }
                             }
                             PanelSection {
+                                id: curveSection
                                 key: "curve"
                                 title: qsTr("Tone curve")
                                 host: root
                                 visible: root.isProMode
+                                pro: true
                                 onReset: {
                                     root.pushUndoState();
                                     root.curveHighlights = 0.0;
@@ -2210,6 +2289,7 @@ Rectangle {
                                 title: qsTr("Colour mixer")
                                 host: root
                                 visible: root.isProMode
+                                pro: true
                                 onReset: {
                                     root.hslH = [0, 0, 0, 0, 0, 0, 0, 0];
                                     root.hslS = [0, 0, 0, 0, 0, 0, 0, 0];
@@ -2237,6 +2317,7 @@ Rectangle {
                                 title: qsTr("Colour grading")
                                 host: root
                                 visible: root.isProMode
+                                pro: true
                                 resettable: false
 
                                 ColorGradingWheels {
@@ -2327,6 +2408,7 @@ Rectangle {
                                 title: qsTr("Detail and optics")
                                 host: root
                                 visible: root.isProMode
+                                pro: true
                                 onReset: {
                                     root.sharpnessVal = 25.0;
                                     root.denoiseLumVal = 0.0;
@@ -2394,6 +2476,7 @@ Rectangle {
                                 title: qsTr("Grain")
                                 host: root
                                 visible: root.isProMode
+                                pro: true
                                 resettable: false
 
                                 FilmGrainPanel {
@@ -2416,6 +2499,7 @@ Rectangle {
                                 title: qsTr("Colour management")
                                 host: root
                                 visible: root.isProMode
+                                pro: true
                                 resettable: false
 
                                 ColorSpaceSelector {
@@ -2538,6 +2622,7 @@ Rectangle {
                                 onNotify: function(text, isError) {
                                     root.showToast(text, isError ? Theme.accentMagenta : Theme.accentGreen);
                                 }
+                                onLocalConnectedNow: root.aiChatOpen = true
                             }
                             }
                         }
@@ -2598,6 +2683,7 @@ Rectangle {
                 exportDialog.isBatchMode = true;
                 exportDialog.batchCount = filmstrip.selectedPaths.length;
                 exportDialog.exportStatusText = "";
+                exportDialog.exportStatusIsError = false;
                 root.showExportModal = true;
             }
         }
@@ -2659,6 +2745,7 @@ Rectangle {
             onDoExport: function(opts) {
                 exportDialog.isExporting = true;
                 if (exportDialog.isBatchMode && filmstrip.selectedPaths.length > 0) {
+                    exportDialog.exportStatusIsError = false;
                     exportDialog.exportStatusText = qsTr("Exporting %n photos…", "", filmstrip.selectedPaths.length);
                     var batchItems = [];
                     for (var i = 0; i < filmstrip.selectedPaths.length; i++) {
@@ -2674,6 +2761,7 @@ Rectangle {
                         options: opts
                     });
                 } else {
+                    exportDialog.exportStatusIsError = false;
                     exportDialog.exportStatusText = qsTr("Developing at full resolution…");
                     var recipeJson = JSON.stringify(root.buildRecipeObject());
                     var optsJson = JSON.stringify(opts);
@@ -2722,6 +2810,7 @@ Rectangle {
     }
 
     Component.onDestruction: {
+        root.autosave();
         if (daemonProc.running) {
             daemonProc.write(JSON.stringify({ cmd: "exit" }) + "\n");
             daemonProc.running = false;
@@ -2729,5 +2818,23 @@ Rectangle {
         if (exportProc.running) exportProc.running = false;
         if (listProc.running) listProc.running = false;
         if (openFileProc.running) openFileProc.running = false;
+    }
+
+    AiChatPanel {
+        id: aiChat
+        parent: viewport
+        visible: root.aiChatOpen && aiAssist.localConnected
+        z: 50
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
+        anchors.margins: Theme.px(12)
+        width: Math.min(Theme.px(360), parent.width - Theme.px(24))
+        height: Math.min(Theme.px(440), parent.height - Theme.px(24))
+        assistant: aiAssist
+        activePhotoPath: root.activePhotoPath
+        label: topBar.aiLabel
+        onCloseRequested: root.aiChatOpen = false
+        onReconnectRequested: aiAssist.connectLocal()
+        onVisibleChanged: if (visible) focusInput()
     }
 }

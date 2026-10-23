@@ -232,6 +232,57 @@
     </message>
 </context>
 <context>
+    <name>AiChatPanel</name>
+    <message>
+        <source>Open a photo first</source>
+        <translation>افتح صورة أولًا</translation>
+    </message>
+    <message>
+        <source>Edit applied.</source>
+        <translation>تم تطبيق التعديل.</translation>
+    </message>
+    <message>
+        <source>Chat · %1</source>
+        <translation>محادثة · %1</translation>
+    </message>
+    <message>
+        <source>Chat</source>
+        <translation>محادثة</translation>
+    </message>
+    <message>
+        <source>Reconnect</source>
+        <translation>إعادة الاتصال</translation>
+    </message>
+    <message>
+        <source>Clear chat</source>
+        <translation>مسح المحادثة</translation>
+    </message>
+    <message>
+        <source>Close chat</source>
+        <translation>إغلاق المحادثة</translation>
+    </message>
+    <message>
+        <source>Write below what to change in the photo. The AI sets the adjustments; Ctrl+Z undoes each edit.</source>
+        <translation>اكتب أدناه ما يجب تغييره في الصورة. يضبط الذكاء الاصطناعي المنزلقات؛ ويتراجع Ctrl+Z عن كل تعديل.</translation>
+    </message>
+    <message>
+        <source>Working…</source>
+        <translation>جارٍ العمل…</translation>
+    </message>
+    <message>
+        <source>e.g. warmer, moody evening light, recover the sky</source>
+        <translation>مثلًا: أدفأ، ضوء مسائي كئيب، استعادة السماء</translation>
+    </message>
+    <message>
+        <source>Message to the AI</source>
+        <translation>رسالة إلى الذكاء الاصطناعي</translation>
+    </message>
+    <message>
+        <source>Send</source>
+        <translation>إرسال</translation>
+    </message>
+</context>
+<context>
     <name>BoundedTextInput</name>
     <message>
         <source>Clipboard content exceeded byte limit or timed out.</source>
@@ -646,10 +697,6 @@
         <translation>قياسي / إيقاف</translation>
     </message>
     <message>
-        <source>Neutral camera linear profile</source>
-        <translation>ملف كاميرا خطي محايد</translation>
-    </message>
-    <message>
         <source>Standard natural daylight color</source>
         <translation>لون طبيعي قياسي لضوء النهار</translation>
     </message>
@@ -776,6 +823,10 @@
     <message>
         <source>Acros B&amp;W</source>
         <translation>Acros أبيض وأسود</translation>
+    </message>
+    <message>
+        <source>No film simulation</source>
+        <translation>بلا محاكاة فيلم</translation>
     </message>
 </context>
 <context>
@@ -1305,10 +1356,6 @@
         <translation>فشل عرض المعاينة</translation>
     </message>
     <message>
-        <source>%1 applied (%2)</source>
-        <translation>طُبق %1 (%2)</translation>
-    </message>
-    <message>
         <source>Batch export: %1 succeeded, %2 failed</source>
         <translation>تصدير الدفعة: نجح %1، وفشل %2</translation>
     </message>
@@ -1483,10 +1530,6 @@
     <message>
         <source>Reset to defaults</source>
         <translation>أُعيدت القيم الافتراضية</translation>
-    </message>
-    <message>
-        <source>Platform crop reset</source>
-        <translation>أُعيد ضبط قص المنصة</translation>
     </message>
     <message>
         <source>Auto applied</source>
@@ -1719,6 +1762,22 @@
         <source>Developing at full resolution…</source>
         <translation>جارٍ التحميض بالدقة الكاملة…</translation>
     </message>
+    <message>
+        <source>%1 applied: long edge %2 px, quality %3</source>
+        <translation>تم تطبيق %1: الضلع الأطول %2 بكسل، الجودة %3</translation>
+    </message>
+    <message>
+        <source>Pro: tone curve, colour mixer, colour grading, detail, grain, colour management and the Masks tab are shown</source>
+        <translation>Pro: يظهر منحنى الدرجات، وخلاط الألوان، وتدرج الألوان، والتفاصيل، والحبيبات، وإدارة الألوان، وتبويب الأقنعة</translation>
+    </message>
+    <message>
+        <source>Essentials: Pro sections are hidden. Settings made in them stay applied.</source>
+        <translation>الأساسيات: أقسام Pro مخفية. تبقى إعداداتها مطبقة.</translation>
+    </message>
+    <message>
+        <source>Platform crop reset</source>
+        <translation>أُعيد ضبط قص المنصة</translation>
+    </message>
 </context>
 <context>
     <name>Navigator</name>
@@ -1732,6 +1791,10 @@
     <message>
         <source>Reset %1</source>
         <translation>إعادة ضبط %1</translation>
+    </message>
+    <message>
+        <source>Pro</source>
+        <translation>Pro</translation>
     </message>
 </context>
 <context>
@@ -1928,10 +1991,6 @@
         <translation>إعادة الضبط</translation>
     </message>
     <message>
-        <source>Vectorscope 123° flesh line (target: %1°)</source>
-        <translation>خط البشرة 123° في راسم المتجهات (الهدف: %1°)</translation>
-    </message>
-    <message>
         <source>Target Skin Hue</source>
         <translation>صبغة البشرة المستهدفة</translation>
     </message>
@@ -1954,6 +2013,10 @@
     <message>
         <source>Saturation Shift</source>
         <translation>إزاحة التشبع</translation>
+    </message>
+    <message>
+        <source>Target skin hue: %1° (Oklab)</source>
+        <translation>درجة البشرة المستهدفة: %1° (Oklab)</translation>
     </message>
 </context>
 <context>
@@ -2024,16 +2087,8 @@
         <translation>جارٍ الاتصال…</translation>
     </message>
     <message>
-        <source>Local AI</source>
-        <translation>ذكاء اصطناعي محلي</translation>
-    </message>
-    <message>
         <source>Connect local AI</source>
         <translation>توصيل الذكاء الاصطناعي المحلي</translation>
-    </message>
-    <message>
-        <source>Connected: %1. Click to reconnect.</source>
-        <translation>متصل: %1. انقر لإعادة الاتصال.</translation>
     </message>
     <message>
         <source>Use Omarchy&apos;s default AI agent, or Ollama or LM Studio on this computer</source>
@@ -2074,6 +2129,26 @@
     <message>
         <source>Export</source>
         <translation>تصدير</translation>
+    </message>
+    <message>
+        <source>Connected: %1. Click to close the chat.</source>
+        <translation>متصل: %1. انقر لإغلاق المحادثة.</translation>
+    </message>
+    <message>
+        <source>Connected: %1. Click to open the chat.</source>
+        <translation>متصل: %1. انقر لفتح المحادثة.</translation>
+    </message>
+    <message>
+        <source>AI chat</source>
+        <translation>محادثة الذكاء الاصطناعي</translation>
+    </message>
+    <message>
+        <source>Essentials: white balance, tone, presence, film simulation, presets and LUT</source>
+        <translation>الأساسيات: توازن الأبيض، والدرجة، والحضور، ومحاكاة الفيلم، والإعدادات المسبقة، وLUT</translation>
+    </message>
+    <message>
+        <source>Pro adds tone curve, colour mixer, colour grading, detail, grain, colour management and masks</source>
+        <translation>يضيف Pro منحنى الدرجات، وخلاط الألوان، وتدرج الألوان، والتفاصيل، والحبيبات، وإدارة الألوان، والأقنعة</translation>
     </message>
 </context>
 <context>

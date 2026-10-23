@@ -232,6 +232,57 @@
     </message>
 </context>
 <context>
+    <name>AiChatPanel</name>
+    <message>
+        <source>Open a photo first</source>
+        <translation>Ανοίξτε πρώτα μια φωτογραφία</translation>
+    </message>
+    <message>
+        <source>Edit applied.</source>
+        <translation>Η επεξεργασία εφαρμόστηκε.</translation>
+    </message>
+    <message>
+        <source>Chat · %1</source>
+        <translation>Συνομιλία · %1</translation>
+    </message>
+    <message>
+        <source>Chat</source>
+        <translation>Συνομιλία</translation>
+    </message>
+    <message>
+        <source>Reconnect</source>
+        <translation>Επανασύνδεση</translation>
+    </message>
+    <message>
+        <source>Clear chat</source>
+        <translation>Εκκαθάριση συνομιλίας</translation>
+    </message>
+    <message>
+        <source>Close chat</source>
+        <translation>Κλείσιμο συνομιλίας</translation>
+    </message>
+    <message>
+        <source>Write below what to change in the photo. The AI sets the adjustments; Ctrl+Z undoes each edit.</source>
+        <translation>Γράψτε παρακάτω τι να αλλάξει στη φωτογραφία. Η ΤΝ ρυθμίζει τα ρυθμιστικά· το Ctrl+Z αναιρεί κάθε επεξεργασία.</translation>
+    </message>
+    <message>
+        <source>Working…</source>
+        <translation>Επεξεργασία…</translation>
+    </message>
+    <message>
+        <source>e.g. warmer, moody evening light, recover the sky</source>
+        <translation>π.χ. πιο ζεστό, μελαγχολικό βραδινό φως, ανάκτηση ουρανού</translation>
+    </message>
+    <message>
+        <source>Message to the AI</source>
+        <translation>Μήνυμα προς την ΤΝ</translation>
+    </message>
+    <message>
+        <source>Send</source>
+        <translation>Αποστολή</translation>
+    </message>
+</context>
+<context>
     <name>BoundedTextInput</name>
     <message>
         <source>Clipboard content exceeded byte limit or timed out.</source>
@@ -642,10 +693,6 @@
         <translation>Τυπικό / ανενεργό</translation>
     </message>
     <message>
-        <source>Neutral camera linear profile</source>
-        <translation>Ουδέτερο γραμμικό προφίλ μηχανής</translation>
-    </message>
-    <message>
         <source>Standard natural daylight color</source>
         <translation>Τυπικό φυσικό χρώμα φωτός ημέρας</translation>
     </message>
@@ -772,6 +819,10 @@
     <message>
         <source>Acros B&amp;W</source>
         <translation>Acros Α/Μ</translation>
+    </message>
+    <message>
+        <source>No film simulation</source>
+        <translation>Χωρίς προσομοίωση φιλμ</translation>
     </message>
 </context>
 <context>
@@ -1289,10 +1340,6 @@
         <translation>Η απόδοση προεπισκόπησης απέτυχε</translation>
     </message>
     <message>
-        <source>%1 applied (%2)</source>
-        <translation>Εφαρμόστηκε %1 (%2)</translation>
-    </message>
-    <message>
         <source>Batch export: %1 succeeded, %2 failed</source>
         <translation>Μαζική εξαγωγή: %1 επιτυχείς, %2 αποτυχίες</translation>
     </message>
@@ -1467,10 +1514,6 @@
     <message>
         <source>Reset to defaults</source>
         <translation>Επαναφορά στις προεπιλογές</translation>
-    </message>
-    <message>
-        <source>Platform crop reset</source>
-        <translation>Η περικοπή πλατφόρμας επαναφέρθηκε</translation>
     </message>
     <message>
         <source>Auto applied</source>
@@ -1699,6 +1742,22 @@
         <source>Developing at full resolution…</source>
         <translation>Εμφάνιση σε πλήρη ανάλυση…</translation>
     </message>
+    <message>
+        <source>%1 applied: long edge %2 px, quality %3</source>
+        <translation>Εφαρμόστηκε %1: μεγάλη πλευρά %2 px, ποιότητα %3</translation>
+    </message>
+    <message>
+        <source>Pro: tone curve, colour mixer, colour grading, detail, grain, colour management and the Masks tab are shown</source>
+        <translation>Pro: εμφανίζονται καμπύλη τόνων, μίκτης χρωμάτων, χρωματική διαβάθμιση, λεπτομέρεια, κόκκος, διαχείριση χρωμάτων και η καρτέλα Μάσκες</translation>
+    </message>
+    <message>
+        <source>Essentials: Pro sections are hidden. Settings made in them stay applied.</source>
+        <translation>Βασικά: οι ενότητες Pro είναι κρυφές. Οι ρυθμίσεις τους εξακολουθούν να ισχύουν.</translation>
+    </message>
+    <message>
+        <source>Platform crop reset</source>
+        <translation>Η περικοπή πλατφόρμας επαναφέρθηκε</translation>
+    </message>
 </context>
 <context>
     <name>Navigator</name>
@@ -1712,6 +1771,10 @@
     <message>
         <source>Reset %1</source>
         <translation>Επαναφορά: %1</translation>
+    </message>
+    <message>
+        <source>Pro</source>
+        <translation>Pro</translation>
     </message>
 </context>
 <context>
@@ -1908,10 +1971,6 @@
         <translation>Επαναφορά</translation>
     </message>
     <message>
-        <source>Vectorscope 123° flesh line (target: %1°)</source>
-        <translation>Γραμμή δέρματος 123° στο διανυσματοσκόπιο (στόχος: %1°)</translation>
-    </message>
-    <message>
         <source>Target Skin Hue</source>
         <translation>Απόχρωση δέρματος στόχος</translation>
     </message>
@@ -1934,6 +1993,10 @@
     <message>
         <source>Saturation Shift</source>
         <translation>Μετατόπιση κορεσμού</translation>
+    </message>
+    <message>
+        <source>Target skin hue: %1° (Oklab)</source>
+        <translation>Στόχος απόχρωσης δέρματος: %1° (Oklab)</translation>
     </message>
 </context>
 <context>
@@ -2000,16 +2063,8 @@
         <translation>Σύνδεση…</translation>
     </message>
     <message>
-        <source>Local AI</source>
-        <translation>Τοπική ΤΝ</translation>
-    </message>
-    <message>
         <source>Connect local AI</source>
         <translation>Σύνδεση τοπικής ΤΝ</translation>
-    </message>
-    <message>
-        <source>Connected: %1. Click to reconnect.</source>
-        <translation>Συνδέθηκε: %1. Κάντε κλικ για επανασύνδεση.</translation>
     </message>
     <message>
         <source>Use Omarchy&apos;s default AI agent, or Ollama or LM Studio on this computer</source>
@@ -2050,6 +2105,26 @@
     <message>
         <source>Export</source>
         <translation>Εξαγωγή</translation>
+    </message>
+    <message>
+        <source>Connected: %1. Click to close the chat.</source>
+        <translation>Συνδέθηκε: %1. Κάντε κλικ για να κλείσει η συνομιλία.</translation>
+    </message>
+    <message>
+        <source>Connected: %1. Click to open the chat.</source>
+        <translation>Συνδέθηκε: %1. Κάντε κλικ για να ανοίξει η συνομιλία.</translation>
+    </message>
+    <message>
+        <source>AI chat</source>
+        <translation>Συνομιλία με ΤΝ</translation>
+    </message>
+    <message>
+        <source>Essentials: white balance, tone, presence, film simulation, presets and LUT</source>
+        <translation>Βασικά: ισορροπία λευκού, τόνος, παρουσία, προσομοίωση φιλμ, προεπιλογές και LUT</translation>
+    </message>
+    <message>
+        <source>Pro adds tone curve, colour mixer, colour grading, detail, grain, colour management and masks</source>
+        <translation>Το Pro προσθέτει καμπύλη τόνων, μίκτη χρωμάτων, χρωματική διαβάθμιση, λεπτομέρεια, κόκκο, διαχείριση χρωμάτων και μάσκες</translation>
     </message>
 </context>
 <context>

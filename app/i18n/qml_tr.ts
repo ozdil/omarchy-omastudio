@@ -232,6 +232,57 @@
     </message>
 </context>
 <context>
+    <name>AiChatPanel</name>
+    <message>
+        <source>Open a photo first</source>
+        <translation>Önce bir fotoğraf açın</translation>
+    </message>
+    <message>
+        <source>Edit applied.</source>
+        <translation>Düzenleme uygulandı.</translation>
+    </message>
+    <message>
+        <source>Chat · %1</source>
+        <translation>Sohbet · %1</translation>
+    </message>
+    <message>
+        <source>Chat</source>
+        <translation>Sohbet</translation>
+    </message>
+    <message>
+        <source>Reconnect</source>
+        <translation>Yeniden bağlan</translation>
+    </message>
+    <message>
+        <source>Clear chat</source>
+        <translation>Sohbeti temizle</translation>
+    </message>
+    <message>
+        <source>Close chat</source>
+        <translation>Sohbeti kapat</translation>
+    </message>
+    <message>
+        <source>Write below what to change in the photo. The AI sets the adjustments; Ctrl+Z undoes each edit.</source>
+        <translation>Fotoğrafta neyin değişeceğini aşağıya yazın. Yapay zekâ ayarları yapar; her düzenlemeyi Ctrl+Z geri alır.</translation>
+    </message>
+    <message>
+        <source>Working…</source>
+        <translation>Çalışıyor…</translation>
+    </message>
+    <message>
+        <source>e.g. warmer, moody evening light, recover the sky</source>
+        <translation>örn. daha sıcak, karamsar akşam ışığı, gökyüzünü kurtar</translation>
+    </message>
+    <message>
+        <source>Message to the AI</source>
+        <translation>Yapay zekâya mesaj</translation>
+    </message>
+    <message>
+        <source>Send</source>
+        <translation>Gönder</translation>
+    </message>
+</context>
+<context>
     <name>BoundedTextInput</name>
     <message>
         <source>Clipboard content exceeded byte limit or timed out.</source>
@@ -641,10 +692,6 @@
         <translation>Standart / Kapalı</translation>
     </message>
     <message>
-        <source>Neutral camera linear profile</source>
-        <translation>Nötr, doğrusal kamera profili</translation>
-    </message>
-    <message>
         <source>Standard natural daylight color</source>
         <translation>Standart, doğal gün ışığı rengi</translation>
     </message>
@@ -771,6 +818,10 @@
     <message>
         <source>Acros B&amp;W</source>
         <translation>Acros S/B</translation>
+    </message>
+    <message>
+        <source>No film simulation</source>
+        <translation>Film simülasyonu yok</translation>
     </message>
 </context>
 <context>
@@ -1285,10 +1336,6 @@
         <translation>Önizleme oluşturulamadı</translation>
     </message>
     <message>
-        <source>%1 applied (%2)</source>
-        <translation>%1 uygulandı (%2)</translation>
-    </message>
-    <message>
         <source>Batch export: %1 succeeded, %2 failed</source>
         <translation>Toplu dışa aktarma: %1 başarılı, %2 başarısız</translation>
     </message>
@@ -1463,10 +1510,6 @@
     <message>
         <source>Reset to defaults</source>
         <translation>Varsayılanlara sıfırlandı</translation>
-    </message>
-    <message>
-        <source>Platform crop reset</source>
-        <translation>Platform kırpması sıfırlandı</translation>
     </message>
     <message>
         <source>Auto applied</source>
@@ -1694,6 +1737,22 @@
         <source>Developing at full resolution…</source>
         <translation>Tam çözünürlükte işleniyor…</translation>
     </message>
+    <message>
+        <source>%1 applied: long edge %2 px, quality %3</source>
+        <translation>%1 uygulandı: uzun kenar %2 px, kalite %3</translation>
+    </message>
+    <message>
+        <source>Pro: tone curve, colour mixer, colour grading, detail, grain, colour management and the Masks tab are shown</source>
+        <translation>Pro: ton eğrisi, renk karıştırıcı, renk derecelendirme, ayrıntı, gren, renk yönetimi ve Maskeler sekmesi gösteriliyor</translation>
+    </message>
+    <message>
+        <source>Essentials: Pro sections are hidden. Settings made in them stay applied.</source>
+        <translation>Temel: Pro bölümleri gizlendi. Bu bölümlerde yapılan ayarlar uygulanmaya devam eder.</translation>
+    </message>
+    <message>
+        <source>Platform crop reset</source>
+        <translation>Platform kırpması sıfırlandı</translation>
+    </message>
 </context>
 <context>
     <name>Navigator</name>
@@ -1707,6 +1766,10 @@
     <message>
         <source>Reset %1</source>
         <translation>%1 bölümünü sıfırla</translation>
+    </message>
+    <message>
+        <source>Pro</source>
+        <translation>Pro</translation>
     </message>
 </context>
 <context>
@@ -1903,10 +1966,6 @@
         <translation>Sıfırla</translation>
     </message>
     <message>
-        <source>Vectorscope 123° flesh line (target: %1°)</source>
-        <translation>Vektörskop 123° cilt çizgisi (hedef: %1°)</translation>
-    </message>
-    <message>
         <source>Target Skin Hue</source>
         <translation>Hedef cilt tonu</translation>
     </message>
@@ -1929,6 +1988,10 @@
     <message>
         <source>Saturation Shift</source>
         <translation>Doygunluk kaydırma</translation>
+    </message>
+    <message>
+        <source>Target skin hue: %1° (Oklab)</source>
+        <translation>Hedef ten tonu: %1° (Oklab)</translation>
     </message>
 </context>
 <context>
@@ -1994,16 +2057,8 @@
         <translation>Bağlanıyor…</translation>
     </message>
     <message>
-        <source>Local AI</source>
-        <translation>Yerel YZ</translation>
-    </message>
-    <message>
         <source>Connect local AI</source>
         <translation>Yerel YZ&apos;ye bağlan</translation>
-    </message>
-    <message>
-        <source>Connected: %1. Click to reconnect.</source>
-        <translation>Bağlı: %1. Yeniden bağlanmak için tıklayın.</translation>
     </message>
     <message>
         <source>Use Omarchy&apos;s default AI agent, or Ollama or LM Studio on this computer</source>
@@ -2044,6 +2099,26 @@
     <message>
         <source>Export</source>
         <translation>Dışa aktar</translation>
+    </message>
+    <message>
+        <source>Connected: %1. Click to close the chat.</source>
+        <translation>Bağlı: %1. Sohbeti kapatmak için tıklayın.</translation>
+    </message>
+    <message>
+        <source>Connected: %1. Click to open the chat.</source>
+        <translation>Bağlı: %1. Sohbeti açmak için tıklayın.</translation>
+    </message>
+    <message>
+        <source>AI chat</source>
+        <translation>YZ sohbeti</translation>
+    </message>
+    <message>
+        <source>Essentials: white balance, tone, presence, film simulation, presets and LUT</source>
+        <translation>Temel: beyaz dengesi, ton, canlılık ve doku, film simülasyonu, hazır ayarlar ve LUT</translation>
+    </message>
+    <message>
+        <source>Pro adds tone curve, colour mixer, colour grading, detail, grain, colour management and masks</source>
+        <translation>Pro; ton eğrisi, renk karıştırıcı, renk derecelendirme, ayrıntı, gren, renk yönetimi ve maskeleri ekler</translation>
     </message>
 </context>
 <context>

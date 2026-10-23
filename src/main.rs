@@ -522,8 +522,10 @@ fn main() {
         }
         "catalog" => {
             if args.len() < 3 || args[2] == "list" {
+                // Entries of photos that are offline stay in the file, but are not listed
                 let cat = Catalog::load();
-                print_json(&ResponseWrapper::ok(cat));
+                let listed = Catalog { version: cat.version, items: cat.present_items(), unreadable: false };
+                print_json(&ResponseWrapper::ok(listed));
             } else if args[2] == "query" {
                 let mut filter = recipe::CatalogFilter::default();
                 let mut idx = 3;
@@ -580,8 +582,10 @@ fn main() {
                 }
                 let mut cat = Catalog::load();
                 if cat.update_culling(path, rating, flag, color) {
-                    let _ = cat.save();
-                    print_json(&ResponseWrapper::ok("Culling metadata saved"));
+                    match cat.save() {
+                        Ok(()) => print_json(&ResponseWrapper::ok("Culling metadata saved")),
+                        Err(e) => print_json::<()>(&ResponseWrapper::err(format!("Cannot write the catalogue: {e}"))),
+                    }
                 } else {
                     print_json::<()>(&ResponseWrapper::err("Item not found in catalog"));
                 }
@@ -936,7 +940,7 @@ fn inspect_file(raw_path: &str) -> Result<InspectResult, String> {
         metadata: meta.clone(),
         rating: prev.as_ref().map_or(0, |p| p.rating),
         color_label: prev.as_ref().map_or_else(String::new, |p| p.color_label.clone()),
-        flag: prev.as_ref().map_or_else(|| "unflagged".to_string(), |p| p.flag.clone()),
+        flag: prev.as_ref().map_or_else(|| recipe.flag.clone(), |p| p.flag.clone()),
         recipe: recipe.clone(),
         updated_at: now,
     });
@@ -1240,17 +1244,20 @@ fn run_xmp(args: &[String]) {
         let path = Path::new(photo);
         match args.first().map(String::as_str) {
             Some("export") => {
-                let recipe = match flag("--recipe") {
-                    Some(j) => serde_json::from_str(&j).map_err(|e| format!("Invalid recipe: {e}"))?,
+                let given = flag("--recipe");
+                let recipe: Recipe = match &given {
+                    Some(j) => serde_json::from_str(j).map_err(|e| format!("Invalid recipe: {e}"))?,
                     None => Recipe::load_initial(path),
                 };
                 let item = Catalog::load().get(photo).cloned();
+                // The editor's recipe carries the rating and flag as they are now; the
+                // catalogue only supplies them when exporting from the command line
+                let (rating, reject) = match (&given, &item) {
+                    (None, Some(i)) => (i.rating as i32, i.flag == "reject"),
+                    _ => (recipe.rating as i32, recipe.flag == "reject"),
+                };
                 let culling = xmp::Culling {
-                    rating: match &item {
-                        Some(i) if i.flag == "reject" => -1,
-                        Some(i) => i.rating as i32,
-                        None => recipe.rating as i32,
-                    },
+                    rating: if reject { -1 } else { rating },
                     label: item.map(|i| i.color_label).unwrap_or_default(),
                 };
                 let out = flag("--out").map(PathBuf::from);
@@ -1846,16 +1853,17 @@ fn run_daemon() {
                 let platform = cmd_obj.platform.unwrap_or_else(|| "ig".to_string());
                 let c = cache.lock().unwrap();
                 if let Some(ref buffer) = c.raw_buffer_8 {
-                    let sidecar = c.current_path.as_ref()
-                        .map(Recipe::load_initial)
-                        .unwrap_or_default();
+                    // The edit on screen, so unsaved changes are kept
+                    let base = cmd_obj.recipe.clone().unwrap_or_else(|| {
+                        c.current_path.as_ref().map(Recipe::load_initial).unwrap_or_default()
+                    });
                     let result = ai_optimize_for_social(
                         buffer,
                         c.width,
                         c.height,
                         c.channels,
                         &platform,
-                        &sidecar,
+                        &base,
                     );
                     print_json(&ResponseWrapper::ok_action("ai_social", result));
                 } else {
@@ -1863,10 +1871,19 @@ fn run_daemon() {
                 }
             }
             "save_recipe" => {
-                let c = cache.lock().unwrap();
-                if let (Some(p), Some(recipe)) = (&c.current_path, &cmd_obj.recipe) {
+                // The photo is named by the request, so a save sent just before the
+                // next photo loads still lands next to the photo it belongs to
+                let target = cmd_obj.path.clone().or_else(|| cache.lock().unwrap().current_path.clone());
+                if let (Some(p), Some(recipe)) = (&target, &cmd_obj.recipe) {
                     match recipe.save_sidecar(p) {
-                        Ok(sidecar_path) => print_json(&ResponseWrapper::ok_action("save_recipe", sidecar_path.to_string_lossy().to_string())),
+                        Ok(sidecar_path) => {
+                            // Keep the catalogue's rating and flag in step with the edit
+                            let mut cat = Catalog::load();
+                            if cat.update_culling(p, Some(recipe.rating), Some(&recipe.flag), None) && let Err(e) = cat.save() {
+                                eprintln!("omastudio: cannot write the catalogue: {e}");
+                            }
+                            print_json(&ResponseWrapper::ok_action("save_recipe", sidecar_path.to_string_lossy().to_string()))
+                        }
                         Err(e) => print_json::<()>(&ResponseWrapper::err_action("save_recipe", format!("Failed to save sidecar: {}", e))),
                     }
                 } else {
@@ -2004,8 +2021,10 @@ fn run_daemon() {
                 );
 
                 if updated {
-                    let _ = cat.save();
-                    print_json(&ResponseWrapper::ok_action("catalog_cull", "Culling metadata saved successfully"));
+                    match cat.save() {
+                        Ok(()) => print_json(&ResponseWrapper::ok_action("catalog_cull", "Culling metadata saved successfully")),
+                        Err(e) => print_json::<()>(&ResponseWrapper::err_action("catalog_cull", format!("Cannot write the catalogue: {e}"))),
+                    }
                 } else {
                     print_json::<()>(&ResponseWrapper::err_action("catalog_cull", "Item not found in catalog"));
                 }

@@ -232,6 +232,57 @@
     </message>
 </context>
 <context>
+    <name>AiChatPanel</name>
+    <message>
+        <source>Open a photo first</source>
+        <translation>請先開啟照片</translation>
+    </message>
+    <message>
+        <source>Edit applied.</source>
+        <translation>已套用編輯。</translation>
+    </message>
+    <message>
+        <source>Chat · %1</source>
+        <translation>對話 · %1</translation>
+    </message>
+    <message>
+        <source>Chat</source>
+        <translation>對話</translation>
+    </message>
+    <message>
+        <source>Reconnect</source>
+        <translation>重新連線</translation>
+    </message>
+    <message>
+        <source>Clear chat</source>
+        <translation>清除對話</translation>
+    </message>
+    <message>
+        <source>Close chat</source>
+        <translation>關閉對話</translation>
+    </message>
+    <message>
+        <source>Write below what to change in the photo. The AI sets the adjustments; Ctrl+Z undoes each edit.</source>
+        <translation>在下方寫下要修改照片的哪些地方。AI 會設定滑桿；Ctrl+Z 可復原每次編輯。</translation>
+    </message>
+    <message>
+        <source>Working…</source>
+        <translation>處理中…</translation>
+    </message>
+    <message>
+        <source>e.g. warmer, moody evening light, recover the sky</source>
+        <translation>例如：更暖一些、憂鬱的傍晚光線、恢復天空</translation>
+    </message>
+    <message>
+        <source>Message to the AI</source>
+        <translation>給 AI 的訊息</translation>
+    </message>
+    <message>
+        <source>Send</source>
+        <translation>傳送</translation>
+    </message>
+</context>
+<context>
     <name>BoundedTextInput</name>
     <message>
         <source>Clipboard content exceeded byte limit or timed out.</source>
@@ -641,10 +692,6 @@
         <translation>標準 / 關閉</translation>
     </message>
     <message>
-        <source>Neutral camera linear profile</source>
-        <translation>中性線性相機配置檔案</translation>
-    </message>
-    <message>
         <source>Standard natural daylight color</source>
         <translation>標準自然日光色彩</translation>
     </message>
@@ -771,6 +818,10 @@
     <message>
         <source>Acros B&amp;W</source>
         <translation>Acros 黑白</translation>
+    </message>
+    <message>
+        <source>No film simulation</source>
+        <translation>無底片模擬</translation>
     </message>
 </context>
 <context>
@@ -1285,10 +1336,6 @@
         <translation>預覽渲染失敗</translation>
     </message>
     <message>
-        <source>%1 applied (%2)</source>
-        <translation>已應用 %1（%2）</translation>
-    </message>
-    <message>
         <source>Batch export: %1 succeeded, %2 failed</source>
         <translation>批次匯出：成功 %1，失敗 %2</translation>
     </message>
@@ -1463,10 +1510,6 @@
     <message>
         <source>Reset to defaults</source>
         <translation>已重置為預設值</translation>
-    </message>
-    <message>
-        <source>Platform crop reset</source>
-        <translation>已重置平臺裁剪</translation>
     </message>
     <message>
         <source>Auto applied</source>
@@ -1694,6 +1737,22 @@
         <source>Developing at full resolution…</source>
         <translation>正在以完整解析度顯影…</translation>
     </message>
+    <message>
+        <source>%1 applied: long edge %2 px, quality %3</source>
+        <translation>已套用 %1：長邊 %2 像素，品質 %3</translation>
+    </message>
+    <message>
+        <source>Pro: tone curve, colour mixer, colour grading, detail, grain, colour management and the Masks tab are shown</source>
+        <translation>Pro：已顯示色調曲線、色彩混合器、調色、細節、顆粒、色彩管理和蒙版分頁</translation>
+    </message>
+    <message>
+        <source>Essentials: Pro sections are hidden. Settings made in them stay applied.</source>
+        <translation>基礎：已隱藏 Pro 區段。其中的設定仍然有效。</translation>
+    </message>
+    <message>
+        <source>Platform crop reset</source>
+        <translation>已重置平臺裁剪</translation>
+    </message>
 </context>
 <context>
     <name>Navigator</name>
@@ -1707,6 +1766,10 @@
     <message>
         <source>Reset %1</source>
         <translation>重置%1</translation>
+    </message>
+    <message>
+        <source>Pro</source>
+        <translation>Pro</translation>
     </message>
 </context>
 <context>
@@ -1903,10 +1966,6 @@
         <translation>重置</translation>
     </message>
     <message>
-        <source>Vectorscope 123° flesh line (target: %1°)</source>
-        <translation>向量示波器 123° 膚色線（目標：%1°）</translation>
-    </message>
-    <message>
         <source>Target Skin Hue</source>
         <translation>目標膚色色相</translation>
     </message>
@@ -1929,6 +1988,10 @@
     <message>
         <source>Saturation Shift</source>
         <translation>飽和度偏移</translation>
+    </message>
+    <message>
+        <source>Target skin hue: %1° (Oklab)</source>
+        <translation>目標膚色色相：%1°（Oklab）</translation>
     </message>
 </context>
 <context>
@@ -1994,16 +2057,8 @@
         <translation>正在連線…</translation>
     </message>
     <message>
-        <source>Local AI</source>
-        <translation>本地 AI</translation>
-    </message>
-    <message>
         <source>Connect local AI</source>
         <translation>連線本地 AI</translation>
-    </message>
-    <message>
-        <source>Connected: %1. Click to reconnect.</source>
-        <translation>已連線：%1。點選重新連線。</translation>
     </message>
     <message>
         <source>Use Omarchy&apos;s default AI agent, or Ollama or LM Studio on this computer</source>
@@ -2044,6 +2099,26 @@
     <message>
         <source>Export</source>
         <translation>匯出</translation>
+    </message>
+    <message>
+        <source>Connected: %1. Click to close the chat.</source>
+        <translation>已連線：%1。按一下以關閉對話。</translation>
+    </message>
+    <message>
+        <source>Connected: %1. Click to open the chat.</source>
+        <translation>已連線：%1。按一下以開啟對話。</translation>
+    </message>
+    <message>
+        <source>AI chat</source>
+        <translation>AI 對話</translation>
+    </message>
+    <message>
+        <source>Essentials: white balance, tone, presence, film simulation, presets and LUT</source>
+        <translation>基礎：白平衡、色調、質感、底片模擬、預設集和 LUT</translation>
+    </message>
+    <message>
+        <source>Pro adds tone curve, colour mixer, colour grading, detail, grain, colour management and masks</source>
+        <translation>Pro 新增色調曲線、色彩混合器、調色、細節、顆粒、色彩管理和遮罩</translation>
     </message>
 </context>
 <context>

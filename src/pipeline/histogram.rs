@@ -83,10 +83,11 @@ pub fn compute_histogram_with_dimensions(
         blue[b as usize] += 1;
         luma[y as usize] += 1;
 
-        if y <= 1 {
-            shadow_clips += 1;
-        } else if y >= 254 {
+        // Same rule as the clipping overlay: any channel at the top, every channel at the bottom
+        if r >= 254 || g >= 254 || b >= 254 {
             highlight_clips += 1;
+        } else if r <= 1 && g <= 1 && b <= 1 {
+            shadow_clips += 1;
         }
 
         let x = px_idx % w_safe;
@@ -215,10 +216,11 @@ pub fn compute_histogram_16_with_dimensions(
         blue[b as usize] += 1;
         luma[y as usize] += 1;
 
-        if y <= 1 {
-            shadow_clips += 1;
-        } else if y >= 254 {
+        // Same rule as the clipping overlay: any channel at the top, every channel at the bottom
+        if r >= 254 || g >= 254 || b >= 254 {
             highlight_clips += 1;
+        } else if r <= 1 && g <= 1 && b <= 1 {
+            shadow_clips += 1;
         }
 
         let x = px_idx % w_safe;

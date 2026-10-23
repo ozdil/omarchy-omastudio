@@ -138,6 +138,29 @@ pub fn apply_presence_ex(
     dehaze: f32,
     midtone_detail: f32,
 ) {
+    apply_presence_scaled(rgb_buffer, width, height, clarity, texture, dehaze, midtone_detail, 1.0);
+}
+
+/// Blur radius `base` (in pixels of a frame whose long edge is
+/// [`crate::pipeline::REFERENCE_EDGE`]) for a frame `scale` times as large.
+#[inline]
+pub fn scaled_radius(base: usize, scale: f32) -> usize {
+    ((base as f32 * scale).round() as usize).max(1)
+}
+
+/// [`apply_presence_ex`] with the neighbourhoods scaled to the frame, so clarity,
+/// texture, dehaze and midtone detail look the same in the preview and in the export.
+#[allow(clippy::too_many_arguments)]
+pub fn apply_presence_scaled(
+    rgb_buffer: &mut [f32],
+    width: usize,
+    height: usize,
+    clarity: f32,
+    texture: f32,
+    dehaze: f32,
+    midtone_detail: f32,
+    scale: f32,
+) {
     if clarity.abs() < 0.01 && texture.abs() < 0.01 && dehaze.abs() < 0.01 && midtone_detail.abs() < 0.01 {
         return;
     }
@@ -156,8 +179,8 @@ pub fn apply_presence_ex(
 
     // --- 1. TEXTURE ENGINE (Bandpass Micro-Contrast) ---
     let (t_factor, blur_fine, blur_med) = if texture.abs() >= 0.5 {
-        let fine = fast_separable_blur(&luma, width, height, 2);
-        let med = fast_separable_blur(&luma, width, height, 6);
+        let fine = fast_separable_blur(&luma, width, height, scaled_radius(2, scale));
+        let med = fast_separable_blur(&luma, width, height, scaled_radius(6, scale));
         ((texture / 100.0) * 1.6, Some(fine), Some(med))
     } else {
         (0.0, None, None)
@@ -165,7 +188,7 @@ pub fn apply_presence_ex(
 
     // --- 2. CLARITY ENGINE (Midtone Local Contrast) ---
     let (c_factor, blur_broad) = if clarity.abs() >= 0.5 {
-        let broad = fast_separable_blur(&luma, width, height, 16);
+        let broad = fast_separable_blur(&luma, width, height, scaled_radius(16, scale));
         ((clarity / 100.0) * 0.85, Some(broad))
     } else {
         (0.0, None)
@@ -179,7 +202,7 @@ pub fn apply_presence_ex(
             let px = i * 3;
             *d = rgb_buffer[px].min(rgb_buffer[px + 1]).min(rgb_buffer[px + 2]);
         });
-        let veil = fast_separable_blur(&dark, width, height, 12);
+        let veil = fast_separable_blur(&dark, width, height, scaled_radius(12, scale));
         (dehaze / 100.0, Some(veil))
     } else {
         (0.0, None)
@@ -187,8 +210,8 @@ pub fn apply_presence_ex(
 
     // --- 4. DAVINCI MIDTONE DETAIL ENGINE ---
     let (md_factor, blur_md_fine, blur_md_broad) = if midtone_detail.abs() >= 0.5 {
-        let fine = fast_separable_blur(&luma, width, height, 3);
-        let broad = fast_separable_blur(&luma, width, height, 9);
+        let fine = fast_separable_blur(&luma, width, height, scaled_radius(3, scale));
+        let broad = fast_separable_blur(&luma, width, height, scaled_radius(9, scale));
         ((midtone_detail / 100.0) * 1.25, Some(fine), Some(broad))
     } else {
         (0.0, None, None)

@@ -25,7 +25,7 @@ Rectangle {
         spacing: 6
 
         // Top Control Bar: Mode Tabs + Clipping Toggles (the toggles wrap to a second
-        // line when the column is narrow)
+        // line, together, when the column is narrow)
         Flow {
             Layout.fillWidth: true
             spacing: 4
@@ -74,66 +74,72 @@ Rectangle {
                 }
             }
 
-            // Shadow clipping button
-            Rectangle {
-                implicitWidth: shadowText.implicitWidth + 8
-                implicitHeight: Theme.px(11) + 8
-                radius: Theme.r(3)
-                color: root.showClippingShadows ? Theme.shadowClip : Qt.rgba(0.2, 0.5, 1.0, 0.15)
-                border.color: Theme.shadowClip
+            // The two clipping readouts stay together, so a narrow column moves both
+            // to the next line instead of splitting them
+            RowLayout {
+                spacing: 4
 
-                Text {
-                    id: shadowText
-                    anchors.centerIn: parent
-                    text: qsTr("[S] %1%", "S: shadow clipping").arg(root.histData ? root.histData.shadow_clipping_percent.toFixed(1) : "0.0")
-                    textFormat: Text.PlainText
-                    font.pixelSize: Theme.px(11)
-                    font.family: Theme.monoFont
-                    color: root.showClippingShadows ? "#ffffff" : Theme.shadowClip
-                }
+                // Shadow clipping button
+                Rectangle {
+                    implicitWidth: shadowText.implicitWidth + 8
+                    implicitHeight: Theme.px(11) + 8
+                    radius: Theme.r(3)
+                    color: root.showClippingShadows ? Theme.shadowClip : Qt.rgba(0.2, 0.5, 1.0, 0.15)
+                    border.color: Theme.shadowClip
 
-                MouseArea {
-                    anchors.fill: parent
-                    cursorShape: Qt.PointingHandCursor
-                    hoverEnabled: true
-                    ToolTip.visible: containsMouse
-                    ToolTip.delay: 500
-                    ToolTip.text: qsTr("Clipped shadows. Click to show them on the photo.")
-                    onClicked: {
-                        root.showClippingShadows = !root.showClippingShadows;
-                        root.toggleShadowMask();
+                    Text {
+                        id: shadowText
+                        anchors.centerIn: parent
+                        text: qsTr("[S] %1%", "S: shadow clipping").arg(root.histData ? root.histData.shadow_clipping_percent.toFixed(1) : "0.0")
+                        textFormat: Text.PlainText
+                        font.pixelSize: Theme.px(11)
+                        font.family: Theme.monoFont
+                        color: root.showClippingShadows ? "#ffffff" : Theme.shadowClip
+                    }
+
+                    MouseArea {
+                        anchors.fill: parent
+                        cursorShape: Qt.PointingHandCursor
+                        hoverEnabled: true
+                        ToolTip.visible: containsMouse
+                        ToolTip.delay: 500
+                        ToolTip.text: qsTr("Clipped shadows. Click to show them on the photo.")
+                        onClicked: {
+                            root.showClippingShadows = !root.showClippingShadows;
+                            root.toggleShadowMask();
+                        }
                     }
                 }
-            }
 
-            // Highlight clipping button
-            Rectangle {
-                implicitWidth: highText.implicitWidth + 8
-                implicitHeight: Theme.px(11) + 8
-                radius: Theme.r(3)
-                color: root.showClippingHighlights ? Theme.highlightClip : Qt.rgba(1.0, 0.3, 0.4, 0.15)
-                border.color: Theme.highlightClip
+                // Highlight clipping button
+                Rectangle {
+                    implicitWidth: highText.implicitWidth + 8
+                    implicitHeight: Theme.px(11) + 8
+                    radius: Theme.r(3)
+                    color: root.showClippingHighlights ? Theme.highlightClip : Qt.rgba(1.0, 0.3, 0.4, 0.15)
+                    border.color: Theme.highlightClip
 
-                Text {
-                    id: highText
-                    anchors.centerIn: parent
-                    text: qsTr("[H] %1%", "H: highlight clipping").arg(root.histData ? root.histData.highlight_clipping_percent.toFixed(1) : "0.0")
-                    textFormat: Text.PlainText
-                    font.pixelSize: Theme.px(11)
-                    font.family: Theme.monoFont
-                    color: root.showClippingHighlights ? "#ffffff" : Theme.highlightClip
-                }
+                    Text {
+                        id: highText
+                        anchors.centerIn: parent
+                        text: qsTr("[H] %1%", "H: highlight clipping").arg(root.histData ? root.histData.highlight_clipping_percent.toFixed(1) : "0.0")
+                        textFormat: Text.PlainText
+                        font.pixelSize: Theme.px(11)
+                        font.family: Theme.monoFont
+                        color: root.showClippingHighlights ? "#ffffff" : Theme.highlightClip
+                    }
 
-                MouseArea {
-                    anchors.fill: parent
-                    cursorShape: Qt.PointingHandCursor
-                    hoverEnabled: true
-                    ToolTip.visible: containsMouse
-                    ToolTip.delay: 500
-                    ToolTip.text: qsTr("Clipped highlights. Click to show them on the photo.")
-                    onClicked: {
-                        root.showClippingHighlights = !root.showClippingHighlights;
-                        root.toggleHighlightMask();
+                    MouseArea {
+                        anchors.fill: parent
+                        cursorShape: Qt.PointingHandCursor
+                        hoverEnabled: true
+                        ToolTip.visible: containsMouse
+                        ToolTip.delay: 500
+                        ToolTip.text: qsTr("Clipped highlights. Click to show them on the photo.")
+                        onClicked: {
+                            root.showClippingHighlights = !root.showClippingHighlights;
+                            root.toggleHighlightMask();
+                        }
                     }
                 }
             }
@@ -337,42 +343,46 @@ Rectangle {
                     ctx.moveTo(cx, cy - maxRadius); ctx.lineTo(cx, cy + maxRadius);
                     ctx.stroke();
 
-                    // DaVinci Skin Tone Indicator Line (I-Bar at ~123 degrees / -57 degrees)
-                    // The standard vector across all human ethnicities
+                    // Angles are counter-clockwise from +Cb (right), Cr up, as the
+                    // grid below is plotted. Skin tones of every complexion fall on the
+                    // line at 123°, between red and yellow.
+                    function toScreen(angleDeg, radius) {
+                        var a = angleDeg * (Math.PI / 180.0);
+                        return { x: cx + Math.cos(a) * radius, y: cy - Math.sin(a) * radius };
+                    }
                     ctx.strokeStyle = "rgba(255, 180, 100, 0.75)";
                     ctx.lineWidth = 1.5;
                     ctx.beginPath();
                     ctx.moveTo(cx, cy);
-                    var skinAngle = -57.0 * (Math.PI / 180.0);
-                    ctx.lineTo(cx + Math.cos(skinAngle) * maxRadius, cy + Math.sin(skinAngle) * maxRadius);
+                    var skinEnd = toScreen(123.0, maxRadius);
+                    ctx.lineTo(skinEnd.x, skinEnd.y);
                     ctx.stroke();
 
-                    // Target label for skin line
                     ctx.fillStyle = "rgba(255, 180, 100, 0.85)";
                     ctx.font = "" + Theme.px(7) + "px '" + Theme.monoFont + "'";
                     ctx.textAlign = "left";
-                    ctx.fillText(qsTr("SKIN"), cx + Math.cos(skinAngle) * (maxRadius - 14), cy + Math.sin(skinAngle) * (maxRadius - 14));
+                    var skinLabel = toScreen(123.0, maxRadius - 14);
+                    ctx.fillText(qsTr("SKIN"), skinLabel.x + 4, skinLabel.y);
 
-                    // Standard 75% broadcast color targets (R, Mg, B, Cy, G, Yl)
+                    // 75 % colour bars in BT.709 Cb/Cr: angle and distance from the
+                    // centre (1.0 = the edge of the grid, Cb or Cr = ±0.5)
                     var targets = [
-                        { name: "R", angle: 104, col: "#f7768e" },
-                        { name: "Mg", angle: 161, col: "#bb9af7" },
-                        { name: "B", angle: -14, col: "#7aa2f7" },
-                        { name: "Cy", angle: -76, col: "#7dcfff" },
-                        { name: "G", angle: -19, col: "#9ece6a" },
-                        { name: "Yl", angle: 45, col: "#e0af68" }
+                        { name: "R", angle: 102.9, dist: 0.769, col: "#f7768e" },
+                        { name: "Mg", angle: 49.7, dist: 0.894, col: "#bb9af7" },
+                        { name: "B", angle: -5.2, dist: 0.753, col: "#7aa2f7" },
+                        { name: "Cy", angle: -77.1, dist: 0.769, col: "#7dcfff" },
+                        { name: "G", angle: -130.3, dist: 0.894, col: "#9ece6a" },
+                        { name: "Yl", angle: 174.8, dist: 0.753, col: "#e0af68" }
                     ];
 
+                    ctx.lineWidth = 1;
                     for (var t = 0; t < targets.length; t++) {
                         var tg = targets[t];
-                        var rad = tg.angle * (Math.PI / 180.0);
-                        var tx = cx + Math.cos(rad) * (maxRadius * 0.75);
-                        var ty = cy - Math.sin(rad) * (maxRadius * 0.75);
-
+                        var pt = toScreen(tg.angle, maxRadius * tg.dist);
                         ctx.strokeStyle = tg.col;
-                        ctx.strokeRect(tx - 3, ty - 3, 6, 6);
+                        ctx.strokeRect(pt.x - 3, pt.y - 3, 6, 6);
                         ctx.fillStyle = tg.col;
-                        ctx.fillText(tg.name, tx + 4, ty + 2);
+                        ctx.fillText(tg.name, pt.x + 4, pt.y + 2);
                     }
 
                     // Plot vectorscope UV / CbCr pixel points

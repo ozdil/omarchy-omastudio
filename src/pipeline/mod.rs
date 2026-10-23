@@ -157,8 +157,10 @@ pub fn process_buffer(
             });
     }
 
+    let scale = frame_scale(w, h);
+
     // PASS 2: Presence Engine (Texture, Clarity, Dehaze, DaVinci Midtone Detail)
-    presence::apply_presence_ex(
+    presence::apply_presence_scaled(
         &mut f32_buf,
         w,
         h,
@@ -166,27 +168,32 @@ pub fn process_buffer(
         recipe.texture,
         recipe.dehaze,
         recipe.midtone_detail,
+        scale,
     );
 
-    // PASS 3: Detail & Optics Engine (Sharpness, Luma Denoise, Chroma Denoise)
-    detail::apply_detail(
+    // PASS 3: Detail & Optics Engine (Sharpness, Luma Denoise, Chroma Denoise, Defringe)
+    detail::apply_detail_scaled(
         &mut f32_buf,
         w,
         h,
         recipe.sharpness,
         recipe.denoise_lum,
         recipe.denoise_col,
+        scale,
     );
+    detail::apply_defringe_buffer(&mut f32_buf, w, h, recipe.defringe, scale);
 
     // PASS 4: Photochemical Silver-Halide Film Grain
     if recipe.grain_amount > 0.001 {
-        film_grain::apply_film_grain(
+        film_grain::apply_film_grain_window(
             &mut f32_buf,
             width,
-            height,
+            0,
+            0,
             recipe.grain_amount,
             recipe.grain_size,
             recipe.grain_roughness,
+            scale,
         );
     }
 
@@ -208,12 +215,7 @@ pub fn process_buffer(
                 let px_out = x * ch;
                 let px_f32 = x * 3;
 
-                let (r4, g4, b4) = detail::apply_defringe(
-                    in_f32[px_f32],
-                    in_f32[px_f32 + 1],
-                    in_f32[px_f32 + 2],
-                    recipe.defringe,
-                );
+                let (r4, g4, b4) = (in_f32[px_f32], in_f32[px_f32 + 1], in_f32[px_f32 + 2]);
 
                 let (r5, g5, b5) = detail::apply_vignette(
                     r4,
@@ -448,8 +450,10 @@ pub fn process_buffer_16_to_8_ex(
             });
     }
 
+    let scale = frame_scale(w, h);
+
     // PASS 2: Presence Engine (Texture, Clarity, Dehaze, DaVinci Midtone Detail)
-    presence::apply_presence_ex(
+    presence::apply_presence_scaled(
         &mut f32_buf,
         w,
         h,
@@ -457,27 +461,32 @@ pub fn process_buffer_16_to_8_ex(
         recipe.texture,
         recipe.dehaze,
         recipe.midtone_detail,
+        scale,
     );
 
-    // PASS 3: Detail & Optics Engine (Sharpness, Luma Denoise, Chroma Denoise)
-    detail::apply_detail(
+    // PASS 3: Detail & Optics Engine (Sharpness, Luma Denoise, Chroma Denoise, Defringe)
+    detail::apply_detail_scaled(
         &mut f32_buf,
         w,
         h,
         recipe.sharpness,
         recipe.denoise_lum,
         recipe.denoise_col,
+        scale,
     );
+    detail::apply_defringe_buffer(&mut f32_buf, w, h, recipe.defringe, scale);
 
     // PASS 4: Photochemical Silver-Halide Film Grain
     if recipe.grain_amount > 0.001 {
-        film_grain::apply_film_grain(
+        film_grain::apply_film_grain_window(
             &mut f32_buf,
             width,
-            height,
+            0,
+            0,
             recipe.grain_amount,
             recipe.grain_size,
             recipe.grain_roughness,
+            scale,
         );
     }
 
@@ -499,12 +508,7 @@ pub fn process_buffer_16_to_8_ex(
                 let px_out = x * ch;
                 let px_f32 = x * 3;
 
-                let (r4, g4, b4) = detail::apply_defringe(
-                    in_f32[px_f32],
-                    in_f32[px_f32 + 1],
-                    in_f32[px_f32 + 2],
-                    recipe.defringe,
-                );
+                let (r4, g4, b4) = (in_f32[px_f32], in_f32[px_f32 + 1], in_f32[px_f32 + 2]);
 
                 let (r5, g5, b5) = detail::apply_vignette(
                     r4,
@@ -569,9 +573,27 @@ pub fn process_buffer_16_to_16(
 /// [`BAND_HALO`] extra rows above and below, so working memory no longer grows with
 /// the size of the photo (a 100 MP GFX frame needs the same scratch space as a 24 MP one).
 const BAND_ROWS: usize = 384;
-/// Context rows around a band: the widest neighbourhood any pass reads (clarity's
-/// 16-pixel blur), plus detail's 3 rows that run on presence's result.
+/// Context rows around a band at the reference size: the widest neighbourhood any
+/// pass reads (clarity's 16-pixel blur), plus colour noise reduction, sharpening and
+/// defringe, which run on presence's result. See [`band_halo`].
 const BAND_HALO: usize = 24;
+
+/// Long edge, in pixels, of the frame the neighbourhood sizes (clarity, texture, dehaze,
+/// midtone detail, colour noise reduction, defringe, grain) are tuned for: the size of
+/// the editor's preview. Larger frames scale them up, so an export at full resolution
+/// looks like the preview instead of having 3x finer clarity and grain.
+pub const REFERENCE_EDGE: f32 = 3840.0;
+
+/// How much larger than [`REFERENCE_EDGE`] a `w` x `h` frame is.
+pub fn frame_scale(w: usize, h: usize) -> f32 {
+    (w.max(h) as f32 / REFERENCE_EDGE).max(0.25)
+}
+
+/// [`BAND_HALO`] for a frame `scale` times the reference size.
+pub fn band_halo(scale: f32) -> usize {
+    let s = scale.max(1.0);
+    (16.0 * s).ceil() as usize + 2 * (2.0 * s).ceil() as usize + 4
+}
 /// Pre-distortion rows are kept as u16 covering 0..2, so values pushed above white by
 /// sharpening or clarity survive until the final clamp.
 const PRE_DISTORTION_SCALE: f32 = 32767.5;
@@ -607,6 +629,7 @@ fn process_16_to_16_banded(
 
     let stage = PointStage::new(recipe, transfer);
     let lens = detail::LensDistortion::new(w, h, recipe.lens_distortion);
+    let halo = band_halo(frame_scale(w, h));
 
     // Bands of equal height, so the last one is never a sliver
     let bands = h.div_ceil(max_band_rows).max(1);
@@ -619,7 +642,7 @@ fn process_16_to_16_banded(
 
     for y0 in (0..h).step_by(band_rows) {
         let y1 = (y0 + band_rows).min(h);
-        let (by0, by1) = (y0.saturating_sub(BAND_HALO), (y1 + BAND_HALO).min(h));
+        let (by0, by1) = (y0.saturating_sub(halo), (y1 + halo).min(h));
         let band = process_band(input, w, ch, by0, by1, Window::whole(w, h), recipe, &stage);
         let inner = &band[(y0 - by0) * w * 3..(y1 - by0) * w * 3];
 
@@ -675,10 +698,9 @@ fn process_16_to_16_banded(
     (output, hist)
 }
 
-/// Defringe, vignette and 16-bit quantisation of one output pixel.
+/// Vignette and 16-bit quantisation of one output pixel.
 #[inline(always)]
 fn finish_pixel(out: &mut [u16], (r, g, b): (f32, f32, f32), x: usize, y: usize, width: u32, height: u32, recipe: &Recipe) {
-    let (r, g, b) = detail::apply_defringe(r, g, b, recipe.defringe);
     let (r, g, b) = detail::apply_vignette(r, g, b, x as u32, y as u32, width, height, recipe.vignette);
     out[0] = (r.clamp(0.0, 1.0) * 65535.0 + 0.5) as u16;
     out[1] = (g.clamp(0.0, 1.0) * 65535.0 + 0.5) as u16;
@@ -763,7 +785,8 @@ impl Window {
     }
 }
 
-/// Context the neighbourhood passes need around a region (see [`BAND_HALO`]).
+/// Context the neighbourhood passes need around a region of a frame at the reference
+/// size (see [`band_halo`] for larger frames).
 pub const REGION_HALO: usize = BAND_HALO;
 
 /// Renders part of a frame to 8-bit RGB, for the viewport's detail view.
@@ -771,7 +794,7 @@ pub const REGION_HALO: usize = BAND_HALO;
 /// `input` is 3-channel linear RGB, `w` x `h`, placed in a `window.frame_w` x
 /// `window.frame_h` frame at (`window.x0`, `window.y0`). The output is the frame
 /// rectangle `out` = (x, y, width, height). `input` must cover `out` plus
-/// [`REGION_HALO`] pixels (and, with lens distortion, the area the distortion reads
+/// [`band_halo`] pixels (and, with lens distortion, the area the distortion reads
 /// from); see [`region_source`].
 pub fn render_region_8(
     input: &[u16],
@@ -813,9 +836,8 @@ pub fn render_region_8(
             } else {
                 (0.0, 0.0, 0.0)
             };
-            let (r, g, b) = detail::apply_defringe(px.0, px.1, px.2, recipe.defringe);
             let (r, g, b) =
-                detail::apply_vignette(r, g, b, gx as u32, gy as u32, window.frame_w as u32, window.frame_h as u32, recipe.vignette);
+                detail::apply_vignette(px.0, px.1, px.2, gx as u32, gy as u32, window.frame_w as u32, window.frame_h as u32, recipe.vignette);
             row[i * 3] = (r.clamp(0.0, 1.0) * 255.0) as u8;
             row[i * 3 + 1] = (g.clamp(0.0, 1.0) * 255.0) as u8;
             row[i * 3 + 2] = (b.clamp(0.0, 1.0) * 255.0) as u8;
@@ -845,7 +867,7 @@ pub fn region_source(out: (usize, usize, usize, usize), frame_w: usize, frame_h:
             }
         }
     }
-    let halo = REGION_HALO as f32 + 2.0;
+    let halo = band_halo(frame_scale(frame_w, frame_h)) as f32 + 2.0;
     let x0 = (x0 - halo).floor().clamp(0.0, frame_w as f32) as usize;
     let y0 = (y0 - halo).floor().clamp(0.0, frame_h as f32) as usize;
     let x1 = (x1 + halo).ceil().clamp(0.0, frame_w as f32) as usize;
@@ -853,9 +875,9 @@ pub fn region_source(out: (usize, usize, usize, usize), frame_w: usize, frame_h:
     (x0, y0, x1.saturating_sub(x0).max(1), y1.saturating_sub(y0).max(1))
 }
 
-/// Passes 1 to 4 (point operations, local masks, presence, detail, grain) for rows
+/// Passes 1 to 4 (point operations, local masks, presence, detail, defringe, grain) for rows
 /// `y0..y1` of `input` (`w` pixels wide), which sits in the frame as `window` says. Rows near the band's edges only serve as context for the neighbourhood
-/// passes; the caller keeps the rows at least [`BAND_HALO`] away from a cut.
+/// passes; the caller keeps the rows at least [`band_halo`] away from a cut.
 #[allow(clippy::too_many_arguments)]
 fn process_band(
     input: &[u16],
@@ -899,7 +921,8 @@ fn process_band(
         });
     }
 
-    presence::apply_presence_ex(
+    let scale = frame_scale(window.frame_w, window.frame_h);
+    presence::apply_presence_scaled(
         &mut buf,
         w,
         rows,
@@ -907,8 +930,10 @@ fn process_band(
         recipe.texture,
         recipe.dehaze,
         recipe.midtone_detail,
+        scale,
     );
-    detail::apply_detail(&mut buf, w, rows, recipe.sharpness, recipe.denoise_lum, recipe.denoise_col);
+    detail::apply_detail_scaled(&mut buf, w, rows, recipe.sharpness, recipe.denoise_lum, recipe.denoise_col, scale);
+    detail::apply_defringe_buffer(&mut buf, w, rows, recipe.defringe, scale);
     if recipe.grain_amount > 0.001 {
         film_grain::apply_film_grain_window(
             &mut buf,
@@ -918,6 +943,7 @@ fn process_band(
             recipe.grain_amount,
             recipe.grain_size,
             recipe.grain_roughness,
+            scale,
         );
     }
     buf
@@ -1062,6 +1088,7 @@ mod tests {
             denoise_col: 60.0,
             grain_amount: 20.0,
             vignette: -30.0,
+            defringe: 60.0,
             ..Default::default()
         };
         for lens in [0.0, 25.0] {
@@ -1093,6 +1120,7 @@ mod tests {
             denoise_col: 60.0,
             grain_amount: 20.0,
             vignette: -30.0,
+            defringe: 60.0,
             ..Default::default()
         };
         let t = Transfer::bt709();

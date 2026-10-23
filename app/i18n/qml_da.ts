@@ -232,6 +232,57 @@
     </message>
 </context>
 <context>
+    <name>AiChatPanel</name>
+    <message>
+        <source>Open a photo first</source>
+        <translation>Åbn et foto først</translation>
+    </message>
+    <message>
+        <source>Edit applied.</source>
+        <translation>Redigering anvendt.</translation>
+    </message>
+    <message>
+        <source>Chat · %1</source>
+        <translation>Samtale · %1</translation>
+    </message>
+    <message>
+        <source>Chat</source>
+        <translation>Samtale</translation>
+    </message>
+    <message>
+        <source>Reconnect</source>
+        <translation>Genopret forbindelse</translation>
+    </message>
+    <message>
+        <source>Clear chat</source>
+        <translation>Ryd samtale</translation>
+    </message>
+    <message>
+        <source>Close chat</source>
+        <translation>Luk samtale</translation>
+    </message>
+    <message>
+        <source>Write below what to change in the photo. The AI sets the adjustments; Ctrl+Z undoes each edit.</source>
+        <translation>Skriv nedenfor, hvad der skal ændres i billedet. AI&apos;en indstiller skyderne; Ctrl+Z fortryder hver redigering.</translation>
+    </message>
+    <message>
+        <source>Working…</source>
+        <translation>Arbejder…</translation>
+    </message>
+    <message>
+        <source>e.g. warmer, moody evening light, recover the sky</source>
+        <translation>f.eks. varmere, stemningsfuldt aftenlys, genskab himlen</translation>
+    </message>
+    <message>
+        <source>Message to the AI</source>
+        <translation>Besked til AI</translation>
+    </message>
+    <message>
+        <source>Send</source>
+        <translation>Send</translation>
+    </message>
+</context>
+<context>
     <name>BoundedTextInput</name>
     <message>
         <source>Clipboard content exceeded byte limit or timed out.</source>
@@ -642,10 +693,6 @@
         <translation>Standard / fra</translation>
     </message>
     <message>
-        <source>Neutral camera linear profile</source>
-        <translation>Neutral lineær kameraprofil</translation>
-    </message>
-    <message>
         <source>Standard natural daylight color</source>
         <translation>Naturlig dagslysfarve som standard</translation>
     </message>
@@ -772,6 +819,10 @@
     <message>
         <source>Acros B&amp;W</source>
         <translation>Acros S/H</translation>
+    </message>
+    <message>
+        <source>No film simulation</source>
+        <translation>Ingen filmsimulering</translation>
     </message>
 </context>
 <context>
@@ -1289,10 +1340,6 @@
         <translation>Eksemplet kunne ikke gengives</translation>
     </message>
     <message>
-        <source>%1 applied (%2)</source>
-        <translation>%1 anvendt (%2)</translation>
-    </message>
-    <message>
         <source>Batch export: %1 succeeded, %2 failed</source>
         <translation>Batcheksport: %1 lykkedes, %2 mislykkedes</translation>
     </message>
@@ -1467,10 +1514,6 @@
     <message>
         <source>Reset to defaults</source>
         <translation>Standardværdier gendannet</translation>
-    </message>
-    <message>
-        <source>Platform crop reset</source>
-        <translation>Platformsbeskæring nulstillet</translation>
     </message>
     <message>
         <source>Auto applied</source>
@@ -1699,6 +1742,22 @@
         <source>Developing at full resolution…</source>
         <translation>Fremkalder i fuld opløsning…</translation>
     </message>
+    <message>
+        <source>%1 applied: long edge %2 px, quality %3</source>
+        <translation>%1 anvendt: lange side %2 px, kvalitet %3</translation>
+    </message>
+    <message>
+        <source>Pro: tone curve, colour mixer, colour grading, detail, grain, colour management and the Masks tab are shown</source>
+        <translation>Pro: tonekurve, farvemixer, farvegradering, detaljer, korn, farvestyring og fanen Masker vises</translation>
+    </message>
+    <message>
+        <source>Essentials: Pro sections are hidden. Settings made in them stay applied.</source>
+        <translation>Grundlæggende: Pro-sektioner er skjult. Deres indstillinger gælder stadig.</translation>
+    </message>
+    <message>
+        <source>Platform crop reset</source>
+        <translation>Platformsbeskæring nulstillet</translation>
+    </message>
 </context>
 <context>
     <name>Navigator</name>
@@ -1712,6 +1771,10 @@
     <message>
         <source>Reset %1</source>
         <translation>Nulstil %1</translation>
+    </message>
+    <message>
+        <source>Pro</source>
+        <translation>Pro</translation>
     </message>
 </context>
 <context>
@@ -1908,10 +1971,6 @@
         <translation>Nulstil</translation>
     </message>
     <message>
-        <source>Vectorscope 123° flesh line (target: %1°)</source>
-        <translation>Vektorskopets hudlinje på 123° (mål: %1°)</translation>
-    </message>
-    <message>
         <source>Target Skin Hue</source>
         <translation>Målnuance for hud</translation>
     </message>
@@ -1934,6 +1993,10 @@
     <message>
         <source>Saturation Shift</source>
         <translation>Mætningsforskydning</translation>
+    </message>
+    <message>
+        <source>Target skin hue: %1° (Oklab)</source>
+        <translation>Mål for hudtone: %1° (Oklab)</translation>
     </message>
 </context>
 <context>
@@ -2000,16 +2063,8 @@
         <translation>Forbinder…</translation>
     </message>
     <message>
-        <source>Local AI</source>
-        <translation>Lokal AI</translation>
-    </message>
-    <message>
         <source>Connect local AI</source>
         <translation>Forbind lokal AI</translation>
-    </message>
-    <message>
-        <source>Connected: %1. Click to reconnect.</source>
-        <translation>Forbundet: %1. Klik for at genforbinde.</translation>
     </message>
     <message>
         <source>Use Omarchy&apos;s default AI agent, or Ollama or LM Studio on this computer</source>
@@ -2050,6 +2105,26 @@
     <message>
         <source>Export</source>
         <translation>Eksportér</translation>
+    </message>
+    <message>
+        <source>Connected: %1. Click to close the chat.</source>
+        <translation>Forbundet: %1. Klik for at lukke samtalen.</translation>
+    </message>
+    <message>
+        <source>Connected: %1. Click to open the chat.</source>
+        <translation>Forbundet: %1. Klik for at åbne samtalen.</translation>
+    </message>
+    <message>
+        <source>AI chat</source>
+        <translation>AI-samtale</translation>
+    </message>
+    <message>
+        <source>Essentials: white balance, tone, presence, film simulation, presets and LUT</source>
+        <translation>Grundlæggende: hvidbalance, tone, tilstedeværelse, filmsimulering, forudindstillinger og LUT</translation>
+    </message>
+    <message>
+        <source>Pro adds tone curve, colour mixer, colour grading, detail, grain, colour management and masks</source>
+        <translation>Pro tilføjer tonekurve, farvemixer, farvegradering, detaljer, korn, farvestyring og masker</translation>
     </message>
 </context>
 <context>

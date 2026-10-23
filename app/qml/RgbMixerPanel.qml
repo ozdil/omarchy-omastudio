@@ -123,6 +123,13 @@ Rectangle {
                 activeColor: Theme.accentCyan
                 onToggled: function(isChecked) {
                     root.monochrome = isChecked;
+                    // The monochrome mix uses the red row; untouched, that would be the
+                    // red channel alone, so start from luminance weights instead
+                    if (isChecked && root.redInR === 1.0 && root.greenInR === 0.0 && root.blueInR === 0.0) {
+                        root.redInR = 0.21;
+                        root.greenInR = 0.72;
+                        root.blueInR = 0.07;
+                    }
                     root.mixerChanged();
                 }
             }
