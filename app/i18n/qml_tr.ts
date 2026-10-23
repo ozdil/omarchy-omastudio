@@ -1357,14 +1357,6 @@
         <translation>+ Renk</translation>
     </message>
     <message>
-        <source>+ AI SUBJECT</source>
-        <translation>+ YZ ÖZNE</translation>
-    </message>
-    <message>
-        <source>+ AI SKY</source>
-        <translation>+ YZ GÖKYÜZÜ</translation>
-    </message>
-    <message>
         <source>I</source>
         <comment>invert mask toggle, first letter of Invert</comment>
         <translation>T</translation>

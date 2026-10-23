@@ -30,12 +30,6 @@ Rectangle {
 
     readonly property string version: Host.version
     readonly property string repoUrl: "https://github.com/ozdil/omarchy-omastudio"
-    // The installed application icon (package, then local install)
-    readonly property var iconPaths: [
-        "/usr/share/icons/hicolor/scalable/apps/omastudio.svg",
-        Host.homeDir + "/.local/share/icons/hicolor/scalable/apps/omastudio.svg"
-    ]
-    property int iconIndex: 0
 
     property string gpuInfo: ""
     property string aiAccel: ""
@@ -165,12 +159,12 @@ Rectangle {
                 Image {
                     id: appIcon
                     anchors.fill: parent
-                    source: root.iconIndex < root.iconPaths.length ? "file://" + root.iconPaths[root.iconIndex] : ""
+                    // Built into the binary, so it shows for package and local installs alike
+                    source: "icon.svg"
                     sourceSize.width: width * 2
                     sourceSize.height: height * 2
                     fillMode: Image.PreserveAspectFit
                     smooth: true
-                    onStatusChanged: if (status === Image.Error) Qt.callLater(function() { root.iconIndex++; })
                 }
 
                 // Without an installed icon: the camera glyph in an accent frame

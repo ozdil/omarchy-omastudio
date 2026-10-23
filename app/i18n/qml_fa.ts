@@ -1357,14 +1357,6 @@
         <translation>+ رنگ</translation>
     </message>
     <message>
-        <source>+ AI SUBJECT</source>
-        <translation>+ سوژه (هوش مصنوعی)</translation>
-    </message>
-    <message>
-        <source>+ AI SKY</source>
-        <translation>+ آسمان (هوش مصنوعی)</translation>
-    </message>
-    <message>
         <source>I</source>
         <comment>invert mask toggle, first letter of Invert</comment>
         <translation>و</translation>

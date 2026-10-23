@@ -1360,14 +1360,6 @@
         <translation>+ रंग</translation>
     </message>
     <message>
-        <source>+ AI SUBJECT</source>
-        <translation>+ AI विषय</translation>
-    </message>
-    <message>
-        <source>+ AI SKY</source>
-        <translation>+ AI आसमान</translation>
-    </message>
-    <message>
         <source>I</source>
         <comment>invert mask toggle, first letter of Invert</comment>
         <translation>उ</translation>

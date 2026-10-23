@@ -318,9 +318,11 @@ impl CameraRecipe {
             // Auto / manual: the value actually used
             _ => int(0x140b).or(int(0x1403)).filter(|v| [100, 200, 400].contains(v)).map(|v| v as u32),
         };
+        // D-Range Priority replaces the DR setting (no 0x1402 / 0x140b then). In Auto,
+        // some bodies (GFX 100) record the level picked in the "fixed" tag instead
         let d_range_priority = match (int(0x1443), int(0x1444), int(0x1445)) {
-            (Some(0), Some(1), _) => Some("Auto (weak)"),
-            (Some(0), Some(2), _) => Some("Auto (strong)"),
+            (Some(0), Some(1), _) | (Some(0), None, Some(1)) => Some("Auto (weak)"),
+            (Some(0), Some(2), _) | (Some(0), None, Some(2)) => Some("Auto (strong)"),
             (Some(0), Some(3), _) => Some("Auto (plus)"),
             (Some(0), _, _) => Some("Auto"),
             (Some(1), _, Some(1)) => Some("Weak"),
@@ -375,8 +377,15 @@ impl CameraRecipe {
         r.denoise_lum = (10.0 + self.noise_reduction as f32 * 5.0).clamp(0.0, 100.0);
         r.clarity = self.clarity as f32 * 10.0;
 
-        // DR200/DR400 expose the raw 1/2 stops darker and lift it back in development
-        if let Some(dr) = self.dynamic_range
+        // DR200/DR400 expose the raw 1/2 stops darker and lift it back in development.
+        // D-Range Priority does the same: Weak as DR200, Strong and Plus as DR400
+        let drp = self.d_range_priority.as_deref().map(str::to_ascii_lowercase);
+        let effective_dr = self.dynamic_range.or(match drp.as_deref() {
+            Some(p) if p.contains("weak") => Some(200),
+            Some(p) if p.contains("strong") || p.contains("plus") => Some(400),
+            _ => None,
+        });
+        if let Some(dr) = effective_dr
             && dr > 100
         {
             let stops = (dr as f32 / 100.0).log2();
@@ -458,6 +467,18 @@ mod tests {
         let r = CameraRecipe::from_tags(&tags(&[(0x1401, 0x0), (0x1003, 0x502)]), "").unwrap();
         assert_eq!(r.film_simulation, FilmSim::AcrosYellow);
         assert_eq!(r.to_recipe().saturation, 0.0);
+    }
+
+    #[test]
+    fn d_range_priority_lifts_like_the_matching_dr() {
+        // GFX 100: D-Range Priority Auto, the level picked only in the "fixed" tag
+        let r = CameraRecipe::from_tags(&tags(&[(0x1401, 0x0), (0x1400, 1), (0x1443, 0), (0x1445, 1)]), "GFX 100").unwrap();
+        assert_eq!(r.dynamic_range, None);
+        assert_eq!(r.d_range_priority.as_deref(), Some("Auto (weak)"));
+        assert!((r.to_recipe().exposure - 1.0).abs() < 1e-6);
+
+        let strong = CameraRecipe::from_tags(&tags(&[(0x1401, 0x0), (0x1443, 1), (0x1445, 2)]), "").unwrap();
+        assert!((strong.to_recipe().exposure - 2.0).abs() < 1e-6);
     }
 
     #[test]

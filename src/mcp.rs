@@ -153,7 +153,7 @@ fn tools() -> Vec<Value> {
         tool("apply_recipe", "Replaces the open photo's adjustments with a recipe.", schema(json!({ "recipe": recipe }), &["recipe"]), false),
         tool("adjust", "Changes exposure (EV) and/or white balance (Kelvin) of the open photo.",
             schema(json!({ "exposure": { "type": "number", "minimum": -5, "maximum": 5 }, "temperature": { "type": "number", "minimum": 2000, "maximum": 50000 } }), &[]), false),
-        tool("apply_preset", "Applies one of OmaStudio's built-in presets by name to the open photo.", schema(json!({ "name": { "type": "string" } }), &["name"]), false),
+        tool("apply_preset", "Applies one of the looks from the Looks panel to the open photo: Muted, Vivid, Warm portrait, Black and white or Teal and orange.", schema(json!({ "name": { "type": "string" } }), &["name"]), false),
         tool("apply_fuji_recipe", "Applies a recipe from the Fujifilm recipe library (by label or path) to the open photo.", schema(json!({ "name": { "type": "string" } }), &["name"]), false),
         tool("apply_camera_recipe", "Applies the recipe a Fujifilm photo was shot with to the open photo (the open photo's own by default).", schema(json!({ "path": path }), &[]), false),
         tool("set_zoom", "Zooms the window's viewport: a number is photo pixels per screen pixel (1 = 100%), or \"fit\".",

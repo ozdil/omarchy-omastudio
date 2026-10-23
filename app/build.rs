@@ -22,6 +22,9 @@ fn main() {
         }
     }
     println!("cargo:rerun-if-changed=qml");
+    // The colour app icon, for the About window wherever OmaStudio is installed
+    println!("cargo:rerun-if-changed=../assets/icon.svg");
+    ui = ui.file(QResourceFile::new("../assets/icon.svg").alias("qml/icon.svg".to_string()));
 
     // Every component must be declared in qmldir, or other files can't use it
     let qmldir = std::fs::read_to_string("qml/qmldir").expect("app/qml/qmldir");

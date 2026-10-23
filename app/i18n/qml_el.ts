@@ -1360,14 +1360,6 @@
         <translation>+ Χρώμα</translation>
     </message>
     <message>
-        <source>+ AI SUBJECT</source>
-        <translation>+ ΘΕΜΑ (ΤΝ)</translation>
-    </message>
-    <message>
-        <source>+ AI SKY</source>
-        <translation>+ ΟΥΡΑΝΟΣ (ΤΝ)</translation>
-    </message>
-    <message>
         <source>I</source>
         <comment>invert mask toggle, first letter of Invert</comment>
         <translation>Α</translation>

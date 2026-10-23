@@ -6,7 +6,7 @@ pkgdesc="The Complete Medium Format RAW Editor for Omarchy"
 arch=('x86_64')
 url="https://github.com/ozdil/omarchy-omastudio"
 license=('MIT')
-depends=('libraw>=0.22' 'lcms2' 'qt6-base>=6.12' 'qt6-declarative>=6.12' 'qt6-wayland' 'libjxl' 'libavif' 'zenity' 'libwebp-utils' 'libheif')
+depends=('libraw>=0.22' 'lcms2' 'qt6-base>=6.12' 'qt6-declarative>=6.12' 'qt6-wayland' 'qt6-svg' 'libjxl' 'libavif' 'zenity' 'libwebp-utils' 'libheif')
 optdepends=('quickshell: OmaStudio button in the Omarchy bar' 'wl-clipboard: bounded paste in text fields' 'vulkan-icd-loader: GPU demosaicing (with your GPU'"'"'s Vulkan driver)' 'perl-image-exiftool: preserve EXIF metadata on export' 'ffmpeg: AVIF export fallback' 'curl: AI edit assistant' 'libsecret: keep AI provider keys and cloud account keys in the keyring (secret-tool)' 'ollama: local AI models' 'onnxruntime: local AI masks on the NPU, GPU or CPU' 'rclone: Google Drive, OneDrive, Dropbox, Box, pCloud and Yandex Disk accounts' 'github-cli: GitHub account')
 makedepends=('rust' 'cargo' 'pkgconf' 'clang' 'qt6-tools')
 source=()
@@ -37,6 +37,7 @@ package() {
     install -m644 assets/icc/*.icc "$pkgdir/usr/share/omastudio/icc/"
     install -Dm644 omastudio.desktop "$pkgdir/usr/share/applications/omastudio.desktop"
     install -Dm644 assets/icon.svg "$pkgdir/usr/share/icons/hicolor/scalable/apps/omastudio.svg"
+    install -Dm644 assets/icon-mono.svg "$pkgdir/usr/share/icons/hicolor/scalable/apps/omastudio-mono.svg"
     ln -sf "omastudio.desktop" "$pkgdir/usr/share/applications/omaraw.desktop"
     install -Dm644 Panel.qml "$pkgdir/usr/share/omastudio/Panel.qml"
     install -Dm644 manifest.json "$pkgdir/usr/share/omastudio/manifest.json"

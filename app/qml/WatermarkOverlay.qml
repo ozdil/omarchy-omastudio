@@ -5,7 +5,7 @@ Item {
     id: root
     anchors.fill: parent
 
-    property bool enabled: false
+    property bool shown: false
     property string watermarkType: "text"
     property string text: "OmaStudio Photography"
     property string logoPath: ""
@@ -36,7 +36,7 @@ Item {
 
     Item {
         id: watermarkItem
-        visible: root.enabled && (root.watermarkType === "text" ? root.text.length > 0 : root.logoPath.length > 0)
+        visible: root.shown && (root.watermarkType === "text" ? root.text.length > 0 : root.logoPath.length > 0)
         opacity: root.watermarkOpacity
 
         // 9-Point Anchor Placement
