@@ -5,7 +5,7 @@
 //! - Capture One style Hue, Saturation, and Lightness Uniformity (homogenization).
 //! - Target color matching without destroying micro-texture or facial highlights.
 
-use crate::pipeline::color_grading::{linear_rgb_to_oklab, oklab_to_linear_rgb};
+use crate::pipeline::color_grading::{encoded_rgb_to_oklab, oklab_to_encoded_rgb};
 use crate::recipe::Recipe;
 
 /// Standard photographic vectorscope skin line angle in Oklch space (approx 45° to 55° in Oklab,
@@ -87,7 +87,7 @@ pub fn apply_skin_tone_uniformity(
         DEFAULT_SKIN_HUE_TOLERANCE
     };
 
-    let (l, a, b_val) = linear_rgb_to_oklab(r, g, b);
+    let (l, a, b_val) = encoded_rgb_to_oklab(r, g, b);
     let chroma = (a * a + b_val * b_val).sqrt();
     let mut hue = b_val.atan2(a).to_degrees();
     if hue < 0.0 {
@@ -130,7 +130,7 @@ pub fn apply_skin_tone_uniformity(
     let new_a = new_chroma * rad.cos();
     let new_b = new_chroma * rad.sin();
 
-    oklab_to_linear_rgb(l, new_a, new_b)
+    oklab_to_encoded_rgb(l, new_a, new_b)
 }
 
 #[cfg(test)]

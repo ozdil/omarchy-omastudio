@@ -1,4 +1,27 @@
+use crate::pipeline::transfer::Transfer;
 use crate::recipe::Recipe;
+use std::sync::LazyLock;
+
+/// The creative stage works on display-encoded values (see [`crate::pipeline::transfer`]),
+/// but Oklab is defined on linear light: hues and chroma read on encoded values are
+/// skewed (orange reads as yellow, saturation is overstated in the shadows). The
+/// Oklch tools decode with the pipeline's default curve first and encode afterwards.
+static DISPLAY: LazyLock<Transfer> = LazyLock::new(Transfer::bt709);
+
+/// Display-encoded RGB → Oklab.
+#[inline(always)]
+pub fn encoded_rgb_to_oklab(r: f32, g: f32, b: f32) -> (f32, f32, f32) {
+    let t = &*DISPLAY;
+    linear_rgb_to_oklab(t.decode(r), t.decode(g), t.decode(b))
+}
+
+/// Oklab → display-encoded RGB.
+#[inline(always)]
+pub fn oklab_to_encoded_rgb(l: f32, a: f32, b: f32) -> (f32, f32, f32) {
+    let t = &*DISPLAY;
+    let (r, g, b) = oklab_to_linear_rgb(l, a, b);
+    (t.encode(r), t.encode(g), t.encode(b))
+}
 
 /// Oklch Hue Centers for 8 photographic color bands:
 /// Red, Orange, Yellow, Green, Aqua, Blue, Purple, Magenta
@@ -81,7 +104,7 @@ pub fn apply_hsl_mixer(r: f32, g: f32, b: f32, recipe: &Recipe) -> (f32, f32, f3
         return (r, g, b);
     }
 
-    let (big_l, a, b_val) = linear_rgb_to_oklab(r, g, b);
+    let (big_l, a, b_val) = encoded_rgb_to_oklab(r, g, b);
     let chroma = (a * a + b_val * b_val).sqrt();
 
     // Preserve achromatic neutrals (protects black, white, gray from chromatic pollution)
@@ -152,7 +175,7 @@ pub fn apply_hsl_mixer(r: f32, g: f32, b: f32, recipe: &Recipe) -> (f32, f32, f3
     let new_a = new_chroma * new_hue_rad.cos();
     let new_b = new_chroma * new_hue_rad.sin();
 
-    oklab_to_linear_rgb(new_l, new_a, new_b)
+    oklab_to_encoded_rgb(new_l, new_a, new_b)
 }
 
 /// Applies DaVinci Resolve style 3-Way Color Wheels (Lift, Gamma, Gain, Offset)
