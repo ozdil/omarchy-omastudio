@@ -82,6 +82,7 @@ OmaStudio 3 is a new RAW engine and a standalone Qt 6 application: its own Bayer
 - JPEG, PNG and other raster sources exported to a wide-gamut profile are converted from sRGB instead of falling back to sRGB.
 - Profiles such as scRGB Linear and e-sRGB are no longer mistaken for sRGB.
 
+### Removed
 - OmaSend code that had been copied into this repository: the `rendezvous`, `oma-id-qr` and `force-scan` engine commands, the matching daemon commands (`rendezvous_derive`, `rendezvous_verify`, `pin_verify`), the OmaSend web pages (`assets/web/omasend`, `docs/index.html`) and the `qrcode` dependency. OmaSend lives in [omarchy-omasend](https://github.com/ozdil/omarchy-omasend) and [omasend-web](https://github.com/ozdil/omasend-web). The OmaStudio UI never used these commands.
 
 ## v2.4.0 — 2026-10-16
