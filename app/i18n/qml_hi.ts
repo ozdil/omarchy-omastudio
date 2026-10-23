@@ -320,38 +320,6 @@
 <context>
     <name>ColorSpaceSelector</name>
     <message>
-        <source>Standard SDR web gamut</source>
-        <translation>मानक SDR वेब रंग सीमा</translation>
-    </message>
-    <message>
-        <source>100% sRGB</source>
-        <translation>100% sRGB</translation>
-    </message>
-    <message>
-        <source>Wide gamut, Apple Retina displays</source>
-        <translation>विस्तृत रंग सीमा, Apple Retina डिस्प्ले</translation>
-    </message>
-    <message>
-        <source>125% sRGB</source>
-        <translation>125% sRGB</translation>
-    </message>
-    <message>
-        <source>Ultra-wide gamut HDR master</source>
-        <translation>अति विस्तृत रंग सीमा वाला HDR मास्टर</translation>
-    </message>
-    <message>
-        <source>150% sRGB</source>
-        <translation>150% sRGB</translation>
-    </message>
-    <message>
-        <source>Academy linear working space</source>
-        <translation>अकादमी का रैखिक कार्य स्थान</translation>
-    </message>
-    <message>
-        <source>Wide AP1</source>
-        <translation>विस्तृत AP1</translation>
-    </message>
-    <message>
         <source>Colour management</source>
         <translation>रंग प्रबंधन</translation>
     </message>
@@ -360,16 +328,20 @@
         <translation>गैमट संपीड़न</translation>
     </message>
     <message>
-        <source>%1 (%2)</source>
-        <translation>%1 (%2)</translation>
+        <source>Brings colours pushed outside the gamut back in smoothly instead of clipping them.</source>
+        <translation>गैमट से बाहर गए रंगों को काटने के बजाय सहजता से वापस लाता है।</translation>
     </message>
     <message>
-        <source>ACES 1.3 RRT/ODT Tonemapper</source>
-        <translation>ACES 1.3 RRT/ODT टोन मैपर</translation>
+        <source>ACES tone curve</source>
+        <translation>ACES टोन कर्व</translation>
     </message>
     <message>
-        <source>Filmic shoulder roll-off &amp; dynamic range mapping</source>
-        <translation>नरम फ़िल्मी कंधा और डायनामिक रेंज मैपिंग</translation>
+        <source>Filmic highlight roll-off, a fitted approximation of the ACES output transform.</source>
+        <translation>हाइलाइट में सहज ढलान, ACES आउटपुट ट्रांसफ़ॉर्म का अनुमानित रूप।</translation>
+    </message>
+    <message>
+        <source>The output colour space is set in the Export window.</source>
+        <translation>आउटपुट कलर स्पेस निर्यात विंडो में चुना जाता है।</translation>
     </message>
 </context>
 <context>

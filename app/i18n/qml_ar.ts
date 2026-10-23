@@ -320,38 +320,6 @@
 <context>
     <name>ColorSpaceSelector</name>
     <message>
-        <source>Standard SDR web gamut</source>
-        <translation>نطاق ألوان SDR القياسي للويب</translation>
-    </message>
-    <message>
-        <source>100% sRGB</source>
-        <translation>100% sRGB</translation>
-    </message>
-    <message>
-        <source>Wide gamut, Apple Retina displays</source>
-        <translation>نطاق ألوان واسع، شاشات Apple Retina</translation>
-    </message>
-    <message>
-        <source>125% sRGB</source>
-        <translation>125% sRGB</translation>
-    </message>
-    <message>
-        <source>Ultra-wide gamut HDR master</source>
-        <translation>ماستر HDR بنطاق ألوان فائق الاتساع</translation>
-    </message>
-    <message>
-        <source>150% sRGB</source>
-        <translation>150% sRGB</translation>
-    </message>
-    <message>
-        <source>Academy linear working space</source>
-        <translation>مساحة العمل الخطية للأكاديمية</translation>
-    </message>
-    <message>
-        <source>Wide AP1</source>
-        <translation>AP1 واسع</translation>
-    </message>
-    <message>
         <source>Colour management</source>
         <translation>إدارة الألوان</translation>
     </message>
@@ -360,16 +328,20 @@
         <translation>ضغط النطاق اللوني</translation>
     </message>
     <message>
-        <source>%1 (%2)</source>
-        <translation>%1 (%2)</translation>
+        <source>Brings colours pushed outside the gamut back in smoothly instead of clipping them.</source>
+        <translation>يعيد الألوان الخارجة عن النطاق اللوني بسلاسة بدلًا من قصّها.</translation>
     </message>
     <message>
-        <source>ACES 1.3 RRT/ODT Tonemapper</source>
-        <translation>مُعيّن الدرجات ACES 1.3 RRT/ODT</translation>
+        <source>ACES tone curve</source>
+        <translation>منحنى درجات ACES</translation>
     </message>
     <message>
-        <source>Filmic shoulder roll-off &amp; dynamic range mapping</source>
-        <translation>كتف سينمائي ناعم وتعيين النطاق الديناميكي</translation>
+        <source>Filmic highlight roll-off, a fitted approximation of the ACES output transform.</source>
+        <translation>انحدار ناعم في المناطق الساطعة، تقريب لتحويل الإخراج في ACES.</translation>
+    </message>
+    <message>
+        <source>The output colour space is set in the Export window.</source>
+        <translation>يُحدَّد فضاء ألوان الإخراج في نافذة التصدير.</translation>
     </message>
 </context>
 <context>

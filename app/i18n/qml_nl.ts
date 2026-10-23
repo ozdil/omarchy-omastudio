@@ -320,38 +320,6 @@
 <context>
     <name>ColorSpaceSelector</name>
     <message>
-        <source>Standard SDR web gamut</source>
-        <translation>Standaard SDR-webgamma</translation>
-    </message>
-    <message>
-        <source>100% sRGB</source>
-        <translation>100% sRGB</translation>
-    </message>
-    <message>
-        <source>Wide gamut, Apple Retina displays</source>
-        <translation>Breed gamma, Apple Retina-schermen</translation>
-    </message>
-    <message>
-        <source>125% sRGB</source>
-        <translation>125% sRGB</translation>
-    </message>
-    <message>
-        <source>Ultra-wide gamut HDR master</source>
-        <translation>Ultrabreed HDR-master</translation>
-    </message>
-    <message>
-        <source>150% sRGB</source>
-        <translation>150% sRGB</translation>
-    </message>
-    <message>
-        <source>Academy linear working space</source>
-        <translation>Lineaire werkruimte van de Academy</translation>
-    </message>
-    <message>
-        <source>Wide AP1</source>
-        <translation>Breed AP1</translation>
-    </message>
-    <message>
         <source>Colour management</source>
         <translation>Kleurbeheer</translation>
     </message>
@@ -360,16 +328,20 @@
         <translation>Gamutcompressie</translation>
     </message>
     <message>
-        <source>%1 (%2)</source>
-        <translation>%1 (%2)</translation>
+        <source>Brings colours pushed outside the gamut back in smoothly instead of clipping them.</source>
+        <translation>Brengt kleuren buiten het gamut vloeiend terug in plaats van ze af te kappen.</translation>
     </message>
     <message>
-        <source>ACES 1.3 RRT/ODT Tonemapper</source>
-        <translation>ACES 1.3 RRT/ODT-tonemapper</translation>
+        <source>ACES tone curve</source>
+        <translation>ACES-toonkromme</translation>
     </message>
     <message>
-        <source>Filmic shoulder roll-off &amp; dynamic range mapping</source>
-        <translation>Zachte filmische schouder en mapping van het dynamisch bereik</translation>
+        <source>Filmic highlight roll-off, a fitted approximation of the ACES output transform.</source>
+        <translation>Zachte afloop van de hooglichten, een benadering van de ACES-uitvoertransformatie.</translation>
+    </message>
+    <message>
+        <source>The output colour space is set in the Export window.</source>
+        <translation>De uitvoerkleurruimte stel je in het exportvenster in.</translation>
     </message>
 </context>
 <context>

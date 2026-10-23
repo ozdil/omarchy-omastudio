@@ -320,38 +320,6 @@
 <context>
     <name>ColorSpaceSelector</name>
     <message>
-        <source>Standard SDR web gamut</source>
-        <translation>Стандартне веб-охоплення SDR</translation>
-    </message>
-    <message>
-        <source>100% sRGB</source>
-        <translation>100% sRGB</translation>
-    </message>
-    <message>
-        <source>Wide gamut, Apple Retina displays</source>
-        <translation>Широке охоплення, дисплеї Apple Retina</translation>
-    </message>
-    <message>
-        <source>125% sRGB</source>
-        <translation>125% sRGB</translation>
-    </message>
-    <message>
-        <source>Ultra-wide gamut HDR master</source>
-        <translation>HDR-мастер із надшироким охопленням</translation>
-    </message>
-    <message>
-        <source>150% sRGB</source>
-        <translation>150% sRGB</translation>
-    </message>
-    <message>
-        <source>Academy linear working space</source>
-        <translation>Лінійний робочий простір Академії</translation>
-    </message>
-    <message>
-        <source>Wide AP1</source>
-        <translation>Широкий AP1</translation>
-    </message>
-    <message>
         <source>Colour management</source>
         <translation>Керування кольором</translation>
     </message>
@@ -360,16 +328,20 @@
         <translation>Стиснення охоплення</translation>
     </message>
     <message>
-        <source>%1 (%2)</source>
-        <translation>%1 (%2)</translation>
+        <source>Brings colours pushed outside the gamut back in smoothly instead of clipping them.</source>
+        <translation>Плавно повертає кольори, що вийшли за межі охоплення, замість обрізання.</translation>
     </message>
     <message>
-        <source>ACES 1.3 RRT/ODT Tonemapper</source>
-        <translation>Тонове відображення ACES 1.3 RRT/ODT</translation>
+        <source>ACES tone curve</source>
+        <translation>Тональна крива ACES</translation>
     </message>
     <message>
-        <source>Filmic shoulder roll-off &amp; dynamic range mapping</source>
-        <translation>М&apos;яке плівкове плече та відображення динамічного діапазону</translation>
+        <source>Filmic highlight roll-off, a fitted approximation of the ACES output transform.</source>
+        <translation>М’який спад у світлих тонах, наближення вихідного перетворення ACES.</translation>
+    </message>
+    <message>
+        <source>The output colour space is set in the Export window.</source>
+        <translation>Вихідний колірний простір задається у вікні експорту.</translation>
     </message>
 </context>
 <context>

@@ -101,8 +101,8 @@ Rectangle {
     property string activeFilmSimulation: "none"
     property real activeFilmSimIntensity: 1.0
 
-    // ACES 1.3 & Color Space Management
-    property string activeColorSpace: "sRGB"
+    // Gamut compression and ACES tone curve (output space is chosen at export)
+    property bool gamutCompression: false
     property bool activeAcesTonemap: false
 
     // Capture One Pro Skin Tone Uniformity Engine
@@ -403,7 +403,7 @@ Rectangle {
         root.activeLutPath = "";
         root.activeFilmSimulation = "none";
         root.activeFilmSimIntensity = 1.0;
-        root.activeColorSpace = "sRGB";
+        root.gamutCompression = false;
         root.activeAcesTonemap = false;
         root.skinToneEnabled = false;
         root.skinTargetHue = 50.0;
@@ -514,7 +514,7 @@ Rectangle {
             "lut_name": root.activeLutName !== "" ? root.activeLutName : null,
             "lut_intensity": root.activeLutIntensity,
             "lut_path": root.activeLutPath !== "" ? root.activeLutPath : null,
-            "color_space": root.activeColorSpace,
+            "gamut_compression": root.gamutCompression,
             "aces_tonemap": root.activeAcesTonemap,
             "film_simulation": root.activeFilmSimulation,
             "film_sim_intensity": root.activeFilmSimIntensity,
@@ -650,8 +650,10 @@ Rectangle {
         if (r.lut_intensity !== undefined) root.activeLutIntensity = root.num(r.lut_intensity, 1.0);
         if (r.lut_path !== undefined) root.activeLutPath = r.lut_path || "";
 
-        // ACES 1.3 & Film Simulations
-        if (r.color_space !== undefined) root.activeColorSpace = r.color_space || "sRGB";
+        // Gamut compression, ACES tone curve & Film Simulations
+        // Recipes from earlier versions stored "ACEScg" for gamut compression
+        if (r.gamut_compression !== undefined || r.color_space !== undefined)
+            root.gamutCompression = Boolean(r.gamut_compression) || String(r.color_space || "").toLowerCase() === "acescg";
         if (r.aces_tonemap !== undefined) root.activeAcesTonemap = Boolean(r.aces_tonemap);
         if (r.film_simulation !== undefined) root.activeFilmSimulation = r.film_simulation || "none";
         if (r.film_sim_intensity !== undefined) root.activeFilmSimIntensity = root.num(r.film_sim_intensity, 1.0);
@@ -774,7 +776,7 @@ Rectangle {
 
         layersPanel.layersList = Qt.binding(function() { return root.adjustmentLayers; });
 
-        colorSpaceSelector.activeColorSpace = Qt.binding(function() { return root.activeColorSpace; });
+        colorSpaceSelector.gamutCompression = Qt.binding(function() { return root.gamutCompression; });
         colorSpaceSelector.acesTonemap = Qt.binding(function() { return root.activeAcesTonemap; });
     }
 
@@ -2420,10 +2422,10 @@ Rectangle {
                                     embedded: true
                                     id: colorSpaceSelector
                                     Layout.fillWidth: true
-                                    activeColorSpace: root.activeColorSpace
+                                    gamutCompression: root.gamutCompression
                                     acesTonemap: root.activeAcesTonemap
-                                    onColorSpaceSelected: function(space) {
-                                        root.activeColorSpace = space;
+                                    onGamutCompressionToggled: function(enabled) {
+                                        root.gamutCompression = enabled;
                                         root.requestRender();
                                     }
                                     onAcesTonemapToggled: function(enabled) {

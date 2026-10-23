@@ -320,38 +320,6 @@
 <context>
     <name>ColorSpaceSelector</name>
     <message>
-        <source>Standard SDR web gamut</source>
-        <translation>מרחב צבע SDR סטנדרטי לרשת</translation>
-    </message>
-    <message>
-        <source>100% sRGB</source>
-        <translation>100% sRGB</translation>
-    </message>
-    <message>
-        <source>Wide gamut, Apple Retina displays</source>
-        <translation>מרחב צבע רחב, מסכי Apple Retina</translation>
-    </message>
-    <message>
-        <source>125% sRGB</source>
-        <translation>125% sRGB</translation>
-    </message>
-    <message>
-        <source>Ultra-wide gamut HDR master</source>
-        <translation>מאסטר HDR במרחב צבע רחב במיוחד</translation>
-    </message>
-    <message>
-        <source>150% sRGB</source>
-        <translation>150% sRGB</translation>
-    </message>
-    <message>
-        <source>Academy linear working space</source>
-        <translation>מרחב העבודה הליניארי של האקדמיה</translation>
-    </message>
-    <message>
-        <source>Wide AP1</source>
-        <translation>AP1 רחב</translation>
-    </message>
-    <message>
         <source>Colour management</source>
         <translation>ניהול צבע</translation>
     </message>
@@ -360,16 +328,20 @@
         <translation>דחיסת סולם צבעים</translation>
     </message>
     <message>
-        <source>%1 (%2)</source>
-        <translation>%1 (%2)</translation>
+        <source>Brings colours pushed outside the gamut back in smoothly instead of clipping them.</source>
+        <translation>מחזיר בעדינות צבעים שחרגו מהסולם במקום לקטום אותם.</translation>
     </message>
     <message>
-        <source>ACES 1.3 RRT/ODT Tonemapper</source>
-        <translation>מיפוי גוונים ACES 1.3 RRT/ODT</translation>
+        <source>ACES tone curve</source>
+        <translation>עקומת טונים ACES</translation>
     </message>
     <message>
-        <source>Filmic shoulder roll-off &amp; dynamic range mapping</source>
-        <translation>כתף קולנועית רכה ומיפוי טווח דינמי</translation>
+        <source>Filmic highlight roll-off, a fitted approximation of the ACES output transform.</source>
+        <translation>ריכוך הדרגתי באזורים הבהירים, קירוב של טרנספורמציית הפלט של ACES.</translation>
+    </message>
+    <message>
+        <source>The output colour space is set in the Export window.</source>
+        <translation>מרחב הצבע של הפלט נקבע בחלון הייצוא.</translation>
     </message>
 </context>
 <context>

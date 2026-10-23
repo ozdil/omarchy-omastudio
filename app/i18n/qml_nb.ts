@@ -320,38 +320,6 @@
 <context>
     <name>ColorSpaceSelector</name>
     <message>
-        <source>Standard SDR web gamut</source>
-        <translation>Standard SDR-fargeområde for nett</translation>
-    </message>
-    <message>
-        <source>100% sRGB</source>
-        <translation>100 % sRGB</translation>
-    </message>
-    <message>
-        <source>Wide gamut, Apple Retina displays</source>
-        <translation>Bredt fargeområde, Apple Retina-skjermer</translation>
-    </message>
-    <message>
-        <source>125% sRGB</source>
-        <translation>125 % sRGB</translation>
-    </message>
-    <message>
-        <source>Ultra-wide gamut HDR master</source>
-        <translation>HDR-master med ultrabredt fargeområde</translation>
-    </message>
-    <message>
-        <source>150% sRGB</source>
-        <translation>150 % sRGB</translation>
-    </message>
-    <message>
-        <source>Academy linear working space</source>
-        <translation>Akademiets lineære arbeidsrom</translation>
-    </message>
-    <message>
-        <source>Wide AP1</source>
-        <translation>Bredt AP1</translation>
-    </message>
-    <message>
         <source>Colour management</source>
         <translation>Fargestyring</translation>
     </message>
@@ -360,16 +328,20 @@
         <translation>Gamutkomprimering</translation>
     </message>
     <message>
-        <source>%1 (%2)</source>
-        <translation>%1 (%2)</translation>
+        <source>Brings colours pushed outside the gamut back in smoothly instead of clipping them.</source>
+        <translation>Fører farger utenfor fargeområdet mykt tilbake i stedet for å klippe dem.</translation>
     </message>
     <message>
-        <source>ACES 1.3 RRT/ODT Tonemapper</source>
-        <translation>ACES 1.3 RRT/ODT-tonekartlegging</translation>
+        <source>ACES tone curve</source>
+        <translation>ACES-tonekurve</translation>
     </message>
     <message>
-        <source>Filmic shoulder roll-off &amp; dynamic range mapping</source>
-        <translation>Myk filmisk skulder og kartlegging av dynamisk omfang</translation>
+        <source>Filmic highlight roll-off, a fitted approximation of the ACES output transform.</source>
+        <translation>Myk avrunding av høylys, en tilnærming av ACES-utdatatransformasjonen.</translation>
+    </message>
+    <message>
+        <source>The output colour space is set in the Export window.</source>
+        <translation>Utdatafargerommet velges i eksportvinduet.</translation>
     </message>
 </context>
 <context>

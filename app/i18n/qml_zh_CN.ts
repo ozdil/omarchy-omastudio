@@ -320,38 +320,6 @@
 <context>
     <name>ColorSpaceSelector</name>
     <message>
-        <source>Standard SDR web gamut</source>
-        <translation>标准 SDR 网页色域</translation>
-    </message>
-    <message>
-        <source>100% sRGB</source>
-        <translation>100% sRGB</translation>
-    </message>
-    <message>
-        <source>Wide gamut, Apple Retina displays</source>
-        <translation>广色域，Apple Retina 显示屏</translation>
-    </message>
-    <message>
-        <source>125% sRGB</source>
-        <translation>125% sRGB</translation>
-    </message>
-    <message>
-        <source>Ultra-wide gamut HDR master</source>
-        <translation>超广色域 HDR 母版</translation>
-    </message>
-    <message>
-        <source>150% sRGB</source>
-        <translation>150% sRGB</translation>
-    </message>
-    <message>
-        <source>Academy linear working space</source>
-        <translation>学院线性工作空间</translation>
-    </message>
-    <message>
-        <source>Wide AP1</source>
-        <translation>宽色域 AP1</translation>
-    </message>
-    <message>
         <source>Colour management</source>
         <translation>色彩管理</translation>
     </message>
@@ -360,16 +328,20 @@
         <translation>色域压缩</translation>
     </message>
     <message>
-        <source>%1 (%2)</source>
-        <translation>%1 (%2)</translation>
+        <source>Brings colours pushed outside the gamut back in smoothly instead of clipping them.</source>
+        <translation>将超出色域的颜色平滑地拉回，而不是直接裁切。</translation>
     </message>
     <message>
-        <source>ACES 1.3 RRT/ODT Tonemapper</source>
-        <translation>ACES 1.3 RRT/ODT 色调映射</translation>
+        <source>ACES tone curve</source>
+        <translation>ACES 色调曲线</translation>
     </message>
     <message>
-        <source>Filmic shoulder roll-off &amp; dynamic range mapping</source>
-        <translation>柔和的胶片肩部与动态范围映射</translation>
+        <source>Filmic highlight roll-off, a fitted approximation of the ACES output transform.</source>
+        <translation>高光柔和过渡，是 ACES 输出变换的近似。</translation>
+    </message>
+    <message>
+        <source>The output colour space is set in the Export window.</source>
+        <translation>输出色彩空间在导出窗口中设置。</translation>
     </message>
 </context>
 <context>

@@ -320,38 +320,6 @@
 <context>
     <name>ColorSpaceSelector</name>
     <message>
-        <source>Standard SDR web gamut</source>
-        <translation>Gamut web SDR standard</translation>
-    </message>
-    <message>
-        <source>100% sRGB</source>
-        <translation>100% sRGB</translation>
-    </message>
-    <message>
-        <source>Wide gamut, Apple Retina displays</source>
-        <translation>Gamut ampio, display Retina Apple</translation>
-    </message>
-    <message>
-        <source>125% sRGB</source>
-        <translation>125% sRGB</translation>
-    </message>
-    <message>
-        <source>Ultra-wide gamut HDR master</source>
-        <translation>Master HDR a gamut ultra ampio</translation>
-    </message>
-    <message>
-        <source>150% sRGB</source>
-        <translation>150% sRGB</translation>
-    </message>
-    <message>
-        <source>Academy linear working space</source>
-        <translation>Spazio di lavoro lineare dell&apos;Academy</translation>
-    </message>
-    <message>
-        <source>Wide AP1</source>
-        <translation>AP1 ampio</translation>
-    </message>
-    <message>
         <source>Colour management</source>
         <translation>Gestione del colore</translation>
     </message>
@@ -360,16 +328,20 @@
         <translation>Compressione della gamma</translation>
     </message>
     <message>
-        <source>%1 (%2)</source>
-        <translation>%1 (%2)</translation>
+        <source>Brings colours pushed outside the gamut back in smoothly instead of clipping them.</source>
+        <translation>Riporta dolcemente nella gamma i colori che ne escono invece di tagliarli.</translation>
     </message>
     <message>
-        <source>ACES 1.3 RRT/ODT Tonemapper</source>
-        <translation>Tone mapper ACES 1.3 RRT/ODT</translation>
+        <source>ACES tone curve</source>
+        <translation>Curva tonale ACES</translation>
     </message>
     <message>
-        <source>Filmic shoulder roll-off &amp; dynamic range mapping</source>
-        <translation>Spalla filmica morbida e mappatura della gamma dinamica</translation>
+        <source>Filmic highlight roll-off, a fitted approximation of the ACES output transform.</source>
+        <translation>Attenuazione morbida delle alte luci, approssimazione della trasformazione di uscita ACES.</translation>
+    </message>
+    <message>
+        <source>The output colour space is set in the Export window.</source>
+        <translation>Lo spazio colore di uscita si imposta nella finestra Esporta.</translation>
     </message>
 </context>
 <context>

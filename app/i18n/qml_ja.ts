@@ -320,38 +320,6 @@
 <context>
     <name>ColorSpaceSelector</name>
     <message>
-        <source>Standard SDR web gamut</source>
-        <translation>標準 SDR Web 色域</translation>
-    </message>
-    <message>
-        <source>100% sRGB</source>
-        <translation>100% sRGB</translation>
-    </message>
-    <message>
-        <source>Wide gamut, Apple Retina displays</source>
-        <translation>広色域、Apple Retina ディスプレイ</translation>
-    </message>
-    <message>
-        <source>125% sRGB</source>
-        <translation>125% sRGB</translation>
-    </message>
-    <message>
-        <source>Ultra-wide gamut HDR master</source>
-        <translation>超広色域 HDR マスター</translation>
-    </message>
-    <message>
-        <source>150% sRGB</source>
-        <translation>150% sRGB</translation>
-    </message>
-    <message>
-        <source>Academy linear working space</source>
-        <translation>アカデミーのリニア作業空間</translation>
-    </message>
-    <message>
-        <source>Wide AP1</source>
-        <translation>広色域 AP1</translation>
-    </message>
-    <message>
         <source>Colour management</source>
         <translation>カラーマネジメント</translation>
     </message>
@@ -360,16 +328,20 @@
         <translation>色域圧縮</translation>
     </message>
     <message>
-        <source>%1 (%2)</source>
-        <translation>%1 (%2)</translation>
+        <source>Brings colours pushed outside the gamut back in smoothly instead of clipping them.</source>
+        <translation>色域外に出た色を切り捨てずに滑らかに色域内へ戻します。</translation>
     </message>
     <message>
-        <source>ACES 1.3 RRT/ODT Tonemapper</source>
-        <translation>ACES 1.3 RRT/ODT トーンマッパー</translation>
+        <source>ACES tone curve</source>
+        <translation>ACES トーンカーブ</translation>
     </message>
     <message>
-        <source>Filmic shoulder roll-off &amp; dynamic range mapping</source>
-        <translation>柔らかなフィルム調ショルダーとダイナミックレンジのマッピング</translation>
+        <source>Filmic highlight roll-off, a fitted approximation of the ACES output transform.</source>
+        <translation>ハイライトをなめらかに丸めます。ACES 出力変換の近似です。</translation>
+    </message>
+    <message>
+        <source>The output colour space is set in the Export window.</source>
+        <translation>出力の色空間は書き出しウィンドウで設定します。</translation>
     </message>
 </context>
 <context>

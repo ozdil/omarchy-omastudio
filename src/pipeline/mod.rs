@@ -63,7 +63,7 @@ pub fn process_buffer(
     let film_sim = film_sim::FilmSimulation::from_id(&recipe.film_simulation);
     let film_lut = film_sim::calibrated_lut(film_sim);
     let color_chrome = recipe.color_chrome > 0.0 || recipe.color_chrome_blue > 0.0;
-    let working_space = aces::WorkingColorSpace::from_str_name(&recipe.color_space);
+    let gamut_compress = recipe.gamut_compression_active();
 
     // Intermediate float buffer for multi-stage 16-bit precision processing
     let mut f32_buf = vec![0.0f32; num_pixels * 3];
@@ -117,9 +117,9 @@ pub fn process_buffer(
                     (r5, g5, b5)
                 };
 
-                // 8. ACES 1.3 Gamut Compression if ACEScg or wide-gamut mode active
-                let (r6, g6, b6) = if working_space == aces::WorkingColorSpace::AcesCg || recipe.aces_tonemap {
-                    aces::apply_aces_gamut_compression(r5, g5, b5)
+                // 8. ACES reference gamut compression
+                let (r6, g6, b6) = if gamut_compress {
+                    aces::apply_gamut_compression_encoded(r5, g5, b5)
                 } else {
                     (r5, g5, b5)
                 };
@@ -278,14 +278,13 @@ pub struct PointOps<'a> {
 impl<'a> PointOps<'a> {
     pub fn new(recipe: &'a Recipe) -> Self {
         let film_sim = film_sim::FilmSimulation::from_id(&recipe.film_simulation);
-        let working_space = aces::WorkingColorSpace::from_str_name(&recipe.color_space);
         Self {
             recipe,
             look_lut: resolve_recipe_lut(recipe),
             film_sim,
             film_lut: film_sim::calibrated_lut(film_sim),
             color_chrome: recipe.color_chrome > 0.0 || recipe.color_chrome_blue > 0.0,
-            aces: working_space == aces::WorkingColorSpace::AcesCg || recipe.aces_tonemap,
+            aces: recipe.gamut_compression_active(),
         }
     }
 
@@ -319,7 +318,7 @@ impl<'a> PointOps<'a> {
             (r, g, b)
         };
         // 8. ACES gamut compression
-        if self.aces { aces::apply_aces_gamut_compression(r, g, b) } else { (r, g, b) }
+        if self.aces { aces::apply_gamut_compression_encoded(r, g, b) } else { (r, g, b) }
     }
 
     /// The operations sampled on a BAKE_GRID³ lattice over 0..BAKE_MAX.
@@ -701,7 +700,6 @@ struct PointStage {
 impl PointStage {
     fn new(recipe: &Recipe, transfer: Transfer) -> Self {
         let film_sim = film_sim::FilmSimulation::from_id(&recipe.film_simulation);
-        let working_space = aces::WorkingColorSpace::from_str_name(&recipe.color_space);
         Self {
             wb: white_balance::kelvin_to_rgb_multipliers(recipe.wb_temperature, recipe.wb_tint),
             exp_factor: 2.0f32.powf(recipe.exposure + recipe.baseline_exposure),
@@ -709,7 +707,7 @@ impl PointStage {
             film_sim,
             film_lut: film_sim::calibrated_lut(film_sim),
             color_chrome: recipe.color_chrome > 0.0 || recipe.color_chrome_blue > 0.0,
-            gamut_compress: working_space == aces::WorkingColorSpace::AcesCg || recipe.aces_tonemap,
+            gamut_compress: recipe.gamut_compression_active(),
             transfer,
         }
     }
@@ -744,7 +742,7 @@ impl PointStage {
         } else {
             (r, g, b)
         };
-        if self.gamut_compress { aces::apply_aces_gamut_compression(r, g, b) } else { (r, g, b) }
+        if self.gamut_compress { aces::apply_gamut_compression_encoded(r, g, b) } else { (r, g, b) }
     }
 }
 

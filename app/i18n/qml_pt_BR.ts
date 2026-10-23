@@ -320,38 +320,6 @@
 <context>
     <name>ColorSpaceSelector</name>
     <message>
-        <source>Standard SDR web gamut</source>
-        <translation>Gama web SDR padrão</translation>
-    </message>
-    <message>
-        <source>100% sRGB</source>
-        <translation>100% sRGB</translation>
-    </message>
-    <message>
-        <source>Wide gamut, Apple Retina displays</source>
-        <translation>Gama ampla, telas Retina da Apple</translation>
-    </message>
-    <message>
-        <source>125% sRGB</source>
-        <translation>125% sRGB</translation>
-    </message>
-    <message>
-        <source>Ultra-wide gamut HDR master</source>
-        <translation>Master HDR de gama ultra-ampla</translation>
-    </message>
-    <message>
-        <source>150% sRGB</source>
-        <translation>150% sRGB</translation>
-    </message>
-    <message>
-        <source>Academy linear working space</source>
-        <translation>Espaço de trabalho linear da Academia</translation>
-    </message>
-    <message>
-        <source>Wide AP1</source>
-        <translation>AP1 amplo</translation>
-    </message>
-    <message>
         <source>Colour management</source>
         <translation>Gerenciamento de cor</translation>
     </message>
@@ -360,16 +328,20 @@
         <translation>Compressão de gama</translation>
     </message>
     <message>
-        <source>%1 (%2)</source>
-        <translation>%1 (%2)</translation>
+        <source>Brings colours pushed outside the gamut back in smoothly instead of clipping them.</source>
+        <translation>Traz de volta suavemente as cores fora da gama em vez de cortá-las.</translation>
     </message>
     <message>
-        <source>ACES 1.3 RRT/ODT Tonemapper</source>
-        <translation>Mapeador de tons ACES 1.3 RRT/ODT</translation>
+        <source>ACES tone curve</source>
+        <translation>Curva de tons ACES</translation>
     </message>
     <message>
-        <source>Filmic shoulder roll-off &amp; dynamic range mapping</source>
-        <translation>Ombro fílmico suave e mapeamento da faixa dinâmica</translation>
+        <source>Filmic highlight roll-off, a fitted approximation of the ACES output transform.</source>
+        <translation>Suavização das altas luzes, uma aproximação da transformação de saída ACES.</translation>
+    </message>
+    <message>
+        <source>The output colour space is set in the Export window.</source>
+        <translation>O espaço de cor de saída é definido na janela Exportar.</translation>
     </message>
 </context>
 <context>

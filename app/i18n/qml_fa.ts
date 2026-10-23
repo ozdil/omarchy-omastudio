@@ -320,38 +320,6 @@
 <context>
     <name>ColorSpaceSelector</name>
     <message>
-        <source>Standard SDR web gamut</source>
-        <translation>گسترهٔ رنگ استاندارد SDR برای وب</translation>
-    </message>
-    <message>
-        <source>100% sRGB</source>
-        <translation>100% sRGB</translation>
-    </message>
-    <message>
-        <source>Wide gamut, Apple Retina displays</source>
-        <translation>گسترهٔ رنگ وسیع، نمایشگرهای Apple Retina</translation>
-    </message>
-    <message>
-        <source>125% sRGB</source>
-        <translation>125% sRGB</translation>
-    </message>
-    <message>
-        <source>Ultra-wide gamut HDR master</source>
-        <translation>مستر HDR با گسترهٔ رنگ بسیار وسیع</translation>
-    </message>
-    <message>
-        <source>150% sRGB</source>
-        <translation>150% sRGB</translation>
-    </message>
-    <message>
-        <source>Academy linear working space</source>
-        <translation>فضای کاری خطی آکادمی</translation>
-    </message>
-    <message>
-        <source>Wide AP1</source>
-        <translation>AP1 وسیع</translation>
-    </message>
-    <message>
         <source>Colour management</source>
         <translation>مدیریت رنگ</translation>
     </message>
@@ -360,16 +328,20 @@
         <translation>فشرده‌سازی گستره</translation>
     </message>
     <message>
-        <source>%1 (%2)</source>
-        <translation>%1 (%2)</translation>
+        <source>Brings colours pushed outside the gamut back in smoothly instead of clipping them.</source>
+        <translation>رنگ‌های خارج از گستره را به‌جای بریدن، به‌نرمی بازمی‌گرداند.</translation>
     </message>
     <message>
-        <source>ACES 1.3 RRT/ODT Tonemapper</source>
-        <translation>نگاشت تُن ACES 1.3 RRT/ODT</translation>
+        <source>ACES tone curve</source>
+        <translation>منحنی تونال ACES</translation>
     </message>
     <message>
-        <source>Filmic shoulder roll-off &amp; dynamic range mapping</source>
-        <translation>شانهٔ سینمایی نرم و نگاشت محدودهٔ دینامیکی</translation>
+        <source>Filmic highlight roll-off, a fitted approximation of the ACES output transform.</source>
+        <translation>افت نرم در روشنایی‌ها، تقریبی از تبدیل خروجی ACES.</translation>
+    </message>
+    <message>
+        <source>The output colour space is set in the Export window.</source>
+        <translation>فضای رنگی خروجی در پنجرهٔ برون‌بری تعیین می‌شود.</translation>
     </message>
 </context>
 <context>

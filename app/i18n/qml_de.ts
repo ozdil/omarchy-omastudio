@@ -320,38 +320,6 @@
 <context>
     <name>ColorSpaceSelector</name>
     <message>
-        <source>Standard SDR web gamut</source>
-        <translation>Standard-SDR-Webfarbraum</translation>
-    </message>
-    <message>
-        <source>100% sRGB</source>
-        <translation>100 % sRGB</translation>
-    </message>
-    <message>
-        <source>Wide gamut, Apple Retina displays</source>
-        <translation>Großer Farbraum, Apple-Retina-Displays</translation>
-    </message>
-    <message>
-        <source>125% sRGB</source>
-        <translation>125 % sRGB</translation>
-    </message>
-    <message>
-        <source>Ultra-wide gamut HDR master</source>
-        <translation>Sehr großer Farbraum, HDR-Master</translation>
-    </message>
-    <message>
-        <source>150% sRGB</source>
-        <translation>150 % sRGB</translation>
-    </message>
-    <message>
-        <source>Academy linear working space</source>
-        <translation>Linearer Arbeitsfarbraum der Academy</translation>
-    </message>
-    <message>
-        <source>Wide AP1</source>
-        <translation>Großer AP1</translation>
-    </message>
-    <message>
         <source>Colour management</source>
         <translation>Farbmanagement</translation>
     </message>
@@ -360,16 +328,20 @@
         <translation>Gamut-Kompression</translation>
     </message>
     <message>
-        <source>%1 (%2)</source>
-        <translation>%1 (%2)</translation>
+        <source>Brings colours pushed outside the gamut back in smoothly instead of clipping them.</source>
+        <translation>Holt Farben, die außerhalb des Farbraums liegen, weich zurück, statt sie abzuschneiden.</translation>
     </message>
     <message>
-        <source>ACES 1.3 RRT/ODT Tonemapper</source>
-        <translation>ACES 1.3 RRT/ODT-Tonemapper</translation>
+        <source>ACES tone curve</source>
+        <translation>ACES-Tonkurve</translation>
     </message>
     <message>
-        <source>Filmic shoulder roll-off &amp; dynamic range mapping</source>
-        <translation>Filmische Schulter und Dynamikumfang-Abbildung</translation>
+        <source>Filmic highlight roll-off, a fitted approximation of the ACES output transform.</source>
+        <translation>Filmische Lichterabrollung, eine angenäherte Form der ACES-Ausgabetransformation.</translation>
+    </message>
+    <message>
+        <source>The output colour space is set in the Export window.</source>
+        <translation>Der Ausgabefarbraum wird im Exportfenster festgelegt.</translation>
     </message>
 </context>
 <context>

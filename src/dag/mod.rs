@@ -105,7 +105,7 @@ pub enum NodeType {
     },
     /// Authentic Film Simulation (Fujifilm, Hasselblad HNCS)
     FilmSimulation { id: String, intensity: f32 },
-    /// ACES 1.3 / 2.0 Reference Gamut Compression (RGC) & Output Transform
+    /// ACES reference gamut compression (in AP1) and the fitted ACES tone curve
     AcesColorManagement {
         color_space: String,
         rrt_odt: bool,
@@ -418,15 +418,13 @@ impl DagEngine {
                     let (r, g, b) = (chunk[0], chunk[1], chunk[2]);
                     let (lr, lg, lb) = crate::pipeline::aces::linear_to_acescg(r, g, b, ws);
                     let (cr, cg, cb) = crate::pipeline::aces::apply_aces_gamut_compression(lr, lg, lb);
-                    let (final_r, final_g, final_b) = if *rrt_odt {
-                        (
-                            crate::pipeline::aces::apply_aces_tonemap(cr),
-                            crate::pipeline::aces::apply_aces_tonemap(cg),
-                            crate::pipeline::aces::apply_aces_tonemap(cb),
-                        )
+                    let (cr, cg, cb) = if *rrt_odt {
+                        crate::pipeline::aces::apply_aces_tonemap_pixel(cr, cg, cb)
                     } else {
                         (cr, cg, cb)
                     };
+                    // Back to the buffer's own primaries.
+                    let (final_r, final_g, final_b) = crate::pipeline::aces::acesccg_to_linear(cr, cg, cb, ws);
                     chunk[0] = final_r;
                     chunk[1] = final_g;
                     chunk[2] = final_b;

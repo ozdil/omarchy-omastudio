@@ -320,38 +320,6 @@
 <context>
     <name>ColorSpaceSelector</name>
     <message>
-        <source>Standard SDR web gamut</source>
-        <translation>표준 SDR 웹 색역</translation>
-    </message>
-    <message>
-        <source>100% sRGB</source>
-        <translation>100% sRGB</translation>
-    </message>
-    <message>
-        <source>Wide gamut, Apple Retina displays</source>
-        <translation>넓은 색역, Apple Retina 디스플레이</translation>
-    </message>
-    <message>
-        <source>125% sRGB</source>
-        <translation>125% sRGB</translation>
-    </message>
-    <message>
-        <source>Ultra-wide gamut HDR master</source>
-        <translation>초광색역 HDR 마스터</translation>
-    </message>
-    <message>
-        <source>150% sRGB</source>
-        <translation>150% sRGB</translation>
-    </message>
-    <message>
-        <source>Academy linear working space</source>
-        <translation>아카데미 선형 작업 공간</translation>
-    </message>
-    <message>
-        <source>Wide AP1</source>
-        <translation>넓은 AP1</translation>
-    </message>
-    <message>
         <source>Colour management</source>
         <translation>색상 관리</translation>
     </message>
@@ -360,16 +328,20 @@
         <translation>색 영역 압축</translation>
     </message>
     <message>
-        <source>%1 (%2)</source>
-        <translation>%1 (%2)</translation>
+        <source>Brings colours pushed outside the gamut back in smoothly instead of clipping them.</source>
+        <translation>색역을 벗어난 색을 잘라내지 않고 부드럽게 되돌립니다.</translation>
     </message>
     <message>
-        <source>ACES 1.3 RRT/ODT Tonemapper</source>
-        <translation>ACES 1.3 RRT/ODT 톤 매퍼</translation>
+        <source>ACES tone curve</source>
+        <translation>ACES 톤 커브</translation>
     </message>
     <message>
-        <source>Filmic shoulder roll-off &amp; dynamic range mapping</source>
-        <translation>부드러운 필름 숄더와 다이내믹 레인지 매핑</translation>
+        <source>Filmic highlight roll-off, a fitted approximation of the ACES output transform.</source>
+        <translation>하이라이트를 부드럽게 줄입니다. ACES 출력 변환의 근사입니다.</translation>
+    </message>
+    <message>
+        <source>The output colour space is set in the Export window.</source>
+        <translation>출력 색 공간은 내보내기 창에서 설정합니다.</translation>
     </message>
 </context>
 <context>

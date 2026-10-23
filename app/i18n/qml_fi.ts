@@ -320,38 +320,6 @@
 <context>
     <name>ColorSpaceSelector</name>
     <message>
-        <source>Standard SDR web gamut</source>
-        <translation>Tavallinen SDR-väriavaruus verkkoon</translation>
-    </message>
-    <message>
-        <source>100% sRGB</source>
-        <translation>100 % sRGB</translation>
-    </message>
-    <message>
-        <source>Wide gamut, Apple Retina displays</source>
-        <translation>Laaja väriavaruus, Apple Retina -näytöt</translation>
-    </message>
-    <message>
-        <source>125% sRGB</source>
-        <translation>125 % sRGB</translation>
-    </message>
-    <message>
-        <source>Ultra-wide gamut HDR master</source>
-        <translation>Erittäin laajan väriavaruuden HDR-master</translation>
-    </message>
-    <message>
-        <source>150% sRGB</source>
-        <translation>150 % sRGB</translation>
-    </message>
-    <message>
-        <source>Academy linear working space</source>
-        <translation>Akatemian lineaarinen työtila</translation>
-    </message>
-    <message>
-        <source>Wide AP1</source>
-        <translation>Laaja AP1</translation>
-    </message>
-    <message>
         <source>Colour management</source>
         <translation>Värinhallinta</translation>
     </message>
@@ -360,16 +328,20 @@
         <translation>Värialueen pakkaus</translation>
     </message>
     <message>
-        <source>%1 (%2)</source>
-        <translation>%1 (%2)</translation>
+        <source>Brings colours pushed outside the gamut back in smoothly instead of clipping them.</source>
+        <translation>Palauttaa väriavaruuden ulkopuolelle joutuneet värit pehmeästi leikkaamatta niitä.</translation>
     </message>
     <message>
-        <source>ACES 1.3 RRT/ODT Tonemapper</source>
-        <translation>ACES 1.3 RRT/ODT -sävykartoitus</translation>
+        <source>ACES tone curve</source>
+        <translation>ACES-sävykäyrä</translation>
     </message>
     <message>
-        <source>Filmic shoulder roll-off &amp; dynamic range mapping</source>
-        <translation>Pehmeä filmimäinen olka ja dynamiikka-alueen kartoitus</translation>
+        <source>Filmic highlight roll-off, a fitted approximation of the ACES output transform.</source>
+        <translation>Pehmeä kirkkaiden sävyjen pyöristys, ACES-tulostemuunnoksen likiarvo.</translation>
+    </message>
+    <message>
+        <source>The output colour space is set in the Export window.</source>
+        <translation>Tulosteen väriavaruus valitaan vientiikkunassa.</translation>
     </message>
 </context>
 <context>
