@@ -83,6 +83,10 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Connected to local AI: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Provider saved</source>
         <translation type="unfinished"></translation>
     </message>
@@ -555,7 +559,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Legendary ultra-fine grain monochrome</source>
+        <source>Very fine grain black and white</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1808,12 +1812,28 @@
 <context>
     <name>TopBar</name>
     <message>
-        <source>STUDIO</source>
+        <source>P</source>
+        <comment>pick flag, first letter of Pick</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>P</source>
-        <comment>pick flag, first letter of Pick</comment>
+        <source>Connecting…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Local AI</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Connect local AI</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Connected: %1. Click to reconnect.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use Omarchy&apos;s default AI agent, or Ollama or LM Studio on this computer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

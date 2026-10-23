@@ -83,6 +83,10 @@
             <translation>API anahtarı anahtar zincirine kaydedildi</translation>
         </message>
         <message>
+            <source>Connected to local AI: %1</source>
+            <translation>Yerel YZ'ye bağlanıldı: %1</translation>
+        </message>
+        <message>
             <source>Provider saved</source>
             <translation>Sağlayıcı kaydedildi</translation>
         </message>
@@ -551,7 +555,7 @@
             <translation>Çok düşük doygunlukla sert kontrast</translation>
         </message>
         <message>
-            <source>Legendary ultra-fine grain monochrome</source>
+            <source>Very fine grain black and white</source>
             <translation>Çok ince grenli siyah beyaz</translation>
         </message>
         <message>
@@ -1794,13 +1798,29 @@
     <context>
         <name>TopBar</name>
         <message>
-            <source>STUDIO</source>
-            <translation>STÜDYO</translation>
-        </message>
-        <message>
             <source>P</source>
             <comment>pick flag, first letter of Pick</comment>
             <translation>S</translation>
+        </message>
+        <message>
+            <source>Connecting…</source>
+            <translation>Bağlanıyor…</translation>
+        </message>
+        <message>
+            <source>Local AI</source>
+            <translation>Yerel YZ</translation>
+        </message>
+        <message>
+            <source>Connect local AI</source>
+            <translation>Yerel YZ'ye bağlan</translation>
+        </message>
+        <message>
+            <source>Connected: %1. Click to reconnect.</source>
+            <translation>Bağlı: %1. Yeniden bağlanmak için tıklayın.</translation>
+        </message>
+        <message>
+            <source>Use Omarchy's default AI agent, or Ollama or LM Studio on this computer</source>
+            <translation>Omarchy'nin varsayılan YZ ajanını ya da bu bilgisayardaki Ollama veya LM Studio'yu kullan</translation>
         </message>
         <message>
             <source>Essentials</source>

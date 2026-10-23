@@ -31,7 +31,7 @@ Rectangle {
         { "id": "fuji_pro_neg_std", "name": "PRO Neg. Std", "brand": "Fujifilm", "desc": qsTr("Soft studio portraits with even skin tones"), "color": "#c0caf5" },
         { "id": "fuji_eterna_bleach_bypass", "name": "Eterna Bleach Bypass", "brand": "Fujifilm", "desc": qsTr("Hard contrast with very low saturation"), "color": "#545c7e" },
         // Fujifilm Monochrome
-        { "id": "fuji_acros_standard", "name": "Acros 100", "brand": "Acros B&W", "desc": qsTr("Legendary ultra-fine grain monochrome"), "color": "#c0caf5" },
+        { "id": "fuji_acros_standard", "name": "Acros 100", "brand": "Acros B&W", "desc": qsTr("Very fine grain black and white"), "color": "#c0caf5" },
         { "id": "fuji_acros_yellow", "name": "Acros (+Ye)", "brand": "Acros B&W", "desc": qsTr("Slight contrast lift for skies and portraits"), "color": "#e0af68" },
         { "id": "fuji_acros_red", "name": "Acros (+R)", "brand": "Acros B&W", "desc": qsTr("Deep dramatic skies and high micro-contrast"), "color": "#f7768e" },
         { "id": "fuji_acros_green", "name": "Acros (+G)", "brand": "Acros B&W", "desc": qsTr("Enhanced foliage separation and soft skin tones"), "color": "#9ece6a" },
