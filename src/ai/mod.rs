@@ -536,9 +536,7 @@ mod social_tests {
 
     #[test]
     fn social_tuning_never_lowers_a_stronger_edit() {
-        let mut base = Recipe::default();
-        base.vibrance = 50.0;
-        base.clarity = -20.0;
+        let base = Recipe { vibrance: 50.0, clarity: -20.0, ..Default::default() };
         let r = ai_optimize_for_social(&grey(300, 200), 300, 200, 3, "ig", &base).recipe;
         assert_eq!(r.vibrance, 50.0);
         assert_eq!(r.clarity, -12.0);
@@ -546,8 +544,7 @@ mod social_tests {
 
     #[test]
     fn social_crop_follows_a_quarter_turn() {
-        let mut base = Recipe::default();
-        base.rotation = 90.0;
+        let base = Recipe { rotation: 90.0, ..Default::default() };
         // 3:2 landscape frame shown upright as 2:3 portrait; 4:5 portrait output
         let res = ai_optimize_for_social(&grey(300, 200), 300, 200, 3, "ig", &base);
         let r = res.recipe;

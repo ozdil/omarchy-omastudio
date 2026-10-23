@@ -232,6 +232,57 @@
     </message>
 </context>
 <context>
+    <name>AiChatPanel</name>
+    <message>
+        <source>Open a photo first</source>
+        <translation>Open eerst een foto</translation>
+    </message>
+    <message>
+        <source>Edit applied.</source>
+        <translation>Bewerking toegepast.</translation>
+    </message>
+    <message>
+        <source>Chat · %1</source>
+        <translation>Gesprek · %1</translation>
+    </message>
+    <message>
+        <source>Chat</source>
+        <translation>Gesprek</translation>
+    </message>
+    <message>
+        <source>Reconnect</source>
+        <translation>Opnieuw verbinden</translation>
+    </message>
+    <message>
+        <source>Clear chat</source>
+        <translation>Gesprek wissen</translation>
+    </message>
+    <message>
+        <source>Close chat</source>
+        <translation>Gesprek sluiten</translation>
+    </message>
+    <message>
+        <source>Write below what to change in the photo. The AI sets the adjustments; Ctrl+Z undoes each edit.</source>
+        <translation>Schrijf hieronder wat er aan de foto moet veranderen. De AI zet de schuifregelaars; Ctrl+Z maakt elke bewerking ongedaan.</translation>
+    </message>
+    <message>
+        <source>Working…</source>
+        <translation>Bezig…</translation>
+    </message>
+    <message>
+        <source>e.g. warmer, moody evening light, recover the sky</source>
+        <translation>bijv. warmer, sfeervol avondlicht, de lucht herstellen</translation>
+    </message>
+    <message>
+        <source>Message to the AI</source>
+        <translation>Bericht aan de AI</translation>
+    </message>
+    <message>
+        <source>Send</source>
+        <translation>Versturen</translation>
+    </message>
+</context>
+<context>
     <name>BoundedTextInput</name>
     <message>
         <source>Clipboard content exceeded byte limit or timed out.</source>
@@ -642,10 +693,6 @@
         <translation>Standaard / uit</translation>
     </message>
     <message>
-        <source>Neutral camera linear profile</source>
-        <translation>Neutraal lineair cameraprofiel</translation>
-    </message>
-    <message>
         <source>Standard natural daylight color</source>
         <translation>Standaard natuurlijke daglichtkleur</translation>
     </message>
@@ -772,6 +819,10 @@
     <message>
         <source>Acros B&amp;W</source>
         <translation>Acros Z/W</translation>
+    </message>
+    <message>
+        <source>No film simulation</source>
+        <translation>Geen filmsimulatie</translation>
     </message>
 </context>
 <context>
@@ -1289,10 +1340,6 @@
         <translation>Voorbeeld renderen mislukt</translation>
     </message>
     <message>
-        <source>%1 applied (%2)</source>
-        <translation>%1 toegepast (%2)</translation>
-    </message>
-    <message>
         <source>Batch export: %1 succeeded, %2 failed</source>
         <translation>Batchexport: %1 gelukt, %2 mislukt</translation>
     </message>
@@ -1467,10 +1514,6 @@
     <message>
         <source>Reset to defaults</source>
         <translation>Standaardwaarden hersteld</translation>
-    </message>
-    <message>
-        <source>Platform crop reset</source>
-        <translation>Platformuitsnede hersteld</translation>
     </message>
     <message>
         <source>Auto applied</source>
@@ -1699,6 +1742,22 @@
         <source>Developing at full resolution…</source>
         <translation>Ontwikkelen op volledige resolutie…</translation>
     </message>
+    <message>
+        <source>%1 applied: long edge %2 px, quality %3</source>
+        <translation>%1 toegepast: lange zijde %2 px, kwaliteit %3</translation>
+    </message>
+    <message>
+        <source>Pro: tone curve, colour mixer, colour grading, detail, grain, colour management and the Masks tab are shown</source>
+        <translation>Pro: toonkromme, kleurmixer, kleurgradatie, detail, korrel, kleurbeheer en het tabblad Maskers worden getoond</translation>
+    </message>
+    <message>
+        <source>Essentials: Pro sections are hidden. Settings made in them stay applied.</source>
+        <translation>Basis: Pro-onderdelen zijn verborgen. Hun instellingen blijven toegepast.</translation>
+    </message>
+    <message>
+        <source>Platform crop reset</source>
+        <translation>Platformuitsnede hersteld</translation>
+    </message>
 </context>
 <context>
     <name>Navigator</name>
@@ -1712,6 +1771,10 @@
     <message>
         <source>Reset %1</source>
         <translation>%1 herstellen</translation>
+    </message>
+    <message>
+        <source>Pro</source>
+        <translation>Pro</translation>
     </message>
 </context>
 <context>
@@ -1908,10 +1971,6 @@
         <translation>Herstellen</translation>
     </message>
     <message>
-        <source>Vectorscope 123° flesh line (target: %1°)</source>
-        <translation>Huidlijn van 123° in de vectorscoop (doel: %1°)</translation>
-    </message>
-    <message>
         <source>Target Skin Hue</source>
         <translation>Doeltint huid</translation>
     </message>
@@ -1934,6 +1993,10 @@
     <message>
         <source>Saturation Shift</source>
         <translation>Verzadigingsverschuiving</translation>
+    </message>
+    <message>
+        <source>Target skin hue: %1° (Oklab)</source>
+        <translation>Doelhuidtint: %1° (Oklab)</translation>
     </message>
 </context>
 <context>
@@ -2000,16 +2063,8 @@
         <translation>Verbinden…</translation>
     </message>
     <message>
-        <source>Local AI</source>
-        <translation>Lokale AI</translation>
-    </message>
-    <message>
         <source>Connect local AI</source>
         <translation>Lokale AI verbinden</translation>
-    </message>
-    <message>
-        <source>Connected: %1. Click to reconnect.</source>
-        <translation>Verbonden: %1. Klik om opnieuw te verbinden.</translation>
     </message>
     <message>
         <source>Use Omarchy&apos;s default AI agent, or Ollama or LM Studio on this computer</source>
@@ -2050,6 +2105,26 @@
     <message>
         <source>Export</source>
         <translation>Exporteren</translation>
+    </message>
+    <message>
+        <source>Connected: %1. Click to close the chat.</source>
+        <translation>Verbonden: %1. Klik om het gesprek te sluiten.</translation>
+    </message>
+    <message>
+        <source>Connected: %1. Click to open the chat.</source>
+        <translation>Verbonden: %1. Klik om het gesprek te openen.</translation>
+    </message>
+    <message>
+        <source>AI chat</source>
+        <translation>AI-gesprek</translation>
+    </message>
+    <message>
+        <source>Essentials: white balance, tone, presence, film simulation, presets and LUT</source>
+        <translation>Basis: witbalans, toon, presence, filmsimulatie, voorinstellingen en LUT</translation>
+    </message>
+    <message>
+        <source>Pro adds tone curve, colour mixer, colour grading, detail, grain, colour management and masks</source>
+        <translation>Pro voegt toonkromme, kleurmixer, kleurgradatie, detail, korrel, kleurbeheer en maskers toe</translation>
     </message>
 </context>
 <context>

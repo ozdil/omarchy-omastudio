@@ -232,6 +232,57 @@
     </message>
 </context>
 <context>
+    <name>AiChatPanel</name>
+    <message>
+        <source>Open a photo first</source>
+        <translation>نخست یک عکس باز کنید</translation>
+    </message>
+    <message>
+        <source>Edit applied.</source>
+        <translation>ویرایش اعمال شد.</translation>
+    </message>
+    <message>
+        <source>Chat · %1</source>
+        <translation>گفت‌وگو · %1</translation>
+    </message>
+    <message>
+        <source>Chat</source>
+        <translation>گفت‌وگو</translation>
+    </message>
+    <message>
+        <source>Reconnect</source>
+        <translation>اتصال دوباره</translation>
+    </message>
+    <message>
+        <source>Clear chat</source>
+        <translation>پاک کردن گفت‌وگو</translation>
+    </message>
+    <message>
+        <source>Close chat</source>
+        <translation>بستن گفت‌وگو</translation>
+    </message>
+    <message>
+        <source>Write below what to change in the photo. The AI sets the adjustments; Ctrl+Z undoes each edit.</source>
+        <translation>در زیر بنویسید چه چیزی در عکس تغییر کند. هوش مصنوعی لغزنده‌ها را تنظیم می‌کند؛ Ctrl+Z هر ویرایش را برمی‌گرداند.</translation>
+    </message>
+    <message>
+        <source>Working…</source>
+        <translation>در حال کار…</translation>
+    </message>
+    <message>
+        <source>e.g. warmer, moody evening light, recover the sky</source>
+        <translation>مثلاً: گرم‌تر، نور غم‌انگیز عصر، بازیابی آسمان</translation>
+    </message>
+    <message>
+        <source>Message to the AI</source>
+        <translation>پیام به هوش مصنوعی</translation>
+    </message>
+    <message>
+        <source>Send</source>
+        <translation>ارسال</translation>
+    </message>
+</context>
+<context>
     <name>BoundedTextInput</name>
     <message>
         <source>Clipboard content exceeded byte limit or timed out.</source>
@@ -641,10 +692,6 @@
         <translation>استاندارد / خاموش</translation>
     </message>
     <message>
-        <source>Neutral camera linear profile</source>
-        <translation>نمایهٔ خطی خنثای دوربین</translation>
-    </message>
-    <message>
         <source>Standard natural daylight color</source>
         <translation>رنگ طبیعی استاندارد نور روز</translation>
     </message>
@@ -771,6 +818,10 @@
     <message>
         <source>Acros B&amp;W</source>
         <translation>Acros سیاه‌وسفید</translation>
+    </message>
+    <message>
+        <source>No film simulation</source>
+        <translation>بدون شبیه‌سازی فیلم</translation>
     </message>
 </context>
 <context>
@@ -1285,10 +1336,6 @@
         <translation>نمایش پیش‌نمایش ناموفق بود</translation>
     </message>
     <message>
-        <source>%1 applied (%2)</source>
-        <translation>%1 اعمال شد (%2)</translation>
-    </message>
-    <message>
         <source>Batch export: %1 succeeded, %2 failed</source>
         <translation>خروجی دسته‌ای: %1 موفق، %2 ناموفق</translation>
     </message>
@@ -1463,10 +1510,6 @@
     <message>
         <source>Reset to defaults</source>
         <translation>مقادیر پیش‌فرض بازگردانده شد</translation>
-    </message>
-    <message>
-        <source>Platform crop reset</source>
-        <translation>برش بستر بازنشانی شد</translation>
     </message>
     <message>
         <source>Auto applied</source>
@@ -1694,6 +1737,22 @@
         <source>Developing at full resolution…</source>
         <translation>در حال ظهور با وضوح کامل…</translation>
     </message>
+    <message>
+        <source>%1 applied: long edge %2 px, quality %3</source>
+        <translation>%1 اعمال شد: ضلع بلند %2 پیکسل، کیفیت %3</translation>
+    </message>
+    <message>
+        <source>Pro: tone curve, colour mixer, colour grading, detail, grain, colour management and the Masks tab are shown</source>
+        <translation>Pro: منحنی تُن، میکسر رنگ، درجه‌بندی رنگ، جزئیات، دانه، مدیریت رنگ و زبانهٔ ماسک‌ها نمایش داده می‌شوند</translation>
+    </message>
+    <message>
+        <source>Essentials: Pro sections are hidden. Settings made in them stay applied.</source>
+        <translation>پایه: بخش‌های Pro پنهان شدند. تنظیمات آن‌ها همچنان اعمال می‌شود.</translation>
+    </message>
+    <message>
+        <source>Platform crop reset</source>
+        <translation>برش بستر بازنشانی شد</translation>
+    </message>
 </context>
 <context>
     <name>Navigator</name>
@@ -1707,6 +1766,10 @@
     <message>
         <source>Reset %1</source>
         <translation>بازنشانی %1</translation>
+    </message>
+    <message>
+        <source>Pro</source>
+        <translation>Pro</translation>
     </message>
 </context>
 <context>
@@ -1903,10 +1966,6 @@
         <translation>بازنشانی</translation>
     </message>
     <message>
-        <source>Vectorscope 123° flesh line (target: %1°)</source>
-        <translation>خط پوست ۱۲۳ درجه در برداربین (هدف: %1°)</translation>
-    </message>
-    <message>
         <source>Target Skin Hue</source>
         <translation>فام هدف پوست</translation>
     </message>
@@ -1929,6 +1988,10 @@
     <message>
         <source>Saturation Shift</source>
         <translation>جابه‌جایی اشباع</translation>
+    </message>
+    <message>
+        <source>Target skin hue: %1° (Oklab)</source>
+        <translation>رنگ پوست هدف: %1° (Oklab)</translation>
     </message>
 </context>
 <context>
@@ -1994,16 +2057,8 @@
         <translation>در حال اتصال…</translation>
     </message>
     <message>
-        <source>Local AI</source>
-        <translation>هوش مصنوعی محلی</translation>
-    </message>
-    <message>
         <source>Connect local AI</source>
         <translation>اتصال هوش مصنوعی محلی</translation>
-    </message>
-    <message>
-        <source>Connected: %1. Click to reconnect.</source>
-        <translation>متصل: %1. برای اتصال دوباره کلیک کنید.</translation>
     </message>
     <message>
         <source>Use Omarchy&apos;s default AI agent, or Ollama or LM Studio on this computer</source>
@@ -2044,6 +2099,26 @@
     <message>
         <source>Export</source>
         <translation>خروجی</translation>
+    </message>
+    <message>
+        <source>Connected: %1. Click to close the chat.</source>
+        <translation>متصل: %1. برای بستن گفت‌وگو کلیک کنید.</translation>
+    </message>
+    <message>
+        <source>Connected: %1. Click to open the chat.</source>
+        <translation>متصل: %1. برای باز کردن گفت‌وگو کلیک کنید.</translation>
+    </message>
+    <message>
+        <source>AI chat</source>
+        <translation>گفت‌وگو با هوش مصنوعی</translation>
+    </message>
+    <message>
+        <source>Essentials: white balance, tone, presence, film simulation, presets and LUT</source>
+        <translation>پایه: تراز سفیدی، تُن، حضور، شبیه‌سازی فیلم، پیش‌تنظیم‌ها و LUT</translation>
+    </message>
+    <message>
+        <source>Pro adds tone curve, colour mixer, colour grading, detail, grain, colour management and masks</source>
+        <translation>Pro منحنی تُن، میکسر رنگ، درجه‌بندی رنگ، جزئیات، دانه، مدیریت رنگ و ماسک‌ها را اضافه می‌کند</translation>
     </message>
 </context>
 <context>

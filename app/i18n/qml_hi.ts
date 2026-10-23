@@ -232,6 +232,57 @@
     </message>
 </context>
 <context>
+    <name>AiChatPanel</name>
+    <message>
+        <source>Open a photo first</source>
+        <translation>पहले कोई फ़ोटो खोलें</translation>
+    </message>
+    <message>
+        <source>Edit applied.</source>
+        <translation>संपादन लागू हुआ।</translation>
+    </message>
+    <message>
+        <source>Chat · %1</source>
+        <translation>चैट · %1</translation>
+    </message>
+    <message>
+        <source>Chat</source>
+        <translation>चैट</translation>
+    </message>
+    <message>
+        <source>Reconnect</source>
+        <translation>फिर से कनेक्ट करें</translation>
+    </message>
+    <message>
+        <source>Clear chat</source>
+        <translation>चैट साफ़ करें</translation>
+    </message>
+    <message>
+        <source>Close chat</source>
+        <translation>चैट बंद करें</translation>
+    </message>
+    <message>
+        <source>Write below what to change in the photo. The AI sets the adjustments; Ctrl+Z undoes each edit.</source>
+        <translation>नीचे लिखें कि फ़ोटो में क्या बदलना है। AI स्लाइडर सेट करता है; Ctrl+Z हर संपादन को पूर्ववत करता है।</translation>
+    </message>
+    <message>
+        <source>Working…</source>
+        <translation>काम जारी है…</translation>
+    </message>
+    <message>
+        <source>e.g. warmer, moody evening light, recover the sky</source>
+        <translation>उदा. अधिक गर्म, उदास शाम की रोशनी, आसमान वापस लाएँ</translation>
+    </message>
+    <message>
+        <source>Message to the AI</source>
+        <translation>AI को संदेश</translation>
+    </message>
+    <message>
+        <source>Send</source>
+        <translation>भेजें</translation>
+    </message>
+</context>
+<context>
     <name>BoundedTextInput</name>
     <message>
         <source>Clipboard content exceeded byte limit or timed out.</source>
@@ -642,10 +693,6 @@
         <translation>मानक / बंद</translation>
     </message>
     <message>
-        <source>Neutral camera linear profile</source>
-        <translation>तटस्थ रैखिक कैमरा प्रोफ़ाइल</translation>
-    </message>
-    <message>
         <source>Standard natural daylight color</source>
         <translation>मानक प्राकृतिक दिन के उजाले का रंग</translation>
     </message>
@@ -772,6 +819,10 @@
     <message>
         <source>Acros B&amp;W</source>
         <translation>Acros श्वेत-श्याम</translation>
+    </message>
+    <message>
+        <source>No film simulation</source>
+        <translation>कोई फ़िल्म सिमुलेशन नहीं</translation>
     </message>
 </context>
 <context>
@@ -1289,10 +1340,6 @@
         <translation>पूर्वावलोकन रेंडर विफल रहा</translation>
     </message>
     <message>
-        <source>%1 applied (%2)</source>
-        <translation>%1 लागू हुआ (%2)</translation>
-    </message>
-    <message>
         <source>Batch export: %1 succeeded, %2 failed</source>
         <translation>बैच निर्यात: %1 सफल, %2 विफल</translation>
     </message>
@@ -1467,10 +1514,6 @@
     <message>
         <source>Reset to defaults</source>
         <translation>डिफ़ॉल्ट पर रीसेट किया गया</translation>
-    </message>
-    <message>
-        <source>Platform crop reset</source>
-        <translation>प्लेटफ़ॉर्म क्रॉप रीसेट किया गया</translation>
     </message>
     <message>
         <source>Auto applied</source>
@@ -1699,6 +1742,22 @@
         <source>Developing at full resolution…</source>
         <translation>पूरे रिज़ॉल्यूशन पर डेवलप हो रहा है…</translation>
     </message>
+    <message>
+        <source>%1 applied: long edge %2 px, quality %3</source>
+        <translation>%1 लागू: लंबी भुजा %2 px, गुणवत्ता %3</translation>
+    </message>
+    <message>
+        <source>Pro: tone curve, colour mixer, colour grading, detail, grain, colour management and the Masks tab are shown</source>
+        <translation>Pro: टोन कर्व, कलर मिक्सर, कलर ग्रेडिंग, डिटेल, ग्रेन, कलर मैनेजमेंट और मास्क टैब दिख रहे हैं</translation>
+    </message>
+    <message>
+        <source>Essentials: Pro sections are hidden. Settings made in them stay applied.</source>
+        <translation>आवश्यक: Pro अनुभाग छिपे हैं। उनकी सेटिंग्स लागू रहती हैं।</translation>
+    </message>
+    <message>
+        <source>Platform crop reset</source>
+        <translation>प्लेटफ़ॉर्म क्रॉप रीसेट किया गया</translation>
+    </message>
 </context>
 <context>
     <name>Navigator</name>
@@ -1712,6 +1771,10 @@
     <message>
         <source>Reset %1</source>
         <translation>%1 रीसेट करें</translation>
+    </message>
+    <message>
+        <source>Pro</source>
+        <translation>Pro</translation>
     </message>
 </context>
 <context>
@@ -1908,10 +1971,6 @@
         <translation>रीसेट</translation>
     </message>
     <message>
-        <source>Vectorscope 123° flesh line (target: %1°)</source>
-        <translation>वेक्टरस्कोप 123° त्वचा रेखा (लक्ष्य: %1°)</translation>
-    </message>
-    <message>
         <source>Target Skin Hue</source>
         <translation>लक्ष्य त्वचा ह्यू</translation>
     </message>
@@ -1934,6 +1993,10 @@
     <message>
         <source>Saturation Shift</source>
         <translation>संतृप्ति बदलाव</translation>
+    </message>
+    <message>
+        <source>Target skin hue: %1° (Oklab)</source>
+        <translation>लक्ष्य त्वचा रंगत: %1° (Oklab)</translation>
     </message>
 </context>
 <context>
@@ -2000,16 +2063,8 @@
         <translation>कनेक्ट हो रहा है…</translation>
     </message>
     <message>
-        <source>Local AI</source>
-        <translation>स्थानीय AI</translation>
-    </message>
-    <message>
         <source>Connect local AI</source>
         <translation>स्थानीय AI कनेक्ट करें</translation>
-    </message>
-    <message>
-        <source>Connected: %1. Click to reconnect.</source>
-        <translation>कनेक्टेड: %1। फिर से कनेक्ट करने के लिए क्लिक करें।</translation>
     </message>
     <message>
         <source>Use Omarchy&apos;s default AI agent, or Ollama or LM Studio on this computer</source>
@@ -2050,6 +2105,26 @@
     <message>
         <source>Export</source>
         <translation>निर्यात</translation>
+    </message>
+    <message>
+        <source>Connected: %1. Click to close the chat.</source>
+        <translation>कनेक्टेड: %1. चैट बंद करने के लिए क्लिक करें।</translation>
+    </message>
+    <message>
+        <source>Connected: %1. Click to open the chat.</source>
+        <translation>कनेक्टेड: %1. चैट खोलने के लिए क्लिक करें।</translation>
+    </message>
+    <message>
+        <source>AI chat</source>
+        <translation>AI चैट</translation>
+    </message>
+    <message>
+        <source>Essentials: white balance, tone, presence, film simulation, presets and LUT</source>
+        <translation>आवश्यक: व्हाइट बैलेंस, टोन, प्रेज़ेंस, फ़िल्म सिमुलेशन, प्रीसेट और LUT</translation>
+    </message>
+    <message>
+        <source>Pro adds tone curve, colour mixer, colour grading, detail, grain, colour management and masks</source>
+        <translation>Pro टोन कर्व, कलर मिक्सर, कलर ग्रेडिंग, डिटेल, ग्रेन, कलर मैनेजमेंट और मास्क जोड़ता है</translation>
     </message>
 </context>
 <context>

@@ -232,6 +232,57 @@
     </message>
 </context>
 <context>
+    <name>AiChatPanel</name>
+    <message>
+        <source>Open a photo first</source>
+        <translation>Nejprve otevřete fotografii</translation>
+    </message>
+    <message>
+        <source>Edit applied.</source>
+        <translation>Úprava použita.</translation>
+    </message>
+    <message>
+        <source>Chat · %1</source>
+        <translation>Konverzace · %1</translation>
+    </message>
+    <message>
+        <source>Chat</source>
+        <translation>Konverzace</translation>
+    </message>
+    <message>
+        <source>Reconnect</source>
+        <translation>Znovu připojit</translation>
+    </message>
+    <message>
+        <source>Clear chat</source>
+        <translation>Vymazat konverzaci</translation>
+    </message>
+    <message>
+        <source>Close chat</source>
+        <translation>Zavřít konverzaci</translation>
+    </message>
+    <message>
+        <source>Write below what to change in the photo. The AI sets the adjustments; Ctrl+Z undoes each edit.</source>
+        <translation>Napište níže, co na fotografii změnit. AI nastaví posuvníky; Ctrl+Z vrátí každou úpravu.</translation>
+    </message>
+    <message>
+        <source>Working…</source>
+        <translation>Zpracovává se…</translation>
+    </message>
+    <message>
+        <source>e.g. warmer, moody evening light, recover the sky</source>
+        <translation>např. tepleji, ponuré večerní světlo, obnovit oblohu</translation>
+    </message>
+    <message>
+        <source>Message to the AI</source>
+        <translation>Zpráva pro AI</translation>
+    </message>
+    <message>
+        <source>Send</source>
+        <translation>Odeslat</translation>
+    </message>
+</context>
+<context>
     <name>BoundedTextInput</name>
     <message>
         <source>Clipboard content exceeded byte limit or timed out.</source>
@@ -643,10 +694,6 @@
         <translation>Standardní / vypnuto</translation>
     </message>
     <message>
-        <source>Neutral camera linear profile</source>
-        <translation>Neutrální lineární profil fotoaparátu</translation>
-    </message>
-    <message>
         <source>Standard natural daylight color</source>
         <translation>Standardní přirozené barvy denního světla</translation>
     </message>
@@ -773,6 +820,10 @@
     <message>
         <source>Acros B&amp;W</source>
         <translation>Acros ČB</translation>
+    </message>
+    <message>
+        <source>No film simulation</source>
+        <translation>Bez simulace filmu</translation>
     </message>
 </context>
 <context>
@@ -1293,10 +1344,6 @@
         <translation>Vykreslení náhledu selhalo</translation>
     </message>
     <message>
-        <source>%1 applied (%2)</source>
-        <translation>%1 použito (%2)</translation>
-    </message>
-    <message>
         <source>Batch export: %1 succeeded, %2 failed</source>
         <translation>Dávkový export: %1 úspěšně, %2 neúspěšně</translation>
     </message>
@@ -1471,10 +1518,6 @@
     <message>
         <source>Reset to defaults</source>
         <translation>Výchozí hodnoty obnoveny</translation>
-    </message>
-    <message>
-        <source>Platform crop reset</source>
-        <translation>Ořez pro platformu obnoven</translation>
     </message>
     <message>
         <source>Auto applied</source>
@@ -1704,6 +1747,22 @@
         <source>Developing at full resolution…</source>
         <translation>Vyvolává se v plném rozlišení…</translation>
     </message>
+    <message>
+        <source>%1 applied: long edge %2 px, quality %3</source>
+        <translation>%1 použito: delší strana %2 px, kvalita %3</translation>
+    </message>
+    <message>
+        <source>Pro: tone curve, colour mixer, colour grading, detail, grain, colour management and the Masks tab are shown</source>
+        <translation>Pro: zobrazena je tónová křivka, mixér barev, barevné gradování, detail, zrno, správa barev a karta Masky</translation>
+    </message>
+    <message>
+        <source>Essentials: Pro sections are hidden. Settings made in them stay applied.</source>
+        <translation>Základy: sekce Pro jsou skryté. Jejich nastavení zůstává použito.</translation>
+    </message>
+    <message>
+        <source>Platform crop reset</source>
+        <translation>Ořez pro platformu obnoven</translation>
+    </message>
 </context>
 <context>
     <name>Navigator</name>
@@ -1717,6 +1776,10 @@
     <message>
         <source>Reset %1</source>
         <translation>Obnovit: %1</translation>
+    </message>
+    <message>
+        <source>Pro</source>
+        <translation>Pro</translation>
     </message>
 </context>
 <context>
@@ -1913,10 +1976,6 @@
         <translation>Obnovit</translation>
     </message>
     <message>
-        <source>Vectorscope 123° flesh line (target: %1°)</source>
-        <translation>Linie pleti 123° ve vektorskopu (cíl: %1°)</translation>
-    </message>
-    <message>
         <source>Target Skin Hue</source>
         <translation>Cílový odstín pleti</translation>
     </message>
@@ -1939,6 +1998,10 @@
     <message>
         <source>Saturation Shift</source>
         <translation>Posun sytosti</translation>
+    </message>
+    <message>
+        <source>Target skin hue: %1° (Oklab)</source>
+        <translation>Cílový odstín pleti: %1° (Oklab)</translation>
     </message>
 </context>
 <context>
@@ -2006,16 +2069,8 @@
         <translation>Připojování…</translation>
     </message>
     <message>
-        <source>Local AI</source>
-        <translation>Místní AI</translation>
-    </message>
-    <message>
         <source>Connect local AI</source>
         <translation>Připojit místní AI</translation>
-    </message>
-    <message>
-        <source>Connected: %1. Click to reconnect.</source>
-        <translation>Připojeno: %1. Kliknutím připojíte znovu.</translation>
     </message>
     <message>
         <source>Use Omarchy&apos;s default AI agent, or Ollama or LM Studio on this computer</source>
@@ -2056,6 +2111,26 @@
     <message>
         <source>Export</source>
         <translation>Exportovat</translation>
+    </message>
+    <message>
+        <source>Connected: %1. Click to close the chat.</source>
+        <translation>Připojeno: %1. Kliknutím konverzaci zavřete.</translation>
+    </message>
+    <message>
+        <source>Connected: %1. Click to open the chat.</source>
+        <translation>Připojeno: %1. Kliknutím konverzaci otevřete.</translation>
+    </message>
+    <message>
+        <source>AI chat</source>
+        <translation>Konverzace s AI</translation>
+    </message>
+    <message>
+        <source>Essentials: white balance, tone, presence, film simulation, presets and LUT</source>
+        <translation>Základy: vyvážení bílé, tón, prezence, simulace filmu, předvolby a LUT</translation>
+    </message>
+    <message>
+        <source>Pro adds tone curve, colour mixer, colour grading, detail, grain, colour management and masks</source>
+        <translation>Pro přidává tónovou křivku, mixér barev, barevné gradování, detail, zrno, správu barev a masky</translation>
     </message>
 </context>
 <context>

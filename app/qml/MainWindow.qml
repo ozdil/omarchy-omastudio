@@ -474,6 +474,7 @@ Rectangle {
         exportDialog.maxDimension = null;
         exportDialog.scalePercent = 100;
         exportDialog.socialOptimizer.activePlatform = "";
+        root.showToast(qsTr("Platform crop reset"), Theme.textDim);
         root.requestRender();
     }
 

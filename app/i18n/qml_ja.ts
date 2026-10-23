@@ -232,6 +232,57 @@
     </message>
 </context>
 <context>
+    <name>AiChatPanel</name>
+    <message>
+        <source>Open a photo first</source>
+        <translation>先に写真を開いてください</translation>
+    </message>
+    <message>
+        <source>Edit applied.</source>
+        <translation>編集を適用しました。</translation>
+    </message>
+    <message>
+        <source>Chat · %1</source>
+        <translation>チャット · %1</translation>
+    </message>
+    <message>
+        <source>Chat</source>
+        <translation>チャット</translation>
+    </message>
+    <message>
+        <source>Reconnect</source>
+        <translation>再接続</translation>
+    </message>
+    <message>
+        <source>Clear chat</source>
+        <translation>チャットを消去</translation>
+    </message>
+    <message>
+        <source>Close chat</source>
+        <translation>チャットを閉じる</translation>
+    </message>
+    <message>
+        <source>Write below what to change in the photo. The AI sets the adjustments; Ctrl+Z undoes each edit.</source>
+        <translation>写真で変えたいことを下に入力してください。AI がスライダーを設定します。Ctrl+Z で各編集を取り消せます。</translation>
+    </message>
+    <message>
+        <source>Working…</source>
+        <translation>処理中…</translation>
+    </message>
+    <message>
+        <source>e.g. warmer, moody evening light, recover the sky</source>
+        <translation>例: もっと暖かく、物憂げな夕方の光、空を復元</translation>
+    </message>
+    <message>
+        <source>Message to the AI</source>
+        <translation>AI へのメッセージ</translation>
+    </message>
+    <message>
+        <source>Send</source>
+        <translation>送信</translation>
+    </message>
+</context>
+<context>
     <name>BoundedTextInput</name>
     <message>
         <source>Clipboard content exceeded byte limit or timed out.</source>
@@ -641,10 +692,6 @@
         <translation>標準 / オフ</translation>
     </message>
     <message>
-        <source>Neutral camera linear profile</source>
-        <translation>ニュートラルなリニアカメラプロファイル</translation>
-    </message>
-    <message>
         <source>Standard natural daylight color</source>
         <translation>標準的な自然な昼光色</translation>
     </message>
@@ -771,6 +818,10 @@
     <message>
         <source>Acros B&amp;W</source>
         <translation>Acros モノクロ</translation>
+    </message>
+    <message>
+        <source>No film simulation</source>
+        <translation>フィルムシミュレーションなし</translation>
     </message>
 </context>
 <context>
@@ -1285,10 +1336,6 @@
         <translation>プレビューの描画に失敗しました</translation>
     </message>
     <message>
-        <source>%1 applied (%2)</source>
-        <translation>%1 を適用しました（%2）</translation>
-    </message>
-    <message>
         <source>Batch export: %1 succeeded, %2 failed</source>
         <translation>一括書き出し: 成功 %1、失敗 %2</translation>
     </message>
@@ -1463,10 +1510,6 @@
     <message>
         <source>Reset to defaults</source>
         <translation>初期設定に戻しました</translation>
-    </message>
-    <message>
-        <source>Platform crop reset</source>
-        <translation>プラットフォームの切り抜きをリセットしました</translation>
     </message>
     <message>
         <source>Auto applied</source>
@@ -1694,6 +1737,22 @@
         <source>Developing at full resolution…</source>
         <translation>フル解像度で現像中…</translation>
     </message>
+    <message>
+        <source>%1 applied: long edge %2 px, quality %3</source>
+        <translation>%1 を適用: 長辺 %2 px、画質 %3</translation>
+    </message>
+    <message>
+        <source>Pro: tone curve, colour mixer, colour grading, detail, grain, colour management and the Masks tab are shown</source>
+        <translation>Pro: トーンカーブ、カラーミキサー、カラーグレーディング、ディテール、粒状感、カラーマネジメント、マスクタブを表示しています</translation>
+    </message>
+    <message>
+        <source>Essentials: Pro sections are hidden. Settings made in them stay applied.</source>
+        <translation>基本: Pro のセクションを非表示にしました。そこで行った設定は引き続き適用されます。</translation>
+    </message>
+    <message>
+        <source>Platform crop reset</source>
+        <translation>プラットフォームの切り抜きをリセットしました</translation>
+    </message>
 </context>
 <context>
     <name>Navigator</name>
@@ -1707,6 +1766,10 @@
     <message>
         <source>Reset %1</source>
         <translation>%1 をリセット</translation>
+    </message>
+    <message>
+        <source>Pro</source>
+        <translation>Pro</translation>
     </message>
 </context>
 <context>
@@ -1903,10 +1966,6 @@
         <translation>リセット</translation>
     </message>
     <message>
-        <source>Vectorscope 123° flesh line (target: %1°)</source>
-        <translation>ベクトルスコープの 123° スキンライン（目標: %1°）</translation>
-    </message>
-    <message>
         <source>Target Skin Hue</source>
         <translation>目標の肌の色相</translation>
     </message>
@@ -1929,6 +1988,10 @@
     <message>
         <source>Saturation Shift</source>
         <translation>彩度のシフト</translation>
+    </message>
+    <message>
+        <source>Target skin hue: %1° (Oklab)</source>
+        <translation>目標の肌の色相: %1°（Oklab）</translation>
     </message>
 </context>
 <context>
@@ -1994,16 +2057,8 @@
         <translation>接続中…</translation>
     </message>
     <message>
-        <source>Local AI</source>
-        <translation>ローカル AI</translation>
-    </message>
-    <message>
         <source>Connect local AI</source>
         <translation>ローカル AI に接続</translation>
-    </message>
-    <message>
-        <source>Connected: %1. Click to reconnect.</source>
-        <translation>接続済み: %1。クリックで再接続します。</translation>
     </message>
     <message>
         <source>Use Omarchy&apos;s default AI agent, or Ollama or LM Studio on this computer</source>
@@ -2044,6 +2099,26 @@
     <message>
         <source>Export</source>
         <translation>書き出し</translation>
+    </message>
+    <message>
+        <source>Connected: %1. Click to close the chat.</source>
+        <translation>接続中: %1。クリックでチャットを閉じます。</translation>
+    </message>
+    <message>
+        <source>Connected: %1. Click to open the chat.</source>
+        <translation>接続中: %1。クリックでチャットを開きます。</translation>
+    </message>
+    <message>
+        <source>AI chat</source>
+        <translation>AI チャット</translation>
+    </message>
+    <message>
+        <source>Essentials: white balance, tone, presence, film simulation, presets and LUT</source>
+        <translation>基本: ホワイトバランス、トーン、外観、フィルムシミュレーション、プリセット、LUT</translation>
+    </message>
+    <message>
+        <source>Pro adds tone curve, colour mixer, colour grading, detail, grain, colour management and masks</source>
+        <translation>Pro ではトーンカーブ、カラーミキサー、カラーグレーディング、ディテール、粒状感、カラーマネジメント、マスクが加わります</translation>
     </message>
 </context>
 <context>
