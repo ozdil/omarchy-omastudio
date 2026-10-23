@@ -8,6 +8,7 @@ pub mod histogram;
 pub mod layers;
 pub mod lut;
 pub mod presence;
+pub mod retouch;
 pub mod rgb_mixer;
 pub mod skin_tone;
 pub mod tone;
@@ -374,6 +375,8 @@ pub fn process_buffer_16_to_8_ex(
     let w = width as usize;
     let h = height as usize;
     let num_pixels = w * h;
+    let retouched = retouch::apply(input, w, h, ch, &recipe.retouch);
+    let input = &*retouched;
 
     let (wb_r, wb_g, wb_b) = white_balance::kelvin_to_rgb_multipliers(
         recipe.wb_temperature,
@@ -632,6 +635,8 @@ fn process_16_to_16_banded(
     let w = width as usize;
     let h = height as usize;
     let num_pixels = w * h;
+    let retouched = retouch::apply(input, w, h, ch, &recipe.retouch);
+    let input = &*retouched;
 
     let stage = PointStage::new(recipe, transfer);
     let lens = detail::LensDistortion::new(w, h, recipe.lens_distortion);

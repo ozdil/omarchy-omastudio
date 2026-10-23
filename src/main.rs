@@ -156,6 +156,9 @@ struct DaemonCache {
     /// The photo at full resolution for the viewport's 1:1 detail view, decoded in the
     /// background after `load` (see `full_ready`).
     full: Option<Arc<FullFrame>>,
+    /// `full` with the recipe's heal and clone spots applied, for the spots it was
+    /// made with, so panning the detail view does not redo them
+    full_retouched: Option<(Arc<FullFrame>, Vec<pipeline::retouch::RetouchSpot>, Arc<FullFrame>)>,
     detail_ping_pong: usize,
 }
 
@@ -232,6 +235,7 @@ fn spawn_full_decode(cache: Arc<Mutex<DaemonCache>>, path: String) {
             return;
         }
         c.full = Some(Arc::new(frame));
+        c.full_retouched = None;
         drop(c);
         print_json(&ResponseWrapper::ok_action("full_ready", ready));
     });
@@ -239,6 +243,26 @@ fn spawn_full_decode(cache: Arc<Mutex<DaemonCache>>, path: String) {
 
 /// Pixels of `frame` scaled by `scale`, for the rectangle (x, y, w, h) of the scaled
 /// frame: box-filtered when reducing, bilinear when enlarging.
+/// The full-resolution frame with `spots` applied, reusing the last result while the
+/// frame and the spots stay the same.
+fn retouched_full(cache: &Mutex<DaemonCache>, full: Arc<FullFrame>, spots: &[pipeline::retouch::RetouchSpot]) -> Arc<FullFrame> {
+    if spots.is_empty() {
+        return full;
+    }
+    if let Some((base, cached_spots, done)) = &cache.lock().unwrap().full_retouched
+        && Arc::ptr_eq(base, &full)
+        && cached_spots.as_slice() == spots
+    {
+        return done.clone();
+    }
+    let done = match pipeline::retouch::apply(&full.data, full.width, full.height, 3, spots) {
+        std::borrow::Cow::Borrowed(_) => return full,
+        std::borrow::Cow::Owned(data) => Arc::new(FullFrame { data, ..*full }),
+    };
+    cache.lock().unwrap().full_retouched = Some((full, spots.to_vec(), done.clone()));
+    done
+}
+
 fn resample_rect(frame: &FullFrame, scale: f64, rect: (usize, usize, usize, usize)) -> Vec<u16> {
     let (rx, ry, rw, rh) = rect;
     let (fw, fh) = (frame.width, frame.height);
@@ -1521,6 +1545,7 @@ fn run_daemon() {
         metadata: None,
         ping_pong: 0,
         full: None,
+        full_retouched: None,
         detail_ping_pong: 0,
     }));
 
@@ -1638,6 +1663,7 @@ fn run_daemon() {
                                 c.transfer = transfer;
                                 c.metadata = Some(meta.clone());
                                 c.full = None;
+                                c.full_retouched = None;
                                 drop(c);
                                 spawn_full_decode(Arc::clone(&cache), p.clone());
                                 // Keep ping_pong running across loads: resetting it made the first
@@ -1786,6 +1812,7 @@ fn run_daemon() {
                 let recipe = Recipe { baseline_exposure: full.baseline_exposure, ..cmd_obj.recipe.unwrap_or_default() };
                 let out = (ox, oy, ow, oh);
                 let src = pipeline::region_source(out, vw, vh, &recipe);
+                let full = retouched_full(&cache, full, &recipe.retouch);
                 let input = resample_rect(&full, scale, src);
                 let window = pipeline::Window { x0: src.0, y0: src.1, frame_w: vw, frame_h: vh };
                 let rgb = pipeline::render_region_8(&input, src.2, src.3, window, out, &recipe, full.transfer);

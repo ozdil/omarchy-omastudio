@@ -1839,6 +1839,10 @@
         <translation>Farbmanagement</translation>
     </message>
     <message>
+        <source>Heal and clone</source>
+        <translation>Reparieren und Kopieren</translation>
+    </message>
+    <message>
         <source>Local adjustments</source>
         <translation>Lokale Anpassungen</translation>
     </message>
@@ -1993,6 +1997,53 @@
     <message>
         <source>Split toning</source>
         <translation>Teiltonung</translation>
+    </message>
+</context>
+<context>
+    <name>RetouchPanel</name>
+    <message>
+        <source>Done</source>
+        <translation>Fertig</translation>
+    </message>
+    <message>
+        <source>Edit spots</source>
+        <translation>Stellen bearbeiten</translation>
+    </message>
+    <message>
+        <source>Heal</source>
+        <translation>Reparieren</translation>
+    </message>
+    <message>
+        <source>Clone</source>
+        <translation>Kopieren</translation>
+    </message>
+    <message>
+        <source>Click a spot on the photo to remove it. Drag the solid circle to move it and the dashed circle to pick another source.</source>
+        <translation>Klicken Sie auf eine Stelle im Foto, um sie zu entfernen. Ziehen Sie den durchgezogenen Kreis, um sie zu verschieben, und den gestrichelten, um eine andere Quelle zu wählen.</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>Größe</translation>
+    </message>
+    <message>
+        <source>Feather</source>
+        <translation>Weiche Kante</translation>
+    </message>
+    <message>
+        <source>Opacity</source>
+        <translation>Deckkraft</translation>
+    </message>
+    <message>
+        <source>Spots: %1</source>
+        <translation>Stellen: %1</translation>
+    </message>
+    <message>
+        <source>Delete spot</source>
+        <translation>Stelle löschen</translation>
+    </message>
+    <message>
+        <source>Clear all</source>
+        <translation>Alle löschen</translation>
     </message>
 </context>
 <context>

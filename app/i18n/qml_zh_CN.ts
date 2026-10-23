@@ -1835,6 +1835,10 @@
         <translation>色彩管理</translation>
     </message>
     <message>
+        <source>Heal and clone</source>
+        <translation>修复与仿制</translation>
+    </message>
+    <message>
         <source>Local adjustments</source>
         <translation>局部调整</translation>
     </message>
@@ -1988,6 +1992,53 @@
     <message>
         <source>Split toning</source>
         <translation>分离色调</translation>
+    </message>
+</context>
+<context>
+    <name>RetouchPanel</name>
+    <message>
+        <source>Done</source>
+        <translation>完成</translation>
+    </message>
+    <message>
+        <source>Edit spots</source>
+        <translation>编辑污点</translation>
+    </message>
+    <message>
+        <source>Heal</source>
+        <translation>修复</translation>
+    </message>
+    <message>
+        <source>Clone</source>
+        <translation>仿制</translation>
+    </message>
+    <message>
+        <source>Click a spot on the photo to remove it. Drag the solid circle to move it and the dashed circle to pick another source.</source>
+        <translation>单击照片上的位置将其去除。拖动实线圆圈移动它，拖动虚线圆圈选择其他来源。</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>尺寸</translation>
+    </message>
+    <message>
+        <source>Feather</source>
+        <translation>羽化</translation>
+    </message>
+    <message>
+        <source>Opacity</source>
+        <translation>不透明度</translation>
+    </message>
+    <message>
+        <source>Spots: %1</source>
+        <translation>污点：%1</translation>
+    </message>
+    <message>
+        <source>Delete spot</source>
+        <translation>删除污点</translation>
+    </message>
+    <message>
+        <source>Clear all</source>
+        <translation>全部清除</translation>
     </message>
 </context>
 <context>

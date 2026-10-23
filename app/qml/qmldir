@@ -27,6 +27,8 @@ MaskOverlay 1.0 MaskOverlay.qml
 PanelSection 1.0 PanelSection.qml
 Navigator 1.0 Navigator.qml
 PresetSelector 1.0 PresetSelector.qml
+RetouchOverlay 1.0 RetouchOverlay.qml
+RetouchPanel 1.0 RetouchPanel.qml
 RgbMixerPanel 1.0 RgbMixerPanel.qml
 ScopesView 1.0 ScopesView.qml
 SkinTonePanel 1.0 SkinTonePanel.qml

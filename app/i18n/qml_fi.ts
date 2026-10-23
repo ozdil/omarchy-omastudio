@@ -1839,6 +1839,10 @@
         <translation>Värinhallinta</translation>
     </message>
     <message>
+        <source>Heal and clone</source>
+        <translation>Korjaus ja kloonaus</translation>
+    </message>
+    <message>
         <source>Local adjustments</source>
         <translation>Paikalliset säädöt</translation>
     </message>
@@ -1993,6 +1997,53 @@
     <message>
         <source>Split toning</source>
         <translation>Jaettu sävytys</translation>
+    </message>
+</context>
+<context>
+    <name>RetouchPanel</name>
+    <message>
+        <source>Done</source>
+        <translation>Valmis</translation>
+    </message>
+    <message>
+        <source>Edit spots</source>
+        <translation>Muokkaa kohtia</translation>
+    </message>
+    <message>
+        <source>Heal</source>
+        <translation>Korjaa</translation>
+    </message>
+    <message>
+        <source>Clone</source>
+        <translation>Kloonaa</translation>
+    </message>
+    <message>
+        <source>Click a spot on the photo to remove it. Drag the solid circle to move it and the dashed circle to pick another source.</source>
+        <translation>Poista kohta napsauttamalla sitä kuvassa. Siirrä sitä vetämällä yhtenäistä ympyrää ja valitse toinen lähde vetämällä katkoviivaympyrää.</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>Koko</translation>
+    </message>
+    <message>
+        <source>Feather</source>
+        <translation>Pehmennys</translation>
+    </message>
+    <message>
+        <source>Opacity</source>
+        <translation>Peittävyys</translation>
+    </message>
+    <message>
+        <source>Spots: %1</source>
+        <translation>Kohtia: %1</translation>
+    </message>
+    <message>
+        <source>Delete spot</source>
+        <translation>Poista kohta</translation>
+    </message>
+    <message>
+        <source>Clear all</source>
+        <translation>Tyhjennä kaikki</translation>
     </message>
 </context>
 <context>

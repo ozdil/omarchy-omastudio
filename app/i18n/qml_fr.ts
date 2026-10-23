@@ -1839,6 +1839,10 @@
         <translation>Gestion des couleurs</translation>
     </message>
     <message>
+        <source>Heal and clone</source>
+        <translation>Correction et clonage</translation>
+    </message>
+    <message>
         <source>Local adjustments</source>
         <translation>Réglages locaux</translation>
     </message>
@@ -1993,6 +1997,53 @@
     <message>
         <source>Split toning</source>
         <translation>Virage partiel</translation>
+    </message>
+</context>
+<context>
+    <name>RetouchPanel</name>
+    <message>
+        <source>Done</source>
+        <translation>Terminé</translation>
+    </message>
+    <message>
+        <source>Edit spots</source>
+        <translation>Modifier les zones</translation>
+    </message>
+    <message>
+        <source>Heal</source>
+        <translation>Corriger</translation>
+    </message>
+    <message>
+        <source>Clone</source>
+        <translation>Cloner</translation>
+    </message>
+    <message>
+        <source>Click a spot on the photo to remove it. Drag the solid circle to move it and the dashed circle to pick another source.</source>
+        <translation>Cliquez sur une zone de la photo pour la supprimer. Faites glisser le cercle plein pour la déplacer et le cercle pointillé pour choisir une autre source.</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>Taille</translation>
+    </message>
+    <message>
+        <source>Feather</source>
+        <translation>Contour progressif</translation>
+    </message>
+    <message>
+        <source>Opacity</source>
+        <translation>Opacité</translation>
+    </message>
+    <message>
+        <source>Spots: %1</source>
+        <translation>Zones : %1</translation>
+    </message>
+    <message>
+        <source>Delete spot</source>
+        <translation>Supprimer la zone</translation>
+    </message>
+    <message>
+        <source>Clear all</source>
+        <translation>Tout effacer</translation>
     </message>
 </context>
 <context>

@@ -182,6 +182,17 @@ Rectangle {
     signal maskStrokePainted(var points, real aspect)
     signal maskColourPicked(real r, real g, real b)
 
+    // Heal and clone spots (see RetouchOverlay)
+    property bool retouchActive: false
+    property var retouchSpots: []
+    property int retouchSelected: -1
+    property string retouchMode: "heal"
+    property real retouchRadius: 0.02
+    property real retouchFeather: 0.3
+    property real retouchOpacity: 1.0
+    signal retouchSpotsEdited(var spots)
+    signal retouchSpotSelected(int index)
+
     signal splitRatioChangedByUser(real ratio)
     signal rotationChangedByUser(real angle)
     signal cropChangedByUser(real cx, real cy, real cw, real ch, string aspect)
@@ -562,6 +573,20 @@ Rectangle {
                     onColourPicked: function(r, g, b) { root.maskColourPicked(r, g, b) }
                 }
 
+                RetouchOverlay {
+                    anchors.fill: parent
+                    z: 21
+                    active: root.retouchActive && !root.isCropMode
+                    spots: root.retouchSpots
+                    selected: root.retouchSelected
+                    mode: root.retouchMode
+                    radius: root.retouchRadius
+                    feather: root.retouchFeather
+                    opacity_: root.retouchOpacity
+                    onSpotsEdited: function(spots) { root.retouchSpotsEdited(spots) }
+                    onSpotSelected: function(index) { root.retouchSpotSelected(index) }
+                }
+
                 // Interactive Crop Overlay & Composition Guides
                 Item {
                     id: cropOverlayContainer
@@ -870,7 +895,7 @@ Rectangle {
             z: 1
             // The mask overlay lives on the fitted image under this one, so the
             // detail steps aside while a mask is being edited
-            opacity: root.maskTool === "" ? 1.0 : 0.0
+            opacity: root.maskTool === "" && !root.retouchActive ? 1.0 : 0.0
             onStatusChanged: {
                 if (status === Image.Ready && root.detailRegion && root.detailWanted) visible = true;
             }

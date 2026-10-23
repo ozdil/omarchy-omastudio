@@ -1843,6 +1843,10 @@
         <translation>Správa barev</translation>
     </message>
     <message>
+        <source>Heal and clone</source>
+        <translation>Retuš a klonování</translation>
+    </message>
+    <message>
         <source>Local adjustments</source>
         <translation>Místní úpravy</translation>
     </message>
@@ -1998,6 +2002,53 @@
     <message>
         <source>Split toning</source>
         <translation>Dělené tónování</translation>
+    </message>
+</context>
+<context>
+    <name>RetouchPanel</name>
+    <message>
+        <source>Done</source>
+        <translation>Hotovo</translation>
+    </message>
+    <message>
+        <source>Edit spots</source>
+        <translation>Upravit body</translation>
+    </message>
+    <message>
+        <source>Heal</source>
+        <translation>Retušovat</translation>
+    </message>
+    <message>
+        <source>Clone</source>
+        <translation>Klonovat</translation>
+    </message>
+    <message>
+        <source>Click a spot on the photo to remove it. Drag the solid circle to move it and the dashed circle to pick another source.</source>
+        <translation>Kliknutím na místo ve fotografii jej odstraníte. Plným kruhem bod přesunete, čárkovaným vyberete jiný zdroj.</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>Velikost</translation>
+    </message>
+    <message>
+        <source>Feather</source>
+        <translation>Prolnutí</translation>
+    </message>
+    <message>
+        <source>Opacity</source>
+        <translation>Krytí</translation>
+    </message>
+    <message>
+        <source>Spots: %1</source>
+        <translation>Body: %1</translation>
+    </message>
+    <message>
+        <source>Delete spot</source>
+        <translation>Smazat bod</translation>
+    </message>
+    <message>
+        <source>Clear all</source>
+        <translation>Vymazat vše</translation>
     </message>
 </context>
 <context>

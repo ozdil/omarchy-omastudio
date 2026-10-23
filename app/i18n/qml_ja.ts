@@ -1835,6 +1835,10 @@
         <translation>カラーマネジメント</translation>
     </message>
     <message>
+        <source>Heal and clone</source>
+        <translation>修復とコピー</translation>
+    </message>
+    <message>
         <source>Local adjustments</source>
         <translation>部分補正</translation>
     </message>
@@ -1988,6 +1992,53 @@
     <message>
         <source>Split toning</source>
         <translation>スプリットトーン</translation>
+    </message>
+</context>
+<context>
+    <name>RetouchPanel</name>
+    <message>
+        <source>Done</source>
+        <translation>完了</translation>
+    </message>
+    <message>
+        <source>Edit spots</source>
+        <translation>スポットを編集</translation>
+    </message>
+    <message>
+        <source>Heal</source>
+        <translation>修復</translation>
+    </message>
+    <message>
+        <source>Clone</source>
+        <translation>コピー</translation>
+    </message>
+    <message>
+        <source>Click a spot on the photo to remove it. Drag the solid circle to move it and the dashed circle to pick another source.</source>
+        <translation>写真上の箇所をクリックすると除去します。実線の円をドラッグして移動し、破線の円をドラッグして別のソースを選びます。</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>サイズ</translation>
+    </message>
+    <message>
+        <source>Feather</source>
+        <translation>ぼかし</translation>
+    </message>
+    <message>
+        <source>Opacity</source>
+        <translation>不透明度</translation>
+    </message>
+    <message>
+        <source>Spots: %1</source>
+        <translation>スポット: %1</translation>
+    </message>
+    <message>
+        <source>Delete spot</source>
+        <translation>スポットを削除</translation>
+    </message>
+    <message>
+        <source>Clear all</source>
+        <translation>すべて消去</translation>
     </message>
 </context>
 <context>

@@ -150,6 +150,8 @@ Rectangle {
 
     // Local Layered Adjustments & Masks
     property var adjustmentLayers: []
+    // Heal and clone spots (recipe "retouch")
+    property var retouchSpots: []
 
     // Watermark & Branding State
     property bool watermarkEnabled: false
@@ -445,6 +447,7 @@ Rectangle {
         root.colorChrome = 0.0;
         root.colorChromeBlue = 0.0;
         root.adjustmentLayers = [];
+        root.retouchSpots = [];
         root.defringeVal = 0.0;
         root.lensDistortionVal = 0.0;
         root.cropX = 0.0;
@@ -564,6 +567,7 @@ Rectangle {
             "color_chrome": root.colorChrome,
             "color_chrome_blue": root.colorChromeBlue,
             "layers": root.adjustmentLayers,
+            "retouch": root.retouchSpots,
             "defringe": root.defringeVal,
             "lens_distortion": root.lensDistortionVal,
             "crop_x": root.cropX,
@@ -717,6 +721,7 @@ Rectangle {
         if (r.layers !== undefined && Array.isArray(r.layers)) {
             root.adjustmentLayers = r.layers;
         }
+        root.retouchSpots = Array.isArray(r.retouch) ? r.retouch : [];
 
         // Optics
         if (r.defringe !== undefined) root.defringeVal = Number(r.defringe) || 0.0;
@@ -1748,7 +1753,19 @@ Rectangle {
                     watermarkDropShadow: root.watermarkDropShadow
                     exifMetadata: root.activeMetadata
                     // Mask editing follows the selected layer while the Masks tab is open
-                    maskTool: root.activePhotoPath !== "" && root.showRightPanel && root.rightTab === "masks" ? layersPanel.overlayTool : ""
+                    maskTool: root.activePhotoPath !== "" && root.showRightPanel && root.rightTab === "masks" && !retouchPanel.editing ? layersPanel.overlayTool : ""
+                    retouchActive: root.activePhotoPath !== "" && root.showRightPanel && root.rightTab === "masks" && retouchPanel.editing
+                    retouchSpots: root.retouchSpots
+                    retouchSelected: retouchPanel.selected
+                    retouchMode: retouchPanel.mode
+                    retouchRadius: retouchPanel.radius
+                    retouchFeather: retouchPanel.feather
+                    retouchOpacity: retouchPanel.opacity_
+                    onRetouchSpotsEdited: function(spots) {
+                        root.retouchSpots = spots;
+                        root.requestRender();
+                    }
+                    onRetouchSpotSelected: function(index) { retouchPanel.selected = index }
                     maskShape: layersPanel.editShape
                     maskBrushSize: layersPanel.brushSize
                     maskBrushFeather: layersPanel.brushFeather
@@ -2570,6 +2587,29 @@ Rectangle {
                             visible: root.rightTab === "masks"
                             Layout.fillWidth: true
                             spacing: 0
+
+                            PanelSection {
+                                key: "retouch"
+                                title: qsTr("Heal and clone")
+                                host: root
+                                onReset: {
+                                    root.pushUndoState();
+                                    root.retouchSpots = [];
+                                    retouchPanel.selected = -1;
+                                    root.requestRender();
+                                }
+
+                                RetouchPanel {
+                                    id: retouchPanel
+                                    Layout.fillWidth: true
+                                    spots: root.retouchSpots
+                                    enabledForPhoto: root.activePhotoPath !== ""
+                                    onSpotsEdited: function(spots) {
+                                        root.retouchSpots = spots;
+                                        root.requestRender();
+                                    }
+                                }
+                            }
 
                             PanelSection {
                                 key: "layers"

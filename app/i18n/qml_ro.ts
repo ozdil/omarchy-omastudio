@@ -1843,6 +1843,10 @@
         <translation>Gestionarea culorii</translation>
     </message>
     <message>
+        <source>Heal and clone</source>
+        <translation>Corectare și clonare</translation>
+    </message>
+    <message>
         <source>Local adjustments</source>
         <translation>Ajustări locale</translation>
     </message>
@@ -1998,6 +2002,53 @@
     <message>
         <source>Split toning</source>
         <translation>Tonare divizată</translation>
+    </message>
+</context>
+<context>
+    <name>RetouchPanel</name>
+    <message>
+        <source>Done</source>
+        <translation>Gata</translation>
+    </message>
+    <message>
+        <source>Edit spots</source>
+        <translation>Editează punctele</translation>
+    </message>
+    <message>
+        <source>Heal</source>
+        <translation>Corectează</translation>
+    </message>
+    <message>
+        <source>Clone</source>
+        <translation>Clonează</translation>
+    </message>
+    <message>
+        <source>Click a spot on the photo to remove it. Drag the solid circle to move it and the dashed circle to pick another source.</source>
+        <translation>Faceți clic pe un punct din fotografie pentru a-l elimina. Trageți cercul plin pentru a-l muta și pe cel punctat pentru a alege altă sursă.</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>Dimensiune</translation>
+    </message>
+    <message>
+        <source>Feather</source>
+        <translation>Estompare</translation>
+    </message>
+    <message>
+        <source>Opacity</source>
+        <translation>Opacitate</translation>
+    </message>
+    <message>
+        <source>Spots: %1</source>
+        <translation>Puncte: %1</translation>
+    </message>
+    <message>
+        <source>Delete spot</source>
+        <translation>Șterge punctul</translation>
+    </message>
+    <message>
+        <source>Clear all</source>
+        <translation>Șterge tot</translation>
     </message>
 </context>
 <context>

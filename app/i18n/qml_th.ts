@@ -1835,6 +1835,10 @@
         <translation>การจัดการสี</translation>
     </message>
     <message>
+        <source>Heal and clone</source>
+        <translation>ซ่อมและโคลน</translation>
+    </message>
+    <message>
         <source>Local adjustments</source>
         <translation>การปรับเฉพาะจุด</translation>
     </message>
@@ -1988,6 +1992,53 @@
     <message>
         <source>Split toning</source>
         <translation>แยกโทนสี</translation>
+    </message>
+</context>
+<context>
+    <name>RetouchPanel</name>
+    <message>
+        <source>Done</source>
+        <translation>เสร็จสิ้น</translation>
+    </message>
+    <message>
+        <source>Edit spots</source>
+        <translation>แก้ไขจุด</translation>
+    </message>
+    <message>
+        <source>Heal</source>
+        <translation>ซ่อม</translation>
+    </message>
+    <message>
+        <source>Clone</source>
+        <translation>โคลน</translation>
+    </message>
+    <message>
+        <source>Click a spot on the photo to remove it. Drag the solid circle to move it and the dashed circle to pick another source.</source>
+        <translation>คลิกจุดบนภาพเพื่อลบออก ลากวงกลมทึบเพื่อย้าย และลากวงกลมเส้นประเพื่อเลือกแหล่งอื่น</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>ขนาด</translation>
+    </message>
+    <message>
+        <source>Feather</source>
+        <translation>ขอบนุ่ม</translation>
+    </message>
+    <message>
+        <source>Opacity</source>
+        <translation>ความทึบ</translation>
+    </message>
+    <message>
+        <source>Spots: %1</source>
+        <translation>จุด: %1</translation>
+    </message>
+    <message>
+        <source>Delete spot</source>
+        <translation>ลบจุด</translation>
+    </message>
+    <message>
+        <source>Clear all</source>
+        <translation>ล้างทั้งหมด</translation>
     </message>
 </context>
 <context>

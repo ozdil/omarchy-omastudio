@@ -1843,6 +1843,10 @@
         <translation>Керування кольором</translation>
     </message>
     <message>
+        <source>Heal and clone</source>
+        <translation>Відновлення і клонування</translation>
+    </message>
+    <message>
         <source>Local adjustments</source>
         <translation>Локальні корекції</translation>
     </message>
@@ -1998,6 +2002,53 @@
     <message>
         <source>Split toning</source>
         <translation>Роздільне тонування</translation>
+    </message>
+</context>
+<context>
+    <name>RetouchPanel</name>
+    <message>
+        <source>Done</source>
+        <translation>Готово</translation>
+    </message>
+    <message>
+        <source>Edit spots</source>
+        <translation>Змінити точки</translation>
+    </message>
+    <message>
+        <source>Heal</source>
+        <translation>Відновити</translation>
+    </message>
+    <message>
+        <source>Clone</source>
+        <translation>Клонувати</translation>
+    </message>
+    <message>
+        <source>Click a spot on the photo to remove it. Drag the solid circle to move it and the dashed circle to pick another source.</source>
+        <translation>Клацніть місце на фото, щоб прибрати його. Перетягніть суцільне коло, щоб перемістити точку, і пунктирне, щоб вибрати інше джерело.</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>Розмір</translation>
+    </message>
+    <message>
+        <source>Feather</source>
+        <translation>Розмиття краю</translation>
+    </message>
+    <message>
+        <source>Opacity</source>
+        <translation>Непрозорість</translation>
+    </message>
+    <message>
+        <source>Spots: %1</source>
+        <translation>Точок: %1</translation>
+    </message>
+    <message>
+        <source>Delete spot</source>
+        <translation>Видалити точку</translation>
+    </message>
+    <message>
+        <source>Clear all</source>
+        <translation>Очистити все</translation>
     </message>
 </context>
 <context>

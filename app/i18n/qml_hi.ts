@@ -1839,6 +1839,10 @@
         <translation>रंग प्रबंधन</translation>
     </message>
     <message>
+        <source>Heal and clone</source>
+        <translation>सुधार और क्लोन</translation>
+    </message>
+    <message>
         <source>Local adjustments</source>
         <translation>स्थानीय समायोजन</translation>
     </message>
@@ -1993,6 +1997,53 @@
     <message>
         <source>Split toning</source>
         <translation>स्प्लिट टोनिंग</translation>
+    </message>
+</context>
+<context>
+    <name>RetouchPanel</name>
+    <message>
+        <source>Done</source>
+        <translation>हो गया</translation>
+    </message>
+    <message>
+        <source>Edit spots</source>
+        <translation>बिंदु संपादित करें</translation>
+    </message>
+    <message>
+        <source>Heal</source>
+        <translation>सुधारें</translation>
+    </message>
+    <message>
+        <source>Clone</source>
+        <translation>क्लोन</translation>
+    </message>
+    <message>
+        <source>Click a spot on the photo to remove it. Drag the solid circle to move it and the dashed circle to pick another source.</source>
+        <translation>हटाने के लिए फ़ोटो पर किसी बिंदु पर क्लिक करें। उसे खिसकाने के लिए भरा वृत्त और दूसरा स्रोत चुनने के लिए बिंदीदार वृत्त खींचें।</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>आकार</translation>
+    </message>
+    <message>
+        <source>Feather</source>
+        <translation>किनारा नरमी</translation>
+    </message>
+    <message>
+        <source>Opacity</source>
+        <translation>अपारदर्शिता</translation>
+    </message>
+    <message>
+        <source>Spots: %1</source>
+        <translation>बिंदु: %1</translation>
+    </message>
+    <message>
+        <source>Delete spot</source>
+        <translation>बिंदु हटाएँ</translation>
+    </message>
+    <message>
+        <source>Clear all</source>
+        <translation>सभी साफ़ करें</translation>
     </message>
 </context>
 <context>

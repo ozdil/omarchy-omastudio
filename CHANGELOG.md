@@ -46,6 +46,11 @@
 - The luminance mask has its range and falloff controls, and the radial mask its feather, in the panel.
 - Layers also adjust highlights, shadows, whites and blacks.
 
+### Heal and clone
+- New **Heal and clone** section in the Masks tab. With **Edit spots** on, a click on the photo removes what is under it: the spot is replaced from a source beside it. Drag the solid circle to move the spot and the dashed circle to pick another source; size, feather and opacity apply to the selected spot and to new ones.
+- **Heal** matches the copied area to the light and colour around the spot (the edge difference is spread over the spot with the Poisson kernel, so shading carries through); **Clone** copies it as it is.
+- Spots are applied to the linear photo before every other step, in the preview, the 1:1 detail view and export alike, and stored in the recipe as `retouch`.
+
 ### Colour management
 - **Gamut compression** is now a switch of its own and follows the ACES 1.3 reference gamut compression: colours pushed outside the gamut by grading come back in smoothly, colours inside it are left alone. The previous version clipped negative values outright and desaturated every strongly saturated colour.
 - The working colour space list (sRGB, Display P3, Rec. 2020, ACEScg) is gone: the choice did not change the rendering (ACEScg only switched gamut compression on), and its coverage figures were wrong. The output colour space is chosen in the Export window, which converts with ICC profiles. Edits saved with ACEScg open with gamut compression on.
