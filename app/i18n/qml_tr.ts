@@ -230,6 +230,14 @@
         <source>API key</source>
         <translation>API anahtarı</translation>
     </message>
+    <message>
+        <source>Omarchy&apos;s default AI is now %1</source>
+        <translation>Omarchy&apos;nin varsayılan YZ&apos;si artık %1</translation>
+    </message>
+    <message>
+        <source>Omarchy&apos;s default AI %1 cannot edit photos; choose claude or codex</source>
+        <translation>Omarchy&apos;nin varsayılan YZ&apos;si %1 fotoğraf düzenleyemez; claude veya codex seçin</translation>
+    </message>
 </context>
 <context>
     <name>AiChatPanel</name>

@@ -25,6 +25,11 @@ ColumnLayout {
     property string explanation: ""
     property bool busy: editProc.running
     property bool connecting: setupProc.running && setupProc.action === "local"
+    // Omarchy's default agent (omarchy-default-agent), read live: edits through the
+    // "omarchy" provider always go to whichever agent is set there
+    property string omarchyAgent: ""
+    property bool agentSeen: false
+    readonly property bool omarchyAgentUsable: root.omarchyAgent === "claude" || root.omarchyAgent === "codex"
     // The saved choice is a local server (Ollama, LM Studio) that answers
     readonly property bool localConnected: {
         for (var i = 0; i < root.providers.length; i++) {
@@ -56,6 +61,8 @@ ColumnLayout {
     }
 
     readonly property string statusText: {
+        if (root.choice.provider === "omarchy")
+            return root.providerName("omarchy") + (root.omarchyAgent ? " · " + root.agentLabel(root.omarchyAgent) : "");
         if (root.choice.provider)
             return root.providerName(root.choice.provider) + (root.choice.model ? " · " + root.choice.model : "");
         for (var i = 0; i < root.providers.length; i++)
@@ -121,11 +128,44 @@ ColumnLayout {
             var resp = root.parse(output);
             var ok = setupProc.action === "key" ? qsTr("API key stored in the keyring")
                    : setupProc.action === "local" ? qsTr("Connected to local AI: %1").arg(resp.success ? resp.data.model : "")
+                   : setupProc.action === "follow" ? qsTr("Omarchy's default AI is now %1").arg(root.agentLabel(root.omarchyAgent))
                    : qsTr("Provider saved");
             root.notify(resp.success ? ok : String(resp.error || qsTr("Failed")).split("\n")[0], !resp.success);
             if (resp.success && setupProc.action === "local") root.localConnectedNow();
             root.refresh();
         }
+    }
+
+    WatchedFile {
+        path: Host.homeDir + "/.config/omarchy/defaults/agent"
+        watch: true
+        onLoaded: root.agentChanged(String(text).split("\n")[0].trim())
+        onLoadFailed: root.agentChanged("")
+    }
+
+    // When the user picks another default agent in Omarchy, OmaStudio follows it
+    // without a restart: the button and chat show the new agent, and a local server
+    // chosen earlier gives way to it
+    function agentChanged(name) {
+        var first = !root.agentSeen;
+        root.agentSeen = true;
+        if (!first && name === root.omarchyAgent) return;
+        root.omarchyAgent = name;
+        root.refresh();
+        if (first || root.enginePath === "") return;
+        if (root.omarchyAgentUsable && root.choice.provider !== "omarchy" && !setupProc.running) {
+            setupProc.action = "follow";
+            setupProc.command = [root.enginePath, "ai", "use", "omarchy"];
+            setupProc.running = true;
+        } else if (root.choice.provider === "omarchy") {
+            root.notify(root.omarchyAgentUsable ? qsTr("Omarchy's default AI is now %1").arg(root.agentLabel(name))
+                                                : qsTr("Omarchy's default AI %1 cannot edit photos; choose claude or codex").arg(name || "-"),
+                        !root.omarchyAgentUsable);
+        }
+    }
+
+    function agentLabel(name) {
+        return name === "claude" ? "Claude" : name === "codex" ? "Codex" : name;
     }
 
     function storeKey() {

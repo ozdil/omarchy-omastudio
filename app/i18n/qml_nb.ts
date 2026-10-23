@@ -230,6 +230,14 @@
         <source>API key</source>
         <translation>API-nøkkel</translation>
     </message>
+    <message>
+        <source>Omarchy&apos;s default AI is now %1</source>
+        <translation>Omarchys standard-KI er nå %1</translation>
+    </message>
+    <message>
+        <source>Omarchy&apos;s default AI %1 cannot edit photos; choose claude or codex</source>
+        <translation>Omarchys standard-KI %1 kan ikke redigere bilder; velg claude eller codex</translation>
+    </message>
 </context>
 <context>
     <name>AiChatPanel</name>

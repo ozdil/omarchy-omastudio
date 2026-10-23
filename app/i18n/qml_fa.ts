@@ -230,6 +230,14 @@
         <source>API key</source>
         <translation>کلید API</translation>
     </message>
+    <message>
+        <source>Omarchy&apos;s default AI is now %1</source>
+        <translation>هوش مصنوعی پیش‌فرض Omarchy اکنون %1 است</translation>
+    </message>
+    <message>
+        <source>Omarchy&apos;s default AI %1 cannot edit photos; choose claude or codex</source>
+        <translation>هوش مصنوعی پیش‌فرض Omarchy (%1) نمی‌تواند عکس ویرایش کند؛ claude یا codex را انتخاب کنید</translation>
+    </message>
 </context>
 <context>
     <name>AiChatPanel</name>

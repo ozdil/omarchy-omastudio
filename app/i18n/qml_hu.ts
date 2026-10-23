@@ -230,6 +230,14 @@
         <source>API key</source>
         <translation>API-kulcs</translation>
     </message>
+    <message>
+        <source>Omarchy&apos;s default AI is now %1</source>
+        <translation>Az Omarchy alapértelmezett MI-je mostantól %1</translation>
+    </message>
+    <message>
+        <source>Omarchy&apos;s default AI %1 cannot edit photos; choose claude or codex</source>
+        <translation>Az Omarchy alapértelmezett MI-je (%1) nem tud fotót szerkeszteni; válassza a claude-ot vagy a codexet</translation>
+    </message>
 </context>
 <context>
     <name>AiChatPanel</name>

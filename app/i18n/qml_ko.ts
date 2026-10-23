@@ -230,6 +230,14 @@
         <source>API key</source>
         <translation>API 키</translation>
     </message>
+    <message>
+        <source>Omarchy&apos;s default AI is now %1</source>
+        <translation>Omarchy 기본 AI가 이제 %1입니다</translation>
+    </message>
+    <message>
+        <source>Omarchy&apos;s default AI %1 cannot edit photos; choose claude or codex</source>
+        <translation>Omarchy 기본 AI(%1)는 사진을 편집할 수 없습니다. claude 또는 codex를 선택하세요</translation>
+    </message>
 </context>
 <context>
     <name>AiChatPanel</name>
