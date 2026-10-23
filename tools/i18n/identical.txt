@@ -14,6 +14,8 @@ Gamma
 Gain
 Offset
 tr:Platform:
+# Invert toggle: the first letter is the same in many languages
+I
 # Feature and product names
 OK
 PIXEL SHIFT MULTI-SHOT
@@ -32,3 +34,20 @@ de:HIST
 de:PARADE
 de:Original
 de:POSITION
+fr:Global
+fr:Saturation
+fr:Monochrome
+fr:Monochrome (+Ye)
+fr:Monochrome (+R)
+fr:Monochrome (+G)
+fr:Orange
+fr:Magenta
+fr:Luminance
+fr:Standard
+fr:Portrait
+fr:+ RADIAL
+fr:Texture
+fr:Vibrance
+fr:PARADE
+fr:Original
+fr:POSITION

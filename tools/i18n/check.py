@@ -49,6 +49,7 @@ ENGLISH_WORDS = {"the", "and", "with", "your", "failed", "saved", "settings", "l
 # Words shared with English in these languages
 ENGLISH_WORD_EXCEPTIONS = {
     "nl": {"selected"},
+    "fr": {"photos"},
 }
 # Scripts each language is written in; a translation with letters but none of these
 # was left in English (or another language)
