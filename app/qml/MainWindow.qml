@@ -1363,6 +1363,10 @@ Rectangle {
                 root.saveSidecar();
             }
             onToggleMode: root.isProMode = !root.isProMode
+            aiConnected: aiAssist.localConnected
+            aiBusy: aiAssist.connecting
+            aiModel: aiAssist.choice.model || ""
+            onConnectLocalAi: aiAssist.connectLocal()
             onUndoClicked: root.undo()
             onRedoClicked: root.redo()
             onOpenFileClicked: openFileProc.running = true

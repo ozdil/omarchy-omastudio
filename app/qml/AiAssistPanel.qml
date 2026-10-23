@@ -3,9 +3,9 @@ import QtQuick.Layouts
 import QtQuick.Controls
 import OmaStudio.Host
 
-// Edit assistant: a vision model (Claude, OpenAI, OpenRouter, Gemini, Ollama or LM Studio)
-// looks at the developed photo and sets the global adjustments from a request in plain
-// words. Provider setup stores API keys in the Secret Service through the engine.
+// Edit assistant: a vision model (Claude, OpenAI, OpenRouter, Gemini, Omarchy's default
+// agent, Ollama or LM Studio) looks at the developed photo and sets the global
+// adjustments from a request in plain words. Provider setup stores API keys in the Secret Service through the engine.
 ColumnLayout {
     id: root
     spacing: 8
@@ -22,6 +22,15 @@ ColumnLayout {
     property string setupProvider: ""
     property string explanation: ""
     property bool busy: editProc.running
+    property bool connecting: setupProc.running && setupProc.action === "local"
+    // The saved choice is a local server (Ollama, LM Studio) that answers
+    readonly property bool localConnected: {
+        for (var i = 0; i < root.providers.length; i++) {
+            var p = root.providers[i];
+            if (p.id === root.choice.provider) return p.local && p.ready;
+        }
+        return false;
+    }
     property alias promptText: promptInput.text
 
     signal recipeSuggested(var recipe, string explanation)
@@ -103,8 +112,10 @@ ColumnLayout {
         }
         onFinished: function(exitCode, output) {
             var resp = root.parse(output);
-            root.notify(resp.success ? (setupProc.action === "key" ? "API key stored in the keyring" : "Provider saved")
-                                     : String(resp.error || "Failed").split("\n")[0], !resp.success);
+            var ok = setupProc.action === "key" ? qsTr("API key stored in the keyring")
+                   : setupProc.action === "local" ? qsTr("Connected to local AI: %1").arg(resp.success ? resp.data.model : "")
+                   : qsTr("Provider saved");
+            root.notify(resp.success ? ok : String(resp.error || "Failed").split("\n")[0], !resp.success);
             root.refresh();
         }
     }
@@ -113,6 +124,14 @@ ColumnLayout {
         if (root.setupProvider === "" || keyInput.text.length === 0 || setupProc.running) return;
         setupProc.action = "key";
         setupProc.command = [root.enginePath, "ai", "key", root.setupProvider];
+        setupProc.running = true;
+    }
+
+    // Connects to the AI set up on this machine: Omarchy's default agent, Ollama, LM Studio
+    function connectLocal() {
+        if (root.enginePath === "" || setupProc.running) return;
+        setupProc.action = "local";
+        setupProc.command = [root.enginePath, "ai", "local"];
         setupProc.running = true;
     }
 

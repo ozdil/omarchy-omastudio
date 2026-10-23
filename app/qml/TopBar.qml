@@ -16,11 +16,16 @@ Rectangle {
     property string activePhotoName: ""
     property int photoRating: 0
     property string photoFlag: "none"
+    // Local AI connection, shown next to the mode switcher
+    property bool aiConnected: false
+    property bool aiBusy: false
+    property string aiModel: ""
 
     signal ratingChanged(int rating)
     signal flagChanged(string flag)
 
     signal toggleMode()
+    signal connectLocalAi()
     signal openFileClicked()
     signal toggleSplit()
     signal toggleCrop()
@@ -64,22 +69,6 @@ Rectangle {
                 font.pixelSize: 14
                 font.weight: Font.Black
                 color: Theme.textMain
-            }
-            Rectangle {
-                width: 44
-                height: 18
-                radius: 4
-                color: Theme.bgCard
-                border.color: Theme.border
-                Text {
-                    anchors.centerIn: parent
-                    text: "STUDIO"
-                    textFormat: Text.PlainText
-                    font.pixelSize: 8
-                    font.weight: Font.Bold
-                    font.letterSpacing: 1
-                    color: Theme.accent
-                }
             }
         }
 
@@ -193,7 +182,51 @@ Rectangle {
 
         Item { Layout.fillWidth: true }
 
-        // Mode Switcher: Basit (Simple AI) vs Pro Studio (Monochrome Themeable)
+        // Local AI: Omarchy's default agent, else Ollama or LM Studio on this machine
+        Rectangle {
+            implicitWidth: aiRow.implicitWidth + 16
+            implicitHeight: 28
+            radius: Theme.radiusSm
+            color: aiMouse.containsMouse ? Theme.bgCardHover : Theme.bgCard
+            border.color: root.aiConnected ? Theme.accentGreen : Theme.border
+
+            RowLayout {
+                id: aiRow
+                anchors.centerIn: parent
+                spacing: 6
+                Text {
+                    text: Theme.iconAi
+                    font.family: Theme.iconFont
+                    font.pixelSize: 10
+                    color: root.aiConnected ? Theme.accentGreen : Theme.textMuted
+                }
+                Text {
+                    text: root.aiBusy ? qsTr("Connecting…")
+                        : root.aiConnected ? qsTr("Local AI") : qsTr("Connect local AI")
+                    textFormat: Text.PlainText
+                    font.pixelSize: 10
+                    font.weight: Font.DemiBold
+                    color: root.aiConnected ? Theme.textMain : Theme.textMuted
+                }
+            }
+
+            MouseArea {
+                id: aiMouse
+                anchors.fill: parent
+                hoverEnabled: true
+                cursorShape: Qt.PointingHandCursor
+                enabled: !root.aiBusy
+                onClicked: root.connectLocalAi()
+                ToolTip.visible: containsMouse
+                ToolTip.delay: 500
+                ToolTip.text: root.aiConnected ? qsTr("Connected: %1. Click to reconnect.").arg(root.aiModel)
+                                               : qsTr("Use Omarchy's default AI agent, or Ollama or LM Studio on this computer")
+                Accessible.role: Accessible.Button
+                Accessible.name: qsTr("Connect local AI")
+            }
+        }
+
+        // Mode Switcher: Essentials vs Pro Studio
         Rectangle {
             implicitWidth: 170
             implicitHeight: 28
@@ -215,13 +248,13 @@ Rectangle {
                         anchors.centerIn: parent
                         spacing: 6
                         Text {
-                            text: Theme.iconAi
+                            text: Theme.iconImage
                             font.family: Theme.iconFont
                             font.pixelSize: 10
                             color: !root.isProMode ? Theme.bgBase : Theme.textMuted
                         }
                         Text {
-                            text: "Basit (AI)"
+                            text: qsTr("Essentials")
                             textFormat: Text.PlainText
                             font.pixelSize: 10
                             font.weight: Font.DemiBold

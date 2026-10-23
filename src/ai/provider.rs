@@ -1,6 +1,6 @@
 //! AI providers for the edit assistant: Anthropic's Messages API, OpenAI-compatible
-//! chat completions (OpenAI, OpenRouter, Google Gemini) and local servers (Ollama,
-//! LM Studio).
+//! chat completions (OpenAI, OpenRouter, Google Gemini), Omarchy's default agent and
+//! local servers (Ollama, LM Studio).
 //!
 //! API keys live in the desktop's Secret Service (GNOME Keyring, KeePassXC, ...)
 //! through `secret-tool`, under `service=omastudio provider=<id>`; an environment
@@ -22,6 +22,8 @@ pub enum Wire {
     Anthropic,
     /// `POST /v1/chat/completions`
     OpenAi,
+    /// Omarchy's default agent, run headless (see `agent`)
+    Agent,
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -41,6 +43,7 @@ pub const PROVIDERS: &[Provider] = &[
     Provider { id: "openai", name: "OpenAI", wire: Wire::OpenAi, endpoint: "https://api.openai.com/v1/chat/completions", default_model: "", key_env: Some("OPENAI_API_KEY"), local: false },
     Provider { id: "openrouter", name: "OpenRouter", wire: Wire::OpenAi, endpoint: "https://openrouter.ai/api/v1/chat/completions", default_model: "", key_env: Some("OPENROUTER_API_KEY"), local: false },
     Provider { id: "gemini", name: "Google Gemini", wire: Wire::OpenAi, endpoint: "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions", default_model: "", key_env: Some("GEMINI_API_KEY"), local: false },
+    Provider { id: "omarchy", name: "Omarchy AI", wire: Wire::Agent, endpoint: "", default_model: "", key_env: None, local: true },
     Provider { id: "ollama", name: "Ollama (local)", wire: Wire::OpenAi, endpoint: "http://127.0.0.1:11434/v1/chat/completions", default_model: "", key_env: None, local: true },
     Provider { id: "lmstudio", name: "LM Studio (local)", wire: Wire::OpenAi, endpoint: "http://127.0.0.1:1234/v1/chat/completions", default_model: "", key_env: None, local: true },
 ];
@@ -169,6 +172,9 @@ fn curl(url: &str, headers: &[String], body: Option<&std::path::Path>, timeout: 
 
 /// Models a local server offers (`GET /v1/models`); None when it is not running.
 pub fn local_models(p: &Provider) -> Option<Vec<String>> {
+    if p.wire == Wire::Agent {
+        return super::agent::available().map(|(agent, _)| vec![agent]);
+    }
     let url = p.endpoint.replace("/chat/completions", "/models");
     let v = curl(&url, &[], None, Duration::from_secs(3)).ok()?;
     Some(
@@ -206,6 +212,30 @@ pub fn status() -> Vec<ProviderStatus> {
             ProviderStatus { id: p.id, name: p.name, local: p.local, ready, models, default_model: p.default_model }
         })
         .collect()
+}
+
+/// Connects to the AI set up on this machine: the saved local choice when it still
+/// answers, else Omarchy's default agent, else Ollama, else LM Studio. A local server's
+/// first model is used unless the saved choice names one it offers. The result is
+/// saved as the choice.
+pub fn connect_local() -> Result<Choice, String> {
+    let saved = load_choice();
+    let mut order: Vec<&'static Provider> = PROVIDERS.iter().filter(|p| p.local).collect();
+    order.sort_by_key(|p| p.id != saved.provider);
+    for p in order {
+        let Some(models) = local_models(p) else { continue };
+        let model = if p.id == saved.provider && models.contains(&saved.model) {
+            saved.model.clone()
+        } else if let Some(first) = models.into_iter().next() {
+            first
+        } else {
+            continue;
+        };
+        let choice = Choice { provider: p.id.to_string(), model, endpoint: None };
+        save_choice(&choice)?;
+        return Ok(choice);
+    }
+    Err("No local AI found. Pick an agent with omarchy-default-agent (claude or codex), or start Ollama or the LM Studio server with a vision model.".to_string())
 }
 
 /// A request resolved to a provider, model, endpoint and key.
@@ -246,6 +276,9 @@ pub fn resolve(provider: Option<&str>, model: Option<&str>) -> Result<Target, St
 
 /// Sends a system prompt, a JPEG and a text, and asks for JSON matching `schema`.
 pub fn ask_json(target: &Target, system: &str, jpeg: &[u8], text: &str, schema: &Value) -> Result<Value, String> {
+    if target.provider.wire == Wire::Agent {
+        return super::agent::ask_json(system, jpeg, text, schema);
+    }
     let image = base64(jpeg);
     let (body, mut headers) = match target.provider.wire {
         Wire::Anthropic => {
@@ -272,7 +305,7 @@ pub fn ask_json(target: &Target, system: &str, jpeg: &[u8], text: &str, schema: 
             }
             (body, headers)
         }
-        Wire::OpenAi => {
+        Wire::OpenAi | Wire::Agent => {
             let body = json!({
                 "model": target.model,
                 "messages": [
@@ -313,13 +346,13 @@ pub fn ask_json(target: &Target, system: &str, jpeg: &[u8], text: &str, schema: 
                 .filter_map(|b| b.get("text").and_then(Value::as_str))
                 .collect::<String>()
         }
-        Wire::OpenAi => answer.pointer("/choices/0/message/content").and_then(Value::as_str).unwrap_or("").to_string(),
+        Wire::OpenAi | Wire::Agent => answer.pointer("/choices/0/message/content").and_then(Value::as_str).unwrap_or("").to_string(),
     };
     parse_json_object(&text).ok_or_else(|| "The model's answer was not valid JSON".to_string())
 }
 
 /// The JSON object in a model's answer, tolerating code fences or surrounding prose.
-fn parse_json_object(text: &str) -> Option<Value> {
+pub(super) fn parse_json_object(text: &str) -> Option<Value> {
     if let Ok(v @ Value::Object(_)) = serde_json::from_str::<Value>(text.trim()) {
         return Some(v);
     }

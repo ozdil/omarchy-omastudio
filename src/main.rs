@@ -1310,17 +1310,18 @@ fn ai_mask(photo: &str, kind: &str, model: Option<String>) -> Result<serde_json:
     }))
 }
 
-/// `ai providers | key <provider> [--delete] | use <provider> [model] [--endpoint URL] |
+/// `ai providers | local | key <provider> [--delete] | use <provider> [model] [--endpoint URL] |
 /// edit <photo> [--prompt P] [--recipe JSON] [--provider X] [--model M]`.
 fn run_ai(args: &[String]) {
     use ai::provider;
     let flag = |name: &str| args.iter().position(|a| a == name).and_then(|i| args.get(i + 1)).cloned();
     let lookup = |id: Option<&String>| -> Result<&'static provider::Provider, String> {
-        let id = id.ok_or("Missing provider: anthropic, openai, openrouter, gemini, ollama or lmstudio")?;
+        let id = id.ok_or("Missing provider: anthropic, openai, openrouter, gemini, omarchy, ollama or lmstudio")?;
         provider::find(id).ok_or_else(|| format!("Unknown provider {id}"))
     };
     let result: Result<serde_json::Value, String> = match args.first().map(String::as_str) {
         Some("providers") | None => Ok(serde_json::json!({ "providers": provider::status(), "choice": provider::load_choice() })),
+        Some("local") => provider::connect_local().and_then(|c| serde_json::to_value(&c).map_err(|e| e.to_string())),
         Some("key") => lookup(args.get(1)).and_then(|p| {
             if args.iter().any(|a| a == "--delete") {
                 return provider::delete_key(p).map(|_| serde_json::json!({ "provider": p.id, "stored": false }));

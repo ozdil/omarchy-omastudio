@@ -5,7 +5,7 @@ import OmaStudio.Host
 
 Rectangle {
     id: root
-    implicitWidth: 480
+    implicitWidth: 520
     implicitHeight: 460
     radius: Theme.radiusLg
     color: Theme.bgSurface
@@ -26,7 +26,6 @@ Rectangle {
     property string pluginDescription: "The complete medium format RAW editor for Omarchy: own X-Trans and Bayer development, Fujifilm recipes and colour-managed export."
     property string pluginAuthor: "Ozan Özdil (@ozdil)"
     property string pluginLicense: "MIT Open Source License"
-    property bool isVerified: true
 
     readonly property string manifestPath: Host.homeDir + "/.local/share/omastudio/manifest.json"
     readonly property string manifestFallbackPath: "/usr/share/omastudio/manifest.json"
@@ -41,7 +40,6 @@ Rectangle {
             if (parsed.description && typeof parsed.description === "string") root.pluginDescription = parsed.description.slice(0, 256);
             if (parsed.author && typeof parsed.author === "string") root.pluginAuthor = parsed.author.slice(0, 64);
             if (parsed.license && typeof parsed.license === "string") root.pluginLicense = parsed.license.slice(0, 32) + " Open Source License";
-            if (typeof parsed.verified === "boolean") root.isVerified = parsed.verified;
         } catch (e) {
             // Safe fallback to default values on malformed JSON
         }
@@ -122,27 +120,6 @@ Rectangle {
                             color: Theme.accentGreen
                         }
                     }
-
-                    Rectangle {
-                        visible: root.isVerified
-                        implicitWidth: verifText.implicitWidth + 8
-                        implicitHeight: 18
-                        radius: 4
-                        color: Qt.rgba(Theme.accentCyan.r, Theme.accentCyan.g, Theme.accentCyan.b, 0.15)
-                        border.color: Theme.accentCyan
-                        border.width: 1
-
-                        Text {
-                            id: verifText
-                            anchors.centerIn: parent
-                            text: "VERIFIED"
-                            textFormat: Text.PlainText
-                            font.family: Theme.monoFont
-                            font.pixelSize: 8
-                            font.weight: Font.Bold
-                            color: Theme.accentCyan
-                        }
-                    }
                 }
 
                 Text {
@@ -151,7 +128,7 @@ Rectangle {
                     font.family: Theme.fontFamily
                     font.pixelSize: 10
                     color: Theme.textMuted
-                    Layout.maximumWidth: 360
+                    Layout.fillWidth: true
                     wrapMode: Text.WordWrap
                 }
             }
@@ -189,93 +166,41 @@ Rectangle {
             color: Theme.border
         }
 
-        // Architecture Features
+        // Architecture Features. Lines wrap: a row wider than the dialog would push
+        // the whole layout past its right edge.
         ColumnLayout {
             Layout.fillWidth: true
             spacing: 8
 
-            RowLayout {
-                spacing: 8
-                Text {
-                    text: "\u2022"
-                    font.family: Theme.monoFont
-                    font.pixelSize: 12
-                    color: Theme.accent
-                }
-                Text {
-                    text: "Own X-Trans & Bayer demosaic on linear light, AgX filmic tone curve"
-                    textFormat: Text.PlainText
-                    font.family: Theme.fontFamily
-                    font.pixelSize: 10
-                    color: Theme.textMain
-                }
-            }
+            Repeater {
+                model: [
+                    "Own X-Trans & Bayer demosaic on linear light, AgX filmic tone curve",
+                    "Little CMS colour management: sRGB, Display P3, Adobe RGB, ProPhoto, Rec. 2020",
+                    "Fujifilm recipes: in-camera settings, X RAW Studio profiles, Color Chrome",
+                    "Medium format: Fujifilm GFX and Hasselblad RAW files, 16-bit throughout",
+                    "Local catalog with ratings, flags and colour labels; USB camera access"
+                ]
 
-            RowLayout {
-                spacing: 8
-                Text {
-                    text: "\u2022"
-                    font.family: Theme.monoFont
-                    font.pixelSize: 12
-                    color: Theme.accent
-                }
-                Text {
-                    text: "Little CMS colour management: sRGB, Display P3, Adobe RGB, ProPhoto, Rec. 2020"
-                    textFormat: Text.PlainText
-                    font.family: Theme.fontFamily
-                    font.pixelSize: 10
-                    color: Theme.textMain
-                }
-            }
-
-            RowLayout {
-                spacing: 8
-                Text {
-                    text: "\u2022"
-                    font.family: Theme.monoFont
-                    font.pixelSize: 12
-                    color: Theme.accent
-                }
-                Text {
-                    text: "Fujifilm recipes: in-camera settings, X RAW Studio profiles, Color Chrome"
-                    textFormat: Text.PlainText
-                    font.family: Theme.fontFamily
-                    font.pixelSize: 10
-                    color: Theme.textMain
-                }
-            }
-
-            RowLayout {
-                spacing: 8
-                Text {
-                    text: "\u2022"
-                    font.family: Theme.monoFont
-                    font.pixelSize: 12
-                    color: Theme.accent
-                }
-                Text {
-                    text: "Medium format: Fujifilm GFX and Hasselblad RAW files, 16-bit throughout"
-                    textFormat: Text.PlainText
-                    font.family: Theme.fontFamily
-                    font.pixelSize: 10
-                    color: Theme.textMain
-                }
-            }
-
-            RowLayout {
-                spacing: 8
-                Text {
-                    text: "\u2022"
-                    font.family: Theme.monoFont
-                    font.pixelSize: 12
-                    color: Theme.accent
-                }
-                Text {
-                    text: "Local catalog with ratings, flags and colour labels; USB camera access"
-                    textFormat: Text.PlainText
-                    font.family: Theme.fontFamily
-                    font.pixelSize: 10
-                    color: Theme.textMain
+                RowLayout {
+                    required property string modelData
+                    Layout.fillWidth: true
+                    spacing: 8
+                    Text {
+                        Layout.alignment: Qt.AlignTop
+                        text: "\u2022"
+                        font.family: Theme.monoFont
+                        font.pixelSize: 12
+                        color: Theme.accent
+                    }
+                    Text {
+                        Layout.fillWidth: true
+                        text: modelData
+                        textFormat: Text.PlainText
+                        wrapMode: Text.WordWrap
+                        font.family: Theme.fontFamily
+                        font.pixelSize: 10
+                        color: Theme.textMain
+                    }
                 }
             }
         }
@@ -301,6 +226,8 @@ Rectangle {
                     color: Theme.textDim
                 }
                 Text {
+                    Layout.fillWidth: true
+                    wrapMode: Text.Wrap
                     text: root.pluginAuthor
                     textFormat: Text.PlainText
                     font.family: Theme.monoFont
@@ -320,6 +247,8 @@ Rectangle {
                     color: Theme.textDim
                 }
                 Text {
+                    Layout.fillWidth: true
+                    wrapMode: Text.Wrap
                     text: root.pluginLicense
                     textFormat: Text.PlainText
                     font.family: Theme.monoFont
@@ -338,6 +267,8 @@ Rectangle {
                     color: Theme.textDim
                 }
                 Text {
+                    Layout.fillWidth: true
+                    wrapMode: Text.Wrap
                     text: "Omarchy Linux (Wayland / Hyprland)"
                     textFormat: Text.PlainText
                     font.family: Theme.monoFont
@@ -356,6 +287,8 @@ Rectangle {
 
             Rectangle {
                 Layout.fillWidth: true
+                Layout.preferredWidth: 1
+                Layout.minimumWidth: ghLabel.implicitWidth + 20
                 implicitHeight: 32
                 radius: Theme.radiusSm
                 color: ghMouse.containsMouse ? Theme.bgCardHover : Theme.bgCard
@@ -363,6 +296,7 @@ Rectangle {
                 border.width: 1
 
                 Text {
+                    id: ghLabel
                     anchors.centerIn: parent
                     text: "GitHub"
                     textFormat: Text.PlainText
@@ -383,6 +317,8 @@ Rectangle {
 
             Rectangle {
                 Layout.fillWidth: true
+                Layout.preferredWidth: 1
+                Layout.minimumWidth: sponsorLabel.implicitWidth + 20
                 implicitHeight: 32
                 radius: Theme.radiusSm
                 color: sponsorMouse.containsMouse ? "#2d1627" : "#1f101b"
@@ -390,6 +326,7 @@ Rectangle {
                 border.width: 1
 
                 RowLayout {
+                    id: sponsorLabel
                     anchors.centerIn: parent
                     spacing: 5
                     Text {
@@ -419,6 +356,8 @@ Rectangle {
 
             Rectangle {
                 Layout.fillWidth: true
+                Layout.preferredWidth: 1
+                Layout.minimumWidth: bmacLabel.implicitWidth + 20
                 implicitHeight: 32
                 radius: Theme.radiusSm
                 color: bmacMouse.containsMouse ? "#FFE433" : "#FFDD00"
@@ -426,6 +365,7 @@ Rectangle {
                 border.width: 1
 
                 RowLayout {
+                    id: bmacLabel
                     anchors.centerIn: parent
                     spacing: 5
                     Text {
