@@ -403,6 +403,33 @@
     </message>
 </context>
 <context>
+    <name>CurveEditor</name>
+    <message>
+        <source>RGB</source>
+        <translation>RGB</translation>
+    </message>
+    <message>
+        <source>Red</source>
+        <translation>Κόκκινο</translation>
+    </message>
+    <message>
+        <source>Green</source>
+        <translation>Πράσινο</translation>
+    </message>
+    <message>
+        <source>Blue</source>
+        <translation>Μπλε</translation>
+    </message>
+    <message>
+        <source>Click to add a point, drag to move it, double-click to remove it.</source>
+        <translation>Κάντε κλικ για να προσθέσετε σημείο, σύρετε για να το μετακινήσετε, διπλό κλικ για να το αφαιρέσετε.</translation>
+    </message>
+    <message>
+        <source>Reset channel</source>
+        <translation>Επαναφορά καναλιού</translation>
+    </message>
+</context>
+<context>
     <name>ExifCard</name>
     <message>
         <source>No photo</source>

@@ -403,6 +403,33 @@
     </message>
 </context>
 <context>
+    <name>CurveEditor</name>
+    <message>
+        <source>RGB</source>
+        <translation>RGB</translation>
+    </message>
+    <message>
+        <source>Red</source>
+        <translation>แดง</translation>
+    </message>
+    <message>
+        <source>Green</source>
+        <translation>เขียว</translation>
+    </message>
+    <message>
+        <source>Blue</source>
+        <translation>น้ำเงิน</translation>
+    </message>
+    <message>
+        <source>Click to add a point, drag to move it, double-click to remove it.</source>
+        <translation>คลิกเพื่อเพิ่มจุด ลากเพื่อย้าย ดับเบิลคลิกเพื่อลบ</translation>
+    </message>
+    <message>
+        <source>Reset channel</source>
+        <translation>รีเซ็ตช่องสี</translation>
+    </message>
+</context>
+<context>
     <name>ExifCard</name>
     <message>
         <source>No photo</source>

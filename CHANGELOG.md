@@ -34,6 +34,11 @@
 - "Temperature" and "Tint" instead of "Temp (Kelvin)" and "Tint (Green / Magenta)".
 - The scene guess is shown only when it is at least 90 % sure, labelled as a suggestion.
 
+### Curves
+- The Tone curve section has a point curve editor over the histogram: an RGB curve and one each for red, green and blue. Click adds a point, dragging moves it, double-click removes it; the other channels' curves show faintly behind the one being edited. The curve is a monotone cubic through the points, so it never overshoots them; values above white keep their headroom.
+- Point curves are stored in the recipe (`curve_points`, `curve_points_red`, `curve_points_green`, `curve_points_blue`) and written to XMP sidecars as Camera Raw's `ToneCurvePV2012` curves, which OmaStudio also reads from Lightroom and Camera Raw sidecars.
+- The four region sliders stay below the editor.
+
 ### Colour management
 - **Gamut compression** is now a switch of its own and follows the ACES 1.3 reference gamut compression: colours pushed outside the gamut by grading come back in smoothly, colours inside it are left alone. The previous version clipped negative values outright and desaturated every strongly saturated colour.
 - The working colour space list (sRGB, Display P3, Rec. 2020, ACEScg) is gone: the choice did not change the rendering (ACEScg only switched gamut compression on), and its coverage figures were wrong. The output colour space is chosen in the Export window, which converts with ICC profiles. Edits saved with ACEScg open with gamut compression on.

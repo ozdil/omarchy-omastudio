@@ -403,6 +403,33 @@
     </message>
 </context>
 <context>
+    <name>CurveEditor</name>
+    <message>
+        <source>RGB</source>
+        <translation>RGB</translation>
+    </message>
+    <message>
+        <source>Red</source>
+        <translation>Rot</translation>
+    </message>
+    <message>
+        <source>Green</source>
+        <translation>Grün</translation>
+    </message>
+    <message>
+        <source>Blue</source>
+        <translation>Blau</translation>
+    </message>
+    <message>
+        <source>Click to add a point, drag to move it, double-click to remove it.</source>
+        <translation>Klicken fügt einen Punkt hinzu, Ziehen verschiebt ihn, Doppelklick entfernt ihn.</translation>
+    </message>
+    <message>
+        <source>Reset channel</source>
+        <translation>Kanal zurücksetzen</translation>
+    </message>
+</context>
+<context>
     <name>ExifCard</name>
     <message>
         <source>No photo</source>

@@ -1,5 +1,6 @@
 pub mod aces;
 pub mod color_grading;
+pub mod curves;
 pub mod detail;
 pub mod film_grain;
 pub mod film_sim;
@@ -64,6 +65,7 @@ pub fn process_buffer(
     let film_lut = film_sim::calibrated_lut(film_sim);
     let color_chrome = recipe.color_chrome > 0.0 || recipe.color_chrome_blue > 0.0;
     let gamut_compress = recipe.gamut_compression_active();
+    let point_curves = curves::Curves::from_recipe(recipe);
 
     // Intermediate float buffer for multi-stage 16-bit precision processing
     let mut f32_buf = vec![0.0f32; num_pixels * 3];
@@ -85,6 +87,7 @@ pub fn process_buffer(
 
                 // 1. Tone & Dynamic range (Chroma-preserving, smooth highlight knee & shadow toe)
                 let (r1, g1, b1) = tone::apply_tone_pixel(r_norm, g_norm, b_norm, recipe, exp_factor);
+                let (r1, g1, b1) = point_curves.apply(r1, g1, b1);
 
                 // 2. DaVinci Resolve RGB Primary Matrix Mixer
                 let (r1_mix, g1_mix, b1_mix) = rgb_mixer::apply_rgb_mixer(r1, g1, b1, recipe);
@@ -275,6 +278,7 @@ pub struct PointOps<'a> {
     film_lut: Option<std::sync::Arc<lut::Lut3D>>,
     color_chrome: bool,
     aces: bool,
+    curves: curves::Curves,
 }
 
 impl<'a> PointOps<'a> {
@@ -287,6 +291,7 @@ impl<'a> PointOps<'a> {
             film_lut: film_sim::calibrated_lut(film_sim),
             color_chrome: recipe.color_chrome > 0.0 || recipe.color_chrome_blue > 0.0,
             aces: recipe.gamut_compression_active(),
+            curves: curves::Curves::from_recipe(recipe),
         }
     }
 
@@ -295,6 +300,7 @@ impl<'a> PointOps<'a> {
         let recipe = self.recipe;
         // 1. Tone & Dynamic range (exposure was already applied in linear light)
         let (r, g, b) = tone::apply_tone_pixel(r, g, b, recipe, 1.0);
+        let (r, g, b) = self.curves.apply(r, g, b);
         // 2. RGB primary mixer
         let (r, g, b) = rgb_mixer::apply_rgb_mixer(r, g, b, recipe);
         // 3. Skin tone uniformity
@@ -716,6 +722,7 @@ struct PointStage {
     film_lut: Option<std::sync::Arc<lut::Lut3D>>,
     color_chrome: bool,
     gamut_compress: bool,
+    curves: curves::Curves,
     transfer: Transfer,
 }
 
@@ -730,6 +737,7 @@ impl PointStage {
             film_lut: film_sim::calibrated_lut(film_sim),
             color_chrome: recipe.color_chrome > 0.0 || recipe.color_chrome_blue > 0.0,
             gamut_compress: recipe.gamut_compression_active(),
+            curves: curves::Curves::from_recipe(recipe),
             transfer,
         }
     }
@@ -746,6 +754,7 @@ impl PointStage {
         let b = self.transfer.encode((b as f32 / 65535.0) * wb_b * self.exp_factor);
 
         let (r, g, b) = tone::apply_tone_pixel(r, g, b, recipe, 1.0);
+        let (r, g, b) = self.curves.apply(r, g, b);
         let (r, g, b) = rgb_mixer::apply_rgb_mixer(r, g, b, recipe);
         let (r, g, b) = skin_tone::apply_skin_tone_uniformity(r, g, b, recipe);
         let (r, g, b) = color_grading::apply_color_wheels(r, g, b, recipe);

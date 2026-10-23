@@ -403,6 +403,33 @@
     </message>
 </context>
 <context>
+    <name>CurveEditor</name>
+    <message>
+        <source>RGB</source>
+        <translation>RGB</translation>
+    </message>
+    <message>
+        <source>Red</source>
+        <translation>Vörös</translation>
+    </message>
+    <message>
+        <source>Green</source>
+        <translation>Zöld</translation>
+    </message>
+    <message>
+        <source>Blue</source>
+        <translation>Kék</translation>
+    </message>
+    <message>
+        <source>Click to add a point, drag to move it, double-click to remove it.</source>
+        <translation>Kattintással pontot ad hozzá, húzással mozgatja, dupla kattintással törli.</translation>
+    </message>
+    <message>
+        <source>Reset channel</source>
+        <translation>Csatorna visszaállítása</translation>
+    </message>
+</context>
+<context>
     <name>ExifCard</name>
     <message>
         <source>No photo</source>

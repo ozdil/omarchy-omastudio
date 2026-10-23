@@ -403,6 +403,33 @@
     </message>
 </context>
 <context>
+    <name>CurveEditor</name>
+    <message>
+        <source>RGB</source>
+        <translation>RGB</translation>
+    </message>
+    <message>
+        <source>Red</source>
+        <translation>लाल</translation>
+    </message>
+    <message>
+        <source>Green</source>
+        <translation>हरा</translation>
+    </message>
+    <message>
+        <source>Blue</source>
+        <translation>नीला</translation>
+    </message>
+    <message>
+        <source>Click to add a point, drag to move it, double-click to remove it.</source>
+        <translation>बिंदु जोड़ने के लिए क्लिक करें, खिसकाने के लिए खींचें, हटाने के लिए डबल-क्लिक करें।</translation>
+    </message>
+    <message>
+        <source>Reset channel</source>
+        <translation>चैनल रीसेट करें</translation>
+    </message>
+</context>
+<context>
     <name>ExifCard</name>
     <message>
         <source>No photo</source>

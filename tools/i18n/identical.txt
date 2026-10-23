@@ -239,6 +239,7 @@ id:+ Radial
 id:Navigator
 vi:HDR, video
 RAW
+RGB
 el:8-bit
 el:10-bit
 el:12-bit

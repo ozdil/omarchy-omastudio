@@ -403,6 +403,33 @@
     </message>
 </context>
 <context>
+    <name>CurveEditor</name>
+    <message>
+        <source>RGB</source>
+        <translation>RGB</translation>
+    </message>
+    <message>
+        <source>Red</source>
+        <translation>Đỏ</translation>
+    </message>
+    <message>
+        <source>Green</source>
+        <translation>Xanh lục</translation>
+    </message>
+    <message>
+        <source>Blue</source>
+        <translation>Xanh lam</translation>
+    </message>
+    <message>
+        <source>Click to add a point, drag to move it, double-click to remove it.</source>
+        <translation>Nhấp để thêm điểm, kéo để di chuyển, nhấp đúp để xóa.</translation>
+    </message>
+    <message>
+        <source>Reset channel</source>
+        <translation>Đặt lại kênh</translation>
+    </message>
+</context>
+<context>
     <name>ExifCard</name>
     <message>
         <source>No photo</source>

@@ -8,6 +8,7 @@ BoundedTextInput 1.0 BoundedTextInput.qml
 ColorGradingWheels 1.0 ColorGradingWheels.qml
 ColorSpaceSelector 1.0 ColorSpaceSelector.qml
 ColorWheel 1.0 ColorWheel.qml
+CurveEditor 1.0 CurveEditor.qml
 CustomSwitch 1.0 CustomSwitch.qml
 ExifCard 1.0 ExifCard.qml
 ExportDialog 1.0 ExportDialog.qml

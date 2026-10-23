@@ -403,6 +403,33 @@
     </message>
 </context>
 <context>
+    <name>CurveEditor</name>
+    <message>
+        <source>RGB</source>
+        <translation>RGB</translation>
+    </message>
+    <message>
+        <source>Red</source>
+        <translation>빨강</translation>
+    </message>
+    <message>
+        <source>Green</source>
+        <translation>초록</translation>
+    </message>
+    <message>
+        <source>Blue</source>
+        <translation>파랑</translation>
+    </message>
+    <message>
+        <source>Click to add a point, drag to move it, double-click to remove it.</source>
+        <translation>클릭하여 점을 추가하고, 드래그하여 옮기고, 두 번 클릭하여 삭제합니다.</translation>
+    </message>
+    <message>
+        <source>Reset channel</source>
+        <translation>채널 초기화</translation>
+    </message>
+</context>
+<context>
     <name>ExifCard</name>
     <message>
         <source>No photo</source>
