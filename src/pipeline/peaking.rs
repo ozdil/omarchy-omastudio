@@ -64,14 +64,25 @@ pub fn apply(rgb: &mut [u8], width: usize, height: usize) {
         }
     }
     let threshold = adaptive_threshold(&histogram);
+    // Sharp blocks, widened by one block each way so a few sharp lashes still make a
+    // mark that is visible on a photo fitted to the window
+    let sharp: Vec<bool> = (0..w * h)
+        .map(|i| {
+            let (x, y) = (i % w, i / w);
+            x > 0 && y > 0 && x + 1 < w && y + 1 < h && laplacian(i) > threshold
+        })
+        .collect();
+    let marked = |bx: usize, by: usize| {
+        (by.saturating_sub(1)..=(by + 1).min(h - 1))
+            .any(|y| (bx.saturating_sub(1)..=(bx + 1).min(w - 1)).any(|x| sharp[y * w + x]))
+    };
     rgb.par_chunks_mut(width * 3)
         .take(h * k)
         .enumerate()
-        .filter(|(y, _)| *y / k > 0 && *y / k + 1 < h)
         .for_each(|(y, row)| {
             let by = y / k;
-            for bx in 1..w - 1 {
-                if laplacian(by * w + bx) > threshold {
+            for bx in 0..w {
+                if marked(bx, by) {
                     for x in bx * k..(bx + 1) * k {
                         row[x * 3..x * 3 + 3].copy_from_slice(&PEAKING_RGB);
                     }
