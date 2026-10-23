@@ -858,7 +858,7 @@
         <message>
             <source>[S] %1%</source>
             <comment>S: shadow clipping</comment>
-            <translation>[T] %1 %</translation>
+            <translation>[T] %1%</translation>
         </message>
         <message>
             <source>RGB HISTOGRAM</source>
@@ -867,7 +867,7 @@
         <message>
             <source>[H] %1%</source>
             <comment>H: highlight clipping</comment>
-            <translation>[L] %1 %</translation>
+            <translation>[L] %1%</translation>
         </message>
     </context>
     <context>
@@ -1677,12 +1677,12 @@
         <message>
             <source>[S] %1%</source>
             <comment>S: shadow clipping</comment>
-            <translation>[T] %1 %</translation>
+            <translation>[T] %1%</translation>
         </message>
         <message>
             <source>[H] %1%</source>
             <comment>H: highlight clipping</comment>
-            <translation>[L] %1 %</translation>
+            <translation>[L] %1%</translation>
         </message>
         <message>
             <source>NO SIGNAL / LOAD RAW</source>
