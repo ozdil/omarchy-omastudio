@@ -3,7 +3,7 @@
 ## Unreleased
 
 ### Fixes
-- Focus peaking follows the photo: a soft portrait or a photo fitted to the window still shows its sharpest edges, where the fixed threshold marked nothing; detailed photos look as before.
+- Focus peaking follows the photo and looks at it at about the size the window shows it: high-ISO noise and fine fabric prints no longer outshine the eyes of a portrait, a soft portrait or a fitted view still shows its sharpest edges, and the marks stay visible when the photo is scaled down. Detailed photos look as before.
 - The About window's icon is built into the program, so it shows for local installs too (it only looked in /usr/share). The package now depends on `qt6-svg`.
 - `omastudio ipc applyPreset` (and the MCP `apply_preset` tool) take the names the Looks panel shows (Muted, Vivid, Warm portrait, Black and white, Teal and orange) and report an unknown name as an error instead of answering OK.
 - The Grain section resets from its header like the other sections, without a second Reset box; the AI mask buttons are no longer in capitals; Qt warnings at start-up are gone.
