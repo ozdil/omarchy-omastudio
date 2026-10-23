@@ -500,12 +500,15 @@ pub struct CatalogItem {
 pub struct Catalog {
     pub version: u32,
     pub items: HashMap<String, CatalogItem>,
+    /// The file on disk exists but could not be read; see [`Catalog::save`].
+    #[serde(skip)]
+    pub unreadable: bool,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct CatalogFilter {
     pub min_rating: Option<u8>,
-    pub flag: Option<String>, // "pick", "reject", "unflagged"
+    pub flag: Option<String>, // "pick", "reject", "none" (or "unflagged")
     pub camera_make: Option<String>,
     pub camera_model: Option<String>,
     pub lens: Option<String>,
@@ -522,26 +525,48 @@ impl Catalog {
             .join("catalog.json")
     }
 
+    /// Reads the catalogue. Entries are kept even when their file is missing: a photo
+    /// on an unmounted drive or a network share must keep its rating, flag and label.
+    /// Use [`Catalog::present_items`] for what can be opened right now.
     pub fn load() -> Self {
-        let path = Self::default_catalog_path();
-        if let Ok(bytes) = crate::security::read_secure_file(&path, 16 * 1024 * 1024)
-            && let Ok(mut cat) = serde_json::from_slice::<Catalog>(&bytes)
-        {
-            // Filter out ghost entries where RAW file no longer exists on disk
-            cat.items.retain(|file_path, _| std::path::Path::new(file_path).exists());
-            return cat;
-        }
-        Self {
-            version: 1,
-            items: HashMap::new(),
+        Self::load_from(&Self::default_catalog_path())
+    }
+
+    fn load_from(path: &Path) -> Self {
+        match crate::security::read_secure_file(path, 16 * 1024 * 1024) {
+            Ok(bytes) => match serde_json::from_slice::<Catalog>(&bytes) {
+                Ok(cat) => cat,
+                Err(_) => Self { version: 1, items: HashMap::new(), unreadable: true },
+            },
+            // A file that exists but cannot be read (too large, wrong owner) is not
+            // overwritten either
+            Err(e) if e.kind() != io::ErrorKind::NotFound => Self { version: 1, items: HashMap::new(), unreadable: true },
+            Err(_) => Self { version: 1, items: HashMap::new(), unreadable: false },
         }
     }
 
+    /// The entries whose photo is on disk now.
+    pub fn present_items(&self) -> HashMap<String, CatalogItem> {
+        self.items.iter().filter(|(p, _)| Path::new(p).exists()).map(|(p, i)| (p.clone(), i.clone())).collect()
+    }
+
+    /// Writes the catalogue. When the existing file could not be read, it is first
+    /// kept as `catalog.json.unreadable-<time>` so a newer or damaged catalogue is
+    /// never replaced by an empty one.
     pub fn save(&self) -> io::Result<()> {
-        let path = Self::default_catalog_path();
+        self.save_to(&Self::default_catalog_path())
+    }
+
+    fn save_to(&self, path: &Path) -> io::Result<()> {
+        if self.unreadable && path.exists() {
+            let secs = std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap_or_default().as_secs();
+            let mut backup = path.as_os_str().to_owned();
+            backup.push(format!(".unreadable-{secs}"));
+            std::fs::rename(path, PathBuf::from(backup))?;
+        }
         let data = serde_json::to_vec_pretty(self)
             .map_err(|e| io::Error::new(io::ErrorKind::InvalidData, e))?;
-        crate::security::atomic_write_secure(&path, &data)
+        crate::security::atomic_write_secure(path, &data)
     }
 
     pub fn upsert(&mut self, item: CatalogItem) {
@@ -582,8 +607,11 @@ impl Catalog {
             {
                 return false;
             }
+            // "none" and the older "unflagged" both mean no flag
+            let unflagged = |f: &str| f.is_empty() || f == "none" || f == "unflagged";
             if let Some(ref fl) = filter.flag
-                && !fl.is_empty() && &item.flag != fl
+                && !fl.is_empty()
+                && !(item.flag == *fl || unflagged(fl) && unflagged(&item.flag))
             {
                 return false;
             }
@@ -628,5 +656,83 @@ impl Catalog {
 
         matched.sort_by_key(|m| std::cmp::Reverse(m.updated_at));
         matched
+    }
+}
+
+#[cfg(test)]
+mod catalog_tests {
+    use super::*;
+
+    fn temp_dir(name: &str) -> PathBuf {
+        let dir = std::env::temp_dir().join(format!("omastudio-catalog-{name}-{}", std::process::id()));
+        let _ = std::fs::remove_dir_all(&dir);
+        std::fs::create_dir_all(&dir).unwrap();
+        dir
+    }
+
+    fn item(path: &str, rating: u8) -> CatalogItem {
+        CatalogItem {
+            id: "x".into(),
+            path: path.into(),
+            remote_path: None,
+            thumbnail_path: String::new(),
+            metadata: RawMetadata {
+                width: 0,
+                height: 0,
+                raw_width: 0,
+                raw_height: 0,
+                make: String::new(),
+                model: String::new(),
+                lens: String::new(),
+                iso: 0.0,
+                shutter: 0.0,
+                aperture: 0.0,
+                focal_length: 0.0,
+                timestamp: 0,
+                cam_mul: [1.0; 4],
+            },
+            rating,
+            color_label: String::new(),
+            flag: "none".into(),
+            recipe: Recipe::default(),
+            updated_at: 0,
+        }
+    }
+
+    /// Photos on an unmounted drive keep their ratings through a load and save.
+    #[test]
+    fn missing_photos_keep_their_entries() {
+        let dir = temp_dir("missing");
+        let path = dir.join("catalog.json");
+        let mut cat = Catalog { version: 1, ..Default::default() };
+        cat.upsert(item("/run/media/offline/DSCF0001.RAF", 5));
+        cat.save_to(&path).unwrap();
+
+        let back = Catalog::load_from(&path);
+        assert!(back.items.contains_key("/run/media/offline/DSCF0001.RAF"));
+        assert!(back.present_items().is_empty());
+        back.save_to(&path).unwrap();
+        assert_eq!(Catalog::load_from(&path).items["/run/media/offline/DSCF0001.RAF"].rating, 5);
+        let _ = std::fs::remove_dir_all(&dir);
+    }
+
+    /// A catalogue that cannot be parsed is set aside, not overwritten.
+    #[test]
+    fn unreadable_catalog_is_kept() {
+        let dir = temp_dir("unreadable");
+        let path = dir.join("catalog.json");
+        std::fs::write(&path, b"{\"version\": 9, \"items\": {\"/a\": {\"future\": true}}}").unwrap();
+        let mut cat = Catalog::load_from(&path);
+        assert!(cat.unreadable && cat.items.is_empty());
+        cat.upsert(item("/b", 1));
+        cat.save_to(&path).unwrap();
+        let kept: Vec<_> = std::fs::read_dir(&dir)
+            .unwrap()
+            .filter_map(|e| e.ok())
+            .filter(|e| e.file_name().to_string_lossy().starts_with("catalog.json.unreadable-"))
+            .collect();
+        assert_eq!(kept.len(), 1);
+        assert!(std::fs::read_to_string(kept[0].path()).unwrap().contains("future"));
+        let _ = std::fs::remove_dir_all(&dir);
     }
 }
