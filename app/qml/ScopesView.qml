@@ -25,7 +25,7 @@ Rectangle {
         spacing: 6
 
         // Top Control Bar: Mode Tabs + Clipping Toggles (the toggles wrap to a second
-        // line when the column is narrow)
+        // line, together, when the column is narrow)
         Flow {
             Layout.fillWidth: true
             spacing: 4
@@ -74,66 +74,72 @@ Rectangle {
                 }
             }
 
-            // Shadow clipping button
-            Rectangle {
-                implicitWidth: shadowText.implicitWidth + 8
-                implicitHeight: Theme.px(11) + 8
-                radius: Theme.r(3)
-                color: root.showClippingShadows ? Theme.shadowClip : Qt.rgba(0.2, 0.5, 1.0, 0.15)
-                border.color: Theme.shadowClip
+            // The two clipping readouts stay together, so a narrow column moves both
+            // to the next line instead of splitting them
+            RowLayout {
+                spacing: 4
 
-                Text {
-                    id: shadowText
-                    anchors.centerIn: parent
-                    text: qsTr("[S] %1%", "S: shadow clipping").arg(root.histData ? root.histData.shadow_clipping_percent.toFixed(1) : "0.0")
-                    textFormat: Text.PlainText
-                    font.pixelSize: Theme.px(11)
-                    font.family: Theme.monoFont
-                    color: root.showClippingShadows ? "#ffffff" : Theme.shadowClip
-                }
+                // Shadow clipping button
+                Rectangle {
+                    implicitWidth: shadowText.implicitWidth + 8
+                    implicitHeight: Theme.px(11) + 8
+                    radius: Theme.r(3)
+                    color: root.showClippingShadows ? Theme.shadowClip : Qt.rgba(0.2, 0.5, 1.0, 0.15)
+                    border.color: Theme.shadowClip
 
-                MouseArea {
-                    anchors.fill: parent
-                    cursorShape: Qt.PointingHandCursor
-                    hoverEnabled: true
-                    ToolTip.visible: containsMouse
-                    ToolTip.delay: 500
-                    ToolTip.text: qsTr("Clipped shadows. Click to show them on the photo.")
-                    onClicked: {
-                        root.showClippingShadows = !root.showClippingShadows;
-                        root.toggleShadowMask();
+                    Text {
+                        id: shadowText
+                        anchors.centerIn: parent
+                        text: qsTr("[S] %1%", "S: shadow clipping").arg(root.histData ? root.histData.shadow_clipping_percent.toFixed(1) : "0.0")
+                        textFormat: Text.PlainText
+                        font.pixelSize: Theme.px(11)
+                        font.family: Theme.monoFont
+                        color: root.showClippingShadows ? "#ffffff" : Theme.shadowClip
+                    }
+
+                    MouseArea {
+                        anchors.fill: parent
+                        cursorShape: Qt.PointingHandCursor
+                        hoverEnabled: true
+                        ToolTip.visible: containsMouse
+                        ToolTip.delay: 500
+                        ToolTip.text: qsTr("Clipped shadows. Click to show them on the photo.")
+                        onClicked: {
+                            root.showClippingShadows = !root.showClippingShadows;
+                            root.toggleShadowMask();
+                        }
                     }
                 }
-            }
 
-            // Highlight clipping button
-            Rectangle {
-                implicitWidth: highText.implicitWidth + 8
-                implicitHeight: Theme.px(11) + 8
-                radius: Theme.r(3)
-                color: root.showClippingHighlights ? Theme.highlightClip : Qt.rgba(1.0, 0.3, 0.4, 0.15)
-                border.color: Theme.highlightClip
+                // Highlight clipping button
+                Rectangle {
+                    implicitWidth: highText.implicitWidth + 8
+                    implicitHeight: Theme.px(11) + 8
+                    radius: Theme.r(3)
+                    color: root.showClippingHighlights ? Theme.highlightClip : Qt.rgba(1.0, 0.3, 0.4, 0.15)
+                    border.color: Theme.highlightClip
 
-                Text {
-                    id: highText
-                    anchors.centerIn: parent
-                    text: qsTr("[H] %1%", "H: highlight clipping").arg(root.histData ? root.histData.highlight_clipping_percent.toFixed(1) : "0.0")
-                    textFormat: Text.PlainText
-                    font.pixelSize: Theme.px(11)
-                    font.family: Theme.monoFont
-                    color: root.showClippingHighlights ? "#ffffff" : Theme.highlightClip
-                }
+                    Text {
+                        id: highText
+                        anchors.centerIn: parent
+                        text: qsTr("[H] %1%", "H: highlight clipping").arg(root.histData ? root.histData.highlight_clipping_percent.toFixed(1) : "0.0")
+                        textFormat: Text.PlainText
+                        font.pixelSize: Theme.px(11)
+                        font.family: Theme.monoFont
+                        color: root.showClippingHighlights ? "#ffffff" : Theme.highlightClip
+                    }
 
-                MouseArea {
-                    anchors.fill: parent
-                    cursorShape: Qt.PointingHandCursor
-                    hoverEnabled: true
-                    ToolTip.visible: containsMouse
-                    ToolTip.delay: 500
-                    ToolTip.text: qsTr("Clipped highlights. Click to show them on the photo.")
-                    onClicked: {
-                        root.showClippingHighlights = !root.showClippingHighlights;
-                        root.toggleHighlightMask();
+                    MouseArea {
+                        anchors.fill: parent
+                        cursorShape: Qt.PointingHandCursor
+                        hoverEnabled: true
+                        ToolTip.visible: containsMouse
+                        ToolTip.delay: 500
+                        ToolTip.text: qsTr("Clipped highlights. Click to show them on the photo.")
+                        onClicked: {
+                            root.showClippingHighlights = !root.showClippingHighlights;
+                            root.toggleHighlightMask();
+                        }
                     }
                 }
             }
