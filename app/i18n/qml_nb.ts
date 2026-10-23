@@ -532,8 +532,8 @@
         <translation>Nett, skjermer</translation>
     </message>
     <message>
-        <source>Wide-gamut screens</source>
-        <translation>Skjermer med stort fargeområde</translation>
+        <source>Modern screens</source>
+        <translation>Moderne skjermer</translation>
     </message>
     <message>
         <source>Print</source>
@@ -2085,6 +2085,14 @@
     <message>
         <source>Reset 0°</source>
         <translation>Tilbakestill til 0°</translation>
+    </message>
+    <message>
+        <source>Rotate left</source>
+        <translation>Roter mot venstre</translation>
+    </message>
+    <message>
+        <source>Rotate right</source>
+        <translation>Roter mot høyre</translation>
     </message>
     <message>
         <source>Fit</source>

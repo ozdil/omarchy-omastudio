@@ -533,8 +533,8 @@
         <translation>Веб, екрани</translation>
     </message>
     <message>
-        <source>Wide-gamut screens</source>
-        <translation>Екрани з широким охопленням</translation>
+        <source>Modern screens</source>
+        <translation>Сучасні екрани</translation>
     </message>
     <message>
         <source>Print</source>
@@ -2091,6 +2091,14 @@
     <message>
         <source>Reset 0°</source>
         <translation>Скинути до 0°</translation>
+    </message>
+    <message>
+        <source>Rotate left</source>
+        <translation>Повернути ліворуч</translation>
+    </message>
+    <message>
+        <source>Rotate right</source>
+        <translation>Повернути праворуч</translation>
     </message>
     <message>
         <source>Fit</source>

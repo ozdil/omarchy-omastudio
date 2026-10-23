@@ -532,8 +532,8 @@
         <translation>Web, telas</translation>
     </message>
     <message>
-        <source>Wide-gamut screens</source>
-        <translation>Telas de gama ampla</translation>
+        <source>Modern screens</source>
+        <translation>Telas modernas</translation>
     </message>
     <message>
         <source>Print</source>
@@ -2085,6 +2085,14 @@
     <message>
         <source>Reset 0°</source>
         <translation>Redefinir para 0°</translation>
+    </message>
+    <message>
+        <source>Rotate left</source>
+        <translation>Girar para a esquerda</translation>
+    </message>
+    <message>
+        <source>Rotate right</source>
+        <translation>Girar para a direita</translation>
     </message>
     <message>
         <source>Fit</source>

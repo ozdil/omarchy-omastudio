@@ -531,8 +531,8 @@
         <translation>وب، نمایشگرها</translation>
     </message>
     <message>
-        <source>Wide-gamut screens</source>
-        <translation>نمایشگرهای با گسترهٔ رنگی وسیع</translation>
+        <source>Modern screens</source>
+        <translation>نمایشگرهای جدید</translation>
     </message>
     <message>
         <source>Print</source>
@@ -2079,6 +2079,14 @@
     <message>
         <source>Reset 0°</source>
         <translation>بازنشانی به ۰°</translation>
+    </message>
+    <message>
+        <source>Rotate left</source>
+        <translation>چرخش به چپ</translation>
+    </message>
+    <message>
+        <source>Rotate right</source>
+        <translation>چرخش به راست</translation>
     </message>
     <message>
         <source>Fit</source>

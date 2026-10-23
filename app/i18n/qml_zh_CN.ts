@@ -531,8 +531,8 @@
         <translation>网页、屏幕</translation>
     </message>
     <message>
-        <source>Wide-gamut screens</source>
-        <translation>广色域屏幕</translation>
+        <source>Modern screens</source>
+        <translation>现代屏幕</translation>
     </message>
     <message>
         <source>Print</source>
@@ -2079,6 +2079,14 @@
     <message>
         <source>Reset 0°</source>
         <translation>重置为 0°</translation>
+    </message>
+    <message>
+        <source>Rotate left</source>
+        <translation>向左旋转</translation>
+    </message>
+    <message>
+        <source>Rotate right</source>
+        <translation>向右旋转</translation>
     </message>
     <message>
         <source>Fit</source>

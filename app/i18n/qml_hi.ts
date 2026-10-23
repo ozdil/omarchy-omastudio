@@ -532,8 +532,8 @@
         <translation>वेब, स्क्रीन</translation>
     </message>
     <message>
-        <source>Wide-gamut screens</source>
-        <translation>वाइड-गैमट स्क्रीन</translation>
+        <source>Modern screens</source>
+        <translation>आधुनिक स्क्रीन</translation>
     </message>
     <message>
         <source>Print</source>
@@ -2085,6 +2085,14 @@
     <message>
         <source>Reset 0°</source>
         <translation>0° पर रीसेट करें</translation>
+    </message>
+    <message>
+        <source>Rotate left</source>
+        <translation>बाईं ओर घुमाएँ</translation>
+    </message>
+    <message>
+        <source>Rotate right</source>
+        <translation>दाईं ओर घुमाएँ</translation>
     </message>
     <message>
         <source>Fit</source>

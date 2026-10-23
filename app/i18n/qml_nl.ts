@@ -532,8 +532,8 @@
         <translation>Web, schermen</translation>
     </message>
     <message>
-        <source>Wide-gamut screens</source>
-        <translation>Schermen met groot kleurbereik</translation>
+        <source>Modern screens</source>
+        <translation>Moderne schermen</translation>
     </message>
     <message>
         <source>Print</source>
@@ -2085,6 +2085,14 @@
     <message>
         <source>Reset 0°</source>
         <translation>Terug naar 0°</translation>
+    </message>
+    <message>
+        <source>Rotate left</source>
+        <translation>Linksom draaien</translation>
+    </message>
+    <message>
+        <source>Rotate right</source>
+        <translation>Rechtsom draaien</translation>
     </message>
     <message>
         <source>Fit</source>

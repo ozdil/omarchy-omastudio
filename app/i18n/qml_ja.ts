@@ -531,8 +531,8 @@
         <translation>Web、ディスプレイ</translation>
     </message>
     <message>
-        <source>Wide-gamut screens</source>
-        <translation>広色域ディスプレイ</translation>
+        <source>Modern screens</source>
+        <translation>最新のディスプレイ</translation>
     </message>
     <message>
         <source>Print</source>
@@ -2079,6 +2079,14 @@
     <message>
         <source>Reset 0°</source>
         <translation>0° にリセット</translation>
+    </message>
+    <message>
+        <source>Rotate left</source>
+        <translation>左に回転</translation>
+    </message>
+    <message>
+        <source>Rotate right</source>
+        <translation>右に回転</translation>
     </message>
     <message>
         <source>Fit</source>

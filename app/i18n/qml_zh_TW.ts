@@ -531,8 +531,8 @@
         <translation>網頁、螢幕</translation>
     </message>
     <message>
-        <source>Wide-gamut screens</source>
-        <translation>廣色域螢幕</translation>
+        <source>Modern screens</source>
+        <translation>現代螢幕</translation>
     </message>
     <message>
         <source>Print</source>
@@ -2079,6 +2079,14 @@
     <message>
         <source>Reset 0°</source>
         <translation>重置為 0°</translation>
+    </message>
+    <message>
+        <source>Rotate left</source>
+        <translation>向左旋轉</translation>
+    </message>
+    <message>
+        <source>Rotate right</source>
+        <translation>向右旋轉</translation>
     </message>
     <message>
         <source>Fit</source>

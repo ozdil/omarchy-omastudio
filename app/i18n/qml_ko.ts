@@ -531,8 +531,8 @@
         <translation>웹, 화면</translation>
     </message>
     <message>
-        <source>Wide-gamut screens</source>
-        <translation>광색역 화면</translation>
+        <source>Modern screens</source>
+        <translation>최신 디스플레이</translation>
     </message>
     <message>
         <source>Print</source>
@@ -2079,6 +2079,14 @@
     <message>
         <source>Reset 0°</source>
         <translation>0°로 재설정</translation>
+    </message>
+    <message>
+        <source>Rotate left</source>
+        <translation>왼쪽으로 회전</translation>
+    </message>
+    <message>
+        <source>Rotate right</source>
+        <translation>오른쪽으로 회전</translation>
     </message>
     <message>
         <source>Fit</source>

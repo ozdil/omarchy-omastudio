@@ -932,16 +932,18 @@ Rectangle {
             spacing: 6
 
             // Rotate 90° CCW
+            // Labelled "90°" so it does not read as undo / redo
             Rectangle {
-                implicitWidth: 28
+                implicitWidth: ccwMouseLabel.implicitWidth + 12
                 implicitHeight: 24
                 radius: Theme.r(4)
                 color: ccwMouse.containsMouse ? Theme.bgCardHover : "transparent"
                 Text {
+                    id: ccwMouseLabel
                     anchors.centerIn: parent
-                    text: Theme.iconRotateLeft
+                    text: Theme.iconRotateLeft + " 90°"
                     font.family: Theme.iconFont
-                    font.pixelSize: Theme.px(12)
+                    font.pixelSize: Theme.px(11)
                     color: ccwMouse.containsMouse ? Theme.accent : Theme.textMain
                 }
                 MouseArea {
@@ -949,21 +951,26 @@ Rectangle {
                     anchors.fill: parent
                     hoverEnabled: true
                     cursorShape: Qt.PointingHandCursor
+                    ToolTip.visible: containsMouse
+                    ToolTip.delay: 500
+                    ToolTip.text: qsTr("Rotate left")
                     onClicked: root.rotateStep(-90)
                 }
             }
 
             // Rotate 90° CW
+            // Labelled "90°" so it does not read as undo / redo
             Rectangle {
-                implicitWidth: 28
+                implicitWidth: cwMouseLabel.implicitWidth + 12
                 implicitHeight: 24
                 radius: Theme.r(4)
                 color: cwMouse.containsMouse ? Theme.bgCardHover : "transparent"
                 Text {
+                    id: cwMouseLabel
                     anchors.centerIn: parent
-                    text: Theme.iconRotateRight
+                    text: Theme.iconRotateRight + " 90°"
                     font.family: Theme.iconFont
-                    font.pixelSize: Theme.px(12)
+                    font.pixelSize: Theme.px(11)
                     color: cwMouse.containsMouse ? Theme.accent : Theme.textMain
                 }
                 MouseArea {
@@ -971,6 +978,9 @@ Rectangle {
                     anchors.fill: parent
                     hoverEnabled: true
                     cursorShape: Qt.PointingHandCursor
+                    ToolTip.visible: containsMouse
+                    ToolTip.delay: 500
+                    ToolTip.text: qsTr("Rotate right")
                     onClicked: root.rotateStep(90)
                 }
             }

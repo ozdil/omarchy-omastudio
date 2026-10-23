@@ -533,8 +533,8 @@
         <translation>Web, obrazovky</translation>
     </message>
     <message>
-        <source>Wide-gamut screens</source>
-        <translation>Obrazovky se širokým gamutem</translation>
+        <source>Modern screens</source>
+        <translation>Moderní displeje</translation>
     </message>
     <message>
         <source>Print</source>
@@ -2091,6 +2091,14 @@
     <message>
         <source>Reset 0°</source>
         <translation>Obnovit na 0°</translation>
+    </message>
+    <message>
+        <source>Rotate left</source>
+        <translation>Otočit doleva</translation>
+    </message>
+    <message>
+        <source>Rotate right</source>
+        <translation>Otočit doprava</translation>
     </message>
     <message>
         <source>Fit</source>

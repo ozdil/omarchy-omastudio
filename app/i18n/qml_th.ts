@@ -531,8 +531,8 @@
         <translation>เว็บ หน้าจอ</translation>
     </message>
     <message>
-        <source>Wide-gamut screens</source>
-        <translation>หน้าจอขอบเขตสีกว้าง</translation>
+        <source>Modern screens</source>
+        <translation>หน้าจอรุ่นใหม่</translation>
     </message>
     <message>
         <source>Print</source>
@@ -2079,6 +2079,14 @@
     <message>
         <source>Reset 0°</source>
         <translation>รีเซ็ตเป็น 0°</translation>
+    </message>
+    <message>
+        <source>Rotate left</source>
+        <translation>หมุนซ้าย</translation>
+    </message>
+    <message>
+        <source>Rotate right</source>
+        <translation>หมุนขวา</translation>
     </message>
     <message>
         <source>Fit</source>

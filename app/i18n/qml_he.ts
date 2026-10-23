@@ -532,8 +532,8 @@
         <translation>רשת, מסכים</translation>
     </message>
     <message>
-        <source>Wide-gamut screens</source>
-        <translation>מסכים עם סולם צבעים רחב</translation>
+        <source>Modern screens</source>
+        <translation>מסכים מודרניים</translation>
     </message>
     <message>
         <source>Print</source>
@@ -2085,6 +2085,14 @@
     <message>
         <source>Reset 0°</source>
         <translation>איפוס ל־0°</translation>
+    </message>
+    <message>
+        <source>Rotate left</source>
+        <translation>סיבוב שמאלה</translation>
+    </message>
+    <message>
+        <source>Rotate right</source>
+        <translation>סיבוב ימינה</translation>
     </message>
     <message>
         <source>Fit</source>

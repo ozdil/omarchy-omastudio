@@ -532,8 +532,8 @@
         <translation>Web, skærme</translation>
     </message>
     <message>
-        <source>Wide-gamut screens</source>
-        <translation>Skærme med bredt farveområde</translation>
+        <source>Modern screens</source>
+        <translation>Moderne skærme</translation>
     </message>
     <message>
         <source>Print</source>
@@ -2085,6 +2085,14 @@
     <message>
         <source>Reset 0°</source>
         <translation>Nulstil til 0°</translation>
+    </message>
+    <message>
+        <source>Rotate left</source>
+        <translation>Rotér til venstre</translation>
+    </message>
+    <message>
+        <source>Rotate right</source>
+        <translation>Rotér til højre</translation>
     </message>
     <message>
         <source>Fit</source>

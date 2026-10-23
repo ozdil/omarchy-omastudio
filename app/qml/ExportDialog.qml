@@ -379,7 +379,7 @@ Rectangle {
                         Repeater {
                             model: [
                                 { id: "sRGB", name: "sRGB", desc: qsTr("Web, screens") },
-                                { id: "DisplayP3", name: "Display P3", desc: qsTr("Wide-gamut screens") },
+                                { id: "DisplayP3", name: "Display P3", desc: qsTr("Modern screens") },
                                 { id: "AdobeRGB1998", name: "Adobe RGB", desc: qsTr("Print") },
                                 { id: "ProPhotoRGB", name: "ProPhoto RGB", desc: qsTr("Editing, archive") },
                                 { id: "Rec2020", name: "Rec. 2020", desc: qsTr("HDR, video") },

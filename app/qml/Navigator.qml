@@ -56,7 +56,7 @@ Rectangle {
                 font.family: Theme.fontFamily
                 text: qsTr("Navigator")
                 textFormat: Text.PlainText
-                font.pixelSize: Theme.px(10)
+                font.pixelSize: Theme.px(11)
                 font.weight: Font.DemiBold
                 font.letterSpacing: 1
                 color: Theme.textDim

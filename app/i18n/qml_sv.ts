@@ -532,8 +532,8 @@
         <translation>Webb, skärmar</translation>
     </message>
     <message>
-        <source>Wide-gamut screens</source>
-        <translation>Skärmar med stort färgomfång</translation>
+        <source>Modern screens</source>
+        <translation>Moderna skärmar</translation>
     </message>
     <message>
         <source>Print</source>
@@ -2085,6 +2085,14 @@
     <message>
         <source>Reset 0°</source>
         <translation>Återställ till 0°</translation>
+    </message>
+    <message>
+        <source>Rotate left</source>
+        <translation>Rotera åt vänster</translation>
+    </message>
+    <message>
+        <source>Rotate right</source>
+        <translation>Rotera åt höger</translation>
     </message>
     <message>
         <source>Fit</source>

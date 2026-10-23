@@ -531,8 +531,8 @@
         <translation>Web, képernyők</translation>
     </message>
     <message>
-        <source>Wide-gamut screens</source>
-        <translation>Széles színtartományú képernyők</translation>
+        <source>Modern screens</source>
+        <translation>Modern kijelzők</translation>
     </message>
     <message>
         <source>Print</source>
@@ -2079,6 +2079,14 @@
     <message>
         <source>Reset 0°</source>
         <translation>Visszaállítás 0°-ra</translation>
+    </message>
+    <message>
+        <source>Rotate left</source>
+        <translation>Forgatás balra</translation>
+    </message>
+    <message>
+        <source>Rotate right</source>
+        <translation>Forgatás jobbra</translation>
     </message>
     <message>
         <source>Fit</source>

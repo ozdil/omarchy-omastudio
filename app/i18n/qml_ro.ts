@@ -533,8 +533,8 @@
         <translation>Web, ecrane</translation>
     </message>
     <message>
-        <source>Wide-gamut screens</source>
-        <translation>Ecrane cu gamă largă</translation>
+        <source>Modern screens</source>
+        <translation>Ecrane moderne</translation>
     </message>
     <message>
         <source>Print</source>
@@ -2091,6 +2091,14 @@
     <message>
         <source>Reset 0°</source>
         <translation>Resetează la 0°</translation>
+    </message>
+    <message>
+        <source>Rotate left</source>
+        <translation>Rotește la stânga</translation>
+    </message>
+    <message>
+        <source>Rotate right</source>
+        <translation>Rotește la dreapta</translation>
     </message>
     <message>
         <source>Fit</source>

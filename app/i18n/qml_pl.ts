@@ -533,8 +533,8 @@
         <translation>Internet, ekrany</translation>
     </message>
     <message>
-        <source>Wide-gamut screens</source>
-        <translation>Ekrany o szerokiej gamie</translation>
+        <source>Modern screens</source>
+        <translation>Nowoczesne ekrany</translation>
     </message>
     <message>
         <source>Print</source>
@@ -2091,6 +2091,14 @@
     <message>
         <source>Reset 0°</source>
         <translation>Resetuj do 0°</translation>
+    </message>
+    <message>
+        <source>Rotate left</source>
+        <translation>Obróć w lewo</translation>
+    </message>
+    <message>
+        <source>Rotate right</source>
+        <translation>Obróć w prawo</translation>
     </message>
     <message>
         <source>Fit</source>

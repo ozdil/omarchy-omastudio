@@ -44,7 +44,7 @@ Rectangle {
                     model: parent.modes
                     delegate: Rectangle {
                         implicitWidth: modeText.implicitWidth + 8
-                        implicitHeight: Theme.px(10) + 8
+                        implicitHeight: Theme.px(11) + 8
                         radius: Theme.r(3)
                         property bool isCur: root.activeScope === modelData.idx
                         color: isCur ? Qt.rgba(Theme.accent.r, Theme.accent.g, Theme.accent.b, 0.25) : Theme.bgCard
@@ -56,7 +56,7 @@ Rectangle {
                             anchors.centerIn: parent
                             text: modelData.name
                             textFormat: Text.PlainText
-                            font.pixelSize: Theme.px(8)
+                            font.pixelSize: Theme.px(11)
                             font.weight: Font.Bold
                             font.family: Theme.monoFont
                             color: parent.isCur ? Theme.accent : Theme.textDim
@@ -77,7 +77,7 @@ Rectangle {
             // Shadow clipping button
             Rectangle {
                 implicitWidth: shadowText.implicitWidth + 8
-                implicitHeight: Theme.px(10) + 8
+                implicitHeight: Theme.px(11) + 8
                 radius: Theme.r(3)
                 color: root.showClippingShadows ? Theme.shadowClip : Qt.rgba(0.2, 0.5, 1.0, 0.15)
                 border.color: Theme.shadowClip
@@ -87,7 +87,7 @@ Rectangle {
                     anchors.centerIn: parent
                     text: qsTr("[S] %1%", "S: shadow clipping").arg(root.histData ? root.histData.shadow_clipping_percent.toFixed(1) : "0.0")
                     textFormat: Text.PlainText
-                    font.pixelSize: Theme.px(8)
+                    font.pixelSize: Theme.px(11)
                     font.family: Theme.monoFont
                     color: root.showClippingShadows ? "#ffffff" : Theme.shadowClip
                 }
@@ -109,7 +109,7 @@ Rectangle {
             // Highlight clipping button
             Rectangle {
                 implicitWidth: highText.implicitWidth + 8
-                implicitHeight: Theme.px(10) + 8
+                implicitHeight: Theme.px(11) + 8
                 radius: Theme.r(3)
                 color: root.showClippingHighlights ? Theme.highlightClip : Qt.rgba(1.0, 0.3, 0.4, 0.15)
                 border.color: Theme.highlightClip
@@ -119,7 +119,7 @@ Rectangle {
                     anchors.centerIn: parent
                     text: qsTr("[H] %1%", "H: highlight clipping").arg(root.histData ? root.histData.highlight_clipping_percent.toFixed(1) : "0.0")
                     textFormat: Text.PlainText
-                    font.pixelSize: Theme.px(8)
+                    font.pixelSize: Theme.px(11)
                     font.family: Theme.monoFont
                     color: root.showClippingHighlights ? "#ffffff" : Theme.highlightClip
                 }

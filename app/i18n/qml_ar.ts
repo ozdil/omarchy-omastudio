@@ -536,8 +536,8 @@
         <translation>الويب، الشاشات</translation>
     </message>
     <message>
-        <source>Wide-gamut screens</source>
-        <translation>شاشات واسعة النطاق اللوني</translation>
+        <source>Modern screens</source>
+        <translation>الشاشات الحديثة</translation>
     </message>
     <message>
         <source>Print</source>
@@ -2109,6 +2109,14 @@
     <message>
         <source>Reset 0°</source>
         <translation>إعادة الضبط إلى 0°</translation>
+    </message>
+    <message>
+        <source>Rotate left</source>
+        <translation>تدوير لليسار</translation>
+    </message>
+    <message>
+        <source>Rotate right</source>
+        <translation>تدوير لليمين</translation>
     </message>
     <message>
         <source>Fit</source>

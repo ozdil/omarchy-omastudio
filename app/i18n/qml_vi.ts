@@ -531,8 +531,8 @@
         <translation>Web, màn hình</translation>
     </message>
     <message>
-        <source>Wide-gamut screens</source>
-        <translation>Màn hình gam màu rộng</translation>
+        <source>Modern screens</source>
+        <translation>Màn hình hiện đại</translation>
     </message>
     <message>
         <source>Print</source>
@@ -2079,6 +2079,14 @@
     <message>
         <source>Reset 0°</source>
         <translation>Đặt lại về 0°</translation>
+    </message>
+    <message>
+        <source>Rotate left</source>
+        <translation>Xoay trái</translation>
+    </message>
+    <message>
+        <source>Rotate right</source>
+        <translation>Xoay phải</translation>
     </message>
     <message>
         <source>Fit</source>

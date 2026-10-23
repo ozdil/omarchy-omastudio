@@ -532,8 +532,8 @@
         <translation>Verkko, näytöt</translation>
     </message>
     <message>
-        <source>Wide-gamut screens</source>
-        <translation>Laajan värialueen näytöt</translation>
+        <source>Modern screens</source>
+        <translation>Nykyaikaiset näytöt</translation>
     </message>
     <message>
         <source>Print</source>
@@ -2085,6 +2085,14 @@
     <message>
         <source>Reset 0°</source>
         <translation>Palauta 0°:een</translation>
+    </message>
+    <message>
+        <source>Rotate left</source>
+        <translation>Kierrä vasemmalle</translation>
+    </message>
+    <message>
+        <source>Rotate right</source>
+        <translation>Kierrä oikealle</translation>
     </message>
     <message>
         <source>Fit</source>

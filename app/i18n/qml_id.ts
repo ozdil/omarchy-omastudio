@@ -531,8 +531,8 @@
         <translation>Web, layar</translation>
     </message>
     <message>
-        <source>Wide-gamut screens</source>
-        <translation>Layar gamut lebar</translation>
+        <source>Modern screens</source>
+        <translation>Layar modern</translation>
     </message>
     <message>
         <source>Print</source>
@@ -2079,6 +2079,14 @@
     <message>
         <source>Reset 0°</source>
         <translation>Atur ulang ke 0°</translation>
+    </message>
+    <message>
+        <source>Rotate left</source>
+        <translation>Putar ke kiri</translation>
+    </message>
+    <message>
+        <source>Rotate right</source>
+        <translation>Putar ke kanan</translation>
     </message>
     <message>
         <source>Fit</source>

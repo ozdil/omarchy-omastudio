@@ -532,8 +532,8 @@
         <translation>Διαδίκτυο, οθόνες</translation>
     </message>
     <message>
-        <source>Wide-gamut screens</source>
-        <translation>Οθόνες ευρείας γκάμας</translation>
+        <source>Modern screens</source>
+        <translation>Σύγχρονες οθόνες</translation>
     </message>
     <message>
         <source>Print</source>
@@ -2085,6 +2085,14 @@
     <message>
         <source>Reset 0°</source>
         <translation>Επαναφορά στις 0°</translation>
+    </message>
+    <message>
+        <source>Rotate left</source>
+        <translation>Περιστροφή αριστερά</translation>
+    </message>
+    <message>
+        <source>Rotate right</source>
+        <translation>Περιστροφή δεξιά</translation>
     </message>
     <message>
         <source>Fit</source>

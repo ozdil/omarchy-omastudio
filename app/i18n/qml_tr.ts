@@ -531,8 +531,8 @@
         <translation>Web, ekranlar</translation>
     </message>
     <message>
-        <source>Wide-gamut screens</source>
-        <translation>Geniş gamlı ekranlar</translation>
+        <source>Modern screens</source>
+        <translation>Modern ekranlar</translation>
     </message>
     <message>
         <source>Print</source>
@@ -2079,6 +2079,14 @@
     <message>
         <source>Reset 0°</source>
         <translation>0°&apos;ye sıfırla</translation>
+    </message>
+    <message>
+        <source>Rotate left</source>
+        <translation>Sola döndür</translation>
+    </message>
+    <message>
+        <source>Rotate right</source>
+        <translation>Sağa döndür</translation>
     </message>
     <message>
         <source>Fit</source>
