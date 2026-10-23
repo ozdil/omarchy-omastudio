@@ -88,3 +88,8 @@ nl:Contrast
 nl:NAVIGATOR
 nl:PARADE
 nl:VECTOR
+pl:AI
+pl:Sepia
+pl:+ GRADIENT
+pl:Color Chrome FX Blue
+pl:HIST
