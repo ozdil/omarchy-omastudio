@@ -1839,6 +1839,10 @@
         <translation>Gestión del color</translation>
     </message>
     <message>
+        <source>Heal and clone</source>
+        <translation>Corregir y clonar</translation>
+    </message>
+    <message>
         <source>Local adjustments</source>
         <translation>Ajustes locales</translation>
     </message>
@@ -1993,6 +1997,53 @@
     <message>
         <source>Split toning</source>
         <translation>Virado dividido</translation>
+    </message>
+</context>
+<context>
+    <name>RetouchPanel</name>
+    <message>
+        <source>Done</source>
+        <translation>Listo</translation>
+    </message>
+    <message>
+        <source>Edit spots</source>
+        <translation>Editar puntos</translation>
+    </message>
+    <message>
+        <source>Heal</source>
+        <translation>Corregir</translation>
+    </message>
+    <message>
+        <source>Clone</source>
+        <translation>Clonar</translation>
+    </message>
+    <message>
+        <source>Click a spot on the photo to remove it. Drag the solid circle to move it and the dashed circle to pick another source.</source>
+        <translation>Haz clic en un punto de la foto para eliminarlo. Arrastra el círculo continuo para moverlo y el discontinuo para elegir otro origen.</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>Tamaño</translation>
+    </message>
+    <message>
+        <source>Feather</source>
+        <translation>Desvanecer</translation>
+    </message>
+    <message>
+        <source>Opacity</source>
+        <translation>Opacidad</translation>
+    </message>
+    <message>
+        <source>Spots: %1</source>
+        <translation>Puntos: %1</translation>
+    </message>
+    <message>
+        <source>Delete spot</source>
+        <translation>Eliminar punto</translation>
+    </message>
+    <message>
+        <source>Clear all</source>
+        <translation>Borrar todo</translation>
     </message>
 </context>
 <context>

@@ -189,6 +189,10 @@ pub struct Recipe {
     #[serde(default)]
     pub layers: Vec<crate::pipeline::layers::AdjustmentLayer>,
 
+    /// Heal and clone spots, applied to the linear input before every other stage
+    #[serde(default)]
+    pub retouch: Vec<crate::pipeline::retouch::RetouchSpot>,
+
     /// Exposure the camera adds to this photo's raw data for its own rendering, in EV
     /// (Fujifilm's mid-point shift, DR200/DR400 included). Set from the photo when it
     /// is developed, never stored or exchanged with the recipe.
@@ -333,6 +337,7 @@ impl Default for Recipe {
             color_chrome: 0.0,
             color_chrome_blue: 0.0,
             layers: Vec::new(),
+            retouch: Vec::new(),
             baseline_exposure: 0.0,
         }
     }

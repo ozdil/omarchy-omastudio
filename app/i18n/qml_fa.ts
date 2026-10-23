@@ -1835,6 +1835,10 @@
         <translation>مدیریت رنگ</translation>
     </message>
     <message>
+        <source>Heal and clone</source>
+        <translation>ترمیم و کلون</translation>
+    </message>
+    <message>
         <source>Local adjustments</source>
         <translation>تنظیمات موضعی</translation>
     </message>
@@ -1988,6 +1992,53 @@
     <message>
         <source>Split toning</source>
         <translation>تونینگ دوگانه</translation>
+    </message>
+</context>
+<context>
+    <name>RetouchPanel</name>
+    <message>
+        <source>Done</source>
+        <translation>انجام شد</translation>
+    </message>
+    <message>
+        <source>Edit spots</source>
+        <translation>ویرایش نقطه‌ها</translation>
+    </message>
+    <message>
+        <source>Heal</source>
+        <translation>ترمیم</translation>
+    </message>
+    <message>
+        <source>Clone</source>
+        <translation>کلون</translation>
+    </message>
+    <message>
+        <source>Click a spot on the photo to remove it. Drag the solid circle to move it and the dashed circle to pick another source.</source>
+        <translation>برای حذف یک نقطه روی عکس کلیک کنید. دایره توپر را برای جابه‌جایی و دایره خط‌چین را برای انتخاب منبع دیگر بکشید.</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>اندازه</translation>
+    </message>
+    <message>
+        <source>Feather</source>
+        <translation>نرمی لبه</translation>
+    </message>
+    <message>
+        <source>Opacity</source>
+        <translation>کدری</translation>
+    </message>
+    <message>
+        <source>Spots: %1</source>
+        <translation>نقطه‌ها: %1</translation>
+    </message>
+    <message>
+        <source>Delete spot</source>
+        <translation>حذف نقطه</translation>
+    </message>
+    <message>
+        <source>Clear all</source>
+        <translation>پاک کردن همه</translation>
     </message>
 </context>
 <context>

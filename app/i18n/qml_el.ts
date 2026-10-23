@@ -1839,6 +1839,10 @@
         <translation>Διαχείριση χρώματος</translation>
     </message>
     <message>
+        <source>Heal and clone</source>
+        <translation>Επιδιόρθωση και κλωνοποίηση</translation>
+    </message>
+    <message>
         <source>Local adjustments</source>
         <translation>Τοπικές ρυθμίσεις</translation>
     </message>
@@ -1993,6 +1997,53 @@
     <message>
         <source>Split toning</source>
         <translation>Διαιρεμένη τονικότητα</translation>
+    </message>
+</context>
+<context>
+    <name>RetouchPanel</name>
+    <message>
+        <source>Done</source>
+        <translation>Τέλος</translation>
+    </message>
+    <message>
+        <source>Edit spots</source>
+        <translation>Επεξεργασία σημείων</translation>
+    </message>
+    <message>
+        <source>Heal</source>
+        <translation>Επιδιόρθωση</translation>
+    </message>
+    <message>
+        <source>Clone</source>
+        <translation>Κλωνοποίηση</translation>
+    </message>
+    <message>
+        <source>Click a spot on the photo to remove it. Drag the solid circle to move it and the dashed circle to pick another source.</source>
+        <translation>Κάντε κλικ σε ένα σημείο της φωτογραφίας για να το αφαιρέσετε. Σύρετε τον συμπαγή κύκλο για να το μετακινήσετε και τον διακεκομμένο για να επιλέξετε άλλη πηγή.</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>Μέγεθος</translation>
+    </message>
+    <message>
+        <source>Feather</source>
+        <translation>Απάλυνση</translation>
+    </message>
+    <message>
+        <source>Opacity</source>
+        <translation>Αδιαφάνεια</translation>
+    </message>
+    <message>
+        <source>Spots: %1</source>
+        <translation>Σημεία: %1</translation>
+    </message>
+    <message>
+        <source>Delete spot</source>
+        <translation>Διαγραφή σημείου</translation>
+    </message>
+    <message>
+        <source>Clear all</source>
+        <translation>Εκκαθάριση όλων</translation>
     </message>
 </context>
 <context>

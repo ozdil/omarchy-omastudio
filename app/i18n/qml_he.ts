@@ -1839,6 +1839,10 @@
         <translation>ניהול צבע</translation>
     </message>
     <message>
+        <source>Heal and clone</source>
+        <translation>ריפוי ושכפול</translation>
+    </message>
+    <message>
         <source>Local adjustments</source>
         <translation>כוונונים מקומיים</translation>
     </message>
@@ -1993,6 +1997,53 @@
     <message>
         <source>Split toning</source>
         <translation>גוון מפוצל</translation>
+    </message>
+</context>
+<context>
+    <name>RetouchPanel</name>
+    <message>
+        <source>Done</source>
+        <translation>סיום</translation>
+    </message>
+    <message>
+        <source>Edit spots</source>
+        <translation>עריכת נקודות</translation>
+    </message>
+    <message>
+        <source>Heal</source>
+        <translation>ריפוי</translation>
+    </message>
+    <message>
+        <source>Clone</source>
+        <translation>שכפול</translation>
+    </message>
+    <message>
+        <source>Click a spot on the photo to remove it. Drag the solid circle to move it and the dashed circle to pick another source.</source>
+        <translation>לחצו על נקודה בתמונה כדי להסיר אותה. גררו את העיגול המלא כדי להזיז אותה ואת העיגול המקווקו כדי לבחור מקור אחר.</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>גודל</translation>
+    </message>
+    <message>
+        <source>Feather</source>
+        <translation>ריכוך שוליים</translation>
+    </message>
+    <message>
+        <source>Opacity</source>
+        <translation>אטימות</translation>
+    </message>
+    <message>
+        <source>Spots: %1</source>
+        <translation>נקודות: %1</translation>
+    </message>
+    <message>
+        <source>Delete spot</source>
+        <translation>מחיקת נקודה</translation>
+    </message>
+    <message>
+        <source>Clear all</source>
+        <translation>ניקוי הכול</translation>
     </message>
 </context>
 <context>

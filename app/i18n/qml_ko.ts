@@ -1835,6 +1835,10 @@
         <translation>색상 관리</translation>
     </message>
     <message>
+        <source>Heal and clone</source>
+        <translation>복구 및 복제</translation>
+    </message>
+    <message>
         <source>Local adjustments</source>
         <translation>부분 조정</translation>
     </message>
@@ -1988,6 +1992,53 @@
     <message>
         <source>Split toning</source>
         <translation>스플릿 토닝</translation>
+    </message>
+</context>
+<context>
+    <name>RetouchPanel</name>
+    <message>
+        <source>Done</source>
+        <translation>완료</translation>
+    </message>
+    <message>
+        <source>Edit spots</source>
+        <translation>스팟 편집</translation>
+    </message>
+    <message>
+        <source>Heal</source>
+        <translation>복구</translation>
+    </message>
+    <message>
+        <source>Clone</source>
+        <translation>복제</translation>
+    </message>
+    <message>
+        <source>Click a spot on the photo to remove it. Drag the solid circle to move it and the dashed circle to pick another source.</source>
+        <translation>사진에서 지울 곳을 클릭하세요. 실선 원을 드래그하여 옮기고, 점선 원을 드래그하여 다른 소스를 고릅니다.</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>크기</translation>
+    </message>
+    <message>
+        <source>Feather</source>
+        <translation>페더</translation>
+    </message>
+    <message>
+        <source>Opacity</source>
+        <translation>불투명도</translation>
+    </message>
+    <message>
+        <source>Spots: %1</source>
+        <translation>스팟: %1</translation>
+    </message>
+    <message>
+        <source>Delete spot</source>
+        <translation>스팟 삭제</translation>
+    </message>
+    <message>
+        <source>Clear all</source>
+        <translation>모두 지우기</translation>
     </message>
 </context>
 <context>

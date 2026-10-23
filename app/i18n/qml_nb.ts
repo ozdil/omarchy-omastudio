@@ -1839,6 +1839,10 @@
         <translation>Fargestyring</translation>
     </message>
     <message>
+        <source>Heal and clone</source>
+        <translation>Reparer og klon</translation>
+    </message>
+    <message>
         <source>Local adjustments</source>
         <translation>Lokale justeringer</translation>
     </message>
@@ -1993,6 +1997,53 @@
     <message>
         <source>Split toning</source>
         <translation>Delt toning</translation>
+    </message>
+</context>
+<context>
+    <name>RetouchPanel</name>
+    <message>
+        <source>Done</source>
+        <translation>Ferdig</translation>
+    </message>
+    <message>
+        <source>Edit spots</source>
+        <translation>Rediger punkter</translation>
+    </message>
+    <message>
+        <source>Heal</source>
+        <translation>Reparer</translation>
+    </message>
+    <message>
+        <source>Clone</source>
+        <translation>Klon</translation>
+    </message>
+    <message>
+        <source>Click a spot on the photo to remove it. Drag the solid circle to move it and the dashed circle to pick another source.</source>
+        <translation>Klikk på et punkt i bildet for å fjerne det. Dra den heltrukne sirkelen for å flytte det og den stiplede for å velge en annen kilde.</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>Størrelse</translation>
+    </message>
+    <message>
+        <source>Feather</source>
+        <translation>Myk kant</translation>
+    </message>
+    <message>
+        <source>Opacity</source>
+        <translation>Dekkevne</translation>
+    </message>
+    <message>
+        <source>Spots: %1</source>
+        <translation>Punkter: %1</translation>
+    </message>
+    <message>
+        <source>Delete spot</source>
+        <translation>Slett punkt</translation>
+    </message>
+    <message>
+        <source>Clear all</source>
+        <translation>Fjern alle</translation>
     </message>
 </context>
 <context>

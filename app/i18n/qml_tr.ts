@@ -1835,6 +1835,10 @@
         <translation>Renk yönetimi</translation>
     </message>
     <message>
+        <source>Heal and clone</source>
+        <translation>Rötuş ve klon</translation>
+    </message>
+    <message>
         <source>Local adjustments</source>
         <translation>Yerel ayarlamalar</translation>
     </message>
@@ -1988,6 +1992,53 @@
     <message>
         <source>Split toning</source>
         <translation>Bölünmüş tonlama</translation>
+    </message>
+</context>
+<context>
+    <name>RetouchPanel</name>
+    <message>
+        <source>Done</source>
+        <translation>Tamam</translation>
+    </message>
+    <message>
+        <source>Edit spots</source>
+        <translation>Noktaları düzenle</translation>
+    </message>
+    <message>
+        <source>Heal</source>
+        <translation>Rötuş</translation>
+    </message>
+    <message>
+        <source>Clone</source>
+        <translation>Klon</translation>
+    </message>
+    <message>
+        <source>Click a spot on the photo to remove it. Drag the solid circle to move it and the dashed circle to pick another source.</source>
+        <translation>Kaldırmak için fotoğrafta bir noktaya tıklayın. Taşımak için düz çemberi, başka bir kaynak seçmek için kesikli çemberi sürükleyin.</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>Boyut</translation>
+    </message>
+    <message>
+        <source>Feather</source>
+        <translation>Yumuşak kenar</translation>
+    </message>
+    <message>
+        <source>Opacity</source>
+        <translation>Opaklık</translation>
+    </message>
+    <message>
+        <source>Spots: %1</source>
+        <translation>Nokta: %1</translation>
+    </message>
+    <message>
+        <source>Delete spot</source>
+        <translation>Noktayı sil</translation>
+    </message>
+    <message>
+        <source>Clear all</source>
+        <translation>Tümünü temizle</translation>
     </message>
 </context>
 <context>

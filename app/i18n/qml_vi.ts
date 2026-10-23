@@ -1835,6 +1835,10 @@
         <translation>Quản lý màu</translation>
     </message>
     <message>
+        <source>Heal and clone</source>
+        <translation>Sửa và nhân bản</translation>
+    </message>
+    <message>
         <source>Local adjustments</source>
         <translation>Điều chỉnh cục bộ</translation>
     </message>
@@ -1988,6 +1992,53 @@
     <message>
         <source>Split toning</source>
         <translation>Tách tông</translation>
+    </message>
+</context>
+<context>
+    <name>RetouchPanel</name>
+    <message>
+        <source>Done</source>
+        <translation>Xong</translation>
+    </message>
+    <message>
+        <source>Edit spots</source>
+        <translation>Sửa điểm</translation>
+    </message>
+    <message>
+        <source>Heal</source>
+        <translation>Sửa</translation>
+    </message>
+    <message>
+        <source>Clone</source>
+        <translation>Nhân bản</translation>
+    </message>
+    <message>
+        <source>Click a spot on the photo to remove it. Drag the solid circle to move it and the dashed circle to pick another source.</source>
+        <translation>Nhấp vào một điểm trên ảnh để xóa nó. Kéo vòng tròn liền để di chuyển và vòng tròn nét đứt để chọn nguồn khác.</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>Kích thước</translation>
+    </message>
+    <message>
+        <source>Feather</source>
+        <translation>Làm mềm viền</translation>
+    </message>
+    <message>
+        <source>Opacity</source>
+        <translation>Độ mờ đục</translation>
+    </message>
+    <message>
+        <source>Spots: %1</source>
+        <translation>Điểm: %1</translation>
+    </message>
+    <message>
+        <source>Delete spot</source>
+        <translation>Xóa điểm</translation>
+    </message>
+    <message>
+        <source>Clear all</source>
+        <translation>Xóa tất cả</translation>
     </message>
 </context>
 <context>

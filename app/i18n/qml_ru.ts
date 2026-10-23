@@ -1843,6 +1843,10 @@
         <translation>Управление цветом</translation>
     </message>
     <message>
+        <source>Heal and clone</source>
+        <translation>Восстановление и клонирование</translation>
+    </message>
+    <message>
         <source>Local adjustments</source>
         <translation>Локальные коррекции</translation>
     </message>
@@ -1998,6 +2002,53 @@
     <message>
         <source>Split toning</source>
         <translation>Раздельное тонирование</translation>
+    </message>
+</context>
+<context>
+    <name>RetouchPanel</name>
+    <message>
+        <source>Done</source>
+        <translation>Готово</translation>
+    </message>
+    <message>
+        <source>Edit spots</source>
+        <translation>Изменить точки</translation>
+    </message>
+    <message>
+        <source>Heal</source>
+        <translation>Восстановить</translation>
+    </message>
+    <message>
+        <source>Clone</source>
+        <translation>Клонировать</translation>
+    </message>
+    <message>
+        <source>Click a spot on the photo to remove it. Drag the solid circle to move it and the dashed circle to pick another source.</source>
+        <translation>Щёлкните по месту на фото, чтобы убрать его. Перетащите сплошной круг, чтобы переместить точку, и пунктирный, чтобы выбрать другой источник.</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>Размер</translation>
+    </message>
+    <message>
+        <source>Feather</source>
+        <translation>Растушёвка</translation>
+    </message>
+    <message>
+        <source>Opacity</source>
+        <translation>Непрозрачность</translation>
+    </message>
+    <message>
+        <source>Spots: %1</source>
+        <translation>Точек: %1</translation>
+    </message>
+    <message>
+        <source>Delete spot</source>
+        <translation>Удалить точку</translation>
+    </message>
+    <message>
+        <source>Clear all</source>
+        <translation>Очистить всё</translation>
     </message>
 </context>
 <context>

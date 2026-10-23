@@ -1855,6 +1855,10 @@
         <translation>إدارة الألوان</translation>
     </message>
     <message>
+        <source>Heal and clone</source>
+        <translation>المعالجة والاستنساخ</translation>
+    </message>
+    <message>
         <source>Local adjustments</source>
         <translation>التعديلات الموضعية</translation>
     </message>
@@ -2013,6 +2017,53 @@
     <message>
         <source>Split toning</source>
         <translation>تلوين منقسم</translation>
+    </message>
+</context>
+<context>
+    <name>RetouchPanel</name>
+    <message>
+        <source>Done</source>
+        <translation>تم</translation>
+    </message>
+    <message>
+        <source>Edit spots</source>
+        <translation>تحرير النقاط</translation>
+    </message>
+    <message>
+        <source>Heal</source>
+        <translation>معالجة</translation>
+    </message>
+    <message>
+        <source>Clone</source>
+        <translation>استنساخ</translation>
+    </message>
+    <message>
+        <source>Click a spot on the photo to remove it. Drag the solid circle to move it and the dashed circle to pick another source.</source>
+        <translation>انقر على نقطة في الصورة لإزالتها. اسحب الدائرة المصمتة لتحريكها والدائرة المتقطعة لاختيار مصدر آخر.</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>الحجم</translation>
+    </message>
+    <message>
+        <source>Feather</source>
+        <translation>تنعيم الحافة</translation>
+    </message>
+    <message>
+        <source>Opacity</source>
+        <translation>العتامة</translation>
+    </message>
+    <message>
+        <source>Spots: %1</source>
+        <translation>النقاط: %1</translation>
+    </message>
+    <message>
+        <source>Delete spot</source>
+        <translation>حذف النقطة</translation>
+    </message>
+    <message>
+        <source>Clear all</source>
+        <translation>مسح الكل</translation>
     </message>
 </context>
 <context>

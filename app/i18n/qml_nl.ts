@@ -1839,6 +1839,10 @@
         <translation>Kleurbeheer</translation>
     </message>
     <message>
+        <source>Heal and clone</source>
+        <translation>Herstellen en klonen</translation>
+    </message>
+    <message>
         <source>Local adjustments</source>
         <translation>Lokale aanpassingen</translation>
     </message>
@@ -1993,6 +1997,53 @@
     <message>
         <source>Split toning</source>
         <translation>Gesplitste toning</translation>
+    </message>
+</context>
+<context>
+    <name>RetouchPanel</name>
+    <message>
+        <source>Done</source>
+        <translation>Klaar</translation>
+    </message>
+    <message>
+        <source>Edit spots</source>
+        <translation>Plekken bewerken</translation>
+    </message>
+    <message>
+        <source>Heal</source>
+        <translation>Herstellen</translation>
+    </message>
+    <message>
+        <source>Clone</source>
+        <translation>Klonen</translation>
+    </message>
+    <message>
+        <source>Click a spot on the photo to remove it. Drag the solid circle to move it and the dashed circle to pick another source.</source>
+        <translation>Klik op een plek in de foto om die te verwijderen. Sleep de doorgetrokken cirkel om hem te verplaatsen en de gestippelde om een andere bron te kiezen.</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>Grootte</translation>
+    </message>
+    <message>
+        <source>Feather</source>
+        <translation>Doezelaar</translation>
+    </message>
+    <message>
+        <source>Opacity</source>
+        <translation>Dekking</translation>
+    </message>
+    <message>
+        <source>Spots: %1</source>
+        <translation>Plekken: %1</translation>
+    </message>
+    <message>
+        <source>Delete spot</source>
+        <translation>Plek verwijderen</translation>
+    </message>
+    <message>
+        <source>Clear all</source>
+        <translation>Alles wissen</translation>
     </message>
 </context>
 <context>
