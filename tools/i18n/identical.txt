@@ -158,3 +158,4 @@ id:+ LUMA
 id:NAVIGATOR
 id:HIST
 id:PARADE
+vi:AI
