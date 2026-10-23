@@ -1336,14 +1336,6 @@
         <translation>+ Farbe</translation>
     </message>
     <message>
-        <source>+ AI SUBJECT</source>
-        <translation>+ KI-MOTIV</translation>
-    </message>
-    <message>
-        <source>+ AI SKY</source>
-        <translation>+ KI-HIMMEL</translation>
-    </message>
-    <message>
         <source>I</source>
         <comment>invert mask toggle, first letter of Invert</comment>
         <translation>U</translation>

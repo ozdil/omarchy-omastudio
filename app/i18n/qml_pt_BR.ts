@@ -1336,14 +1336,6 @@
         <translation>+ Cor</translation>
     </message>
     <message>
-        <source>+ AI SUBJECT</source>
-        <translation>+ ASSUNTO (IA)</translation>
-    </message>
-    <message>
-        <source>+ AI SKY</source>
-        <translation>+ CÉU (IA)</translation>
-    </message>
-    <message>
         <source>I</source>
         <comment>invert mask toggle, first letter of Invert</comment>
         <translation>I</translation>

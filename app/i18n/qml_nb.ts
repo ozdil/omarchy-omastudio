@@ -1336,14 +1336,6 @@
         <translation>+ Farge</translation>
     </message>
     <message>
-        <source>+ AI SUBJECT</source>
-        <translation>+ AI-MOTIV</translation>
-    </message>
-    <message>
-        <source>+ AI SKY</source>
-        <translation>+ AI-HIMMEL</translation>
-    </message>
-    <message>
         <source>I</source>
         <comment>invert mask toggle, first letter of Invert</comment>
         <translation>I</translation>

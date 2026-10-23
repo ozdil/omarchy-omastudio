@@ -344,8 +344,8 @@ Rectangle {
         RowLayout {
             Layout.fillWidth: true
             spacing: 6
-            AiButton { text: qsTr("+ AI SUBJECT"); kind: "subject" }
-            AiButton { text: qsTr("+ AI SKY"); kind: "sky" }
+            AiButton { text: "+ " + qsTr("AI Subject"); kind: "subject" }
+            AiButton { text: "+ " + qsTr("AI Sky"); kind: "sky" }
         }
 
         // Layers List View

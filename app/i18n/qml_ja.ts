@@ -1333,14 +1333,6 @@
         <translation>+ カラー</translation>
     </message>
     <message>
-        <source>+ AI SUBJECT</source>
-        <translation>+ AI 被写体</translation>
-    </message>
-    <message>
-        <source>+ AI SKY</source>
-        <translation>+ AI 空</translation>
-    </message>
-    <message>
         <source>I</source>
         <comment>invert mask toggle, first letter of Invert</comment>
         <translation>反</translation>

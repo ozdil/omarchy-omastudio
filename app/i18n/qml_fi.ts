@@ -1336,14 +1336,6 @@
         <translation>+ Väri</translation>
     </message>
     <message>
-        <source>+ AI SUBJECT</source>
-        <translation>+ KOHDE (TEKOÄLY)</translation>
-    </message>
-    <message>
-        <source>+ AI SKY</source>
-        <translation>+ TAIVAS (TEKOÄLY)</translation>
-    </message>
-    <message>
         <source>I</source>
         <comment>invert mask toggle, first letter of Invert</comment>
         <translation>K</translation>

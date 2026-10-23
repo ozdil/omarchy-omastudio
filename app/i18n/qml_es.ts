@@ -1336,14 +1336,6 @@
         <translation>+ Color</translation>
     </message>
     <message>
-        <source>+ AI SUBJECT</source>
-        <translation>+ SUJETO (IA)</translation>
-    </message>
-    <message>
-        <source>+ AI SKY</source>
-        <translation>+ CIELO (IA)</translation>
-    </message>
-    <message>
         <source>I</source>
         <comment>invert mask toggle, first letter of Invert</comment>
         <translation>I</translation>
