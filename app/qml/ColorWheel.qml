@@ -7,7 +7,7 @@ ColumnLayout {
     spacing: 6
     Layout.fillWidth: true
 
-    property string title: "Wheel"
+    property string title: qsTr("Wheel")
     property var rgbOffset: [0.0, 0.0, 0.0] // [R, G, B] each -1.0 to 1.0
     property real lumaOffset: 0.0           // -1.0 to 1.0
     property color wheelAccent: Theme.accent

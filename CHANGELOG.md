@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+### Languages
+- The interface is translated into 30 languages, each one complete: Arabic, Chinese (Simplified and Traditional), Czech, Danish, Dutch, English, Finnish, French, German, Greek, Hebrew, Hindi, Hungarian, Indonesian, Italian, Japanese, Korean, Norwegian Bokmål, Persian, Polish, Portuguese (Brazil), Romanian, Russian, Spanish, Swedish, Thai, Turkish, Ukrainian and Vietnamese.
+- OmaStudio follows the system language; the language menu in the top bar picks another one and applies it without a restart (stored in `~/.config/omastudio/language`).
+- Arabic, Hebrew and Persian are laid out right to left.
+- `tools/i18n/check.py` (run in CI) rejects missing translations, English left in a translation, wrong scripts and mismatched placeholders, so no language shows a mixed interface.
+- The `omastudio` launcher passes the user's language through to the application.
+- Building needs `qt6-tools` for `lrelease`.
+
 ### Omarchy integration
 - The interface follows Omarchy live, without a restart: every colour comes from the active theme (scopes, the area around the photo and text on accent buttons included); the font is Omarchy's (`omarchy-font-set`, read from fontconfig); text sizes scale from the Omarchy shell's base size; corners follow Hyprland's rounding, so they are square on a default Omarchy setup.
 - Clipping warnings stay red (highlights) and blue (shadows) in every theme.

@@ -36,7 +36,7 @@ Rectangle {
             Text {
                 id: shadowText
                 anchors.centerIn: parent
-                text: "[S] " + (root.histData ? root.histData.shadow_clipping_percent.toFixed(1) + "%" : "0.0%")
+                text: qsTr("[S] %1%", "S: shadow clipping").arg(root.histData ? root.histData.shadow_clipping_percent.toFixed(1) : "0.0")
                 textFormat: Text.PlainText
                 font.pixelSize: Theme.px(10)
                 font.family: Theme.monoFont
@@ -63,9 +63,9 @@ Rectangle {
             font.weight: Font.DemiBold
             font.letterSpacing: 1
             color: Theme.textDim
+            Layout.fillWidth: true
+            elide: Text.ElideRight
         }
-
-        Item { Layout.fillWidth: true }
 
         // Highlight clipping button
         Rectangle {
@@ -78,7 +78,7 @@ Rectangle {
             Text {
                 id: highText
                 anchors.centerIn: parent
-                text: "[H] " + (root.histData ? root.histData.highlight_clipping_percent.toFixed(1) + "%" : "0.0%")
+                text: qsTr("[H] %1%", "H: highlight clipping").arg(root.histData ? root.histData.highlight_clipping_percent.toFixed(1) : "0.0")
                 textFormat: Text.PlainText
                 font.pixelSize: Theme.px(10)
                 font.family: Theme.monoFont

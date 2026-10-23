@@ -31,6 +31,7 @@ Rectangle {
     property string localOutputDir: "~/Pictures/OmaStudio_Exports"
     property bool isExporting: false
     property string exportStatusText: ""
+    property bool exportStatusIsError: false
     property bool isBatchMode: false
     property int batchCount: 0
     property bool watermarkEnabled: false

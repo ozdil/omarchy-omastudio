@@ -60,14 +60,14 @@ Rectangle {
                 font.weight: Font.DemiBold
                 font.letterSpacing: 1
                 color: Theme.textDim
+                Layout.fillWidth: true
+                elide: Text.ElideRight
             }
-
-            Item { Layout.fillWidth: true }
 
             // Preset Zoom Buttons: FIT, 100%, 200%, 300%
             Repeater {
                 model: [
-                    { label: "FIT", val: 0.0 },
+                    { label: qsTr("FIT"), val: 0.0 },
                     { label: "100%", val: 1.0 },
                     { label: "200%", val: 2.0 },
                     { label: "300%", val: 3.0 }
@@ -77,7 +77,7 @@ Rectangle {
                     implicitWidth: lbl.implicitWidth + 10
                     implicitHeight: 18
                     radius: Theme.r(3)
-                    property bool isCur: (modelData.label === "FIT" && root.zoomFactor <= 1.05) || (modelData.label !== "FIT" && Math.abs(root.zoomFactor - modelData.val) < 0.1 && root.zoomFactor > 1.05)
+                    property bool isCur: (modelData.val === 0.0 && root.zoomFactor <= 1.05) || (modelData.val !== 0.0 && Math.abs(root.zoomFactor - modelData.val) < 0.1 && root.zoomFactor > 1.05)
                     color: isCur ? Theme.accent : Theme.bgCard
                     border.color: isCur ? Theme.accent : Theme.border
 

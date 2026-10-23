@@ -33,7 +33,7 @@ ColumnLayout {
         // Reset social preset button (always accessible)
         Rectangle {
             visible: true
-            implicitWidth: 46
+            implicitWidth: Math.max(46, label33.implicitWidth + 16)
             implicitHeight: 18
             radius: Theme.radiusSm
             color: resetSocialMouse.containsMouse ? Qt.rgba(Theme.accentCyan.r, Theme.accentCyan.g, Theme.accentCyan.b, 0.2) : (root.activePlatform !== "" ? Qt.rgba(Theme.accentCyan.r, Theme.accentCyan.g, Theme.accentCyan.b, 0.1) : "transparent")
@@ -41,6 +41,7 @@ ColumnLayout {
             border.width: 1
 
             Text {
+                id: label33
                 font.family: Theme.fontFamily
                 anchors.centerIn: parent
                 text: qsTr("Reset")
@@ -71,8 +72,8 @@ ColumnLayout {
         columnSpacing: 6
 
         property var platforms: [
-            { id: "ig", name: "Instagram post", aspect: "4:5 / 1080x1350" },
-            { id: "story", name: "Stories and Reels", aspect: "9:16 / 1080x1920" },
+            { id: "ig", name: qsTr("Instagram post"), aspect: "4:5 / 1080x1350" },
+            { id: "story", name: qsTr("Stories and Reels"), aspect: "9:16 / 1080x1920" },
             { id: "x", name: "X / Twitter", aspect: "16:9 / 1200x675" },
             { id: "ig_square", name: qsTr("Square"), aspect: "1:1 / 1080x1080" },
             { id: "fb", name: "Facebook", aspect: "1.91:1 / 2048px" },

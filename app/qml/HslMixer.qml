@@ -62,7 +62,7 @@ ColumnLayout {
         root.colorChanged();
     }
 
-    readonly property var channelNames: ["Red", "Orange", "Yellow", "Green", "Aqua", "Blue", "Purple", "Magenta"]
+    readonly property var channelNames: [qsTr("Red"), qsTr("Orange"), qsTr("Yellow"), qsTr("Green"), qsTr("Aqua"), qsTr("Blue"), qsTr("Purple"), qsTr("Magenta")]
     readonly property var channelColors: [
         "#f7768e", "#ff9e64", "#e0af68", "#9ece6a",
         "#7dcfff", "#7aa2f7", "#bb9af7", "#f778ba"
@@ -109,7 +109,7 @@ ColumnLayout {
 
         Text {
             font.family: Theme.fontFamily
-            text: root.channelNames[root.activeChannel] + " Channel"
+            text: qsTr("%1 Channel").arg(root.channelNames[root.activeChannel])
             textFormat: Text.PlainText
             font.pixelSize: Theme.px(11)
             font.weight: Font.DemiBold
@@ -177,7 +177,7 @@ ColumnLayout {
     }
 
     SliderGroup {
-        title: "Hue Shift"
+        title: qsTr("Hue Shift")
         from: -100.0
         to: 100.0
         value: (root.hslHue && root.hslHue.length > root.activeChannel) ? root.hslHue[root.activeChannel] : 0.0
@@ -189,7 +189,7 @@ ColumnLayout {
     }
 
     SliderGroup {
-        title: "Saturation"
+        title: qsTr("Saturation")
         from: -100.0
         to: 100.0
         value: (root.hslSat && root.hslSat.length > root.activeChannel) ? root.hslSat[root.activeChannel] : 0.0
@@ -201,7 +201,7 @@ ColumnLayout {
     }
 
     SliderGroup {
-        title: "Luminance"
+        title: qsTr("Luminance")
         from: -100.0
         to: 100.0
         value: (root.hslLum && root.hslLum.length > root.activeChannel) ? root.hslLum[root.activeChannel] : 0.0

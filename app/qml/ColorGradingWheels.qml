@@ -145,10 +145,10 @@ ColumnLayout {
         visible: !root.fourWheelsMode
 
         property var tabs: [
-            { name: qsTr("Lift"), sub: "Shadows" },
-            { name: qsTr("Gamma"), sub: "Mids" },
-            { name: qsTr("Gain"), sub: "Highlights" },
-            { name: qsTr("Offset"), sub: "Global" }
+            { name: qsTr("Lift"), sub: qsTr("Shadows") },
+            { name: qsTr("Gamma"), sub: qsTr("Mids") },
+            { name: qsTr("Gain"), sub: qsTr("Highlights") },
+            { name: qsTr("Offset"), sub: qsTr("Global") }
         ]
 
         Repeater {
@@ -199,7 +199,7 @@ ColumnLayout {
                 id: liftWheel
                 anchors.fill: parent
                 visible: root.activeTab === 0
-                title: "Shadows Lift"
+                title: qsTr("Shadows Lift")
                 rgbOffset: root.liftRgb
                 lumaOffset: root.liftLuma
                 wheelAccent: Theme.accentCyan
@@ -214,7 +214,7 @@ ColumnLayout {
                 id: gammaWheel
                 anchors.fill: parent
                 visible: root.activeTab === 1
-                title: "Midtones Gamma"
+                title: qsTr("Midtones Gamma")
                 rgbOffset: root.gammaRgb
                 lumaOffset: root.gammaLuma
                 wheelAccent: Theme.accentYellow
@@ -229,7 +229,7 @@ ColumnLayout {
                 id: gainWheel
                 anchors.fill: parent
                 visible: root.activeTab === 2
-                title: "Highlights Gain"
+                title: qsTr("Highlights Gain")
                 rgbOffset: root.gainRgb
                 lumaOffset: root.gainLuma
                 wheelAccent: Theme.accentOrange
@@ -244,7 +244,7 @@ ColumnLayout {
                 id: offsetWheel
                 anchors.fill: parent
                 visible: root.activeTab === 3
-                title: "Master Offset"
+                title: qsTr("Master Offset")
                 rgbOffset: root.offsetRgb
                 lumaOffset: root.offsetLuma
                 wheelAccent: Theme.accentPurple
@@ -277,7 +277,7 @@ ColumnLayout {
                 anchors.margins: 6
                 ColorWheel {
                     anchors.fill: parent
-                    title: "Lift"
+                    title: qsTr("Lift")
                     rgbOffset: root.liftRgb
                     lumaOffset: root.liftLuma
                     wheelAccent: Theme.accentCyan
@@ -302,7 +302,7 @@ ColumnLayout {
                 anchors.margins: 6
                 ColorWheel {
                     anchors.fill: parent
-                    title: "Gamma"
+                    title: qsTr("Gamma")
                     rgbOffset: root.gammaRgb
                     lumaOffset: root.gammaLuma
                     wheelAccent: Theme.accentYellow
@@ -327,7 +327,7 @@ ColumnLayout {
                 anchors.margins: 6
                 ColorWheel {
                     anchors.fill: parent
-                    title: "Gain"
+                    title: qsTr("Gain")
                     rgbOffset: root.gainRgb
                     lumaOffset: root.gainLuma
                     wheelAccent: Theme.accentOrange
@@ -352,7 +352,7 @@ ColumnLayout {
                 anchors.margins: 6
                 ColorWheel {
                     anchors.fill: parent
-                    title: "Offset"
+                    title: qsTr("Offset")
                     rgbOffset: root.offsetRgb
                     lumaOffset: root.offsetLuma
                     wheelAccent: Theme.accentPurple
@@ -372,7 +372,7 @@ ColumnLayout {
         spacing: 6
 
         SliderGroup {
-            title: "Color Boost"
+            title: qsTr("Color Boost")
             from: -100.0
             to: 100.0
             value: root.colorBoost
@@ -387,7 +387,7 @@ ColumnLayout {
         }
 
         SliderGroup {
-            title: "Midtone Detail (MD)"
+            title: qsTr("Midtone Detail (MD)")
             from: -100.0
             to: 100.0
             value: root.midtoneDetail
@@ -402,7 +402,7 @@ ColumnLayout {
         }
 
         SliderGroup {
-            title: "Contrast Pivot"
+            title: qsTr("Contrast Pivot")
             from: 0.05
             to: 0.95
             value: root.contrastPivot

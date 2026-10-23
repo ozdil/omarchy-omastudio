@@ -82,7 +82,7 @@ Rectangle {
             spacing: 8
 
             SliderGroup {
-                title: "Grain Amount"
+                title: qsTr("Grain Amount")
                 from: 0.0
                 to: 100.0
                 value: root.grainAmount
@@ -96,7 +96,7 @@ Rectangle {
             }
 
             SliderGroup {
-                title: "Grain Size"
+                title: qsTr("Grain Size")
                 from: 1.0
                 to: 3.0
                 value: root.grainSize
@@ -113,7 +113,7 @@ Rectangle {
             }
 
             SliderGroup {
-                title: "Grain Roughness"
+                title: qsTr("Grain Roughness")
                 from: 0.0
                 to: 100.0
                 value: root.grainRoughness

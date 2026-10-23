@@ -19,6 +19,12 @@ if [ "${OMASTUDIO_SECURE_ENV:-0}" != "1" ]; then
             SESSION_ENV+=("${var}=${!var}")
         fi
     done
+    # The sanitized environment defaults LC_ALL to C.UTF-8, so the user's UI language is
+    # handed over separately (first match in the usual gettext order).
+    SYSTEM_LANG="${LANGUAGE:-${LC_ALL:-${LC_MESSAGES:-${LANG:-}}}}"
+    if [ -n "${SYSTEM_LANG}" ]; then
+        SESSION_ENV+=("OMASTUDIO_SYSTEM_LANG=${SYSTEM_LANG}")
+    fi
     exec /usr/bin/env -i \
         PATH="/usr/bin:/bin:${HOME}/.local/bin:${HOME}/.cargo/bin" \
         HOME="${HOME}" \

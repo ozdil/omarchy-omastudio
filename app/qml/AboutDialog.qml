@@ -275,9 +275,9 @@ Rectangle {
                 Repeater {
                     model: [
                         { title: qsTr("RAW engine"), detail: qsTr("X-Trans and Bayer demosaicing, 16-bit linear pipeline, GPU via Vulkan") },
-                        { title: qsTr("Colour management"), detail: qsTr("Little CMS 2; sRGB, Display P3, Adobe RGB, ProPhoto, Rec. 2020") },
-                        { title: qsTr("Fujifilm"), detail: qsTr("Camera recipes, film simulations, lens corrections, Pixel Shift") },
-                        { title: qsTr("Medium format"), detail: qsTr("Fujifilm GFX, Hasselblad, Phase One, Leica S, Pentax 645") },
+                        { title: qsTr("Colour management"), detail: "Little CMS 2; sRGB, Display P3, Adobe RGB, ProPhoto, Rec. 2020" },
+                        { title: "Fujifilm", detail: qsTr("Camera recipes, film simulations, lens corrections, Pixel Shift") },
+                        { title: qsTr("Medium format"), detail: "Fujifilm GFX, Hasselblad, Phase One, Leica S, Pentax 645" },
                         { title: qsTr("AI"), detail: qsTr("Omarchy's default agent, Ollama, LM Studio or a cloud provider; local masks") },
                         { title: qsTr("Library"), detail: qsTr("Local catalogue with ratings, flags and colour labels; camera over USB") }
                     ]
@@ -328,7 +328,7 @@ Rectangle {
                 model: [
                     [qsTr("Developer"), "Ozan Özdil · @ozdil"],
                     [qsTr("License"), qsTr("MIT License")],
-                    [qsTr("Platform"), qsTr("Omarchy Linux · Wayland · Hyprland")],
+                    [qsTr("Platform"), "Omarchy Linux · Wayland · Hyprland"],
                     [qsTr("Graphics"), root.gpuInfo || "…"],
                     [qsTr("Appearance"), Theme.themeName + " · " + Theme.systemFont],
                     [qsTr("Source"), "github.com/ozdil/omarchy-omastudio"]
@@ -451,7 +451,7 @@ Rectangle {
 
             Text {
                 Layout.fillWidth: true
-                text: qsTr("© 2026 Ozan Özdil · MIT License")
+                text: qsTr("© %1 %2 · MIT License").arg(2026).arg("Ozan Özdil")
                 textFormat: Text.PlainText
                 wrapMode: Text.WordWrap
                 font.family: Theme.fontFamily

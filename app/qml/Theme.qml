@@ -85,6 +85,7 @@ QtObject {
     readonly property string iconCrop: "\uf125"
     readonly property string iconCoffee: "\uf0f4"
     readonly property string iconInfo: "\uf05a"
+    readonly property string iconLanguage: "\uf1ab"
     readonly property string iconArrowUp: "\uf062"
     readonly property string iconLayers: "\uf5fd"
 
