@@ -4,6 +4,7 @@ pub mod dng;
 pub mod ffi;
 pub mod lens;
 pub mod pixel_shift;
+pub mod raster;
 
 use crate::pipeline::transfer::Transfer;
 use ffi::*;
@@ -274,15 +275,22 @@ pub struct RawImage {
 // SAFETY: RawImage handle/backend is managed exclusively by Rust wrapper
 unsafe impl Send for RawImage {}
 
+/// Camera RAW extensions LibRaw reads (by file contents; the list decides what
+/// folder scans, the file dialog and the desktop entry offer).
+pub const RAW_EXTENSIONS: &[&str] = &[
+    "3fr", "ari", "arw", "bay", "cap", "cr2", "cr3", "crw", "cs1", "dc2", "dcr", "dcs", "dng", "drf", "eip", "erf",
+    "fff", "gpr", "iiq", "k25", "kc2", "kdc", "mdc", "mef", "mfw", "mos", "mrw", "nef", "nrw", "orf", "ori", "pef",
+    "ptx", "pxn", "qtk", "raf", "raw", "rdc", "rw2", "rwl", "rwz", "sr2", "srf", "srw", "sti", "x3f",
+];
+
+/// RAW or raster extension that OmaStudio opens.
+pub fn is_supported_extension(ext: &str) -> bool {
+    let ext = ext.to_lowercase();
+    RAW_EXTENSIONS.contains(&ext.as_str()) || raster::RASTER_EXTENSIONS.contains(&ext.as_str())
+}
+
 fn is_raster_extension(path: &Path) -> bool {
-    if let Some(ext) = path.extension().and_then(|e| e.to_str()) {
-        matches!(
-            ext.to_lowercase().as_str(),
-            "jpg" | "jpeg" | "png" | "webp" | "tif" | "tiff"
-        )
-    } else {
-        false
-    }
+    raster::is_raster(path)
 }
 
 impl RawImage {
@@ -292,8 +300,7 @@ impl RawImage {
             .map_err(|e| format!("Security check failed for {}: {}", path_ref.display(), e))?;
 
         if is_raster_extension(path_ref) {
-            let img = image::open(path_ref)
-                .map_err(|e| format!("Failed to open raster image {}: {}", path_ref.display(), e))?;
+            let img = raster::decode(path_ref)?;
             return Ok(Self {
                 backend: RawBackend::Raster { img },
                 path: path_ref.to_path_buf(),
@@ -311,8 +318,8 @@ impl RawImage {
         let handle = unsafe { omaraw_open(c_path.as_ptr(), &mut errcode) };
 
         if handle.is_null() {
-            // Fallback: try loading with standard image reader if LibRaw fails
-            if let Ok(img) = image::open(path_ref) {
+            // Not a RAW after all: try it as an image
+            if let Ok(img) = raster::decode(path_ref) {
                 return Ok(Self {
                     backend: RawBackend::Raster { img },
                     path: path_ref.to_path_buf(),

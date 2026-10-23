@@ -6,8 +6,8 @@ pkgdesc="The Complete Medium Format RAW Editor for Omarchy"
 arch=('x86_64')
 url="https://github.com/ozdil/omarchy-omastudio"
 license=('MIT')
-depends=('libraw>=0.22' 'lcms2' 'qt6-base>=6.12' 'qt6-declarative>=6.12' 'qt6-wayland' 'libjxl' 'libavif' 'zenity' 'libwebp')
-optdepends=('quickshell: OmaStudio button in the Omarchy bar' 'wl-clipboard: bounded paste in text fields' 'vulkan-icd-loader: GPU demosaicing (with your GPU'"'"'s Vulkan driver)' 'perl-image-exiftool: preserve EXIF metadata on export' 'ffmpeg: AVIF export fallback' 'libheif: HEIF export (heif-enc)' 'curl: AI edit assistant' 'libsecret: store AI provider keys in the keyring (secret-tool)' 'ollama: local AI models' 'onnxruntime: local AI masks on the NPU, GPU or CPU')
+depends=('libraw>=0.22' 'lcms2' 'qt6-base>=6.12' 'qt6-declarative>=6.12' 'qt6-wayland' 'libjxl' 'libavif' 'zenity' 'libwebp-utils' 'libheif')
+optdepends=('quickshell: OmaStudio button in the Omarchy bar' 'wl-clipboard: bounded paste in text fields' 'vulkan-icd-loader: GPU demosaicing (with your GPU'"'"'s Vulkan driver)' 'perl-image-exiftool: preserve EXIF metadata on export' 'ffmpeg: AVIF export fallback' 'curl: AI edit assistant' 'libsecret: store AI provider keys in the keyring (secret-tool)' 'ollama: local AI models' 'onnxruntime: local AI masks on the NPU, GPU or CPU')
 makedepends=('rust' 'cargo' 'pkgconf' 'clang')
 source=()
 sha256sums=()

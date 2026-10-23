@@ -18,9 +18,15 @@
 - Auto is a single action (the separate "Jev" auto was not reachable from the interface and has been folded in).
 - The gesture hint over the photo and the "DaVinci Color Engine" line are gone.
 
+### Opening photos
+- Every RAW format LibRaw reads opens from the dialog, by drag and drop and from the folder view (Fujifilm, Hasselblad, Phase One, Leica, Pentax, Mamiya/Leaf, Canon, Nikon, Sony, Panasonic, Olympus, Sigma, DNG and others), plus JPEG, PNG, WebP, TIFF (8/16-bit and float), HEIF/HEIC, AVIF, JPEG XL, OpenEXR, Radiance HDR and PNM.
+- Images with a wide-gamut ICC profile (Display P3, Adobe RGB, ProPhoto) are converted correctly instead of being read as sRGB; scene-linear EXR and HDR files are shown with the sRGB curve.
+- The open dialog filters by Photos, RAW or Images, and OmaStudio is offered as an app for these file types.
+
 ### Export
 - New Export window. Left: format, quality, bit depth, TIFF compression, size, colour profile, rendering intent and metadata. Right: platform presets (crop and output sharpening for Instagram, Stories, X, Facebook, YouTube) and the watermark, which moved here from the side panel, plus the output folder. Enter exports, Esc closes.
-- Formats: JPEG, PNG (8/16-bit), TIFF (8/16-bit; none, LZW or ZIP compression), WebP (lossy with `cwebp`, lossless at 100), AVIF (8/10/12-bit; lossless at 100), HEIF (8/10/12-bit with `heif-enc`), JPEG XL (8/16-bit; lossless at 100) and OpenEXR (half or full float, scene-linear, with the colour space's chromaticities). Every format except EXR carries the ICC profile.
+- Formats: JPEG, PNG (8/16-bit), TIFF (8/16-bit; none, LZW or ZIP compression), WebP (lossy with `cwebp` from libwebp-utils, lossless at 100; a missing `cwebp` is reported instead of silently writing a lossless file), AVIF (8/10/12-bit; lossless at 100), HEIF (8/10/12-bit with `heif-enc`), JPEG XL (8/16-bit; lossless at 100; written in the container format so camera EXIF is kept) and OpenEXR (half or full float, scene-linear, with the colour space's chromaticities). Every format except EXR carries the ICC profile.
+- Exported files are readable by other users (`rw-r--r--`) whichever encoder wrote them.
 - ACEScg is a working export profile (it needed an ICC file on disk before).
 - Exported JPEG and TIFF files use the `.jpg` and `.tif` extensions.
 - `omastudio ipc showExport` opens the Export window; `setRightTab <adjust|masks|looks|ai>` switches the panel tab.

@@ -25,6 +25,12 @@ Rectangle {
     property bool showLeftPanel: true
 
     property bool showRightPanel: true
+    // Same lists as RAW_EXTENSIONS and RASTER_EXTENSIONS in the engine
+    readonly property var rawExtensions: ["3fr", "ari", "arw", "bay", "cap", "cr2", "cr3", "crw", "cs1", "dc2", "dcr", "dcs", "dng", "drf", "eip", "erf", "fff", "gpr", "iiq", "k25", "kc2", "kdc", "mdc", "mef", "mfw", "mos", "mrw", "nef", "nrw", "orf", "ori", "pef", "ptx", "pxn", "qtk", "raf", "raw", "rdc", "rw2", "rwl", "rwz", "sr2", "srf", "srw", "sti", "x3f"]
+    readonly property var imageExtensions: ["jpg", "jpeg", "jpe", "png", "webp", "tif", "tiff", "heic", "heif", "hif", "avif", "jxl", "exr", "hdr", "pnm", "ppm", "pgm", "pam"]
+    function globs(exts) {
+        return exts.map(function(e) { return "*." + e + " *." + e.toUpperCase(); }).join(" ");
+    }
     property bool showFilmstrip: true
     // Right panel tab: adjust, masks, looks, ai, output
     property string rightTab: "adjust"
@@ -974,7 +980,10 @@ Rectangle {
     // Process: File picker
     Process {
         id: openFileProc
-        command: ["zenity", "--file-selection", "--title=Open RAW Photo", "--file-filter=RAW Photos | *.RAF *.raf *.NEF *.nef *.CR2 *.cr2 *.CR3 *.cr3 *.ARW *.arw *.DNG *.dng *.3FR *.3fr *.FFF *.fff *.IIQ *.iiq *.MOS *.mos *.MEF *.mef *.PEF *.pef"]
+        command: ["zenity", "--file-selection", "--title=" + qsTr("Open photo"),
+                  "--file-filter=" + qsTr("Photos") + " | " + root.globs(root.rawExtensions.concat(root.imageExtensions)),
+                  "--file-filter=" + qsTr("RAW") + " | " + root.globs(root.rawExtensions),
+                  "--file-filter=" + qsTr("Images") + " | " + root.globs(root.imageExtensions)]
         onFinished: function(exitCode, output) {
             var p = String(output || "").trim();
             if (exitCode === 0 && p.length > 0) {

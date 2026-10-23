@@ -75,14 +75,23 @@ fn exported_icc(format: &str, profile: &str) -> (Vec<u8>, image::DynamicImage) {
     let src = dir.join("source.png");
     let img = image::RgbImage::from_fn(16, 8, |x, y| image::Rgb([(x * 16) as u8, (y * 32) as u8, 200]));
     img.save(&src).unwrap();
-    let opts = ExportOptions {
+    let mut opts = ExportOptions {
         format: format.to_string(),
         output_dir: dir.to_string_lossy().to_string(),
         preserve_exif: false,
         icc_profile: Some(profile.to_string()),
         ..Default::default()
     };
+    // Lossy WebP needs cwebp; the built-in lossless encoder covers the ICC check
+    if format == "webp" {
+        opts.quality = 100;
+    }
     let out = export_photo(&src, &Recipe::default(), &opts).expect("export succeeds");
+    {
+        use std::os::unix::fs::PermissionsExt;
+        let mode = std::fs::metadata(&out).unwrap().permissions().mode() & 0o777;
+        assert_eq!(mode, 0o644, "{format}: exports are readable by others");
+    }
     let file = std::fs::read(&out).unwrap();
     let reader = image::ImageReader::open(&out).unwrap().with_guessed_format().unwrap();
     let mut decoder = reader.into_decoder().unwrap();

@@ -1422,7 +1422,7 @@ Rectangle {
             if (!path || path.trim() === "") return;
 
             var lower = path.toLowerCase();
-            var rawExts = [".nef", ".nrw", ".raf", ".cr2", ".cr3", ".arw", ".dng", ".rwl", ".orf", ".rw2", ".3fr", ".fff", ".iiq", ".mos", ".mef", ".pef", ".jpg", ".jpeg", ".png", ".webp", ".tiff", ".tif"];
+            var rawExts = [".3fr", ".ari", ".arw", ".bay", ".cap", ".cr2", ".cr3", ".crw", ".cs1", ".dc2", ".dcr", ".dcs", ".dng", ".drf", ".eip", ".erf", ".fff", ".gpr", ".iiq", ".k25", ".kc2", ".kdc", ".mdc", ".mef", ".mfw", ".mos", ".mrw", ".nef", ".nrw", ".orf", ".ori", ".pef", ".ptx", ".pxn", ".qtk", ".raf", ".raw", ".rdc", ".rw2", ".rwl", ".rwz", ".sr2", ".srf", ".srw", ".sti", ".x3f", ".jpg", ".jpeg", ".jpe", ".png", ".webp", ".tif", ".tiff", ".heic", ".heif", ".hif", ".avif", ".jxl", ".exr", ".hdr", ".pnm", ".ppm", ".pgm", ".pam"];
             var isFile = false;
             for (var i = 0; i < rawExts.length; i++) {
                 if (lower.endsWith(rawExts[i])) {

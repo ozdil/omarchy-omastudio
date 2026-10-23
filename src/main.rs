@@ -351,7 +351,7 @@ fn scan_directory(dir_path: &str) -> Result<Vec<FolderScanItem>, String> {
                 && let Some(ext) = path.extension().and_then(|e| e.to_str())
             {
                 let ext_lower = ext.to_lowercase();
-                let is_supported = ["nef", "nrw", "raf", "cr2", "cr3", "arw", "dng", "rwl", "orf", "rw2", "3fr", "fff", "iiq", "mos", "mef", "pef", "jpg", "jpeg", "png", "webp", "tif", "tiff", "heic"].contains(&ext_lower.as_str());
+                let is_supported = omastudio_engine::raw::is_supported_extension(&ext_lower);
                 if is_supported {
                     let thumb_path = thumbnail_path_for(&path);
                     if !thumb_path.exists() {
@@ -721,12 +721,7 @@ fn main() {
                 status: "ready".to_string(),
                 active_mode: "studio".to_string(),
                 active_theme,
-                supported_raw_formats: vec![
-                    "RAF".into(), "NEF".into(), "NRW".into(), "CR2".into(), "CR3".into(),
-                    "ARW".into(), "SR2".into(), "DNG".into(), "RWL".into(), "ORF".into(),
-                    "RW2".into(), "3FR".into(), "FFF".into(), "IIQ".into(), "MOS".into(),
-                    "MEF".into(), "PEF".into(),
-                ],
+                supported_raw_formats: omastudio_engine::raw::RAW_EXTENSIONS.iter().map(|e| e.to_uppercase()).collect(),
                 icc_profiles_count: icc_count,
                 local_only_mode: true,
                 gpu: gpu::status(),
