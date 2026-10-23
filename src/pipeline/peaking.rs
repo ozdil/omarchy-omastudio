@@ -48,7 +48,7 @@ pub fn apply(rgb: &mut [u8], width: usize, height: usize) {
                 let mut sum = 0u32;
                 for y in by * k..(by + 1) * k {
                     let row = &rgb[(y * width + bx * k) * 3..(y * width + (bx + 1) * k) * 3];
-                    for p in row.chunks_exact(3) {
+                    for p in row.as_chunks::<3>().0 {
                         sum += (p[0] as u32 * 54 + p[1] as u32 * 183 + p[2] as u32 * 19) >> 8;
                     }
                 }
@@ -142,7 +142,7 @@ mod tests {
     fn noise_in_a_large_photo_is_not_taken_for_focus() {
         // High-ISO grain on a flat wall, with one sharp edge in the middle
         let (w, h) = (2000, 400);
-        let noise = |x: usize, y: usize| if (x * 7 + y * 13) % 3 == 0 { 40 } else { 0 };
+        let noise = |x: usize, y: usize| if (x * 7 + y * 13).is_multiple_of(3) { 40 } else { 0 };
         let mut photo = image(w, h, |x, y| (if x < w / 2 { 60 } else { 180 }) + noise(x, y) as u8);
         apply(&mut photo, w, h);
         let marked_columns: Vec<usize> = (0..w).filter(|&x| photo[(h / 2 * w + x) * 3..][..3] == PEAKING_RGB).collect();
