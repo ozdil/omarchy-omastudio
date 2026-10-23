@@ -1710,6 +1710,10 @@
         <translation>ไม่ได้ใช้การพรูฟบนจอ: %1</translation>
     </message>
     <message>
+        <source>Before</source>
+        <translation>ก่อน</translation>
+    </message>
+    <message>
         <source>Snapshot %1</source>
         <translation>สแนปช็อต %1</translation>
     </message>
@@ -2504,6 +2508,30 @@
         <translation>สีพื้นรอบภาพ</translation>
     </message>
     <message>
+        <source>Loupe</source>
+        <translation>แว่นขยาย</translation>
+    </message>
+    <message>
+        <source>Loupe (L): the photo at 1:1 around the pointer</source>
+        <translation>แว่นขยาย (L): ภาพขนาด 1:1 รอบตัวชี้</translation>
+    </message>
+    <message>
+        <source>Peaking</source>
+        <translation>โฟกัส</translation>
+    </message>
+    <message>
+        <source>Focus peaking (Shift+F): marks the sharpest edges in green</source>
+        <translation>ไฮไลต์โฟกัส (Shift+F): ทำเครื่องหมายขอบที่คมที่สุดด้วยสีเขียว</translation>
+    </message>
+    <message>
+        <source>Compare</source>
+        <translation>เปรียบเทียบ</translation>
+    </message>
+    <message>
+        <source>Compare (Shift+C): another state of the edit beside this one</source>
+        <translation>เปรียบเทียบ (Shift+C): สถานะอื่นของการแก้ไขข้างๆ สถานะนี้</translation>
+    </message>
+    <message>
         <source>Crop</source>
         <translation>ครอป</translation>
     </message>
@@ -2550,6 +2578,10 @@
     <message>
         <source>ORIGINAL RAW (Before)</source>
         <translation>RAW ต้นฉบับ (ก่อน)</translation>
+    </message>
+    <message>
+        <source>Current edit</source>
+        <translation>การแก้ไขปัจจุบัน</translation>
     </message>
     <message>
         <source>EDITED RECIPE (After)</source>

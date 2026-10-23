@@ -1714,6 +1714,10 @@
         <translation>Softproof niet toegepast: %1</translation>
     </message>
     <message>
+        <source>Before</source>
+        <translation>Voor</translation>
+    </message>
+    <message>
         <source>Snapshot %1</source>
         <translation>Momentopname %1</translation>
     </message>
@@ -2510,6 +2514,30 @@
         <translation>Omgevingskleur</translation>
     </message>
     <message>
+        <source>Loupe</source>
+        <translation>Loep</translation>
+    </message>
+    <message>
+        <source>Loupe (L): the photo at 1:1 around the pointer</source>
+        <translation>Loep (L): de foto op 1:1 rond de aanwijzer</translation>
+    </message>
+    <message>
+        <source>Peaking</source>
+        <translation>Focus</translation>
+    </message>
+    <message>
+        <source>Focus peaking (Shift+F): marks the sharpest edges in green</source>
+        <translation>Focus peaking (Shift+F): markeert de scherpste randen groen</translation>
+    </message>
+    <message>
+        <source>Compare</source>
+        <translation>Vergelijken</translation>
+    </message>
+    <message>
+        <source>Compare (Shift+C): another state of the edit beside this one</source>
+        <translation>Vergelijken (Shift+C): een andere staat van de bewerking naast deze</translation>
+    </message>
+    <message>
         <source>Crop</source>
         <translation>Uitsnijden</translation>
     </message>
@@ -2556,6 +2584,10 @@
     <message>
         <source>ORIGINAL RAW (Before)</source>
         <translation>ORIGINELE RAW (voor)</translation>
+    </message>
+    <message>
+        <source>Current edit</source>
+        <translation>Huidige bewerking</translation>
     </message>
     <message>
         <source>EDITED RECIPE (After)</source>

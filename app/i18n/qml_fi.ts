@@ -1714,6 +1714,10 @@
         <translation>Näyttövedosta ei käytetty: %1</translation>
     </message>
     <message>
+        <source>Before</source>
+        <translation>Ennen</translation>
+    </message>
+    <message>
         <source>Snapshot %1</source>
         <translation>Tilannekuva %1</translation>
     </message>
@@ -2510,6 +2514,30 @@
         <translation>Ympäristön väri</translation>
     </message>
     <message>
+        <source>Loupe</source>
+        <translation>Suurennuslasi</translation>
+    </message>
+    <message>
+        <source>Loupe (L): the photo at 1:1 around the pointer</source>
+        <translation>Suurennuslasi (L): kuva 1:1-koossa osoittimen ympärillä</translation>
+    </message>
+    <message>
+        <source>Peaking</source>
+        <translation>Tarkennus</translation>
+    </message>
+    <message>
+        <source>Focus peaking (Shift+F): marks the sharpest edges in green</source>
+        <translation>Tarkennuksen korostus (Vaihto+F): merkitsee terävimmät reunat vihreällä</translation>
+    </message>
+    <message>
+        <source>Compare</source>
+        <translation>Vertaa</translation>
+    </message>
+    <message>
+        <source>Compare (Shift+C): another state of the edit beside this one</source>
+        <translation>Vertaa (Vaihto+C): muokkauksen toinen tila tämän vieressä</translation>
+    </message>
+    <message>
         <source>Crop</source>
         <translation>Rajaa</translation>
     </message>
@@ -2556,6 +2584,10 @@
     <message>
         <source>ORIGINAL RAW (Before)</source>
         <translation>ALKUPERÄINEN RAW (ennen)</translation>
+    </message>
+    <message>
+        <source>Current edit</source>
+        <translation>Nykyinen muokkaus</translation>
     </message>
     <message>
         <source>EDITED RECIPE (After)</source>

@@ -1714,6 +1714,10 @@
         <translation>Softproof nicht angewendet: %1</translation>
     </message>
     <message>
+        <source>Before</source>
+        <translation>Vorher</translation>
+    </message>
+    <message>
         <source>Snapshot %1</source>
         <translation>Schnappschuss %1</translation>
     </message>
@@ -2510,6 +2514,30 @@
         <translation>Umgebungsfarbe</translation>
     </message>
     <message>
+        <source>Loupe</source>
+        <translation>Lupe</translation>
+    </message>
+    <message>
+        <source>Loupe (L): the photo at 1:1 around the pointer</source>
+        <translation>Lupe (L): das Foto in 1:1 um den Mauszeiger</translation>
+    </message>
+    <message>
+        <source>Peaking</source>
+        <translation>Fokus</translation>
+    </message>
+    <message>
+        <source>Focus peaking (Shift+F): marks the sharpest edges in green</source>
+        <translation>Fokus-Peaking (Umschalt+F): markiert die schärfsten Kanten grün</translation>
+    </message>
+    <message>
+        <source>Compare</source>
+        <translation>Vergleich</translation>
+    </message>
+    <message>
+        <source>Compare (Shift+C): another state of the edit beside this one</source>
+        <translation>Vergleich (Umschalt+C): ein anderer Stand der Bearbeitung neben diesem</translation>
+    </message>
+    <message>
         <source>Crop</source>
         <translation>Zuschneiden</translation>
     </message>
@@ -2556,6 +2584,10 @@
     <message>
         <source>ORIGINAL RAW (Before)</source>
         <translation>ORIGINAL-RAW (vorher)</translation>
+    </message>
+    <message>
+        <source>Current edit</source>
+        <translation>Aktuelle Bearbeitung</translation>
     </message>
     <message>
         <source>EDITED RECIPE (After)</source>

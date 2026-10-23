@@ -1714,6 +1714,10 @@
         <translation>Prova a video non applicata: %1</translation>
     </message>
     <message>
+        <source>Before</source>
+        <translation>Prima</translation>
+    </message>
+    <message>
         <source>Snapshot %1</source>
         <translation>Istantanea %1</translation>
     </message>
@@ -2346,7 +2350,7 @@
     </message>
     <message>
         <source>Shows the photo as it will look with the profile below, for example a printer and paper profile. The edit and the export do not change.</source>
-        <translation>Mostra la foto come apparirà con il profilo qui sotto, per esempio un profilo di stampante e carta. La modifica e l'esportazione non cambiano.</translation>
+        <translation>Mostra la foto come apparirà con il profilo qui sotto, per esempio un profilo di stampante e carta. La modifica e l&apos;esportazione non cambiano.</translation>
     </message>
     <message>
         <source>Rendering intent</source>
@@ -2374,7 +2378,7 @@
     </message>
     <message>
         <source>Magenta marks colours the profile cannot reproduce. The preview is sRGB, so wider spaces such as Adobe RGB show no warnings.</source>
-        <translation>Il magenta indica i colori che il profilo non può riprodurre. L'anteprima è sRGB, quindi spazi più ampi come Adobe RGB non mostrano avvisi.</translation>
+        <translation>Il magenta indica i colori che il profilo non può riprodurre. L&apos;anteprima è sRGB, quindi spazi più ampi come Adobe RGB non mostrano avvisi.</translation>
     </message>
 </context>
 <context>
@@ -2510,6 +2514,30 @@
         <translation>Colore del contorno</translation>
     </message>
     <message>
+        <source>Loupe</source>
+        <translation>Lente</translation>
+    </message>
+    <message>
+        <source>Loupe (L): the photo at 1:1 around the pointer</source>
+        <translation>Lente (L): la foto a 1:1 attorno al puntatore</translation>
+    </message>
+    <message>
+        <source>Peaking</source>
+        <translation>Messa a fuoco</translation>
+    </message>
+    <message>
+        <source>Focus peaking (Shift+F): marks the sharpest edges in green</source>
+        <translation>Focus peaking (Maiusc+F): evidenzia in verde i bordi più nitidi</translation>
+    </message>
+    <message>
+        <source>Compare</source>
+        <translation>Confronta</translation>
+    </message>
+    <message>
+        <source>Compare (Shift+C): another state of the edit beside this one</source>
+        <translation>Confronta (Maiusc+C): un altro stato della modifica accanto a questo</translation>
+    </message>
+    <message>
         <source>Crop</source>
         <translation>Ritaglia</translation>
     </message>
@@ -2556,6 +2584,10 @@
     <message>
         <source>ORIGINAL RAW (Before)</source>
         <translation>RAW ORIGINALE (prima)</translation>
+    </message>
+    <message>
+        <source>Current edit</source>
+        <translation>Modifica attuale</translation>
     </message>
     <message>
         <source>EDITED RECIPE (After)</source>

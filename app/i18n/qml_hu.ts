@@ -1710,6 +1710,10 @@
         <translation>A képernyős próbanyomat nem alkalmazható: %1</translation>
     </message>
     <message>
+        <source>Before</source>
+        <translation>Előtte</translation>
+    </message>
+    <message>
         <source>Snapshot %1</source>
         <translation>Pillanatkép %1</translation>
     </message>
@@ -2504,6 +2508,30 @@
         <translation>Környezet színe</translation>
     </message>
     <message>
+        <source>Loupe</source>
+        <translation>Nagyító</translation>
+    </message>
+    <message>
+        <source>Loupe (L): the photo at 1:1 around the pointer</source>
+        <translation>Nagyító (L): a fotó 1:1 méretben a mutató körül</translation>
+    </message>
+    <message>
+        <source>Peaking</source>
+        <translation>Élesség</translation>
+    </message>
+    <message>
+        <source>Focus peaking (Shift+F): marks the sharpest edges in green</source>
+        <translation>Élességkiemelés (Shift+F): zölddel jelöli a legélesebb széleket</translation>
+    </message>
+    <message>
+        <source>Compare</source>
+        <translation>Összevetés</translation>
+    </message>
+    <message>
+        <source>Compare (Shift+C): another state of the edit beside this one</source>
+        <translation>Összevetés (Shift+C): a szerkesztés egy másik állapota emellett</translation>
+    </message>
+    <message>
         <source>Crop</source>
         <translation>Vágás</translation>
     </message>
@@ -2550,6 +2578,10 @@
     <message>
         <source>ORIGINAL RAW (Before)</source>
         <translation>EREDETI RAW (előtte)</translation>
+    </message>
+    <message>
+        <source>Current edit</source>
+        <translation>Jelenlegi szerkesztés</translation>
     </message>
     <message>
         <source>EDITED RECIPE (After)</source>

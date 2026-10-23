@@ -1730,6 +1730,10 @@
         <translation>لم يُطبَّق التدقيق على الشاشة: %1</translation>
     </message>
     <message>
+        <source>Before</source>
+        <translation>قبل</translation>
+    </message>
+    <message>
         <source>Snapshot %1</source>
         <translation>لقطة %1</translation>
     </message>
@@ -2534,6 +2538,30 @@
         <translation>لون المحيط</translation>
     </message>
     <message>
+        <source>Loupe</source>
+        <translation>العدسة المكبرة</translation>
+    </message>
+    <message>
+        <source>Loupe (L): the photo at 1:1 around the pointer</source>
+        <translation>العدسة المكبرة (L): الصورة بمقياس 1:1 حول المؤشر</translation>
+    </message>
+    <message>
+        <source>Peaking</source>
+        <translation>التركيز</translation>
+    </message>
+    <message>
+        <source>Focus peaking (Shift+F): marks the sharpest edges in green</source>
+        <translation>إبراز التركيز (Shift+F): يُعلِّم الحواف الأكثر حدة باللون الأخضر</translation>
+    </message>
+    <message>
+        <source>Compare</source>
+        <translation>مقارنة</translation>
+    </message>
+    <message>
+        <source>Compare (Shift+C): another state of the edit beside this one</source>
+        <translation>مقارنة (Shift+C): حالة أخرى من التعديل بجانب هذه</translation>
+    </message>
+    <message>
         <source>Crop</source>
         <translation>قص</translation>
     </message>
@@ -2580,6 +2608,10 @@
     <message>
         <source>ORIGINAL RAW (Before)</source>
         <translation>RAW الأصلي (قبل)</translation>
+    </message>
+    <message>
+        <source>Current edit</source>
+        <translation>التعديل الحالي</translation>
     </message>
     <message>
         <source>EDITED RECIPE (After)</source>

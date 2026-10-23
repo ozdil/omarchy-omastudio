@@ -1714,6 +1714,10 @@
         <translation>Softproof ikke brukt: %1</translation>
     </message>
     <message>
+        <source>Before</source>
+        <translation>Før</translation>
+    </message>
+    <message>
         <source>Snapshot %1</source>
         <translation>Øyeblikksbilde %1</translation>
     </message>
@@ -2510,6 +2514,30 @@
         <translation>Omgivelsesfarge</translation>
     </message>
     <message>
+        <source>Loupe</source>
+        <translation>Lupe</translation>
+    </message>
+    <message>
+        <source>Loupe (L): the photo at 1:1 around the pointer</source>
+        <translation>Lupe (L): bildet i 1:1 rundt pekeren</translation>
+    </message>
+    <message>
+        <source>Peaking</source>
+        <translation>Fokus</translation>
+    </message>
+    <message>
+        <source>Focus peaking (Shift+F): marks the sharpest edges in green</source>
+        <translation>Fokusmarkering (Skift+F): markerer de skarpeste kantene i grønt</translation>
+    </message>
+    <message>
+        <source>Compare</source>
+        <translation>Sammenlign</translation>
+    </message>
+    <message>
+        <source>Compare (Shift+C): another state of the edit beside this one</source>
+        <translation>Sammenlign (Skift+C): en annen tilstand av redigeringen ved siden av denne</translation>
+    </message>
+    <message>
         <source>Crop</source>
         <translation>Beskjær</translation>
     </message>
@@ -2556,6 +2584,10 @@
     <message>
         <source>ORIGINAL RAW (Before)</source>
         <translation>ORIGINAL RAW (før)</translation>
+    </message>
+    <message>
+        <source>Current edit</source>
+        <translation>Gjeldende redigering</translation>
     </message>
     <message>
         <source>EDITED RECIPE (After)</source>

@@ -1714,6 +1714,10 @@
         <translation>Prova de tela não aplicada: %1</translation>
     </message>
     <message>
+        <source>Before</source>
+        <translation>Antes</translation>
+    </message>
+    <message>
         <source>Snapshot %1</source>
         <translation>Instantâneo %1</translation>
     </message>
@@ -2510,6 +2514,30 @@
         <translation>Cor do entorno</translation>
     </message>
     <message>
+        <source>Loupe</source>
+        <translation>Lupa</translation>
+    </message>
+    <message>
+        <source>Loupe (L): the photo at 1:1 around the pointer</source>
+        <translation>Lupa (L): a foto em 1:1 ao redor do ponteiro</translation>
+    </message>
+    <message>
+        <source>Peaking</source>
+        <translation>Foco</translation>
+    </message>
+    <message>
+        <source>Focus peaking (Shift+F): marks the sharpest edges in green</source>
+        <translation>Focus peaking (Shift+F): marca em verde as bordas mais nítidas</translation>
+    </message>
+    <message>
+        <source>Compare</source>
+        <translation>Comparar</translation>
+    </message>
+    <message>
+        <source>Compare (Shift+C): another state of the edit beside this one</source>
+        <translation>Comparar (Shift+C): outro estado da edição ao lado deste</translation>
+    </message>
+    <message>
         <source>Crop</source>
         <translation>Cortar</translation>
     </message>
@@ -2556,6 +2584,10 @@
     <message>
         <source>ORIGINAL RAW (Before)</source>
         <translation>RAW ORIGINAL (antes)</translation>
+    </message>
+    <message>
+        <source>Current edit</source>
+        <translation>Edição atual</translation>
     </message>
     <message>
         <source>EDITED RECIPE (After)</source>

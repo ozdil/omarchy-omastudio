@@ -285,3 +285,4 @@ id:Soft proof: %1
 id:Soft proof (S)
 vi:Soft proof: %1
 vi:Soft proof (S)
+fr:Loupe

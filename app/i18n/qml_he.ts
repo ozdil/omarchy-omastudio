@@ -1714,6 +1714,10 @@
         <translation>הגהה על המסך לא הוחלה: %1</translation>
     </message>
     <message>
+        <source>Before</source>
+        <translation>לפני</translation>
+    </message>
+    <message>
         <source>Snapshot %1</source>
         <translation>תמונת מצב %1</translation>
     </message>
@@ -2510,6 +2514,30 @@
         <translation>צבע הסביבה</translation>
     </message>
     <message>
+        <source>Loupe</source>
+        <translation>זכוכית מגדלת</translation>
+    </message>
+    <message>
+        <source>Loupe (L): the photo at 1:1 around the pointer</source>
+        <translation>זכוכית מגדלת (L): התמונה ב־1:1 סביב הסמן</translation>
+    </message>
+    <message>
+        <source>Peaking</source>
+        <translation>מיקוד</translation>
+    </message>
+    <message>
+        <source>Focus peaking (Shift+F): marks the sharpest edges in green</source>
+        <translation>הדגשת מיקוד (Shift+F): מסמנת בירוק את הקצוות החדים ביותר</translation>
+    </message>
+    <message>
+        <source>Compare</source>
+        <translation>השוואה</translation>
+    </message>
+    <message>
+        <source>Compare (Shift+C): another state of the edit beside this one</source>
+        <translation>השוואה (Shift+C): מצב אחר של העריכה לצד המצב הזה</translation>
+    </message>
+    <message>
         <source>Crop</source>
         <translation>חיתוך</translation>
     </message>
@@ -2556,6 +2584,10 @@
     <message>
         <source>ORIGINAL RAW (Before)</source>
         <translation>RAW מקורי (לפני)</translation>
+    </message>
+    <message>
+        <source>Current edit</source>
+        <translation>העריכה הנוכחית</translation>
     </message>
     <message>
         <source>EDITED RECIPE (After)</source>

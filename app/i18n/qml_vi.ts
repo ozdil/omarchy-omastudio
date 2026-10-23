@@ -1710,6 +1710,10 @@
         <translation>Không áp dụng được soft proof: %1</translation>
     </message>
     <message>
+        <source>Before</source>
+        <translation>Trước</translation>
+    </message>
+    <message>
         <source>Snapshot %1</source>
         <translation>Ảnh chụp trạng thái %1</translation>
     </message>
@@ -2504,6 +2508,30 @@
         <translation>Màu nền xung quanh</translation>
     </message>
     <message>
+        <source>Loupe</source>
+        <translation>Kính lúp</translation>
+    </message>
+    <message>
+        <source>Loupe (L): the photo at 1:1 around the pointer</source>
+        <translation>Kính lúp (L): ảnh ở tỷ lệ 1:1 quanh con trỏ</translation>
+    </message>
+    <message>
+        <source>Peaking</source>
+        <translation>Lấy nét</translation>
+    </message>
+    <message>
+        <source>Focus peaking (Shift+F): marks the sharpest edges in green</source>
+        <translation>Tô sáng lấy nét (Shift+F): đánh dấu các cạnh nét nhất bằng màu xanh lá</translation>
+    </message>
+    <message>
+        <source>Compare</source>
+        <translation>So sánh</translation>
+    </message>
+    <message>
+        <source>Compare (Shift+C): another state of the edit beside this one</source>
+        <translation>So sánh (Shift+C): một trạng thái chỉnh sửa khác bên cạnh trạng thái này</translation>
+    </message>
+    <message>
         <source>Crop</source>
         <translation>Cắt</translation>
     </message>
@@ -2550,6 +2578,10 @@
     <message>
         <source>ORIGINAL RAW (Before)</source>
         <translation>RAW GỐC (trước)</translation>
+    </message>
+    <message>
+        <source>Current edit</source>
+        <translation>Chỉnh sửa hiện tại</translation>
     </message>
     <message>
         <source>EDITED RECIPE (After)</source>

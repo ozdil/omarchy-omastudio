@@ -1718,6 +1718,10 @@
         <translation>Кольоропробу не застосовано: %1</translation>
     </message>
     <message>
+        <source>Before</source>
+        <translation>До</translation>
+    </message>
+    <message>
         <source>Snapshot %1</source>
         <translation>Знімок %1</translation>
     </message>
@@ -2516,6 +2520,30 @@
         <translation>Колір оточення</translation>
     </message>
     <message>
+        <source>Loupe</source>
+        <translation>Лупа</translation>
+    </message>
+    <message>
+        <source>Loupe (L): the photo at 1:1 around the pointer</source>
+        <translation>Лупа (L): фото в масштабі 1:1 навколо вказівника</translation>
+    </message>
+    <message>
+        <source>Peaking</source>
+        <translation>Фокус</translation>
+    </message>
+    <message>
+        <source>Focus peaking (Shift+F): marks the sharpest edges in green</source>
+        <translation>Підсвічування фокуса (Shift+F): позначає найрізкіші краї зеленим</translation>
+    </message>
+    <message>
+        <source>Compare</source>
+        <translation>Порівняти</translation>
+    </message>
+    <message>
+        <source>Compare (Shift+C): another state of the edit beside this one</source>
+        <translation>Порівняти (Shift+C): інший стан редагування поруч із поточним</translation>
+    </message>
+    <message>
         <source>Crop</source>
         <translation>Кадрувати</translation>
     </message>
@@ -2562,6 +2590,10 @@
     <message>
         <source>ORIGINAL RAW (Before)</source>
         <translation>ВИХІДНИЙ RAW (до)</translation>
+    </message>
+    <message>
+        <source>Current edit</source>
+        <translation>Поточне редагування</translation>
     </message>
     <message>
         <source>EDITED RECIPE (After)</source>

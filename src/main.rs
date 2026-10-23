@@ -115,6 +115,9 @@ struct RenderResult {
     proof_error: Option<String>,
 }
 
+/// Alternates the compare view between two files, so it never reads one being written
+static REFERENCE_SLOT: std::sync::atomic::AtomicUsize = std::sync::atomic::AtomicUsize::new(0);
+
 /// Soft-proofing settings sent with `adjust` and `detail`: a view option, not part of the edit
 #[derive(Deserialize)]
 struct ProofRequest {
@@ -201,6 +204,8 @@ struct FullReady {
 #[derive(Serialize)]
 struct DetailResult {
     image: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    tag: Option<&'static str>,
     #[serde(skip_serializing_if = "Option::is_none")]
     proof_error: Option<String>,
     /// The rendered part of the photo, normalised: x, y, width, height.
@@ -1170,6 +1175,12 @@ struct DaemonCommand {
     /// `adjust`, `detail`: soft-proof the preview against an output profile
     #[serde(default)]
     proof: Option<ProofRequest>,
+    /// `adjust`, `detail`: mark in-focus edges (see `pipeline::peaking`)
+    #[serde(default)]
+    focus_peaking: Option<bool>,
+    /// `detail`: "loupe" renders for the loupe, into files of its own, and is echoed back
+    #[serde(default)]
+    tag: Option<String>,
 }
 
 #[derive(Serialize)]
@@ -1644,6 +1655,35 @@ fn run_daemon() {
             "icc_profiles" => {
                 print_json(&ResponseWrapper::ok_action("icc_profiles", icc::list_icc_profiles()));
             }
+            "reference" => {
+                // The other side of the compare view: the open photo with another recipe
+                // (a snapshot, a version, or the defaults for "before")
+                let (buffer, width, height, channels, transfer, baseline) = {
+                    let c = cache.lock().unwrap();
+                    match c.raw_buffer_16.as_ref() {
+                        Some(b) => (Arc::clone(b), c.width, c.height, c.channels, c.transfer, c.baseline_exposure),
+                        None => {
+                            print_json::<()>(&ResponseWrapper::err_action("reference", "No RAW image currently loaded in daemon cache"));
+                            continue;
+                        }
+                    }
+                };
+                let recipe = Recipe { baseline_exposure: baseline, ..cmd_obj.recipe.unwrap_or_default() };
+                let (mut rgb, _) = process_buffer_16_to_8_ex(&buffer, width, height, channels, &recipe, transfer, false, false);
+                let proof_error = apply_proof(&mut rgb, cmd_obj.proof.as_ref());
+                let slot = REFERENCE_SLOT.fetch_add(1, std::sync::atomic::Ordering::Relaxed) % 2;
+                let dest = security::get_secure_preview_dir().join(format!("omastudio_reference_{}.ppm", slot));
+                let mut ppm = format!("P6\n{} {}\n255\n", width, height).into_bytes();
+                ppm.extend_from_slice(&rgb);
+                match security::atomic_write_secure(&dest, &ppm) {
+                    Ok(()) => print_json(&ResponseWrapper::ok_action("reference", RenderResult {
+                        image: dest.to_string_lossy().to_string(),
+                        histogram: Default::default(),
+                        proof_error,
+                    })),
+                    Err(e) => print_json::<()>(&ResponseWrapper::err_action("reference", format!("Failed to write compare view: {}", e))),
+                }
+            }
             "load" => {
                 let p = match cmd_obj.path {
                     Some(ref path) => path,
@@ -1786,6 +1826,9 @@ fn run_daemon() {
                 };
 
                 let proof_error = apply_proof(&mut final_buf, cmd_obj.proof.as_ref());
+                if cmd_obj.focus_peaking == Some(true) {
+                    pipeline::peaking::apply(&mut final_buf, width as usize, height as usize);
+                }
 
                 let dest_path = Path::new(&out_dest);
                 let write_result: Result<(), String> = if out_dest.ends_with(".ppm") {
@@ -1851,8 +1894,14 @@ fn run_daemon() {
                 let window = pipeline::Window { x0: src.0, y0: src.1, frame_w: vw, frame_h: vh };
                 let mut rgb = pipeline::render_region_8(&input, src.2, src.3, window, out, &recipe, full.transfer);
                 let proof_error = apply_proof(&mut rgb, cmd_obj.proof.as_ref());
+                if cmd_obj.focus_peaking == Some(true) {
+                    pipeline::peaking::apply(&mut rgb, ow, oh);
+                }
 
-                let dest = security::get_secure_preview_dir().join(format!("omastudio_detail_{}.ppm", slot));
+                // The loupe and the viewport's detail view render at the same time; each
+                // has its own pair of files so one never overwrites what the other shows
+                let tag = (cmd_obj.tag.as_deref() == Some("loupe")).then_some("loupe");
+                let dest = security::get_secure_preview_dir().join(format!("omastudio_{}_{}.ppm", tag.unwrap_or("detail"), slot));
                 let mut ppm = format!("P6\n{} {}\n255\n", ow, oh).into_bytes();
                 ppm.extend_from_slice(&rgb);
                 if let Err(e) = security::atomic_write_secure(&dest, &ppm) {
@@ -1861,6 +1910,7 @@ fn run_daemon() {
                 }
                 print_json(&ResponseWrapper::ok_action("detail", DetailResult {
                     image: dest.to_string_lossy().to_string(),
+                    tag,
                     proof_error,
                     region: [ox as f64 / vw as f64, oy as f64 / vh as f64, ow as f64 / vw as f64, oh as f64 / vh as f64],
                     width: ow,

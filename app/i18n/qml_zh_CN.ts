@@ -1710,6 +1710,10 @@
         <translation>未应用软打样：%1</translation>
     </message>
     <message>
+        <source>Before</source>
+        <translation>之前</translation>
+    </message>
+    <message>
         <source>Snapshot %1</source>
         <translation>快照 %1</translation>
     </message>
@@ -2504,6 +2508,30 @@
         <translation>背景颜色</translation>
     </message>
     <message>
+        <source>Loupe</source>
+        <translation>放大镜</translation>
+    </message>
+    <message>
+        <source>Loupe (L): the photo at 1:1 around the pointer</source>
+        <translation>放大镜 (L)：以 1:1 显示指针周围的照片</translation>
+    </message>
+    <message>
+        <source>Peaking</source>
+        <translation>峰值对焦</translation>
+    </message>
+    <message>
+        <source>Focus peaking (Shift+F): marks the sharpest edges in green</source>
+        <translation>峰值对焦 (Shift+F)：用绿色标出最清晰的边缘</translation>
+    </message>
+    <message>
+        <source>Compare</source>
+        <translation>比较</translation>
+    </message>
+    <message>
+        <source>Compare (Shift+C): another state of the edit beside this one</source>
+        <translation>比较 (Shift+C)：在旁边显示编辑的另一个状态</translation>
+    </message>
+    <message>
         <source>Crop</source>
         <translation>裁剪</translation>
     </message>
@@ -2550,6 +2578,10 @@
     <message>
         <source>ORIGINAL RAW (Before)</source>
         <translation>原始 RAW（之前）</translation>
+    </message>
+    <message>
+        <source>Current edit</source>
+        <translation>当前编辑</translation>
     </message>
     <message>
         <source>EDITED RECIPE (After)</source>

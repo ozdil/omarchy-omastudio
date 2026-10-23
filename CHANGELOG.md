@@ -65,6 +65,11 @@
 - **Gamut warning** paints the colours the profile cannot reproduce magenta. The preview is sRGB, so it only finds colours outside profiles that are smaller than sRGB somewhere, which is what printers and papers are.
 - The profile, intent and warning setting are remembered; soft proofing itself starts off.
 
+### Loupe, focus peaking and compare
+- **Loupe** (L, or the Loupe button under the photo): a square under the pointer shows the full-resolution photo at 1:1, at any zoom, rendered with the current edit.
+- **Focus peaking** (Shift+F): the sharpest edges are painted green in the preview, the 1:1 detail view and the loupe, so the plane of focus shows at a glance. It is a view aid; exports are not affected.
+- **Compare** (Shift+C): the current edit beside another state of the same photo, both fitted: **Before** (no edits), a grade version or any snapshot.
+
 ### Colour management
 - **Gamut compression** is now a switch of its own and follows the ACES 1.3 reference gamut compression: colours pushed outside the gamut by grading come back in smoothly, colours inside it are left alone. The previous version clipped negative values outright and desaturated every strongly saturated colour.
 - The working colour space list (sRGB, Display P3, Rec. 2020, ACEScg) is gone: the choice did not change the rendering (ACEScg only switched gamut compression on), and its coverage figures were wrong. The output colour space is chosen in the Export window, which converts with ICC profiles. Edits saved with ACEScg open with gamut compression on.

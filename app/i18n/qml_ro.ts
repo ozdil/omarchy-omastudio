@@ -1718,6 +1718,10 @@
         <translation>Probă pe ecran neaplicată: %1</translation>
     </message>
     <message>
+        <source>Before</source>
+        <translation>Înainte</translation>
+    </message>
+    <message>
         <source>Snapshot %1</source>
         <translation>Instantaneu %1</translation>
     </message>
@@ -2516,6 +2520,30 @@
         <translation>Culoarea împrejurimilor</translation>
     </message>
     <message>
+        <source>Loupe</source>
+        <translation>Lupă</translation>
+    </message>
+    <message>
+        <source>Loupe (L): the photo at 1:1 around the pointer</source>
+        <translation>Lupă (L): fotografia la 1:1 în jurul cursorului</translation>
+    </message>
+    <message>
+        <source>Peaking</source>
+        <translation>Focalizare</translation>
+    </message>
+    <message>
+        <source>Focus peaking (Shift+F): marks the sharpest edges in green</source>
+        <translation>Focus peaking (Shift+F): marchează cu verde marginile cele mai clare</translation>
+    </message>
+    <message>
+        <source>Compare</source>
+        <translation>Compară</translation>
+    </message>
+    <message>
+        <source>Compare (Shift+C): another state of the edit beside this one</source>
+        <translation>Compară (Shift+C): altă stare a editării lângă aceasta</translation>
+    </message>
+    <message>
         <source>Crop</source>
         <translation>Decupează</translation>
     </message>
@@ -2562,6 +2590,10 @@
     <message>
         <source>ORIGINAL RAW (Before)</source>
         <translation>RAW ORIGINAL (înainte)</translation>
+    </message>
+    <message>
+        <source>Current edit</source>
+        <translation>Editarea curentă</translation>
     </message>
     <message>
         <source>EDITED RECIPE (After)</source>

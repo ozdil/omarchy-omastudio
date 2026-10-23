@@ -1710,6 +1710,10 @@
         <translation>소프트 프루프를 적용하지 못했습니다: %1</translation>
     </message>
     <message>
+        <source>Before</source>
+        <translation>이전</translation>
+    </message>
+    <message>
         <source>Snapshot %1</source>
         <translation>스냅숏 %1</translation>
     </message>
@@ -2504,6 +2508,30 @@
         <translation>배경 색상</translation>
     </message>
     <message>
+        <source>Loupe</source>
+        <translation>돋보기</translation>
+    </message>
+    <message>
+        <source>Loupe (L): the photo at 1:1 around the pointer</source>
+        <translation>돋보기 (L): 포인터 주변을 1:1로 표시</translation>
+    </message>
+    <message>
+        <source>Peaking</source>
+        <translation>피킹</translation>
+    </message>
+    <message>
+        <source>Focus peaking (Shift+F): marks the sharpest edges in green</source>
+        <translation>포커스 피킹 (Shift+F): 가장 선명한 가장자리를 초록색으로 표시</translation>
+    </message>
+    <message>
+        <source>Compare</source>
+        <translation>비교</translation>
+    </message>
+    <message>
+        <source>Compare (Shift+C): another state of the edit beside this one</source>
+        <translation>비교 (Shift+C): 편집의 다른 상태를 옆에 표시</translation>
+    </message>
+    <message>
         <source>Crop</source>
         <translation>자르기</translation>
     </message>
@@ -2550,6 +2578,10 @@
     <message>
         <source>ORIGINAL RAW (Before)</source>
         <translation>원본 RAW (전)</translation>
+    </message>
+    <message>
+        <source>Current edit</source>
+        <translation>현재 편집</translation>
     </message>
     <message>
         <source>EDITED RECIPE (After)</source>

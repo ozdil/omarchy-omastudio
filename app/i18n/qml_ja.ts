@@ -1710,6 +1710,10 @@
         <translation>ソフトプルーフを適用できませんでした: %1</translation>
     </message>
     <message>
+        <source>Before</source>
+        <translation>補正前</translation>
+    </message>
+    <message>
         <source>Snapshot %1</source>
         <translation>スナップショット %1</translation>
     </message>
@@ -2504,6 +2508,30 @@
         <translation>背景色</translation>
     </message>
     <message>
+        <source>Loupe</source>
+        <translation>ルーペ</translation>
+    </message>
+    <message>
+        <source>Loupe (L): the photo at 1:1 around the pointer</source>
+        <translation>ルーペ (L): ポインター周辺を等倍で表示</translation>
+    </message>
+    <message>
+        <source>Peaking</source>
+        <translation>ピーキング</translation>
+    </message>
+    <message>
+        <source>Focus peaking (Shift+F): marks the sharpest edges in green</source>
+        <translation>フォーカスピーキング (Shift+F): 最もシャープなエッジを緑で示します</translation>
+    </message>
+    <message>
+        <source>Compare</source>
+        <translation>比較</translation>
+    </message>
+    <message>
+        <source>Compare (Shift+C): another state of the edit beside this one</source>
+        <translation>比較 (Shift+C): 編集の別の状態を横に並べて表示</translation>
+    </message>
+    <message>
         <source>Crop</source>
         <translation>切り抜き</translation>
     </message>
@@ -2550,6 +2578,10 @@
     <message>
         <source>ORIGINAL RAW (Before)</source>
         <translation>元の RAW（補正前）</translation>
+    </message>
+    <message>
+        <source>Current edit</source>
+        <translation>現在の編集</translation>
     </message>
     <message>
         <source>EDITED RECIPE (After)</source>

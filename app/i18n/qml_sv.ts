@@ -1714,6 +1714,10 @@
         <translation>Skärmkorrektur inte tillämpad: %1</translation>
     </message>
     <message>
+        <source>Before</source>
+        <translation>Före</translation>
+    </message>
+    <message>
         <source>Snapshot %1</source>
         <translation>Ögonblicksbild %1</translation>
     </message>
@@ -2510,6 +2514,30 @@
         <translation>Omgivningsfärg</translation>
     </message>
     <message>
+        <source>Loupe</source>
+        <translation>Lupp</translation>
+    </message>
+    <message>
+        <source>Loupe (L): the photo at 1:1 around the pointer</source>
+        <translation>Lupp (L): fotot i 1:1 runt pekaren</translation>
+    </message>
+    <message>
+        <source>Peaking</source>
+        <translation>Fokus</translation>
+    </message>
+    <message>
+        <source>Focus peaking (Shift+F): marks the sharpest edges in green</source>
+        <translation>Fokusmarkering (Skift+F): markerar de skarpaste kanterna i grönt</translation>
+    </message>
+    <message>
+        <source>Compare</source>
+        <translation>Jämför</translation>
+    </message>
+    <message>
+        <source>Compare (Shift+C): another state of the edit beside this one</source>
+        <translation>Jämför (Skift+C): ett annat läge av redigeringen bredvid detta</translation>
+    </message>
+    <message>
         <source>Crop</source>
         <translation>Beskär</translation>
     </message>
@@ -2556,6 +2584,10 @@
     <message>
         <source>ORIGINAL RAW (Before)</source>
         <translation>ORIGINAL-RAW (före)</translation>
+    </message>
+    <message>
+        <source>Current edit</source>
+        <translation>Aktuell redigering</translation>
     </message>
     <message>
         <source>EDITED RECIPE (After)</source>

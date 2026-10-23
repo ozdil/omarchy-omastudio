@@ -1710,6 +1710,10 @@
         <translation>未套用螢幕校樣：%1</translation>
     </message>
     <message>
+        <source>Before</source>
+        <translation>之前</translation>
+    </message>
+    <message>
         <source>Snapshot %1</source>
         <translation>快照 %1</translation>
     </message>
@@ -2504,6 +2508,30 @@
         <translation>背景顏色</translation>
     </message>
     <message>
+        <source>Loupe</source>
+        <translation>放大鏡</translation>
+    </message>
+    <message>
+        <source>Loupe (L): the photo at 1:1 around the pointer</source>
+        <translation>放大鏡 (L)：以 1:1 顯示指標周圍的照片</translation>
+    </message>
+    <message>
+        <source>Peaking</source>
+        <translation>峰值對焦</translation>
+    </message>
+    <message>
+        <source>Focus peaking (Shift+F): marks the sharpest edges in green</source>
+        <translation>峰值對焦 (Shift+F)：以綠色標示最清晰的邊緣</translation>
+    </message>
+    <message>
+        <source>Compare</source>
+        <translation>比較</translation>
+    </message>
+    <message>
+        <source>Compare (Shift+C): another state of the edit beside this one</source>
+        <translation>比較 (Shift+C)：在旁邊顯示編輯的另一個狀態</translation>
+    </message>
+    <message>
         <source>Crop</source>
         <translation>裁剪</translation>
     </message>
@@ -2550,6 +2578,10 @@
     <message>
         <source>ORIGINAL RAW (Before)</source>
         <translation>原始 RAW（之前）</translation>
+    </message>
+    <message>
+        <source>Current edit</source>
+        <translation>目前的編輯</translation>
     </message>
     <message>
         <source>EDITED RECIPE (After)</source>

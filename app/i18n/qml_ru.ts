@@ -1718,6 +1718,10 @@
         <translation>Цветопроба не применена: %1</translation>
     </message>
     <message>
+        <source>Before</source>
+        <translation>До</translation>
+    </message>
+    <message>
         <source>Snapshot %1</source>
         <translation>Снимок %1</translation>
     </message>
@@ -2516,6 +2520,30 @@
         <translation>Цвет окружения</translation>
     </message>
     <message>
+        <source>Loupe</source>
+        <translation>Лупа</translation>
+    </message>
+    <message>
+        <source>Loupe (L): the photo at 1:1 around the pointer</source>
+        <translation>Лупа (L): фото в масштабе 1:1 вокруг указателя</translation>
+    </message>
+    <message>
+        <source>Peaking</source>
+        <translation>Фокус</translation>
+    </message>
+    <message>
+        <source>Focus peaking (Shift+F): marks the sharpest edges in green</source>
+        <translation>Подсветка фокуса (Shift+F): отмечает самые резкие края зелёным</translation>
+    </message>
+    <message>
+        <source>Compare</source>
+        <translation>Сравнить</translation>
+    </message>
+    <message>
+        <source>Compare (Shift+C): another state of the edit beside this one</source>
+        <translation>Сравнить (Shift+C): другое состояние обработки рядом с текущим</translation>
+    </message>
+    <message>
         <source>Crop</source>
         <translation>Кадрировать</translation>
     </message>
@@ -2562,6 +2590,10 @@
     <message>
         <source>ORIGINAL RAW (Before)</source>
         <translation>ИСХОДНЫЙ RAW (до)</translation>
+    </message>
+    <message>
+        <source>Current edit</source>
+        <translation>Текущая обработка</translation>
     </message>
     <message>
         <source>EDITED RECIPE (After)</source>

@@ -1714,6 +1714,10 @@
         <translation>सॉफ़्ट प्रूफ़ लागू नहीं हुआ: %1</translation>
     </message>
     <message>
+        <source>Before</source>
+        <translation>पहले</translation>
+    </message>
+    <message>
         <source>Snapshot %1</source>
         <translation>स्नैपशॉट %1</translation>
     </message>
@@ -2510,6 +2514,30 @@
         <translation>आसपास का रंग</translation>
     </message>
     <message>
+        <source>Loupe</source>
+        <translation>आवर्धक</translation>
+    </message>
+    <message>
+        <source>Loupe (L): the photo at 1:1 around the pointer</source>
+        <translation>आवर्धक (L): पॉइंटर के आसपास फ़ोटो 1:1 पर</translation>
+    </message>
+    <message>
+        <source>Peaking</source>
+        <translation>फ़ोकस</translation>
+    </message>
+    <message>
+        <source>Focus peaking (Shift+F): marks the sharpest edges in green</source>
+        <translation>फ़ोकस पीकिंग (Shift+F): सबसे तीखे किनारों को हरे रंग से चिह्नित करता है</translation>
+    </message>
+    <message>
+        <source>Compare</source>
+        <translation>तुलना करें</translation>
+    </message>
+    <message>
+        <source>Compare (Shift+C): another state of the edit beside this one</source>
+        <translation>तुलना करें (Shift+C): इसके बगल में संपादन की कोई दूसरी स्थिति</translation>
+    </message>
+    <message>
         <source>Crop</source>
         <translation>क्रॉप</translation>
     </message>
@@ -2556,6 +2584,10 @@
     <message>
         <source>ORIGINAL RAW (Before)</source>
         <translation>मूल RAW (पहले)</translation>
+    </message>
+    <message>
+        <source>Current edit</source>
+        <translation>मौजूदा संपादन</translation>
     </message>
     <message>
         <source>EDITED RECIPE (After)</source>

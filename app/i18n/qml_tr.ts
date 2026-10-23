@@ -1710,6 +1710,10 @@
         <translation>Ekran provası uygulanmadı: %1</translation>
     </message>
     <message>
+        <source>Before</source>
+        <translation>Önce</translation>
+    </message>
+    <message>
         <source>Snapshot %1</source>
         <translation>Anlık görüntü %1</translation>
     </message>
@@ -2504,6 +2508,30 @@
         <translation>Çevre rengi</translation>
     </message>
     <message>
+        <source>Loupe</source>
+        <translation>Büyüteç</translation>
+    </message>
+    <message>
+        <source>Loupe (L): the photo at 1:1 around the pointer</source>
+        <translation>Büyüteç (L): fotoğrafı imlecin çevresinde 1:1 gösterir</translation>
+    </message>
+    <message>
+        <source>Peaking</source>
+        <translation>Odak</translation>
+    </message>
+    <message>
+        <source>Focus peaking (Shift+F): marks the sharpest edges in green</source>
+        <translation>Odak vurgusu (Shift+F): en keskin kenarları yeşille işaretler</translation>
+    </message>
+    <message>
+        <source>Compare</source>
+        <translation>Karşılaştır</translation>
+    </message>
+    <message>
+        <source>Compare (Shift+C): another state of the edit beside this one</source>
+        <translation>Karşılaştır (Shift+C): düzenlemenin başka bir hâli bunun yanında</translation>
+    </message>
+    <message>
         <source>Crop</source>
         <translation>Kırp</translation>
     </message>
@@ -2550,6 +2578,10 @@
     <message>
         <source>ORIGINAL RAW (Before)</source>
         <translation>ORİJİNAL RAW (önce)</translation>
+    </message>
+    <message>
+        <source>Current edit</source>
+        <translation>Mevcut düzenleme</translation>
     </message>
     <message>
         <source>EDITED RECIPE (After)</source>

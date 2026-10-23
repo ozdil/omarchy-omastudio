@@ -1710,6 +1710,10 @@
         <translation>Soft proof tidak diterapkan: %1</translation>
     </message>
     <message>
+        <source>Before</source>
+        <translation>Sebelum</translation>
+    </message>
+    <message>
         <source>Snapshot %1</source>
         <translation>Snapshot %1</translation>
     </message>
@@ -2504,6 +2508,30 @@
         <translation>Warna sekitar</translation>
     </message>
     <message>
+        <source>Loupe</source>
+        <translation>Kaca pembesar</translation>
+    </message>
+    <message>
+        <source>Loupe (L): the photo at 1:1 around the pointer</source>
+        <translation>Kaca pembesar (L): foto pada 1:1 di sekitar penunjuk</translation>
+    </message>
+    <message>
+        <source>Peaking</source>
+        <translation>Fokus</translation>
+    </message>
+    <message>
+        <source>Focus peaking (Shift+F): marks the sharpest edges in green</source>
+        <translation>Focus peaking (Shift+F): menandai tepi paling tajam dengan hijau</translation>
+    </message>
+    <message>
+        <source>Compare</source>
+        <translation>Bandingkan</translation>
+    </message>
+    <message>
+        <source>Compare (Shift+C): another state of the edit beside this one</source>
+        <translation>Bandingkan (Shift+C): keadaan edit lain di samping yang ini</translation>
+    </message>
+    <message>
         <source>Crop</source>
         <translation>Pangkas</translation>
     </message>
@@ -2550,6 +2578,10 @@
     <message>
         <source>ORIGINAL RAW (Before)</source>
         <translation>RAW ASLI (sebelum)</translation>
+    </message>
+    <message>
+        <source>Current edit</source>
+        <translation>Edit saat ini</translation>
     </message>
     <message>
         <source>EDITED RECIPE (After)</source>
