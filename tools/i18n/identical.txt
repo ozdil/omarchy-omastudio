@@ -17,6 +17,10 @@ tr:Platform:
 tr:Platform
 # Invert toggle: the first letter is the same in many languages
 I
+# Numbers with units; some languages write them the same way
+100% sRGB
+125% sRGB
+150% sRGB
 # Feature and product names
 OK
 PIXEL SHIFT MULTI-SHOT
@@ -54,3 +58,14 @@ fr:Original
 fr:POSITION
 de:Version %1
 fr:Version %1
+es:Global
+es:Perceptual
+es:Sepia
+es:Magenta
+es:+ RADIAL
+es:HIST
+es:VECTOR
+es:Original
+it:Magenta
+it:Standard
+it:Texture
