@@ -95,7 +95,7 @@ Rectangle {
     readonly property int effectiveDepth: depthsFor(selectedFormat).indexOf(bitDepth) >= 0 ? bitDepth : bestDepth(selectedFormat)
     readonly property bool hasQuality: ["jpeg", "webp", "avif", "heic", "jxl"].indexOf(selectedFormat) >= 0
     readonly property bool hasLossless: ["webp", "avif", "heic", "jxl"].indexOf(selectedFormat) >= 0
-    readonly property bool statusIsError: exportStatusText.indexOf("[ERR]") === 0
+    readonly property bool statusIsError: exportStatusIsError || exportStatusText.indexOf("[ERR]") === 0
 
     onSelectedFormatChanged: bitDepth = 0
 
@@ -361,7 +361,8 @@ Rectangle {
                             { "id": "50", "label": "50 %" },
                             { "id": "3840", "label": qsTr("3840 px"), "tip": qsTr("Long edge at most 3840 px") },
                             { "id": "2048", "label": qsTr("2048 px"), "tip": qsTr("Long edge at most 2048 px") }
-                        ]
+                        ].concat(root.maxDimension && root.maxDimension !== 3840 && root.maxDimension !== 2048
+                                 ? [{ "id": String(root.maxDimension), "label": root.maxDimension + " px" }] : [])
                         current: root.maxDimension ? String(root.maxDimension) : String(root.scalePercent)
                         onPicked: function(id) {
                             var n = Number(id);

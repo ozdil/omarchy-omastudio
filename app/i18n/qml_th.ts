@@ -232,6 +232,57 @@
     </message>
 </context>
 <context>
+    <name>AiChatPanel</name>
+    <message>
+        <source>Open a photo first</source>
+        <translation>เปิดภาพก่อน</translation>
+    </message>
+    <message>
+        <source>Edit applied.</source>
+        <translation>ใช้การแก้ไขแล้ว</translation>
+    </message>
+    <message>
+        <source>Chat · %1</source>
+        <translation>แชต · %1</translation>
+    </message>
+    <message>
+        <source>Chat</source>
+        <translation>แชต</translation>
+    </message>
+    <message>
+        <source>Reconnect</source>
+        <translation>เชื่อมต่อใหม่</translation>
+    </message>
+    <message>
+        <source>Clear chat</source>
+        <translation>ล้างแชต</translation>
+    </message>
+    <message>
+        <source>Close chat</source>
+        <translation>ปิดแชต</translation>
+    </message>
+    <message>
+        <source>Write below what to change in the photo. The AI sets the adjustments; Ctrl+Z undoes each edit.</source>
+        <translation>เขียนด้านล่างว่าจะเปลี่ยนอะไรในภาพ AI จะตั้งค่าแถบเลื่อน และ Ctrl+Z เลิกทำแต่ละการแก้ไข</translation>
+    </message>
+    <message>
+        <source>Working…</source>
+        <translation>กำลังทำงาน…</translation>
+    </message>
+    <message>
+        <source>e.g. warmer, moody evening light, recover the sky</source>
+        <translation>เช่น อุ่นขึ้น แสงยามเย็นหม่น ๆ กู้คืนท้องฟ้า</translation>
+    </message>
+    <message>
+        <source>Message to the AI</source>
+        <translation>ข้อความถึง AI</translation>
+    </message>
+    <message>
+        <source>Send</source>
+        <translation>ส่ง</translation>
+    </message>
+</context>
+<context>
     <name>BoundedTextInput</name>
     <message>
         <source>Clipboard content exceeded byte limit or timed out.</source>
@@ -668,10 +719,6 @@
         <translation>มาตรฐาน / ปิด</translation>
     </message>
     <message>
-        <source>Neutral camera linear profile</source>
-        <translation>โปรไฟล์กล้องเชิงเส้นแบบกลาง</translation>
-    </message>
-    <message>
         <source>Standard natural daylight color</source>
         <translation>สีแสงกลางวันธรรมชาติแบบมาตรฐาน</translation>
     </message>
@@ -798,6 +845,10 @@
     <message>
         <source>Acros B&amp;W</source>
         <translation>Acros ขาวดำ</translation>
+    </message>
+    <message>
+        <source>No film simulation</source>
+        <translation>ไม่จำลองฟิล์ม</translation>
     </message>
 </context>
 <context>
@@ -1312,10 +1363,6 @@
         <translation>การเรนเดอร์ภาพตัวอย่างล้มเหลว</translation>
     </message>
     <message>
-        <source>%1 applied (%2)</source>
-        <translation>ใช้ %1 แล้ว (%2)</translation>
-    </message>
-    <message>
         <source>Batch export: %1 succeeded, %2 failed</source>
         <translation>ส่งออกเป็นชุด: สำเร็จ %1 ล้มเหลว %2</translation>
     </message>
@@ -1490,10 +1537,6 @@
     <message>
         <source>Reset to defaults</source>
         <translation>รีเซ็ตเป็นค่าเริ่มต้นแล้ว</translation>
-    </message>
-    <message>
-        <source>Platform crop reset</source>
-        <translation>รีเซ็ตการครอปสำหรับแพลตฟอร์มแล้ว</translation>
     </message>
     <message>
         <source>Auto applied</source>
@@ -1721,6 +1764,22 @@
         <source>Developing at full resolution…</source>
         <translation>กำลังล้างภาพที่ความละเอียดเต็ม…</translation>
     </message>
+    <message>
+        <source>%1 applied: long edge %2 px, quality %3</source>
+        <translation>ใช้ %1 แล้ว: ด้านยาว %2 px คุณภาพ %3</translation>
+    </message>
+    <message>
+        <source>Pro: tone curve, colour mixer, colour grading, detail, grain, colour management and the Masks tab are shown</source>
+        <translation>Pro: แสดงเส้นโค้งโทน ตัวผสมสี การเกรดสี รายละเอียด เกรน การจัดการสี และแท็บ มาสก์</translation>
+    </message>
+    <message>
+        <source>Essentials: Pro sections are hidden. Settings made in them stay applied.</source>
+        <translation>พื้นฐาน: ซ่อนส่วน Pro แล้ว การตั้งค่าในส่วนเหล่านั้นยังมีผลอยู่</translation>
+    </message>
+    <message>
+        <source>Platform crop reset</source>
+        <translation>รีเซ็ตการครอปสำหรับแพลตฟอร์มแล้ว</translation>
+    </message>
 </context>
 <context>
     <name>Navigator</name>
@@ -1734,6 +1793,10 @@
     <message>
         <source>Reset %1</source>
         <translation>รีเซ็ต %1</translation>
+    </message>
+    <message>
+        <source>Pro</source>
+        <translation>Pro</translation>
     </message>
 </context>
 <context>
@@ -1930,10 +1993,6 @@
         <translation>รีเซ็ต</translation>
     </message>
     <message>
-        <source>Vectorscope 123° flesh line (target: %1°)</source>
-        <translation>เส้นผิว 123° บนเวกเตอร์สโคป (เป้าหมาย: %1°)</translation>
-    </message>
-    <message>
         <source>Target Skin Hue</source>
         <translation>เฉดผิวเป้าหมาย</translation>
     </message>
@@ -1956,6 +2015,10 @@
     <message>
         <source>Saturation Shift</source>
         <translation>การเลื่อนความอิ่มตัว</translation>
+    </message>
+    <message>
+        <source>Target skin hue: %1° (Oklab)</source>
+        <translation>โทนผิวเป้าหมาย: %1° (Oklab)</translation>
     </message>
 </context>
 <context>
@@ -2021,16 +2084,8 @@
         <translation>กำลังเชื่อมต่อ…</translation>
     </message>
     <message>
-        <source>Local AI</source>
-        <translation>AI ภายในเครื่อง</translation>
-    </message>
-    <message>
         <source>Connect local AI</source>
         <translation>เชื่อมต่อ AI ภายในเครื่อง</translation>
-    </message>
-    <message>
-        <source>Connected: %1. Click to reconnect.</source>
-        <translation>เชื่อมต่อแล้ว: %1 คลิกเพื่อเชื่อมต่อใหม่</translation>
     </message>
     <message>
         <source>Use Omarchy&apos;s default AI agent, or Ollama or LM Studio on this computer</source>
@@ -2071,6 +2126,26 @@
     <message>
         <source>Export</source>
         <translation>ส่งออก</translation>
+    </message>
+    <message>
+        <source>Connected: %1. Click to close the chat.</source>
+        <translation>เชื่อมต่อแล้ว: %1 คลิกเพื่อปิดแชต</translation>
+    </message>
+    <message>
+        <source>Connected: %1. Click to open the chat.</source>
+        <translation>เชื่อมต่อแล้ว: %1 คลิกเพื่อเปิดแชต</translation>
+    </message>
+    <message>
+        <source>AI chat</source>
+        <translation>แชตกับ AI</translation>
+    </message>
+    <message>
+        <source>Essentials: white balance, tone, presence, film simulation, presets and LUT</source>
+        <translation>พื้นฐาน: สมดุลแสงขาว โทน ความเด่นชัด การจำลองฟิล์ม พรีเซ็ต และ LUT</translation>
+    </message>
+    <message>
+        <source>Pro adds tone curve, colour mixer, colour grading, detail, grain, colour management and masks</source>
+        <translation>Pro เพิ่มเส้นโค้งโทน ตัวผสมสี การเกรดสี รายละเอียด เกรน การจัดการสี และมาสก์</translation>
     </message>
 </context>
 <context>

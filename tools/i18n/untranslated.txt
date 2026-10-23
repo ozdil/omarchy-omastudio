@@ -78,3 +78,7 @@ Adobe RGB
 Rec. 2020
 ACEScg
 Facebook
+# Agents and local AI servers named on the AI button
+Claude
+Codex
+LM

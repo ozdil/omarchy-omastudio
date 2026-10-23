@@ -3,6 +3,7 @@ singleton Theme 1.0 Theme.qml
 singleton I18n 1.0 I18n.qml
 AboutDialog 1.0 AboutDialog.qml
 AiAssistPanel 1.0 AiAssistPanel.qml
+AiChatPanel 1.0 AiChatPanel.qml
 BoundedTextInput 1.0 BoundedTextInput.qml
 ColorGradingWheels 1.0 ColorGradingWheels.qml
 ColorSpaceSelector 1.0 ColorSpaceSelector.qml

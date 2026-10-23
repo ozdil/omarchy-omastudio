@@ -129,7 +129,11 @@ impl qobject::Host {
 
     pub fn set_ui_language(mut self: Pin<&mut Self>, code: &QString) -> bool {
         let requested = String::from(code);
-        let choice = if requested.is_empty() { String::new() } else { language::best_match(&requested).unwrap_or_default() };
+        let mut choice = if requested.is_empty() { String::new() } else { language::best_match(&requested).unwrap_or_default() };
+        // Picking the system's own language keeps following the system
+        if choice == language::system() {
+            choice.clear();
+        }
         let saved = language::store(&choice);
         if let Err(e) = &saved {
             eprintln!("omastudio: could not save the language: {e}");

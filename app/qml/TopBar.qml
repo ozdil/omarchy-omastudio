@@ -21,12 +21,41 @@ Rectangle {
     property bool aiConnected: false
     property bool aiBusy: false
     property string aiModel: ""
+    property string aiProvider: ""
+    property string aiProviderName: ""
+    // Who answers, as shown on the button: the agent behind Omarchy's default agent
+    // (claude, codex), else the local server's name and model
+    readonly property string aiLabel: {
+        if (root.aiProvider === "omarchy") {
+            if (root.aiModel === "claude") return "Claude";
+            if (root.aiModel === "codex") return "Codex";
+            return root.aiModel !== "" ? root.aiModel : root.aiProviderName;
+        }
+        var name = root.aiProviderName !== "" ? root.aiProviderName : root.aiProvider;
+        return root.aiModel !== "" ? name + " · " + root.aiModel : name;
+    }
+    // Our own monogram badge per provider; no vendor logos are shipped
+    readonly property string aiMonogram: {
+        if (root.aiProvider === "omarchy") return root.aiModel === "codex" ? "Cx" : (root.aiModel === "claude" ? "C" : "A");
+        if (root.aiProvider === "ollama") return "O";
+        if (root.aiProvider === "lmstudio") return "LM";
+        return root.aiProviderName !== "" ? root.aiProviderName.charAt(0).toUpperCase() : "A";
+    }
+    readonly property color aiBadgeColor: {
+        if (root.aiProvider === "omarchy") return root.aiModel === "codex" ? Theme.accentGreen : Theme.accentOrange;
+        if (root.aiProvider === "ollama") return Theme.accentCyan;
+        if (root.aiProvider === "lmstudio") return Theme.accentMagenta;
+        return Theme.accent;
+    }
 
     signal ratingChanged(int rating)
     signal flagChanged(string flag)
 
     signal toggleMode()
     signal connectLocalAi()
+    // Opens or closes the AI chat once an AI is connected
+    signal toggleAiChat()
+    property bool aiChatOpen: false
     signal openFileClicked()
     signal toggleSplit()
     signal toggleCrop()
@@ -196,24 +225,45 @@ Rectangle {
             implicitWidth: aiRow.implicitWidth + 16
             implicitHeight: 28
             radius: Theme.radiusSm
-            color: aiMouse.containsMouse ? Theme.bgCardHover : Theme.bgCard
-            border.color: root.aiConnected ? Theme.accentGreen : Theme.border
+            color: root.aiChatOpen ? Theme.bgCardHover : (aiMouse.containsMouse ? Theme.bgCardHover : Theme.bgCard)
+            border.color: root.aiChatOpen ? Theme.accent : (root.aiConnected ? Theme.accentGreen : Theme.border)
 
             RowLayout {
                 id: aiRow
                 anchors.centerIn: parent
                 spacing: 6
                 Text {
+                    visible: !root.aiConnected || root.aiBusy
                     text: Theme.iconAi
                     font.family: Theme.iconFont
                     font.pixelSize: Theme.px(10)
-                    color: root.aiConnected ? Theme.accentGreen : Theme.textMuted
+                    color: Theme.textMuted
+                }
+                Rectangle {
+                    visible: root.aiConnected && !root.aiBusy
+                    implicitWidth: Math.max(implicitHeight, monogram.implicitWidth + Theme.px(8))
+                    implicitHeight: Theme.px(18)
+                    radius: implicitHeight / 2
+                    color: root.aiBadgeColor
+
+                    Text {
+                        id: monogram
+                        anchors.centerIn: parent
+                        text: root.aiMonogram
+                        textFormat: Text.PlainText
+                        font.family: Theme.fontFamily
+                        font.pixelSize: Theme.px(9)
+                        font.weight: Font.Bold
+                        color: Theme.bgBase
+                    }
                 }
                 Text {
                     font.family: Theme.fontFamily
                     text: root.aiBusy ? qsTr("Connecting…")
-                        : root.aiConnected ? qsTr("Local AI") : qsTr("Connect local AI")
+                        : root.aiConnected ? root.aiLabel : qsTr("Connect local AI")
                     textFormat: Text.PlainText
+                    elide: Text.ElideRight
+                    Layout.maximumWidth: Theme.px(180)
                     font.pixelSize: Theme.px(10)
                     font.weight: Font.DemiBold
                     color: root.aiConnected ? Theme.textMain : Theme.textMuted
@@ -226,13 +276,14 @@ Rectangle {
                 hoverEnabled: true
                 cursorShape: Qt.PointingHandCursor
                 enabled: !root.aiBusy
-                onClicked: root.connectLocalAi()
+                onClicked: root.aiConnected ? root.toggleAiChat() : root.connectLocalAi()
                 ToolTip.visible: containsMouse
                 ToolTip.delay: 500
-                ToolTip.text: root.aiConnected ? qsTr("Connected: %1. Click to reconnect.").arg(root.aiModel)
+                ToolTip.text: root.aiConnected ? (root.aiChatOpen ? qsTr("Connected: %1. Click to close the chat.").arg(root.aiLabel)
+                                                                    : qsTr("Connected: %1. Click to open the chat.").arg(root.aiLabel))
                                                : qsTr("Use Omarchy's default AI agent, or Ollama or LM Studio on this computer")
                 Accessible.role: Accessible.Button
-                Accessible.name: qsTr("Connect local AI")
+                Accessible.name: root.aiConnected ? qsTr("AI chat") : qsTr("Connect local AI")
             }
         }
 
@@ -276,7 +327,13 @@ Rectangle {
                     MouseArea {
                         anchors.fill: parent
                         cursorShape: Qt.PointingHandCursor
+                        hoverEnabled: true
                         onClicked: if (root.isProMode) root.toggleMode()
+                        ToolTip.visible: containsMouse
+                        ToolTip.delay: 500
+                        ToolTip.text: qsTr("Essentials: white balance, tone, presence, film simulation, presets and LUT")
+                        Accessible.role: Accessible.Button
+                        Accessible.name: qsTr("Essentials")
                     }
                 }
 
@@ -308,7 +365,13 @@ Rectangle {
                     MouseArea {
                         anchors.fill: parent
                         cursorShape: Qt.PointingHandCursor
+                        hoverEnabled: true
                         onClicked: if (!root.isProMode) root.toggleMode()
+                        ToolTip.visible: containsMouse
+                        ToolTip.delay: 500
+                        ToolTip.text: qsTr("Pro adds tone curve, colour mixer, colour grading, detail, grain, colour management and masks")
+                        Accessible.role: Accessible.Button
+                        Accessible.name: qsTr("Pro")
                     }
                 }
             }

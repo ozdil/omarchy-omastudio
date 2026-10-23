@@ -232,6 +232,57 @@
     </message>
 </context>
 <context>
+    <name>AiChatPanel</name>
+    <message>
+        <source>Open a photo first</source>
+        <translation>먼저 사진을 여세요</translation>
+    </message>
+    <message>
+        <source>Edit applied.</source>
+        <translation>편집을 적용했습니다.</translation>
+    </message>
+    <message>
+        <source>Chat · %1</source>
+        <translation>채팅 · %1</translation>
+    </message>
+    <message>
+        <source>Chat</source>
+        <translation>채팅</translation>
+    </message>
+    <message>
+        <source>Reconnect</source>
+        <translation>다시 연결</translation>
+    </message>
+    <message>
+        <source>Clear chat</source>
+        <translation>채팅 지우기</translation>
+    </message>
+    <message>
+        <source>Close chat</source>
+        <translation>채팅 닫기</translation>
+    </message>
+    <message>
+        <source>Write below what to change in the photo. The AI sets the adjustments; Ctrl+Z undoes each edit.</source>
+        <translation>사진에서 바꿀 내용을 아래에 입력하세요. AI가 슬라이더를 설정하며, Ctrl+Z로 각 편집을 되돌릴 수 있습니다.</translation>
+    </message>
+    <message>
+        <source>Working…</source>
+        <translation>작업 중…</translation>
+    </message>
+    <message>
+        <source>e.g. warmer, moody evening light, recover the sky</source>
+        <translation>예: 더 따뜻하게, 우울한 저녁 빛, 하늘 복원</translation>
+    </message>
+    <message>
+        <source>Message to the AI</source>
+        <translation>AI에게 보낼 메시지</translation>
+    </message>
+    <message>
+        <source>Send</source>
+        <translation>보내기</translation>
+    </message>
+</context>
+<context>
     <name>BoundedTextInput</name>
     <message>
         <source>Clipboard content exceeded byte limit or timed out.</source>
@@ -668,10 +719,6 @@
         <translation>표준 / 끄기</translation>
     </message>
     <message>
-        <source>Neutral camera linear profile</source>
-        <translation>중립 선형 카메라 프로필</translation>
-    </message>
-    <message>
         <source>Standard natural daylight color</source>
         <translation>표준 자연 주광 색상</translation>
     </message>
@@ -798,6 +845,10 @@
     <message>
         <source>Acros B&amp;W</source>
         <translation>Acros 흑백</translation>
+    </message>
+    <message>
+        <source>No film simulation</source>
+        <translation>필름 시뮬레이션 없음</translation>
     </message>
 </context>
 <context>
@@ -1312,10 +1363,6 @@
         <translation>미리 보기 렌더링에 실패했습니다</translation>
     </message>
     <message>
-        <source>%1 applied (%2)</source>
-        <translation>%1 적용됨 (%2)</translation>
-    </message>
-    <message>
         <source>Batch export: %1 succeeded, %2 failed</source>
         <translation>일괄 내보내기: 성공 %1, 실패 %2</translation>
     </message>
@@ -1490,10 +1537,6 @@
     <message>
         <source>Reset to defaults</source>
         <translation>기본값으로 재설정됨</translation>
-    </message>
-    <message>
-        <source>Platform crop reset</source>
-        <translation>플랫폼 자르기 재설정됨</translation>
     </message>
     <message>
         <source>Auto applied</source>
@@ -1721,6 +1764,22 @@
         <source>Developing at full resolution…</source>
         <translation>전체 해상도로 현상 중…</translation>
     </message>
+    <message>
+        <source>%1 applied: long edge %2 px, quality %3</source>
+        <translation>%1 적용: 긴 변 %2 px, 품질 %3</translation>
+    </message>
+    <message>
+        <source>Pro: tone curve, colour mixer, colour grading, detail, grain, colour management and the Masks tab are shown</source>
+        <translation>Pro: 톤 곡선, 색상 혼합기, 색 보정, 디테일, 그레인, 색상 관리, 마스크 탭이 표시됩니다</translation>
+    </message>
+    <message>
+        <source>Essentials: Pro sections are hidden. Settings made in them stay applied.</source>
+        <translation>기본: Pro 섹션을 숨겼습니다. 그 설정은 계속 적용됩니다.</translation>
+    </message>
+    <message>
+        <source>Platform crop reset</source>
+        <translation>플랫폼 자르기 재설정됨</translation>
+    </message>
 </context>
 <context>
     <name>Navigator</name>
@@ -1734,6 +1793,10 @@
     <message>
         <source>Reset %1</source>
         <translation>%1 재설정</translation>
+    </message>
+    <message>
+        <source>Pro</source>
+        <translation>Pro</translation>
     </message>
 </context>
 <context>
@@ -1930,10 +1993,6 @@
         <translation>초기화</translation>
     </message>
     <message>
-        <source>Vectorscope 123° flesh line (target: %1°)</source>
-        <translation>벡터스코프 123° 피부 선 (목표: %1°)</translation>
-    </message>
-    <message>
         <source>Target Skin Hue</source>
         <translation>목표 피부 색조</translation>
     </message>
@@ -1956,6 +2015,10 @@
     <message>
         <source>Saturation Shift</source>
         <translation>채도 이동</translation>
+    </message>
+    <message>
+        <source>Target skin hue: %1° (Oklab)</source>
+        <translation>목표 피부 색조: %1° (Oklab)</translation>
     </message>
 </context>
 <context>
@@ -2021,16 +2084,8 @@
         <translation>연결 중…</translation>
     </message>
     <message>
-        <source>Local AI</source>
-        <translation>로컬 AI</translation>
-    </message>
-    <message>
         <source>Connect local AI</source>
         <translation>로컬 AI 연결</translation>
-    </message>
-    <message>
-        <source>Connected: %1. Click to reconnect.</source>
-        <translation>연결됨: %1. 다시 연결하려면 클릭하세요.</translation>
     </message>
     <message>
         <source>Use Omarchy&apos;s default AI agent, or Ollama or LM Studio on this computer</source>
@@ -2071,6 +2126,26 @@
     <message>
         <source>Export</source>
         <translation>내보내기</translation>
+    </message>
+    <message>
+        <source>Connected: %1. Click to close the chat.</source>
+        <translation>연결됨: %1. 클릭하면 채팅을 닫습니다.</translation>
+    </message>
+    <message>
+        <source>Connected: %1. Click to open the chat.</source>
+        <translation>연결됨: %1. 클릭하면 채팅을 엽니다.</translation>
+    </message>
+    <message>
+        <source>AI chat</source>
+        <translation>AI 채팅</translation>
+    </message>
+    <message>
+        <source>Essentials: white balance, tone, presence, film simulation, presets and LUT</source>
+        <translation>기본: 화이트 밸런스, 톤, 존재감, 필름 시뮬레이션, 프리셋, LUT</translation>
+    </message>
+    <message>
+        <source>Pro adds tone curve, colour mixer, colour grading, detail, grain, colour management and masks</source>
+        <translation>Pro는 톤 곡선, 색상 혼합기, 색 보정, 디테일, 그레인, 색상 관리, 마스크를 추가합니다</translation>
     </message>
 </context>
 <context>

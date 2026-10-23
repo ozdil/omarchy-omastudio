@@ -251,3 +251,6 @@ id:16-bit
 fr:Photos
 fr:Images
 nl:Tint
+# "Send" is spelled the same in Danish and Norwegian
+da:Send
+nb:Send

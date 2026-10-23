@@ -18,6 +18,8 @@ ColumnLayout {
     property var host: null
     // Dimmed and inactive while no photo is open
     property bool needsPhoto: true
+    // Shown only in Pro mode; the header carries a "Pro" tag
+    property bool pro: false
     enabled: !needsPhoto || (host !== null && host.activePhotoPath !== "")
     opacity: enabled ? 1.0 : 0.45
 
@@ -72,6 +74,26 @@ ColumnLayout {
                 font.pixelSize: Theme.px(11)
                 font.weight: Font.DemiBold
                 color: sec.expanded || headerMouse.containsMouse ? Theme.textMain : Theme.textMuted
+            }
+
+            Rectangle {
+                visible: sec.pro
+                implicitWidth: proTag.implicitWidth + Theme.px(10)
+                implicitHeight: Theme.px(16)
+                radius: Theme.radiusSm
+                color: "transparent"
+                border.color: Theme.accent
+
+                Text {
+                    id: proTag
+                    anchors.centerIn: parent
+                    text: qsTr("Pro")
+                    textFormat: Text.PlainText
+                    font.family: Theme.fontFamily
+                    font.pixelSize: Theme.px(9)
+                    font.weight: Font.DemiBold
+                    color: Theme.accent
+                }
             }
 
             Rectangle {

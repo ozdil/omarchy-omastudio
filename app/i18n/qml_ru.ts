@@ -232,6 +232,57 @@
     </message>
 </context>
 <context>
+    <name>AiChatPanel</name>
+    <message>
+        <source>Open a photo first</source>
+        <translation>Сначала откройте фото</translation>
+    </message>
+    <message>
+        <source>Edit applied.</source>
+        <translation>Правка применена.</translation>
+    </message>
+    <message>
+        <source>Chat · %1</source>
+        <translation>Чат · %1</translation>
+    </message>
+    <message>
+        <source>Chat</source>
+        <translation>Чат</translation>
+    </message>
+    <message>
+        <source>Reconnect</source>
+        <translation>Переподключить</translation>
+    </message>
+    <message>
+        <source>Clear chat</source>
+        <translation>Очистить чат</translation>
+    </message>
+    <message>
+        <source>Close chat</source>
+        <translation>Закрыть чат</translation>
+    </message>
+    <message>
+        <source>Write below what to change in the photo. The AI sets the adjustments; Ctrl+Z undoes each edit.</source>
+        <translation>Напишите ниже, что изменить на фото. ИИ выставит ползунки; Ctrl+Z отменяет каждую правку.</translation>
+    </message>
+    <message>
+        <source>Working…</source>
+        <translation>Обработка…</translation>
+    </message>
+    <message>
+        <source>e.g. warmer, moody evening light, recover the sky</source>
+        <translation>например: теплее, мрачный вечерний свет, восстановить небо</translation>
+    </message>
+    <message>
+        <source>Message to the AI</source>
+        <translation>Сообщение для ИИ</translation>
+    </message>
+    <message>
+        <source>Send</source>
+        <translation>Отправить</translation>
+    </message>
+</context>
+<context>
     <name>BoundedTextInput</name>
     <message>
         <source>Clipboard content exceeded byte limit or timed out.</source>
@@ -670,10 +721,6 @@
         <translation>Стандарт / выкл.</translation>
     </message>
     <message>
-        <source>Neutral camera linear profile</source>
-        <translation>Нейтральный линейный профиль камеры</translation>
-    </message>
-    <message>
         <source>Standard natural daylight color</source>
         <translation>Стандартный естественный цвет дневного света</translation>
     </message>
@@ -800,6 +847,10 @@
     <message>
         <source>Acros B&amp;W</source>
         <translation>Acros Ч/Б</translation>
+    </message>
+    <message>
+        <source>No film simulation</source>
+        <translation>Без имитации плёнки</translation>
     </message>
 </context>
 <context>
@@ -1320,10 +1371,6 @@
         <translation>Не удалось отрисовать превью</translation>
     </message>
     <message>
-        <source>%1 applied (%2)</source>
-        <translation>%1 применено (%2)</translation>
-    </message>
-    <message>
         <source>Batch export: %1 succeeded, %2 failed</source>
         <translation>Пакетный экспорт: успешно %1, с ошибкой %2</translation>
     </message>
@@ -1498,10 +1545,6 @@
     <message>
         <source>Reset to defaults</source>
         <translation>Восстановлены значения по умолчанию</translation>
-    </message>
-    <message>
-        <source>Platform crop reset</source>
-        <translation>Кадрирование для платформы сброшено</translation>
     </message>
     <message>
         <source>Auto applied</source>
@@ -1731,6 +1774,22 @@
         <source>Developing at full resolution…</source>
         <translation>Проявка в полном разрешении…</translation>
     </message>
+    <message>
+        <source>%1 applied: long edge %2 px, quality %3</source>
+        <translation>%1 применено: длинная сторона %2 px, качество %3</translation>
+    </message>
+    <message>
+        <source>Pro: tone curve, colour mixer, colour grading, detail, grain, colour management and the Masks tab are shown</source>
+        <translation>Pro: показаны тоновая кривая, микшер цветов, цветокоррекция, детализация, зерно, управление цветом и вкладка «Маски»</translation>
+    </message>
+    <message>
+        <source>Essentials: Pro sections are hidden. Settings made in them stay applied.</source>
+        <translation>Основное: разделы Pro скрыты. Сделанные в них настройки продолжают действовать.</translation>
+    </message>
+    <message>
+        <source>Platform crop reset</source>
+        <translation>Кадрирование для платформы сброшено</translation>
+    </message>
 </context>
 <context>
     <name>Navigator</name>
@@ -1744,6 +1803,10 @@
     <message>
         <source>Reset %1</source>
         <translation>Сбросить: %1</translation>
+    </message>
+    <message>
+        <source>Pro</source>
+        <translation>Pro</translation>
     </message>
 </context>
 <context>
@@ -1940,10 +2003,6 @@
         <translation>Сброс</translation>
     </message>
     <message>
-        <source>Vectorscope 123° flesh line (target: %1°)</source>
-        <translation>Линия кожи 123° на вектороскопе (цель: %1°)</translation>
-    </message>
-    <message>
         <source>Target Skin Hue</source>
         <translation>Целевой оттенок кожи</translation>
     </message>
@@ -1966,6 +2025,10 @@
     <message>
         <source>Saturation Shift</source>
         <translation>Сдвиг насыщенности</translation>
+    </message>
+    <message>
+        <source>Target skin hue: %1° (Oklab)</source>
+        <translation>Целевой тон кожи: %1° (Oklab)</translation>
     </message>
 </context>
 <context>
@@ -2033,16 +2096,8 @@
         <translation>Подключение…</translation>
     </message>
     <message>
-        <source>Local AI</source>
-        <translation>Локальный ИИ</translation>
-    </message>
-    <message>
         <source>Connect local AI</source>
         <translation>Подключить локальный ИИ</translation>
-    </message>
-    <message>
-        <source>Connected: %1. Click to reconnect.</source>
-        <translation>Подключено: %1. Нажмите, чтобы переподключиться.</translation>
     </message>
     <message>
         <source>Use Omarchy&apos;s default AI agent, or Ollama or LM Studio on this computer</source>
@@ -2083,6 +2138,26 @@
     <message>
         <source>Export</source>
         <translation>Экспорт</translation>
+    </message>
+    <message>
+        <source>Connected: %1. Click to close the chat.</source>
+        <translation>Подключено: %1. Нажмите, чтобы закрыть чат.</translation>
+    </message>
+    <message>
+        <source>Connected: %1. Click to open the chat.</source>
+        <translation>Подключено: %1. Нажмите, чтобы открыть чат.</translation>
+    </message>
+    <message>
+        <source>AI chat</source>
+        <translation>Чат с ИИ</translation>
+    </message>
+    <message>
+        <source>Essentials: white balance, tone, presence, film simulation, presets and LUT</source>
+        <translation>Основное: баланс белого, тон, выразительность, имитация плёнки, пресеты и LUT</translation>
+    </message>
+    <message>
+        <source>Pro adds tone curve, colour mixer, colour grading, detail, grain, colour management and masks</source>
+        <translation>Pro добавляет тоновую кривую, микшер цветов, цветокоррекцию, детализацию, зерно, управление цветом и маски</translation>
     </message>
 </context>
 <context>

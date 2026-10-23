@@ -232,6 +232,57 @@
     </message>
 </context>
 <context>
+    <name>AiChatPanel</name>
+    <message>
+        <source>Open a photo first</source>
+        <translation>יש לפתוח תמונה תחילה</translation>
+    </message>
+    <message>
+        <source>Edit applied.</source>
+        <translation>העריכה הוחלה.</translation>
+    </message>
+    <message>
+        <source>Chat · %1</source>
+        <translation>שיחה · %1</translation>
+    </message>
+    <message>
+        <source>Chat</source>
+        <translation>שיחה</translation>
+    </message>
+    <message>
+        <source>Reconnect</source>
+        <translation>חיבור מחדש</translation>
+    </message>
+    <message>
+        <source>Clear chat</source>
+        <translation>ניקוי השיחה</translation>
+    </message>
+    <message>
+        <source>Close chat</source>
+        <translation>סגירת השיחה</translation>
+    </message>
+    <message>
+        <source>Write below what to change in the photo. The AI sets the adjustments; Ctrl+Z undoes each edit.</source>
+        <translation>כתבו למטה מה לשנות בתמונה. הבינה המלאכותית מכוונת את המחוונים; Ctrl+Z מבטל כל עריכה.</translation>
+    </message>
+    <message>
+        <source>Working…</source>
+        <translation>מעבד…</translation>
+    </message>
+    <message>
+        <source>e.g. warmer, moody evening light, recover the sky</source>
+        <translation>לדוגמה: חם יותר, אור ערב קודר, שחזור השמיים</translation>
+    </message>
+    <message>
+        <source>Message to the AI</source>
+        <translation>הודעה לבינה המלאכותית</translation>
+    </message>
+    <message>
+        <source>Send</source>
+        <translation>שליחה</translation>
+    </message>
+</context>
+<context>
     <name>BoundedTextInput</name>
     <message>
         <source>Clipboard content exceeded byte limit or timed out.</source>
@@ -669,10 +720,6 @@
         <translation>רגיל / כבוי</translation>
     </message>
     <message>
-        <source>Neutral camera linear profile</source>
-        <translation>פרופיל מצלמה ליניארי ניטרלי</translation>
-    </message>
-    <message>
         <source>Standard natural daylight color</source>
         <translation>צבע טבעי סטנדרטי של אור יום</translation>
     </message>
@@ -799,6 +846,10 @@
     <message>
         <source>Acros B&amp;W</source>
         <translation>Acros שחור-לבן</translation>
+    </message>
+    <message>
+        <source>No film simulation</source>
+        <translation>ללא הדמיית פילם</translation>
     </message>
 </context>
 <context>
@@ -1316,10 +1367,6 @@
         <translation>עיבוד התצוגה המקדימה נכשל</translation>
     </message>
     <message>
-        <source>%1 applied (%2)</source>
-        <translation>%1 הוחל (%2)</translation>
-    </message>
-    <message>
         <source>Batch export: %1 succeeded, %2 failed</source>
         <translation>ייצוא אצווה: %1 הצליחו, %2 נכשלו</translation>
     </message>
@@ -1494,10 +1541,6 @@
     <message>
         <source>Reset to defaults</source>
         <translation>שוחזרו ערכי ברירת המחדל</translation>
-    </message>
-    <message>
-        <source>Platform crop reset</source>
-        <translation>חיתוך הפלטפורמה אופס</translation>
     </message>
     <message>
         <source>Auto applied</source>
@@ -1726,6 +1769,22 @@
         <source>Developing at full resolution…</source>
         <translation>מפתח ברזולוציה מלאה…</translation>
     </message>
+    <message>
+        <source>%1 applied: long edge %2 px, quality %3</source>
+        <translation>%1 הוחל: צלע ארוכה %2 פיקסלים, איכות %3</translation>
+    </message>
+    <message>
+        <source>Pro: tone curve, colour mixer, colour grading, detail, grain, colour management and the Masks tab are shown</source>
+        <translation>Pro: מוצגים עקומת טונים, מערבל צבעים, דירוג צבע, פרטים, גרעיניות, ניהול צבע והלשונית מסכות</translation>
+    </message>
+    <message>
+        <source>Essentials: Pro sections are hidden. Settings made in them stay applied.</source>
+        <translation>בסיסי: מקטעי Pro מוסתרים. ההגדרות שבהם ממשיכות לחול.</translation>
+    </message>
+    <message>
+        <source>Platform crop reset</source>
+        <translation>חיתוך הפלטפורמה אופס</translation>
+    </message>
 </context>
 <context>
     <name>Navigator</name>
@@ -1739,6 +1798,10 @@
     <message>
         <source>Reset %1</source>
         <translation>איפוס %1</translation>
+    </message>
+    <message>
+        <source>Pro</source>
+        <translation>Pro</translation>
     </message>
 </context>
 <context>
@@ -1935,10 +1998,6 @@
         <translation>איפוס</translation>
     </message>
     <message>
-        <source>Vectorscope 123° flesh line (target: %1°)</source>
-        <translation>קו העור של 123° בווקטורסקופ (יעד: %1°)</translation>
-    </message>
-    <message>
         <source>Target Skin Hue</source>
         <translation>גוון עור יעד</translation>
     </message>
@@ -1961,6 +2020,10 @@
     <message>
         <source>Saturation Shift</source>
         <translation>הסטת רוויה</translation>
+    </message>
+    <message>
+        <source>Target skin hue: %1° (Oklab)</source>
+        <translation>גוון עור יעד: %1° (Oklab)</translation>
     </message>
 </context>
 <context>
@@ -2027,16 +2090,8 @@
         <translation>מתחבר…</translation>
     </message>
     <message>
-        <source>Local AI</source>
-        <translation>בינה מלאכותית מקומית</translation>
-    </message>
-    <message>
         <source>Connect local AI</source>
         <translation>חיבור בינה מלאכותית מקומית</translation>
-    </message>
-    <message>
-        <source>Connected: %1. Click to reconnect.</source>
-        <translation>מחובר: %1. יש ללחוץ לחיבור מחדש.</translation>
     </message>
     <message>
         <source>Use Omarchy&apos;s default AI agent, or Ollama or LM Studio on this computer</source>
@@ -2077,6 +2132,26 @@
     <message>
         <source>Export</source>
         <translation>ייצוא</translation>
+    </message>
+    <message>
+        <source>Connected: %1. Click to close the chat.</source>
+        <translation>מחובר: %1. לחצו כדי לסגור את השיחה.</translation>
+    </message>
+    <message>
+        <source>Connected: %1. Click to open the chat.</source>
+        <translation>מחובר: %1. לחצו כדי לפתוח את השיחה.</translation>
+    </message>
+    <message>
+        <source>AI chat</source>
+        <translation>שיחה עם הבינה המלאכותית</translation>
+    </message>
+    <message>
+        <source>Essentials: white balance, tone, presence, film simulation, presets and LUT</source>
+        <translation>בסיסי: איזון לבן, טון, נוכחות, הדמיית פילם, הגדרות קבועות ו-LUT</translation>
+    </message>
+    <message>
+        <source>Pro adds tone curve, colour mixer, colour grading, detail, grain, colour management and masks</source>
+        <translation>Pro מוסיף עקומת טונים, מערבל צבעים, דירוג צבע, פרטים, גרעיניות, ניהול צבע ומסכות</translation>
     </message>
 </context>
 <context>

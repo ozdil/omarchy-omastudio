@@ -232,6 +232,57 @@
     </message>
 </context>
 <context>
+    <name>AiChatPanel</name>
+    <message>
+        <source>Open a photo first</source>
+        <translation>Buka foto terlebih dahulu</translation>
+    </message>
+    <message>
+        <source>Edit applied.</source>
+        <translation>Suntingan diterapkan.</translation>
+    </message>
+    <message>
+        <source>Chat · %1</source>
+        <translation>Obrolan · %1</translation>
+    </message>
+    <message>
+        <source>Chat</source>
+        <translation>Obrolan</translation>
+    </message>
+    <message>
+        <source>Reconnect</source>
+        <translation>Sambungkan ulang</translation>
+    </message>
+    <message>
+        <source>Clear chat</source>
+        <translation>Hapus obrolan</translation>
+    </message>
+    <message>
+        <source>Close chat</source>
+        <translation>Tutup obrolan</translation>
+    </message>
+    <message>
+        <source>Write below what to change in the photo. The AI sets the adjustments; Ctrl+Z undoes each edit.</source>
+        <translation>Tulis di bawah apa yang diubah pada foto. AI mengatur penggeser; Ctrl+Z membatalkan setiap suntingan.</translation>
+    </message>
+    <message>
+        <source>Working…</source>
+        <translation>Sedang bekerja…</translation>
+    </message>
+    <message>
+        <source>e.g. warmer, moody evening light, recover the sky</source>
+        <translation>mis. lebih hangat, cahaya senja yang muram, pulihkan langit</translation>
+    </message>
+    <message>
+        <source>Message to the AI</source>
+        <translation>Pesan untuk AI</translation>
+    </message>
+    <message>
+        <source>Send</source>
+        <translation>Kirim</translation>
+    </message>
+</context>
+<context>
     <name>BoundedTextInput</name>
     <message>
         <source>Clipboard content exceeded byte limit or timed out.</source>
@@ -668,10 +719,6 @@
         <translation>Standar / mati</translation>
     </message>
     <message>
-        <source>Neutral camera linear profile</source>
-        <translation>Profil kamera linear netral</translation>
-    </message>
-    <message>
         <source>Standard natural daylight color</source>
         <translation>Warna siang hari alami standar</translation>
     </message>
@@ -798,6 +845,10 @@
     <message>
         <source>Acros B&amp;W</source>
         <translation>Acros H/P</translation>
+    </message>
+    <message>
+        <source>No film simulation</source>
+        <translation>Tanpa simulasi film</translation>
     </message>
 </context>
 <context>
@@ -1312,10 +1363,6 @@
         <translation>Render pratinjau gagal</translation>
     </message>
     <message>
-        <source>%1 applied (%2)</source>
-        <translation>%1 diterapkan (%2)</translation>
-    </message>
-    <message>
         <source>Batch export: %1 succeeded, %2 failed</source>
         <translation>Ekspor massal: %1 berhasil, %2 gagal</translation>
     </message>
@@ -1490,10 +1537,6 @@
     <message>
         <source>Reset to defaults</source>
         <translation>Diatur ulang ke bawaan</translation>
-    </message>
-    <message>
-        <source>Platform crop reset</source>
-        <translation>Pemangkasan platform diatur ulang</translation>
     </message>
     <message>
         <source>Auto applied</source>
@@ -1721,6 +1764,22 @@
         <source>Developing at full resolution…</source>
         <translation>Mengembangkan dalam resolusi penuh…</translation>
     </message>
+    <message>
+        <source>%1 applied: long edge %2 px, quality %3</source>
+        <translation>%1 diterapkan: sisi panjang %2 px, kualitas %3</translation>
+    </message>
+    <message>
+        <source>Pro: tone curve, colour mixer, colour grading, detail, grain, colour management and the Masks tab are shown</source>
+        <translation>Pro: kurva nada, mixer warna, color grading, detail, butiran, manajemen warna, dan tab Masker ditampilkan</translation>
+    </message>
+    <message>
+        <source>Essentials: Pro sections are hidden. Settings made in them stay applied.</source>
+        <translation>Dasar: bagian Pro disembunyikan. Pengaturannya tetap diterapkan.</translation>
+    </message>
+    <message>
+        <source>Platform crop reset</source>
+        <translation>Pemangkasan platform diatur ulang</translation>
+    </message>
 </context>
 <context>
     <name>Navigator</name>
@@ -1734,6 +1793,10 @@
     <message>
         <source>Reset %1</source>
         <translation>Atur ulang %1</translation>
+    </message>
+    <message>
+        <source>Pro</source>
+        <translation>Pro</translation>
     </message>
 </context>
 <context>
@@ -1930,10 +1993,6 @@
         <translation>Atur ulang</translation>
     </message>
     <message>
-        <source>Vectorscope 123° flesh line (target: %1°)</source>
-        <translation>Garis kulit 123° vektorskop (target: %1°)</translation>
-    </message>
-    <message>
         <source>Target Skin Hue</source>
         <translation>Rona kulit target</translation>
     </message>
@@ -1956,6 +2015,10 @@
     <message>
         <source>Saturation Shift</source>
         <translation>Pergeseran saturasi</translation>
+    </message>
+    <message>
+        <source>Target skin hue: %1° (Oklab)</source>
+        <translation>Rona kulit sasaran: %1° (Oklab)</translation>
     </message>
 </context>
 <context>
@@ -2021,16 +2084,8 @@
         <translation>Menghubungkan…</translation>
     </message>
     <message>
-        <source>Local AI</source>
-        <translation>AI lokal</translation>
-    </message>
-    <message>
         <source>Connect local AI</source>
         <translation>Hubungkan AI lokal</translation>
-    </message>
-    <message>
-        <source>Connected: %1. Click to reconnect.</source>
-        <translation>Terhubung: %1. Klik untuk menghubungkan ulang.</translation>
     </message>
     <message>
         <source>Use Omarchy&apos;s default AI agent, or Ollama or LM Studio on this computer</source>
@@ -2071,6 +2126,26 @@
     <message>
         <source>Export</source>
         <translation>Ekspor</translation>
+    </message>
+    <message>
+        <source>Connected: %1. Click to close the chat.</source>
+        <translation>Terhubung: %1. Klik untuk menutup obrolan.</translation>
+    </message>
+    <message>
+        <source>Connected: %1. Click to open the chat.</source>
+        <translation>Terhubung: %1. Klik untuk membuka obrolan.</translation>
+    </message>
+    <message>
+        <source>AI chat</source>
+        <translation>Obrolan AI</translation>
+    </message>
+    <message>
+        <source>Essentials: white balance, tone, presence, film simulation, presets and LUT</source>
+        <translation>Dasar: keseimbangan putih, nada, presence, simulasi film, preset, dan LUT</translation>
+    </message>
+    <message>
+        <source>Pro adds tone curve, colour mixer, colour grading, detail, grain, colour management and masks</source>
+        <translation>Pro menambahkan kurva nada, mixer warna, color grading, detail, butiran, manajemen warna, dan masker</translation>
     </message>
 </context>
 <context>

@@ -232,6 +232,57 @@
     </message>
 </context>
 <context>
+    <name>AiChatPanel</name>
+    <message>
+        <source>Open a photo first</source>
+        <translation>Deschideți mai întâi o fotografie</translation>
+    </message>
+    <message>
+        <source>Edit applied.</source>
+        <translation>Editare aplicată.</translation>
+    </message>
+    <message>
+        <source>Chat · %1</source>
+        <translation>Conversație · %1</translation>
+    </message>
+    <message>
+        <source>Chat</source>
+        <translation>Conversație</translation>
+    </message>
+    <message>
+        <source>Reconnect</source>
+        <translation>Reconectează</translation>
+    </message>
+    <message>
+        <source>Clear chat</source>
+        <translation>Golește conversația</translation>
+    </message>
+    <message>
+        <source>Close chat</source>
+        <translation>Închide conversația</translation>
+    </message>
+    <message>
+        <source>Write below what to change in the photo. The AI sets the adjustments; Ctrl+Z undoes each edit.</source>
+        <translation>Scrieți mai jos ce să se schimbe în fotografie. IA setează cursoarele; Ctrl+Z anulează fiecare editare.</translation>
+    </message>
+    <message>
+        <source>Working…</source>
+        <translation>Se procesează…</translation>
+    </message>
+    <message>
+        <source>e.g. warmer, moody evening light, recover the sky</source>
+        <translation>de ex. mai cald, lumină de seară melancolică, recuperează cerul</translation>
+    </message>
+    <message>
+        <source>Message to the AI</source>
+        <translation>Mesaj către IA</translation>
+    </message>
+    <message>
+        <source>Send</source>
+        <translation>Trimite</translation>
+    </message>
+</context>
+<context>
     <name>BoundedTextInput</name>
     <message>
         <source>Clipboard content exceeded byte limit or timed out.</source>
@@ -670,10 +721,6 @@
         <translation>Standard / oprit</translation>
     </message>
     <message>
-        <source>Neutral camera linear profile</source>
-        <translation>Profil liniar neutru al aparatului</translation>
-    </message>
-    <message>
         <source>Standard natural daylight color</source>
         <translation>Culoare naturală standard la lumina zilei</translation>
     </message>
@@ -800,6 +847,10 @@
     <message>
         <source>Acros B&amp;W</source>
         <translation>Acros A/N</translation>
+    </message>
+    <message>
+        <source>No film simulation</source>
+        <translation>Fără simulare de film</translation>
     </message>
 </context>
 <context>
@@ -1320,10 +1371,6 @@
         <translation>Randarea previzualizării a eșuat</translation>
     </message>
     <message>
-        <source>%1 applied (%2)</source>
-        <translation>%1 aplicat (%2)</translation>
-    </message>
-    <message>
         <source>Batch export: %1 succeeded, %2 failed</source>
         <translation>Export în lot: %1 reușite, %2 eșuate</translation>
     </message>
@@ -1498,10 +1545,6 @@
     <message>
         <source>Reset to defaults</source>
         <translation>Valorile implicite au fost restabilite</translation>
-    </message>
-    <message>
-        <source>Platform crop reset</source>
-        <translation>Decuparea pentru platformă a fost resetată</translation>
     </message>
     <message>
         <source>Auto applied</source>
@@ -1731,6 +1774,22 @@
         <source>Developing at full resolution…</source>
         <translation>Se developează la rezoluție completă…</translation>
     </message>
+    <message>
+        <source>%1 applied: long edge %2 px, quality %3</source>
+        <translation>%1 aplicat: latura lungă %2 px, calitate %3</translation>
+    </message>
+    <message>
+        <source>Pro: tone curve, colour mixer, colour grading, detail, grain, colour management and the Masks tab are shown</source>
+        <translation>Pro: sunt afișate curba de tonuri, mixerul de culori, gradarea culorilor, detaliile, granulația, gestionarea culorilor și fila Măști</translation>
+    </message>
+    <message>
+        <source>Essentials: Pro sections are hidden. Settings made in them stay applied.</source>
+        <translation>Esențiale: secțiunile Pro sunt ascunse. Setările lor rămân aplicate.</translation>
+    </message>
+    <message>
+        <source>Platform crop reset</source>
+        <translation>Decuparea pentru platformă a fost resetată</translation>
+    </message>
 </context>
 <context>
     <name>Navigator</name>
@@ -1744,6 +1803,10 @@
     <message>
         <source>Reset %1</source>
         <translation>Resetează %1</translation>
+    </message>
+    <message>
+        <source>Pro</source>
+        <translation>Pro</translation>
     </message>
 </context>
 <context>
@@ -1940,10 +2003,6 @@
         <translation>Resetează</translation>
     </message>
     <message>
-        <source>Vectorscope 123° flesh line (target: %1°)</source>
-        <translation>Linia pielii la 123° pe vectorscop (țintă: %1°)</translation>
-    </message>
-    <message>
         <source>Target Skin Hue</source>
         <translation>Nuanța țintă a pielii</translation>
     </message>
@@ -1966,6 +2025,10 @@
     <message>
         <source>Saturation Shift</source>
         <translation>Deplasarea saturației</translation>
+    </message>
+    <message>
+        <source>Target skin hue: %1° (Oklab)</source>
+        <translation>Nuanța țintă a pielii: %1° (Oklab)</translation>
     </message>
 </context>
 <context>
@@ -2033,16 +2096,8 @@
         <translation>Se conectează…</translation>
     </message>
     <message>
-        <source>Local AI</source>
-        <translation>IA locală</translation>
-    </message>
-    <message>
         <source>Connect local AI</source>
         <translation>Conectează IA locală</translation>
-    </message>
-    <message>
-        <source>Connected: %1. Click to reconnect.</source>
-        <translation>Conectat: %1. Faceți clic pentru reconectare.</translation>
     </message>
     <message>
         <source>Use Omarchy&apos;s default AI agent, or Ollama or LM Studio on this computer</source>
@@ -2083,6 +2138,26 @@
     <message>
         <source>Export</source>
         <translation>Exportă</translation>
+    </message>
+    <message>
+        <source>Connected: %1. Click to close the chat.</source>
+        <translation>Conectat: %1. Faceți clic pentru a închide conversația.</translation>
+    </message>
+    <message>
+        <source>Connected: %1. Click to open the chat.</source>
+        <translation>Conectat: %1. Faceți clic pentru a deschide conversația.</translation>
+    </message>
+    <message>
+        <source>AI chat</source>
+        <translation>Conversație IA</translation>
+    </message>
+    <message>
+        <source>Essentials: white balance, tone, presence, film simulation, presets and LUT</source>
+        <translation>Esențiale: balansul de alb, ton, prezență, simulare de film, presetări și LUT</translation>
+    </message>
+    <message>
+        <source>Pro adds tone curve, colour mixer, colour grading, detail, grain, colour management and masks</source>
+        <translation>Pro adaugă curba de tonuri, mixerul de culori, gradarea culorilor, detaliile, granulația, gestionarea culorilor și măștile</translation>
     </message>
 </context>
 <context>

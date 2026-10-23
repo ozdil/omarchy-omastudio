@@ -232,6 +232,57 @@
     </message>
 </context>
 <context>
+    <name>AiChatPanel</name>
+    <message>
+        <source>Open a photo first</source>
+        <translation>Előbb nyisson meg egy fotót</translation>
+    </message>
+    <message>
+        <source>Edit applied.</source>
+        <translation>Szerkesztés alkalmazva.</translation>
+    </message>
+    <message>
+        <source>Chat · %1</source>
+        <translation>Csevegés · %1</translation>
+    </message>
+    <message>
+        <source>Chat</source>
+        <translation>Csevegés</translation>
+    </message>
+    <message>
+        <source>Reconnect</source>
+        <translation>Újracsatlakozás</translation>
+    </message>
+    <message>
+        <source>Clear chat</source>
+        <translation>Csevegés törlése</translation>
+    </message>
+    <message>
+        <source>Close chat</source>
+        <translation>Csevegés bezárása</translation>
+    </message>
+    <message>
+        <source>Write below what to change in the photo. The AI sets the adjustments; Ctrl+Z undoes each edit.</source>
+        <translation>Írja be lent, mit változtasson a fotón. Az MI beállítja a csúszkákat; a Ctrl+Z minden szerkesztést visszavon.</translation>
+    </message>
+    <message>
+        <source>Working…</source>
+        <translation>Feldolgozás…</translation>
+    </message>
+    <message>
+        <source>e.g. warmer, moody evening light, recover the sky</source>
+        <translation>pl. melegebb, hangulatos esti fény, az ég visszaállítása</translation>
+    </message>
+    <message>
+        <source>Message to the AI</source>
+        <translation>Üzenet az MI-nek</translation>
+    </message>
+    <message>
+        <source>Send</source>
+        <translation>Küldés</translation>
+    </message>
+</context>
+<context>
     <name>BoundedTextInput</name>
     <message>
         <source>Clipboard content exceeded byte limit or timed out.</source>
@@ -668,10 +719,6 @@
         <translation>Normál / ki</translation>
     </message>
     <message>
-        <source>Neutral camera linear profile</source>
-        <translation>Semleges lineáris gépprofil</translation>
-    </message>
-    <message>
         <source>Standard natural daylight color</source>
         <translation>Szabványos természetes nappali szín</translation>
     </message>
@@ -798,6 +845,10 @@
     <message>
         <source>Acros B&amp;W</source>
         <translation>Acros FF</translation>
+    </message>
+    <message>
+        <source>No film simulation</source>
+        <translation>Nincs filmszimuláció</translation>
     </message>
 </context>
 <context>
@@ -1312,10 +1363,6 @@
         <translation>Az előnézet megjelenítése sikertelen</translation>
     </message>
     <message>
-        <source>%1 applied (%2)</source>
-        <translation>%1 alkalmazva (%2)</translation>
-    </message>
-    <message>
         <source>Batch export: %1 succeeded, %2 failed</source>
         <translation>Kötegelt exportálás: %1 sikeres, %2 sikertelen</translation>
     </message>
@@ -1490,10 +1537,6 @@
     <message>
         <source>Reset to defaults</source>
         <translation>Alapértékek visszaállítva</translation>
-    </message>
-    <message>
-        <source>Platform crop reset</source>
-        <translation>Platformvágás visszaállítva</translation>
     </message>
     <message>
         <source>Auto applied</source>
@@ -1721,6 +1764,22 @@
         <source>Developing at full resolution…</source>
         <translation>Előhívás teljes felbontásban…</translation>
     </message>
+    <message>
+        <source>%1 applied: long edge %2 px, quality %3</source>
+        <translation>%1 alkalmazva: hosszabb oldal %2 px, minőség %3</translation>
+    </message>
+    <message>
+        <source>Pro: tone curve, colour mixer, colour grading, detail, grain, colour management and the Masks tab are shown</source>
+        <translation>Pro: látható a tónusgörbe, a színkeverő, a színkorrekció, a részletek, a szemcse, a színkezelés és a(z) Maszkok lap</translation>
+    </message>
+    <message>
+        <source>Essentials: Pro sections are hidden. Settings made in them stay applied.</source>
+        <translation>Alapok: a Pro szakaszok rejtve vannak. Beállításaik továbbra is érvényesek.</translation>
+    </message>
+    <message>
+        <source>Platform crop reset</source>
+        <translation>Platformvágás visszaállítva</translation>
+    </message>
 </context>
 <context>
     <name>Navigator</name>
@@ -1734,6 +1793,10 @@
     <message>
         <source>Reset %1</source>
         <translation>%1 visszaállítása</translation>
+    </message>
+    <message>
+        <source>Pro</source>
+        <translation>Pro</translation>
     </message>
 </context>
 <context>
@@ -1930,10 +1993,6 @@
         <translation>Visszaállítás</translation>
     </message>
     <message>
-        <source>Vectorscope 123° flesh line (target: %1°)</source>
-        <translation>A vektorszkóp 123°-os bőrvonala (cél: %1°)</translation>
-    </message>
-    <message>
         <source>Target Skin Hue</source>
         <translation>Cél bőrárnyalat</translation>
     </message>
@@ -1956,6 +2015,10 @@
     <message>
         <source>Saturation Shift</source>
         <translation>Telítettség eltolása</translation>
+    </message>
+    <message>
+        <source>Target skin hue: %1° (Oklab)</source>
+        <translation>Cél bőrtónus: %1° (Oklab)</translation>
     </message>
 </context>
 <context>
@@ -2021,16 +2084,8 @@
         <translation>Csatlakozás…</translation>
     </message>
     <message>
-        <source>Local AI</source>
-        <translation>Helyi MI</translation>
-    </message>
-    <message>
         <source>Connect local AI</source>
         <translation>Helyi MI csatlakoztatása</translation>
-    </message>
-    <message>
-        <source>Connected: %1. Click to reconnect.</source>
-        <translation>Csatlakozva: %1. Kattintson az újracsatlakozáshoz.</translation>
     </message>
     <message>
         <source>Use Omarchy&apos;s default AI agent, or Ollama or LM Studio on this computer</source>
@@ -2071,6 +2126,26 @@
     <message>
         <source>Export</source>
         <translation>Exportálás</translation>
+    </message>
+    <message>
+        <source>Connected: %1. Click to close the chat.</source>
+        <translation>Csatlakozva: %1. Kattintson a csevegés bezárásához.</translation>
+    </message>
+    <message>
+        <source>Connected: %1. Click to open the chat.</source>
+        <translation>Csatlakozva: %1. Kattintson a csevegés megnyitásához.</translation>
+    </message>
+    <message>
+        <source>AI chat</source>
+        <translation>MI-csevegés</translation>
+    </message>
+    <message>
+        <source>Essentials: white balance, tone, presence, film simulation, presets and LUT</source>
+        <translation>Alapok: fehéregyensúly, tónus, jelenlét, filmszimuláció, előbeállítások és LUT</translation>
+    </message>
+    <message>
+        <source>Pro adds tone curve, colour mixer, colour grading, detail, grain, colour management and masks</source>
+        <translation>A Pro hozzáadja a tónusgörbét, a színkeverőt, a színkorrekciót, a részleteket, a szemcsét, a színkezelést és a maszkokat</translation>
     </message>
 </context>
 <context>

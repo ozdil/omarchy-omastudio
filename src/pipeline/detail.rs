@@ -35,13 +35,15 @@ pub fn apply_vignette(
     (r * clamped_factor, g * clamped_factor, b * clamped_factor)
 }
 
-/// Reduces chromatic aberration fringing (purple and green edges)
+/// Reduces chromatic aberration fringing (purple and green edges) of one pixel.
+/// `edge` (0..1) says how close the pixel is to a high-contrast edge; fringes only
+/// occur there, so purple flowers and green leaves away from edges keep their colour.
 #[inline(always)]
-pub fn apply_defringe(r: f32, g: f32, b: f32, amount: f32) -> (f32, f32, f32) {
-    if amount <= 0.01 {
+pub fn apply_defringe(r: f32, g: f32, b: f32, amount: f32, edge: f32) -> (f32, f32, f32) {
+    if amount <= 0.01 || edge <= 0.001 {
         return (r, g, b);
     }
-    let factor = (amount / 100.0).clamp(0.0, 1.0);
+    let factor = (amount / 100.0).clamp(0.0, 1.0) * edge.clamp(0.0, 1.0);
     let luma = 0.2126 * r + 0.7152 * g + 0.0722 * b;
 
     // Detect purple fringing: R and B much higher than G
@@ -59,6 +61,36 @@ pub fn apply_defringe(r: f32, g: f32, b: f32, amount: f32) -> (f32, f32, f32) {
     (r, g, b)
 }
 
+/// Defringe over a buffer: the strength follows the local luminance contrast,
+/// spread a few pixels (`scale`d to the frame) to reach the whole fringe beside an edge.
+pub fn apply_defringe_buffer(rgb_buffer: &mut [f32], width: usize, height: usize, amount: f32, scale: f32) {
+    if amount <= 0.01 || width < 3 || height < 3 || rgb_buffer.len() < width * height * 3 {
+        return;
+    }
+    let luma: Vec<f32> = rgb_buffer
+        .par_chunks(3)
+        .map(|p| 0.2126 * p[0] + 0.7152 * p[1] + 0.0722 * p[2])
+        .collect();
+    let mut grad = vec![0.0f32; width * height];
+    grad.par_chunks_mut(width).enumerate().for_each(|(y, row)| {
+        let (yp, yn) = (y.saturating_sub(1), (y + 1).min(height - 1));
+        for (x, g) in row.iter_mut().enumerate() {
+            let (xp, xn) = (x.saturating_sub(1), (x + 1).min(width - 1));
+            let gx = (luma[y * width + xn] - luma[y * width + xp]).abs();
+            let gy = (luma[yn * width + x] - luma[yp * width + x]).abs();
+            *g = gx.max(gy);
+        }
+    });
+    let spread = crate::pipeline::presence::fast_separable_blur(&grad, width, height, crate::pipeline::presence::scaled_radius(2, scale));
+    rgb_buffer.par_chunks_mut(3).zip(spread.par_iter()).for_each(|(p, &e)| {
+        let edge = ((e - 0.01) / 0.05).clamp(0.0, 1.0);
+        let (r, g, b) = apply_defringe(p[0], p[1], p[2], amount, edge);
+        p[0] = r;
+        p[1] = g;
+        p[2] = b;
+    });
+}
+
 /// Applies high-precision multi-threaded Detail enhancements:
 /// - **Sharpness**: High-frequency edge enhancement with noise-gate thresholding.
 /// - **Luma Denoise**: Bilateral edge-preserving filter suppressing grain while locking sharp contours.
@@ -70,6 +102,21 @@ pub fn apply_detail(
     sharpness: f32,
     denoise_lum: f32,
     denoise_col: f32,
+) {
+    apply_detail_scaled(rgb_buffer, width, height, sharpness, denoise_lum, denoise_col, 1.0);
+}
+
+/// [`apply_detail`] with the colour noise reduction's neighbourhood scaled to the
+/// frame (see [`crate::pipeline::presence::apply_presence_scaled`]). Sharpening and
+/// luminance noise reduction work on single pixels at every size.
+pub fn apply_detail_scaled(
+    rgb_buffer: &mut [f32],
+    width: usize,
+    height: usize,
+    sharpness: f32,
+    denoise_lum: f32,
+    denoise_col: f32,
+    scale: f32,
 ) {
     if sharpness <= 0.1 && denoise_lum <= 0.1 && denoise_col <= 0.1 {
         return;
@@ -104,7 +151,7 @@ pub fn apply_detail(
     // 1. Chroma Denoise: Separable multi-pixel color average (eliminates color blotches with zero loss of sharpness)
     let (cr_smooth, cb_smooth) = if do_chroma_dn {
         let weight = (denoise_col / 100.0).clamp(0.0, 1.0);
-        let radius = if denoise_col > 40.0 { 2 } else { 1 };
+        let radius = crate::pipeline::presence::scaled_radius(if denoise_col > 40.0 { 2 } else { 1 }, scale);
         let blur_cr = crate::pipeline::presence::fast_separable_blur(&cr, width, height, radius);
         let blur_cb = crate::pipeline::presence::fast_separable_blur(&cb, width, height, radius);
 
@@ -192,12 +239,15 @@ pub fn apply_detail(
 }
 
 /// Radial polynomial lens distortion: r_source = r * (1 + k1 * (r / max_r)^2).
+/// When k1 > 0 the corners would sample outside the photo and come out black, so the
+/// result is enlarged by 1 / (1 + k1) until the corners land on the photo's corners.
 #[derive(Clone, Copy)]
 pub struct LensDistortion {
     cx: f32,
     cy: f32,
     inv_max_r2: f32,
     k1: f32,
+    fill: f32,
 }
 
 impl LensDistortion {
@@ -207,14 +257,15 @@ impl LensDistortion {
             return None;
         }
         let (cx, cy) = (width as f32 / 2.0, height as f32 / 2.0);
-        Some(Self { cx, cy, inv_max_r2: 1.0 / (cx * cx + cy * cy), k1: (distortion / 100.0) * 0.15 })
+        let k1 = (distortion / 100.0) * 0.15;
+        Some(Self { cx, cy, inv_max_r2: 1.0 / (cx * cx + cy * cy), k1, fill: 1.0 / (1.0 + k1.max(0.0)) })
     }
 
     /// Where the output pixel (x, y) samples the source image.
     #[inline(always)]
     pub fn source(&self, x: f32, y: f32) -> (f32, f32) {
         let (dx, dy) = (x - self.cx, y - self.cy);
-        let factor = 1.0 + self.k1 * (dx * dx + dy * dy) * self.inv_max_r2;
+        let factor = (1.0 + self.k1 * (dx * dx + dy * dy) * self.inv_max_r2) * self.fill;
         (self.cx + dx * factor, self.cy + dy * factor)
     }
 }
@@ -276,4 +327,46 @@ pub fn apply_lens_distortion(
         });
 
     output
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    /// Saturated colours away from edges keep their colour; a green fringe beside a
+    /// hard edge is neutralised.
+    #[test]
+    fn defringe_only_touches_edges() {
+        let (w, h) = (20usize, 20usize);
+        let mut flat = vec![0.0f32; w * h * 3];
+        for p in flat.chunks_mut(3) {
+            p.copy_from_slice(&[0.15, 0.6, 0.12]);
+        }
+        let before = flat.clone();
+        apply_defringe_buffer(&mut flat, w, h, 100.0, 1.0);
+        assert_eq!(flat, before, "flat foliage must stay green");
+
+        // Dark left half, bright right half, a green column on the boundary
+        let mut edge = vec![0.0f32; w * h * 3];
+        for y in 0..h {
+            for x in 0..w {
+                let v = if x < 10 { [0.05, 0.05, 0.05] } else if x == 10 { [0.3, 0.7, 0.3] } else { [0.9, 0.9, 0.9] };
+                edge[(y * w + x) * 3..(y * w + x) * 3 + 3].copy_from_slice(&v);
+            }
+        }
+        apply_defringe_buffer(&mut edge, w, h, 100.0, 1.0);
+        let p = &edge[(10 * w + 10) * 3..(10 * w + 10) * 3 + 3];
+        // The green excess was 0.4
+        assert!(p[1] - (p[0] + p[2]) / 2.0 < 0.35, "fringe reduced: {p:?}");
+    }
+
+    /// Positive correction does not leave black corners.
+    #[test]
+    fn pincushion_correction_fills_the_frame() {
+        let lens = LensDistortion::new(400, 300, 50.0).unwrap();
+        let (sx, sy) = lens.source(0.0, 0.0);
+        assert!(sx >= -0.01 && sy >= -0.01, "corner samples ({sx}, {sy})");
+        let (sx, sy) = lens.source(399.0, 299.0);
+        assert!(sx <= 399.5 && sy <= 299.5);
+    }
 }

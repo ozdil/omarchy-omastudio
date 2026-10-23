@@ -232,6 +232,57 @@
     </message>
 </context>
 <context>
+    <name>AiChatPanel</name>
+    <message>
+        <source>Open a photo first</source>
+        <translation>Avaa ensin kuva</translation>
+    </message>
+    <message>
+        <source>Edit applied.</source>
+        <translation>Muokkaus tehty.</translation>
+    </message>
+    <message>
+        <source>Chat · %1</source>
+        <translation>Keskustelu · %1</translation>
+    </message>
+    <message>
+        <source>Chat</source>
+        <translation>Keskustelu</translation>
+    </message>
+    <message>
+        <source>Reconnect</source>
+        <translation>Yhdistä uudelleen</translation>
+    </message>
+    <message>
+        <source>Clear chat</source>
+        <translation>Tyhjennä keskustelu</translation>
+    </message>
+    <message>
+        <source>Close chat</source>
+        <translation>Sulje keskustelu</translation>
+    </message>
+    <message>
+        <source>Write below what to change in the photo. The AI sets the adjustments; Ctrl+Z undoes each edit.</source>
+        <translation>Kirjoita alle, mitä kuvassa muutetaan. Tekoäly säätää liukusäätimet; Ctrl+Z kumoaa jokaisen muokkauksen.</translation>
+    </message>
+    <message>
+        <source>Working…</source>
+        <translation>Käsitellään…</translation>
+    </message>
+    <message>
+        <source>e.g. warmer, moody evening light, recover the sky</source>
+        <translation>esim. lämpimämpi, tunnelmallinen iltavalo, palauta taivas</translation>
+    </message>
+    <message>
+        <source>Message to the AI</source>
+        <translation>Viesti tekoälylle</translation>
+    </message>
+    <message>
+        <source>Send</source>
+        <translation>Lähetä</translation>
+    </message>
+</context>
+<context>
     <name>BoundedTextInput</name>
     <message>
         <source>Clipboard content exceeded byte limit or timed out.</source>
@@ -669,10 +720,6 @@
         <translation>Vakio / pois</translation>
     </message>
     <message>
-        <source>Neutral camera linear profile</source>
-        <translation>Neutraali lineaarinen kameraprofiili</translation>
-    </message>
-    <message>
         <source>Standard natural daylight color</source>
         <translation>Tavallinen luonnollinen päivänvalon väri</translation>
     </message>
@@ -799,6 +846,10 @@
     <message>
         <source>Acros B&amp;W</source>
         <translation>Acros MV</translation>
+    </message>
+    <message>
+        <source>No film simulation</source>
+        <translation>Ei filmisimulaatiota</translation>
     </message>
 </context>
 <context>
@@ -1316,10 +1367,6 @@
         <translation>Esikatselun hahmonnus epäonnistui</translation>
     </message>
     <message>
-        <source>%1 applied (%2)</source>
-        <translation>%1 käytetty (%2)</translation>
-    </message>
-    <message>
         <source>Batch export: %1 succeeded, %2 failed</source>
         <translation>Erävienti: %1 onnistui, %2 epäonnistui</translation>
     </message>
@@ -1494,10 +1541,6 @@
     <message>
         <source>Reset to defaults</source>
         <translation>Oletusarvot palautettu</translation>
-    </message>
-    <message>
-        <source>Platform crop reset</source>
-        <translation>Alustan rajaus palautettu</translation>
     </message>
     <message>
         <source>Auto applied</source>
@@ -1726,6 +1769,22 @@
         <source>Developing at full resolution…</source>
         <translation>Kehitetään täydellä tarkkuudella…</translation>
     </message>
+    <message>
+        <source>%1 applied: long edge %2 px, quality %3</source>
+        <translation>%1 käytössä: pitkä sivu %2 px, laatu %3</translation>
+    </message>
+    <message>
+        <source>Pro: tone curve, colour mixer, colour grading, detail, grain, colour management and the Masks tab are shown</source>
+        <translation>Pro: sävykäyrä, värimikseri, värimäärittely, yksityiskohdat, rakeisuus, värinhallinta ja Maskit-välilehti näytetään</translation>
+    </message>
+    <message>
+        <source>Essentials: Pro sections are hidden. Settings made in them stay applied.</source>
+        <translation>Perusteet: Pro-osiot on piilotettu. Niiden asetukset ovat yhä voimassa.</translation>
+    </message>
+    <message>
+        <source>Platform crop reset</source>
+        <translation>Alustan rajaus palautettu</translation>
+    </message>
 </context>
 <context>
     <name>Navigator</name>
@@ -1739,6 +1798,10 @@
     <message>
         <source>Reset %1</source>
         <translation>Palauta %1</translation>
+    </message>
+    <message>
+        <source>Pro</source>
+        <translation>Pro</translation>
     </message>
 </context>
 <context>
@@ -1935,10 +1998,6 @@
         <translation>Palauta</translation>
     </message>
     <message>
-        <source>Vectorscope 123° flesh line (target: %1°)</source>
-        <translation>Vektoriskoopin 123°:n ihoviiva (tavoite: %1°)</translation>
-    </message>
-    <message>
         <source>Target Skin Hue</source>
         <translation>Ihon tavoitesävy</translation>
     </message>
@@ -1961,6 +2020,10 @@
     <message>
         <source>Saturation Shift</source>
         <translation>Kylläisyyden siirto</translation>
+    </message>
+    <message>
+        <source>Target skin hue: %1° (Oklab)</source>
+        <translation>Ihonsävyn tavoite: %1° (Oklab)</translation>
     </message>
 </context>
 <context>
@@ -2027,16 +2090,8 @@
         <translation>Yhdistetään…</translation>
     </message>
     <message>
-        <source>Local AI</source>
-        <translation>Paikallinen tekoäly</translation>
-    </message>
-    <message>
         <source>Connect local AI</source>
         <translation>Yhdistä paikallinen tekoäly</translation>
-    </message>
-    <message>
-        <source>Connected: %1. Click to reconnect.</source>
-        <translation>Yhdistetty: %1. Yhdistä uudelleen napsauttamalla.</translation>
     </message>
     <message>
         <source>Use Omarchy&apos;s default AI agent, or Ollama or LM Studio on this computer</source>
@@ -2077,6 +2132,26 @@
     <message>
         <source>Export</source>
         <translation>Vie</translation>
+    </message>
+    <message>
+        <source>Connected: %1. Click to close the chat.</source>
+        <translation>Yhdistetty: %1. Sulje keskustelu napsauttamalla.</translation>
+    </message>
+    <message>
+        <source>Connected: %1. Click to open the chat.</source>
+        <translation>Yhdistetty: %1. Avaa keskustelu napsauttamalla.</translation>
+    </message>
+    <message>
+        <source>AI chat</source>
+        <translation>Tekoälykeskustelu</translation>
+    </message>
+    <message>
+        <source>Essentials: white balance, tone, presence, film simulation, presets and LUT</source>
+        <translation>Perusteet: valkotasapaino, sävy, läsnäolo, filmisimulaatio, esiasetukset ja LUT</translation>
+    </message>
+    <message>
+        <source>Pro adds tone curve, colour mixer, colour grading, detail, grain, colour management and masks</source>
+        <translation>Pro lisää sävykäyrän, värimikserin, värimäärittelyn, yksityiskohdat, rakeisuuden, värinhallinnan ja maskit</translation>
     </message>
 </context>
 <context>

@@ -27,12 +27,15 @@ pub fn apply_film_grain(
     size: f32,      // 1.0 to 3.0 (Default: 1.0)
     roughness: f32, // 0.0 to 100.0 (Default: 50.0)
 ) {
-    apply_film_grain_window(buffer, width, 0, 0, amount, size, roughness);
+    apply_film_grain_window(buffer, width, 0, 0, amount, size, roughness, 1.0);
 }
 
 /// [`apply_film_grain`] for a window of the image whose top-left pixel is image pixel
 /// (`first_col`, `first_row`), so the grain pattern is the same as when the whole
-/// image is processed at once.
+/// image is processed at once. `scale` is the frame's size relative to the
+/// preview's (see [`crate::pipeline::REFERENCE_EDGE`]): the grain covers the same part
+/// of the photo in the preview and in the full-size export.
+#[allow(clippy::too_many_arguments)]
 pub fn apply_film_grain_window(
     buffer: &mut [f32],
     width: u32,
@@ -41,6 +44,7 @@ pub fn apply_film_grain_window(
     amount: f32,
     size: f32,
     roughness: f32,
+    scale: f32,
 ) {
     if amount <= 0.001 {
         return;
@@ -48,7 +52,8 @@ pub fn apply_film_grain_window(
 
     let w = width as usize;
     let norm_amount = (amount / 100.0) * 0.12; // Scaled to photographic realistic contrast
-    let step = size.max(1.0);
+    let step = (size.max(1.0) * scale).max(1.0);
+    let fine_step = scale.max(1.0);
     let rough_weight = roughness / 100.0;
 
     buffer
@@ -57,6 +62,7 @@ pub fn apply_film_grain_window(
         .for_each(|(y_idx, row)| {
             let y = first_row + y_idx as u32;
             let sample_y = (y as f32 / step) as u32;
+            let fine_y = (y as f32 / fine_step) as u32;
 
             for x in 0..w {
                 let px = x * 3;
@@ -77,7 +83,7 @@ pub fn apply_film_grain_window(
 
                 // Multi-scale noise: Base grain + Fine particulate roughness
                 let n1 = hash_noise(sample_x, sample_y, 42);
-                let n2 = hash_noise(gx, y, 1337);
+                let n2 = hash_noise((gx as f32 / fine_step) as u32, fine_y, 1337);
                 let combined_noise = n1 * (1.0 - rough_weight * 0.4) + n2 * (rough_weight * 0.4);
 
                 let delta = combined_noise * norm_amount * luma_response;

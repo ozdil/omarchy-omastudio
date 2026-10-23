@@ -220,7 +220,15 @@ pub fn sample_mask_weight(
     (w * opacity).clamp(0.0, 1.0)
 }
 
-/// Applies active adjustment layers to an RGB pixel in linear 0.0..1.0 space
+static DISPLAY: std::sync::LazyLock<crate::pipeline::transfer::Transfer> =
+    std::sync::LazyLock::new(crate::pipeline::transfer::Transfer::bt709);
+
+/// Middle grey (18 % reflectance) on the display-encoded scale the layers work on.
+const MID_GREY: f32 = 0.41;
+
+/// Applies active adjustment layers to a display-encoded RGB pixel (0.0..1.0). The
+/// clarity field is not applied (it needs the neighbourhood, which this per-pixel
+/// stage has not got) and is not offered in the interface.
 #[inline]
 pub fn apply_layers_pixel(
     mut r: f32,
@@ -246,18 +254,38 @@ pub fn apply_layers_pixel(
             continue;
         }
 
-        // Layer exposure
-        let exp_mul = 2.0f32.powf(layer.exposure * weight);
-        let mut lr = r * exp_mul;
-        let mut lg = g * exp_mul;
-        let mut lb = b * exp_mul;
+        // Layer exposure acts on light: the values here are display-encoded, so they
+        // are decoded, scaled by 2^EV and encoded again
+        let (mut lr, mut lg, mut lb) = if layer.exposure.abs() > 1e-4 {
+            let t = &*DISPLAY;
+            let exp_mul = 2.0f32.powf(layer.exposure * weight);
+            (t.encode(t.decode(r) * exp_mul), t.encode(t.decode(g) * exp_mul), t.encode(t.decode(b) * exp_mul))
+        } else {
+            (r, g, b)
+        };
 
-        // Layer contrast
+        // Layer highlights, shadows, whites and blacks: the global tone controls'
+        // luminance zones, applied as a shift that keeps the colour
+        if layer.highlights != 0.0 || layer.shadows != 0.0 || layer.whites != 0.0 || layer.blacks != 0.0 {
+            let l = (0.2126 * lr + 0.7152 * lg + 0.0722 * lb).max(0.0);
+            let mut shift = 0.0;
+            let h = ((l - 0.35).max(0.0) / 0.65).min(1.0);
+            shift += layer.highlights / 100.0 * h * h * (3.0 - 2.0 * h) * 0.35;
+            let fall = (1.0 - (l / 0.60).min(1.0)).powi(2);
+            shift += layer.shadows / 100.0 * fall * (l / (l + 0.03)) * 0.35;
+            shift += layer.whites / 100.0 * (((l - 0.60).max(0.0) / 0.40).min(1.0)).powi(2) * 0.25;
+            shift += layer.blacks / 100.0 * (((0.30 - l).max(0.0) / 0.30).min(1.0)).powi(2) * 0.20;
+            lr += shift * weight;
+            lg += shift * weight;
+            lb += shift * weight;
+        }
+
+        // Layer contrast around middle grey (0.18 linear is about 0.41 encoded)
         if layer.contrast.abs() > 1e-3 {
             let c_factor = 1.0 + (layer.contrast / 100.0) * weight;
-            lr = 0.18 + (lr - 0.18) * c_factor;
-            lg = 0.18 + (lg - 0.18) * c_factor;
-            lb = 0.18 + (lb - 0.18) * c_factor;
+            lr = MID_GREY + (lr - MID_GREY) * c_factor;
+            lg = MID_GREY + (lg - MID_GREY) * c_factor;
+            lb = MID_GREY + (lb - MID_GREY) * c_factor;
         }
 
         // Layer saturation
@@ -338,6 +366,32 @@ mod tests {
 
         assert!((w_center - 1.0).abs() < 1e-3);
         assert_eq!(w_outside, 0.0);
+    }
+
+    /// +1 EV on a layer doubles the light, which is 2^0.45 on encoded values.
+    #[test]
+    fn layer_exposure_is_one_stop_per_ev() {
+        let layer = AdjustmentLayer {
+            shape: MaskShape::LumaRange { min_luma: 0.0, max_luma: 1.0, falloff: 0.01 },
+            exposure: 1.0,
+            ..Default::default()
+        };
+        let t = crate::pipeline::transfer::Transfer::bt709();
+        let enc = t.encode(0.1);
+        let (r, _, _) = apply_layers_pixel(enc, enc, enc, &[layer], 0.5, 0.5);
+        let linear = t.decode(r);
+        assert!((linear / 0.1 - 2.0).abs() < 0.08, "{linear}");
+    }
+
+    #[test]
+    fn layer_tone_zones_apply() {
+        let layer = AdjustmentLayer {
+            shape: MaskShape::LumaRange { min_luma: 0.0, max_luma: 1.0, falloff: 0.01 },
+            shadows: 60.0,
+            ..Default::default()
+        };
+        let (r, g, b) = apply_layers_pixel(0.1, 0.1, 0.1, &[layer], 0.5, 0.5);
+        assert!(r > 0.12 && (r - g).abs() < 1e-6 && (g - b).abs() < 1e-6);
     }
 
     #[test]

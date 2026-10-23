@@ -57,21 +57,50 @@ pub fn store(code: &str) -> std::io::Result<()> {
     std::fs::rename(&tmp, &path)
 }
 
-/// The system language from the usual locale variables. The launcher passes the
-/// user's own locale as `OMASTUDIO_SYSTEM_LANG`, since it runs the application under
-/// a fixed C locale.
+/// The system language: the usual locale variables, else the locale Omarchy (or
+/// localectl) configured in `~/.config/locale.conf` or `/etc/locale.conf`, for
+/// sessions started without LANG. The launcher passes the user's own locale as
+/// `OMASTUDIO_SYSTEM_LANG`, since it runs the application under a fixed C locale.
 pub fn system() -> String {
     let vars = ["OMASTUDIO_SYSTEM_LANG", "LANGUAGE", "LC_ALL", "LC_MESSAGES", "LANG"];
     for var in vars {
         let Ok(value) = std::env::var(var) else { continue };
-        // LANGUAGE is a priority list such as "tr:en"
-        for candidate in value.split(':') {
-            if let Some(code) = best_match(candidate) {
-                return code;
-            }
+        if let Some(code) = from_list(&value) {
+            return code;
+        }
+    }
+    let user_conf = config_file().and_then(|f| f.parent().and_then(|d| d.parent()).map(|c| c.join("locale.conf")));
+    for path in user_conf.into_iter().chain([PathBuf::from("/etc/locale.conf")]) {
+        if let Some(code) = read_locale_conf(&path) {
+            return code;
         }
     }
     "en".to_string()
+}
+
+/// LANGUAGE is a priority list such as "tr:en"
+fn from_list(value: &str) -> Option<String> {
+    value.split(':').find_map(best_match)
+}
+
+/// `KEY=value` lines as written by localectl; LANGUAGE, LC_MESSAGES, then LANG.
+fn read_locale_conf(path: &std::path::Path) -> Option<String> {
+    let ok = std::fs::metadata(path).is_ok_and(|m| m.is_file() && m.len() <= 4096);
+    if !ok {
+        return None;
+    }
+    let text = std::fs::read_to_string(path).ok()?;
+    locale_from_conf(&text)
+}
+
+fn locale_from_conf(text: &str) -> Option<String> {
+    let value = |key: &str| {
+        text.lines()
+            .filter_map(|l| l.trim().strip_prefix(key)?.strip_prefix('='))
+            .next_back()
+            .map(|v| v.trim().trim_matches(['"', '\''].as_ref()).to_string())
+    };
+    ["LANGUAGE", "LC_MESSAGES", "LANG"].iter().find_map(|k| value(k).and_then(|v| from_list(&v)))
 }
 
 /// The language the interface starts in.
@@ -122,6 +151,14 @@ mod tests {
         assert_eq!(best_match("POSIX"), None);
         assert_eq!(best_match(""), None);
         assert_eq!(best_match("xx_YY"), None);
+    }
+
+    #[test]
+    fn reads_locale_conf() {
+        assert_eq!(locale_from_conf("LANG=tr_TR.UTF-8\nLC_TIME=en_GB.UTF-8\n").as_deref(), Some("tr"));
+        assert_eq!(locale_from_conf("LANG=\"de_DE.UTF-8\"\nLC_MESSAGES=fr_FR.UTF-8\n").as_deref(), Some("fr"));
+        assert_eq!(locale_from_conf("LANG=C.UTF-8\n"), None);
+        assert_eq!(locale_from_conf("# nothing\n"), None);
     }
 
     #[test]

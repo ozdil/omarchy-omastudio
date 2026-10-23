@@ -232,6 +232,57 @@
     </message>
 </context>
 <context>
+    <name>AiChatPanel</name>
+    <message>
+        <source>Open a photo first</source>
+        <translation>Ouvrez d&apos;abord une photo</translation>
+    </message>
+    <message>
+        <source>Edit applied.</source>
+        <translation>Retouche appliquée.</translation>
+    </message>
+    <message>
+        <source>Chat · %1</source>
+        <translation>Discussion · %1</translation>
+    </message>
+    <message>
+        <source>Chat</source>
+        <translation>Discussion</translation>
+    </message>
+    <message>
+        <source>Reconnect</source>
+        <translation>Reconnecter</translation>
+    </message>
+    <message>
+        <source>Clear chat</source>
+        <translation>Effacer la discussion</translation>
+    </message>
+    <message>
+        <source>Close chat</source>
+        <translation>Fermer la discussion</translation>
+    </message>
+    <message>
+        <source>Write below what to change in the photo. The AI sets the adjustments; Ctrl+Z undoes each edit.</source>
+        <translation>Écrivez ci-dessous ce qu&apos;il faut changer dans la photo. L&apos;IA règle les curseurs ; Ctrl+Z annule chaque retouche.</translation>
+    </message>
+    <message>
+        <source>Working…</source>
+        <translation>En cours…</translation>
+    </message>
+    <message>
+        <source>e.g. warmer, moody evening light, recover the sky</source>
+        <translation>ex. plus chaud, lumière du soir sombre, récupérer le ciel</translation>
+    </message>
+    <message>
+        <source>Message to the AI</source>
+        <translation>Message à l&apos;IA</translation>
+    </message>
+    <message>
+        <source>Send</source>
+        <translation>Envoyer</translation>
+    </message>
+</context>
+<context>
     <name>BoundedTextInput</name>
     <message>
         <source>Clipboard content exceeded byte limit or timed out.</source>
@@ -669,10 +720,6 @@
         <translation>Standard / Désactivé</translation>
     </message>
     <message>
-        <source>Neutral camera linear profile</source>
-        <translation>Profil linéaire neutre de l&apos;appareil</translation>
-    </message>
-    <message>
         <source>Standard natural daylight color</source>
         <translation>Couleurs naturelles de lumière du jour</translation>
     </message>
@@ -799,6 +846,10 @@
     <message>
         <source>Acros B&amp;W</source>
         <translation>Acros N&amp;B</translation>
+    </message>
+    <message>
+        <source>No film simulation</source>
+        <translation>Aucune simulation de film</translation>
     </message>
 </context>
 <context>
@@ -1316,10 +1367,6 @@
         <translation>Échec du rendu de l&apos;aperçu</translation>
     </message>
     <message>
-        <source>%1 applied (%2)</source>
-        <translation>%1 appliqué (%2)</translation>
-    </message>
-    <message>
         <source>Batch export: %1 succeeded, %2 failed</source>
         <translation>Export par lot : %1 réussies, %2 en échec</translation>
     </message>
@@ -1494,10 +1541,6 @@
     <message>
         <source>Reset to defaults</source>
         <translation>Valeurs par défaut rétablies</translation>
-    </message>
-    <message>
-        <source>Platform crop reset</source>
-        <translation>Recadrage de plateforme réinitialisé</translation>
     </message>
     <message>
         <source>Auto applied</source>
@@ -1726,6 +1769,22 @@
         <source>Developing at full resolution…</source>
         <translation>Développement en pleine résolution…</translation>
     </message>
+    <message>
+        <source>%1 applied: long edge %2 px, quality %3</source>
+        <translation>%1 appliqué : grand côté %2 px, qualité %3</translation>
+    </message>
+    <message>
+        <source>Pro: tone curve, colour mixer, colour grading, detail, grain, colour management and the Masks tab are shown</source>
+        <translation>Pro : courbe des tons, mélangeur de couleurs, étalonnage, détail, grain, gestion des couleurs et onglet Masques affichés</translation>
+    </message>
+    <message>
+        <source>Essentials: Pro sections are hidden. Settings made in them stay applied.</source>
+        <translation>Essentiel : les sections Pro sont masquées. Leurs réglages restent appliqués.</translation>
+    </message>
+    <message>
+        <source>Platform crop reset</source>
+        <translation>Recadrage de plateforme réinitialisé</translation>
+    </message>
 </context>
 <context>
     <name>Navigator</name>
@@ -1739,6 +1798,10 @@
     <message>
         <source>Reset %1</source>
         <translation>Réinitialiser %1</translation>
+    </message>
+    <message>
+        <source>Pro</source>
+        <translation>Pro</translation>
     </message>
 </context>
 <context>
@@ -1935,10 +1998,6 @@
         <translation>Réinitialiser</translation>
     </message>
     <message>
-        <source>Vectorscope 123° flesh line (target: %1°)</source>
-        <translation>Ligne chair du vectorscope à 123° (cible : %1°)</translation>
-    </message>
-    <message>
         <source>Target Skin Hue</source>
         <translation>Teinte de peau cible</translation>
     </message>
@@ -1961,6 +2020,10 @@
     <message>
         <source>Saturation Shift</source>
         <translation>Décalage de saturation</translation>
+    </message>
+    <message>
+        <source>Target skin hue: %1° (Oklab)</source>
+        <translation>Teinte de peau cible : %1° (Oklab)</translation>
     </message>
 </context>
 <context>
@@ -2027,16 +2090,8 @@
         <translation>Connexion…</translation>
     </message>
     <message>
-        <source>Local AI</source>
-        <translation>IA locale</translation>
-    </message>
-    <message>
         <source>Connect local AI</source>
         <translation>Connecter l&apos;IA locale</translation>
-    </message>
-    <message>
-        <source>Connected: %1. Click to reconnect.</source>
-        <translation>Connecté : %1. Cliquez pour reconnecter.</translation>
     </message>
     <message>
         <source>Use Omarchy&apos;s default AI agent, or Ollama or LM Studio on this computer</source>
@@ -2077,6 +2132,26 @@
     <message>
         <source>Export</source>
         <translation>Exporter</translation>
+    </message>
+    <message>
+        <source>Connected: %1. Click to close the chat.</source>
+        <translation>Connecté : %1. Cliquez pour fermer la discussion.</translation>
+    </message>
+    <message>
+        <source>Connected: %1. Click to open the chat.</source>
+        <translation>Connecté : %1. Cliquez pour ouvrir la discussion.</translation>
+    </message>
+    <message>
+        <source>AI chat</source>
+        <translation>Discussion IA</translation>
+    </message>
+    <message>
+        <source>Essentials: white balance, tone, presence, film simulation, presets and LUT</source>
+        <translation>Essentiel : balance des blancs, tons, présence, simulation de film, préréglages et LUT</translation>
+    </message>
+    <message>
+        <source>Pro adds tone curve, colour mixer, colour grading, detail, grain, colour management and masks</source>
+        <translation>Pro ajoute la courbe des tons, le mélangeur de couleurs, l&apos;étalonnage, le détail, le grain, la gestion des couleurs et les masques</translation>
     </message>
 </context>
 <context>

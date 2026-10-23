@@ -232,6 +232,57 @@
     </message>
 </context>
 <context>
+    <name>AiChatPanel</name>
+    <message>
+        <source>Open a photo first</source>
+        <translation>Hãy mở ảnh trước</translation>
+    </message>
+    <message>
+        <source>Edit applied.</source>
+        <translation>Đã áp dụng chỉnh sửa.</translation>
+    </message>
+    <message>
+        <source>Chat · %1</source>
+        <translation>Trò chuyện · %1</translation>
+    </message>
+    <message>
+        <source>Chat</source>
+        <translation>Trò chuyện</translation>
+    </message>
+    <message>
+        <source>Reconnect</source>
+        <translation>Kết nối lại</translation>
+    </message>
+    <message>
+        <source>Clear chat</source>
+        <translation>Xóa cuộc trò chuyện</translation>
+    </message>
+    <message>
+        <source>Close chat</source>
+        <translation>Đóng cuộc trò chuyện</translation>
+    </message>
+    <message>
+        <source>Write below what to change in the photo. The AI sets the adjustments; Ctrl+Z undoes each edit.</source>
+        <translation>Viết bên dưới điều cần thay đổi trong ảnh. AI sẽ đặt các thanh trượt; Ctrl+Z hoàn tác từng chỉnh sửa.</translation>
+    </message>
+    <message>
+        <source>Working…</source>
+        <translation>Đang xử lý…</translation>
+    </message>
+    <message>
+        <source>e.g. warmer, moody evening light, recover the sky</source>
+        <translation>vd: ấm hơn, ánh chiều u buồn, khôi phục bầu trời</translation>
+    </message>
+    <message>
+        <source>Message to the AI</source>
+        <translation>Tin nhắn gửi AI</translation>
+    </message>
+    <message>
+        <source>Send</source>
+        <translation>Gửi</translation>
+    </message>
+</context>
+<context>
     <name>BoundedTextInput</name>
     <message>
         <source>Clipboard content exceeded byte limit or timed out.</source>
@@ -668,10 +719,6 @@
         <translation>Tiêu chuẩn / tắt</translation>
     </message>
     <message>
-        <source>Neutral camera linear profile</source>
-        <translation>Hồ sơ máy ảnh tuyến tính trung tính</translation>
-    </message>
-    <message>
         <source>Standard natural daylight color</source>
         <translation>Màu ánh sáng ban ngày tự nhiên tiêu chuẩn</translation>
     </message>
@@ -798,6 +845,10 @@
     <message>
         <source>Acros B&amp;W</source>
         <translation>Acros Đ/T</translation>
+    </message>
+    <message>
+        <source>No film simulation</source>
+        <translation>Không giả lập phim</translation>
     </message>
 </context>
 <context>
@@ -1312,10 +1363,6 @@
         <translation>Kết xuất xem trước thất bại</translation>
     </message>
     <message>
-        <source>%1 applied (%2)</source>
-        <translation>Đã áp dụng %1 (%2)</translation>
-    </message>
-    <message>
         <source>Batch export: %1 succeeded, %2 failed</source>
         <translation>Xuất hàng loạt: %1 thành công, %2 thất bại</translation>
     </message>
@@ -1490,10 +1537,6 @@
     <message>
         <source>Reset to defaults</source>
         <translation>Đã đặt lại về mặc định</translation>
-    </message>
-    <message>
-        <source>Platform crop reset</source>
-        <translation>Đã đặt lại khung cắt nền tảng</translation>
     </message>
     <message>
         <source>Auto applied</source>
@@ -1721,6 +1764,22 @@
         <source>Developing at full resolution…</source>
         <translation>Đang xử lý ở độ phân giải đầy đủ…</translation>
     </message>
+    <message>
+        <source>%1 applied: long edge %2 px, quality %3</source>
+        <translation>Đã áp dụng %1: cạnh dài %2 px, chất lượng %3</translation>
+    </message>
+    <message>
+        <source>Pro: tone curve, colour mixer, colour grading, detail, grain, colour management and the Masks tab are shown</source>
+        <translation>Pro: hiển thị đường cong tông, bộ trộn màu, chỉnh màu, chi tiết, hạt, quản lý màu và thẻ Mặt nạ</translation>
+    </message>
+    <message>
+        <source>Essentials: Pro sections are hidden. Settings made in them stay applied.</source>
+        <translation>Cơ bản: các mục Pro đã ẩn. Cài đặt trong đó vẫn được áp dụng.</translation>
+    </message>
+    <message>
+        <source>Platform crop reset</source>
+        <translation>Đã đặt lại khung cắt nền tảng</translation>
+    </message>
 </context>
 <context>
     <name>Navigator</name>
@@ -1734,6 +1793,10 @@
     <message>
         <source>Reset %1</source>
         <translation>Đặt lại %1</translation>
+    </message>
+    <message>
+        <source>Pro</source>
+        <translation>Pro</translation>
     </message>
 </context>
 <context>
@@ -1930,10 +1993,6 @@
         <translation>Đặt lại</translation>
     </message>
     <message>
-        <source>Vectorscope 123° flesh line (target: %1°)</source>
-        <translation>Đường màu da 123° trên vectorscope (mục tiêu: %1°)</translation>
-    </message>
-    <message>
         <source>Target Skin Hue</source>
         <translation>Sắc độ da mục tiêu</translation>
     </message>
@@ -1956,6 +2015,10 @@
     <message>
         <source>Saturation Shift</source>
         <translation>Dịch độ bão hòa</translation>
+    </message>
+    <message>
+        <source>Target skin hue: %1° (Oklab)</source>
+        <translation>Sắc da mục tiêu: %1° (Oklab)</translation>
     </message>
 </context>
 <context>
@@ -2021,16 +2084,8 @@
         <translation>Đang kết nối…</translation>
     </message>
     <message>
-        <source>Local AI</source>
-        <translation>AI cục bộ</translation>
-    </message>
-    <message>
         <source>Connect local AI</source>
         <translation>Kết nối AI cục bộ</translation>
-    </message>
-    <message>
-        <source>Connected: %1. Click to reconnect.</source>
-        <translation>Đã kết nối: %1. Nhấp để kết nối lại.</translation>
     </message>
     <message>
         <source>Use Omarchy&apos;s default AI agent, or Ollama or LM Studio on this computer</source>
@@ -2071,6 +2126,26 @@
     <message>
         <source>Export</source>
         <translation>Xuất</translation>
+    </message>
+    <message>
+        <source>Connected: %1. Click to close the chat.</source>
+        <translation>Đã kết nối: %1. Nhấp để đóng cuộc trò chuyện.</translation>
+    </message>
+    <message>
+        <source>Connected: %1. Click to open the chat.</source>
+        <translation>Đã kết nối: %1. Nhấp để mở cuộc trò chuyện.</translation>
+    </message>
+    <message>
+        <source>AI chat</source>
+        <translation>Trò chuyện với AI</translation>
+    </message>
+    <message>
+        <source>Essentials: white balance, tone, presence, film simulation, presets and LUT</source>
+        <translation>Cơ bản: cân bằng trắng, tông, độ hiện diện, giả lập phim, thiết lập sẵn và LUT</translation>
+    </message>
+    <message>
+        <source>Pro adds tone curve, colour mixer, colour grading, detail, grain, colour management and masks</source>
+        <translation>Pro thêm đường cong tông, bộ trộn màu, chỉnh màu, chi tiết, hạt, quản lý màu và mặt nạ</translation>
     </message>
 </context>
 <context>
