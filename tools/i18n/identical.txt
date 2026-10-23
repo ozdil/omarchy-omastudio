@@ -144,3 +144,4 @@ ro:Contrast
 ro:NAVIGATOR
 ro:VECTOR
 ro:Original
+el:16-bit TIFF
