@@ -16,6 +16,10 @@ ColumnLayout {
     property bool resettable: true
     // The window: collapsedSections, toggleSection(key), soloSection(key)
     property var host: null
+    // Dimmed and inactive while no photo is open
+    property bool needsPhoto: true
+    enabled: !needsPhoto || (host !== null && host.activePhotoPath !== "")
+    opacity: enabled ? 1.0 : 0.45
 
     readonly property bool expanded: !(host && host.collapsedSections[key] === true)
 

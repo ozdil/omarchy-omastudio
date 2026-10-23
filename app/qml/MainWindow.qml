@@ -13,6 +13,8 @@ Rectangle {
     property string activePhotoPath: ""
     property string currentRenderPath: "/dev/shm/omastudio_viewport.ppm"
     property var activeMetadata: null
+    readonly property bool isFujifilm: activeMetadata !== null && activeMetadata !== undefined
+        && /fujifilm/i.test(activeMetadata.make || "")
     property var activeHistogram: null
     property var activeScene: null
     property var photoList: []
@@ -36,7 +38,7 @@ Rectangle {
     property string rightTab: "adjust"
     // Section key -> true when the section is collapsed
     property var collapsedSections: ({})
-    // Photo surround: "dark", "grey" (18 %) or "light"; independent of the theme
+    // Photo surround: "dark", "grey" (middle grey) or "theme"
     property string surround: "dark"
     property bool uiStateLoaded: false
     property int photoRating: 0
@@ -1224,7 +1226,7 @@ Rectangle {
     // Collapses every section of the current tab except `key`
     function soloSection(key) {
         var keys = ["profile", "wb", "tone", "presence", "curve", "hsl", "grading", "detail", "grain",
-                    "colour", "layers", "looks", "lut", "assistant"];
+                    "colour", "layers", "looks", "lut", "assistant", "fujifilm"];
         var m = {};
         for (var i = 0; i < keys.length; i++) if (keys[i] !== key) m[keys[i]] = true;
         root.collapsedSections = m;
@@ -1238,7 +1240,7 @@ Rectangle {
         if (typeof st.showFilmstrip === "boolean") root.showFilmstrip = st.showFilmstrip;
         if (["adjust", "masks", "looks", "ai"].indexOf(st.rightTab) >= 0) root.rightTab = st.rightTab;
         if (st.collapsedSections && typeof st.collapsedSections === "object") root.collapsedSections = st.collapsedSections;
-        if (["dark", "grey", "light"].indexOf(st.surround) >= 0) root.surround = st.surround;
+        if (["dark", "grey", "theme"].indexOf(st.surround) >= 0) root.surround = st.surround;
         root.uiStateLoaded = true;
     }
 
@@ -1434,9 +1436,6 @@ Rectangle {
                 viewport.isCropMode = !viewport.isCropMode;
                 root.showToast(viewport.isCropMode ? "Crop Mode: ON (C)" : "Crop Mode: OFF", Theme.accentYellow);
             }
-            onZoomFit: viewport.resetZoomFit()
-            onZoom100: viewport.setZoomAbsolute(1.0)
-            onZoom200: viewport.setZoomAbsolute(2.0)
             onExportClicked: {
                 exportDialog.isBatchMode = false;
                 exportDialog.batchCount = 0;
@@ -1520,7 +1519,8 @@ Rectangle {
 
                         // 4. Scene analysis (after Auto)
                         Rectangle {
-                            visible: root.activeScene !== null
+                            // A guess from simple image statistics: shown only when it is fairly sure
+                            visible: root.activeScene !== null && root.activeScene.confidence >= 0.9
                             Layout.fillWidth: true
                             implicitHeight: 70
                             radius: Theme.radiusMd
@@ -1541,7 +1541,7 @@ Rectangle {
                                         color: Theme.accentPurple
                                     }
                                     Text {
-                                        text: qsTr("Scene")
+                                        text: qsTr("Suggested scene")
                                         textFormat: Text.PlainText
                                         font.family: Theme.fontFamily
                                         font.pixelSize: Theme.px(9)
@@ -1622,6 +1622,8 @@ Rectangle {
 
                 Viewport {
                     id: viewport
+                    surround: root.surround
+                    onSurroundCycled: function(next) { root.surround = next }
                     Layout.fillWidth: true
                     Layout.fillHeight: true
                     isSplitView: root.isSplitView
@@ -1742,11 +1744,159 @@ Rectangle {
                     color: Theme.border
                 }
 
+                // Copy, paste and reset the edit, and XMP sidecars: the same in every tab
+                Rectangle {
+                    id: editActionsLine
+                    anchors.bottom: editActions.top
+                    anchors.bottomMargin: 10
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    height: 1
+                    color: Theme.border
+                }
+                ColumnLayout {
+                    id: editActions
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.bottom: parent.bottom
+                    anchors.margins: 12
+                    spacing: 6
+                    enabled: root.activePhotoPath !== ""
+                    opacity: enabled ? 1.0 : 0.45
+
+                        RowLayout {
+                            Layout.fillWidth: true
+                            spacing: 6
+
+                            Rectangle {
+                                Layout.fillWidth: true
+                                implicitHeight: 28
+                                radius: Theme.radiusSm
+                                color: copyBtnMouse.containsMouse ? Theme.bgCardHover : Theme.bgCard
+                                border.color: Theme.border
+
+                                RowLayout {
+                                    anchors.centerIn: parent
+                                    spacing: 4
+                                    Text {
+                                        text: qsTr("Copy")
+                                        textFormat: Text.PlainText
+                                        font.family: Theme.monoFont
+                                        font.pixelSize: Theme.px(10)
+                                        font.weight: Font.Medium
+                                        color: Theme.textMain
+                                    }
+                                }
+                                MouseArea {
+                                    id: copyBtnMouse
+                                    anchors.fill: parent
+                                    cursorShape: Qt.PointingHandCursor
+                                    hoverEnabled: true
+                                    onClicked: root.copyRecipe()
+                                }
+                            }
+
+                            Rectangle {
+                                Layout.fillWidth: true
+                                implicitHeight: 28
+                                radius: Theme.radiusSm
+                                color: pasteBtnMouse.containsMouse ? Theme.bgCardHover : Theme.bgCard
+                                border.color: Theme.border
+
+                                RowLayout {
+                                    anchors.centerIn: parent
+                                    spacing: 4
+                                    Text {
+                                        text: qsTr("Paste")
+                                        textFormat: Text.PlainText
+                                        font.family: Theme.monoFont
+                                        font.pixelSize: Theme.px(10)
+                                        font.weight: Font.Medium
+                                        color: Theme.textMain
+                                    }
+                                }
+                                MouseArea {
+                                    id: pasteBtnMouse
+                                    anchors.fill: parent
+                                    cursorShape: Qt.PointingHandCursor
+                                    hoverEnabled: true
+                                    onClicked: root.pasteRecipe()
+                                }
+                            }
+
+                            Rectangle {
+                                implicitWidth: 70
+                                implicitHeight: 28
+                                radius: Theme.radiusSm
+                                color: resetBtnMouse.containsMouse ? Theme.bgCardHover : Theme.bgCard
+                                border.color: Theme.border
+
+                                Text {
+                                    anchors.centerIn: parent
+                                    text: qsTr("Reset")
+                                    textFormat: Text.PlainText
+                                    font.family: Theme.monoFont
+                                    font.pixelSize: Theme.px(10)
+                                    font.weight: Font.Bold
+                                    color: Theme.highlightClip
+                                }
+                                MouseArea {
+                                    id: resetBtnMouse
+                                    anchors.fill: parent
+                                    cursorShape: Qt.PointingHandCursor
+                                    hoverEnabled: true
+                                    onClicked: root.resetRecipe()
+                                }
+                            }
+                        }
+
+                        // Edits exchanged with other editors as XMP sidecars
+                        RowLayout {
+                            Layout.fillWidth: true
+                            spacing: 6
+
+                            Repeater {
+                                model: [
+                                    { "label": qsTr("Import XMP"), "tip": qsTr("Read the photo's .xmp sidecar written by another editor") },
+                                    { "label": qsTr("Write XMP"), "tip": qsTr("Write the edit, rating and label to an .xmp sidecar for other editors") }
+                                ]
+                                delegate: Rectangle {
+                                    Layout.fillWidth: true
+                                    implicitHeight: 28
+                                    radius: Theme.radiusSm
+                                    opacity: root.activePhotoPath !== "" ? 1.0 : 0.4
+                                    color: xmpBtnMouse.containsMouse ? Theme.bgCardHover : Theme.bgCard
+                                    border.color: Theme.border
+
+                                    Text {
+                                        anchors.centerIn: parent
+                                        text: modelData.label
+                                        textFormat: Text.PlainText
+                                        font.family: Theme.monoFont
+                                        font.pixelSize: Theme.px(10)
+                                        font.weight: Font.Medium
+                                        color: Theme.textMain
+                                    }
+                                    MouseArea {
+                                        id: xmpBtnMouse
+                                        anchors.fill: parent
+                                        cursorShape: Qt.PointingHandCursor
+                                        hoverEnabled: true
+                                        onClicked: index === 0 ? root.importXmp() : root.writeXmp(false)
+                                    }
+                                    ToolTip.visible: xmpBtnMouse.containsMouse
+                                    ToolTip.delay: 500
+                                    ToolTip.text: modelData.tip
+                                }
+                            }
+                        }
+                }
+
                 ScrollView {
                     anchors.top: rightTabsLine.bottom
                     anchors.left: parent.left
                     anchors.right: parent.right
-                    anchors.bottom: parent.bottom
+                    anchors.bottom: editActionsLine.top
                     anchors.margins: 12
                     clip: true
                     contentWidth: availableWidth
@@ -1764,7 +1914,7 @@ Rectangle {
                                 key: "profile"
                                 title: qsTr("Profile")
                                 host: root
-                                resettable: false
+                                onReset: filmSimPanel.reset()
 
                                 FilmSimulationPanel {
                                     embedded: true
@@ -1778,7 +1928,23 @@ Rectangle {
                                         root.requestRender();
                                     }
                                 }
+                            }
+                            // Recipes, the camera over USB and Pixel Shift: for Fujifilm photos,
+                            // and with no photo open so a camera can be connected
+                            PanelSection {
+                                key: "fujifilm"
+                                title: "Fujifilm"
+                                host: root
+                                needsPhoto: false
+                                visible: root.isFujifilm || root.activePhotoPath === ""
+                                onReset: {
+                                    root.colorChrome = 0.0;
+                                    root.colorChromeBlue = 0.0;
+                                    root.requestRender();
+                                }
+
                                 SliderGroup {
+                                    visible: root.isFujifilm
                                     title: "Color Chrome Effect"
                                     from: 0.0
                                     to: 100.0
@@ -1789,6 +1955,7 @@ Rectangle {
                                     onSliderMoved: function(v) { root.colorChrome = v; root.requestRender() }
                                 }
                                 SliderGroup {
+                                    visible: root.isFujifilm
                                     title: "Color Chrome FX Blue"
                                     from: 0.0
                                     to: 100.0
@@ -1832,7 +1999,7 @@ Rectangle {
                                 }
 
                                 SliderGroup {
-                                    title: "Temp (Kelvin)"
+                                    title: qsTr("Temperature")
                                     from: 2000.0
                                     to: 12000.0
                                     value: root.wbTemp
@@ -1843,7 +2010,7 @@ Rectangle {
                                     onSliderMoved: function(v) { root.wbTemp = v; root.requestRender() }
                                 }
                                 SliderGroup {
-                                    title: "Tint (Green / Magenta)"
+                                    title: qsTr("Tint")
                                     from: -100.0
                                     to: 100.0
                                     value: root.wbTint
@@ -2311,7 +2478,7 @@ Rectangle {
                                 key: "lut"
                                 title: qsTr("LUT")
                                 host: root
-                                resettable: false
+                                onReset: lutSelector.reset()
 
                                 LutSelector {
                                     embedded: true
@@ -2360,134 +2527,6 @@ Rectangle {
                             }
                         }
 
-                        // Persistent Lightroom Workflow Action Bar (Copy / Paste / Reset)
-                        Rectangle { Layout.fillWidth: true; height: 1; color: Theme.border }
-                        RowLayout {
-                            Layout.fillWidth: true
-                            spacing: 6
-
-                            Rectangle {
-                                Layout.fillWidth: true
-                                implicitHeight: 28
-                                radius: Theme.radiusSm
-                                color: copyBtnMouse.containsMouse ? Theme.bgCardHover : Theme.bgCard
-                                border.color: Theme.border
-
-                                RowLayout {
-                                    anchors.centerIn: parent
-                                    spacing: 4
-                                    Text {
-                                        text: "Copy"
-                                        textFormat: Text.PlainText
-                                        font.family: Theme.monoFont
-                                        font.pixelSize: Theme.px(10)
-                                        font.weight: Font.Medium
-                                        color: Theme.textMain
-                                    }
-                                }
-                                MouseArea {
-                                    id: copyBtnMouse
-                                    anchors.fill: parent
-                                    cursorShape: Qt.PointingHandCursor
-                                    hoverEnabled: true
-                                    onClicked: root.copyRecipe()
-                                }
-                            }
-
-                            Rectangle {
-                                Layout.fillWidth: true
-                                implicitHeight: 28
-                                radius: Theme.radiusSm
-                                color: pasteBtnMouse.containsMouse ? Theme.bgCardHover : Theme.bgCard
-                                border.color: Theme.border
-
-                                RowLayout {
-                                    anchors.centerIn: parent
-                                    spacing: 4
-                                    Text {
-                                        text: "Paste"
-                                        textFormat: Text.PlainText
-                                        font.family: Theme.monoFont
-                                        font.pixelSize: Theme.px(10)
-                                        font.weight: Font.Medium
-                                        color: Theme.textMain
-                                    }
-                                }
-                                MouseArea {
-                                    id: pasteBtnMouse
-                                    anchors.fill: parent
-                                    cursorShape: Qt.PointingHandCursor
-                                    hoverEnabled: true
-                                    onClicked: root.pasteRecipe()
-                                }
-                            }
-
-                            Rectangle {
-                                implicitWidth: 70
-                                implicitHeight: 28
-                                radius: Theme.radiusSm
-                                color: resetBtnMouse.containsMouse ? Theme.bgCardHover : Theme.bgCard
-                                border.color: Theme.border
-
-                                Text {
-                                    anchors.centerIn: parent
-                                    text: "Reset"
-                                    textFormat: Text.PlainText
-                                    font.family: Theme.monoFont
-                                    font.pixelSize: Theme.px(10)
-                                    font.weight: Font.Bold
-                                    color: Theme.highlightClip
-                                }
-                                MouseArea {
-                                    id: resetBtnMouse
-                                    anchors.fill: parent
-                                    cursorShape: Qt.PointingHandCursor
-                                    hoverEnabled: true
-                                    onClicked: root.resetRecipe()
-                                }
-                            }
-                        }
-
-                        // Edits exchanged with other editors as XMP sidecars
-                        RowLayout {
-                            Layout.fillWidth: true
-                            spacing: 6
-
-                            Repeater {
-                                model: [
-                                    { "label": "Import XMP", "tip": "Read DSCF0001.xmp from Lightroom, Capture One or darktable" },
-                                    { "label": "Write XMP", "tip": "Write the edit, rating and label to DSCF0001.xmp for other editors" }
-                                ]
-                                delegate: Rectangle {
-                                    Layout.fillWidth: true
-                                    implicitHeight: 28
-                                    radius: Theme.radiusSm
-                                    opacity: root.activePhotoPath !== "" ? 1.0 : 0.4
-                                    color: xmpBtnMouse.containsMouse ? Theme.bgCardHover : Theme.bgCard
-                                    border.color: Theme.border
-
-                                    Text {
-                                        anchors.centerIn: parent
-                                        text: modelData.label
-                                        textFormat: Text.PlainText
-                                        font.family: Theme.monoFont
-                                        font.pixelSize: Theme.px(10)
-                                        font.weight: Font.Medium
-                                        color: Theme.textMain
-                                    }
-                                    MouseArea {
-                                        id: xmpBtnMouse
-                                        anchors.fill: parent
-                                        cursorShape: Qt.PointingHandCursor
-                                        hoverEnabled: true
-                                        onClicked: index === 0 ? root.importXmp() : root.writeXmp(false)
-                                    }
-                                    ToolTip.visible: xmpBtnMouse.containsMouse
-                                    ToolTip.delay: 500
-                                    ToolTip.text: modelData.tip
-                                }
-                            }
-                        }
                     }
                 }
             }

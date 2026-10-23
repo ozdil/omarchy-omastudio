@@ -17,6 +17,14 @@
 - 3D LUTs: **Load .cube file…** opens your own LUT. The four built-in named looks are no longer offered; edits that use them still render.
 - Auto is a single action (the separate "Jev" auto was not reachable from the interface and has been folded in).
 - The gesture hint over the photo and the "DaVinci Color Engine" line are gone.
+- Each control has one place: zoom (with the current percentage) and rotate are on the bar under the photo; undo, redo, before/after and crop are in the top bar. Copy, paste, reset and XMP are a fixed row under the panel, the same in every tab.
+- Fujifilm has its own section: Color Chrome for Fujifilm photos, and recipes, the camera over USB and Pixel Shift. It is also shown with no photo open, so a camera can be connected.
+- With no photo open, editing sections and buttons are dimmed and inactive.
+- The area around the photo is neutral dark grey by default. The button under the photo switches to middle grey or the theme colour; the choice is remembered.
+- Rating and flags use star, flag and reject icons with tooltips. Nothing is drawn smaller than 10 px at the base font size.
+- Section reset buttons sit in the section header only. Disabled buttons look disabled.
+- "Temperature" and "Tint" instead of "Temp (Kelvin)" and "Tint (Green / Magenta)".
+- The scene guess is shown only when it is at least 90 % sure, labelled as a suggestion.
 
 ### Opening photos
 - Every RAW format LibRaw reads opens from the dialog, by drag and drop and from the folder view (Fujifilm, Hasselblad, Phase One, Leica, Pentax, Mamiya/Leaf, Canon, Nikon, Sony, Panasonic, Olympus, Sigma, DNG and others), plus JPEG, PNG, WebP, TIFF (8/16-bit and float), HEIF/HEIC, AVIF, JPEG XL, OpenEXR, Radiance HDR and PNM.
@@ -29,6 +37,7 @@
 - Exported files are readable by other users (`rw-r--r--`) whichever encoder wrote them.
 - ACEScg is a working export profile (it needed an ICC file on disk before).
 - Exported JPEG and TIFF files use the `.jpg` and `.tif` extensions.
+- Export window: **Choose…** picks the folder; **File name** adds a tag to the name, with a preview of the result. Format tiles show the bit depth, with the use in the tooltip. Clicking an active platform preset again clears it.
 - `omastudio ipc showExport` opens the Export window; `setRightTab <adjust|masks|looks|ai>` switches the panel tab.
 
 ### AI

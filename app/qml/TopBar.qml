@@ -14,6 +14,7 @@ Rectangle {
     property bool isCropMode: false
     property real currentZoom: 1.0
     property string activePhotoName: ""
+    readonly property bool hasPhoto: activePhotoName !== ""
     property int photoRating: 0
     property string photoFlag: "none"
     // Local AI connection, shown next to the mode switcher
@@ -29,9 +30,6 @@ Rectangle {
     signal openFileClicked()
     signal toggleSplit()
     signal toggleCrop()
-    signal zoomFit()
-    signal zoom100()
-    signal zoom200()
     signal undoClicked()
     signal redoClicked()
     signal exportClicked()
@@ -112,16 +110,20 @@ Rectangle {
                 border.color: root.photoFlag === "pick" ? Theme.accentGreen : Theme.border
                 Text {
                     anchors.centerIn: parent
-                    text: "P"
-                    textFormat: Text.PlainText
-                    font.family: Theme.monoFont
-                    font.pixelSize: Theme.px(9)
-                    font.weight: Font.Bold
-                    color: root.photoFlag === "pick" ? Theme.bgBase : Theme.accentGreen
+                    text: Theme.iconFlag
+                    font.family: Theme.iconFont
+                    font.pixelSize: Theme.px(10)
+                    color: root.photoFlag === "pick" ? Theme.onAccent : Theme.textMuted
                 }
                 MouseArea {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
+                    hoverEnabled: true
+                    ToolTip.visible: containsMouse
+                    ToolTip.delay: 500
+                    ToolTip.text: qsTr("Pick (P)")
+                    Accessible.role: Accessible.Button
+                    Accessible.name: qsTr("Pick")
                     onClicked: root.flagChanged(root.photoFlag === "pick" ? "none" : "pick")
                 }
             }
@@ -135,16 +137,20 @@ Rectangle {
                 border.color: root.photoFlag === "reject" ? Theme.highlightClip : Theme.border
                 Text {
                     anchors.centerIn: parent
-                    text: "X"
-                    textFormat: Text.PlainText
-                    font.family: Theme.monoFont
-                    font.pixelSize: Theme.px(9)
-                    font.weight: Font.Bold
-                    color: root.photoFlag === "reject" ? "#ffffff" : Theme.highlightClip
+                    text: Theme.iconBan
+                    font.family: Theme.iconFont
+                    font.pixelSize: Theme.px(10)
+                    color: root.photoFlag === "reject" ? "#ffffff" : Theme.textMuted
                 }
                 MouseArea {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
+                    hoverEnabled: true
+                    ToolTip.visible: containsMouse
+                    ToolTip.delay: 500
+                    ToolTip.text: qsTr("Reject (X)")
+                    Accessible.role: Accessible.Button
+                    Accessible.name: qsTr("Reject")
                     onClicked: root.flagChanged(root.photoFlag === "reject" ? "none" : "reject")
                 }
             }
@@ -161,16 +167,18 @@ Rectangle {
                         color: "transparent"
                         Text {
                             anchors.centerIn: parent
-                            text: (index + 1) <= root.photoRating ? "*" : "-"
-                            textFormat: Text.PlainText
-                            font.family: Theme.monoFont
+                            text: (index + 1) <= root.photoRating ? Theme.iconStar : Theme.iconStarEmpty
+                            font.family: Theme.iconFont
                             font.pixelSize: Theme.px(11)
-                            font.weight: Font.Bold
                             color: (index + 1) <= root.photoRating ? Theme.accentYellow : Theme.textDim
                         }
                         MouseArea {
                             anchors.fill: parent
                             cursorShape: Qt.PointingHandCursor
+                            hoverEnabled: true
+                            ToolTip.visible: containsMouse
+                            ToolTip.delay: 500
+                            ToolTip.text: qsTr("%n star(s)", "", index + 1)
                             onClicked: {
                                 var newR = (root.photoRating === (index + 1)) ? 0 : (index + 1);
                                 root.ratingChanged(newR);
@@ -308,6 +316,8 @@ Rectangle {
 
         // Undo / Redo Quick Actions
         RowLayout {
+            enabled: root.hasPhoto
+            opacity: enabled ? 1 : 0.4
             spacing: 2
 
             Rectangle {
@@ -371,6 +381,8 @@ Rectangle {
 
         // Before / After Split Button (A | B)
         Rectangle {
+            enabled: root.hasPhoto
+            opacity: enabled ? 1 : 0.4
             implicitWidth: 70
             implicitHeight: 28
             radius: Theme.radiusSm
@@ -405,6 +417,8 @@ Rectangle {
 
         // Crop Mode Toggle Button (C)
         Rectangle {
+            enabled: root.hasPhoto
+            opacity: enabled ? 1 : 0.4
             implicitWidth: 68
             implicitHeight: 28
             radius: Theme.radiusSm
@@ -434,71 +448,6 @@ Rectangle {
                 anchors.fill: parent
                 cursorShape: Qt.PointingHandCursor
                 onClicked: root.toggleCrop()
-            }
-        }
-
-        // Zoom Controls
-        RowLayout {
-            spacing: 2
-            Rectangle {
-                width: 28
-                height: 28
-                radius: Theme.r(4)
-                color: Theme.bgCard
-                border.color: Theme.border
-                Text {
-                    font.family: Theme.fontFamily
-                    anchors.centerIn: parent
-                    text: "Fit"
-                    textFormat: Text.PlainText
-                    font.pixelSize: Theme.px(9)
-                    color: Theme.textMain
-                }
-                MouseArea {
-                    anchors.fill: parent
-                    cursorShape: Qt.PointingHandCursor
-                    onClicked: root.zoomFit()
-                }
-            }
-            Rectangle {
-                width: 32
-                height: 28
-                radius: Theme.r(4)
-                color: Theme.bgCard
-                border.color: Theme.border
-                Text {
-                    font.family: Theme.fontFamily
-                    anchors.centerIn: parent
-                    text: "1:1"
-                    textFormat: Text.PlainText
-                    font.pixelSize: Theme.px(9)
-                    color: Theme.textMain
-                }
-                MouseArea {
-                    anchors.fill: parent
-                    cursorShape: Qt.PointingHandCursor
-                    onClicked: root.zoom100()
-                }
-            }
-            Rectangle {
-                width: 32
-                height: 28
-                radius: Theme.r(4)
-                color: Theme.bgCard
-                border.color: Theme.border
-                Text {
-                    font.family: Theme.fontFamily
-                    anchors.centerIn: parent
-                    text: "2:1"
-                    textFormat: Text.PlainText
-                    font.pixelSize: Theme.px(9)
-                    color: Theme.textMain
-                }
-                MouseArea {
-                    anchors.fill: parent
-                    cursorShape: Qt.PointingHandCursor
-                    onClicked: root.zoom200()
-                }
             }
         }
 

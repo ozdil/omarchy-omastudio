@@ -32,7 +32,7 @@ ColumnLayout {
 
         // Reset preset button (always accessible)
         Rectangle {
-            visible: true
+            visible: !root.embedded
             implicitWidth: 46
             implicitHeight: 18
             radius: Theme.radiusSm

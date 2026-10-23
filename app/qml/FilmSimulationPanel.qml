@@ -6,6 +6,11 @@ Rectangle {
     id: root
     // Inside a panel section, which shows the title
     property bool embedded: false
+    function reset() {
+        root.activeSimulation = "none";
+        root.intensity = 1.0;
+        root.simulationChanged("none", 1.0);
+    }
     Layout.fillWidth: true
     implicitHeight: mainCol.implicitHeight + 16
     radius: Theme.radiusMd
@@ -73,6 +78,7 @@ Rectangle {
             }
 
             Rectangle {
+                visible: !root.embedded
                 implicitWidth: resetSimText.implicitWidth + 10
                 implicitHeight: 18
                 radius: Theme.r(4)
@@ -96,11 +102,7 @@ Rectangle {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
                     hoverEnabled: true
-                    onClicked: {
-                        root.activeSimulation = "none";
-                        root.intensity = 1.0;
-                        root.simulationChanged("none", 1.0);
-                    }
+                    onClicked: root.reset()
                 }
             }
         }

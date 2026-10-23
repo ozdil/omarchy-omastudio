@@ -64,41 +64,6 @@ Rectangle {
 
             Item { Layout.fillWidth: true }
 
-            // Preset Zoom Buttons: FIT, 100%, 200%, 300%
-            Repeater {
-                model: [
-                    { label: "FIT", val: 0.0 },
-                    { label: "100%", val: 1.0 },
-                    { label: "200%", val: 2.0 },
-                    { label: "300%", val: 3.0 }
-                ]
-
-                delegate: Rectangle {
-                    implicitWidth: lbl.implicitWidth + 10
-                    implicitHeight: 18
-                    radius: Theme.r(3)
-                    property bool isCur: (modelData.label === "FIT" && root.zoomFactor <= 1.05) || (modelData.label !== "FIT" && Math.abs(root.zoomFactor - modelData.val) < 0.1 && root.zoomFactor > 1.05)
-                    color: isCur ? Theme.accent : Theme.bgCard
-                    border.color: isCur ? Theme.accent : Theme.border
-
-                    Text {
-                        id: lbl
-                        anchors.centerIn: parent
-                        text: modelData.label
-                        textFormat: Text.PlainText
-                        font.pixelSize: Theme.px(9)
-                        font.family: Theme.monoFont
-                        font.weight: Font.Bold
-                        color: parent.isCur ? Theme.bgBase : Theme.textMuted
-                    }
-
-                    MouseArea {
-                        anchors.fill: parent
-                        cursorShape: Qt.PointingHandCursor
-                        onClicked: root.zoomRequested(modelData.val)
-                    }
-                }
-            }
         }
 
         // Mini Canvas Area

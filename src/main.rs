@@ -1908,7 +1908,12 @@ fn run_daemon() {
                     .map(|(item, tag)| {
                         let recipe = item.recipe.clone().unwrap_or_else(|| Recipe::load_initial(&item.path));
                         let mut item_options = options.clone();
-                        item_options.name_tag = tag.clone();
+                        // The user's tag stays; the disambiguating tag is added after it
+                        item_options.name_tag = match (&options.name_tag, tag) {
+                            (Some(user), Some(t)) if !user.is_empty() => Some(format!("{}{}", user, t)),
+                            (Some(user), _) if !user.is_empty() => Some(user.clone()),
+                            (_, t) => t.clone(),
+                        };
                         match export_photo(&item.path, &recipe, &item_options) {
                             Ok(dest) => BatchExportItemResult {
                                 path: item.path.clone(),

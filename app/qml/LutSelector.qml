@@ -7,6 +7,12 @@ Rectangle {
     id: root
     // Inside a panel section, which shows the title
     property bool embedded: false
+    function reset() {
+        root.activeLut = "";
+        root.lutIntensity = 1.0;
+        root.customLutPath = "";
+        root.lutChanged("", 1.0, "");
+    }
     Layout.fillWidth: true
     implicitHeight: mainCol.implicitHeight + 16
     radius: Theme.radiusMd
@@ -60,6 +66,7 @@ Rectangle {
 
             // Reset LUT
             Rectangle {
+                visible: !root.embedded
                 implicitWidth: resetText.implicitWidth + 10
                 implicitHeight: 18
                 radius: Theme.r(4)
@@ -83,12 +90,7 @@ Rectangle {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
                     hoverEnabled: true
-                    onClicked: {
-                        root.activeLut = "";
-                        root.lutIntensity = 1.0;
-                        root.customLutPath = "";
-                        root.lutChanged("", 1.0, "");
-                    }
+                    onClicked: root.reset()
                 }
             }
         }

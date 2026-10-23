@@ -522,7 +522,7 @@ fn encode_png(img: &DynamicImage, icc: Option<&[u8]>) -> Result<Vec<u8>, String>
 
 /// Keeps only ASCII alphanumerics so a tag can never inject separators into the name.
 fn sanitize_name_tag(tag: &str) -> String {
-    tag.chars().filter(|c| c.is_ascii_alphanumeric()).take(16).collect::<String>().to_lowercase()
+    tag.chars().filter(|c| c.is_ascii_alphanumeric()).take(24).collect::<String>().to_lowercase()
 }
 
 /// Name tags for a batch: sources sharing a file stem (DSC_0001.NEF + DSC_0001.JPG,
