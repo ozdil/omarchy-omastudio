@@ -95,3 +95,16 @@ pl:Color Chrome FX Blue
 pl:HIST
 cs:AI
 cs:HIST
+sv:Version %1
+sv:AI
+sv:Sepia
+sv:Batch (%1)
+sv:[S] %1%
+sv:[H] %1%
+sv:Orange
+sv:Magenta
+sv:Standard
+sv:NAVIGATOR
+sv:HIST
+sv:Original
+sv:POSITION
