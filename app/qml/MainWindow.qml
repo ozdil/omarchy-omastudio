@@ -1504,8 +1504,9 @@ Rectangle {
                                         font.pixelSize: Theme.px(9)
                                         font.weight: Font.Bold
                                         color: Theme.accentPurple
+                                        Layout.fillWidth: true
+                                        elide: Text.ElideRight
                                     }
-                                    Item { Layout.fillWidth: true }
                                     Text {
                                         text: root.activeScene ? Math.round(root.activeScene.confidence * 100) + "%" : ""
                                         textFormat: Text.PlainText
@@ -2671,13 +2672,14 @@ Rectangle {
                             }
 
                             Rectangle {
-                                implicitWidth: 70
+                                implicitWidth: Math.max(70, label2674.implicitWidth + 16)
                                 implicitHeight: 28
                                 radius: Theme.radiusSm
                                 color: resetBtnMouse.containsMouse ? Theme.bgCardHover : Theme.bgCard
                                 border.color: Theme.border
 
                                 Text {
+                                    id: label2674
                                     anchors.centerIn: parent
                                     text: qsTr("Reset")
                                     textFormat: Text.PlainText

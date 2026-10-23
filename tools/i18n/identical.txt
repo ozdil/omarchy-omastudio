@@ -14,3 +14,21 @@ Gamma
 Gain
 Offset
 tr:Platform:
+# Feature and product names
+OK
+PIXEL SHIFT MULTI-SHOT
+Pro Studio
+Stories / Reels
+Social (2048p)
+de:Global
+de:Sepia
+de:Orange
+de:Magenta
+de:Standard
+de:+ RADIAL
+de:Vignette
+de:NAVIGATOR
+de:HIST
+de:PARADE
+de:Original
+de:POSITION

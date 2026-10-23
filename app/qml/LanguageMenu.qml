@@ -5,7 +5,7 @@ import QtQuick.Controls
 // Top-bar button that picks the interface language
 Rectangle {
     id: root
-    implicitWidth: 32
+    implicitWidth: Math.max(32, label8.implicitWidth + 16)
     implicitHeight: 28
     radius: Theme.radiusSm
     color: langMouse.containsMouse || menu.visible ? Theme.bgCardHover : Theme.bgCard
@@ -13,6 +13,7 @@ Rectangle {
     border.width: 1
 
     Text {
+        id: label8
         anchors.centerIn: parent
         text: Theme.iconLanguage
         font.family: Theme.iconFont

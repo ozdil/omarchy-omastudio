@@ -40,6 +40,8 @@ UI_CALL = re.compile(r"\b(?:showToast|notify|fillText|strokeText)\(|\breturn\s")
 IGNORE_LINE = re.compile(r"^\s*(?://|import\s|\*)|console\.(?:log|warn|error)")
 
 TURKISH_CHARS = re.compile(r"[çğıöşüÇĞİÖŞÜ]")
+# Letters only Turkish (and Azerbaijani) use, for spotting Turkish in other languages
+TURKISH_ONLY = re.compile(r"[ğıİşĞŞ]")
 TURKISH_WORDS = {"ve", "bir", "için", "yok", "basit", "tarama", "dosya", "fotoğraf", "ayarlar",
                  "yanit", "yanıt", "veremedi", "kaydedildi", "hata", "açık", "kapalı", "dışa"}
 ENGLISH_WORDS = {"the", "and", "with", "your", "failed", "saved", "settings", "loading",
@@ -180,7 +182,7 @@ def check_ts(path, sources, identical_ok):
                 elif script and WORD.search(f) and not script.search(f) and src not in identical_ok \
                         and f"{code}:{src}" not in identical_ok:
                     problems.append(f"{path.name}: [{cname}] not in the language's script: \"{f}\"")
-                elif code != "tr" and TURKISH_CHARS.search(f) and not TURKISH_CHARS.search(src):
+                elif code != "tr" and TURKISH_ONLY.search(f) and not TURKISH_ONLY.search(src):
                     problems.append(f"{path.name}: [{cname}] Turkish letters in a {code} translation: \"{f}\"")
                 elif {w.lower() for w in WORD.findall(f)} & english_words and f != src:
                     problems.append(f"{path.name}: [{cname}] English words in the translation: \"{f}\"")

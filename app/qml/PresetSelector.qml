@@ -30,7 +30,7 @@ ColumnLayout {
         // Reset preset button (always accessible)
         Rectangle {
             visible: true
-            implicitWidth: 46
+            implicitWidth: Math.max(46, label33.implicitWidth + 16)
             implicitHeight: 18
             radius: Theme.radiusSm
             color: resetPresetMouse.containsMouse ? Qt.rgba(Theme.accentMagenta.r, Theme.accentMagenta.g, Theme.accentMagenta.b, 0.2) : (root.activePreset !== "" ? Qt.rgba(Theme.accentMagenta.r, Theme.accentMagenta.g, Theme.accentMagenta.b, 0.1) : "transparent")
@@ -38,6 +38,7 @@ ColumnLayout {
             border.width: 1
 
             Text {
+                id: label33
                 font.family: Theme.fontFamily
                 anchors.centerIn: parent
                 text: qsTr("RESET")

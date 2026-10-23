@@ -975,11 +975,12 @@ Rectangle {
 
             // Fit Button
             Rectangle {
-                implicitWidth: 34
+                implicitWidth: Math.max(34, label978.implicitWidth + 16)
                 implicitHeight: 24
                 radius: Theme.r(4)
                 color: root.zoomFactor <= 1.05 ? Theme.accent : (fitMouse.containsMouse ? Theme.bgCardHover : "transparent")
                 Text {
+                    id: label978
                     anchors.centerIn: parent
                     text: qsTr("FIT")
                     textFormat: Text.PlainText
@@ -999,11 +1000,12 @@ Rectangle {
 
             // 100% Button
             Rectangle {
-                implicitWidth: 42
+                implicitWidth: Math.max(42, label1003.implicitWidth + 16)
                 implicitHeight: 24
                 radius: Theme.r(4)
                 color: Math.abs(root.pixelScale - 1.0) < 0.02 ? Theme.accent : (pct100Mouse.containsMouse ? Theme.bgCardHover : "transparent")
                 Text {
+                    id: label1003
                     anchors.centerIn: parent
                     text: "100%"
                     textFormat: Text.PlainText
@@ -1023,11 +1025,12 @@ Rectangle {
 
             // 200% Button
             Rectangle {
-                implicitWidth: 42
+                implicitWidth: Math.max(42, label1028.implicitWidth + 16)
                 implicitHeight: 24
                 radius: Theme.r(4)
                 color: Math.abs(root.pixelScale - 2.0) < 0.04 ? Theme.accent : (pct200Mouse.containsMouse ? Theme.bgCardHover : "transparent")
                 Text {
+                    id: label1028
                     anchors.centerIn: parent
                     text: "200%"
                     textFormat: Text.PlainText
@@ -1206,11 +1209,12 @@ Rectangle {
 
             // Reset Crop
             Rectangle {
-                implicitWidth: 46
+                implicitWidth: Math.max(46, label1212.implicitWidth + 16)
                 implicitHeight: 22
                 radius: Theme.r(4)
                 color: rstCropMouse.containsMouse ? Theme.bgCardHover : "transparent"
                 Text {
+                    id: label1212
                     font.family: Theme.fontFamily
                     anchors.centerIn: parent
                     text: qsTr("RESET")
@@ -1229,11 +1233,12 @@ Rectangle {
 
             // Done Button
             Rectangle {
-                implicitWidth: 46
+                implicitWidth: Math.max(46, label1236.implicitWidth + 16)
                 implicitHeight: 22
                 radius: Theme.r(4)
                 color: Theme.accent
                 Text {
+                    id: label1236
                     font.family: Theme.fontFamily
                     anchors.centerIn: parent
                     text: qsTr("DONE")

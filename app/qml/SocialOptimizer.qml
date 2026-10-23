@@ -30,7 +30,7 @@ ColumnLayout {
         // Reset social preset button (always accessible)
         Rectangle {
             visible: true
-            implicitWidth: 46
+            implicitWidth: Math.max(46, label33.implicitWidth + 16)
             implicitHeight: 18
             radius: Theme.radiusSm
             color: resetSocialMouse.containsMouse ? Qt.rgba(Theme.accentCyan.r, Theme.accentCyan.g, Theme.accentCyan.b, 0.2) : (root.activePlatform !== "" ? Qt.rgba(Theme.accentCyan.r, Theme.accentCyan.g, Theme.accentCyan.b, 0.1) : "transparent")
@@ -38,6 +38,7 @@ ColumnLayout {
             border.width: 1
 
             Text {
+                id: label33
                 font.family: Theme.fontFamily
                 anchors.centerIn: parent
                 text: qsTr("RESET")
