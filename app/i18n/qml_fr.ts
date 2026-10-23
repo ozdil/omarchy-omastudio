@@ -4,48 +4,128 @@
     <context>
         <name>AboutDialog</name>
         <message>
-            <source>The complete medium format RAW editor for Omarchy: own X-Trans and Bayer development, Fujifilm recipes and colour-managed export.</source>
-            <translation>L'éditeur RAW moyen format complet pour Omarchy : développement X-Trans et Bayer maison, recettes Fujifilm et export avec gestion des couleurs.</translation>
+            <source>CPU only</source>
+            <translation>Processeur uniquement</translation>
         </message>
         <message>
-            <source>Own X-Trans &amp; Bayer demosaic on linear light, AgX filmic tone curve</source>
-            <translation>Dématriçage X-Trans et Bayer maison en lumière linéaire, courbe filmique AgX</translation>
+            <source>The Complete Medium Format RAW Editor for Omarchy</source>
+            <translation>L'éditeur RAW moyen format complet pour Omarchy</translation>
         </message>
         <message>
-            <source>Little CMS colour management: sRGB, Display P3, Adobe RGB, ProPhoto, Rec. 2020</source>
-            <translation>Gestion des couleurs Little CMS : sRGB, Display P3, Adobe RGB, ProPhoto, Rec. 2020</translation>
+            <source>Version %1</source>
+            <translation>Version %1</translation>
         </message>
         <message>
-            <source>Fujifilm recipes: in-camera settings, X RAW Studio profiles, Color Chrome</source>
-            <translation>Recettes Fujifilm : réglages de l'appareil, profils X RAW Studio, Color Chrome</translation>
+            <source>Copied</source>
+            <translation>Copié</translation>
         </message>
         <message>
-            <source>Medium format: Fujifilm GFX and Hasselblad RAW files, 16-bit throughout</source>
-            <translation>Moyen format : fichiers RAW Fujifilm GFX et Hasselblad, en 16 bits de bout en bout</translation>
+            <source>Copy system info</source>
+            <translation>Copier les infos système</translation>
         </message>
         <message>
-            <source>Local catalog with ratings, flags and colour labels; USB camera access</source>
-            <translation>Catalogue local avec notes, marqueurs et étiquettes de couleur ; accès à l'appareil par USB</translation>
+            <source>Copy version, GPU and Omarchy details for a bug report</source>
+            <translation>Copier la version, le GPU et les détails d'Omarchy pour un rapport de bogue</translation>
         </message>
         <message>
-            <source>Developer:</source>
-            <translation>Développeur :</translation>
+            <source>OmaStudio develops RAW files with its own engine: X-Trans and Bayer demosaicing on linear light, GPU acceleration and colour-managed output, with full support for Fujifilm GFX, Hasselblad and other medium format cameras.</source>
+            <translation>OmaStudio développe les fichiers RAW avec son propre moteur : dématriçage X-Trans et Bayer en lumière linéaire, accélération GPU et sortie avec gestion des couleurs, avec une prise en charge complète des boîtiers Fujifilm GFX, Hasselblad et autres moyens formats.</translation>
         </message>
         <message>
-            <source>License:</source>
-            <translation>Licence :</translation>
+            <source>Capabilities</source>
+            <translation>Fonctionnalités</translation>
         </message>
         <message>
-            <source>%1 open source license</source>
-            <translation>Licence libre %1</translation>
+            <source>RAW engine</source>
+            <translation>Moteur RAW</translation>
         </message>
         <message>
-            <source>Platform:</source>
-            <translation>Plateforme :</translation>
+            <source>X-Trans and Bayer demosaicing, 16-bit linear pipeline, GPU via Vulkan</source>
+            <translation>Dématriçage X-Trans et Bayer, chaîne linéaire 16 bits, GPU via Vulkan</translation>
         </message>
         <message>
-            <source>Omarchy Linux (Wayland / Hyprland)</source>
-            <translation>Omarchy Linux (Wayland / Hyprland)</translation>
+            <source>Colour management</source>
+            <translation>Gestion des couleurs</translation>
+        </message>
+        <message>
+            <source>© %1 %2 · MIT License</source>
+            <translation>© %1 %2 · Licence MIT</translation>
+        </message>
+        <message>
+            <source>Camera recipes, film simulations, lens corrections, Pixel Shift</source>
+            <translation>Recettes d'appareil, simulations de film, corrections d'objectif, Pixel Shift</translation>
+        </message>
+        <message>
+            <source>Medium format</source>
+            <translation>Moyen format</translation>
+        </message>
+        <message>
+            <source>AI</source>
+            <translation>IA</translation>
+        </message>
+        <message>
+            <source>Omarchy's default agent, Ollama, LM Studio or a cloud provider; local masks</source>
+            <translation>Agent par défaut d'Omarchy, Ollama, LM Studio ou un fournisseur cloud ; masques locaux</translation>
+        </message>
+        <message>
+            <source>Library</source>
+            <translation>Bibliothèque</translation>
+        </message>
+        <message>
+            <source>Local catalogue with ratings, flags and colour labels; camera over USB</source>
+            <translation>Catalogue local avec notes, marqueurs et étiquettes de couleur ; appareil via USB</translation>
+        </message>
+        <message>
+            <source>Developer</source>
+            <translation>Développeur</translation>
+        </message>
+        <message>
+            <source>License</source>
+            <translation>Licence</translation>
+        </message>
+        <message>
+            <source>MIT License</source>
+            <translation>Licence MIT</translation>
+        </message>
+        <message>
+            <source>Platform</source>
+            <translation>Plateforme</translation>
+        </message>
+        <message>
+            <source>Graphics</source>
+            <translation>Graphisme</translation>
+        </message>
+        <message>
+            <source>Appearance</source>
+            <translation>Apparence</translation>
+        </message>
+        <message>
+            <source>Source</source>
+            <translation>Code source</translation>
+        </message>
+        <message>
+            <source>Runs entirely on this computer. No telemetry. AI features contact only the provider you choose.</source>
+            <translation>Fonctionne entièrement sur cet ordinateur. Aucune télémétrie. Les fonctions d'IA ne contactent que le fournisseur que vous choisissez.</translation>
+        </message>
+        <message>
+            <source>Third-party software</source>
+            <translation>Logiciels tiers</translation>
+        </message>
+        <message>
+            <source>Fujifilm, GFX, X-Trans, Hasselblad and other camera names are trademarks of their owners and are used only to describe compatibility.</source>
+            <translation>Fujifilm, GFX, X-Trans, Hasselblad et les autres noms d'appareils sont des marques de leurs propriétaires et ne servent qu'à décrire la compatibilité.</translation>
+        </message>
+        <message>
+            <source>Project page</source>
+            <translation>Page du projet</translation>
+        </message>
+        <message>
+            <source>Release notes</source>
+            <translation>Notes de version</translation>
+        </message>
+        <message>
+            <source>Report an issue</source>
+            <translation>Signaler un problème</translation>
         </message>
         <message>
             <source>Sponsor</source>
@@ -56,8 +136,8 @@
             <translation>Offrez-moi un café</translation>
         </message>
         <message>
-            <source>OK</source>
-            <translation>OK</translation>
+            <source>Close</source>
+            <translation>Fermer</translation>
         </message>
     </context>
     <context>

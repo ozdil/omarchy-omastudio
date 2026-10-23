@@ -4,48 +4,128 @@
     <context>
         <name>AboutDialog</name>
         <message>
-            <source>The complete medium format RAW editor for Omarchy: own X-Trans and Bayer development, Fujifilm recipes and colour-managed export.</source>
-            <translation>Omarchy için eksiksiz orta format RAW düzenleyici: kendi X-Trans ve Bayer işleme motoru, Fujifilm tarifleri ve renk yönetimli dışa aktarma.</translation>
+            <source>CPU only</source>
+            <translation>Yalnızca CPU</translation>
         </message>
         <message>
-            <source>Own X-Trans &amp; Bayer demosaic on linear light, AgX filmic tone curve</source>
-            <translation>Doğrusal ışıkta kendi X-Trans ve Bayer demozaikleme, AgX filmik ton eğrisi</translation>
+            <source>The Complete Medium Format RAW Editor for Omarchy</source>
+            <translation>Omarchy için eksiksiz orta format RAW düzenleyici</translation>
         </message>
         <message>
-            <source>Little CMS colour management: sRGB, Display P3, Adobe RGB, ProPhoto, Rec. 2020</source>
-            <translation>Little CMS renk yönetimi: sRGB, Display P3, Adobe RGB, ProPhoto, Rec. 2020</translation>
+            <source>Version %1</source>
+            <translation>Sürüm %1</translation>
         </message>
         <message>
-            <source>Fujifilm recipes: in-camera settings, X RAW Studio profiles, Color Chrome</source>
-            <translation>Fujifilm tarifleri: fotoğraf makinesi ayarları, X RAW Studio profilleri, Color Chrome</translation>
+            <source>Copied</source>
+            <translation>Kopyalandı</translation>
         </message>
         <message>
-            <source>Medium format: Fujifilm GFX and Hasselblad RAW files, 16-bit throughout</source>
-            <translation>Orta format: Fujifilm GFX ve Hasselblad RAW dosyaları, baştan sona 16 bit</translation>
+            <source>Copy system info</source>
+            <translation>Sistem bilgisini kopyala</translation>
         </message>
         <message>
-            <source>Local catalog with ratings, flags and colour labels; USB camera access</source>
-            <translation>Puan, işaret ve renk etiketli yerel katalog; USB ile fotoğraf makinesi erişimi</translation>
+            <source>Copy version, GPU and Omarchy details for a bug report</source>
+            <translation>Hata bildirimi için sürüm, GPU ve Omarchy bilgilerini kopyalar</translation>
         </message>
         <message>
-            <source>Developer:</source>
-            <translation>Geliştirici:</translation>
+            <source>OmaStudio develops RAW files with its own engine: X-Trans and Bayer demosaicing on linear light, GPU acceleration and colour-managed output, with full support for Fujifilm GFX, Hasselblad and other medium format cameras.</source>
+            <translation>OmaStudio, RAW dosyalarını kendi motoruyla işler: doğrusal ışıkta X-Trans ve Bayer demozaikleme, GPU hızlandırma ve renk yönetimli çıktı; Fujifilm GFX, Hasselblad ve diğer orta format kameralar için tam destek.</translation>
         </message>
         <message>
-            <source>License:</source>
-            <translation>Lisans:</translation>
+            <source>Capabilities</source>
+            <translation>Özellikler</translation>
         </message>
         <message>
-            <source>%1 open source license</source>
-            <translation>%1 açık kaynak lisansı</translation>
+            <source>RAW engine</source>
+            <translation>RAW motoru</translation>
         </message>
         <message>
-            <source>Platform:</source>
-            <translation>Platform:</translation>
+            <source>X-Trans and Bayer demosaicing, 16-bit linear pipeline, GPU via Vulkan</source>
+            <translation>X-Trans ve Bayer demozaikleme, 16 bit doğrusal işlem hattı, Vulkan ile GPU</translation>
         </message>
         <message>
-            <source>Omarchy Linux (Wayland / Hyprland)</source>
-            <translation>Omarchy Linux (Wayland / Hyprland)</translation>
+            <source>Colour management</source>
+            <translation>Renk yönetimi</translation>
+        </message>
+        <message>
+            <source>© %1 %2 · MIT License</source>
+            <translation>© %1 %2 · MIT Lisansı</translation>
+        </message>
+        <message>
+            <source>Camera recipes, film simulations, lens corrections, Pixel Shift</source>
+            <translation>Kamera tarifleri, film simülasyonları, lens düzeltmeleri, Pixel Shift</translation>
+        </message>
+        <message>
+            <source>Medium format</source>
+            <translation>Orta format</translation>
+        </message>
+        <message>
+            <source>AI</source>
+            <translation>Yapay zekâ</translation>
+        </message>
+        <message>
+            <source>Omarchy's default agent, Ollama, LM Studio or a cloud provider; local masks</source>
+            <translation>Omarchy'nin varsayılan ajanı, Ollama, LM Studio veya bir bulut sağlayıcı; yerel maskeler</translation>
+        </message>
+        <message>
+            <source>Library</source>
+            <translation>Kütüphane</translation>
+        </message>
+        <message>
+            <source>Local catalogue with ratings, flags and colour labels; camera over USB</source>
+            <translation>Puan, işaret ve renk etiketli yerel katalog; USB ile kamera bağlantısı</translation>
+        </message>
+        <message>
+            <source>Developer</source>
+            <translation>Geliştirici</translation>
+        </message>
+        <message>
+            <source>License</source>
+            <translation>Lisans</translation>
+        </message>
+        <message>
+            <source>MIT License</source>
+            <translation>MIT Lisansı</translation>
+        </message>
+        <message>
+            <source>Platform</source>
+            <translation>Platform</translation>
+        </message>
+        <message>
+            <source>Graphics</source>
+            <translation>Grafik</translation>
+        </message>
+        <message>
+            <source>Appearance</source>
+            <translation>Görünüm</translation>
+        </message>
+        <message>
+            <source>Source</source>
+            <translation>Kaynak kod</translation>
+        </message>
+        <message>
+            <source>Runs entirely on this computer. No telemetry. AI features contact only the provider you choose.</source>
+            <translation>Tamamen bu bilgisayarda çalışır. Telemetri yoktur. Yapay zekâ özellikleri yalnızca seçtiğiniz sağlayıcıyla iletişim kurar.</translation>
+        </message>
+        <message>
+            <source>Third-party software</source>
+            <translation>Üçüncü taraf yazılımlar</translation>
+        </message>
+        <message>
+            <source>Fujifilm, GFX, X-Trans, Hasselblad and other camera names are trademarks of their owners and are used only to describe compatibility.</source>
+            <translation>Fujifilm, GFX, X-Trans, Hasselblad ve diğer kamera adları sahiplerinin ticari markalarıdır ve yalnızca uyumluluğu belirtmek için kullanılır.</translation>
+        </message>
+        <message>
+            <source>Project page</source>
+            <translation>Proje sayfası</translation>
+        </message>
+        <message>
+            <source>Release notes</source>
+            <translation>Sürüm notları</translation>
+        </message>
+        <message>
+            <source>Report an issue</source>
+            <translation>Sorun bildir</translation>
         </message>
         <message>
             <source>Sponsor</source>
@@ -56,8 +136,8 @@
             <translation>Bana bir kahve ısmarla</translation>
         </message>
         <message>
-            <source>OK</source>
-            <translation>Tamam</translation>
+            <source>Close</source>
+            <translation>Kapat</translation>
         </message>
     </context>
     <context>

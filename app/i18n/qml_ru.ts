@@ -4,47 +4,127 @@
 <context>
     <name>AboutDialog</name>
     <message>
-        <source>The complete medium format RAW editor for Omarchy: own X-Trans and Bayer development, Fujifilm recipes and colour-managed export.</source>
+        <source>CPU only</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Own X-Trans &amp; Bayer demosaic on linear light, AgX filmic tone curve</source>
+        <source>The Complete Medium Format RAW Editor for Omarchy</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Little CMS colour management: sRGB, Display P3, Adobe RGB, ProPhoto, Rec. 2020</source>
+        <source>Version %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Fujifilm recipes: in-camera settings, X RAW Studio profiles, Color Chrome</source>
+        <source>Copied</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Medium format: Fujifilm GFX and Hasselblad RAW files, 16-bit throughout</source>
+        <source>Copy system info</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Local catalog with ratings, flags and colour labels; USB camera access</source>
+        <source>Copy version, GPU and Omarchy details for a bug report</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Developer:</source>
+        <source>OmaStudio develops RAW files with its own engine: X-Trans and Bayer demosaicing on linear light, GPU acceleration and colour-managed output, with full support for Fujifilm GFX, Hasselblad and other medium format cameras.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>License:</source>
+        <source>Capabilities</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>%1 open source license</source>
+        <source>RAW engine</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Platform:</source>
+        <source>X-Trans and Bayer demosaicing, 16-bit linear pipeline, GPU via Vulkan</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Omarchy Linux (Wayland / Hyprland)</source>
+        <source>Colour management</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>© %1 %2 · MIT License</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Camera recipes, film simulations, lens corrections, Pixel Shift</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Medium format</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>AI</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Omarchy&apos;s default agent, Ollama, LM Studio or a cloud provider; local masks</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Library</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Local catalogue with ratings, flags and colour labels; camera over USB</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Developer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>License</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>MIT License</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Platform</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Graphics</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Appearance</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Source</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Runs entirely on this computer. No telemetry. AI features contact only the provider you choose.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Third-party software</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fujifilm, GFX, X-Trans, Hasselblad and other camera names are trademarks of their owners and are used only to describe compatibility.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Project page</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Release notes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Report an issue</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -56,7 +136,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>OK</source>
+        <source>Close</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

@@ -14,6 +14,7 @@ Gamma
 Gain
 Offset
 tr:Platform:
+tr:Platform
 # Invert toggle: the first letter is the same in many languages
 I
 # Feature and product names
@@ -51,3 +52,5 @@ fr:Vibrance
 fr:PARADE
 fr:Original
 fr:POSITION
+de:Version %1
+fr:Version %1
