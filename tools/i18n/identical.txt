@@ -108,3 +108,18 @@ sv:NAVIGATOR
 sv:HIST
 sv:Original
 sv:POSITION
+da:Version %1
+da:AI
+da:Platform
+da:16-bit TIFF
+da:Sepia
+da:Batch (%1)
+da:[S] %1%
+da:[H] %1%
+da:Orange
+da:Magenta
+da:Standard
+da:+ RADIAL
+da:HIST
+da:PARADE
+da:Original
