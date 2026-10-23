@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+### Fixes
+- Focus peaking follows the photo: a soft portrait or a photo fitted to the window still shows its sharpest edges, where the fixed threshold marked nothing; detailed photos look as before.
+- The About window's icon is built into the program, so it shows for local installs too (it only looked in /usr/share). The package now depends on `qt6-svg`.
+- `omastudio ipc applyPreset` (and the MCP `apply_preset` tool) take the names the Looks panel shows (Muted, Vivid, Warm portrait, Black and white, Teal and orange) and report an unknown name as an error instead of answering OK.
+- The Grain section resets from its header like the other sections, without a second Reset box; the AI mask buttons are no longer in capitals; Qt warnings at start-up are gone.
+- The Omarchy app menu shows OmaStudio with a black-and-white icon in the same HighContrast style as Omarchy's own apps (for example Omasnap), readable on light and dark themes, instead of the fixed teal one. The colour icon stays for the About window.
+- Photos shot with D-Range Priority (GFX 100 and newer bodies) now get the matching highlight protection when their camera recipe is read: Weak develops like DR200 and Strong like DR400. The picked level is also read when the camera only stores it in the "fixed" tag, so the recipe shows "Auto (weak)" instead of just "Auto".
+
 ### Languages
 - The interface is translated into 30 languages, each one complete: Arabic, Chinese (Simplified and Traditional), Czech, Danish, Dutch, English, Finnish, French, German, Greek, Hebrew, Hindi, Hungarian, Indonesian, Italian, Japanese, Korean, Norwegian Bokmål, Persian, Polish, Portuguese (Brazil), Romanian, Russian, Spanish, Swedish, Thai, Turkish, Ukrainian and Vietnamese.
 - OmaStudio follows the system language; the language menu in the top bar picks another one and applies it without a restart (stored in `~/.config/omastudio/language`).

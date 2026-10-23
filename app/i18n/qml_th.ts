@@ -1333,14 +1333,6 @@
         <translation>+ สี</translation>
     </message>
     <message>
-        <source>+ AI SUBJECT</source>
-        <translation>+ วัตถุหลัก (AI)</translation>
-    </message>
-    <message>
-        <source>+ AI SKY</source>
-        <translation>+ ท้องฟ้า (AI)</translation>
-    </message>
-    <message>
         <source>I</source>
         <comment>invert mask toggle, first letter of Invert</comment>
         <translation>ก</translation>

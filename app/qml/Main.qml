@@ -75,7 +75,8 @@ Window {
                 return "OK";
             case "applyPreset":
                 if (str(a[0]).length === 0) return "Error: empty preset name";
-                mainWin.applyPresetNamed(str(a[0]));
+                if (!mainWin.applyPresetNamed(str(a[0])))
+                    return "Error: unknown preset (Muted, Vivid, Warm portrait, Black and white, Teal and orange)";
                 return "OK";
             case "setExposure":
                 mainWin.setExposureEv(Number(a[0]));

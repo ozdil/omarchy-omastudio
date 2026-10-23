@@ -86,12 +86,12 @@ Rectangle {
     readonly property bool detailWanted: root.fullWidth > 0 && root.imageSource !== ""
         && Math.abs(root.rotationAngle) < 0.01 && !root.isCropMode && !root.isSplitView
         && !root.showHighlightMask && !root.showShadowMask
-        && root.fitWidth * root.zoomFactor * root.dpr > mainImage.implicitWidth * 1.05
+        && root.fitWidth * root.zoomFactor * root.dpr > mainImage.imageWidth * 1.05
     property var detailRegion: null          // normalised x, y, w, h of the shown detail
     property var detailRequest: null         // what the next request asks for
     property bool detailPending: false
     readonly property bool detailShown: detailImage.visible
-    readonly property real previewWidth: mainImage.implicitWidth
+    readonly property real previewWidth: mainImage.imageWidth
     signal detailRequested(var region, int outWidth, int outHeight)
 
     // Loupe: the full-resolution photo at 1:1 around the pointer, whatever the zoom
@@ -344,8 +344,8 @@ Rectangle {
 
     function applyAspectPreset(aspect) {
         root.cropAspect = aspect;
-        var baseAspect = (mainImage.implicitWidth > 0 && mainImage.implicitHeight > 0)
-            ? (mainImage.implicitWidth / mainImage.implicitHeight) : 1.0;
+        var baseAspect = (mainImage.imageWidth > 0 && mainImage.imageHeight > 0)
+            ? (mainImage.imageWidth / mainImage.imageHeight) : 1.0;
 
         var targetRatio = baseAspect;
         if (aspect === "1:1") targetRatio = 1.0;
@@ -376,15 +376,15 @@ Rectangle {
 
     // Base fitted size of image inside viewport
     readonly property real fitWidth: {
-        if (mainImage.implicitWidth <= 0 || mainImage.implicitHeight <= 0 || width <= 0 || height <= 0) return width;
-        var imgAspect = mainImage.implicitWidth / mainImage.implicitHeight;
+        if (mainImage.imageWidth <= 0 || mainImage.imageHeight <= 0 || width <= 0 || height <= 0) return width;
+        var imgAspect = mainImage.imageWidth / mainImage.imageHeight;
         var vpAspect = width / height;
         return imgAspect > vpAspect ? width : height * imgAspect;
     }
 
     readonly property real fitHeight: {
-        if (mainImage.implicitWidth <= 0 || mainImage.implicitHeight <= 0 || width <= 0 || height <= 0) return height;
-        var imgAspect = mainImage.implicitWidth / mainImage.implicitHeight;
+        if (mainImage.imageWidth <= 0 || mainImage.imageHeight <= 0 || width <= 0 || height <= 0) return height;
+        var imgAspect = mainImage.imageWidth / mainImage.imageHeight;
         var vpAspect = width / height;
         return imgAspect > vpAspect ? width / imgAspect : height;
     }
@@ -572,10 +572,10 @@ Rectangle {
                 property string currentSource: ""
                 readonly property var currentActiveImage: activeBuffer === 0 ? imgBuffer0 : imgBuffer1
                 readonly property var pendingImage: activeBuffer === 0 ? imgBuffer1 : imgBuffer0
-                readonly property real implicitWidth: (currentActiveImage && currentActiveImage.implicitWidth > 0)
+                readonly property real imageWidth: (currentActiveImage && currentActiveImage.implicitWidth > 0)
                     ? currentActiveImage.implicitWidth
                     : ((pendingImage && pendingImage.implicitWidth > 0) ? pendingImage.implicitWidth : 1)
-                readonly property real implicitHeight: (currentActiveImage && currentActiveImage.implicitHeight > 0)
+                readonly property real imageHeight: (currentActiveImage && currentActiveImage.implicitHeight > 0)
                     ? currentActiveImage.implicitHeight
                     : ((pendingImage && pendingImage.implicitHeight > 0) ? pendingImage.implicitHeight : 1)
 
@@ -627,7 +627,7 @@ Rectangle {
                 WatermarkOverlay {
                     id: liveWatermarkOverlay
                     anchors.fill: parent
-                    enabled: root.watermarkEnabled
+                    shown: root.watermarkEnabled
                     watermarkType: root.watermarkType
                     text: root.watermarkText
                     logoPath: root.watermarkLogoPath

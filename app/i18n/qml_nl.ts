@@ -1336,14 +1336,6 @@
         <translation>+ Kleur</translation>
     </message>
     <message>
-        <source>+ AI SUBJECT</source>
-        <translation>+ AI-ONDERWERP</translation>
-    </message>
-    <message>
-        <source>+ AI SKY</source>
-        <translation>+ AI-LUCHT</translation>
-    </message>
-    <message>
         <source>I</source>
         <comment>invert mask toggle, first letter of Invert</comment>
         <translation>I</translation>

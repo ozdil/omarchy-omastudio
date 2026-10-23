@@ -19,14 +19,22 @@ Rectangle {
 
     signal grainChanged()
 
+    function reset() {
+        root.grainAmount = 0.0;
+        root.grainSize = 1.0;
+        root.grainRoughness = 50.0;
+        root.grainChanged();
+    }
+
     ColumnLayout {
         id: mainCol
         anchors.fill: parent
         anchors.margins: 10
         spacing: 10
 
-        // Header & Reset
+        // Header & Reset (embedded, the section header has both)
         RowLayout {
+            visible: !root.embedded
             Layout.fillWidth: true
             spacing: 6
 
@@ -66,12 +74,7 @@ Rectangle {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
                     hoverEnabled: true
-                    onClicked: {
-                        root.grainAmount = 0.0;
-                        root.grainSize = 1.0;
-                        root.grainRoughness = 50.0;
-                        root.grainChanged();
-                    }
+                    onClicked: root.reset()
                 }
             }
         }

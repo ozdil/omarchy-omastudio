@@ -2,7 +2,7 @@
 Name=OmaStudio
 Comment=The Complete Medium Format RAW Editor for Omarchy
 Exec=omastudio %f
-Icon=omastudio
+Icon=omastudio-mono
 Terminal=false
 Type=Application
 Categories=Graphics;Photography;2DGraphics;RasterGraphics;

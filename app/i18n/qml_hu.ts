@@ -1333,14 +1333,6 @@
         <translation>+ Szín</translation>
     </message>
     <message>
-        <source>+ AI SUBJECT</source>
-        <translation>+ MI-TÉMA</translation>
-    </message>
-    <message>
-        <source>+ AI SKY</source>
-        <translation>+ MI-ÉGBOLT</translation>
-    </message>
-    <message>
         <source>I</source>
         <comment>invert mask toggle, first letter of Invert</comment>
         <translation>F</translation>

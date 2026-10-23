@@ -1512,7 +1512,7 @@ Rectangle {
         }
     }
     Shortcut {
-        sequence: StandardKey.Open
+        sequences: [StandardKey.Open]
         onActivated: openFileProc.running = true
     }
     Shortcut {
@@ -1714,8 +1714,14 @@ Rectangle {
                                          lift: [-0.05, 0.04, 0.12], lift_luma: -0.05, gain: [0.14, 0.05, -0.08], gain_luma: 0.02,
                                          hsl_hue: { 5: -25, 1: -5 }, hsl_sat: { 5: 30, 1: 25 }, vignette: -20 }
         };
-        var look = looks[name];
-        if (!look) return;
+        // The names the Looks panel shows, so agents can use what the user sees
+        var aliases = { "muted": "Fuji Classic Chrome", "vivid": "Fuji Velvia 50", "warm portrait": "Kodak Portra 400",
+                        "black and white": "Leica Monochrom HC", "teal and orange": "Cinematic Teal & Orange" };
+        var key = String(name).trim();
+        for (var id in looks) if (id.toLowerCase() === key.toLowerCase()) key = id;
+        if (aliases[key.toLowerCase()]) key = aliases[key.toLowerCase()];
+        var look = looks[key];
+        if (!look) return false;
         root.pushUndoState();
         var r = root.buildRecipeObject();
         var zero = ["contrast", "highlights", "shadows", "whites", "blacks", "texture", "clarity", "dehaze", "vibrance",
@@ -1734,6 +1740,7 @@ Rectangle {
         }
         root.applyRecipeObject(r);
         requestRender();
+        return true;
     }
 
     function triggerSocial(platformCode) {
@@ -2926,7 +2933,7 @@ Rectangle {
                                 host: root
                                 visible: root.isProMode
                                 pro: true
-                                resettable: false
+                                onReset: filmGrainPanel.reset()
 
                                 FilmGrainPanel {
                                     embedded: true

@@ -1333,14 +1333,6 @@
         <translation>+ 색상</translation>
     </message>
     <message>
-        <source>+ AI SUBJECT</source>
-        <translation>+ AI 피사체</translation>
-    </message>
-    <message>
-        <source>+ AI SKY</source>
-        <translation>+ AI 하늘</translation>
-    </message>
-    <message>
         <source>I</source>
         <comment>invert mask toggle, first letter of Invert</comment>
         <translation>반</translation>

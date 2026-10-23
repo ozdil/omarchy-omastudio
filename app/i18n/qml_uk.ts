@@ -1339,14 +1339,6 @@
         <translation>+ Колір</translation>
     </message>
     <message>
-        <source>+ AI SUBJECT</source>
-        <translation>+ ОБ&apos;ЄКТ (ШІ)</translation>
-    </message>
-    <message>
-        <source>+ AI SKY</source>
-        <translation>+ НЕБО (ШІ)</translation>
-    </message>
-    <message>
         <source>I</source>
         <comment>invert mask toggle, first letter of Invert</comment>
         <translation>І</translation>

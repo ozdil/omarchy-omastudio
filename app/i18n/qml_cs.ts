@@ -1339,14 +1339,6 @@
         <translation>+ Barva</translation>
     </message>
     <message>
-        <source>+ AI SUBJECT</source>
-        <translation>+ OBJEKT (AI)</translation>
-    </message>
-    <message>
-        <source>+ AI SKY</source>
-        <translation>+ OBLOHA (AI)</translation>
-    </message>
-    <message>
         <source>I</source>
         <comment>invert mask toggle, first letter of Invert</comment>
         <translation>I</translation>

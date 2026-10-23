@@ -1339,14 +1339,6 @@
         <translation>+ Kolor</translation>
     </message>
     <message>
-        <source>+ AI SUBJECT</source>
-        <translation>+ OBIEKT (AI)</translation>
-    </message>
-    <message>
-        <source>+ AI SKY</source>
-        <translation>+ NIEBO (AI)</translation>
-    </message>
-    <message>
         <source>I</source>
         <comment>invert mask toggle, first letter of Invert</comment>
         <translation>O</translation>
