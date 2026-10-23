@@ -18,10 +18,10 @@ Rectangle {
     signal acesTonemapToggled(bool enabled)
 
     readonly property var spaces: [
-        { "id": "sRGB", "name": "sRGB (D65)", "desc": "Standard SDR Web gamut", "coverage": "100% sRGB", "badgeColor": "#7aa2f7" },
-        { "id": "DisplayP3", "name": "Display P3", "desc": "Wide gamut, Apple Retina displays", "coverage": "125% sRGB", "badgeColor": "#bb9af7" },
-        { "id": "Rec2020", "name": "Rec.2020", "desc": "Ultra-wide gamut HDR master", "coverage": "150% sRGB", "badgeColor": "#9ece6a" },
-        { "id": "ACEScg", "name": "ACEScg (AP1)", "desc": "Academy linear working space", "coverage": "Wide AP1", "badgeColor": "#e0af68" }
+        { "id": "sRGB", "name": "sRGB (D65)", "desc": qsTr("Standard SDR web gamut"), "coverage": qsTr("100% sRGB"), "badgeColor": "#7aa2f7" },
+        { "id": "DisplayP3", "name": "Display P3", "desc": qsTr("Wide gamut, Apple Retina displays"), "coverage": qsTr("125% sRGB"), "badgeColor": "#bb9af7" },
+        { "id": "Rec2020", "name": "Rec.2020", "desc": qsTr("Ultra-wide gamut HDR master"), "coverage": qsTr("150% sRGB"), "badgeColor": "#9ece6a" },
+        { "id": "ACEScg", "name": "ACEScg (AP1)", "desc": qsTr("Academy linear working space"), "coverage": qsTr("Wide AP1"), "badgeColor": "#e0af68" }
     ]
 
     ColumnLayout {
@@ -36,7 +36,7 @@ Rectangle {
             spacing: 6
 
             Text {
-                text: "COLOR MANAGEMENT & ACES 1.3"
+                text: qsTr("COLOR MANAGEMENT & ACES 1.3")
                 textFormat: Text.PlainText
                 font.family: Theme.fontFamily
                 font.pixelSize: Theme.px(10)
@@ -112,7 +112,7 @@ Rectangle {
                             }
 
                             Text {
-                                text: modelData.desc + " (" + modelData.coverage + ")"
+                                text: qsTr("%1 (%2)").arg(modelData.desc).arg(modelData.coverage)
                                 textFormat: Text.PlainText
                                 font.family: Theme.fontFamily
                                 font.pixelSize: Theme.px(8)
@@ -175,7 +175,7 @@ Rectangle {
                     spacing: 1
 
                     Text {
-                        text: "ACES 1.3 RRT/ODT Tonemapper"
+                        text: qsTr("ACES 1.3 RRT/ODT Tonemapper")
                         textFormat: Text.PlainText
                         font.family: Theme.fontFamily
                         font.pixelSize: Theme.px(10)
@@ -186,7 +186,7 @@ Rectangle {
                     }
 
                     Text {
-                        text: "Filmic shoulder roll-off & dynamic range mapping"
+                        text: qsTr("Filmic shoulder roll-off & dynamic range mapping")
                         textFormat: Text.PlainText
                         font.family: Theme.fontFamily
                         font.pixelSize: Theme.px(8)

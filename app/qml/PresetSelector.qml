@@ -18,7 +18,7 @@ ColumnLayout {
 
         Text {
             font.family: Theme.fontFamily
-            text: "FILM LOOKS & STYLES"
+            text: qsTr("FILM LOOKS & STYLES")
             textFormat: Text.PlainText
             font.pixelSize: Theme.px(10)
             font.weight: Font.DemiBold
@@ -40,7 +40,7 @@ ColumnLayout {
             Text {
                 font.family: Theme.fontFamily
                 anchors.centerIn: parent
-                text: "RESET"
+                text: qsTr("RESET")
                 textFormat: Text.PlainText
                 font.pixelSize: Theme.px(8)
                 font.weight: Font.DemiBold
@@ -83,7 +83,7 @@ ColumnLayout {
             }
 
             Text {
-                text: "AI Auto Enhance"
+                text: qsTr("AI Auto Enhance")
                 textFormat: Text.PlainText
                 font.family: Theme.fontFamily
                 font.pixelSize: Theme.px(11)
@@ -93,7 +93,7 @@ ColumnLayout {
             }
 
             Text {
-                text: "RUN"
+                text: qsTr("RUN")
                 textFormat: Text.PlainText
                 font.family: Theme.fontFamily
                 font.pixelSize: Theme.px(9)
@@ -121,11 +121,11 @@ ColumnLayout {
         columnSpacing: 5
 
         property var presets: [
-            { name: "Fuji Classic Chrome", sub: "Documentary Muted" },
-            { name: "Fuji Velvia 50", sub: "Vivid Landscapes" },
-            { name: "Kodak Portra 400", sub: "Warm Skin Tones" },
-            { name: "Leica Monochrom HC", sub: "High Contrast B&W" },
-            { name: "Cinematic Teal & Orange", sub: "Film Grade" }
+            { name: "Fuji Classic Chrome", sub: qsTr("Documentary Muted") },
+            { name: "Fuji Velvia 50", sub: qsTr("Vivid Landscapes") },
+            { name: "Kodak Portra 400", sub: qsTr("Warm Skin Tones") },
+            { name: "Leica Monochrom HC", sub: qsTr("High Contrast B&W") },
+            { name: "Cinematic Teal & Orange", sub: qsTr("Film Grade") }
         ]
 
         Repeater {

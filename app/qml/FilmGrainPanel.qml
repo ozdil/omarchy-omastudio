@@ -29,7 +29,7 @@ Rectangle {
             spacing: 6
 
             Text {
-                text: "SILVER-HALIDE FILM GRAIN"
+                text: qsTr("SILVER-HALIDE FILM GRAIN")
                 textFormat: Text.PlainText
                 font.family: Theme.fontFamily
                 font.pixelSize: Theme.px(10)
@@ -50,7 +50,7 @@ Rectangle {
                 Text {
                     id: resetGrainText
                     anchors.centerIn: parent
-                    text: "RESET"
+                    text: qsTr("RESET")
                     textFormat: Text.PlainText
                     font.family: Theme.monoFont
                     font.pixelSize: Theme.px(8)
@@ -79,7 +79,7 @@ Rectangle {
             spacing: 8
 
             SliderGroup {
-                title: "Grain Amount"
+                title: qsTr("Grain Amount")
                 from: 0.0
                 to: 100.0
                 value: root.grainAmount
@@ -93,7 +93,7 @@ Rectangle {
             }
 
             SliderGroup {
-                title: "Grain Size"
+                title: qsTr("Grain Size")
                 from: 1.0
                 to: 3.0
                 value: root.grainSize
@@ -110,7 +110,7 @@ Rectangle {
             }
 
             SliderGroup {
-                title: "Grain Roughness"
+                title: qsTr("Grain Roughness")
                 from: 0.0
                 to: 100.0
                 value: root.grainRoughness

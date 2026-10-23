@@ -52,7 +52,7 @@ Rectangle {
             spacing: 6
 
             Text {
-                text: "WATERMARK & BRANDING"
+                text: qsTr("WATERMARK & BRANDING")
                 textFormat: Text.PlainText
                 font.family: Theme.fontFamily
                 font.pixelSize: Theme.px(10)
@@ -98,7 +98,7 @@ Rectangle {
                         anchors.centerIn: parent
                         width: parent.width - 12
                         horizontalAlignment: Text.AlignHCenter
-                        text: "Text / EXIF Tag"
+                        text: qsTr("Text / EXIF Tag")
                         textFormat: Text.PlainText
                         font.family: Theme.fontFamily
                         font.pixelSize: Theme.px(9)
@@ -130,7 +130,7 @@ Rectangle {
                         anchors.centerIn: parent
                         width: parent.width - 12
                         horizontalAlignment: Text.AlignHCenter
-                        text: "Custom Logo PNG"
+                        text: qsTr("Custom Logo PNG")
                         textFormat: Text.PlainText
                         font.family: Theme.fontFamily
                         font.pixelSize: Theme.px(9)
@@ -157,7 +157,7 @@ Rectangle {
                 visible: root.watermarkType === "text"
 
                 Text {
-                    text: "WATERMARK TEXT OR TEMPLATE"
+                    text: qsTr("WATERMARK TEXT OR TEMPLATE")
                     textFormat: Text.PlainText
                     font.family: Theme.fontFamily
                     font.pixelSize: Theme.px(9)
@@ -253,7 +253,7 @@ Rectangle {
                 visible: root.watermarkType === "logo"
 
                 Text {
-                    text: "LOGO FILE PATH (.PNG)"
+                    text: qsTr("LOGO FILE PATH (.PNG)")
                     textFormat: Text.PlainText
                     font.family: Theme.fontFamily
                     font.pixelSize: Theme.px(9)
@@ -302,7 +302,7 @@ Rectangle {
                 ColumnLayout {
                     spacing: 4
                     Text {
-                        text: "POSITION"
+                        text: qsTr("POSITION")
                         textFormat: Text.PlainText
                         font.family: Theme.fontFamily
                         font.pixelSize: Theme.px(9)
@@ -355,7 +355,7 @@ Rectangle {
                         Layout.fillWidth: true
                         spacing: 4
                         Text {
-                            text: "Drop Shadow"
+                            text: qsTr("Drop Shadow")
                             textFormat: Text.PlainText
                             font.family: Theme.fontFamily
                             font.pixelSize: Theme.px(9)
@@ -414,7 +414,7 @@ Rectangle {
                 RowLayout {
                     Layout.fillWidth: true
                     Text {
-                        text: "OPACITY"
+                        text: qsTr("OPACITY")
                         textFormat: Text.PlainText
                         font.family: Theme.fontFamily
                         font.pixelSize: Theme.px(9)
@@ -479,7 +479,7 @@ Rectangle {
                 RowLayout {
                     Layout.fillWidth: true
                     Text {
-                        text: "SIZE MULTIPLIER"
+                        text: qsTr("SIZE MULTIPLIER")
                         textFormat: Text.PlainText
                         font.family: Theme.fontFamily
                         font.pixelSize: Theme.px(9)

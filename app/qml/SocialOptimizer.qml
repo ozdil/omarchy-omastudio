@@ -18,7 +18,7 @@ ColumnLayout {
 
         Text {
             font.family: Theme.fontFamily
-            text: "AI SOCIAL MEDIA OPTIMIZER"
+            text: qsTr("AI SOCIAL MEDIA OPTIMIZER")
             textFormat: Text.PlainText
             font.pixelSize: Theme.px(10)
             font.weight: Font.DemiBold
@@ -40,7 +40,7 @@ ColumnLayout {
             Text {
                 font.family: Theme.fontFamily
                 anchors.centerIn: parent
-                text: "RESET"
+                text: qsTr("RESET")
                 textFormat: Text.PlainText
                 font.pixelSize: Theme.px(8)
                 font.weight: Font.DemiBold
@@ -68,12 +68,12 @@ ColumnLayout {
         columnSpacing: 6
 
         property var platforms: [
-            { id: "ig", name: "Instagram Feed", aspect: "4:5 / 1080x1350", tag: "Max Screen" },
-            { id: "story", name: "Stories / Reels", aspect: "9:16 / 1080x1920", tag: "Full Mobile" },
-            { id: "x", name: "X / Twitter", aspect: "16:9 / 1200x675", tag: "Crisp Feed" },
-            { id: "ig_square", name: "Classic Square", aspect: "1:1 / 1080x1080", tag: "Grid Post" },
-            { id: "fb", name: "Facebook HD", aspect: "1.91:1 / 2048px", tag: "High Res" },
-            { id: "yt", name: "YouTube Thumb", aspect: "16:9 / 1280x720", tag: "High CTR" }
+            { id: "ig", name: qsTr("Instagram Feed"), aspect: "4:5 / 1080x1350", tag: qsTr("Max Screen") },
+            { id: "story", name: qsTr("Stories / Reels"), aspect: "9:16 / 1080x1920", tag: qsTr("Full Mobile") },
+            { id: "x", name: "X / Twitter", aspect: "16:9 / 1200x675", tag: qsTr("Crisp Feed") },
+            { id: "ig_square", name: qsTr("Classic Square"), aspect: "1:1 / 1080x1080", tag: qsTr("Grid Post") },
+            { id: "fb", name: "Facebook HD", aspect: "1.91:1 / 2048px", tag: qsTr("High Res") },
+            { id: "yt", name: qsTr("YouTube Thumb"), aspect: "16:9 / 1280x720", tag: qsTr("High CTR") }
         ]
 
         Repeater {

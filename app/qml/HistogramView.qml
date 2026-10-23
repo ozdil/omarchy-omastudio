@@ -36,7 +36,7 @@ Rectangle {
             Text {
                 id: shadowText
                 anchors.centerIn: parent
-                text: "[S] " + (root.histData ? root.histData.shadow_clipping_percent.toFixed(1) + "%" : "0.0%")
+                text: qsTr("[S] %1%", "S: shadow clipping").arg(root.histData ? root.histData.shadow_clipping_percent.toFixed(1) : "0.0")
                 textFormat: Text.PlainText
                 font.pixelSize: Theme.px(10)
                 font.family: Theme.monoFont
@@ -57,7 +57,7 @@ Rectangle {
 
         Text {
             font.family: Theme.fontFamily
-            text: "RGB HISTOGRAM"
+            text: qsTr("RGB HISTOGRAM")
             textFormat: Text.PlainText
             font.pixelSize: Theme.px(10)
             font.weight: Font.DemiBold
@@ -78,7 +78,7 @@ Rectangle {
             Text {
                 id: highText
                 anchors.centerIn: parent
-                text: "[H] " + (root.histData ? root.histData.highlight_clipping_percent.toFixed(1) + "%" : "0.0%")
+                text: qsTr("[H] %1%", "H: highlight clipping").arg(root.histData ? root.histData.highlight_clipping_percent.toFixed(1) : "0.0")
                 textFormat: Text.PlainText
                 font.pixelSize: Theme.px(10)
                 font.family: Theme.monoFont

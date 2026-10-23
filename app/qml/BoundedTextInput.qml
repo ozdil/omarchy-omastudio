@@ -60,7 +60,7 @@ TextEdit {
 
         onFinished: (exitCode, output) => {
             if (exitCode === -2 || exitCode === 124 || exitCode === 137) {
-                control.pasteNotice = "Clipboard content exceeded byte limit or timed out.";
+                control.pasteNotice = qsTr("Clipboard content exceeded byte limit or timed out.");
                 return;
             }
             if (exitCode !== 0 || output.length === 0) return;

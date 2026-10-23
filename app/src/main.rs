@@ -8,6 +8,7 @@
 
 mod host;
 mod ipc;
+mod language;
 mod process;
 mod watched_file;
 

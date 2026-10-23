@@ -32,7 +32,7 @@ Rectangle {
 
             Text {
                 font.family: Theme.fontFamily
-                text: "DAVINCI 3D LUT ENGINE (.CUBE)"
+                text: qsTr("DAVINCI 3D LUT ENGINE (.CUBE)")
                 textFormat: Text.PlainText
                 font.pixelSize: Theme.px(10)
                 font.weight: Font.DemiBold
@@ -54,7 +54,7 @@ Rectangle {
                     font.family: Theme.fontFamily
                     id: resetText
                     anchors.centerIn: parent
-                    text: "RESET"
+                    text: qsTr("RESET")
                     textFormat: Text.PlainText
                     font.pixelSize: Theme.px(8)
                     font.weight: Font.Bold
@@ -84,10 +84,10 @@ Rectangle {
             columnSpacing: 4
 
             property var presets: [
-                { name: "Kodak 2383", sub: "Hollywood Print", col: Theme.accentOrange },
-                { name: "Teal & Orange", sub: "Cinema Blockbuster", col: Theme.accentCyan },
-                { name: "Fuji Eterna", sub: "35mm Soft Stock", col: Theme.accentGreen },
-                { name: "Silver Nitrate", sub: "High-Acutance B&W", col: Theme.accentPurple }
+                { name: "Kodak 2383", sub: qsTr("Hollywood Print"), col: Theme.accentOrange },
+                { name: "Teal & Orange", sub: qsTr("Cinema Blockbuster"), col: Theme.accentCyan },
+                { name: "Fuji Eterna", sub: qsTr("35mm Soft Stock"), col: Theme.accentGreen },
+                { name: "Silver Nitrate", sub: qsTr("High-Acutance B&W"), col: Theme.accentPurple }
             ]
 
             Repeater {
@@ -167,7 +167,7 @@ Rectangle {
                 Layout.fillWidth: true
                 Text {
                     font.family: Theme.fontFamily
-                    text: "LUT Intensity (Mix)"
+                    text: qsTr("LUT Intensity (Mix)")
                     textFormat: Text.PlainText
                     font.pixelSize: Theme.px(9)
                     color: Theme.textDim

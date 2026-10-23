@@ -1,0 +1,16 @@
+# Strings a translation may keep exactly as in English. "code:text" applies to one
+# language only (for words that are spelled the same there).
+%1 (%2)
+%1 %2
+Omarchy Linux (Wayland / Hyprland)
+Pixel Shift DNG: %1 x %2
+# DaVinci Resolve's names for the primary wheels
+LIFT
+GAMMA
+GAIN
+OFFSET
+Lift
+Gamma
+Gain
+Offset
+tr:Platform:

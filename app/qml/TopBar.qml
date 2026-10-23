@@ -112,7 +112,7 @@ Rectangle {
                 border.color: root.photoFlag === "pick" ? Theme.accentGreen : Theme.border
                 Text {
                     anchors.centerIn: parent
-                    text: "P"
+                    text: qsTr("P", "pick flag, first letter of Pick")
                     textFormat: Text.PlainText
                     font.family: Theme.monoFont
                     font.pixelSize: Theme.px(9)
@@ -289,7 +289,7 @@ Rectangle {
                         }
                         Text {
                             font.family: Theme.fontFamily
-                            text: "Pro Studio"
+                            text: qsTr("Pro Studio")
                             textFormat: Text.PlainText
                             font.pixelSize: Theme.px(10)
                             font.weight: Font.DemiBold
@@ -332,9 +332,9 @@ Rectangle {
                     hoverEnabled: true
                     ToolTip.visible: containsMouse
                     ToolTip.delay: 500
-                    ToolTip.text: "Undo (Ctrl+Z)"
+                    ToolTip.text: qsTr("Undo (Ctrl+Z)")
                     Accessible.role: Accessible.Button
-                    Accessible.name: "Undo"
+                    Accessible.name: qsTr("Undo")
                     onClicked: root.undoClicked()
                 }
             }
@@ -361,9 +361,9 @@ Rectangle {
                     hoverEnabled: true
                     ToolTip.visible: containsMouse
                     ToolTip.delay: 500
-                    ToolTip.text: "Redo (Ctrl+Shift+Z)"
+                    ToolTip.text: qsTr("Redo (Ctrl+Shift+Z)")
                     Accessible.role: Accessible.Button
-                    Accessible.name: "Redo"
+                    Accessible.name: qsTr("Redo")
                     onClicked: root.redoClicked()
                 }
             }
@@ -422,7 +422,7 @@ Rectangle {
                 }
                 Text {
                     font.family: Theme.fontFamily
-                    text: "Crop"
+                    text: qsTr("Crop")
                     textFormat: Text.PlainText
                     font.pixelSize: Theme.px(10)
                     font.weight: Font.DemiBold
@@ -449,7 +449,7 @@ Rectangle {
                 Text {
                     font.family: Theme.fontFamily
                     anchors.centerIn: parent
-                    text: "Fit"
+                    text: qsTr("Fit")
                     textFormat: Text.PlainText
                     font.pixelSize: Theme.px(9)
                     color: Theme.textMain
@@ -504,6 +504,8 @@ Rectangle {
 
         Item { Layout.fillWidth: true }
 
+        LanguageMenu {}
+
         // Omarchy Studio Info & About Button
         Rectangle {
             implicitWidth: 32
@@ -550,7 +552,7 @@ Rectangle {
                 }
                 Text {
                     font.family: Theme.fontFamily
-                    text: "Open RAW"
+                    text: qsTr("Open RAW")
                     textFormat: Text.PlainText
                     font.pixelSize: Theme.px(11)
                     font.weight: Font.Medium
@@ -583,7 +585,7 @@ Rectangle {
                 }
                 Text {
                     font.family: Theme.fontFamily
-                    text: "Export"
+                    text: qsTr("Export")
                     textFormat: Text.PlainText
                     font.pixelSize: Theme.px(11)
                     font.weight: Font.Bold

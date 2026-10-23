@@ -22,6 +22,7 @@ Rectangle {
     property string localOutputDir: "~/Pictures/OmaStudio_Exports"
     property bool isExporting: false
     property string exportStatusText: ""
+    property bool exportStatusIsError: false
     property bool isBatchMode: false
     property int batchCount: 0
     property bool watermarkEnabled: false
@@ -55,7 +56,7 @@ Rectangle {
                 }
                 Text {
                     font.family: Theme.fontFamily
-                    text: root.isBatchMode ? ("Batch Export (" + root.batchCount + " Photos)") : "Export Master Photo"
+                    text: root.isBatchMode ? qsTr("Batch Export (%n Photos)", "", root.batchCount) : qsTr("Export Master Photo")
                     textFormat: Text.PlainText
                     font.pixelSize: Theme.px(15)
                     font.weight: Font.Bold
@@ -96,7 +97,7 @@ Rectangle {
             Layout.fillWidth: true
             Text {
                 font.family: Theme.fontFamily
-                text: "MODERN OPEN FORMAT"
+                text: qsTr("MODERN OPEN FORMAT")
                 textFormat: Text.PlainText
                 font.pixelSize: Theme.px(10)
                 font.weight: Font.DemiBold
@@ -110,12 +111,12 @@ Rectangle {
                 rowSpacing: 6
 
                 property var formats: [
-                    { id: "jxl", name: "JPEG XL (.jxl)", badge: "Next-Gen 16-bit HDR" },
-                    { id: "avif", name: "AVIF (.avif)", badge: "AV1 Web/Mobile" },
-                    { id: "webp", name: "WebP (.webp)", badge: "Ultra Compact" },
-                    { id: "tiff", name: "16-bit TIFF", badge: "Master Print Lossless" },
-                    { id: "png", name: "PNG (.png)", badge: "Graphic Lossless" },
-                    { id: "jpeg", name: "JPEG (.jpg)", badge: "Universal MozJPEG" }
+                    { id: "jxl", name: "JPEG XL (.jxl)", badge: qsTr("Next-Gen 16-bit HDR") },
+                    { id: "avif", name: "AVIF (.avif)", badge: qsTr("AV1 Web/Mobile") },
+                    { id: "webp", name: "WebP (.webp)", badge: qsTr("Ultra Compact") },
+                    { id: "tiff", name: qsTr("16-bit TIFF"), badge: qsTr("Master Print Lossless") },
+                    { id: "png", name: "PNG (.png)", badge: qsTr("Graphic Lossless") },
+                    { id: "jpeg", name: "JPEG (.jpg)", badge: qsTr("Universal MozJPEG") }
                 ]
 
                 Repeater {
@@ -161,7 +162,7 @@ Rectangle {
 
         // Quality Slider
         SliderGroup {
-            title: "Export Compression Quality"
+            title: qsTr("Export Compression Quality")
             from: 10
             to: 100
             value: root.quality
@@ -176,7 +177,7 @@ Rectangle {
             Layout.fillWidth: true
             Text {
                 font.family: Theme.fontFamily
-                text: "RESOLUTION & SCALING"
+                text: qsTr("RESOLUTION & SCALING")
                 textFormat: Text.PlainText
                 font.pixelSize: Theme.px(10)
                 font.weight: Font.DemiBold
@@ -188,11 +189,11 @@ Rectangle {
                 spacing: 6
 
                 property var scales: [
-                    { label: "100% Full", pct: 100, maxD: null },
+                    { label: qsTr("100% Full"), pct: 100, maxD: null },
                     { label: "75%", pct: 75, maxD: null },
                     { label: "50%", pct: 50, maxD: null },
                     { label: "4K (3840p)", pct: 100, maxD: 3840 },
-                    { label: "Social (2048p)", pct: 100, maxD: 2048 }
+                    { label: qsTr("Social (2048p)"), pct: 100, maxD: 2048 }
                 ]
 
                 Repeater {
@@ -235,7 +236,7 @@ Rectangle {
             Layout.fillWidth: true
             Text {
                 font.family: Theme.fontFamily
-                text: "COLOR SPACE & ICC PROFILE"
+                text: qsTr("COLOR SPACE & ICC PROFILE")
                 textFormat: Text.PlainText
                 font.pixelSize: Theme.px(10)
                 font.weight: Font.DemiBold
@@ -249,12 +250,12 @@ Rectangle {
                 rowSpacing: 6
 
                 property var profiles: [
-                    { id: "sRGB", name: "sRGB", desc: "Universal Web / Social" },
-                    { id: "DisplayP3", name: "Display P3", desc: "Apple / Wide OLED" },
-                    { id: "Rec2020", name: "Rec.2020", desc: "Ultra-Wide Gamut HDR" },
-                    { id: "ACEScg", name: "ACEScg (AP1)", desc: "Academy Color Standard" },
-                    { id: "AdobeRGB1998", name: "Adobe RGB 1998", desc: "Pro Photography / Print" },
-                    { id: "ProPhotoRGB", name: "ProPhoto RGB", desc: "16-Bit Master Archival" }
+                    { id: "sRGB", name: "sRGB", desc: qsTr("Universal Web / Social") },
+                    { id: "DisplayP3", name: "Display P3", desc: qsTr("Apple / Wide OLED") },
+                    { id: "Rec2020", name: "Rec.2020", desc: qsTr("Ultra-Wide Gamut HDR") },
+                    { id: "ACEScg", name: "ACEScg (AP1)", desc: qsTr("Academy Color Standard") },
+                    { id: "AdobeRGB1998", name: "Adobe RGB 1998", desc: qsTr("Pro Photography / Print") },
+                    { id: "ProPhotoRGB", name: "ProPhoto RGB", desc: qsTr("16-Bit Master Archival") }
                 ]
 
                 Repeater {
@@ -306,7 +307,7 @@ Rectangle {
 
                 Text {
                     font.family: Theme.fontFamily
-                    text: "Intent"
+                    text: qsTr("Intent")
                     textFormat: Text.PlainText
                     font.pixelSize: Theme.px(10)
                     color: Theme.textDim
@@ -315,10 +316,10 @@ Rectangle {
 
                 Repeater {
                     model: [
-                        { id: "perceptual", name: "Perceptual", tip: "Compresses the whole gamut; smooth, saturated colours keep their relations" },
-                        { id: "relative_colorimetric", name: "Relative", tip: "In-gamut colours stay exact; out-of-gamut colours clip to the edge" },
-                        { id: "saturation", name: "Saturation", tip: "Keeps colours vivid at the cost of accuracy; for graphics" },
-                        { id: "absolute_colorimetric", name: "Absolute", tip: "Exact colours including the source white point; for proofing" }
+                        { id: "perceptual", name: qsTr("Perceptual"), tip: qsTr("Compresses the whole gamut; smooth, saturated colours keep their relations") },
+                        { id: "relative_colorimetric", name: qsTr("Relative"), tip: qsTr("In-gamut colours stay exact; out-of-gamut colours clip to the edge") },
+                        { id: "saturation", name: qsTr("Saturation"), tip: qsTr("Keeps colours vivid at the cost of accuracy; for graphics") },
+                        { id: "absolute_colorimetric", name: qsTr("Absolute"), tip: qsTr("Exact colours including the source white point; for proofing") }
                     ]
                     delegate: Rectangle {
                         Layout.fillWidth: true
@@ -380,7 +381,7 @@ Rectangle {
                     }
                     Text {
                         font.family: Theme.fontFamily
-                        text: "Preserve Camera EXIF"
+                        text: qsTr("Preserve Camera EXIF")
                         textFormat: Text.PlainText
                         font.pixelSize: Theme.px(10)
                         color: Theme.textMain
@@ -414,7 +415,7 @@ Rectangle {
                     }
                     Text {
                         font.family: Theme.fontFamily
-                        text: "Strip GPS (Privacy)"
+                        text: qsTr("Strip GPS (Privacy)")
                         textFormat: Text.PlainText
                         font.pixelSize: Theme.px(10)
                         color: Theme.textMain
@@ -449,7 +450,7 @@ Rectangle {
                 }
                 Text {
                     font.family: Theme.fontFamily
-                    text: "Apply Photography Watermark / EXIF Signature"
+                    text: qsTr("Apply Photography Watermark / EXIF Signature")
                     textFormat: Text.PlainText
                     font.pixelSize: Theme.px(11)
                     color: Theme.textMain
@@ -482,7 +483,7 @@ Rectangle {
                 }
                 Text {
                     font.family: Theme.fontFamily
-                    text: root.isExporting ? (root.isBatchMode ? "Exporting Batch..." : "Exporting Full Resolution...") : (root.isBatchMode ? ("Start Parallel Batch Export (" + root.batchCount + " Photos)") : ("Start Export (" + root.selectedFormat.toUpperCase() + " / " + root.selectedIcc + ")"))
+                    text: root.isExporting ? (root.isBatchMode ? qsTr("Exporting Batch...") : qsTr("Exporting Full Resolution...")) : (root.isBatchMode ? qsTr("Start Parallel Batch Export (%n Photos)", "", root.batchCount) : qsTr("Start Export (%1 / %2)").arg(root.selectedFormat.toUpperCase()).arg(root.selectedIcc))
                     textFormat: Text.PlainText
                     font.pixelSize: Theme.px(13)
                     font.weight: Font.Bold
@@ -519,7 +520,7 @@ Rectangle {
             text: root.exportStatusText
             textFormat: Text.PlainText
             font.pixelSize: Theme.px(11)
-            color: root.exportStatusText.indexOf("[ERR]") === 0 ? Theme.highlightClip : Theme.accentGreen
+            color: root.exportStatusIsError ? Theme.highlightClip : Theme.accentGreen
             visible: root.exportStatusText !== ""
             wrapMode: Text.WrapAnywhere
             horizontalAlignment: Text.AlignHCenter

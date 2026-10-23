@@ -161,11 +161,11 @@ Rectangle {
             root.gradeVersions = vMap;
             // Grade versions hold the edit, not the photo's culling state
             root.applyRecipeObject(Object.assign({}, vMap[ver], { "rating": root.photoRating, "flag": root.photoFlag }));
-            root.showToast("[Grade] Switched to Version " + ver, Theme.accentCyan);
+            root.showToast(qsTr("Switched to version %1").arg(ver), Theme.accentCyan);
         } else {
             vMap[ver] = cur;
             root.gradeVersions = vMap;
-            root.showToast("[Grade] Version " + ver + " initialized", Theme.accentYellow);
+            root.showToast(qsTr("Version %1 initialized").arg(ver), Theme.accentYellow);
         }
         root.requestRender();
     }
@@ -175,7 +175,7 @@ Rectangle {
         var vMap = Object.assign({}, root.gradeVersions);
         vMap[ver] = cur;
         root.gradeVersions = vMap;
-        root.showToast("[Grade] Copied current grade to Version " + ver, Theme.accentGreen);
+        root.showToast(qsTr("Copied current grade to version %1").arg(ver), Theme.accentGreen);
     }
 
     // Optics & Crop State
@@ -209,6 +209,16 @@ Rectangle {
         root.toastMessage = msg;
         root.toastColor = col || Theme.accent;
         toastTimer.restart();
+    }
+
+    function ratingMessage(stars) {
+        return stars > 0 ? qsTr("Rating: %n star(s)", "", stars) : qsTr("Rating cleared");
+    }
+
+    function flagMessage(flag) {
+        if (flag === "pick") return qsTr("Flag: pick (P)");
+        if (flag === "reject") return qsTr("Flag: reject (X)");
+        return qsTr("Flag: none (U)");
     }
 
     Timer {
@@ -276,7 +286,7 @@ Rectangle {
     function undo() {
         root.commitPendingUndo();
         if (root.undoStack.length === 0) {
-            root.showToast("[Undo] No previous actions", Theme.textDim);
+            root.showToast(qsTr("Nothing to undo"), Theme.textDim);
             return;
         }
         root.isPerformingUndoRedo = true;
@@ -293,13 +303,13 @@ Rectangle {
         prev = Object.assign({}, prev, { "rating": root.photoRating, "flag": root.photoFlag });
         root.applyRecipeObject(prev);
         root.isPerformingUndoRedo = false;
-        root.showToast("[OK] Undo (Ctrl+Z)", Theme.accentCyan);
+        root.showToast(qsTr("Undo (Ctrl+Z)"), Theme.accentCyan);
     }
 
     function redo() {
         root.commitPendingUndo();
         if (root.redoStack.length === 0) {
-            root.showToast("[Redo] No actions to redo", Theme.textDim);
+            root.showToast(qsTr("Nothing to redo"), Theme.textDim);
             return;
         }
         root.isPerformingUndoRedo = true;
@@ -316,22 +326,22 @@ Rectangle {
         next = Object.assign({}, next, { "rating": root.photoRating, "flag": root.photoFlag });
         root.applyRecipeObject(next);
         root.isPerformingUndoRedo = false;
-        root.showToast("[OK] Redo (Ctrl+Shift+Z)", Theme.accentCyan);
+        root.showToast(qsTr("Redo (Ctrl+Shift+Z)"), Theme.accentCyan);
     }
 
     function copyRecipe() {
         root.copiedRecipe = root.buildRecipeObject();
-        root.showToast("[OK] Adjustments Copied (Ctrl+Shift+C)", Theme.accentGreen);
+        root.showToast(qsTr("Adjustments copied (Ctrl+Shift+C)"), Theme.accentGreen);
     }
 
     function pasteRecipe() {
         if (!root.copiedRecipe) {
-            root.showToast("[ERR] No adjustments in clipboard", Theme.accentMagenta);
+            root.showToast(qsTr("No adjustments in clipboard"), Theme.accentMagenta);
             return;
         }
         root.pushUndoState();
         root.applyRecipeObject(root.copiedRecipe);
-        root.showToast("[OK] Adjustments Pasted (Ctrl+Shift+V)", Theme.accentGreen);
+        root.showToast(qsTr("Adjustments pasted (Ctrl+Shift+V)"), Theme.accentGreen);
     }
 
     function resetRecipe() {
@@ -420,7 +430,7 @@ Rectangle {
         root.highlightReconstruct = true;
         root.filmicAgx = false;
         try { root.syncPanels(); } catch (e) { console.warn("syncPanels failed: " + e); }
-        root.showToast("[OK] Reset to defaults (Ctrl+R)", Theme.textDim);
+        root.showToast(qsTr("Reset to defaults (Ctrl+R)"), Theme.textDim);
         root.requestRender();
     }
 
@@ -441,7 +451,7 @@ Rectangle {
             socialOpt.activePlatform = "";
         }
         root.requestRender();
-        root.showToast("[OK] AI Social Framing & Adjustments Reset", Theme.accentCyan);
+        root.showToast(qsTr("Social framing and adjustments reset"), Theme.accentCyan);
     }
 
     function buildRecipeObject() {
@@ -772,16 +782,17 @@ Rectangle {
             if (!resp.success) {
                 console.warn("Daemon returned error for action " + resp.action + ": " + resp.error);
                 if (resp.action === "load") {
-                    root.showToast("[ERR] Failed to load RAW: " + (resp.error || "Unknown error"), Theme.highlightClip);
+                    root.showToast(qsTr("Failed to load RAW: %1").arg(resp.error || qsTr("Unknown error")), Theme.highlightClip);
                 } else if (resp.action === "ai_auto" || resp.action === "ai_social" || resp.action === "ai_jev") {
-                    root.showToast("[ERR] " + (resp.error || "AI action failed"), Theme.highlightClip);
+                    root.showToast((resp.error || qsTr("AI action failed")), Theme.highlightClip);
                 } else if (resp.action === "batch_export") {
                     // Without this the dialog stays stuck on "Exporting Batch..."
                     exportDialog.isExporting = false;
-                    exportDialog.exportStatusText = "[ERR] " + (resp.error || "Batch export failed");
+                    exportDialog.exportStatusIsError = true;
+                    exportDialog.exportStatusText = resp.error || qsTr("Batch export failed");
                 } else if (resp.action === "adjust") {
                     root.renderFinished();
-                    root.showToast("[ERR] " + (resp.error || "Preview render failed"), Theme.highlightClip);
+                    root.showToast((resp.error || qsTr("Preview render failed")), Theme.highlightClip);
                 } else if (resp.action === "detail") {
                     viewport.detailFailed();
                 }
@@ -815,29 +826,29 @@ Rectangle {
                 if (data) {
                     root.applyRecipeObject(data.recipe);
                     root.activeScene = data.scene;
-                    root.showToast("[OK] AI Auto Tone Applied", Theme.accentCyan);
+                    root.showToast(qsTr("Auto tone applied"), Theme.accentCyan);
                 }
             } else if (act === "ai_jev") {
                 if (data) {
                     root.applyRecipeObject(data.recipe);
                     root.activeScene = data.scene;
-                    var label = data.jev_decisions ? "TypeSafe Jev System 1" : "Local Heuristic";
-                    root.showToast("[OK] " + label + " Applied", Theme.accentCyan);
+                    root.showToast(data.jev_decisions ? qsTr("AI decisions applied") : qsTr("Local heuristic applied"), Theme.accentCyan);
                 }
             } else if (act === "ai_social") {
                 if (data) {
                     if (data.recipe) {
                         root.applyRecipeObject(data.recipe);
                     }
-                    root.showToast("[OK] " + data.platform + " applied (" + data.target_resolution + ")", Theme.accentCyan);
+                    root.showToast(qsTr("%1 applied (%2)").arg(data.platform).arg(data.target_resolution), Theme.accentCyan);
                 }
             } else if (act === "save_recipe") {
-                root.showToast("[OK] Recipe sidecar saved", Theme.accentGreen);
+                root.showToast(qsTr("Recipe sidecar saved"), Theme.accentGreen);
             } else if (act === "batch_export") {
                 exportDialog.isExporting = false;
                 if (data) {
-                    exportDialog.exportStatusText = "[OK] Batch Finished: " + data.succeeded + "/" + data.total + " photos exported";
-                    root.showToast("[OK] Batch Export: " + data.succeeded + " succeeded, " + data.failed + " failed", Theme.accentGreen);
+                    exportDialog.exportStatusIsError = false;
+                    exportDialog.exportStatusText = qsTr("Batch finished: %1/%2 photos exported").arg(data.succeeded).arg(data.total);
+                    root.showToast(qsTr("Batch export: %1 succeeded, %2 failed").arg(data.succeeded).arg(data.failed), Theme.accentGreen);
                 }
             }
         } catch(e) {
@@ -869,15 +880,15 @@ Rectangle {
         property string action: ""
         onFinished: function(exitCode, output) {
             var resp;
-            try { resp = JSON.parse(String(output || "")); } catch (e) { resp = { "success": false, "error": "No answer from the engine" }; }
+            try { resp = JSON.parse(String(output || "")); } catch (e) { resp = { "success": false, "error": qsTr("No answer from the engine") }; }
             if (!resp.success) {
-                root.showToast("[ERR] " + String(resp.error || "XMP failed").split("\n")[0], Theme.accentMagenta);
+                root.showToast(String(resp.error || qsTr("XMP failed")).split("\n")[0], Theme.accentMagenta);
             } else if (xmpProc.action === "import") {
                 root.pushUndoState();
                 root.applyRecipeObject(resp.data.recipe);
-                root.showToast("[OK] Edit read from " + String(resp.data.source).split("/").pop(), Theme.accentGreen);
+                root.showToast(qsTr("Edit read from %1").arg(String(resp.data.source).split("/").pop()), Theme.accentGreen);
             } else {
-                root.showToast("[OK] Wrote " + String(resp.data.path).split("/").pop(), Theme.accentGreen);
+                root.showToast(qsTr("Wrote %1").arg(String(resp.data.path).split("/").pop()), Theme.accentGreen);
             }
         }
     }
@@ -891,13 +902,13 @@ Rectangle {
 
     function triggerAiAuto() {
         root.pushUndoState();
-        root.showToast("[AI] Analyzing dynamic range & scene...", Theme.accentCyan);
+        root.showToast(qsTr("Analyzing dynamic range and scene..."), Theme.accentCyan);
         root.sendDaemonCommand({ cmd: "ai_auto" });
     }
 
     function triggerAiJev() {
         root.pushUndoState();
-        root.showToast("[JEV] Querying TypeSafe AI Decision Engine...", Theme.accentCyan);
+        root.showToast(qsTr("Asking the AI for edit decisions..."), Theme.accentCyan);
         root.sendDaemonCommand({ cmd: "ai_jev" });
     }
 
@@ -980,7 +991,7 @@ Rectangle {
     // Process: File picker
     Process {
         id: openFileProc
-        command: ["zenity", "--file-selection", "--title=Open RAW Photo", "--file-filter=RAW Photos | *.RAF *.raf *.NEF *.nef *.CR2 *.cr2 *.CR3 *.cr3 *.ARW *.arw *.DNG *.dng *.3FR *.3fr *.FFF *.fff *.IIQ *.iiq *.MOS *.mos *.MEF *.mef *.PEF *.pef"]
+        command: ["zenity", "--file-selection", "--title=" + qsTr("Open RAW Photo"), "--file-filter=" + qsTr("RAW Photos") + " | *.RAF *.raf *.NEF *.nef *.CR2 *.cr2 *.CR3 *.cr3 *.ARW *.arw *.DNG *.dng *.3FR *.3fr *.FFF *.fff *.IIQ *.iiq *.MOS *.mos *.MEF *.mef *.PEF *.pef"]
         onFinished: function(exitCode, output) {
             var p = String(output || "").trim();
             if (exitCode === 0 && p.length > 0) {
@@ -997,12 +1008,15 @@ Rectangle {
             try {
                 var resp = JSON.parse(output);
                 if (resp.success && resp.data) {
-                    exportDialog.exportStatusText = "[OK] Saved to: " + resp.data.exported_path;
+                    exportDialog.exportStatusIsError = false;
+                    exportDialog.exportStatusText = qsTr("Saved to: %1").arg(resp.data.exported_path);
                 } else {
-                    exportDialog.exportStatusText = "[ERR] Export Error: " + (resp.error || "Unknown");
+                    exportDialog.exportStatusIsError = true;
+                    exportDialog.exportStatusText = qsTr("Export error: %1").arg(resp.error || qsTr("Unknown error"));
                 }
             } catch(e) {
-                exportDialog.exportStatusText = "[ERR] Export finished";
+                exportDialog.exportStatusIsError = true;
+                exportDialog.exportStatusText = qsTr("Export finished without a result");
             }
         }
     }
@@ -1044,10 +1058,10 @@ Rectangle {
                     }
                 } else if (resp.error) {
                     var cleanMsg = String(resp.error || "").split("\n")[0].substring(0, 80);
-                    root.showToast("[ERR] " + cleanMsg, Theme.accentMagenta);
+                    root.showToast(cleanMsg, Theme.accentMagenta);
                 }
             } catch(e) {
-                root.showToast("[ERR] Tarama yanit veremedi.", Theme.accentMagenta);
+                root.showToast(qsTr("The folder scan gave no answer"), Theme.accentMagenta);
             }
         }
     }
@@ -1081,7 +1095,7 @@ Rectangle {
         sequence: "C"
         onActivated: {
             viewport.isCropMode = !viewport.isCropMode;
-            root.showToast(viewport.isCropMode ? "Crop Mode: ON (C)" : "Crop Mode: OFF", Theme.accentYellow);
+            root.showToast(viewport.isCropMode ? qsTr("Crop mode: on (C)") : qsTr("Crop mode: off"), Theme.accentYellow);
         }
     }
     Shortcut {
@@ -1120,45 +1134,45 @@ Rectangle {
     // Lightroom Studio Culling & Ergonomics (1-5 Stars, Flags, Cinematic View)
     Shortcut {
         sequence: "1"
-        onActivated: { root.photoRating = 1; root.showToast("Rating: [ * ] 1 Star (1)", Theme.accentYellow); root.saveSidecar(); }
+        onActivated: { root.photoRating = 1; root.showToast(root.ratingMessage(1), Theme.accentYellow); root.saveSidecar(); }
     }
     Shortcut {
         sequence: "2"
-        onActivated: { root.photoRating = 2; root.showToast("Rating: [ * * ] 2 Stars (2)", Theme.accentYellow); root.saveSidecar(); }
+        onActivated: { root.photoRating = 2; root.showToast(root.ratingMessage(2), Theme.accentYellow); root.saveSidecar(); }
     }
     Shortcut {
         sequence: "3"
-        onActivated: { root.photoRating = 3; root.showToast("Rating: [ * * * ] 3 Stars (3)", Theme.accentYellow); root.saveSidecar(); }
+        onActivated: { root.photoRating = 3; root.showToast(root.ratingMessage(3), Theme.accentYellow); root.saveSidecar(); }
     }
     Shortcut {
         sequence: "4"
-        onActivated: { root.photoRating = 4; root.showToast("Rating: [ * * * * ] 4 Stars (4)", Theme.accentYellow); root.saveSidecar(); }
+        onActivated: { root.photoRating = 4; root.showToast(root.ratingMessage(4), Theme.accentYellow); root.saveSidecar(); }
     }
     Shortcut {
         sequence: "5"
-        onActivated: { root.photoRating = 5; root.showToast("Rating: [ * * * * * ] 5 Stars (5)", Theme.accentYellow); root.saveSidecar(); }
+        onActivated: { root.photoRating = 5; root.showToast(root.ratingMessage(5), Theme.accentYellow); root.saveSidecar(); }
     }
     Shortcut {
         sequence: "0"
-        onActivated: { root.photoRating = 0; root.showToast("Rating Cleared (0)", Theme.textDim); root.saveSidecar(); }
+        onActivated: { root.photoRating = 0; root.showToast(root.ratingMessage(0), Theme.textDim); root.saveSidecar(); }
     }
     Shortcut {
         sequence: "X"
-        onActivated: { root.photoFlag = (root.photoFlag === "reject" ? "none" : "reject"); root.showToast(root.photoFlag === "reject" ? "Flag: REJECT (X)" : "Flag: NONE", Theme.highlightClip); root.saveSidecar(); }
+        onActivated: { root.photoFlag = (root.photoFlag === "reject" ? "none" : "reject"); root.showToast(root.flagMessage(root.photoFlag), Theme.highlightClip); root.saveSidecar(); }
     }
     Shortcut {
         sequence: "P"
-        onActivated: { root.photoFlag = (root.photoFlag === "pick" ? "none" : "pick"); root.showToast(root.photoFlag === "pick" ? "Flag: PICK (P)" : "Flag: NONE", Theme.accentGreen); root.saveSidecar(); }
+        onActivated: { root.photoFlag = (root.photoFlag === "pick" ? "none" : "pick"); root.showToast(root.flagMessage(root.photoFlag), Theme.accentGreen); root.saveSidecar(); }
     }
     Shortcut {
         sequence: "U"
-        onActivated: { root.photoFlag = "none"; root.showToast("Flag: UNFLAGGED (U)", Theme.textDim); root.saveSidecar(); }
+        onActivated: { root.photoFlag = "none"; root.showToast(root.flagMessage("none"), Theme.textDim); root.saveSidecar(); }
     }
     Shortcut {
         sequence: "E"
         onActivated: {
             if (root.activePhotoPath === "" && !root.showExportModal) {
-                root.showToast("Open a photo first to export", Theme.textDim);
+                root.showToast(qsTr("Open a photo first to export"), Theme.textDim);
                 return;
             }
             root.showExportModal = !root.showExportModal;
@@ -1208,7 +1222,7 @@ Rectangle {
             var bothOpen = root.showLeftPanel || root.showRightPanel;
             root.showLeftPanel = !bothOpen;
             root.showRightPanel = !bothOpen;
-            root.showToast(bothOpen ? "Cinematic Full Canvas (Tab)" : "Panels Restored (Tab)", Theme.accentCyan);
+            root.showToast(bothOpen ? qsTr("Panels hidden (Tab)") : qsTr("Panels restored (Tab)"), Theme.accentCyan);
         }
     }
 
@@ -1306,7 +1320,7 @@ Rectangle {
     function triggerSocial(platformCode) {
         if (!platformCode || platformCode.length === 0) return;
         root.pushUndoState();
-        root.showToast("[AI] Optimizing for " + platformCode + "...", Theme.accentCyan);
+        root.showToast(qsTr("Optimizing for %1...").arg(platformCode), Theme.accentCyan);
         root.sendDaemonCommand({
             cmd: "ai_social",
             platform: String(platformCode)
@@ -1315,7 +1329,7 @@ Rectangle {
 
     function toggleCropMode() {
         viewport.isCropMode = !viewport.isCropMode;
-        root.showToast(viewport.isCropMode ? "Crop Mode: ON (C)" : "Crop Mode: OFF", Theme.accentYellow);
+        root.showToast(viewport.isCropMode ? qsTr("Crop mode: on (C)") : qsTr("Crop mode: off"), Theme.accentYellow);
         return viewport.isCropMode;
     }
 
@@ -1354,12 +1368,12 @@ Rectangle {
             }
             onRatingChanged: function(r) {
                 root.photoRating = r;
-                root.showToast("Rating: " + (r > 0 ? (r + " Stars") : "Cleared"), Theme.accentYellow);
+                root.showToast(root.ratingMessage(r), Theme.accentYellow);
                 root.saveSidecar();
             }
             onFlagChanged: function(f) {
                 root.photoFlag = f;
-                root.showToast("Flag: " + f.toUpperCase(), f === "pick" ? Theme.accentGreen : (f === "reject" ? Theme.highlightClip : Theme.textDim));
+                root.showToast(root.flagMessage(f), f === "pick" ? Theme.accentGreen : (f === "reject" ? Theme.highlightClip : Theme.textDim));
                 root.saveSidecar();
             }
             onToggleMode: root.isProMode = !root.isProMode
@@ -1376,7 +1390,7 @@ Rectangle {
             }
             onToggleCrop: {
                 viewport.isCropMode = !viewport.isCropMode;
-                root.showToast(viewport.isCropMode ? "Crop Mode: ON (C)" : "Crop Mode: OFF", Theme.accentYellow);
+                root.showToast(viewport.isCropMode ? qsTr("Crop mode: on (C)") : qsTr("Crop mode: off"), Theme.accentYellow);
             }
             onZoomFit: viewport.resetZoomFit()
             onZoom100: viewport.setZoomAbsolute(1.0)
@@ -1484,7 +1498,7 @@ Rectangle {
                                         color: Theme.accentPurple
                                     }
                                     Text {
-                                        text: "AI SCENE INSIGHT"
+                                        text: qsTr("AI SCENE INSIGHT")
                                         textFormat: Text.PlainText
                                         font.family: Theme.fontFamily
                                         font.pixelSize: Theme.px(9)
@@ -1502,7 +1516,7 @@ Rectangle {
                                 }
 
                                 Text {
-                                    text: root.activeScene ? root.activeScene.scene_type : "Analyzing..."
+                                    text: root.activeScene ? I18n.sceneType(root.activeScene.scene_type) : qsTr("Analyzing...")
                                     textFormat: Text.PlainText
                                     font.family: Theme.fontFamily
                                     font.pixelSize: Theme.px(11)
@@ -1511,7 +1525,7 @@ Rectangle {
                                 }
 
                                 Text {
-                                    text: root.activeScene ? root.activeScene.description : "Extracting dynamic range..."
+                                    text: root.activeScene ? I18n.sceneDescription(root.activeScene.scene_type, root.activeScene.description) : qsTr("Extracting dynamic range...")
                                     textFormat: Text.PlainText
                                     font.family: Theme.fontFamily
                                     font.pixelSize: Theme.px(9)
@@ -1562,7 +1576,7 @@ Rectangle {
                         Item { Layout.fillWidth: true }
 
                         Text {
-                            text: "DaVinci Color Engine • [Alt+1..4] Switch Version"
+                            text: qsTr("Grade versions • Alt+1..4 to switch")
                             textFormat: Text.PlainText
                             font.pixelSize: Theme.px(8)
                             font.family: Theme.monoFont
@@ -1613,12 +1627,12 @@ Rectangle {
                     }
                     onFileDropped: function(filePath) {
                         root.loadPhoto(filePath);
-                        root.showToast("[OK] Opened dropped RAW: " + filePath.split("/").pop(), Theme.accentCyan);
+                        root.showToast(qsTr("Opened %1").arg(filePath.split("/").pop()), Theme.accentCyan);
                     }
                     onFolderDropped: function(folderPath) {
                         filmstrip.currentFolder = folderPath;
                         root.scanLocalFolder(folderPath);
-                        root.showToast("[OK] Scanning dropped folder: " + folderPath.split("/").pop(), Theme.accentCyan);
+                        root.showToast(qsTr("Scanning folder %1").arg(folderPath.split("/").pop()), Theme.accentCyan);
                     }
                 }
             }
@@ -1667,10 +1681,10 @@ Rectangle {
                             onRecipeSuggested: function(recipe, explanation) {
                                 root.pushUndoState();
                                 root.applyRecipeObject(recipe);
-                                root.showToast("[OK] AI edit applied", Theme.accentGreen);
+                                root.showToast(qsTr("AI edit applied"), Theme.accentGreen);
                             }
                             onNotify: function(text, isError) {
-                                root.showToast((isError ? "[ERR] " : "[OK] ") + text, isError ? Theme.accentMagenta : Theme.accentGreen);
+                                root.showToast(text, isError ? Theme.accentMagenta : Theme.accentGreen);
                             }
                         }
 
@@ -1703,7 +1717,7 @@ Rectangle {
                                 spacing: 6
 
                                 Text {
-                                    text: "ESSENTIAL ADJUSTMENTS"
+                                    text: qsTr("ESSENTIAL ADJUSTMENTS")
                                     textFormat: Text.PlainText
                                     font.family: Theme.fontFamily
                                     font.pixelSize: Theme.px(10)
@@ -1724,7 +1738,7 @@ Rectangle {
                                     Text {
                                         id: resetEssentialText
                                         anchors.centerIn: parent
-                                        text: "RESET"
+                                        text: qsTr("RESET")
                                         textFormat: Text.PlainText
                                         font.family: Theme.monoFont
                                         font.pixelSize: Theme.px(8)
@@ -1749,7 +1763,7 @@ Rectangle {
                             }
 
                             SliderGroup {
-                                title: "Exposure (Light)"
+                                title: qsTr("Exposure (Light)")
                                 from: -5.0
                                 to: 5.0
                                 value: root.expValue
@@ -1762,7 +1776,7 @@ Rectangle {
                             }
 
                             SliderGroup {
-                                title: "Warmth (Temperature)"
+                                title: qsTr("Warmth (Temperature)")
                                 from: 2000.0
                                 to: 12000.0
                                 value: root.wbTemp
@@ -1774,7 +1788,7 @@ Rectangle {
                             }
 
                             SliderGroup {
-                                title: "Vibrance (Color Punch)"
+                                title: qsTr("Vibrance (Color Punch)")
                                 from: -100.0
                                 to: 100.0
                                 value: root.vibranceValue
@@ -1784,7 +1798,7 @@ Rectangle {
                             }
 
                             SliderGroup {
-                                title: "Contrast"
+                                title: qsTr("Contrast")
                                 from: -100.0
                                 to: 100.0
                                 value: root.contrastValue
@@ -1806,7 +1820,7 @@ Rectangle {
                                 spacing: 6
 
                                 Text {
-                                    text: "WHITE BALANCE"
+                                    text: qsTr("WHITE BALANCE")
                                     textFormat: Text.PlainText
                                     font.family: Theme.fontFamily
                                     font.pixelSize: Theme.px(10)
@@ -1827,7 +1841,7 @@ Rectangle {
                                     Text {
                                         id: resetWbText
                                         anchors.centerIn: parent
-                                        text: "RESET"
+                                        text: qsTr("RESET")
                                         textFormat: Text.PlainText
                                         font.family: Theme.monoFont
                                         font.pixelSize: Theme.px(8)
@@ -1850,7 +1864,7 @@ Rectangle {
                             }
 
                             SliderGroup {
-                                title: "Temp (Kelvin)"
+                                title: qsTr("Temp (Kelvin)")
                                 from: 2000.0
                                 to: 12000.0
                                 value: root.wbTemp
@@ -1862,7 +1876,7 @@ Rectangle {
                             }
 
                             SliderGroup {
-                                title: "Tint (Green / Magenta)"
+                                title: qsTr("Tint (Green / Magenta)")
                                 from: -100.0
                                 to: 100.0
                                 value: root.wbTint
@@ -1878,7 +1892,7 @@ Rectangle {
                                 spacing: 6
 
                                 Text {
-                                    text: "LIGHT & DYNAMIC RANGE"
+                                    text: qsTr("LIGHT & DYNAMIC RANGE")
                                     textFormat: Text.PlainText
                                     font.family: Theme.fontFamily
                                     font.pixelSize: Theme.px(10)
@@ -1899,7 +1913,7 @@ Rectangle {
                                     Text {
                                         id: resetLightText
                                         anchors.centerIn: parent
-                                        text: "RESET"
+                                        text: qsTr("RESET")
                                         textFormat: Text.PlainText
                                         font.family: Theme.monoFont
                                         font.pixelSize: Theme.px(8)
@@ -1926,7 +1940,7 @@ Rectangle {
                             }
 
                             SliderGroup {
-                                title: "Exposure"
+                                title: qsTr("Exposure")
                                 from: -5.0
                                 to: 5.0
                                 value: root.expValue
@@ -1938,7 +1952,7 @@ Rectangle {
                             }
 
                             SliderGroup {
-                                title: "Contrast"
+                                title: qsTr("Contrast")
                                 from: -100.0
                                 to: 100.0
                                 value: root.contrastValue
@@ -1947,7 +1961,7 @@ Rectangle {
                             }
 
                             SliderGroup {
-                                title: "Highlights"
+                                title: qsTr("Highlights")
                                 from: -100.0
                                 to: 100.0
                                 value: root.highlightsValue
@@ -1956,7 +1970,7 @@ Rectangle {
                             }
 
                             SliderGroup {
-                                title: "Shadows"
+                                title: qsTr("Shadows")
                                 from: -100.0
                                 to: 100.0
                                 value: root.shadowsValue
@@ -1965,7 +1979,7 @@ Rectangle {
                             }
 
                             SliderGroup {
-                                title: "Whites"
+                                title: qsTr("Whites")
                                 from: -100.0
                                 to: 100.0
                                 value: root.whitesValue
@@ -1974,7 +1988,7 @@ Rectangle {
                             }
 
                             SliderGroup {
-                                title: "Blacks"
+                                title: qsTr("Blacks")
                                 from: -100.0
                                 to: 100.0
                                 value: root.blacksValue
@@ -1989,7 +2003,7 @@ Rectangle {
                                 spacing: 6
 
                                 Text {
-                                    text: "TONE CURVE (PARAMETRIC)"
+                                    text: qsTr("TONE CURVE (PARAMETRIC)")
                                     textFormat: Text.PlainText
                                     font.family: Theme.fontFamily
                                     font.pixelSize: Theme.px(10)
@@ -2010,7 +2024,7 @@ Rectangle {
                                     Text {
                                         id: resetCurveText
                                         anchors.centerIn: parent
-                                        text: "RESET"
+                                        text: qsTr("RESET")
                                         textFormat: Text.PlainText
                                         font.family: Theme.monoFont
                                         font.pixelSize: Theme.px(8)
@@ -2036,7 +2050,7 @@ Rectangle {
                             }
 
                             SliderGroup {
-                                title: "Curve Highlights"
+                                title: qsTr("Curve Highlights")
                                 from: -100.0
                                 to: 100.0
                                 value: root.curveHighlights
@@ -2046,7 +2060,7 @@ Rectangle {
                             }
 
                             SliderGroup {
-                                title: "Curve Lights (Upper Mids)"
+                                title: qsTr("Curve Lights (Upper Mids)")
                                 from: -100.0
                                 to: 100.0
                                 value: root.curveLights
@@ -2056,7 +2070,7 @@ Rectangle {
                             }
 
                             SliderGroup {
-                                title: "Curve Darks (Lower Mids)"
+                                title: qsTr("Curve Darks (Lower Mids)")
                                 from: -100.0
                                 to: 100.0
                                 value: root.curveDarks
@@ -2066,7 +2080,7 @@ Rectangle {
                             }
 
                             SliderGroup {
-                                title: "Curve Shadows"
+                                title: qsTr("Curve Shadows")
                                 from: -100.0
                                 to: 100.0
                                 value: root.curveShadows
@@ -2082,7 +2096,7 @@ Rectangle {
                                 spacing: 6
 
                                 Text {
-                                    text: "PRESENCE & TEXTURE"
+                                    text: qsTr("PRESENCE & TEXTURE")
                                     textFormat: Text.PlainText
                                     font.family: Theme.fontFamily
                                     font.pixelSize: Theme.px(10)
@@ -2103,7 +2117,7 @@ Rectangle {
                                     Text {
                                         id: resetPresenceText
                                         anchors.centerIn: parent
-                                        text: "RESET"
+                                        text: qsTr("RESET")
                                         textFormat: Text.PlainText
                                         font.family: Theme.monoFont
                                         font.pixelSize: Theme.px(8)
@@ -2129,7 +2143,7 @@ Rectangle {
                             }
 
                             SliderGroup {
-                                title: "Texture"
+                                title: qsTr("Texture")
                                 from: -100.0
                                 to: 100.0
                                 value: root.textureValue
@@ -2138,7 +2152,7 @@ Rectangle {
                             }
 
                             SliderGroup {
-                                title: "Clarity (Midtone Contrast)"
+                                title: qsTr("Clarity (Midtone Contrast)")
                                 from: -100.0
                                 to: 100.0
                                 value: root.clarityValue
@@ -2147,7 +2161,7 @@ Rectangle {
                             }
 
                             SliderGroup {
-                                title: "Dehaze"
+                                title: qsTr("Dehaze")
                                 from: -100.0
                                 to: 100.0
                                 value: root.dehazeValue
@@ -2156,7 +2170,7 @@ Rectangle {
                             }
 
                             SliderGroup {
-                                title: "Vibrance"
+                                title: qsTr("Vibrance")
                                 from: -100.0
                                 to: 100.0
                                 value: root.vibranceValue
@@ -2165,7 +2179,7 @@ Rectangle {
                             }
 
                             SliderGroup {
-                                title: "Saturation"
+                                title: qsTr("Saturation")
                                 from: -100.0
                                 to: 100.0
                                 value: root.saturationValue
@@ -2180,7 +2194,7 @@ Rectangle {
                                 spacing: 6
 
                                 Text {
-                                    text: "COLOR MIXER (8-BAND HSL)"
+                                    text: qsTr("COLOR MIXER (8-BAND HSL)")
                                     textFormat: Text.PlainText
                                     font.family: Theme.fontFamily
                                     font.pixelSize: Theme.px(10)
@@ -2201,7 +2215,7 @@ Rectangle {
                                     Text {
                                         id: resetHslText
                                         anchors.centerIn: parent
-                                        text: "RESET"
+                                        text: qsTr("RESET")
                                         textFormat: Text.PlainText
                                         font.family: Theme.monoFont
                                         font.pixelSize: Theme.px(8)
@@ -2294,7 +2308,7 @@ Rectangle {
                                 spacing: 6
 
                                 Text {
-                                    text: "DETAIL & OPTICS"
+                                    text: qsTr("DETAIL & OPTICS")
                                     textFormat: Text.PlainText
                                     font.family: Theme.fontFamily
                                     font.pixelSize: Theme.px(10)
@@ -2315,7 +2329,7 @@ Rectangle {
                                     Text {
                                         id: resetDetailText
                                         anchors.centerIn: parent
-                                        text: "RESET"
+                                        text: qsTr("RESET")
                                         textFormat: Text.PlainText
                                         font.family: Theme.monoFont
                                         font.pixelSize: Theme.px(8)
@@ -2342,7 +2356,7 @@ Rectangle {
                             }
 
                             SliderGroup {
-                                title: "Sharpening"
+                                title: qsTr("Sharpening")
                                 from: 0.0
                                 to: 100.0
                                 value: root.sharpnessVal
@@ -2351,7 +2365,7 @@ Rectangle {
                             }
 
                             SliderGroup {
-                                title: "Noise Reduction (Luma)"
+                                title: qsTr("Noise Reduction (Luma)")
                                 from: 0.0
                                 to: 100.0
                                 value: root.denoiseLumVal
@@ -2360,7 +2374,7 @@ Rectangle {
                             }
 
                             SliderGroup {
-                                title: "Noise Reduction (Color)"
+                                title: qsTr("Noise Reduction (Color)")
                                 from: 0.0
                                 to: 100.0
                                 value: root.denoiseColVal
@@ -2370,7 +2384,7 @@ Rectangle {
                             }
 
                             SliderGroup {
-                                title: "Vignette"
+                                title: qsTr("Vignette")
                                 from: -100.0
                                 to: 100.0
                                 value: root.vignetteVal
@@ -2379,7 +2393,7 @@ Rectangle {
                             }
 
                             SliderGroup {
-                                title: "Defringe (Chromatic Aberration)"
+                                title: qsTr("Defringe (Chromatic Aberration)")
                                 from: 0.0
                                 to: 100.0
                                 value: root.defringeVal
@@ -2389,7 +2403,7 @@ Rectangle {
                             }
 
                             SliderGroup {
-                                title: "Lens Distortion Correction"
+                                title: qsTr("Lens Distortion Correction")
                                 from: -50.0
                                 to: 50.0
                                 value: root.lensDistortionVal
@@ -2477,24 +2491,24 @@ Rectangle {
                                 selectedPaths: filmstrip.selectedPaths
                                 onRecipeApplied: function(recipe, label) {
                                     if (root.activePhotoPath === "") {
-                                        root.showToast("[ERR] Open a photo first", Theme.accentMagenta);
+                                        root.showToast(qsTr("Open a photo first"), Theme.accentMagenta);
                                         return;
                                     }
                                     root.pushUndoState();
                                     root.applyRecipeObject(recipe);
-                                    root.showToast("[OK] " + label, Theme.accentGreen);
+                                    root.showToast(label, Theme.accentGreen);
                                 }
                                 onFileProduced: function(path, openIt) {
                                     if (openIt) root.loadPhoto(path);
                                 }
                                 onNotify: function(text, isError) {
-                                    root.showToast((isError ? "[ERR] " : "[OK] ") + text, isError ? Theme.accentMagenta : Theme.accentGreen);
+                                    root.showToast(text, isError ? Theme.accentMagenta : Theme.accentGreen);
                                 }
                             }
 
                             // Fujifilm Color Chrome Effect / FX Blue (Weak = 50, Strong = 100)
                             SliderGroup {
-                                title: "Color Chrome Effect"
+                                title: qsTr("Color Chrome Effect")
                                 from: 0.0
                                 to: 100.0
                                 value: root.colorChrome
@@ -2504,7 +2518,7 @@ Rectangle {
                                 onSliderMoved: function(v) { root.colorChrome = v; root.requestRender() }
                             }
                             SliderGroup {
-                                title: "Color Chrome FX Blue"
+                                title: qsTr("Color Chrome FX Blue")
                                 from: 0.0
                                 to: 100.0
                                 value: root.colorChromeBlue
@@ -2539,7 +2553,7 @@ Rectangle {
                                 enginePath: root.resolveEnginePath()
                                 activePhotoPath: root.activePhotoPath
                                 onNotify: function(text, isError) {
-                                    root.showToast((isError ? "[ERR] " : "[OK] ") + text, isError ? Theme.accentMagenta : Theme.accentGreen);
+                                    root.showToast(text, isError ? Theme.accentMagenta : Theme.accentGreen);
                                 }
                                 onLayersChanged: {
                                     root.adjustmentLayers = layersPanel.layersList;
@@ -2611,7 +2625,7 @@ Rectangle {
                                     anchors.centerIn: parent
                                     spacing: 4
                                     Text {
-                                        text: "Copy"
+                                        text: qsTr("Copy")
                                         textFormat: Text.PlainText
                                         font.family: Theme.monoFont
                                         font.pixelSize: Theme.px(10)
@@ -2639,7 +2653,7 @@ Rectangle {
                                     anchors.centerIn: parent
                                     spacing: 4
                                     Text {
-                                        text: "Paste"
+                                        text: qsTr("Paste")
                                         textFormat: Text.PlainText
                                         font.family: Theme.monoFont
                                         font.pixelSize: Theme.px(10)
@@ -2665,7 +2679,7 @@ Rectangle {
 
                                 Text {
                                     anchors.centerIn: parent
-                                    text: "Reset"
+                                    text: qsTr("Reset")
                                     textFormat: Text.PlainText
                                     font.family: Theme.monoFont
                                     font.pixelSize: Theme.px(10)
@@ -2689,8 +2703,8 @@ Rectangle {
 
                             Repeater {
                                 model: [
-                                    { "label": "Import XMP", "tip": "Read DSCF0001.xmp from Lightroom, Capture One or darktable" },
-                                    { "label": "Write XMP", "tip": "Write the edit, rating and label to DSCF0001.xmp for other editors" }
+                                    { "label": qsTr("Import XMP"), "tip": qsTr("Read DSCF0001.xmp from Lightroom, Capture One or darktable") },
+                                    { "label": qsTr("Write XMP"), "tip": qsTr("Write the edit, rating and label to DSCF0001.xmp for other editors") }
                                 ]
                                 delegate: Rectangle {
                                     Layout.fillWidth: true
@@ -2740,7 +2754,7 @@ Rectangle {
                 root.loadPhoto(path);
             }
             onNavigateFolder: function(remotePath) {
-                root.showToast("[Folder] Navigating: " + remotePath, Theme.accent);
+                root.showToast(qsTr("Opening %1").arg(remotePath), Theme.accent);
                 filmstrip.currentFolder = remotePath;
                 root.scanLocalFolder(remotePath);
             }
@@ -2759,7 +2773,7 @@ Rectangle {
             }
             onSwitchSource: function(isCatalog) {
                 if (isCatalog) {
-                    root.showToast("[Catalog] Loading Studio Local Catalog...", Theme.accentCyan);
+                    root.showToast(qsTr("Loading the studio catalog..."), Theme.accentCyan);
                     root.loadStudioCatalog("");
                 } else {
                     filmstrip.currentFolder = "~/Pictures";
@@ -2768,7 +2782,7 @@ Rectangle {
             }
             onRefreshRequested: {
                 if (filmstrip.isCatalogMode) {
-                    root.showToast("[Catalog] Refreshing Studio Catalog...", Theme.accentCyan);
+                    root.showToast(qsTr("Refreshing the studio catalog..."), Theme.accentCyan);
                     root.loadStudioCatalog("");
                 } else {
                     root.scanLocalFolder(filmstrip.currentFolder || "~/Pictures");
@@ -2838,7 +2852,8 @@ Rectangle {
             onDoExport: function(opts) {
                 exportDialog.isExporting = true;
                 if (exportDialog.isBatchMode && filmstrip.selectedPaths.length > 0) {
-                    exportDialog.exportStatusText = "Dispatching " + filmstrip.selectedPaths.length + " photos to multi-core Rayon pool...";
+                    exportDialog.exportStatusIsError = false;
+                    exportDialog.exportStatusText = qsTr("Exporting %n photo(s) in parallel...", "", filmstrip.selectedPaths.length);
                     var batchItems = [];
                     for (var i = 0; i < filmstrip.selectedPaths.length; i++) {
                         var p = filmstrip.selectedPaths[i];
@@ -2853,7 +2868,8 @@ Rectangle {
                         options: opts
                     });
                 } else {
-                    exportDialog.exportStatusText = "Demosaicing full resolution sensor & encoding...";
+                    exportDialog.exportStatusIsError = false;
+                    exportDialog.exportStatusText = qsTr("Developing at full resolution and encoding...");
                     var recipeJson = JSON.stringify(root.buildRecipeObject());
                     var optsJson = JSON.stringify(opts);
                     exportProc.command = [

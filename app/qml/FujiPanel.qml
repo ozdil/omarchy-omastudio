@@ -58,7 +58,7 @@ Rectangle {
 
     function handle(action, resp) {
         if (!resp.success) {
-            root.notify(String(resp.error || "Fujifilm command failed").split("\n")[0], true);
+            root.notify(String(resp.error || qsTr("Fujifilm command failed")).split("\n")[0], true);
             return;
         }
         var d = resp.data;
@@ -67,12 +67,12 @@ Rectangle {
             root.recipes = Array.isArray(d) ? d : [];
             break;
         case "read":
-            root.recipeApplied(d.omastudio, d.label || "Camera recipe");
+            root.recipeApplied(d.omastudio, d.label || qsTr("Camera recipe"));
             break;
         case "save":
         case "import":
             root.selectedRecipePath = d.path || "";
-            root.notify("Recipe saved to the library", false);
+            root.notify(qsTr("Recipe saved to the library"), false);
             refreshLibrary();
             return;
         case "camera":
@@ -84,14 +84,14 @@ Rectangle {
             break;
         case "write":
             var refused = d.refused_properties || [];
-            root.notify("Saved to C" + d.slot + (refused.length ? " (" + refused.length + " settings refused by the camera)" : ""), refused.length > 0);
+            root.notify(refused.length ? qsTr("Saved to C%1 (%n setting(s) refused by the camera)", "", refused.length).arg(d.slot) : qsTr("Saved to C%1").arg(d.slot), refused.length > 0);
             break;
         case "convert":
-            root.notify("Camera JPEG: " + d.path, false);
+            root.notify(qsTr("Camera JPEG: %1").arg(d.path), false);
             root.fileProduced(d.path, false);
             break;
         case "shift":
-            root.notify("Pixel Shift DNG: " + d.width + " x " + d.height + (d.coverage < 1 ? ", incomplete sequence" : ""), d.coverage < 1);
+            root.notify((d.coverage < 1 ? qsTr("Pixel Shift DNG: %1 x %2, incomplete sequence") : qsTr("Pixel Shift DNG: %1 x %2")).arg(d.width).arg(d.height), d.coverage < 1);
             root.fileProduced(d.output, true);
             break;
         }
@@ -107,7 +107,7 @@ Rectangle {
             try {
                 resp = JSON.parse(String(output || ""));
             } catch (e) {
-                root.notify("Fujifilm command gave no answer", true);
+                root.notify(qsTr("Fujifilm command gave no answer"), true);
                 return;
             }
             root.handle(action, resp);
@@ -117,8 +117,8 @@ Rectangle {
     // Recipe files to import: photos, X RAW Studio profiles and recipe text
     Process {
         id: pickProc
-        command: ["zenity", "--file-selection", "--title=Import Fujifilm Recipe",
-                  "--file-filter=Fujifilm recipes | *.RAF *.raf *.JPG *.jpg *.FP1 *.fp1 *.FP2 *.fp2 *.FP3 *.fp3 *.txt"]
+        command: ["zenity", "--file-selection", "--title=" + qsTr("Import Fujifilm Recipe"),
+                  "--file-filter=" + qsTr("Fujifilm recipes") + " | *.RAF *.raf *.JPG *.jpg *.FP1 *.fp1 *.FP2 *.fp2 *.FP3 *.fp3 *.txt"]
         onFinished: function(exitCode, output) {
             var p = String(output || "").trim();
             if (exitCode === 0 && p.length > 0) root.run("import", ["fuji-recipe", "save", p]);
@@ -180,9 +180,9 @@ Rectangle {
         RowLayout {
             Layout.fillWidth: true
             spacing: 6
-            SectionTitle { text: "FUJIFILM RECIPES" }
+            SectionTitle { text: qsTr("FUJIFILM RECIPES") }
             PanelButton {
-                label: "IMPORT"
+                label: qsTr("IMPORT")
                 enabled: root.busyAction === "" && !pickProc.running
                 onClicked: pickProc.running = true
             }
@@ -200,13 +200,13 @@ Rectangle {
             visible: root.activeIsFuji
             PanelButton {
                 Layout.fillWidth: true
-                label: "APPLY PHOTO'S RECIPE"
+                label: qsTr("APPLY PHOTO'S RECIPE")
                 busy: root.busyAction === "read"
                 enabled: root.busyAction === ""
                 onClicked: root.run("read", ["fuji-recipe", root.activePhotoPath])
             }
             PanelButton {
-                label: "SAVE"
+                label: qsTr("SAVE")
                 busy: root.busyAction === "save"
                 enabled: root.busyAction === ""
                 onClicked: root.run("save", ["fuji-recipe", "save", root.activePhotoPath])
@@ -218,7 +218,7 @@ Rectangle {
             visible: root.recipes.length === 0
             Layout.fillWidth: true
             wrapMode: Text.WordWrap
-            text: "No saved recipes. Import an X RAW Studio profile, recipe text or a Fujifilm photo."
+            text: qsTr("No saved recipes. Import an X RAW Studio profile, recipe text or a Fujifilm photo.")
             textFormat: Text.PlainText
             font.pixelSize: Theme.px(10)
             color: Theme.textMuted
@@ -282,7 +282,7 @@ Rectangle {
             Layout.fillWidth: true
             visible: root.selectedRecipe() !== null
             primary: true
-            label: "APPLY SELECTED RECIPE"
+            label: qsTr("APPLY SELECTED RECIPE")
             onClicked: {
                 var r = root.selectedRecipe();
                 if (r) root.recipeApplied(r.recipe.omastudio, r.recipe.label);
@@ -295,9 +295,9 @@ Rectangle {
         RowLayout {
             Layout.fillWidth: true
             spacing: 6
-            SectionTitle { text: "CAMERA (USB)" }
+            SectionTitle { text: qsTr("CAMERA (USB)") }
             PanelButton {
-                label: root.camera ? "RECONNECT" : "CONNECT"
+                label: root.camera ? qsTr("RECONNECT") : qsTr("CONNECT")
                 busy: root.busyAction === "camera"
                 enabled: root.busyAction === ""
                 onClicked: root.run("camera", ["fuji-camera", "info"])
@@ -312,8 +312,8 @@ Rectangle {
             font.pixelSize: Theme.px(10)
             color: root.camera ? Theme.textMain : Theme.textMuted
             text: root.camera
-                ? (root.camera.device.model || "Fujifilm camera") + (root.camera.raw_conversion ? "  ·  in-camera RAW conversion" : "")
-                : "Set the camera's USB mode to USB RAW CONV./BACKUP RESTORE and connect it."
+                ? (root.camera.raw_conversion ? qsTr("%1  ·  in-camera RAW conversion") : "%1").arg(root.camera.device.model || qsTr("Fujifilm camera"))
+                : qsTr("Set the camera's USB mode to %1 and connect it.").arg("USB RAW CONV./BACKUP RESTORE")
         }
 
         ColumnLayout {
@@ -326,14 +326,14 @@ Rectangle {
                 spacing: 6
                 PanelButton {
                     Layout.fillWidth: true
-                    label: "READ C1-C7"
+                    label: qsTr("READ C1-C7")
                     busy: root.busyAction === "presets"
                     enabled: root.busyAction === ""
                     onClicked: root.run("presets", ["fuji-camera", "presets"])
                 }
                 PanelButton {
                     Layout.fillWidth: true
-                    label: "CONVERT IN CAMERA"
+                    label: qsTr("CONVERT IN CAMERA")
                     busy: root.busyAction === "convert"
                     enabled: root.busyAction === "" && root.activeIsRaf && root.camera !== null && root.camera.raw_conversion
                     onClicked: {
@@ -370,7 +370,7 @@ Rectangle {
                         Text {
                             font.family: Theme.fontFamily
                             Layout.fillWidth: true
-                            text: (modelData.name || "Unnamed") + "  ·  " + modelData.recipe.film_simulation_name
+                            text: (modelData.name || qsTr("Unnamed")) + "  ·  " + modelData.recipe.film_simulation_name
                             elide: Text.ElideRight
                             textFormat: Text.PlainText
                             font.pixelSize: Theme.px(10)
@@ -425,7 +425,7 @@ Rectangle {
             PanelButton {
                 Layout.fillWidth: true
                 visible: root.selectedRecipe() !== null
-                label: "WRITE SELECTED RECIPE TO C" + root.targetSlot
+                label: qsTr("WRITE SELECTED RECIPE TO C%1").arg(root.targetSlot)
                 busy: root.busyAction === "write"
                 enabled: root.busyAction === ""
                 onClicked: root.run("write", ["fuji-camera", "write-preset", String(root.targetSlot), root.selectedRecipePath])
@@ -435,7 +435,7 @@ Rectangle {
         Rectangle { Layout.fillWidth: true; height: 1; color: Theme.border }
 
         // Pixel Shift Multi-Shot
-        SectionTitle { text: "PIXEL SHIFT MULTI-SHOT" }
+        SectionTitle { text: qsTr("PIXEL SHIFT MULTI-SHOT") }
 
         Text {
             font.family: Theme.fontFamily
@@ -445,14 +445,14 @@ Rectangle {
             font.pixelSize: Theme.px(10)
             color: Theme.textMuted
             text: root.shiftFrames.length >= 2
-                ? root.shiftFrames.length + " RAF frames selected. 4 frames give full colour per pixel, 16 frames double the resolution."
-                : "Select the RAF frames of one GFX Pixel Shift sequence in the filmstrip."
+                ? qsTr("%n RAF frames selected. 4 frames give full colour per pixel, 16 frames double the resolution.", "", root.shiftFrames.length)
+                : qsTr("Select the RAF frames of one GFX Pixel Shift sequence in the filmstrip.")
         }
 
         PanelButton {
             Layout.fillWidth: true
             primary: true
-            label: root.shiftFrames.length >= 2 ? "MERGE " + root.shiftFrames.length + " FRAMES TO DNG" : "MERGE FRAMES TO DNG"
+            label: root.shiftFrames.length >= 2 ? qsTr("MERGE %n FRAMES TO DNG", "", root.shiftFrames.length) : qsTr("MERGE FRAMES TO DNG")
             busy: root.busyAction === "shift"
             enabled: root.busyAction === "" && root.shiftFrames.length >= 2
             onClicked: root.run("shift", ["fuji-pixel-shift"].concat(root.shiftFrames))

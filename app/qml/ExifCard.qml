@@ -44,7 +44,7 @@ Rectangle {
 
                 Text {
                     font.family: Theme.fontFamily
-                    text: root.metadata ? (root.metadata.make + " " + root.metadata.model) : "No Camera Loaded"
+                    text: root.metadata ? (root.metadata.make + " " + root.metadata.model) : qsTr("No camera loaded")
                     textFormat: Text.PlainText
                     font.pixelSize: Theme.px(12)
                     font.weight: Font.Bold
@@ -55,7 +55,7 @@ Rectangle {
 
                 Text {
                     font.family: Theme.fontFamily
-                    text: root.metadata ? root.metadata.lens : "Unknown Lens"
+                    text: root.metadata ? root.metadata.lens : qsTr("Unknown lens")
                     textFormat: Text.PlainText
                     font.pixelSize: Theme.px(10)
                     color: Theme.textMuted

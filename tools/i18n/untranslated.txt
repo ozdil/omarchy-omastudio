@@ -1,0 +1,59 @@
+# Names, formats and symbols that read the same in every language; tools/i18n/check.py
+# accepts these as plain (untranslated) strings in the QML.
+OmaStudio
+OmaStudio Photography
+GitHub
+Fujifilm
+Hasselblad
+ISO
+mm
+X / Twitter
+Facebook HD
+# Colour spaces and file formats
+sRGB
+sRGB (D65)
+Display P3
+Rec.2020
+ACEScg (AP1)
+ACES RGC
+Adobe RGB 1998
+ProPhoto RGB
+JPEG XL (.jxl)
+AVIF (.avif)
+WebP (.webp)
+PNG (.png)
+JPEG (.jpg)
+# Film simulations and LUTs (product names)
+Provia 100F
+Velvia 50
+Astia 100F
+Classic Chrome
+Classic Neg
+Eterna Cinema
+Reala Ace
+Nostalgic Neg.
+PRO Neg. Hi
+PRO Neg. Std
+Eterna Bleach Bypass
+Acros 100
+Acros (+Ye)
+Acros (+R)
+Acros (+G)
+HNCS Neutral
+XPan Panoramic
+Kodak 2383
+Teal & Orange
+Fuji Eterna
+Silver Nitrate
+Fuji Classic Chrome
+Fuji Velvia 50
+Kodak Portra 400
+Leica Monochrom HC
+Cinematic Teal & Orange
+px
+# Vectorscope targets (broadcast abbreviations)
+Mg
+Cy
+Yl
+Theme reloaded: 
+RAW

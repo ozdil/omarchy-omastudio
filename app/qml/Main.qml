@@ -18,7 +18,13 @@ Window {
     MainWindow {
         id: mainWin
         anchors.fill: parent
+        // Arabic, Hebrew and Persian lay the interface out right to left
+        LayoutMirroring.enabled: I18n.rightToLeft
+        LayoutMirroring.childrenInherit: true
     }
+
+    // Loads the translation for the stored or system language
+    Component.onCompleted: I18n.apply()
 
     function present() {
         win.show();

@@ -887,7 +887,7 @@ Rectangle {
                     font.family: Theme.fontFamily
                     id: resetTxt
                     anchors.centerIn: parent
-                    text: "RESET 0°"
+                    text: qsTr("RESET 0°")
                     textFormat: Text.PlainText
                     font.pixelSize: Theme.px(9)
                     font.weight: Font.Bold
@@ -981,7 +981,7 @@ Rectangle {
                 color: root.zoomFactor <= 1.05 ? Theme.accent : (fitMouse.containsMouse ? Theme.bgCardHover : "transparent")
                 Text {
                     anchors.centerIn: parent
-                    text: "FIT"
+                    text: qsTr("FIT")
                     textFormat: Text.PlainText
                     font.pixelSize: Theme.px(10)
                     font.family: Theme.monoFont
@@ -1130,7 +1130,7 @@ Rectangle {
 
             Text {
                 font.family: Theme.fontFamily
-                text: "CROP & COMPOSE"
+                text: qsTr("CROP & COMPOSE")
                 textFormat: Text.PlainText
                 font.pixelSize: Theme.px(10)
                 font.weight: Font.Bold
@@ -1154,7 +1154,7 @@ Rectangle {
                         font.family: Theme.fontFamily
                         id: aspText
                         anchors.centerIn: parent
-                        text: modelData
+                        text: modelData === "Original" ? qsTr("Original") : (modelData === "Free" ? qsTr("Free") : modelData)
                         textFormat: Text.PlainText
                         font.pixelSize: Theme.px(9)
                         font.weight: Font.DemiBold
@@ -1185,10 +1185,10 @@ Rectangle {
                     id: guideText
                     anchors.centerIn: parent
                     text: {
-                        if (root.guideMode === 1) return "Grid: 3x3 Thirds";
-                        if (root.guideMode === 2) return "Grid: Golden Ratio";
-                        if (root.guideMode === 3) return "Grid: Golden Spiral";
-                        return "Grid: Off";
+                        if (root.guideMode === 1) return qsTr("Grid: 3x3 Thirds");
+                        if (root.guideMode === 2) return qsTr("Grid: Golden Ratio");
+                        if (root.guideMode === 3) return qsTr("Grid: Golden Spiral");
+                        return qsTr("Grid: Off");
                     }
                     textFormat: Text.PlainText
                     font.pixelSize: Theme.px(9)
@@ -1213,7 +1213,7 @@ Rectangle {
                 Text {
                     font.family: Theme.fontFamily
                     anchors.centerIn: parent
-                    text: "RESET"
+                    text: qsTr("RESET")
                     textFormat: Text.PlainText
                     font.pixelSize: Theme.px(9)
                     font.weight: Font.Bold
@@ -1236,7 +1236,7 @@ Rectangle {
                 Text {
                     font.family: Theme.fontFamily
                     anchors.centerIn: parent
-                    text: "DONE [OK]"
+                    text: qsTr("DONE")
                     textFormat: Text.PlainText
                     font.pixelSize: Theme.px(9)
                     font.weight: Font.Bold
@@ -1269,7 +1269,7 @@ Rectangle {
                 font.family: Theme.fontFamily
                 id: beforeText
                 anchors.centerIn: parent
-                text: "ORIGINAL RAW (Before)"
+                text: qsTr("ORIGINAL RAW (Before)")
                 textFormat: Text.PlainText
                 font.pixelSize: Theme.px(9)
                 font.weight: Font.Bold
@@ -1288,7 +1288,7 @@ Rectangle {
                 font.family: Theme.fontFamily
                 id: afterText
                 anchors.centerIn: parent
-                text: "EDITED RECIPE (After)"
+                text: qsTr("EDITED RECIPE (After)")
                 textFormat: Text.PlainText
                 font.pixelSize: Theme.px(9)
                 font.weight: Font.Bold
@@ -1317,7 +1317,7 @@ Rectangle {
             Text {
                 id: shadowClipTxt
                 anchors.centerIn: parent
-                text: "[S] SHADOW CLIPPING (BLUE)"
+                text: qsTr("[S] SHADOW CLIPPING (BLUE)")
                 textFormat: Text.PlainText
                 font.pixelSize: Theme.px(9)
                 font.family: Theme.monoFont
@@ -1338,7 +1338,7 @@ Rectangle {
             Text {
                 id: highClipTxt
                 anchors.centerIn: parent
-                text: "[H] HIGHLIGHT CLIPPING (RED)"
+                text: qsTr("[H] HIGHLIGHT CLIPPING (RED)")
                 textFormat: Text.PlainText
                 font.pixelSize: Theme.px(9)
                 font.family: Theme.monoFont
@@ -1374,7 +1374,7 @@ Rectangle {
             }
 
             Text {
-                text: "Pinch: Zoom | 2-Finger Twist: Rotate | 2-Finger Pan | Double-Tap: Reset"
+                text: qsTr("Pinch: Zoom | 2-Finger Twist: Rotate | 2-Finger Pan | Double-Tap: Reset")
                 textFormat: Text.PlainText
                 font.pixelSize: Theme.px(9)
                 font.family: Theme.monoFont
@@ -1427,7 +1427,7 @@ Rectangle {
         }
         Text {
             anchors.horizontalCenter: parent.horizontalCenter
-            text: "Open a RAW (Ctrl+O) or drop a photo / folder here"
+            text: qsTr("Open a RAW (Ctrl+O) or drop a photo / folder here")
             textFormat: Text.PlainText
             font.family: Theme.monoFont
             font.pixelSize: Theme.px(12)
@@ -1508,7 +1508,7 @@ Rectangle {
             }
 
             Text {
-                text: "Drop RAW Photo or Folder to Open"
+                text: qsTr("Drop RAW Photo or Folder to Open")
                 textFormat: Text.PlainText
                 font.pixelSize: Theme.px(14)
                 font.weight: Font.Bold

@@ -40,7 +40,7 @@ Rectangle {
             spacing: 6
 
             Text {
-                text: "DAVINCI RGB PRIMARY MIXER"
+                text: qsTr("DAVINCI RGB PRIMARY MIXER")
                 textFormat: Text.PlainText
                 font.family: Theme.fontFamily
                 font.pixelSize: Theme.px(10)
@@ -70,7 +70,7 @@ Rectangle {
                 Text {
                     id: resetMixerText
                     anchors.centerIn: parent
-                    text: "RESET"
+                    text: qsTr("RESET")
                     textFormat: Text.PlainText
                     font.family: Theme.monoFont
                     font.pixelSize: Theme.px(8)
@@ -107,7 +107,7 @@ Rectangle {
             visible: root.mixerEnabled
 
             Text {
-                text: "Monochrome Mixing"
+                text: qsTr("Monochrome Mixing")
                 textFormat: Text.PlainText
                 font.family: Theme.fontFamily
                 font.pixelSize: Theme.px(11)
@@ -134,7 +134,7 @@ Rectangle {
 
             // RED OUTPUT CHANNEL
             Text {
-                text: root.monochrome ? "MONOCHROME LUMA MIX" : "RED OUTPUT CHANNEL"
+                text: root.monochrome ? qsTr("MONOCHROME LUMA MIX") : qsTr("RED OUTPUT CHANNEL")
                 textFormat: Text.PlainText
                 font.family: Theme.fontFamily
                 font.pixelSize: Theme.px(9)
@@ -143,7 +143,7 @@ Rectangle {
             }
 
             SliderGroup {
-                title: "Red in Red"
+                title: qsTr("Red in Red")
                 from: -2.0
                 to: 2.0
                 value: root.redInR
@@ -155,7 +155,7 @@ Rectangle {
             }
 
             SliderGroup {
-                title: "Green in Red"
+                title: qsTr("Green in Red")
                 from: -2.0
                 to: 2.0
                 value: root.greenInR
@@ -167,7 +167,7 @@ Rectangle {
             }
 
             SliderGroup {
-                title: "Blue in Red"
+                title: qsTr("Blue in Red")
                 from: -2.0
                 to: 2.0
                 value: root.blueInR
@@ -187,7 +187,7 @@ Rectangle {
                 Rectangle { Layout.fillWidth: true; height: 1; color: Theme.border }
 
                 Text {
-                    text: "GREEN OUTPUT CHANNEL"
+                    text: qsTr("GREEN OUTPUT CHANNEL")
                     textFormat: Text.PlainText
                     font.family: Theme.fontFamily
                     font.pixelSize: Theme.px(9)
@@ -196,7 +196,7 @@ Rectangle {
                 }
 
                 SliderGroup {
-                    title: "Red in Green"
+                    title: qsTr("Red in Green")
                     from: -2.0
                     to: 2.0
                     value: root.redInG
@@ -208,7 +208,7 @@ Rectangle {
                 }
 
                 SliderGroup {
-                    title: "Green in Green"
+                    title: qsTr("Green in Green")
                     from: -2.0
                     to: 2.0
                     value: root.greenInG
@@ -220,7 +220,7 @@ Rectangle {
                 }
 
                 SliderGroup {
-                    title: "Blue in Green"
+                    title: qsTr("Blue in Green")
                     from: -2.0
                     to: 2.0
                     value: root.blueInG
@@ -241,7 +241,7 @@ Rectangle {
                 Rectangle { Layout.fillWidth: true; height: 1; color: Theme.border }
 
                 Text {
-                    text: "BLUE OUTPUT CHANNEL"
+                    text: qsTr("BLUE OUTPUT CHANNEL")
                     textFormat: Text.PlainText
                     font.family: Theme.fontFamily
                     font.pixelSize: Theme.px(9)
@@ -250,7 +250,7 @@ Rectangle {
                 }
 
                 SliderGroup {
-                    title: "Red in Blue"
+                    title: qsTr("Red in Blue")
                     from: -2.0
                     to: 2.0
                     value: root.redInB
@@ -262,7 +262,7 @@ Rectangle {
                 }
 
                 SliderGroup {
-                    title: "Green in Blue"
+                    title: qsTr("Green in Blue")
                     from: -2.0
                     to: 2.0
                     value: root.greenInB
@@ -274,7 +274,7 @@ Rectangle {
                 }
 
                 SliderGroup {
-                    title: "Blue in Blue"
+                    title: qsTr("Blue in Blue")
                     from: -2.0
                     to: 2.0
                     value: root.blueInB
