@@ -1835,6 +1835,26 @@
         <translation>Detaily a optika</translation>
     </message>
     <message>
+        <source>Transform</source>
+        <translation>Transformace</translation>
+    </message>
+    <message>
+        <source>Vertical</source>
+        <translation>Svisle</translation>
+    </message>
+    <message>
+        <source>Horizontal</source>
+        <translation>Vodorovně</translation>
+    </message>
+    <message>
+        <source>Scale</source>
+        <translation>Měřítko</translation>
+    </message>
+    <message>
+        <source>Vertical straightens converging lines, such as buildings photographed from below. Crop afterwards to remove the empty edges.</source>
+        <translation>Svisle narovná sbíhající se linie, například budovy fotografované zdola. Poté ořízněte prázdné okraje.</translation>
+    </message>
+    <message>
         <source>Grain</source>
         <translation>Zrno</translation>
     </message>

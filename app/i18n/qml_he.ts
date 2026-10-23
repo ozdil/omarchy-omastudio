@@ -1831,6 +1831,26 @@
         <translation>פרטים ואופטיקה</translation>
     </message>
     <message>
+        <source>Transform</source>
+        <translation>התמרה</translation>
+    </message>
+    <message>
+        <source>Vertical</source>
+        <translation>אנכי</translation>
+    </message>
+    <message>
+        <source>Horizontal</source>
+        <translation>אופקי</translation>
+    </message>
+    <message>
+        <source>Scale</source>
+        <translation>קנה מידה</translation>
+    </message>
+    <message>
+        <source>Vertical straightens converging lines, such as buildings photographed from below. Crop afterwards to remove the empty edges.</source>
+        <translation>אנכי מיישר קווים מתכנסים, כמו בניינים שצולמו מלמטה. לאחר מכן חתכו כדי להסיר את השוליים הריקים.</translation>
+    </message>
+    <message>
         <source>Grain</source>
         <translation>גרעיניות</translation>
     </message>

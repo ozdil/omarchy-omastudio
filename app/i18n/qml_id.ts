@@ -1827,6 +1827,26 @@
         <translation>Detail dan optik</translation>
     </message>
     <message>
+        <source>Transform</source>
+        <translation>Transformasi</translation>
+    </message>
+    <message>
+        <source>Vertical</source>
+        <translation>Vertikal</translation>
+    </message>
+    <message>
+        <source>Horizontal</source>
+        <translation>Horizontal</translation>
+    </message>
+    <message>
+        <source>Scale</source>
+        <translation>Skala</translation>
+    </message>
+    <message>
+        <source>Vertical straightens converging lines, such as buildings photographed from below. Crop afterwards to remove the empty edges.</source>
+        <translation>Vertikal meluruskan garis yang menyempit, seperti gedung yang difoto dari bawah. Pangkas setelahnya untuk menghapus tepi kosong.</translation>
+    </message>
+    <message>
         <source>Grain</source>
         <translation>Butiran</translation>
     </message>

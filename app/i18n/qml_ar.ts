@@ -1847,6 +1847,26 @@
         <translation>التفاصيل والبصريات</translation>
     </message>
     <message>
+        <source>Transform</source>
+        <translation>تحويل</translation>
+    </message>
+    <message>
+        <source>Vertical</source>
+        <translation>عمودي</translation>
+    </message>
+    <message>
+        <source>Horizontal</source>
+        <translation>أفقي</translation>
+    </message>
+    <message>
+        <source>Scale</source>
+        <translation>المقياس</translation>
+    </message>
+    <message>
+        <source>Vertical straightens converging lines, such as buildings photographed from below. Crop afterwards to remove the empty edges.</source>
+        <translation>يقوّم العمودي الخطوط المتقاربة، مثل المباني المصوّرة من الأسفل. قُصّ بعد ذلك لإزالة الحواف الفارغة.</translation>
+    </message>
+    <message>
         <source>Grain</source>
         <translation>الحبيبات</translation>
     </message>

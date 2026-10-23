@@ -1827,6 +1827,26 @@
         <translation>Chi tiết và quang học</translation>
     </message>
     <message>
+        <source>Transform</source>
+        <translation>Biến đổi</translation>
+    </message>
+    <message>
+        <source>Vertical</source>
+        <translation>Dọc</translation>
+    </message>
+    <message>
+        <source>Horizontal</source>
+        <translation>Ngang</translation>
+    </message>
+    <message>
+        <source>Scale</source>
+        <translation>Tỷ lệ</translation>
+    </message>
+    <message>
+        <source>Vertical straightens converging lines, such as buildings photographed from below. Crop afterwards to remove the empty edges.</source>
+        <translation>Dọc làm thẳng các đường hội tụ, như tòa nhà chụp từ dưới lên. Sau đó hãy cắt để bỏ các viền trống.</translation>
+    </message>
+    <message>
         <source>Grain</source>
         <translation>Hạt</translation>
     </message>

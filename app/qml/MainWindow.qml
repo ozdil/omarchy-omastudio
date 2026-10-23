@@ -211,6 +211,9 @@ Rectangle {
     // Optics & Crop State
     property real defringeVal: 0.0
     property real lensDistortionVal: 0.0
+    property real perspectiveVertical: 0.0
+    property real perspectiveHorizontal: 0.0
+    property real perspectiveScale: 100.0
     property real cropX: 0.0
     property real cropY: 0.0
     property real cropW: 1.0
@@ -450,6 +453,9 @@ Rectangle {
         root.retouchSpots = [];
         root.defringeVal = 0.0;
         root.lensDistortionVal = 0.0;
+        root.perspectiveVertical = 0.0;
+        root.perspectiveHorizontal = 0.0;
+        root.perspectiveScale = 100.0;
         root.cropX = 0.0;
         root.cropY = 0.0;
         root.cropW = 1.0;
@@ -570,6 +576,9 @@ Rectangle {
             "retouch": root.retouchSpots,
             "defringe": root.defringeVal,
             "lens_distortion": root.lensDistortionVal,
+            "perspective_vertical": root.perspectiveVertical,
+            "perspective_horizontal": root.perspectiveHorizontal,
+            "perspective_scale": root.perspectiveScale,
             "crop_x": root.cropX,
             "crop_y": root.cropY,
             "crop_w": root.cropW,
@@ -726,6 +735,9 @@ Rectangle {
         // Optics
         if (r.defringe !== undefined) root.defringeVal = Number(r.defringe) || 0.0;
         if (r.lens_distortion !== undefined) root.lensDistortionVal = Number(r.lens_distortion) || 0.0;
+        root.perspectiveVertical = root.num(r.perspective_vertical, 0.0);
+        root.perspectiveHorizontal = root.num(r.perspective_horizontal, 0.0);
+        root.perspectiveScale = root.num(r.perspective_scale, 100.0);
 
         // Crop
         if (r.crop_x !== undefined) {
@@ -1752,6 +1764,9 @@ Rectangle {
                     watermarkColorHex: root.watermarkColorHex
                     watermarkDropShadow: root.watermarkDropShadow
                     exifMetadata: root.activeMetadata
+                    perspectiveVertical: root.perspectiveVertical
+                    perspectiveHorizontal: root.perspectiveHorizontal
+                    perspectiveScale: root.perspectiveScale
                     // Mask editing follows the selected layer while the Masks tab is open
                     maskTool: root.activePhotoPath !== "" && root.showRightPanel && root.rightTab === "masks" && !retouchPanel.editing ? layersPanel.overlayTool : ""
                     retouchActive: root.activePhotoPath !== "" && root.showRightPanel && root.rightTab === "masks" && retouchPanel.editing
@@ -2532,6 +2547,55 @@ Rectangle {
                                     defaultValue: 0.0
                                     accentColor: Theme.accentCyan
                                     onSliderMoved: function(v) { root.lensDistortionVal = v; root.requestRender() }
+                                }
+                            }
+                            PanelSection {
+                                key: "transform"
+                                title: qsTr("Transform")
+                                host: root
+                                visible: root.isProMode
+                                pro: true
+                                onReset: {
+                                    root.pushUndoState();
+                                    root.perspectiveVertical = 0.0;
+                                    root.perspectiveHorizontal = 0.0;
+                                    root.perspectiveScale = 100.0;
+                                    root.requestRender();
+                                }
+
+                                SliderGroup {
+                                    title: qsTr("Vertical")
+                                    from: -100.0
+                                    to: 100.0
+                                    value: root.perspectiveVertical
+                                    defaultValue: 0.0
+                                    onSliderMoved: function(v) { root.perspectiveVertical = v; root.requestRender() }
+                                }
+                                SliderGroup {
+                                    title: qsTr("Horizontal")
+                                    from: -100.0
+                                    to: 100.0
+                                    value: root.perspectiveHorizontal
+                                    defaultValue: 0.0
+                                    onSliderMoved: function(v) { root.perspectiveHorizontal = v; root.requestRender() }
+                                }
+                                SliderGroup {
+                                    title: qsTr("Scale")
+                                    from: 50.0
+                                    to: 150.0
+                                    value: root.perspectiveScale
+                                    defaultValue: 100.0
+                                    suffix: " %"
+                                    onSliderMoved: function(v) { root.perspectiveScale = v; root.requestRender() }
+                                }
+                                Text {
+                                    Layout.fillWidth: true
+                                    text: qsTr("Vertical straightens converging lines, such as buildings photographed from below. Crop afterwards to remove the empty edges.")
+                                    textFormat: Text.PlainText
+                                    wrapMode: Text.WordWrap
+                                    font.family: Theme.fontFamily
+                                    font.pixelSize: Theme.px(10)
+                                    color: Theme.textDim
                                 }
                             }
                             PanelSection {

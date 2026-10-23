@@ -201,9 +201,9 @@ pub fn process_buffer(
         );
     }
 
-    // PASS 5: Lens Distortion Correction (if enabled)
-    if recipe.lens_distortion.abs() >= 0.1 {
-        f32_buf = detail::apply_lens_distortion(&f32_buf, w, h, 3, recipe.lens_distortion);
+    // PASS 5: Geometry: lens distortion and perspective (if enabled)
+    if let Some(geometry) = detail::Geometry::new(w, h, recipe) {
+        f32_buf = detail::apply_geometry(&f32_buf, w, h, 3, &geometry);
     }
 
     // PASS 6: Defringe, Vignette & Final Quantization to 8-bit output
@@ -499,9 +499,9 @@ pub fn process_buffer_16_to_8_ex(
         );
     }
 
-    // PASS 5: Lens Distortion Correction (if enabled)
-    if recipe.lens_distortion.abs() >= 0.1 {
-        f32_buf = detail::apply_lens_distortion(&f32_buf, w, h, 3, recipe.lens_distortion);
+    // PASS 5: Geometry: lens distortion and perspective (if enabled)
+    if let Some(geometry) = detail::Geometry::new(w, h, recipe) {
+        f32_buf = detail::apply_geometry(&f32_buf, w, h, 3, &geometry);
     }
 
     // PASS 6: Defringe, Vignette & Final Quantization to 8-bit viewport output
@@ -639,7 +639,7 @@ fn process_16_to_16_banded(
     let input = &*retouched;
 
     let stage = PointStage::new(recipe, transfer);
-    let lens = detail::LensDistortion::new(w, h, recipe.lens_distortion);
+    let lens = detail::Geometry::new(w, h, recipe);
     let halo = band_halo(frame_scale(w, h));
 
     // Bands of equal height, so the last one is never a sliver
@@ -821,7 +821,7 @@ pub fn render_region_8(
 ) -> Vec<u8> {
     let stage = PointStage::new(recipe, transfer);
     let buf = process_band(input, w, 3, 0, h, window, recipe, &stage);
-    let lens = detail::LensDistortion::new(window.frame_w, window.frame_h, recipe.lens_distortion);
+    let lens = detail::Geometry::new(window.frame_w, window.frame_h, recipe);
     let (ox, oy, ow, oh) = out;
     let (fw, fh) = (window.frame_w as f32, window.frame_h as f32);
     let mut output = vec![0u8; ow * oh * 3];
@@ -865,7 +865,7 @@ pub fn render_region_8(
 pub fn region_source(out: (usize, usize, usize, usize), frame_w: usize, frame_h: usize, recipe: &Recipe) -> (usize, usize, usize, usize) {
     let (ox, oy, ow, oh) = out;
     let (mut x0, mut y0, mut x1, mut y1) = (ox as f32, oy as f32, (ox + ow) as f32, (oy + oh) as f32);
-    if let Some(lens) = detail::LensDistortion::new(frame_w, frame_h, recipe.lens_distortion) {
+    if let Some(lens) = detail::Geometry::new(frame_w, frame_h, recipe) {
         // The distortion is radial and monotonic, so the border of the output maps to
         // the border of what it reads
         let steps = 32;
@@ -1138,8 +1138,10 @@ mod tests {
             ..Default::default()
         };
         let t = Transfer::bt709();
-        for lens in [0.0, 25.0, -25.0] {
+        for (lens, keystone) in [(0.0, 0.0), (25.0, 0.0), (-25.0, 0.0), (0.0, 40.0), (15.0, -30.0)] {
             recipe.lens_distortion = lens;
+            recipe.perspective_vertical = keystone;
+            recipe.perspective_horizontal = keystone * 0.5;
             let whole = render_region_8(&input, w, h, Window::whole(w, h), (0, 0, w, h), &recipe, t);
             let out = (110, 9, 50, 40);
             let (sx, sy, sw, sh) = region_source(out, w, h, &recipe);
@@ -1153,7 +1155,7 @@ mod tests {
                     worst = worst.max(a.abs_diff(part[j * out.2 * 3 + i]));
                 }
             }
-            assert!(worst <= 1, "lens {lens}: max difference {worst}");
+            assert!(worst <= 1, "lens {lens}, keystone {keystone}: max difference {worst}");
         }
     }
 

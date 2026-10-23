@@ -1827,6 +1827,26 @@
         <translation>ディテールと光学</translation>
     </message>
     <message>
+        <source>Transform</source>
+        <translation>変形</translation>
+    </message>
+    <message>
+        <source>Vertical</source>
+        <translation>垂直方向</translation>
+    </message>
+    <message>
+        <source>Horizontal</source>
+        <translation>水平方向</translation>
+    </message>
+    <message>
+        <source>Scale</source>
+        <translation>拡大・縮小</translation>
+    </message>
+    <message>
+        <source>Vertical straightens converging lines, such as buildings photographed from below. Crop afterwards to remove the empty edges.</source>
+        <translation>垂直方向は、下から撮影した建物などの収束する線をまっすぐにします。その後、切り抜きで空白の端を取り除きます。</translation>
+    </message>
+    <message>
         <source>Grain</source>
         <translation>粒状感</translation>
     </message>

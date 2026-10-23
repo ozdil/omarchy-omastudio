@@ -1835,6 +1835,26 @@
         <translation>Detalii și optică</translation>
     </message>
     <message>
+        <source>Transform</source>
+        <translation>Transformare</translation>
+    </message>
+    <message>
+        <source>Vertical</source>
+        <translation>Vertical</translation>
+    </message>
+    <message>
+        <source>Horizontal</source>
+        <translation>Orizontal</translation>
+    </message>
+    <message>
+        <source>Scale</source>
+        <translation>Scară</translation>
+    </message>
+    <message>
+        <source>Vertical straightens converging lines, such as buildings photographed from below. Crop afterwards to remove the empty edges.</source>
+        <translation>Vertical îndreaptă liniile convergente, cum ar fi clădirile fotografiate de jos. Decupați apoi pentru a elimina marginile goale.</translation>
+    </message>
+    <message>
         <source>Grain</source>
         <translation>Granulație</translation>
     </message>

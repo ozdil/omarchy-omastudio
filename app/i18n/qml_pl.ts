@@ -1835,6 +1835,26 @@
         <translation>Szczegóły i optyka</translation>
     </message>
     <message>
+        <source>Transform</source>
+        <translation>Przekształć</translation>
+    </message>
+    <message>
+        <source>Vertical</source>
+        <translation>Pionowo</translation>
+    </message>
+    <message>
+        <source>Horizontal</source>
+        <translation>Poziomo</translation>
+    </message>
+    <message>
+        <source>Scale</source>
+        <translation>Skala</translation>
+    </message>
+    <message>
+        <source>Vertical straightens converging lines, such as buildings photographed from below. Crop afterwards to remove the empty edges.</source>
+        <translation>Pionowo prostuje zbiegające się linie, np. budynki fotografowane od dołu. Następnie przytnij, aby usunąć puste krawędzie.</translation>
+    </message>
+    <message>
         <source>Grain</source>
         <translation>Ziarno</translation>
     </message>

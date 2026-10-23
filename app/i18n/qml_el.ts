@@ -1831,6 +1831,26 @@
         <translation>Λεπτομέρεια και οπτική</translation>
     </message>
     <message>
+        <source>Transform</source>
+        <translation>Μετασχηματισμός</translation>
+    </message>
+    <message>
+        <source>Vertical</source>
+        <translation>Κατακόρυφα</translation>
+    </message>
+    <message>
+        <source>Horizontal</source>
+        <translation>Οριζόντια</translation>
+    </message>
+    <message>
+        <source>Scale</source>
+        <translation>Κλίμακα</translation>
+    </message>
+    <message>
+        <source>Vertical straightens converging lines, such as buildings photographed from below. Crop afterwards to remove the empty edges.</source>
+        <translation>Το κατακόρυφο ισιώνει τις συγκλίνουσες γραμμές, όπως κτίρια που φωτογραφήθηκαν από κάτω. Περικόψτε μετά για να αφαιρέσετε τα κενά άκρα.</translation>
+    </message>
+    <message>
         <source>Grain</source>
         <translation>Κόκκος</translation>
     </message>

@@ -270,62 +270,125 @@ impl LensDistortion {
     }
 }
 
-/// Corrects optical barrel / pincushion lens distortion via radial polynomial mapping
-pub fn apply_lens_distortion(
-    input: &[f32],
-    width: usize,
-    height: usize,
-    channels: usize,
-    distortion: f32,
-) -> Vec<f32> {
-    let Some(lens) = LensDistortion::new(width, height, distortion) else {
-        return input.to_vec();
-    };
+/// Largest tilt of the perspective correction, at a slider value of 100
+const PERSPECTIVE_MAX_DEGREES: f32 = 30.0;
+/// Focal length of the virtual camera for perspective correction, in half frame
+/// diagonals (about a normal lens)
+const PERSPECTIVE_FOCAL: f32 = 2.0;
 
+/// The perspective correction as a homography in centred pixel coordinates: row-major
+/// 3x3, mapping a point of the photo to where it lands in the corrected photo. The
+/// photo is treated as a plane facing a virtual camera and tilted about its centre;
+/// `vertical` and `horizontal` run -100..100 and `scale` is in percent. None when there
+/// is nothing to correct.
+pub fn perspective_matrix(width: usize, height: usize, vertical: f32, horizontal: f32, scale: f32) -> Option<[f32; 9]> {
+    let finite = vertical.is_finite() && horizontal.is_finite() && scale.is_finite();
+    let s = if finite { scale.clamp(50.0, 150.0) / 100.0 } else { 1.0 };
+    if !finite || width == 0 || height == 0 || (vertical.abs() < 0.05 && horizontal.abs() < 0.05 && (s - 1.0).abs() < 1e-4) {
+        return None;
+    }
+    let ax = (vertical.clamp(-100.0, 100.0) / 100.0 * PERSPECTIVE_MAX_DEGREES).to_radians();
+    let ay = (horizontal.clamp(-100.0, 100.0) / 100.0 * PERSPECTIVE_MAX_DEGREES).to_radians();
+    let f = PERSPECTIVE_FOCAL * ((width * width + height * height) as f32).sqrt() / 2.0;
+    let (sx, cx) = ax.sin_cos();
+    let (sy, cy) = ay.sin_cos();
+    // R = Ry * Rx; the plane's points (x, y, 0) move to R (x, y, 0) + (0, 0, f) and are
+    // projected with focal length f, so the centre stays where it is
+    let (r11, r12) = (cy, sy * sx);
+    let (r21, r22) = (0.0, cx);
+    let (r31, r32) = (-sy, cy * sx);
+    Some([s * r11, s * r12, 0.0, s * r21, s * r22, 0.0, r31 / f, r32 / f, 1.0])
+}
+
+/// Inverse of a 3x3 matrix (row-major); None when it is singular.
+fn invert3(m: &[f32; 9]) -> Option<[f32; 9]> {
+    let det = m[0] * (m[4] * m[8] - m[5] * m[7]) - m[1] * (m[3] * m[8] - m[5] * m[6]) + m[2] * (m[3] * m[7] - m[4] * m[6]);
+    if det.abs() < 1e-12 || !det.is_finite() {
+        return None;
+    }
+    let d = 1.0 / det;
+    Some([
+        (m[4] * m[8] - m[5] * m[7]) * d,
+        (m[2] * m[7] - m[1] * m[8]) * d,
+        (m[1] * m[5] - m[2] * m[4]) * d,
+        (m[5] * m[6] - m[3] * m[8]) * d,
+        (m[0] * m[8] - m[2] * m[6]) * d,
+        (m[2] * m[3] - m[0] * m[5]) * d,
+        (m[3] * m[7] - m[4] * m[6]) * d,
+        (m[1] * m[6] - m[0] * m[7]) * d,
+        (m[0] * m[4] - m[1] * m[3]) * d,
+    ])
+}
+
+/// The geometric corrections of the developed photo: lens distortion, then
+/// perspective. `source` gives, for a pixel of the result, the position in the
+/// photo it is sampled from.
+#[derive(Clone, Copy)]
+pub struct Geometry {
+    lens: Option<LensDistortion>,
+    /// Inverse perspective homography (output to photo), centred coordinates
+    inverse: Option<[f32; 9]>,
+    cx: f32,
+    cy: f32,
+}
+
+impl Geometry {
+    /// None when the recipe has no geometric correction.
+    pub fn new(width: usize, height: usize, recipe: &crate::recipe::Recipe) -> Option<Self> {
+        let lens = LensDistortion::new(width, height, recipe.lens_distortion);
+        let inverse = perspective_matrix(width, height, recipe.perspective_vertical, recipe.perspective_horizontal, recipe.perspective_scale)
+            .and_then(|m| invert3(&m));
+        if lens.is_none() && inverse.is_none() {
+            return None;
+        }
+        Some(Self { lens, inverse, cx: width as f32 / 2.0, cy: height as f32 / 2.0 })
+    }
+
+    /// Where the output pixel (x, y) samples the photo. Points the perspective sends
+    /// behind the virtual camera come back far outside the photo.
+    #[inline(always)]
+    pub fn source(&self, x: f32, y: f32) -> (f32, f32) {
+        let (mut x, mut y) = (x, y);
+        if let Some(m) = &self.inverse {
+            let (dx, dy) = (x - self.cx, y - self.cy);
+            let w = m[6] * dx + m[7] * dy + m[8];
+            if w <= 1e-6 {
+                return (-1e9, -1e9);
+            }
+            x = (m[0] * dx + m[1] * dy + m[2]) / w + self.cx;
+            y = (m[3] * dx + m[4] * dy + m[5]) / w + self.cy;
+        }
+        match &self.lens {
+            Some(l) => l.source(x, y),
+            None => (x, y),
+        }
+    }
+}
+
+/// Resamples the developed photo through `geometry` (lens distortion and perspective).
+/// Samples outside the photo are black.
+pub fn apply_geometry(input: &[f32], width: usize, height: usize, channels: usize, geometry: &Geometry) -> Vec<f32> {
     let mut output = vec![0.0f32; input.len()];
-    output
-        .par_chunks_mut(width * channels)
-        .enumerate()
-        .for_each(|(y_idx, row)| {
-            for x_idx in 0..width {
-                let (src_x, src_y) = lens.source(x_idx as f32, y_idx as f32);
-                let px = x_idx * channels;
-
-                if src_x >= 0.0 && src_x < (width - 1) as f32 && src_y >= 0.0 && src_y < (height - 1) as f32 {
-                    let x0 = src_x.floor() as usize;
-                    let y0 = src_y.floor() as usize;
-                    let x1 = (x0 + 1).min(width - 1);
-                    let y1 = (y0 + 1).min(height - 1);
-
-                    let fx = src_x - (x0 as f32);
-                    let fy = src_y - (y0 as f32);
-
-                    let idx00 = (y0 * width + x0) * channels;
-                    let idx10 = (y0 * width + x1) * channels;
-                    let idx01 = (y1 * width + x0) * channels;
-                    let idx11 = (y1 * width + x1) * channels;
-
-                    for c in 0..channels.min(3) {
-                        let v00 = input[idx00 + c];
-                        let v10 = input[idx10 + c];
-                        let v01 = input[idx01 + c];
-                        let v11 = input[idx11 + c];
-
-                        let top = v00 * (1.0 - fx) + v10 * fx;
-                        let bottom = v01 * (1.0 - fx) + v11 * fx;
-                        row[px + c] = top * (1.0 - fy) + bottom * fy;
-                    }
-                    if channels == 4 {
-                        row[px + 3] = input[idx00 + 3];
-                    }
-                } else {
-                    for c in 0..channels {
-                        row[px + c] = 0.0;
-                    }
+    output.par_chunks_mut(width * channels).enumerate().for_each(|(y_idx, row)| {
+        for x_idx in 0..width {
+            let (src_x, src_y) = geometry.source(x_idx as f32, y_idx as f32);
+            let px = x_idx * channels;
+            if src_x >= 0.0 && src_x < (width - 1) as f32 && src_y >= 0.0 && src_y < (height - 1) as f32 {
+                let (x0, y0) = (src_x.floor() as usize, src_y.floor() as usize);
+                let (x1, y1) = ((x0 + 1).min(width - 1), (y0 + 1).min(height - 1));
+                let (fx, fy) = (src_x - x0 as f32, src_y - y0 as f32);
+                for c in 0..channels.min(3) {
+                    let at = |yy: usize, xx: usize| input[(yy * width + xx) * channels + c];
+                    let top = at(y0, x0) * (1.0 - fx) + at(y0, x1) * fx;
+                    let bottom = at(y1, x0) * (1.0 - fx) + at(y1, x1) * fx;
+                    row[px + c] = top * (1.0 - fy) + bottom * fy;
+                }
+                if channels == 4 {
+                    row[px + 3] = input[(y0 * width + x0) * channels + 3];
                 }
             }
-        });
-
+        }
+    });
     output
 }
 
@@ -358,6 +421,37 @@ mod tests {
         let p = &edge[(10 * w + 10) * 3..(10 * w + 10) * 3 + 3];
         // The green excess was 0.4
         assert!(p[1] - (p[0] + p[2]) / 2.0 < 0.35, "fringe reduced: {p:?}");
+    }
+
+    #[test]
+    fn perspective_keeps_the_centre_and_widens_the_top() {
+        let (w, h) = (400usize, 300usize);
+        let r = crate::recipe::Recipe { perspective_vertical: 50.0, ..Default::default() };
+        let g = Geometry::new(w, h, &r).unwrap();
+        let (sx, sy) = g.source(200.0, 150.0);
+        assert!((sx - 200.0).abs() < 1e-3 && (sy - 150.0).abs() < 1e-3);
+        // The top is enlarged, so an output point near the top-left corner samples
+        // further in than one near the bottom-left corner
+        let (tx, _) = g.source(20.0, 10.0);
+        let (bx, _) = g.source(20.0, 290.0);
+        assert!(tx > bx, "top {tx}, bottom {bx}");
+        // Neutral settings are no correction at all
+        assert!(Geometry::new(w, h, &crate::recipe::Recipe::default()).is_none());
+    }
+
+    #[test]
+    fn perspective_inverse_undoes_the_forward_map() {
+        let (w, h) = (640usize, 480usize);
+        let m = perspective_matrix(w, h, -35.0, 60.0, 90.0).unwrap();
+        let r = crate::recipe::Recipe { perspective_vertical: -35.0, perspective_horizontal: 60.0, perspective_scale: 90.0, ..Default::default() };
+        let g = Geometry::new(w, h, &r).unwrap();
+        for &(x, y) in &[(10.0f32, 20.0f32), (600.0, 30.0), (320.0, 400.0), (50.0, 470.0)] {
+            let (dx, dy) = (x - 320.0, y - 240.0);
+            let ww = m[6] * dx + m[7] * dy + m[8];
+            let (ox, oy) = ((m[0] * dx + m[1] * dy + m[2]) / ww + 320.0, (m[3] * dx + m[4] * dy + m[5]) / ww + 240.0);
+            let (bx, by) = g.source(ox, oy);
+            assert!((bx - x).abs() < 0.01 && (by - y).abs() < 0.01, "({x}, {y}) -> ({ox}, {oy}) -> ({bx}, {by})");
+        }
     }
 
     /// Positive correction does not leave black corners.
