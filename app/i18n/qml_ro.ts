@@ -1714,6 +1714,14 @@
         <translation>Început</translation>
     </message>
     <message>
+        <source>Soft proof not applied: %1</source>
+        <translation>Probă pe ecran neaplicată: %1</translation>
+    </message>
+    <message>
+        <source>Before</source>
+        <translation>Înainte</translation>
+    </message>
+    <message>
         <source>Snapshot %1</source>
         <translation>Instantaneu %1</translation>
     </message>
@@ -1784,6 +1792,14 @@
     <message>
         <source>The scan did not respond.</source>
         <translation>Scanarea dosarului nu a răspuns.</translation>
+    </message>
+    <message>
+        <source>Soft proof: %1</source>
+        <translation>Probă pe ecran: %1</translation>
+    </message>
+    <message>
+        <source>Soft proof off</source>
+        <translation>Probă pe ecran oprită</translation>
     </message>
     <message>
         <source>Rating: ★</source>
@@ -2332,6 +2348,45 @@
     </message>
 </context>
 <context>
+    <name>SoftProofPanel</name>
+    <message>
+        <source>Soft proof (S)</source>
+        <translation>Probă pe ecran (S)</translation>
+    </message>
+    <message>
+        <source>Shows the photo as it will look with the profile below, for example a printer and paper profile. The edit and the export do not change.</source>
+        <translation>Arată fotografia așa cum va arăta cu profilul de mai jos, de exemplu un profil de imprimantă și hârtie. Editarea și exportul nu se schimbă.</translation>
+    </message>
+    <message>
+        <source>Rendering intent</source>
+        <translation>Intenție de randare</translation>
+    </message>
+    <message>
+        <source>Perceptual</source>
+        <translation>Perceptuală</translation>
+    </message>
+    <message>
+        <source>Relative</source>
+        <translation>Relativă</translation>
+    </message>
+    <message>
+        <source>Saturation</source>
+        <translation>Saturație</translation>
+    </message>
+    <message>
+        <source>Absolute</source>
+        <translation>Absolută</translation>
+    </message>
+    <message>
+        <source>Gamut warning</source>
+        <translation>Avertizare gamă</translation>
+    </message>
+    <message>
+        <source>Magenta marks colours the profile cannot reproduce. The preview is sRGB, so wider spaces such as Adobe RGB show no warnings.</source>
+        <translation>Magenta marchează culorile pe care profilul nu le poate reda. Previzualizarea este sRGB, deci spațiile mai largi, ca Adobe RGB, nu arată avertizări.</translation>
+    </message>
+</context>
+<context>
     <name>TopBar</name>
     <message>
         <source>Pick (P)</source>
@@ -2465,6 +2520,30 @@
         <translation>Culoarea împrejurimilor</translation>
     </message>
     <message>
+        <source>Loupe</source>
+        <translation>Lupă</translation>
+    </message>
+    <message>
+        <source>Loupe (L): the photo at 1:1 around the pointer</source>
+        <translation>Lupă (L): fotografia la 1:1 în jurul cursorului</translation>
+    </message>
+    <message>
+        <source>Peaking</source>
+        <translation>Focalizare</translation>
+    </message>
+    <message>
+        <source>Focus peaking (Shift+F): marks the sharpest edges in green</source>
+        <translation>Focus peaking (Shift+F): marchează cu verde marginile cele mai clare</translation>
+    </message>
+    <message>
+        <source>Compare</source>
+        <translation>Compară</translation>
+    </message>
+    <message>
+        <source>Compare (Shift+C): another state of the edit beside this one</source>
+        <translation>Compară (Shift+C): altă stare a editării lângă aceasta</translation>
+    </message>
+    <message>
         <source>Crop</source>
         <translation>Decupează</translation>
     </message>
@@ -2511,6 +2590,10 @@
     <message>
         <source>ORIGINAL RAW (Before)</source>
         <translation>RAW ORIGINAL (înainte)</translation>
+    </message>
+    <message>
+        <source>Current edit</source>
+        <translation>Editarea curentă</translation>
     </message>
     <message>
         <source>EDITED RECIPE (After)</source>

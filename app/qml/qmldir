@@ -34,6 +34,7 @@ RgbMixerPanel 1.0 RgbMixerPanel.qml
 ScopesView 1.0 ScopesView.qml
 SkinTonePanel 1.0 SkinTonePanel.qml
 SliderGroup 1.0 SliderGroup.qml
+SoftProofPanel 1.0 SoftProofPanel.qml
 SocialOptimizer 1.0 SocialOptimizer.qml
 TopBar 1.0 TopBar.qml
 Viewport 1.0 Viewport.qml

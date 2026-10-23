@@ -7,6 +7,7 @@ pub mod film_sim;
 pub mod histogram;
 pub mod layers;
 pub mod lut;
+pub mod peaking;
 pub mod presence;
 pub mod retouch;
 pub mod rgb_mixer;

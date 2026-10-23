@@ -1706,6 +1706,14 @@
         <translation>Kezdet</translation>
     </message>
     <message>
+        <source>Soft proof not applied: %1</source>
+        <translation>A képernyős próbanyomat nem alkalmazható: %1</translation>
+    </message>
+    <message>
+        <source>Before</source>
+        <translation>Előtte</translation>
+    </message>
+    <message>
         <source>Snapshot %1</source>
         <translation>Pillanatkép %1</translation>
     </message>
@@ -1776,6 +1784,14 @@
     <message>
         <source>The scan did not respond.</source>
         <translation>A mappa átvizsgálása nem válaszolt.</translation>
+    </message>
+    <message>
+        <source>Soft proof: %1</source>
+        <translation>Képernyős próbanyomat: %1</translation>
+    </message>
+    <message>
+        <source>Soft proof off</source>
+        <translation>Képernyős próbanyomat ki</translation>
     </message>
     <message>
         <source>Rating: ★</source>
@@ -2322,6 +2338,45 @@
     </message>
 </context>
 <context>
+    <name>SoftProofPanel</name>
+    <message>
+        <source>Soft proof (S)</source>
+        <translation>Képernyős próbanyomat (S)</translation>
+    </message>
+    <message>
+        <source>Shows the photo as it will look with the profile below, for example a printer and paper profile. The edit and the export do not change.</source>
+        <translation>Megmutatja, hogyan fog kinézni a fotó az alábbi profillal, például egy nyomtató- és papírprofillal. A szerkesztés és az exportálás nem változik.</translation>
+    </message>
+    <message>
+        <source>Rendering intent</source>
+        <translation>Megjelenítési mód</translation>
+    </message>
+    <message>
+        <source>Perceptual</source>
+        <translation>Érzékelési</translation>
+    </message>
+    <message>
+        <source>Relative</source>
+        <translation>Relatív</translation>
+    </message>
+    <message>
+        <source>Saturation</source>
+        <translation>Telítettség</translation>
+    </message>
+    <message>
+        <source>Absolute</source>
+        <translation>Abszolút</translation>
+    </message>
+    <message>
+        <source>Gamut warning</source>
+        <translation>Színtér-figyelmeztetés</translation>
+    </message>
+    <message>
+        <source>Magenta marks colours the profile cannot reproduce. The preview is sRGB, so wider spaces such as Adobe RGB show no warnings.</source>
+        <translation>A bíbor jelöli azokat a színeket, amelyeket a profil nem tud visszaadni. Az előnézet sRGB, így a szélesebb terek, mint az Adobe RGB, nem jeleznek.</translation>
+    </message>
+</context>
+<context>
     <name>TopBar</name>
     <message>
         <source>Pick (P)</source>
@@ -2453,6 +2508,30 @@
         <translation>Környezet színe</translation>
     </message>
     <message>
+        <source>Loupe</source>
+        <translation>Nagyító</translation>
+    </message>
+    <message>
+        <source>Loupe (L): the photo at 1:1 around the pointer</source>
+        <translation>Nagyító (L): a fotó 1:1 méretben a mutató körül</translation>
+    </message>
+    <message>
+        <source>Peaking</source>
+        <translation>Élesség</translation>
+    </message>
+    <message>
+        <source>Focus peaking (Shift+F): marks the sharpest edges in green</source>
+        <translation>Élességkiemelés (Shift+F): zölddel jelöli a legélesebb széleket</translation>
+    </message>
+    <message>
+        <source>Compare</source>
+        <translation>Összevetés</translation>
+    </message>
+    <message>
+        <source>Compare (Shift+C): another state of the edit beside this one</source>
+        <translation>Összevetés (Shift+C): a szerkesztés egy másik állapota emellett</translation>
+    </message>
+    <message>
         <source>Crop</source>
         <translation>Vágás</translation>
     </message>
@@ -2499,6 +2578,10 @@
     <message>
         <source>ORIGINAL RAW (Before)</source>
         <translation>EREDETI RAW (előtte)</translation>
+    </message>
+    <message>
+        <source>Current edit</source>
+        <translation>Jelenlegi szerkesztés</translation>
     </message>
     <message>
         <source>EDITED RECIPE (After)</source>

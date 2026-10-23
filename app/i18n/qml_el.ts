@@ -1710,6 +1710,14 @@
         <translation>Αρχή</translation>
     </message>
     <message>
+        <source>Soft proof not applied: %1</source>
+        <translation>Η δοκιμή οθόνης δεν εφαρμόστηκε: %1</translation>
+    </message>
+    <message>
+        <source>Before</source>
+        <translation>Πριν</translation>
+    </message>
+    <message>
         <source>Snapshot %1</source>
         <translation>Στιγμιότυπο %1</translation>
     </message>
@@ -1780,6 +1788,14 @@
     <message>
         <source>The scan did not respond.</source>
         <translation>Η σάρωση του φακέλου δεν απάντησε.</translation>
+    </message>
+    <message>
+        <source>Soft proof: %1</source>
+        <translation>Δοκιμή οθόνης: %1</translation>
+    </message>
+    <message>
+        <source>Soft proof off</source>
+        <translation>Δοκιμή οθόνης ανενεργή</translation>
     </message>
     <message>
         <source>Rating: ★</source>
@@ -2327,6 +2343,45 @@
     </message>
 </context>
 <context>
+    <name>SoftProofPanel</name>
+    <message>
+        <source>Soft proof (S)</source>
+        <translation>Δοκιμή οθόνης (S)</translation>
+    </message>
+    <message>
+        <source>Shows the photo as it will look with the profile below, for example a printer and paper profile. The edit and the export do not change.</source>
+        <translation>Δείχνει τη φωτογραφία όπως θα είναι με το παρακάτω προφίλ, π.χ. ένα προφίλ εκτυπωτή και χαρτιού. Η επεξεργασία και η εξαγωγή δεν αλλάζουν.</translation>
+    </message>
+    <message>
+        <source>Rendering intent</source>
+        <translation>Πρόθεση απόδοσης</translation>
+    </message>
+    <message>
+        <source>Perceptual</source>
+        <translation>Αντιληπτική</translation>
+    </message>
+    <message>
+        <source>Relative</source>
+        <translation>Σχετική</translation>
+    </message>
+    <message>
+        <source>Saturation</source>
+        <translation>Κορεσμός</translation>
+    </message>
+    <message>
+        <source>Absolute</source>
+        <translation>Απόλυτη</translation>
+    </message>
+    <message>
+        <source>Gamut warning</source>
+        <translation>Προειδοποίηση γκάμας</translation>
+    </message>
+    <message>
+        <source>Magenta marks colours the profile cannot reproduce. The preview is sRGB, so wider spaces such as Adobe RGB show no warnings.</source>
+        <translation>Το ματζέντα σημειώνει χρώματα που το προφίλ δεν μπορεί να αναπαραγάγει. Η προεπισκόπηση είναι sRGB, οπότε ευρύτεροι χώροι όπως το Adobe RGB δεν δείχνουν προειδοποιήσεις.</translation>
+    </message>
+</context>
+<context>
     <name>TopBar</name>
     <message>
         <source>Pick (P)</source>
@@ -2459,6 +2514,30 @@
         <translation>Χρώμα περιβάλλοντος</translation>
     </message>
     <message>
+        <source>Loupe</source>
+        <translation>Μεγεθυντικός φακός</translation>
+    </message>
+    <message>
+        <source>Loupe (L): the photo at 1:1 around the pointer</source>
+        <translation>Μεγεθυντικός φακός (L): η φωτογραφία σε 1:1 γύρω από τον δείκτη</translation>
+    </message>
+    <message>
+        <source>Peaking</source>
+        <translation>Εστίαση</translation>
+    </message>
+    <message>
+        <source>Focus peaking (Shift+F): marks the sharpest edges in green</source>
+        <translation>Επισήμανση εστίασης (Shift+F): σημειώνει με πράσινο τις πιο ευκρινείς ακμές</translation>
+    </message>
+    <message>
+        <source>Compare</source>
+        <translation>Σύγκριση</translation>
+    </message>
+    <message>
+        <source>Compare (Shift+C): another state of the edit beside this one</source>
+        <translation>Σύγκριση (Shift+C): μια άλλη κατάσταση της επεξεργασίας δίπλα σε αυτή</translation>
+    </message>
+    <message>
         <source>Crop</source>
         <translation>Περικοπή</translation>
     </message>
@@ -2505,6 +2584,10 @@
     <message>
         <source>ORIGINAL RAW (Before)</source>
         <translation>ΑΡΧΙΚΟ RAW (πριν)</translation>
+    </message>
+    <message>
+        <source>Current edit</source>
+        <translation>Τρέχουσα επεξεργασία</translation>
     </message>
     <message>
         <source>EDITED RECIPE (After)</source>

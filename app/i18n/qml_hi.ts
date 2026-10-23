@@ -1710,6 +1710,14 @@
         <translation>शुरुआत</translation>
     </message>
     <message>
+        <source>Soft proof not applied: %1</source>
+        <translation>सॉफ़्ट प्रूफ़ लागू नहीं हुआ: %1</translation>
+    </message>
+    <message>
+        <source>Before</source>
+        <translation>पहले</translation>
+    </message>
+    <message>
         <source>Snapshot %1</source>
         <translation>स्नैपशॉट %1</translation>
     </message>
@@ -1780,6 +1788,14 @@
     <message>
         <source>The scan did not respond.</source>
         <translation>फ़ोल्डर स्कैन ने जवाब नहीं दिया।</translation>
+    </message>
+    <message>
+        <source>Soft proof: %1</source>
+        <translation>सॉफ़्ट प्रूफ़: %1</translation>
+    </message>
+    <message>
+        <source>Soft proof off</source>
+        <translation>सॉफ़्ट प्रूफ़ बंद</translation>
     </message>
     <message>
         <source>Rating: ★</source>
@@ -2327,6 +2343,45 @@
     </message>
 </context>
 <context>
+    <name>SoftProofPanel</name>
+    <message>
+        <source>Soft proof (S)</source>
+        <translation>सॉफ़्ट प्रूफ़ (S)</translation>
+    </message>
+    <message>
+        <source>Shows the photo as it will look with the profile below, for example a printer and paper profile. The edit and the export do not change.</source>
+        <translation>नीचे दिए प्रोफ़ाइल, जैसे प्रिंटर और कागज़ प्रोफ़ाइल, के साथ फ़ोटो जैसी दिखेगी वैसी दिखाता है। संपादन और निर्यात नहीं बदलते।</translation>
+    </message>
+    <message>
+        <source>Rendering intent</source>
+        <translation>रेंडरिंग इंटेंट</translation>
+    </message>
+    <message>
+        <source>Perceptual</source>
+        <translation>बोधात्मक</translation>
+    </message>
+    <message>
+        <source>Relative</source>
+        <translation>सापेक्ष</translation>
+    </message>
+    <message>
+        <source>Saturation</source>
+        <translation>संतृप्ति</translation>
+    </message>
+    <message>
+        <source>Absolute</source>
+        <translation>निरपेक्ष</translation>
+    </message>
+    <message>
+        <source>Gamut warning</source>
+        <translation>गैमट चेतावनी</translation>
+    </message>
+    <message>
+        <source>Magenta marks colours the profile cannot reproduce. The preview is sRGB, so wider spaces such as Adobe RGB show no warnings.</source>
+        <translation>मैजेंटा उन रंगों को चिह्नित करता है जिन्हें प्रोफ़ाइल नहीं बना सकता। पूर्वावलोकन sRGB है, इसलिए Adobe RGB जैसे बड़े स्पेस कोई चेतावनी नहीं दिखाते।</translation>
+    </message>
+</context>
+<context>
     <name>TopBar</name>
     <message>
         <source>Pick (P)</source>
@@ -2459,6 +2514,30 @@
         <translation>आसपास का रंग</translation>
     </message>
     <message>
+        <source>Loupe</source>
+        <translation>आवर्धक</translation>
+    </message>
+    <message>
+        <source>Loupe (L): the photo at 1:1 around the pointer</source>
+        <translation>आवर्धक (L): पॉइंटर के आसपास फ़ोटो 1:1 पर</translation>
+    </message>
+    <message>
+        <source>Peaking</source>
+        <translation>फ़ोकस</translation>
+    </message>
+    <message>
+        <source>Focus peaking (Shift+F): marks the sharpest edges in green</source>
+        <translation>फ़ोकस पीकिंग (Shift+F): सबसे तीखे किनारों को हरे रंग से चिह्नित करता है</translation>
+    </message>
+    <message>
+        <source>Compare</source>
+        <translation>तुलना करें</translation>
+    </message>
+    <message>
+        <source>Compare (Shift+C): another state of the edit beside this one</source>
+        <translation>तुलना करें (Shift+C): इसके बगल में संपादन की कोई दूसरी स्थिति</translation>
+    </message>
+    <message>
         <source>Crop</source>
         <translation>क्रॉप</translation>
     </message>
@@ -2505,6 +2584,10 @@
     <message>
         <source>ORIGINAL RAW (Before)</source>
         <translation>मूल RAW (पहले)</translation>
+    </message>
+    <message>
+        <source>Current edit</source>
+        <translation>मौजूदा संपादन</translation>
     </message>
     <message>
         <source>EDITED RECIPE (After)</source>

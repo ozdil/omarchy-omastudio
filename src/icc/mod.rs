@@ -1,7 +1,7 @@
 use crate::raw::OutputColorSpace;
 use lcms2::{
     CIExyY, CIExyYTRIPLE, ColorSpaceSignature, Flags, GlobalContext, Intent, Locale, MLU, PixelFormat, Profile, Tag,
-    TagSignature, ToneCurve, Transform,
+    TagSignature, ThreadContext, ToneCurve, Transform,
 };
 use rayon::prelude::*;
 use serde::{Deserialize, Serialize};
@@ -351,6 +351,69 @@ impl ExportProfile {
     }
 }
 
+/// ICC bytes of a profile to soft-proof against: a built-in space, ACEScg, or a file
+/// found by [`resolve_icc_path`]. Unlike export, print profiles (CMYK, grey) are
+/// accepted: proofing only needs the device's gamut, never its pixels.
+pub fn proof_profile_bytes(name: &str) -> Result<Vec<u8>, String> {
+    if let Some(space) = builtin_space(name) {
+        return builtin_profile(space).icc().map_err(|e| format!("Could not serialise ICC profile: {}", e));
+    }
+    let n = name.to_lowercase().replace([' ', '-', '_', '.', '(', ')'], "");
+    if n == "acescg" || n == "acescgap1" || n == "ap1" {
+        return acescg_profile().icc().map_err(|e| format!("Could not serialise ICC profile: {}", e));
+    }
+    let path = resolve_icc_path(name).ok_or_else(|| format!("ICC profile not found: {}", name))?;
+    let bytes = crate::security::read_secure_file(&path, MAX_ICC_BYTES)
+        .map_err(|e| format!("Could not read ICC profile {}: {}", path.display(), e))?;
+    let profile = Profile::new_icc(&bytes).map_err(|e| format!("Invalid ICC profile {}: {}", path.display(), e))?;
+    match profile.color_space() {
+        ColorSpaceSignature::RgbData | ColorSpaceSignature::CmykData | ColorSpaceSignature::GrayData => Ok(bytes),
+        _ => Err(format!("{} is not an RGB, CMYK or grey output profile", path.display())),
+    }
+}
+
+/// Colour that marks pixels the proof profile cannot reproduce (a vivid magenta,
+/// which photographs rarely contain)
+const GAMUT_WARNING_RGB: [u16; 3] = [0xFFFF, 0x0000, 0xC0C0];
+
+/// Soft-proofs an 8-bit sRGB preview in place: each pixel is shown as it would look
+/// printed or exported with `proof_icc` and `intent`. With `gamut_warning`, pixels the
+/// proof device cannot reproduce are painted [`GAMUT_WARNING_RGB`].
+pub fn soft_proof_rgb8(pixels: &mut [u8], proof_icc: &[u8], intent: RenderingIntent, gamut_warning: bool) -> Result<(), String> {
+    let mut context = ThreadContext::new();
+    if gamut_warning {
+        let mut codes = [0u16; 16];
+        codes[..3].copy_from_slice(&GAMUT_WARNING_RGB);
+        context.set_alarm_codes(codes);
+    }
+    let display: Profile<ThreadContext> = Profile::new_srgb_context(&context);
+    let proof = Profile::new_icc_context(&context, proof_icc).map_err(|e| format!("Invalid proof profile: {}", e))?;
+    let mut flags = Flags::NO_CACHE | Flags::SOFT_PROOFING;
+    if gamut_warning {
+        flags = flags | Flags::GAMUT_CHECK;
+    }
+    if intent != RenderingIntent::AbsoluteColorimetric {
+        flags = flags | Flags::BLACKPOINT_COMPENSATION;
+    }
+    // sRGB -> proof device with the chosen intent, then proof device -> screen keeping
+    // the device's white (relative colorimetric), as print previews do by default
+    let transform: Transform<[u8; 3], [u8; 3], ThreadContext, _> = Transform::new_proofing_context(
+        &context,
+        &display,
+        PixelFormat::RGB_8,
+        &display,
+        PixelFormat::RGB_8,
+        &proof,
+        intent.into(),
+        Intent::RelativeColorimetric,
+        flags,
+    )
+    .map_err(|e| format!("Could not build proofing transform: {}", e))?;
+    let (rgb, _) = pixels.as_chunks_mut::<3>();
+    rgb.par_chunks_mut(64 * 1024).for_each(|chunk| transform.transform_in_place(chunk));
+    Ok(())
+}
+
 /// How lcms2 maps colours that a destination profile cannot hold.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
@@ -431,4 +494,42 @@ pub fn convert_rgb16_to_f32(
         .zip(src.par_chunks(64 * 1024))
         .for_each(|(dst, src)| transform.transform_pixels(src, dst));
     Ok(out.into_iter().flatten().collect())
+}
+
+#[cfg(test)]
+mod proof_tests {
+    use super::*;
+
+    /// A narrow RGB device: its primaries sit halfway to the white point.
+    fn narrow_profile() -> Vec<u8> {
+        let ((p, w), half) = (primaries(OutputColorSpace::Srgb), |a: (f64, f64), w: (f64, f64)| ((a.0 + w.0) / 2.0, (a.1 + w.1) / 2.0));
+        let narrow = ([half(p[0], w), half(p[1], w), half(p[2], w)], w);
+        rgb_profile("narrow", narrow, &ToneCurve::new(2.2)).icc().unwrap()
+    }
+
+    #[test]
+    fn proofing_against_srgb_changes_nothing_visible() {
+        let mut px = vec![200u8, 40, 30, 20, 120, 220, 128, 128, 128];
+        let before = px.clone();
+        let srgb = builtin_profile(OutputColorSpace::Srgb).icc().unwrap();
+        soft_proof_rgb8(&mut px, &srgb, RenderingIntent::RelativeColorimetric, true).unwrap();
+        for (a, b) in px.iter().zip(&before) {
+            assert!((*a as i32 - *b as i32).abs() <= 2, "{px:?} vs {before:?}");
+        }
+    }
+
+    #[test]
+    fn saturated_colours_outside_a_narrow_device_are_flagged() {
+        let narrow = narrow_profile();
+        // Pure red is far outside; mid grey is inside
+        let mut px = vec![255u8, 0, 0, 128, 128, 128];
+        soft_proof_rgb8(&mut px, &narrow, RenderingIntent::RelativeColorimetric, true).unwrap();
+        assert_eq!(&px[..3], &[255, 0, 192]);
+        assert!(px[3..].iter().all(|&v| (v as i32 - 128).abs() <= 3), "{px:?}");
+
+        // Without the warning the red is shown as the device can print it: duller
+        let mut px = vec![255u8, 0, 0];
+        soft_proof_rgb8(&mut px, &narrow, RenderingIntent::RelativeColorimetric, false).unwrap();
+        assert!(px[1] > 20 && px[2] > 20, "{px:?}");
+    }
 }

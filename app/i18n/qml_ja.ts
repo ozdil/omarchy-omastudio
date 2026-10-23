@@ -1706,6 +1706,14 @@
         <translation>開始</translation>
     </message>
     <message>
+        <source>Soft proof not applied: %1</source>
+        <translation>ソフトプルーフを適用できませんでした: %1</translation>
+    </message>
+    <message>
+        <source>Before</source>
+        <translation>補正前</translation>
+    </message>
+    <message>
         <source>Snapshot %1</source>
         <translation>スナップショット %1</translation>
     </message>
@@ -1776,6 +1784,14 @@
     <message>
         <source>The scan did not respond.</source>
         <translation>フォルダーのスキャンが応答しませんでした。</translation>
+    </message>
+    <message>
+        <source>Soft proof: %1</source>
+        <translation>ソフトプルーフ: %1</translation>
+    </message>
+    <message>
+        <source>Soft proof off</source>
+        <translation>ソフトプルーフ オフ</translation>
     </message>
     <message>
         <source>Rating: ★</source>
@@ -2322,6 +2338,45 @@
     </message>
 </context>
 <context>
+    <name>SoftProofPanel</name>
+    <message>
+        <source>Soft proof (S)</source>
+        <translation>ソフトプルーフ (S)</translation>
+    </message>
+    <message>
+        <source>Shows the photo as it will look with the profile below, for example a printer and paper profile. The edit and the export do not change.</source>
+        <translation>下のプロファイル（プリンターと用紙のプロファイルなど）で出力したときの見え方で写真を表示します。編集と書き出しは変わりません。</translation>
+    </message>
+    <message>
+        <source>Rendering intent</source>
+        <translation>レンダリングインテント</translation>
+    </message>
+    <message>
+        <source>Perceptual</source>
+        <translation>知覚的</translation>
+    </message>
+    <message>
+        <source>Relative</source>
+        <translation>相対的</translation>
+    </message>
+    <message>
+        <source>Saturation</source>
+        <translation>彩度</translation>
+    </message>
+    <message>
+        <source>Absolute</source>
+        <translation>絶対的</translation>
+    </message>
+    <message>
+        <source>Gamut warning</source>
+        <translation>色域外警告</translation>
+    </message>
+    <message>
+        <source>Magenta marks colours the profile cannot reproduce. The preview is sRGB, so wider spaces such as Adobe RGB show no warnings.</source>
+        <translation>マゼンタはプロファイルで再現できない色を示します。プレビューは sRGB のため、Adobe RGB などのより広い色空間では警告は表示されません。</translation>
+    </message>
+</context>
+<context>
     <name>TopBar</name>
     <message>
         <source>Pick (P)</source>
@@ -2453,6 +2508,30 @@
         <translation>背景色</translation>
     </message>
     <message>
+        <source>Loupe</source>
+        <translation>ルーペ</translation>
+    </message>
+    <message>
+        <source>Loupe (L): the photo at 1:1 around the pointer</source>
+        <translation>ルーペ (L): ポインター周辺を等倍で表示</translation>
+    </message>
+    <message>
+        <source>Peaking</source>
+        <translation>ピーキング</translation>
+    </message>
+    <message>
+        <source>Focus peaking (Shift+F): marks the sharpest edges in green</source>
+        <translation>フォーカスピーキング (Shift+F): 最もシャープなエッジを緑で示します</translation>
+    </message>
+    <message>
+        <source>Compare</source>
+        <translation>比較</translation>
+    </message>
+    <message>
+        <source>Compare (Shift+C): another state of the edit beside this one</source>
+        <translation>比較 (Shift+C): 編集の別の状態を横に並べて表示</translation>
+    </message>
+    <message>
         <source>Crop</source>
         <translation>切り抜き</translation>
     </message>
@@ -2499,6 +2578,10 @@
     <message>
         <source>ORIGINAL RAW (Before)</source>
         <translation>元の RAW（補正前）</translation>
+    </message>
+    <message>
+        <source>Current edit</source>
+        <translation>現在の編集</translation>
     </message>
     <message>
         <source>EDITED RECIPE (After)</source>

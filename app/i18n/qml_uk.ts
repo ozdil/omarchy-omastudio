@@ -1714,6 +1714,14 @@
         <translation>Початок</translation>
     </message>
     <message>
+        <source>Soft proof not applied: %1</source>
+        <translation>Кольоропробу не застосовано: %1</translation>
+    </message>
+    <message>
+        <source>Before</source>
+        <translation>До</translation>
+    </message>
+    <message>
         <source>Snapshot %1</source>
         <translation>Знімок %1</translation>
     </message>
@@ -1784,6 +1792,14 @@
     <message>
         <source>The scan did not respond.</source>
         <translation>Сканування теки не відповіло.</translation>
+    </message>
+    <message>
+        <source>Soft proof: %1</source>
+        <translation>Кольоропроба: %1</translation>
+    </message>
+    <message>
+        <source>Soft proof off</source>
+        <translation>Кольоропробу вимкнено</translation>
     </message>
     <message>
         <source>Rating: ★</source>
@@ -2332,6 +2348,45 @@
     </message>
 </context>
 <context>
+    <name>SoftProofPanel</name>
+    <message>
+        <source>Soft proof (S)</source>
+        <translation>Кольоропроба (S)</translation>
+    </message>
+    <message>
+        <source>Shows the photo as it will look with the profile below, for example a printer and paper profile. The edit and the export do not change.</source>
+        <translation>Показує фото таким, яким воно буде з профілем нижче, наприклад із профілем принтера й паперу. Редагування та експорт не змінюються.</translation>
+    </message>
+    <message>
+        <source>Rendering intent</source>
+        <translation>Метод рендерингу</translation>
+    </message>
+    <message>
+        <source>Perceptual</source>
+        <translation>Перцептивний</translation>
+    </message>
+    <message>
+        <source>Relative</source>
+        <translation>Відносний</translation>
+    </message>
+    <message>
+        <source>Saturation</source>
+        <translation>Насиченість</translation>
+    </message>
+    <message>
+        <source>Absolute</source>
+        <translation>Абсолютний</translation>
+    </message>
+    <message>
+        <source>Gamut warning</source>
+        <translation>Попередження про охоплення</translation>
+    </message>
+    <message>
+        <source>Magenta marks colours the profile cannot reproduce. The preview is sRGB, so wider spaces such as Adobe RGB show no warnings.</source>
+        <translation>Пурпуровим позначено кольори, які профіль не може відтворити. Перегляд у sRGB, тому ширші простори, як-от Adobe RGB, попереджень не показують.</translation>
+    </message>
+</context>
+<context>
     <name>TopBar</name>
     <message>
         <source>Pick (P)</source>
@@ -2465,6 +2520,30 @@
         <translation>Колір оточення</translation>
     </message>
     <message>
+        <source>Loupe</source>
+        <translation>Лупа</translation>
+    </message>
+    <message>
+        <source>Loupe (L): the photo at 1:1 around the pointer</source>
+        <translation>Лупа (L): фото в масштабі 1:1 навколо вказівника</translation>
+    </message>
+    <message>
+        <source>Peaking</source>
+        <translation>Фокус</translation>
+    </message>
+    <message>
+        <source>Focus peaking (Shift+F): marks the sharpest edges in green</source>
+        <translation>Підсвічування фокуса (Shift+F): позначає найрізкіші краї зеленим</translation>
+    </message>
+    <message>
+        <source>Compare</source>
+        <translation>Порівняти</translation>
+    </message>
+    <message>
+        <source>Compare (Shift+C): another state of the edit beside this one</source>
+        <translation>Порівняти (Shift+C): інший стан редагування поруч із поточним</translation>
+    </message>
+    <message>
         <source>Crop</source>
         <translation>Кадрувати</translation>
     </message>
@@ -2511,6 +2590,10 @@
     <message>
         <source>ORIGINAL RAW (Before)</source>
         <translation>ВИХІДНИЙ RAW (до)</translation>
+    </message>
+    <message>
+        <source>Current edit</source>
+        <translation>Поточне редагування</translation>
     </message>
     <message>
         <source>EDITED RECIPE (After)</source>

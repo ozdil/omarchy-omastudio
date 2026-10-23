@@ -458,6 +458,93 @@ Rectangle {
     // Snapshots: named states of the edit, kept in the sidecar
     property var snapshots: []
 
+    // Soft proofing: a view setting sent with every render, never part of the edit
+    property bool softProof: false
+    property string proofProfile: "sRGB"
+    property string proofIntent: "relative_colorimetric"
+    property bool gamutWarning: false
+    property var iccProfiles: []
+    property string lastProofError: ""
+
+    function proofRequest() {
+        if (!root.softProof) return null;
+        return { "profile": root.proofProfile, "intent": root.proofIntent, "gamut_warning": root.gamutWarning };
+    }
+
+    function proofProfileName() {
+        for (var i = 0; i < root.iccProfiles.length; ++i)
+            if (root.iccProfiles[i].id === root.proofProfile) return root.iccProfiles[i].name;
+        return root.proofProfile;
+    }
+
+    function reportProofError(error) {
+        if (!error) {
+            root.lastProofError = "";
+            return;
+        }
+        // Once per problem, not on every render
+        if (error === root.lastProofError) return;
+        root.lastProofError = error;
+        root.showToast(qsTr("Soft proof not applied: %1").arg(error), Theme.highlightClip);
+    }
+
+    onSoftProofChanged: { root.requestRender(); root.requestReference(); root.saveUiStateSoon(); }
+    onProofProfileChanged: { if (root.softProof) { root.requestRender(); root.requestReference(); } root.saveUiStateSoon(); }
+    onProofIntentChanged: { if (root.softProof) { root.requestRender(); root.requestReference(); } root.saveUiStateSoon(); }
+    onGamutWarningChanged: { if (root.softProof) { root.requestRender(); root.requestReference(); } root.saveUiStateSoon(); }
+
+    // Focus peaking: a view setting like soft proofing
+    property bool focusPeaking: false
+    onFocusPeakingChanged: root.requestRender()
+
+    // Compare view: the current edit beside the photo as first opened ("before"),
+    // a grade version ("ver:A") or a snapshot ("snap:0")
+    property bool compareMode: false
+    property string compareRef: "before"
+    property string referenceImage: ""
+    property int referenceRevision: 0
+
+    readonly property var compareChoices: {
+        var list = [{ "id": "before", "label": qsTr("Before") }];
+        var versions = ["A", "B", "C", "D"];
+        for (var i = 0; i < versions.length; ++i) {
+            var v = versions[i];
+            if (v !== root.currentGradeVersion && root.gradeVersions[v])
+                list.push({ "id": "ver:" + v, "label": qsTr("Version %1").arg(v) });
+        }
+        for (var k = 0; k < root.snapshots.length; ++k)
+            list.push({ "id": "snap:" + k, "label": root.snapshots[k].name });
+        return list;
+    }
+
+    function compareRecipe(ref) {
+        if (ref.indexOf("ver:") === 0) return root.gradeVersions[ref.slice(4)] || null;
+        if (ref.indexOf("snap:") === 0) {
+            var snap = root.snapshots[Number(ref.slice(5))];
+            return snap ? snap.recipe : null;
+        }
+        // Before: the engine's defaults, i.e. no edits
+        return {};
+    }
+
+    function requestReference() {
+        if (!root.compareMode || root.activePhotoPath === "") return;
+        var recipe = root.compareRecipe(root.compareRef);
+        if (recipe === null) {
+            root.compareRef = "before";
+            return;   // the change of compareRef asks again
+        }
+        root.sendDaemonCommand({ cmd: "reference", recipe: recipe, proof: root.proofRequest() });
+    }
+
+    onCompareModeChanged: {
+        if (root.compareMode) root.requestReference();
+        else root.referenceImage = "";
+    }
+    onCompareRefChanged: root.requestReference()
+    onSnapshotsChanged: if (root.compareRef.indexOf("snap:") === 0) root.requestReference()
+    onGradeVersionsChanged: if (root.compareRef.indexOf("ver:") === 0) root.requestReference()
+
     function takeSnapshot() {
         root.commitPendingUndo();
         var r = root.buildRecipeObject();
@@ -1002,6 +1089,8 @@ Rectangle {
                     root.snapshots = data.recipe && Array.isArray(data.recipe.snapshots) ? data.recipe.snapshots : [];
                     root.savedRecipeJson = JSON.stringify(root.buildRecipeObject());
                     root.refreshHistory();
+                    if (root.compareRef !== "before") root.compareRef = "before";
+                    else root.requestReference();
                 }
             } else if (act === "adjust") {
                 root.renderFinished();
@@ -1009,6 +1098,7 @@ Rectangle {
                     root.activeHistogram = data.histogram;
                     viewport.imageSource = data.image;
                     navigator.imageSource = data.image;
+                    root.reportProofError(data.proof_error);
                 }
             } else if (act === "full_ready") {
                 if (data && data.path === root.activePhotoPath) {
@@ -1016,7 +1106,12 @@ Rectangle {
                     viewport.fullHeight = data.height;
                 }
             } else if (act === "detail") {
-                if (data) viewport.showDetail(data.image, data.region);
+                if (data && data.tag === "loupe") viewport.showLoupe(data.image, data.region);
+                else if (data) viewport.showDetail(data.image, data.region);
+            } else if (act === "reference") {
+                if (data) root.referenceImage = "file://" + data.image + "?v=" + (++root.referenceRevision);
+            } else if (act === "icc_profiles") {
+                if (Array.isArray(data)) root.iccProfiles = data;
             } else if (act === "ai_auto") {
                 if (data) {
                     root.applyRecipeObject(data.recipe);
@@ -1155,7 +1250,9 @@ Rectangle {
                     recipe: root.buildRecipeObject(),
                     split: splitVal,
                     highlight_mask: viewport.showHighlightMask,
-                    shadow_mask: viewport.showShadowMask
+                    shadow_mask: viewport.showShadowMask,
+                    proof: root.proofRequest(),
+                    focus_peaking: root.focusPeaking
                 });
             }
         }
@@ -1316,6 +1413,25 @@ Rectangle {
         }
     }
     Shortcut {
+        sequence: "S"
+        onActivated: {
+            root.softProof = !root.softProof;
+            root.showToast(root.softProof ? qsTr("Soft proof: %1").arg(root.proofProfileName()) : qsTr("Soft proof off"), Theme.accentYellow);
+        }
+    }
+    Shortcut {
+        sequence: "L"
+        onActivated: viewport.loupeActive = !viewport.loupeActive
+    }
+    Shortcut {
+        sequence: "Shift+F"
+        onActivated: root.focusPeaking = !root.focusPeaking
+    }
+    Shortcut {
+        sequence: "Shift+C"
+        onActivated: root.compareMode = !root.compareMode
+    }
+    Shortcut {
         sequence: "Y"
         onActivated: {
             root.isSplitView = !root.isSplitView;
@@ -1468,6 +1584,10 @@ Rectangle {
         if (st.collapsedSections && typeof st.collapsedSections === "object") root.collapsedSections = st.collapsedSections;
         if (["dark", "grey", "theme"].indexOf(st.surround) >= 0) root.surround = st.surround;
         if (typeof st.proMode === "boolean") root.isProMode = st.proMode;
+        if (typeof st.proofProfile === "string" && st.proofProfile !== "") root.proofProfile = st.proofProfile;
+        if (["perceptual", "relative_colorimetric", "saturation", "absolute_colorimetric"].indexOf(st.proofIntent) >= 0)
+            root.proofIntent = st.proofIntent;
+        if (typeof st.gamutWarning === "boolean") root.gamutWarning = st.gamutWarning;
         root.uiStateLoaded = true;
     }
 
@@ -1485,7 +1605,10 @@ Rectangle {
             "rightTab": root.rightTab,
             "collapsedSections": root.collapsedSections,
             "surround": root.surround,
-            "proMode": root.isProMode
+            "proMode": root.isProMode,
+            "proofProfile": root.proofProfile,
+            "proofIntent": root.proofIntent,
+            "gamutWarning": root.gamutWarning
         }))
     }
 
@@ -1893,6 +2016,32 @@ Rectangle {
                         }
 
                         Item { Layout.fillWidth: true }
+
+                        // The preview is simulated while soft proofing is on; a click turns it off
+                        Rectangle {
+                            visible: root.softProof
+                            implicitWidth: proofBadge.implicitWidth + 14
+                            implicitHeight: 20
+                            radius: Theme.r(4)
+                            color: Qt.rgba(Theme.accentYellow.r, Theme.accentYellow.g, Theme.accentYellow.b, 0.15)
+                            border.color: Theme.accentYellow
+                            border.width: 1
+                            Text {
+                                id: proofBadge
+                                anchors.centerIn: parent
+                                text: qsTr("Soft proof: %1").arg(root.proofProfileName())
+                                textFormat: Text.PlainText
+                                font.family: Theme.monoFont
+                                font.pixelSize: Theme.px(9)
+                                font.weight: Font.Bold
+                                color: Theme.accentYellow
+                            }
+                            MouseArea {
+                                anchors.fill: parent
+                                cursorShape: Qt.PointingHandCursor
+                                onClicked: root.softProof = false
+                            }
+                        }
                     }
                 }
 
@@ -1952,9 +2101,31 @@ Rectangle {
                             recipe: root.buildRecipeObject(),
                             region: region,
                             out_width: outWidth,
-                            out_height: outHeight
+                            out_height: outHeight,
+                            proof: root.proofRequest(),
+                            focus_peaking: root.focusPeaking
                         });
                     }
+                    onLoupeRequested: function(region, outWidth, outHeight) {
+                        root.sendDaemonCommand({
+                            cmd: "detail",
+                            tag: "loupe",
+                            recipe: root.buildRecipeObject(),
+                            region: region,
+                            out_width: outWidth,
+                            out_height: outHeight,
+                            proof: root.proofRequest(),
+                            focus_peaking: root.focusPeaking
+                        });
+                    }
+                    focusPeaking: root.focusPeaking
+                    onFocusPeakingToggled: root.focusPeaking = !root.focusPeaking
+                    compareActive: root.compareMode
+                    compareImage: root.referenceImage
+                    compareChoices: root.compareChoices
+                    compareChoice: root.compareRef
+                    onCompareToggled: root.compareMode = !root.compareMode
+                    onCompareChoicePicked: function(id) { root.compareRef = id }
                     onCropChangedByUser: function(cx, cy, cw, ch, aspect) {
                         root.cropX = cx;
                         root.cropY = cy;
@@ -2795,6 +2966,20 @@ Rectangle {
                                         root.requestRender();
                                     }
                                 }
+
+                                SoftProofPanel {
+                                    Layout.fillWidth: true
+                                    Layout.topMargin: 6
+                                    active: root.softProof
+                                    profile: root.proofProfile
+                                    intent: root.proofIntent
+                                    gamutWarning: root.gamutWarning
+                                    profiles: root.iccProfiles
+                                    onActiveToggled: function(on) { root.softProof = on }
+                                    onProfilePicked: function(id) { root.proofProfile = id }
+                                    onIntentPicked: function(id) { root.proofIntent = id }
+                                    onGamutWarningToggled: function(on) { root.gamutWarning = on }
+                                }
                             }
                         }
 
@@ -3101,6 +3286,7 @@ Rectangle {
 
     Component.onCompleted: {
         loadUiState();
+        root.sendDaemonCommand({ cmd: "icc_profiles" });
         scanLocalFolder("~/Pictures");
         // Photo passed on the command line (`omastudio photo.NEF`, desktop "Open with")
         var openPath = Host.openPath;

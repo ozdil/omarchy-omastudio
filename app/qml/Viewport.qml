@@ -5,6 +5,40 @@ import QtQuick.Controls
 
 Rectangle {
     id: root
+
+    component ViewToggle: Rectangle {
+        id: vt
+        property string label: ""
+        property string tip: ""
+        property bool active: false
+        signal clicked()
+        implicitWidth: vtText.implicitWidth + 14
+        implicitHeight: 24
+        radius: Theme.r(4)
+        color: vt.active ? Theme.accent : (vtMouse.containsMouse ? Theme.bgCardHover : "transparent")
+        Text {
+            id: vtText
+            anchors.centerIn: parent
+            text: vt.label
+            textFormat: Text.PlainText
+            font.pixelSize: Theme.px(10)
+            font.family: Theme.monoFont
+            font.weight: Font.Bold
+            color: vt.active ? Theme.onAccent : Theme.textMain
+        }
+        MouseArea {
+            id: vtMouse
+            anchors.fill: parent
+            hoverEnabled: true
+            cursorShape: Qt.PointingHandCursor
+            ToolTip.visible: containsMouse
+            ToolTip.delay: 500
+            ToolTip.text: vt.tip
+            Accessible.role: Accessible.Button
+            Accessible.name: vt.label
+            onClicked: vt.clicked()
+        }
+    }
     // Neutral surround so the theme's tint does not shift how colours are judged:
     // "dark" (default), "grey" (middle grey) or "theme"
     property string surround: "dark"
@@ -25,8 +59,9 @@ Rectangle {
         }
         root.revisionCounter++;
         var nextSrc = "file://" + root.imageSource + "?v=" + root.revisionCounter;
-        // A new preview means new adjustments: the detail view follows
+        // A new preview means new adjustments: the detail view and the loupe follow
         if (root.detailWanted) detailTimer.restart();
+        if (root.loupeActive) root.sendLoupeRequest();
 
         if (imgBuffer0.status !== Image.Ready && imgBuffer1.status !== Image.Ready) {
             imgBuffer0.source = nextSrc;
@@ -58,6 +93,69 @@ Rectangle {
     readonly property bool detailShown: detailImage.visible
     readonly property real previewWidth: mainImage.implicitWidth
     signal detailRequested(var region, int outWidth, int outHeight)
+
+    // Loupe: the full-resolution photo at 1:1 around the pointer, whatever the zoom
+    property bool loupeActive: false
+    property point loupeCursor: Qt.point(-1, -1)   // in the viewport
+    property var loupeUv: null                      // photo point under the pointer, normalised
+    property var loupeRequest: null
+    property var loupeShown: null                   // { region, path } of the last render
+    property bool loupePending: false
+    readonly property real loupeSize: Theme.px(220)
+    signal loupeRequested(var region, int outWidth, int outHeight)
+
+    // Focus peaking and the compare view are owned by the window, which renders them
+    property bool focusPeaking: false
+    signal focusPeakingToggled()
+    property bool compareActive: false
+    property string compareImage: ""
+    property var compareChoices: []                  // [{ id, label }]
+    property string compareChoice: ""
+    signal compareToggled()
+    signal compareChoicePicked(string id)
+
+    function loupeRegionAt(u, v) {
+        if (root.fullWidth <= 0 || root.fullHeight <= 0) return null;
+        var px = Math.round(root.loupeSize * root.dpr);
+        var w = Math.min(1, px / root.fullWidth), h = Math.min(1, px / root.fullHeight);
+        var x = Math.max(0, Math.min(1 - w, u - w / 2)), y = Math.max(0, Math.min(1 - h, v - h / 2));
+        return { "region": [x, y, w, h], "outWidth": Math.round(w * root.fullWidth), "outHeight": Math.round(h * root.fullHeight) };
+    }
+
+    function sendLoupeRequest() {
+        var r = root.loupeRequest;
+        if (!r || root.loupePending || !root.loupeActive) return;
+        root.loupePending = true;
+        root.loupeRequested(r.region, r.outWidth, r.outHeight);
+    }
+
+    function updateLoupe(x, y) {
+        root.loupeCursor = Qt.point(x, y);
+        var p = canvasArea.mapToItem(mainImage, x, y);
+        var u = p.x / Math.max(1, mainImage.width), v = p.y / Math.max(1, mainImage.height);
+        if (u < 0 || u > 1 || v < 0 || v > 1) {
+            root.loupeUv = null;
+            return;
+        }
+        root.loupeUv = [u, v];
+        root.loupeRequest = root.loupeRegionAt(u, v);
+        root.sendLoupeRequest();
+    }
+
+    // Answer from the engine; asks again if the pointer has moved a pixel or more since
+    function showLoupe(path, region) {
+        root.loupePending = false;
+        root.loupeShown = { "region": region, "path": "file://" + path + "?v=" + (++root.revisionCounter) };
+        var want = root.loupeRequest;
+        if (want && (Math.abs(want.region[0] - region[0]) * root.fullWidth >= 1
+                     || Math.abs(want.region[1] - region[1]) * root.fullHeight >= 1))
+            root.sendLoupeRequest();
+    }
+
+    onLoupeActiveChanged: {
+        root.loupeShown = null;
+        root.loupePending = false;
+    }
 
     // zoomFactor at which one full-resolution pixel covers `scale` screen pixels
     function zoomForPixelScale(scale) {
@@ -118,6 +216,7 @@ Rectangle {
 
     function detailFailed() {
         root.detailPending = false;
+        root.loupePending = false;
     }
 
     onZoomFactorChanged: scheduleDetail()
@@ -917,6 +1016,13 @@ Rectangle {
             }
         }
 
+        // Follows the pointer for the loupe
+        HoverHandler {
+            enabled: root.loupeActive
+            onPointChanged: if (hovered) root.updateLoupe(point.position.x, point.position.y)
+            onHoveredChanged: if (!hovered) root.loupeUv = null
+        }
+
         // Full-resolution detail of the visible area, drawn 1:1 in physical pixels
         Image {
             id: detailImage
@@ -935,6 +1041,152 @@ Rectangle {
             opacity: root.maskTool === "" && !root.retouchActive ? 1.0 : 0.0
             onStatusChanged: {
                 if (status === Image.Ready && root.detailRegion && root.detailWanted) visible = true;
+            }
+        }
+    }
+
+    // Compare view: another state of the edit beside the current one, both fitted
+    Rectangle {
+        anchors.fill: parent
+        visible: root.compareActive
+        color: root.surroundColor
+        z: 20
+
+        // The canvas underneath neither pans nor zooms while comparing
+        MouseArea {
+            anchors.fill: parent
+            acceptedButtons: Qt.AllButtons
+            onWheel: function(wheel) { wheel.accepted = true }
+        }
+
+        RowLayout {
+            anchors.fill: parent
+            anchors.margins: 12
+            anchors.bottomMargin: 60
+            spacing: 12
+
+            ColumnLayout {
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                Layout.preferredWidth: 1
+                spacing: 6
+                Flow {
+                    Layout.fillWidth: true
+                    spacing: 4
+                    Repeater {
+                        model: root.compareChoices
+                        delegate: Rectangle {
+                            id: choice
+                            required property var modelData
+                            readonly property bool isCur: root.compareChoice === modelData.id
+                            width: choiceText.implicitWidth + 12
+                            height: 20
+                            radius: Theme.r(4)
+                            color: isCur ? Theme.accent : (choiceMouse.containsMouse ? Theme.bgCardHover : Theme.bgCard)
+                            border.color: isCur ? Theme.accent : Theme.border
+                            Text {
+                                id: choiceText
+                                anchors.centerIn: parent
+                                text: choice.modelData.label
+                                textFormat: Text.PlainText
+                                font.family: Theme.monoFont
+                                font.pixelSize: Theme.px(9)
+                                font.weight: Font.Bold
+                                color: choice.isCur ? Theme.onAccent : Theme.textMain
+                            }
+                            MouseArea {
+                                id: choiceMouse
+                                anchors.fill: parent
+                                hoverEnabled: true
+                                cursorShape: Qt.PointingHandCursor
+                                onClicked: root.compareChoicePicked(choice.modelData.id)
+                            }
+                        }
+                    }
+                }
+                Image {
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    source: root.compareImage
+                    fillMode: Image.PreserveAspectFit
+                    asynchronous: true
+                    cache: false
+                    smooth: true
+                    mipmap: true
+                }
+            }
+
+            ColumnLayout {
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                Layout.preferredWidth: 1
+                spacing: 6
+                Text {
+                    Layout.preferredHeight: 20
+                    verticalAlignment: Text.AlignVCenter
+                    text: qsTr("Current edit")
+                    textFormat: Text.PlainText
+                    font.family: Theme.monoFont
+                    font.pixelSize: Theme.px(9)
+                    font.weight: Font.Bold
+                    color: Theme.accent
+                }
+                Image {
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    source: mainImage.currentSource
+                    fillMode: Image.PreserveAspectFit
+                    asynchronous: true
+                    cache: false
+                    smooth: true
+                    mipmap: true
+                }
+            }
+        }
+    }
+
+    // Loupe, centred on the pointer
+    Rectangle {
+        id: loupe
+        visible: root.loupeActive && !root.compareActive && root.loupeUv !== null && root.loupeShown !== null
+        width: root.loupeSize
+        height: root.loupeSize
+        x: root.loupeCursor.x - width / 2
+        y: root.loupeCursor.y - height / 2
+        color: root.surroundColor
+        border.color: Theme.borderLight
+        border.width: 2
+        clip: true
+        z: 30
+
+        Image {
+            readonly property var shown: root.loupeShown
+            source: shown ? shown.path : ""
+            asynchronous: false
+            cache: false
+            smooth: false
+            width: implicitWidth / root.dpr
+            height: implicitHeight / root.dpr
+            // The photo point under the pointer sits at the loupe's centre
+            x: shown && root.loupeUv ? loupe.width / 2 - (root.loupeUv[0] - shown.region[0]) / shown.region[2] * width : 0
+            y: shown && root.loupeUv ? loupe.height / 2 - (root.loupeUv[1] - shown.region[1]) / shown.region[3] * height : 0
+        }
+        Rectangle {
+            anchors.right: parent.right
+            anchors.bottom: parent.bottom
+            anchors.margins: 4
+            width: oneToOne.implicitWidth + 8
+            height: oneToOne.implicitHeight + 4
+            radius: Theme.r(3)
+            color: Qt.rgba(0, 0, 0, 0.6)
+            Text {
+                id: oneToOne
+                anchors.centerIn: parent
+                text: "1:1"
+                textFormat: Text.PlainText
+                font.family: Theme.monoFont
+                font.pixelSize: Theme.px(9)
+                color: "#ffffff"
             }
         }
     }
@@ -1207,6 +1459,31 @@ Rectangle {
                     onClicked: root.surroundCycled(root.surround === "dark" ? "grey"
                         : root.surround === "grey" ? "theme" : "dark")
                 }
+            }
+
+            Rectangle {
+                implicitWidth: 1
+                implicitHeight: 16
+                color: Theme.borderLight
+            }
+
+            ViewToggle {
+                label: qsTr("Loupe")
+                tip: qsTr("Loupe (L): the photo at 1:1 around the pointer")
+                active: root.loupeActive
+                onClicked: root.loupeActive = !root.loupeActive
+            }
+            ViewToggle {
+                label: qsTr("Peaking")
+                tip: qsTr("Focus peaking (Shift+F): marks the sharpest edges in green")
+                active: root.focusPeaking
+                onClicked: root.focusPeakingToggled()
+            }
+            ViewToggle {
+                label: qsTr("Compare")
+                tip: qsTr("Compare (Shift+C): another state of the edit beside this one")
+                active: root.compareActive
+                onClicked: root.compareToggled()
             }
         }
     }

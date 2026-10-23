@@ -1714,6 +1714,14 @@
         <translation>Начало</translation>
     </message>
     <message>
+        <source>Soft proof not applied: %1</source>
+        <translation>Цветопроба не применена: %1</translation>
+    </message>
+    <message>
+        <source>Before</source>
+        <translation>До</translation>
+    </message>
+    <message>
         <source>Snapshot %1</source>
         <translation>Снимок %1</translation>
     </message>
@@ -1784,6 +1792,14 @@
     <message>
         <source>The scan did not respond.</source>
         <translation>Сканирование папки не ответило.</translation>
+    </message>
+    <message>
+        <source>Soft proof: %1</source>
+        <translation>Цветопроба: %1</translation>
+    </message>
+    <message>
+        <source>Soft proof off</source>
+        <translation>Цветопроба выключена</translation>
     </message>
     <message>
         <source>Rating: ★</source>
@@ -2332,6 +2348,45 @@
     </message>
 </context>
 <context>
+    <name>SoftProofPanel</name>
+    <message>
+        <source>Soft proof (S)</source>
+        <translation>Цветопроба (S)</translation>
+    </message>
+    <message>
+        <source>Shows the photo as it will look with the profile below, for example a printer and paper profile. The edit and the export do not change.</source>
+        <translation>Показывает фото таким, каким оно будет с профилем ниже, например с профилем принтера и бумаги. Обработка и экспорт не меняются.</translation>
+    </message>
+    <message>
+        <source>Rendering intent</source>
+        <translation>Метод рендеринга</translation>
+    </message>
+    <message>
+        <source>Perceptual</source>
+        <translation>Перцепционный</translation>
+    </message>
+    <message>
+        <source>Relative</source>
+        <translation>Относительный</translation>
+    </message>
+    <message>
+        <source>Saturation</source>
+        <translation>Насыщенность</translation>
+    </message>
+    <message>
+        <source>Absolute</source>
+        <translation>Абсолютный</translation>
+    </message>
+    <message>
+        <source>Gamut warning</source>
+        <translation>Предупреждение об охвате</translation>
+    </message>
+    <message>
+        <source>Magenta marks colours the profile cannot reproduce. The preview is sRGB, so wider spaces such as Adobe RGB show no warnings.</source>
+        <translation>Пурпурным отмечены цвета, которые профиль не может воспроизвести. Превью в sRGB, поэтому более широкие пространства, такие как Adobe RGB, предупреждений не дают.</translation>
+    </message>
+</context>
+<context>
     <name>TopBar</name>
     <message>
         <source>Pick (P)</source>
@@ -2465,6 +2520,30 @@
         <translation>Цвет окружения</translation>
     </message>
     <message>
+        <source>Loupe</source>
+        <translation>Лупа</translation>
+    </message>
+    <message>
+        <source>Loupe (L): the photo at 1:1 around the pointer</source>
+        <translation>Лупа (L): фото в масштабе 1:1 вокруг указателя</translation>
+    </message>
+    <message>
+        <source>Peaking</source>
+        <translation>Фокус</translation>
+    </message>
+    <message>
+        <source>Focus peaking (Shift+F): marks the sharpest edges in green</source>
+        <translation>Подсветка фокуса (Shift+F): отмечает самые резкие края зелёным</translation>
+    </message>
+    <message>
+        <source>Compare</source>
+        <translation>Сравнить</translation>
+    </message>
+    <message>
+        <source>Compare (Shift+C): another state of the edit beside this one</source>
+        <translation>Сравнить (Shift+C): другое состояние обработки рядом с текущим</translation>
+    </message>
+    <message>
         <source>Crop</source>
         <translation>Кадрировать</translation>
     </message>
@@ -2511,6 +2590,10 @@
     <message>
         <source>ORIGINAL RAW (Before)</source>
         <translation>ИСХОДНЫЙ RAW (до)</translation>
+    </message>
+    <message>
+        <source>Current edit</source>
+        <translation>Текущая обработка</translation>
     </message>
     <message>
         <source>EDITED RECIPE (After)</source>

@@ -1714,6 +1714,14 @@
         <translation>Začátek</translation>
     </message>
     <message>
+        <source>Soft proof not applied: %1</source>
+        <translation>Softproof nebyl použit: %1</translation>
+    </message>
+    <message>
+        <source>Before</source>
+        <translation>Před</translation>
+    </message>
+    <message>
         <source>Snapshot %1</source>
         <translation>Snímek stavu %1</translation>
     </message>
@@ -1784,6 +1792,14 @@
     <message>
         <source>The scan did not respond.</source>
         <translation>Prohledávání složky neodpovědělo.</translation>
+    </message>
+    <message>
+        <source>Soft proof: %1</source>
+        <translation>Softproof: %1</translation>
+    </message>
+    <message>
+        <source>Soft proof off</source>
+        <translation>Softproof vypnut</translation>
     </message>
     <message>
         <source>Rating: ★</source>
@@ -2332,6 +2348,45 @@
     </message>
 </context>
 <context>
+    <name>SoftProofPanel</name>
+    <message>
+        <source>Soft proof (S)</source>
+        <translation>Softproof (S)</translation>
+    </message>
+    <message>
+        <source>Shows the photo as it will look with the profile below, for example a printer and paper profile. The edit and the export do not change.</source>
+        <translation>Zobrazí fotografii tak, jak bude vypadat s profilem níže, například s profilem tiskárny a papíru. Úprava ani export se nemění.</translation>
+    </message>
+    <message>
+        <source>Rendering intent</source>
+        <translation>Způsob vykreslení</translation>
+    </message>
+    <message>
+        <source>Perceptual</source>
+        <translation>Perceptuální</translation>
+    </message>
+    <message>
+        <source>Relative</source>
+        <translation>Relativní</translation>
+    </message>
+    <message>
+        <source>Saturation</source>
+        <translation>Sytost</translation>
+    </message>
+    <message>
+        <source>Absolute</source>
+        <translation>Absolutní</translation>
+    </message>
+    <message>
+        <source>Gamut warning</source>
+        <translation>Varování gamutu</translation>
+    </message>
+    <message>
+        <source>Magenta marks colours the profile cannot reproduce. The preview is sRGB, so wider spaces such as Adobe RGB show no warnings.</source>
+        <translation>Purpurová označuje barvy, které profil nedokáže reprodukovat. Náhled je v sRGB, takže širší prostory jako Adobe RGB žádná varování neukazují.</translation>
+    </message>
+</context>
+<context>
     <name>TopBar</name>
     <message>
         <source>Pick (P)</source>
@@ -2465,6 +2520,30 @@
         <translation>Barva okolí</translation>
     </message>
     <message>
+        <source>Loupe</source>
+        <translation>Lupa</translation>
+    </message>
+    <message>
+        <source>Loupe (L): the photo at 1:1 around the pointer</source>
+        <translation>Lupa (L): fotografie v měřítku 1:1 kolem ukazatele</translation>
+    </message>
+    <message>
+        <source>Peaking</source>
+        <translation>Ostření</translation>
+    </message>
+    <message>
+        <source>Focus peaking (Shift+F): marks the sharpest edges in green</source>
+        <translation>Zvýraznění ostrosti (Shift+F): označí nejostřejší hrany zeleně</translation>
+    </message>
+    <message>
+        <source>Compare</source>
+        <translation>Porovnat</translation>
+    </message>
+    <message>
+        <source>Compare (Shift+C): another state of the edit beside this one</source>
+        <translation>Porovnat (Shift+C): jiný stav úpravy vedle tohoto</translation>
+    </message>
+    <message>
         <source>Crop</source>
         <translation>Oříznout</translation>
     </message>
@@ -2511,6 +2590,10 @@
     <message>
         <source>ORIGINAL RAW (Before)</source>
         <translation>PŮVODNÍ RAW (před)</translation>
+    </message>
+    <message>
+        <source>Current edit</source>
+        <translation>Aktuální úprava</translation>
     </message>
     <message>
         <source>EDITED RECIPE (After)</source>

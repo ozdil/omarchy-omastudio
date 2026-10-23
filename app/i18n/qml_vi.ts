@@ -1706,6 +1706,14 @@
         <translation>Bắt đầu</translation>
     </message>
     <message>
+        <source>Soft proof not applied: %1</source>
+        <translation>Không áp dụng được soft proof: %1</translation>
+    </message>
+    <message>
+        <source>Before</source>
+        <translation>Trước</translation>
+    </message>
+    <message>
         <source>Snapshot %1</source>
         <translation>Ảnh chụp trạng thái %1</translation>
     </message>
@@ -1776,6 +1784,14 @@
     <message>
         <source>The scan did not respond.</source>
         <translation>Quét thư mục không phản hồi.</translation>
+    </message>
+    <message>
+        <source>Soft proof: %1</source>
+        <translation>Soft proof: %1</translation>
+    </message>
+    <message>
+        <source>Soft proof off</source>
+        <translation>Đã tắt soft proof</translation>
     </message>
     <message>
         <source>Rating: ★</source>
@@ -2322,6 +2338,45 @@
     </message>
 </context>
 <context>
+    <name>SoftProofPanel</name>
+    <message>
+        <source>Soft proof (S)</source>
+        <translation>Soft proof (S)</translation>
+    </message>
+    <message>
+        <source>Shows the photo as it will look with the profile below, for example a printer and paper profile. The edit and the export do not change.</source>
+        <translation>Hiển thị ảnh như khi dùng hồ sơ bên dưới, ví dụ hồ sơ máy in và giấy. Bản chỉnh sửa và bản xuất không thay đổi.</translation>
+    </message>
+    <message>
+        <source>Rendering intent</source>
+        <translation>Mục đích kết xuất</translation>
+    </message>
+    <message>
+        <source>Perceptual</source>
+        <translation>Cảm nhận</translation>
+    </message>
+    <message>
+        <source>Relative</source>
+        <translation>Tương đối</translation>
+    </message>
+    <message>
+        <source>Saturation</source>
+        <translation>Độ bão hòa</translation>
+    </message>
+    <message>
+        <source>Absolute</source>
+        <translation>Tuyệt đối</translation>
+    </message>
+    <message>
+        <source>Gamut warning</source>
+        <translation>Cảnh báo gam màu</translation>
+    </message>
+    <message>
+        <source>Magenta marks colours the profile cannot reproduce. The preview is sRGB, so wider spaces such as Adobe RGB show no warnings.</source>
+        <translation>Màu đỏ tím đánh dấu những màu hồ sơ không tái tạo được. Bản xem trước là sRGB, nên các không gian rộng hơn như Adobe RGB không hiện cảnh báo.</translation>
+    </message>
+</context>
+<context>
     <name>TopBar</name>
     <message>
         <source>Pick (P)</source>
@@ -2453,6 +2508,30 @@
         <translation>Màu nền xung quanh</translation>
     </message>
     <message>
+        <source>Loupe</source>
+        <translation>Kính lúp</translation>
+    </message>
+    <message>
+        <source>Loupe (L): the photo at 1:1 around the pointer</source>
+        <translation>Kính lúp (L): ảnh ở tỷ lệ 1:1 quanh con trỏ</translation>
+    </message>
+    <message>
+        <source>Peaking</source>
+        <translation>Lấy nét</translation>
+    </message>
+    <message>
+        <source>Focus peaking (Shift+F): marks the sharpest edges in green</source>
+        <translation>Tô sáng lấy nét (Shift+F): đánh dấu các cạnh nét nhất bằng màu xanh lá</translation>
+    </message>
+    <message>
+        <source>Compare</source>
+        <translation>So sánh</translation>
+    </message>
+    <message>
+        <source>Compare (Shift+C): another state of the edit beside this one</source>
+        <translation>So sánh (Shift+C): một trạng thái chỉnh sửa khác bên cạnh trạng thái này</translation>
+    </message>
+    <message>
         <source>Crop</source>
         <translation>Cắt</translation>
     </message>
@@ -2499,6 +2578,10 @@
     <message>
         <source>ORIGINAL RAW (Before)</source>
         <translation>RAW GỐC (trước)</translation>
+    </message>
+    <message>
+        <source>Current edit</source>
+        <translation>Chỉnh sửa hiện tại</translation>
     </message>
     <message>
         <source>EDITED RECIPE (After)</source>

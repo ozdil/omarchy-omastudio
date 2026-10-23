@@ -1710,6 +1710,14 @@
         <translation>Början</translation>
     </message>
     <message>
+        <source>Soft proof not applied: %1</source>
+        <translation>Skärmkorrektur inte tillämpad: %1</translation>
+    </message>
+    <message>
+        <source>Before</source>
+        <translation>Före</translation>
+    </message>
+    <message>
         <source>Snapshot %1</source>
         <translation>Ögonblicksbild %1</translation>
     </message>
@@ -1780,6 +1788,14 @@
     <message>
         <source>The scan did not respond.</source>
         <translation>Mappgenomsökningen svarade inte.</translation>
+    </message>
+    <message>
+        <source>Soft proof: %1</source>
+        <translation>Skärmkorrektur: %1</translation>
+    </message>
+    <message>
+        <source>Soft proof off</source>
+        <translation>Skärmkorrektur av</translation>
     </message>
     <message>
         <source>Rating: ★</source>
@@ -2327,6 +2343,45 @@
     </message>
 </context>
 <context>
+    <name>SoftProofPanel</name>
+    <message>
+        <source>Soft proof (S)</source>
+        <translation>Skärmkorrektur (S)</translation>
+    </message>
+    <message>
+        <source>Shows the photo as it will look with the profile below, for example a printer and paper profile. The edit and the export do not change.</source>
+        <translation>Visar fotot som det kommer att se ut med profilen nedan, till exempel en skrivar- och pappersprofil. Redigeringen och exporten ändras inte.</translation>
+    </message>
+    <message>
+        <source>Rendering intent</source>
+        <translation>Återgivningsavsikt</translation>
+    </message>
+    <message>
+        <source>Perceptual</source>
+        <translation>Perceptuell</translation>
+    </message>
+    <message>
+        <source>Relative</source>
+        <translation>Relativ</translation>
+    </message>
+    <message>
+        <source>Saturation</source>
+        <translation>Mättnad</translation>
+    </message>
+    <message>
+        <source>Absolute</source>
+        <translation>Absolut</translation>
+    </message>
+    <message>
+        <source>Gamut warning</source>
+        <translation>Färgomfångsvarning</translation>
+    </message>
+    <message>
+        <source>Magenta marks colours the profile cannot reproduce. The preview is sRGB, so wider spaces such as Adobe RGB show no warnings.</source>
+        <translation>Magenta markerar färger som profilen inte kan återge. Förhandsvisningen är sRGB, så större färgrymder som Adobe RGB visar inga varningar.</translation>
+    </message>
+</context>
+<context>
     <name>TopBar</name>
     <message>
         <source>Pick (P)</source>
@@ -2459,6 +2514,30 @@
         <translation>Omgivningsfärg</translation>
     </message>
     <message>
+        <source>Loupe</source>
+        <translation>Lupp</translation>
+    </message>
+    <message>
+        <source>Loupe (L): the photo at 1:1 around the pointer</source>
+        <translation>Lupp (L): fotot i 1:1 runt pekaren</translation>
+    </message>
+    <message>
+        <source>Peaking</source>
+        <translation>Fokus</translation>
+    </message>
+    <message>
+        <source>Focus peaking (Shift+F): marks the sharpest edges in green</source>
+        <translation>Fokusmarkering (Skift+F): markerar de skarpaste kanterna i grönt</translation>
+    </message>
+    <message>
+        <source>Compare</source>
+        <translation>Jämför</translation>
+    </message>
+    <message>
+        <source>Compare (Shift+C): another state of the edit beside this one</source>
+        <translation>Jämför (Skift+C): ett annat läge av redigeringen bredvid detta</translation>
+    </message>
+    <message>
         <source>Crop</source>
         <translation>Beskär</translation>
     </message>
@@ -2505,6 +2584,10 @@
     <message>
         <source>ORIGINAL RAW (Before)</source>
         <translation>ORIGINAL-RAW (före)</translation>
+    </message>
+    <message>
+        <source>Current edit</source>
+        <translation>Aktuell redigering</translation>
     </message>
     <message>
         <source>EDITED RECIPE (After)</source>

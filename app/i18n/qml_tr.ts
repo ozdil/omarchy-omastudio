@@ -1706,6 +1706,14 @@
         <translation>Başlangıç</translation>
     </message>
     <message>
+        <source>Soft proof not applied: %1</source>
+        <translation>Ekran provası uygulanmadı: %1</translation>
+    </message>
+    <message>
+        <source>Before</source>
+        <translation>Önce</translation>
+    </message>
+    <message>
         <source>Snapshot %1</source>
         <translation>Anlık görüntü %1</translation>
     </message>
@@ -1776,6 +1784,14 @@
     <message>
         <source>The scan did not respond.</source>
         <translation>Tarama yanıt vermedi.</translation>
+    </message>
+    <message>
+        <source>Soft proof: %1</source>
+        <translation>Ekran provası: %1</translation>
+    </message>
+    <message>
+        <source>Soft proof off</source>
+        <translation>Ekran provası kapalı</translation>
     </message>
     <message>
         <source>Rating: ★</source>
@@ -2322,6 +2338,45 @@
     </message>
 </context>
 <context>
+    <name>SoftProofPanel</name>
+    <message>
+        <source>Soft proof (S)</source>
+        <translation>Ekran provası (S)</translation>
+    </message>
+    <message>
+        <source>Shows the photo as it will look with the profile below, for example a printer and paper profile. The edit and the export do not change.</source>
+        <translation>Fotoğrafı aşağıdaki profille, örneğin bir yazıcı ve kâğıt profiliyle nasıl görüneceği gibi gösterir. Düzenleme ve dışa aktarma değişmez.</translation>
+    </message>
+    <message>
+        <source>Rendering intent</source>
+        <translation>İşleme amacı</translation>
+    </message>
+    <message>
+        <source>Perceptual</source>
+        <translation>Algısal</translation>
+    </message>
+    <message>
+        <source>Relative</source>
+        <translation>Göreli</translation>
+    </message>
+    <message>
+        <source>Saturation</source>
+        <translation>Doygunluk</translation>
+    </message>
+    <message>
+        <source>Absolute</source>
+        <translation>Mutlak</translation>
+    </message>
+    <message>
+        <source>Gamut warning</source>
+        <translation>Gamut uyarısı</translation>
+    </message>
+    <message>
+        <source>Magenta marks colours the profile cannot reproduce. The preview is sRGB, so wider spaces such as Adobe RGB show no warnings.</source>
+        <translation>Macenta, profilin üretemediği renkleri işaretler. Önizleme sRGB olduğundan Adobe RGB gibi daha geniş alanlarda uyarı görünmez.</translation>
+    </message>
+</context>
+<context>
     <name>TopBar</name>
     <message>
         <source>Pick (P)</source>
@@ -2453,6 +2508,30 @@
         <translation>Çevre rengi</translation>
     </message>
     <message>
+        <source>Loupe</source>
+        <translation>Büyüteç</translation>
+    </message>
+    <message>
+        <source>Loupe (L): the photo at 1:1 around the pointer</source>
+        <translation>Büyüteç (L): fotoğrafı imlecin çevresinde 1:1 gösterir</translation>
+    </message>
+    <message>
+        <source>Peaking</source>
+        <translation>Odak</translation>
+    </message>
+    <message>
+        <source>Focus peaking (Shift+F): marks the sharpest edges in green</source>
+        <translation>Odak vurgusu (Shift+F): en keskin kenarları yeşille işaretler</translation>
+    </message>
+    <message>
+        <source>Compare</source>
+        <translation>Karşılaştır</translation>
+    </message>
+    <message>
+        <source>Compare (Shift+C): another state of the edit beside this one</source>
+        <translation>Karşılaştır (Shift+C): düzenlemenin başka bir hâli bunun yanında</translation>
+    </message>
+    <message>
         <source>Crop</source>
         <translation>Kırp</translation>
     </message>
@@ -2499,6 +2578,10 @@
     <message>
         <source>ORIGINAL RAW (Before)</source>
         <translation>ORİJİNAL RAW (önce)</translation>
+    </message>
+    <message>
+        <source>Current edit</source>
+        <translation>Mevcut düzenleme</translation>
     </message>
     <message>
         <source>EDITED RECIPE (After)</source>

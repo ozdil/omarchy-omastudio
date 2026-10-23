@@ -1706,6 +1706,14 @@
         <translation>آغاز</translation>
     </message>
     <message>
+        <source>Soft proof not applied: %1</source>
+        <translation>پیش‌نمایش چاپ اعمال نشد: %1</translation>
+    </message>
+    <message>
+        <source>Before</source>
+        <translation>قبل</translation>
+    </message>
+    <message>
         <source>Snapshot %1</source>
         <translation>اسنپ‌شات %1</translation>
     </message>
@@ -1776,6 +1784,14 @@
     <message>
         <source>The scan did not respond.</source>
         <translation>پویش پوشه پاسخ نداد.</translation>
+    </message>
+    <message>
+        <source>Soft proof: %1</source>
+        <translation>پیش‌نمایش چاپ: %1</translation>
+    </message>
+    <message>
+        <source>Soft proof off</source>
+        <translation>پیش‌نمایش چاپ خاموش</translation>
     </message>
     <message>
         <source>Rating: ★</source>
@@ -2322,6 +2338,45 @@
     </message>
 </context>
 <context>
+    <name>SoftProofPanel</name>
+    <message>
+        <source>Soft proof (S)</source>
+        <translation>پیش‌نمایش چاپ (S)</translation>
+    </message>
+    <message>
+        <source>Shows the photo as it will look with the profile below, for example a printer and paper profile. The edit and the export do not change.</source>
+        <translation>عکس را همان‌طور که با پروفایل زیر خواهد بود نشان می‌دهد، مثلاً پروفایل چاپگر و کاغذ. ویرایش و خروجی تغییر نمی‌کنند.</translation>
+    </message>
+    <message>
+        <source>Rendering intent</source>
+        <translation>هدف رندر</translation>
+    </message>
+    <message>
+        <source>Perceptual</source>
+        <translation>ادراکی</translation>
+    </message>
+    <message>
+        <source>Relative</source>
+        <translation>نسبی</translation>
+    </message>
+    <message>
+        <source>Saturation</source>
+        <translation>اشباع</translation>
+    </message>
+    <message>
+        <source>Absolute</source>
+        <translation>مطلق</translation>
+    </message>
+    <message>
+        <source>Gamut warning</source>
+        <translation>هشدار گستره رنگ</translation>
+    </message>
+    <message>
+        <source>Magenta marks colours the profile cannot reproduce. The preview is sRGB, so wider spaces such as Adobe RGB show no warnings.</source>
+        <translation>سرخابی رنگ‌هایی را نشان می‌دهد که پروفایل نمی‌تواند بازتولید کند. پیش‌نمایش sRGB است، پس فضاهای گسترده‌تر مانند Adobe RGB هشداری نشان نمی‌دهند.</translation>
+    </message>
+</context>
+<context>
     <name>TopBar</name>
     <message>
         <source>Pick (P)</source>
@@ -2453,6 +2508,30 @@
         <translation>رنگ پیرامون</translation>
     </message>
     <message>
+        <source>Loupe</source>
+        <translation>ذره‌بین</translation>
+    </message>
+    <message>
+        <source>Loupe (L): the photo at 1:1 around the pointer</source>
+        <translation>ذره‌بین (L): عکس با مقیاس ۱:۱ در اطراف نشانگر</translation>
+    </message>
+    <message>
+        <source>Peaking</source>
+        <translation>فوکوس</translation>
+    </message>
+    <message>
+        <source>Focus peaking (Shift+F): marks the sharpest edges in green</source>
+        <translation>برجسته‌سازی فوکوس (Shift+F): تیزترین لبه‌ها را با سبز نشان می‌دهد</translation>
+    </message>
+    <message>
+        <source>Compare</source>
+        <translation>مقایسه</translation>
+    </message>
+    <message>
+        <source>Compare (Shift+C): another state of the edit beside this one</source>
+        <translation>مقایسه (Shift+C): حالت دیگری از ویرایش در کنار این یکی</translation>
+    </message>
+    <message>
         <source>Crop</source>
         <translation>برش</translation>
     </message>
@@ -2499,6 +2578,10 @@
     <message>
         <source>ORIGINAL RAW (Before)</source>
         <translation>RAW اصلی (پیش)</translation>
+    </message>
+    <message>
+        <source>Current edit</source>
+        <translation>ویرایش فعلی</translation>
     </message>
     <message>
         <source>EDITED RECIPE (After)</source>

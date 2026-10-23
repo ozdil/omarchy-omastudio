@@ -1714,6 +1714,14 @@
         <translation>Początek</translation>
     </message>
     <message>
+        <source>Soft proof not applied: %1</source>
+        <translation>Nie zastosowano próby ekranowej: %1</translation>
+    </message>
+    <message>
+        <source>Before</source>
+        <translation>Przed</translation>
+    </message>
+    <message>
         <source>Snapshot %1</source>
         <translation>Migawka %1</translation>
     </message>
@@ -1784,6 +1792,14 @@
     <message>
         <source>The scan did not respond.</source>
         <translation>Skanowanie folderu nie odpowiedziało.</translation>
+    </message>
+    <message>
+        <source>Soft proof: %1</source>
+        <translation>Próba ekranowa: %1</translation>
+    </message>
+    <message>
+        <source>Soft proof off</source>
+        <translation>Próba ekranowa wyłączona</translation>
     </message>
     <message>
         <source>Rating: ★</source>
@@ -2332,6 +2348,45 @@
     </message>
 </context>
 <context>
+    <name>SoftProofPanel</name>
+    <message>
+        <source>Soft proof (S)</source>
+        <translation>Próba ekranowa (S)</translation>
+    </message>
+    <message>
+        <source>Shows the photo as it will look with the profile below, for example a printer and paper profile. The edit and the export do not change.</source>
+        <translation>Pokazuje zdjęcie tak, jak będzie wyglądać z profilem poniżej, np. profilem drukarki i papieru. Edycja i eksport się nie zmieniają.</translation>
+    </message>
+    <message>
+        <source>Rendering intent</source>
+        <translation>Metoda odwzorowania</translation>
+    </message>
+    <message>
+        <source>Perceptual</source>
+        <translation>Percepcyjna</translation>
+    </message>
+    <message>
+        <source>Relative</source>
+        <translation>Względna</translation>
+    </message>
+    <message>
+        <source>Saturation</source>
+        <translation>Nasycenie</translation>
+    </message>
+    <message>
+        <source>Absolute</source>
+        <translation>Bezwzględna</translation>
+    </message>
+    <message>
+        <source>Gamut warning</source>
+        <translation>Ostrzeżenie o gamucie</translation>
+    </message>
+    <message>
+        <source>Magenta marks colours the profile cannot reproduce. The preview is sRGB, so wider spaces such as Adobe RGB show no warnings.</source>
+        <translation>Magenta oznacza kolory, których profil nie odtworzy. Podgląd jest w sRGB, więc szersze przestrzenie, jak Adobe RGB, nie pokazują ostrzeżeń.</translation>
+    </message>
+</context>
+<context>
     <name>TopBar</name>
     <message>
         <source>Pick (P)</source>
@@ -2465,6 +2520,30 @@
         <translation>Kolor otoczenia</translation>
     </message>
     <message>
+        <source>Loupe</source>
+        <translation>Lupa</translation>
+    </message>
+    <message>
+        <source>Loupe (L): the photo at 1:1 around the pointer</source>
+        <translation>Lupa (L): zdjęcie w skali 1:1 wokół kursora</translation>
+    </message>
+    <message>
+        <source>Peaking</source>
+        <translation>Ostrość</translation>
+    </message>
+    <message>
+        <source>Focus peaking (Shift+F): marks the sharpest edges in green</source>
+        <translation>Focus peaking (Shift+F): zaznacza na zielono najostrzejsze krawędzie</translation>
+    </message>
+    <message>
+        <source>Compare</source>
+        <translation>Porównaj</translation>
+    </message>
+    <message>
+        <source>Compare (Shift+C): another state of the edit beside this one</source>
+        <translation>Porównaj (Shift+C): inny stan edycji obok bieżącego</translation>
+    </message>
+    <message>
         <source>Crop</source>
         <translation>Kadruj</translation>
     </message>
@@ -2511,6 +2590,10 @@
     <message>
         <source>ORIGINAL RAW (Before)</source>
         <translation>ORYGINALNY RAW (przed)</translation>
+    </message>
+    <message>
+        <source>Current edit</source>
+        <translation>Bieżąca edycja</translation>
     </message>
     <message>
         <source>EDITED RECIPE (After)</source>
