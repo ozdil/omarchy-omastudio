@@ -175,28 +175,36 @@
         <translation>Ошибка</translation>
     </message>
     <message>
-        <source>AI EDIT ASSISTANT</source>
-        <translation>ПОМОЩНИК ПРАВКИ С ИИ</translation>
+        <source>Assistant</source>
+        <translation>Ассистент</translation>
     </message>
     <message>
-        <source>DONE</source>
-        <translation>ГОТОВО</translation>
+        <source>Done</source>
+        <translation>Готово</translation>
     </message>
     <message>
-        <source>SETUP</source>
-        <translation>НАСТРОЙКА</translation>
+        <source>Set up</source>
+        <translation>Настроить</translation>
+    </message>
+    <message>
+        <source>Working…</source>
+        <translation>Обработка…</translation>
+    </message>
+    <message>
+        <source>Edit</source>
+        <translation>Изменить</translation>
+    </message>
+    <message>
+        <source>Store key</source>
+        <translation>Сохранить ключ</translation>
+    </message>
+    <message>
+        <source>Use %1</source>
+        <translation>Использовать %1</translation>
     </message>
     <message>
         <source>e.g. warmer, moody evening light, recover the sky</source>
         <translation>например: теплее, мрачный вечерний свет, восстановить небо</translation>
-    </message>
-    <message>
-        <source>THINKING...</source>
-        <translation>ДУМАЮ...</translation>
-    </message>
-    <message>
-        <source>EDIT WITH AI</source>
-        <translation>ПРАВИТЬ С ИИ</translation>
     </message>
     <message>
         <source>Running. Models: %1</source>
@@ -222,14 +230,6 @@
         <source>API key</source>
         <translation>Ключ API</translation>
     </message>
-    <message>
-        <source>STORE KEY</source>
-        <translation>СОХРАНИТЬ КЛЮЧ</translation>
-    </message>
-    <message>
-        <source>USE %1</source>
-        <translation>ИСПОЛЬЗОВАТЬ %1</translation>
-    </message>
 </context>
 <context>
     <name>BoundedTextInput</name>
@@ -241,48 +241,16 @@
 <context>
     <name>ColorGradingWheels</name>
     <message>
-        <source>DAVINCI PRIMARIES WHEELS</source>
-        <translation>ОСНОВНЫЕ КОЛЁСА DAVINCI</translation>
-    </message>
-    <message>
-        <source>4-WHEEL</source>
-        <translation>4 КОЛЕСА</translation>
-    </message>
-    <message>
-        <source>TABBED</source>
-        <translation>ВКЛАДКИ</translation>
-    </message>
-    <message>
-        <source>RESET</source>
-        <translation>СБРОС</translation>
-    </message>
-    <message>
-        <source>LIFT</source>
-        <translation>LIFT</translation>
-    </message>
-    <message>
         <source>Shadows</source>
         <translation>Тени</translation>
-    </message>
-    <message>
-        <source>GAMMA</source>
-        <translation>GAMMA</translation>
     </message>
     <message>
         <source>Mids</source>
         <translation>Средние</translation>
     </message>
     <message>
-        <source>GAIN</source>
-        <translation>GAIN</translation>
-    </message>
-    <message>
         <source>Highlights</source>
         <translation>Света</translation>
-    </message>
-    <message>
-        <source>OFFSET</source>
-        <translation>OFFSET</translation>
     </message>
     <message>
         <source>Global</source>
@@ -307,6 +275,22 @@
     <message>
         <source>Lift</source>
         <translation>Lift</translation>
+    </message>
+    <message>
+        <source>Colour grading</source>
+        <translation>Цветокоррекция</translation>
+    </message>
+    <message>
+        <source>4 wheels</source>
+        <translation>4 круга</translation>
+    </message>
+    <message>
+        <source>Tabs</source>
+        <translation>Вкладки</translation>
+    </message>
+    <message>
+        <source>Reset</source>
+        <translation>Сброс</translation>
     </message>
     <message>
         <source>Gamma</source>
@@ -368,8 +352,12 @@
         <translation>Широкий AP1</translation>
     </message>
     <message>
-        <source>COLOR MANAGEMENT &amp; ACES 1.3</source>
-        <translation>УПРАВЛЕНИЕ ЦВЕТОМ И ACES 1.3</translation>
+        <source>Colour management</source>
+        <translation>Управление цветом</translation>
+    </message>
+    <message>
+        <source>Gamut compression</source>
+        <translation>Сжатие охвата</translation>
     </message>
     <message>
         <source>%1 (%2)</source>
@@ -394,115 +382,163 @@
 <context>
     <name>ExifCard</name>
     <message>
-        <source>No camera loaded</source>
-        <translation>Камера не загружена</translation>
-    </message>
-    <message>
-        <source>Unknown lens</source>
-        <translation>Неизвестный объектив</translation>
+        <source>No photo</source>
+        <translation>Нет фото</translation>
     </message>
 </context>
 <context>
     <name>ExportDialog</name>
-    <message numerus="yes">
-        <source>Batch Export (%n Photos)</source>
-        <translation>
-            <numerusform>Пакетный экспорт (%n фото)</numerusform>
-            <numerusform>Пакетный экспорт (%n фото)</numerusform>
-            <numerusform>Пакетный экспорт (%n фото)</numerusform>
-        </translation>
-    </message>
-    <message>
-        <source>Export Master Photo</source>
-        <translation>Экспортировать основное фото</translation>
-    </message>
-    <message>
-        <source>MODERN OPEN FORMAT</source>
-        <translation>СОВРЕМЕННЫЙ ОТКРЫТЫЙ ФОРМАТ</translation>
-    </message>
-    <message>
-        <source>Next-Gen 16-bit HDR</source>
-        <translation>16-битный HDR нового поколения</translation>
-    </message>
-    <message>
-        <source>AV1 Web/Mobile</source>
-        <translation>AV1 для веба и мобильных</translation>
-    </message>
-    <message>
-        <source>Ultra Compact</source>
-        <translation>Сверхкомпактный</translation>
-    </message>
-    <message>
-        <source>16-bit TIFF</source>
-        <translation>16-битный TIFF</translation>
-    </message>
-    <message>
-        <source>Master Print Lossless</source>
-        <translation>Мастер-печать без потерь</translation>
-    </message>
-    <message>
-        <source>Graphic Lossless</source>
-        <translation>Графика без потерь</translation>
-    </message>
-    <message>
-        <source>Universal MozJPEG</source>
-        <translation>Универсальный MozJPEG</translation>
-    </message>
-    <message>
-        <source>Export Compression Quality</source>
-        <translation>Качество сжатия при экспорте</translation>
-    </message>
-    <message>
-        <source>RESOLUTION &amp; SCALING</source>
-        <translation>РАЗРЕШЕНИЕ И МАСШТАБ</translation>
-    </message>
-    <message>
-        <source>100% Full</source>
-        <translation>100% полное</translation>
-    </message>
-    <message>
-        <source>Social (2048p)</source>
-        <translation>Соцсети (2048p)</translation>
-    </message>
-    <message>
-        <source>COLOR SPACE &amp; ICC PROFILE</source>
-        <translation>ЦВЕТОВОЕ ПРОСТРАНСТВО И ПРОФИЛЬ ICC</translation>
-    </message>
-    <message>
-        <source>Universal Web / Social</source>
-        <translation>Универсальный веб / соцсети</translation>
-    </message>
-    <message>
-        <source>Apple / Wide OLED</source>
-        <translation>Apple / широкий OLED</translation>
-    </message>
-    <message>
-        <source>Ultra-Wide Gamut HDR</source>
-        <translation>HDR со сверхшироким охватом</translation>
-    </message>
-    <message>
-        <source>Academy Color Standard</source>
-        <translation>Цветовой стандарт Академии</translation>
-    </message>
-    <message>
-        <source>Pro Photography / Print</source>
-        <translation>Профессиональная фотография / печать</translation>
-    </message>
-    <message>
-        <source>16-Bit Master Archival</source>
-        <translation>16-битный архивный мастер</translation>
-    </message>
-    <message>
-        <source>Intent</source>
-        <translation>Метод</translation>
-    </message>
     <message>
         <source>Perceptual</source>
         <translation>Перцепционный</translation>
     </message>
     <message>
-        <source>Compresses the whole gamut; smooth, saturated colours keep their relations</source>
-        <translation>Сжимает весь охват; мягкие насыщенные цвета сохраняют свои соотношения</translation>
+        <source>8-bit · universal</source>
+        <translation>8 бит · универсальный</translation>
+    </message>
+    <message>
+        <source>16-bit · lossless</source>
+        <translation>16 бит · без потерь</translation>
+    </message>
+    <message>
+        <source>16-bit · print, archive</source>
+        <translation>16 бит · печать, архив</translation>
+    </message>
+    <message>
+        <source>8-bit · web</source>
+        <translation>8 бит · веб</translation>
+    </message>
+    <message>
+        <source>12-bit · HDR-ready</source>
+        <translation>12 бит · готов к HDR</translation>
+    </message>
+    <message>
+        <source>10-bit · HEVC</source>
+        <translation>10 бит · HEVC</translation>
+    </message>
+    <message>
+        <source>16-bit · modern</source>
+        <translation>16 бит · современный</translation>
+    </message>
+    <message>
+        <source>Float · scene-linear</source>
+        <translation>С плавающей точкой · линейный сцены</translation>
+    </message>
+    <message numerus="yes">
+        <source>Export %n photos</source>
+        <translation>
+            <numerusform>Экспортировать %n фото</numerusform>
+            <numerusform>Экспортировать %n фото</numerusform>
+            <numerusform>Экспортировать %n фото</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>Export</source>
+        <translation>Экспорт</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>Закрыть</translation>
+    </message>
+    <message>
+        <source>Format</source>
+        <translation>Формат</translation>
+    </message>
+    <message>
+        <source>Quality</source>
+        <translation>Качество</translation>
+    </message>
+    <message>
+        <source>100 is lossless.</source>
+        <translation>100 — без потерь.</translation>
+    </message>
+    <message>
+        <source>Bit depth</source>
+        <translation>Глубина цвета</translation>
+    </message>
+    <message>
+        <source>Half float</source>
+        <translation>Половинная точность с плавающей точкой</translation>
+    </message>
+    <message>
+        <source>Full float</source>
+        <translation>Полная точность с плавающей точкой</translation>
+    </message>
+    <message>
+        <source>%1-bit</source>
+        <translation>%1 бит</translation>
+    </message>
+    <message>
+        <source>Compression</source>
+        <translation>Сжатие</translation>
+    </message>
+    <message>
+        <source>None</source>
+        <translation>Нет</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>Размер</translation>
+    </message>
+    <message>
+        <source>Full</source>
+        <translation>Полный</translation>
+    </message>
+    <message>
+        <source>3840 px</source>
+        <translation>3840 пикс.</translation>
+    </message>
+    <message>
+        <source>Long edge at most 3840 px</source>
+        <translation>Длинная сторона не более 3840 пикс.</translation>
+    </message>
+    <message>
+        <source>2048 px</source>
+        <translation>2048 пикс.</translation>
+    </message>
+    <message>
+        <source>Long edge at most 2048 px</source>
+        <translation>Длинная сторона не более 2048 пикс.</translation>
+    </message>
+    <message>
+        <source>Colour profile</source>
+        <translation>Цветовой профиль</translation>
+    </message>
+    <message>
+        <source>Web, screens</source>
+        <translation>Веб, экраны</translation>
+    </message>
+    <message>
+        <source>Wide-gamut screens</source>
+        <translation>Экраны с широким охватом</translation>
+    </message>
+    <message>
+        <source>Print</source>
+        <translation>Печать</translation>
+    </message>
+    <message>
+        <source>Editing, archive</source>
+        <translation>Обработка, архив</translation>
+    </message>
+    <message>
+        <source>HDR, video</source>
+        <translation>HDR, видео</translation>
+    </message>
+    <message>
+        <source>Linear, VFX</source>
+        <translation>Линейный, VFX</translation>
+    </message>
+    <message>
+        <source>OpenEXR is written scene-linear in the chosen primaries.</source>
+        <translation>OpenEXR записывается линейно относительно сцены в выбранных основных цветах.</translation>
+    </message>
+    <message>
+        <source>Rendering intent</source>
+        <translation>Метод рендеринга</translation>
+    </message>
+    <message>
+        <source>Compresses the whole gamut; colour relations are kept</source>
+        <translation>Сжимает весь охват; соотношения между цветами сохраняются</translation>
     </message>
     <message>
         <source>Relative</source>
@@ -529,47 +565,55 @@
         <translation>Точные цвета, включая белую точку источника; для цветопробы</translation>
     </message>
     <message>
-        <source>Preserve Camera EXIF</source>
-        <translation>Сохранять EXIF камеры</translation>
+        <source>Metadata</source>
+        <translation>Метаданные</translation>
     </message>
     <message>
-        <source>Strip GPS (Privacy)</source>
-        <translation>Удалять GPS (конфиденциальность)</translation>
+        <source>Keep camera metadata (EXIF)</source>
+        <translation>Сохранять метаданные камеры (EXIF)</translation>
     </message>
     <message>
-        <source>Apply Photography Watermark / EXIF Signature</source>
-        <translation>Добавить водяной знак / подпись EXIF</translation>
+        <source>Remove location (GPS)</source>
+        <translation>Удалить местоположение (GPS)</translation>
     </message>
     <message>
-        <source>Exporting Batch...</source>
-        <translation>Экспорт пакета...</translation>
+        <source>Prepare for</source>
+        <translation>Подготовить для</translation>
     </message>
     <message>
-        <source>Exporting Full Resolution...</source>
-        <translation>Экспорт в полном разрешении...</translation>
-    </message>
-    <message numerus="yes">
-        <source>Start Parallel Batch Export (%n Photos)</source>
-        <translation>
-            <numerusform>Начать параллельный пакетный экспорт (%n фото)</numerusform>
-            <numerusform>Начать параллельный пакетный экспорт (%n фото)</numerusform>
-            <numerusform>Начать параллельный пакетный экспорт (%n фото)</numerusform>
-        </translation>
+        <source>Sets the crop and output sharpening for a platform. Reset restores your own.</source>
+        <translation>Задаёт кадрирование и выходную резкость для платформы. «Сбросить» возвращает ваши собственные настройки.</translation>
     </message>
     <message>
-        <source>Start Export (%1 / %2)</source>
-        <translation>Начать экспорт (%1 / %2)</translation>
+        <source>Watermark</source>
+        <translation>Водяной знак</translation>
+    </message>
+    <message>
+        <source>Folder</source>
+        <translation>Папка</translation>
+    </message>
+    <message>
+        <source>Hide</source>
+        <translation>Скрыть</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Отмена</translation>
+    </message>
+    <message>
+        <source>Exporting…</source>
+        <translation>Экспорт…</translation>
     </message>
 </context>
 <context>
     <name>FilmGrainPanel</name>
     <message>
-        <source>SILVER-HALIDE FILM GRAIN</source>
-        <translation>ЗЕРНО СЕРЕБРЯНОЙ ПЛЁНКИ</translation>
+        <source>Grain</source>
+        <translation>Зерно</translation>
     </message>
     <message>
-        <source>RESET</source>
-        <translation>СБРОС</translation>
+        <source>Reset</source>
+        <translation>Сброс</translation>
     </message>
     <message>
         <source>Grain Amount</source>
@@ -703,12 +747,16 @@
         <translation>Панорамный кинематографический контраст 35 мм</translation>
     </message>
     <message>
-        <source>FILM SIMULATION &amp; SENSOR PROFILES</source>
-        <translation>СИМУЛЯЦИЯ ПЛЁНКИ И ПРОФИЛИ МАТРИЦЫ</translation>
+        <source>Profile</source>
+        <translation>Профиль</translation>
     </message>
     <message>
-        <source>RESET</source>
-        <translation>СБРОС</translation>
+        <source>Reset</source>
+        <translation>Сброс</translation>
+    </message>
+    <message>
+        <source>Amount</source>
+        <translation>Сила</translation>
     </message>
     <message>
         <source>All</source>
@@ -718,17 +766,9 @@
         <source>Acros B&amp;W</source>
         <translation>Acros Ч/Б</translation>
     </message>
-    <message>
-        <source>SIMULATION INTENSITY</source>
-        <translation>ИНТЕНСИВНОСТЬ СИМУЛЯЦИИ</translation>
-    </message>
 </context>
 <context>
     <name>Filmstrip</name>
-    <message>
-        <source>Local Photos</source>
-        <translation>Локальные фото</translation>
-    </message>
     <message>
         <source>Studio Catalog</source>
         <translation>Каталог студии</translation>
@@ -736,6 +776,14 @@
     <message>
         <source>Up</source>
         <translation>Вверх</translation>
+    </message>
+    <message>
+        <source>Folders</source>
+        <translation>Папки</translation>
+    </message>
+    <message>
+        <source>Catalog</source>
+        <translation>Каталог</translation>
     </message>
     <message>
         <source>Scanning Catalog...</source>
@@ -762,21 +810,20 @@
         <translation>В этой папке нет фотографий.</translation>
     </message>
     <message>
-        <source>DIR</source>
-        <comment>folder badge</comment>
-        <translation>ПАП</translation>
+        <source>Folder</source>
+        <translation>Папка</translation>
     </message>
     <message>
-        <source>FETCHING</source>
-        <translation>ЗАГРУЗКА</translation>
+        <source>Downloading</source>
+        <translation>Загрузка</translation>
     </message>
     <message>
-        <source>RAW CLOUD</source>
-        <translation>RAW В ОБЛАКЕ</translation>
+        <source>Remote</source>
+        <translation>Удалённое</translation>
     </message>
     <message>
-        <source>NO PREVIEW</source>
-        <translation>НЕТ ПРЕВЬЮ</translation>
+        <source>No preview</source>
+        <translation>Нет превью</translation>
     </message>
     <message>
         <source>Loading...</source>
@@ -839,40 +886,60 @@
         <translation>Рецепты Fujifilm</translation>
     </message>
     <message>
-        <source>FUJIFILM RECIPES</source>
-        <translation>РЕЦЕПТЫ FUJIFILM</translation>
+        <source>Import</source>
+        <translation>Импорт</translation>
     </message>
     <message>
-        <source>IMPORT</source>
-        <translation>ИМПОРТ</translation>
+        <source>Apply photo&apos;s recipe</source>
+        <translation>Применить рецепт фото</translation>
     </message>
     <message>
-        <source>APPLY PHOTO&apos;S RECIPE</source>
-        <translation>ПРИМЕНИТЬ РЕЦЕПТ ФОТО</translation>
+        <source>Save</source>
+        <translation>Сохранить</translation>
     </message>
     <message>
-        <source>SAVE</source>
-        <translation>СОХРАНИТЬ</translation>
+        <source>Apply recipe</source>
+        <translation>Применить рецепт</translation>
+    </message>
+    <message>
+        <source>Camera (USB)</source>
+        <translation>Камера (USB)</translation>
+    </message>
+    <message>
+        <source>Reconnect</source>
+        <translation>Переподключить</translation>
+    </message>
+    <message>
+        <source>Connect</source>
+        <translation>Подключить</translation>
+    </message>
+    <message>
+        <source>Read C1–C7</source>
+        <translation>Прочитать C1–C7</translation>
+    </message>
+    <message>
+        <source>Convert in camera</source>
+        <translation>Конвертировать в камере</translation>
+    </message>
+    <message>
+        <source>Write recipe to C%1</source>
+        <translation>Записать рецепт в C%1</translation>
+    </message>
+    <message>
+        <source>Pixel shift</source>
+        <translation>Pixel Shift</translation>
+    </message>
+    <message>
+        <source>Merge %1 frames to DNG</source>
+        <translation>Объединить кадры (%1) в DNG</translation>
+    </message>
+    <message>
+        <source>Merge frames to DNG</source>
+        <translation>Объединить кадры в DNG</translation>
     </message>
     <message>
         <source>No saved recipes. Import an X RAW Studio profile, recipe text or a Fujifilm photo.</source>
         <translation>Нет сохранённых рецептов. Импортируйте профиль X RAW Studio, текст рецепта или фото Fujifilm.</translation>
-    </message>
-    <message>
-        <source>APPLY SELECTED RECIPE</source>
-        <translation>ПРИМЕНИТЬ ВЫБРАННЫЙ РЕЦЕПТ</translation>
-    </message>
-    <message>
-        <source>CAMERA (USB)</source>
-        <translation>КАМЕРА (USB)</translation>
-    </message>
-    <message>
-        <source>RECONNECT</source>
-        <translation>ПЕРЕПОДКЛЮЧИТЬ</translation>
-    </message>
-    <message>
-        <source>CONNECT</source>
-        <translation>ПОДКЛЮЧИТЬ</translation>
     </message>
     <message>
         <source>%1  ·  in-camera RAW conversion</source>
@@ -887,24 +954,8 @@
         <translation>Установите режим USB камеры на %1 и подключите её.</translation>
     </message>
     <message>
-        <source>READ C1-C7</source>
-        <translation>ПРОЧИТАТЬ C1-C7</translation>
-    </message>
-    <message>
-        <source>CONVERT IN CAMERA</source>
-        <translation>КОНВЕРТИРОВАТЬ В КАМЕРЕ</translation>
-    </message>
-    <message>
         <source>Unnamed</source>
         <translation>Без имени</translation>
-    </message>
-    <message>
-        <source>WRITE SELECTED RECIPE TO C%1</source>
-        <translation>ЗАПИСАТЬ ВЫБРАННЫЙ РЕЦЕПТ В C%1</translation>
-    </message>
-    <message>
-        <source>PIXEL SHIFT MULTI-SHOT</source>
-        <translation>PIXEL SHIFT: НЕСКОЛЬКО КАДРОВ</translation>
     </message>
     <message numerus="yes">
         <source>%n RAF frames selected. 4 frames give full colour per pixel, 16 frames double the resolution.</source>
@@ -918,24 +969,12 @@
         <source>Select the RAF frames of one GFX Pixel Shift sequence in the filmstrip.</source>
         <translation>Выберите на ленте кадры RAF одной серии GFX Pixel Shift.</translation>
     </message>
-    <message numerus="yes">
-        <source>MERGE %n FRAMES TO DNG</source>
-        <translation>
-            <numerusform>ОБЪЕДИНИТЬ %n КАДР В DNG</numerusform>
-            <numerusform>ОБЪЕДИНИТЬ %n КАДРА В DNG</numerusform>
-            <numerusform>ОБЪЕДИНИТЬ %n КАДРОВ В DNG</numerusform>
-        </translation>
-    </message>
-    <message>
-        <source>MERGE FRAMES TO DNG</source>
-        <translation>ОБЪЕДИНИТЬ КАДРЫ В DNG</translation>
-    </message>
 </context>
 <context>
     <name>GradeVersionsBar</name>
     <message>
-        <source>GRADE VERSION</source>
-        <translation>ВЕРСИЯ ГРЕЙДИНГА</translation>
+        <source>Version</source>
+        <translation>Версия</translation>
     </message>
 </context>
 <context>
@@ -946,8 +985,8 @@
         <translation>[Т] %1%</translation>
     </message>
     <message>
-        <source>RGB HISTOGRAM</source>
-        <translation>ГИСТОГРАММА RGB</translation>
+        <source>Histogram</source>
+        <translation>Гистограмма</translation>
     </message>
     <message>
         <source>[H] %1%</source>
@@ -994,12 +1033,12 @@
         <translation>Канал %1</translation>
     </message>
     <message>
-        <source>RESET CH</source>
-        <translation>СБРОС КАНАЛА</translation>
+        <source>Reset colour</source>
+        <translation>Сбросить цвет</translation>
     </message>
     <message>
-        <source>RESET ALL</source>
-        <translation>СБРОСИТЬ ВСЁ</translation>
+        <source>Reset all</source>
+        <translation>Сбросить всё</translation>
     </message>
     <message>
         <source>Hue Shift</source>
@@ -1107,32 +1146,32 @@
         <translation>Маска %1 готова (%2)</translation>
     </message>
     <message>
-        <source>DETECTING...</source>
-        <translation>ОПРЕДЕЛЕНИЕ...</translation>
+        <source>Detecting…</source>
+        <translation>Распознавание…</translation>
     </message>
     <message>
-        <source>LOCAL ADJUSTMENT LAYERS</source>
-        <translation>СЛОИ ЛОКАЛЬНОЙ КОРРЕКЦИИ</translation>
+        <source>Masks</source>
+        <translation>Маски</translation>
     </message>
     <message>
-        <source>+ GRADIENT</source>
-        <translation>+ ГРАДИЕНТ</translation>
+        <source>+ Linear</source>
+        <translation>+ Линейная</translation>
+    </message>
+    <message>
+        <source>+ Radial</source>
+        <translation>+ Радиальная</translation>
+    </message>
+    <message>
+        <source>+ Luminance</source>
+        <translation>+ Яркость</translation>
     </message>
     <message>
         <source>Linear Gradient %1</source>
         <translation>Линейный градиент %1</translation>
     </message>
     <message>
-        <source>+ RADIAL</source>
-        <translation>+ РАДИАЛЬНЫЙ</translation>
-    </message>
-    <message>
         <source>Radial Mask %1</source>
         <translation>Радиальная маска %1</translation>
-    </message>
-    <message>
-        <source>+ LUMA</source>
-        <translation>+ ЯРКОСТЬ</translation>
     </message>
     <message>
         <source>Luma Range %1</source>
@@ -1150,10 +1189,6 @@
         <source>I</source>
         <comment>invert mask toggle, first letter of Invert</comment>
         <translation>И</translation>
-    </message>
-    <message>
-        <source>SELECTED LAYER CONTROLS (%1)</source>
-        <translation>НАСТРОЙКИ ВЫБРАННОГО СЛОЯ (%1)</translation>
     </message>
     <message>
         <source>Layer Opacity</source>
@@ -1175,48 +1210,32 @@
 <context>
     <name>LutSelector</name>
     <message>
-        <source>DAVINCI 3D LUT ENGINE (.CUBE)</source>
-        <translation>ДВИЖОК 3D LUT DAVINCI (.CUBE)</translation>
+        <source>Load 3D LUT</source>
+        <translation>Загрузить 3D LUT</translation>
     </message>
     <message>
-        <source>RESET</source>
-        <translation>СБРОС</translation>
+        <source>3D LUT</source>
+        <translation>3D LUT</translation>
     </message>
     <message>
-        <source>Hollywood Print</source>
-        <translation>Голливудская копия</translation>
+        <source>Reset</source>
+        <translation>Сброс</translation>
     </message>
     <message>
-        <source>Cinema Blockbuster</source>
-        <translation>Киноблокбастер</translation>
+        <source>Load .cube file…</source>
+        <translation>Загрузить файл .cube…</translation>
     </message>
     <message>
-        <source>35mm Soft Stock</source>
-        <translation>Мягкая плёнка 35 мм</translation>
+        <source>Saved look: %1</source>
+        <translation>Сохранённый стиль: %1</translation>
     </message>
     <message>
-        <source>High-Acutance B&amp;W</source>
-        <translation>Ч/Б с высокой резкостью</translation>
-    </message>
-    <message>
-        <source>LUT Intensity (Mix)</source>
-        <translation>Интенсивность LUT (смешивание)</translation>
+        <source>Amount</source>
+        <translation>Сила</translation>
     </message>
 </context>
 <context>
     <name>MainWindow</name>
-    <message>
-        <source>Switched to version %1</source>
-        <translation>Переключено на версию %1</translation>
-    </message>
-    <message>
-        <source>Version %1 initialized</source>
-        <translation>Версия %1 создана</translation>
-    </message>
-    <message>
-        <source>Copied current grade to version %1</source>
-        <translation>Текущий грейдинг скопирован в версию %1</translation>
-    </message>
     <message numerus="yes">
         <source>Rating: %n star(s)</source>
         <translation>
@@ -1246,36 +1265,8 @@
         <translation>Нечего отменять</translation>
     </message>
     <message>
-        <source>Undo (Ctrl+Z)</source>
-        <translation>Отменить (Ctrl+Z)</translation>
-    </message>
-    <message>
         <source>Nothing to redo</source>
         <translation>Нечего повторять</translation>
-    </message>
-    <message>
-        <source>Redo (Ctrl+Shift+Z)</source>
-        <translation>Повторить (Ctrl+Shift+Z)</translation>
-    </message>
-    <message>
-        <source>Adjustments copied (Ctrl+Shift+C)</source>
-        <translation>Настройки скопированы (Ctrl+Shift+C)</translation>
-    </message>
-    <message>
-        <source>No adjustments in clipboard</source>
-        <translation>В буфере обмена нет настроек</translation>
-    </message>
-    <message>
-        <source>Adjustments pasted (Ctrl+Shift+V)</source>
-        <translation>Настройки вставлены (Ctrl+Shift+V)</translation>
-    </message>
-    <message>
-        <source>Reset to defaults (Ctrl+R)</source>
-        <translation>Восстановлены значения по умолчанию (Ctrl+R)</translation>
-    </message>
-    <message>
-        <source>Social framing and adjustments reset</source>
-        <translation>Кадрирование для соцсетей и настройки сброшены</translation>
     </message>
     <message>
         <source>Failed to load RAW: %1</source>
@@ -1298,28 +1289,8 @@
         <translation>Не удалось отрисовать превью</translation>
     </message>
     <message>
-        <source>Auto tone applied</source>
-        <translation>Автотон применён</translation>
-    </message>
-    <message>
-        <source>AI decisions applied</source>
-        <translation>Решения ИИ применены</translation>
-    </message>
-    <message>
-        <source>Local heuristic applied</source>
-        <translation>Локальная эвристика применена</translation>
-    </message>
-    <message>
         <source>%1 applied (%2)</source>
         <translation>%1 применено (%2)</translation>
-    </message>
-    <message>
-        <source>Recipe sidecar saved</source>
-        <translation>Файл рецепта сохранён</translation>
-    </message>
-    <message>
-        <source>Batch finished: %1/%2 photos exported</source>
-        <translation>Пакет завершён: экспортировано %1/%2 фото</translation>
     </message>
     <message>
         <source>Batch export: %1 succeeded, %2 failed</source>
@@ -1342,14 +1313,6 @@
         <translation>Записано: %1</translation>
     </message>
     <message>
-        <source>Analyzing dynamic range and scene...</source>
-        <translation>Анализ динамического диапазона и сцены...</translation>
-    </message>
-    <message>
-        <source>Asking the AI for edit decisions...</source>
-        <translation>Запрос решений по правке у ИИ...</translation>
-    </message>
-    <message>
         <source>Open RAW Photo</source>
         <translation>Открыть фото RAW</translation>
     </message>
@@ -1358,20 +1321,8 @@
         <translation>Фото RAW</translation>
     </message>
     <message>
-        <source>Saved to: %1</source>
-        <translation>Сохранено в: %1</translation>
-    </message>
-    <message>
-        <source>Export error: %1</source>
-        <translation>Ошибка экспорта: %1</translation>
-    </message>
-    <message>
         <source>Export finished without a result</source>
         <translation>Экспорт завершился без результата</translation>
-    </message>
-    <message>
-        <source>The folder scan gave no answer</source>
-        <translation>Сканирование папки не дало ответа</translation>
     </message>
     <message>
         <source>Crop mode: on (C)</source>
@@ -1382,36 +1333,12 @@
         <translation>Режим кадрирования: выкл.</translation>
     </message>
     <message>
-        <source>Open a photo first to export</source>
-        <translation>Сначала откройте фото для экспорта</translation>
-    </message>
-    <message>
-        <source>Panels hidden (Tab)</source>
-        <translation>Панели скрыты (Tab)</translation>
-    </message>
-    <message>
-        <source>Panels restored (Tab)</source>
-        <translation>Панели восстановлены (Tab)</translation>
-    </message>
-    <message>
-        <source>Optimizing for %1...</source>
-        <translation>Оптимизация для %1...</translation>
-    </message>
-    <message>
-        <source>AI SCENE INSIGHT</source>
-        <translation>АНАЛИЗ СЦЕНЫ ИИ</translation>
-    </message>
-    <message>
         <source>Analyzing...</source>
         <translation>Анализ...</translation>
     </message>
     <message>
         <source>Extracting dynamic range...</source>
         <translation>Определение динамического диапазона...</translation>
-    </message>
-    <message>
-        <source>Grade versions • Alt+1..4 to switch</source>
-        <translation>Версии грейдинга • Alt+1..4 для переключения</translation>
     </message>
     <message>
         <source>Opened %1</source>
@@ -1422,36 +1349,8 @@
         <translation>Сканирование папки %1</translation>
     </message>
     <message>
-        <source>AI edit applied</source>
-        <translation>Правка ИИ применена</translation>
-    </message>
-    <message>
-        <source>ESSENTIAL ADJUSTMENTS</source>
-        <translation>ОСНОВНЫЕ НАСТРОЙКИ</translation>
-    </message>
-    <message>
-        <source>RESET</source>
-        <translation>СБРОС</translation>
-    </message>
-    <message>
-        <source>Exposure (Light)</source>
-        <translation>Экспозиция (свет)</translation>
-    </message>
-    <message>
-        <source>Warmth (Temperature)</source>
-        <translation>Теплота (температура)</translation>
-    </message>
-    <message>
-        <source>Vibrance (Color Punch)</source>
-        <translation>Красочность (сила цвета)</translation>
-    </message>
-    <message>
         <source>Contrast</source>
         <translation>Контраст</translation>
-    </message>
-    <message>
-        <source>WHITE BALANCE</source>
-        <translation>БАЛАНС БЕЛОГО</translation>
     </message>
     <message>
         <source>Temp (Kelvin)</source>
@@ -1460,10 +1359,6 @@
     <message>
         <source>Tint (Green / Magenta)</source>
         <translation>Оттенок (зелёный / пурпурный)</translation>
-    </message>
-    <message>
-        <source>LIGHT &amp; DYNAMIC RANGE</source>
-        <translation>СВЕТ И ДИНАМИЧЕСКИЙ ДИАПАЗОН</translation>
     </message>
     <message>
         <source>Exposure</source>
@@ -1486,10 +1381,6 @@
         <translation>Чёрные</translation>
     </message>
     <message>
-        <source>TONE CURVE (PARAMETRIC)</source>
-        <translation>ТОНОВАЯ КРИВАЯ (ПАРАМЕТРИЧЕСКАЯ)</translation>
-    </message>
-    <message>
         <source>Curve Highlights</source>
         <translation>Кривая: света</translation>
     </message>
@@ -1504,10 +1395,6 @@
     <message>
         <source>Curve Shadows</source>
         <translation>Кривая: тени</translation>
-    </message>
-    <message>
-        <source>PRESENCE &amp; TEXTURE</source>
-        <translation>ВЫРАЗИТЕЛЬНОСТЬ И ТЕКСТУРА</translation>
     </message>
     <message>
         <source>Texture</source>
@@ -1528,14 +1415,6 @@
     <message>
         <source>Saturation</source>
         <translation>Насыщенность</translation>
-    </message>
-    <message>
-        <source>COLOR MIXER (8-BAND HSL)</source>
-        <translation>ЦВЕТОВОЙ МИКШЕР (HSL, 8 ПОЛОС)</translation>
-    </message>
-    <message>
-        <source>DETAIL &amp; OPTICS</source>
-        <translation>ДЕТАЛИ И ОПТИКА</translation>
     </message>
     <message>
         <source>Sharpening</source>
@@ -1566,12 +1445,200 @@
         <translation>Сначала откройте фото</translation>
     </message>
     <message>
+        <source>Version %1</source>
+        <translation>Версия %1</translation>
+    </message>
+    <message>
+        <source>Version %1 started</source>
+        <translation>Начата версия %1</translation>
+    </message>
+    <message>
+        <source>Copied to version %1</source>
+        <translation>Скопировано в версию %1</translation>
+    </message>
+    <message>
+        <source>Undo</source>
+        <translation>Отменить</translation>
+    </message>
+    <message>
+        <source>Redo</source>
+        <translation>Повторить</translation>
+    </message>
+    <message>
+        <source>Settings copied</source>
+        <translation>Настройки скопированы</translation>
+    </message>
+    <message>
+        <source>Nothing copied yet</source>
+        <translation>Пока ничего не скопировано</translation>
+    </message>
+    <message>
+        <source>Settings pasted</source>
+        <translation>Настройки вставлены</translation>
+    </message>
+    <message>
+        <source>Reset to defaults</source>
+        <translation>Восстановлены значения по умолчанию</translation>
+    </message>
+    <message>
+        <source>Platform crop reset</source>
+        <translation>Кадрирование для платформы сброшено</translation>
+    </message>
+    <message>
+        <source>Auto applied</source>
+        <translation>Автокоррекция применена</translation>
+    </message>
+    <message>
+        <source>Settings saved</source>
+        <translation>Настройки сохранены</translation>
+    </message>
+    <message>
+        <source>%1 of %2 photos exported</source>
+        <translation>Экспортировано фото: %1 из %2</translation>
+    </message>
+    <message>
+        <source>Auto: analysing the photo…</source>
+        <translation>Авто: анализ фото…</translation>
+    </message>
+    <message>
+        <source>Saved to %1</source>
+        <translation>Сохранено в %1</translation>
+    </message>
+    <message>
+        <source>Export failed</source>
+        <translation>Ошибка экспорта</translation>
+    </message>
+    <message>
+        <source>The scan did not respond.</source>
+        <translation>Сканирование папки не ответило.</translation>
+    </message>
+    <message>
+        <source>Rating: ★</source>
+        <translation>Оценка: ★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★</source>
+        <translation>Оценка: ★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★</source>
+        <translation>Оценка: ★★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★★</source>
+        <translation>Оценка: ★★★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★★★</source>
+        <translation>Оценка: ★★★★★</translation>
+    </message>
+    <message>
+        <source>Flag cleared</source>
+        <translation>Пометка снята</translation>
+    </message>
+    <message>
+        <source>Preparing for %1…</source>
+        <translation>Подготовка для %1…</translation>
+    </message>
+    <message>
+        <source>Rating: %1</source>
+        <translation>Оценка: %1</translation>
+    </message>
+    <message>
+        <source>Picked</source>
+        <translation>Выбрано</translation>
+    </message>
+    <message>
+        <source>Rejected</source>
+        <translation>Отклонено</translation>
+    </message>
+    <message>
+        <source>Scene</source>
+        <translation>Сцена</translation>
+    </message>
+    <message>
+        <source>Adjust</source>
+        <translation>Настройка</translation>
+    </message>
+    <message>
+        <source>Masks</source>
+        <translation>Маски</translation>
+    </message>
+    <message>
+        <source>Looks</source>
+        <translation>Стили</translation>
+    </message>
+    <message>
+        <source>AI</source>
+        <translation>ИИ</translation>
+    </message>
+    <message>
+        <source>Profile</source>
+        <translation>Профиль</translation>
+    </message>
+    <message>
         <source>Color Chrome Effect</source>
         <translation>Эффект Color Chrome</translation>
     </message>
     <message>
         <source>Color Chrome FX Blue</source>
         <translation>Color Chrome FX Синий</translation>
+    </message>
+    <message>
+        <source>White balance</source>
+        <translation>Баланс белого</translation>
+    </message>
+    <message>
+        <source>Tone</source>
+        <translation>Тон</translation>
+    </message>
+    <message>
+        <source>Presence</source>
+        <translation>Присутствие</translation>
+    </message>
+    <message>
+        <source>Tone curve</source>
+        <translation>Тоновая кривая</translation>
+    </message>
+    <message>
+        <source>Colour mixer</source>
+        <translation>Микшер цветов</translation>
+    </message>
+    <message>
+        <source>Colour grading</source>
+        <translation>Цветокоррекция</translation>
+    </message>
+    <message>
+        <source>Detail and optics</source>
+        <translation>Детализация и оптика</translation>
+    </message>
+    <message>
+        <source>Grain</source>
+        <translation>Зерно</translation>
+    </message>
+    <message>
+        <source>Colour management</source>
+        <translation>Управление цветом</translation>
+    </message>
+    <message>
+        <source>Local adjustments</source>
+        <translation>Локальные коррекции</translation>
+    </message>
+    <message>
+        <source>Presets</source>
+        <translation>Пресеты</translation>
+    </message>
+    <message>
+        <source>LUT</source>
+        <translation>LUT</translation>
+    </message>
+    <message>
+        <source>Edit assistant</source>
+        <translation>Ассистент редактирования</translation>
+    </message>
+    <message>
+        <source>Assistant edit applied</source>
+        <translation>Правка ассистента применена</translation>
     </message>
     <message>
         <source>Copy</source>
@@ -1606,31 +1673,31 @@
         <translation>Открытие %1</translation>
     </message>
     <message>
-        <source>Loading the studio catalog...</source>
-        <translation>Загрузка каталога студии...</translation>
+        <source>Loading the catalog…</source>
+        <translation>Загрузка каталога…</translation>
     </message>
     <message>
-        <source>Refreshing the studio catalog...</source>
-        <translation>Обновление каталога студии...</translation>
+        <source>Refreshing the catalog…</source>
+        <translation>Обновление каталога…</translation>
     </message>
     <message numerus="yes">
-        <source>Exporting %n photo(s) in parallel...</source>
+        <source>Exporting %n photos…</source>
         <translation>
-            <numerusform>Параллельный экспорт %n фото...</numerusform>
-            <numerusform>Параллельный экспорт %n фото...</numerusform>
-            <numerusform>Параллельный экспорт %n фото...</numerusform>
+            <numerusform>Экспорт %n фото…</numerusform>
+            <numerusform>Экспорт %n фото…</numerusform>
+            <numerusform>Экспорт %n фото…</numerusform>
         </translation>
     </message>
     <message>
-        <source>Developing at full resolution and encoding...</source>
-        <translation>Проявка в полном разрешении и кодирование...</translation>
+        <source>Developing at full resolution…</source>
+        <translation>Проявка в полном разрешении…</translation>
     </message>
 </context>
 <context>
     <name>Navigator</name>
     <message>
-        <source>NAVIGATOR</source>
-        <translation>НАВИГАТОР</translation>
+        <source>Navigator</source>
+        <translation>Навигатор</translation>
     </message>
     <message>
         <source>FIT</source>
@@ -1638,65 +1705,92 @@
     </message>
 </context>
 <context>
+    <name>PanelSection</name>
+    <message>
+        <source>Reset %1</source>
+        <translation>Сбросить: %1</translation>
+    </message>
+</context>
+<context>
     <name>PresetSelector</name>
     <message>
-        <source>FILM LOOKS &amp; STYLES</source>
-        <translation>ПЛЁНОЧНЫЕ ОБРАЗЫ И СТИЛИ</translation>
+        <source>Looks</source>
+        <translation>Стили</translation>
     </message>
     <message>
-        <source>RESET</source>
-        <translation>СБРОС</translation>
+        <source>Reset</source>
+        <translation>Сброс</translation>
     </message>
     <message>
-        <source>AI Auto Enhance</source>
-        <translation>Автоулучшение ИИ</translation>
+        <source>Auto</source>
+        <translation>Авто</translation>
     </message>
     <message>
-        <source>RUN</source>
-        <translation>ЗАПУСК</translation>
+        <source>Run</source>
+        <translation>Запустить</translation>
     </message>
     <message>
-        <source>Documentary Muted</source>
-        <translation>Приглушённый документальный</translation>
+        <source>Muted</source>
+        <translation>Приглушённый</translation>
     </message>
     <message>
-        <source>Vivid Landscapes</source>
-        <translation>Яркие пейзажи</translation>
+        <source>Documentary, low saturation</source>
+        <translation>Документальный, низкая насыщенность</translation>
     </message>
     <message>
-        <source>Warm Skin Tones</source>
-        <translation>Тёплые тона кожи</translation>
+        <source>Vivid</source>
+        <translation>Яркий</translation>
     </message>
     <message>
-        <source>High Contrast B&amp;W</source>
-        <translation>Контрастное Ч/Б</translation>
+        <source>Landscapes, rich colour</source>
+        <translation>Пейзажи, насыщенный цвет</translation>
     </message>
     <message>
-        <source>Film Grade</source>
-        <translation>Плёночный грейдинг</translation>
+        <source>Warm portrait</source>
+        <translation>Тёплый портрет</translation>
+    </message>
+    <message>
+        <source>Soft contrast, warm skin</source>
+        <translation>Мягкий контраст, тёплая кожа</translation>
+    </message>
+    <message>
+        <source>Black and white</source>
+        <translation>Чёрно-белый</translation>
+    </message>
+    <message>
+        <source>High contrast</source>
+        <translation>Высокий контраст</translation>
+    </message>
+    <message>
+        <source>Teal and orange</source>
+        <translation>Бирюзовый и оранжевый</translation>
+    </message>
+    <message>
+        <source>Split toning</source>
+        <translation>Раздельное тонирование</translation>
     </message>
 </context>
 <context>
     <name>RgbMixerPanel</name>
     <message>
-        <source>DAVINCI RGB PRIMARY MIXER</source>
-        <translation>ОСНОВНОЙ RGB-МИКШЕР DAVINCI</translation>
-    </message>
-    <message>
-        <source>RESET</source>
-        <translation>СБРОС</translation>
-    </message>
-    <message>
         <source>Monochrome Mixing</source>
         <translation>Монохромное смешивание</translation>
     </message>
     <message>
-        <source>MONOCHROME LUMA MIX</source>
-        <translation>МОНОХРОМНОЕ СМЕШИВАНИЕ ЯРКОСТИ</translation>
+        <source>Channel mixer</source>
+        <translation>Микшер каналов</translation>
     </message>
     <message>
-        <source>RED OUTPUT CHANNEL</source>
-        <translation>КРАСНЫЙ ВЫХОДНОЙ КАНАЛ</translation>
+        <source>Reset</source>
+        <translation>Сброс</translation>
+    </message>
+    <message>
+        <source>Monochrome mix</source>
+        <translation>Монохромное смешение</translation>
+    </message>
+    <message>
+        <source>Red output</source>
+        <translation>Красный выход</translation>
     </message>
     <message>
         <source>Red in Red</source>
@@ -1711,8 +1805,12 @@
         <translation>Синий в красном</translation>
     </message>
     <message>
-        <source>GREEN OUTPUT CHANNEL</source>
-        <translation>ЗЕЛЁНЫЙ ВЫХОДНОЙ КАНАЛ</translation>
+        <source>Green output</source>
+        <translation>Зелёный выход</translation>
+    </message>
+    <message>
+        <source>Blue output</source>
+        <translation>Синий выход</translation>
     </message>
     <message>
         <source>Red in Green</source>
@@ -1725,10 +1823,6 @@
     <message>
         <source>Blue in Green</source>
         <translation>Синий в зелёном</translation>
-    </message>
-    <message>
-        <source>BLUE OUTPUT CHANNEL</source>
-        <translation>СИНИЙ ВЫХОДНОЙ КАНАЛ</translation>
     </message>
     <message>
         <source>Red in Blue</source>
@@ -1772,8 +1866,8 @@
         <translation>[С] %1%</translation>
     </message>
     <message>
-        <source>NO SIGNAL / LOAD RAW</source>
-        <translation>НЕТ СИГНАЛА / ЗАГРУЗИТЕ RAW</translation>
+        <source>No photo</source>
+        <translation>Нет фото</translation>
     </message>
     <message>
         <source>RED</source>
@@ -1795,12 +1889,12 @@
 <context>
     <name>SkinTonePanel</name>
     <message>
-        <source>CAPTURE ONE SKIN TONE</source>
-        <translation>ТОН КОЖИ CAPTURE ONE</translation>
+        <source>Skin tone</source>
+        <translation>Тон кожи</translation>
     </message>
     <message>
-        <source>RESET</source>
-        <translation>СБРОС</translation>
+        <source>Reset</source>
+        <translation>Сброс</translation>
     </message>
     <message>
         <source>Vectorscope 123° flesh line (target: %1°)</source>
@@ -1841,52 +1935,28 @@
 <context>
     <name>SocialOptimizer</name>
     <message>
-        <source>AI SOCIAL MEDIA OPTIMIZER</source>
-        <translation>ОПТИМИЗАЦИЯ ДЛЯ СОЦСЕТЕЙ С ИИ</translation>
+        <source>Prepare for</source>
+        <translation>Подготовить для</translation>
     </message>
     <message>
-        <source>RESET</source>
-        <translation>СБРОС</translation>
+        <source>Reset</source>
+        <translation>Сброс</translation>
     </message>
     <message>
-        <source>Instagram Feed</source>
-        <translation>Лента Instagram</translation>
+        <source>Instagram post</source>
+        <translation>Пост в Instagram</translation>
     </message>
     <message>
-        <source>Max Screen</source>
-        <translation>Максимальный экран</translation>
+        <source>Stories and Reels</source>
+        <translation>Истории и Reels</translation>
     </message>
     <message>
-        <source>Stories / Reels</source>
-        <translation>Истории / Reels</translation>
+        <source>Square</source>
+        <translation>Квадрат</translation>
     </message>
     <message>
-        <source>Full Mobile</source>
-        <translation>Полный экран телефона</translation>
-    </message>
-    <message>
-        <source>Crisp Feed</source>
-        <translation>Чёткая лента</translation>
-    </message>
-    <message>
-        <source>Classic Square</source>
-        <translation>Классический квадрат</translation>
-    </message>
-    <message>
-        <source>Grid Post</source>
-        <translation>Пост в сетке</translation>
-    </message>
-    <message>
-        <source>High Res</source>
-        <translation>Высокое разрешение</translation>
-    </message>
-    <message>
-        <source>YouTube Thumb</source>
-        <translation>Миниатюра YouTube</translation>
-    </message>
-    <message>
-        <source>High CTR</source>
-        <translation>Высокий CTR</translation>
+        <source>YouTube thumbnail</source>
+        <translation>Обложка YouTube</translation>
     </message>
 </context>
 <context>
@@ -1921,8 +1991,8 @@
         <translation>Основное</translation>
     </message>
     <message>
-        <source>Pro Studio</source>
-        <translation>Pro Studio</translation>
+        <source>Pro</source>
+        <translation>Pro</translation>
     </message>
     <message>
         <source>Undo (Ctrl+Z)</source>
@@ -1960,16 +2030,16 @@
 <context>
     <name>Viewport</name>
     <message>
-        <source>RESET 0°</source>
-        <translation>СБРОС 0°</translation>
+        <source>Reset 0°</source>
+        <translation>Сбросить до 0°</translation>
     </message>
     <message>
-        <source>FIT</source>
-        <translation>ВПИСАТЬ</translation>
+        <source>Fit</source>
+        <translation>Вписать</translation>
     </message>
     <message>
-        <source>CROP &amp; COMPOSE</source>
-        <translation>КАДРИРОВАНИЕ И КОМПОЗИЦИЯ</translation>
+        <source>Crop</source>
+        <translation>Кадрировать</translation>
     </message>
     <message>
         <source>Original</source>
@@ -1996,12 +2066,20 @@
         <translation>Сетка: выкл.</translation>
     </message>
     <message>
-        <source>RESET</source>
-        <translation>СБРОС</translation>
+        <source>Reset</source>
+        <translation>Сброс</translation>
     </message>
     <message>
-        <source>DONE</source>
-        <translation>ГОТОВО</translation>
+        <source>Done</source>
+        <translation>Готово</translation>
+    </message>
+    <message>
+        <source>Shadow clipping</source>
+        <translation>Обрезка теней</translation>
+    </message>
+    <message>
+        <source>Highlight clipping</source>
+        <translation>Обрезка светов</translation>
     </message>
     <message>
         <source>ORIGINAL RAW (Before)</source>
@@ -2010,18 +2088,6 @@
     <message>
         <source>EDITED RECIPE (After)</source>
         <translation>ИЗМЕНЁННЫЙ РЕЦЕПТ (после)</translation>
-    </message>
-    <message>
-        <source>[S] SHADOW CLIPPING (BLUE)</source>
-        <translation>[Т] ОБРЕЗКА ТЕНЕЙ (СИНИЙ)</translation>
-    </message>
-    <message>
-        <source>[H] HIGHLIGHT CLIPPING (RED)</source>
-        <translation>[С] ОБРЕЗКА СВЕТОВ (КРАСНЫЙ)</translation>
-    </message>
-    <message>
-        <source>Pinch: Zoom | 2-Finger Twist: Rotate | 2-Finger Pan | Double-Tap: Reset</source>
-        <translation>Щипок: масштаб | Поворот двумя пальцами: вращение | Сдвиг двумя пальцами | Двойное касание: сброс</translation>
     </message>
     <message>
         <source>Open a RAW (Ctrl+O) or drop a photo / folder here</source>
@@ -2035,8 +2101,8 @@
 <context>
     <name>WatermarkConfig</name>
     <message>
-        <source>WATERMARK &amp; BRANDING</source>
-        <translation>ВОДЯНОЙ ЗНАК И ФИРМЕННЫЙ СТИЛЬ</translation>
+        <source>Watermark</source>
+        <translation>Водяной знак</translation>
     </message>
     <message>
         <source>Text / EXIF Tag</source>
@@ -2047,28 +2113,28 @@
         <translation>Свой логотип PNG</translation>
     </message>
     <message>
-        <source>WATERMARK TEXT OR TEMPLATE</source>
-        <translation>ТЕКСТ ИЛИ ШАБЛОН ВОДЯНОГО ЗНАКА</translation>
+        <source>Text or template</source>
+        <translation>Текст или шаблон</translation>
     </message>
     <message>
-        <source>LOGO FILE PATH (.PNG)</source>
-        <translation>ПУТЬ К ЛОГОТИПУ (.PNG)</translation>
+        <source>Logo file (PNG)</source>
+        <translation>Файл логотипа (PNG)</translation>
     </message>
     <message>
-        <source>POSITION</source>
-        <translation>ПОЛОЖЕНИЕ</translation>
+        <source>Position</source>
+        <translation>Положение</translation>
+    </message>
+    <message>
+        <source>Opacity</source>
+        <translation>Непрозрачность</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>Размер</translation>
     </message>
     <message>
         <source>Drop Shadow</source>
         <translation>Тень</translation>
-    </message>
-    <message>
-        <source>OPACITY</source>
-        <translation>НЕПРОЗРАЧНОСТЬ</translation>
-    </message>
-    <message>
-        <source>SIZE MULTIPLIER</source>
-        <translation>МНОЖИТЕЛЬ РАЗМЕРА</translation>
     </message>
 </context>
 </TS>

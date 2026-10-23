@@ -63,3 +63,18 @@ Omarchy Linux · Wayland · Hyprland
 Little CMS 2; sRGB, Display P3, Adobe RGB, ProPhoto, Rec. 2020
 Qt 6 (LGPLv3) · cxx-qt (MIT/Apache-2.0) · LibRaw (LGPL-2.1/CDDL-1.0) · Little CMS 2 (MIT) · 
 Ozan Özdil
+# File formats, compression methods and colour spaces
+JPEG
+PNG
+TIFF
+WebP
+AVIF
+HEIF
+JPEG XL
+OpenEXR
+LZW
+ZIP
+Adobe RGB
+Rec. 2020
+ACEScg
+Facebook

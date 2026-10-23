@@ -23,7 +23,7 @@ Rectangle {
 
         Text {
             font.family: Theme.fontFamily
-            text: qsTr("GRADE VERSION")
+            text: qsTr("Version")
             textFormat: Text.PlainText
             font.pixelSize: Theme.px(8)
             font.weight: Font.DemiBold

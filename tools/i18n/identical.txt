@@ -159,3 +159,82 @@ id:NAVIGATOR
 id:HIST
 id:PARADE
 vi:AI
+# Product and format names kept as they are
+3D LUT
+LUT
+Pro
+10-bit · HEVC
+tr:Histogram
+tr:HDR, video
+3840 px
+2048 px
+de:Tabs
+de:Format
+de:Linear, VFX
+de:Version
+de:+ Linear
+de:+ Radial
+de:Looks
+de:Navigator
+de:Position
+fr:Assistant
+fr:Format
+fr:Compression
+fr:Grain
+fr:Version
+fr:+ Radial
+fr:+ Luminance
+fr:Auto
+fr:Position
+es:+ Radial
+it:HDR, video
+pt_BR:+ Linear
+pt_BR:+ Radial
+nl:HDR, video
+nl:Histogram
+nl:Navigator
+nl:Monochrome mix
+sv:Full
+sv:HDR, video
+sv:Metadata
+sv:Version
+sv:Histogram
+sv:Navigator
+da:HDR, video
+da:Metadata
+da:Version
+da:Histogram
+da:+ Radial
+da:Scene
+da:Tone
+da:Navigator
+nb:Full
+nb:HDR, video
+nb:Metadata
+nb:Histogram
+nb:Scene
+nb:Tone
+nb:Navigator
+fi:HDR, video
+pl:Folder
+pl:Histogram
+cs:HDR, video
+cs:Metadata
+cs:Histogram
+ro:HDR, video
+ro:Catalog
+ro:+ Radial
+ro:Navigator
+Pixel shift
+el:%1-bit
+id:8-bit · web
+id:16-bit · modern
+id:%1-bit
+id:HDR, video
+id:Metadata
+id:Folder
+id:Histogram
+id:+ Linear
+id:+ Radial
+id:Navigator
+vi:HDR, video

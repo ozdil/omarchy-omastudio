@@ -175,28 +175,36 @@
         <translation>Selhalo</translation>
     </message>
     <message>
-        <source>AI EDIT ASSISTANT</source>
-        <translation>ASISTENT ÚPRAV AI</translation>
+        <source>Assistant</source>
+        <translation>Asistent</translation>
     </message>
     <message>
-        <source>DONE</source>
-        <translation>HOTOVO</translation>
+        <source>Done</source>
+        <translation>Hotovo</translation>
     </message>
     <message>
-        <source>SETUP</source>
-        <translation>NASTAVENÍ</translation>
+        <source>Set up</source>
+        <translation>Nastavit</translation>
+    </message>
+    <message>
+        <source>Working…</source>
+        <translation>Zpracovává se…</translation>
+    </message>
+    <message>
+        <source>Edit</source>
+        <translation>Upravit</translation>
+    </message>
+    <message>
+        <source>Store key</source>
+        <translation>Uložit klíč</translation>
+    </message>
+    <message>
+        <source>Use %1</source>
+        <translation>Použít %1</translation>
     </message>
     <message>
         <source>e.g. warmer, moody evening light, recover the sky</source>
         <translation>např. tepleji, ponuré večerní světlo, obnovit oblohu</translation>
-    </message>
-    <message>
-        <source>THINKING...</source>
-        <translation>PŘEMÝŠLÍM...</translation>
-    </message>
-    <message>
-        <source>EDIT WITH AI</source>
-        <translation>UPRAVIT POMOCÍ AI</translation>
     </message>
     <message>
         <source>Running. Models: %1</source>
@@ -222,14 +230,6 @@
         <source>API key</source>
         <translation>Klíč API</translation>
     </message>
-    <message>
-        <source>STORE KEY</source>
-        <translation>ULOŽIT KLÍČ</translation>
-    </message>
-    <message>
-        <source>USE %1</source>
-        <translation>POUŽÍT %1</translation>
-    </message>
 </context>
 <context>
     <name>BoundedTextInput</name>
@@ -241,48 +241,16 @@
 <context>
     <name>ColorGradingWheels</name>
     <message>
-        <source>DAVINCI PRIMARIES WHEELS</source>
-        <translation>PRIMÁRNÍ KOLA DAVINCI</translation>
-    </message>
-    <message>
-        <source>4-WHEEL</source>
-        <translation>4 KOLA</translation>
-    </message>
-    <message>
-        <source>TABBED</source>
-        <translation>KARTY</translation>
-    </message>
-    <message>
-        <source>RESET</source>
-        <translation>OBNOVIT</translation>
-    </message>
-    <message>
-        <source>LIFT</source>
-        <translation>LIFT</translation>
-    </message>
-    <message>
         <source>Shadows</source>
         <translation>Stíny</translation>
-    </message>
-    <message>
-        <source>GAMMA</source>
-        <translation>GAMMA</translation>
     </message>
     <message>
         <source>Mids</source>
         <translation>Středy</translation>
     </message>
     <message>
-        <source>GAIN</source>
-        <translation>GAIN</translation>
-    </message>
-    <message>
         <source>Highlights</source>
         <translation>Světla</translation>
-    </message>
-    <message>
-        <source>OFFSET</source>
-        <translation>OFFSET</translation>
     </message>
     <message>
         <source>Global</source>
@@ -307,6 +275,22 @@
     <message>
         <source>Lift</source>
         <translation>Lift</translation>
+    </message>
+    <message>
+        <source>Colour grading</source>
+        <translation>Barevné korekce</translation>
+    </message>
+    <message>
+        <source>4 wheels</source>
+        <translation>4 kola</translation>
+    </message>
+    <message>
+        <source>Tabs</source>
+        <translation>Karty</translation>
+    </message>
+    <message>
+        <source>Reset</source>
+        <translation>Obnovit</translation>
     </message>
     <message>
         <source>Gamma</source>
@@ -368,8 +352,12 @@
         <translation>Široký AP1</translation>
     </message>
     <message>
-        <source>COLOR MANAGEMENT &amp; ACES 1.3</source>
-        <translation>SPRÁVA BAREV A ACES 1.3</translation>
+        <source>Colour management</source>
+        <translation>Správa barev</translation>
+    </message>
+    <message>
+        <source>Gamut compression</source>
+        <translation>Komprese gamutu</translation>
     </message>
     <message>
         <source>%1 (%2)</source>
@@ -394,115 +382,163 @@
 <context>
     <name>ExifCard</name>
     <message>
-        <source>No camera loaded</source>
-        <translation>Není načten žádný fotoaparát</translation>
-    </message>
-    <message>
-        <source>Unknown lens</source>
-        <translation>Neznámý objektiv</translation>
+        <source>No photo</source>
+        <translation>Žádná fotografie</translation>
     </message>
 </context>
 <context>
     <name>ExportDialog</name>
-    <message numerus="yes">
-        <source>Batch Export (%n Photos)</source>
-        <translation>
-            <numerusform>Dávkový export (%n fotografie)</numerusform>
-            <numerusform>Dávkový export (%n fotografie)</numerusform>
-            <numerusform>Dávkový export (%n fotografií)</numerusform>
-        </translation>
-    </message>
-    <message>
-        <source>Export Master Photo</source>
-        <translation>Exportovat hlavní fotografii</translation>
-    </message>
-    <message>
-        <source>MODERN OPEN FORMAT</source>
-        <translation>MODERNÍ OTEVŘENÝ FORMÁT</translation>
-    </message>
-    <message>
-        <source>Next-Gen 16-bit HDR</source>
-        <translation>16bitové HDR nové generace</translation>
-    </message>
-    <message>
-        <source>AV1 Web/Mobile</source>
-        <translation>AV1 web/mobil</translation>
-    </message>
-    <message>
-        <source>Ultra Compact</source>
-        <translation>Velmi kompaktní</translation>
-    </message>
-    <message>
-        <source>16-bit TIFF</source>
-        <translation>16bitový TIFF</translation>
-    </message>
-    <message>
-        <source>Master Print Lossless</source>
-        <translation>Bezeztrátový tisk masteru</translation>
-    </message>
-    <message>
-        <source>Graphic Lossless</source>
-        <translation>Bezeztrátová grafika</translation>
-    </message>
-    <message>
-        <source>Universal MozJPEG</source>
-        <translation>Univerzální MozJPEG</translation>
-    </message>
-    <message>
-        <source>Export Compression Quality</source>
-        <translation>Kvalita komprese exportu</translation>
-    </message>
-    <message>
-        <source>RESOLUTION &amp; SCALING</source>
-        <translation>ROZLIŠENÍ A ZMĚNA VELIKOSTI</translation>
-    </message>
-    <message>
-        <source>100% Full</source>
-        <translation>100 % plné</translation>
-    </message>
-    <message>
-        <source>Social (2048p)</source>
-        <translation>Sociální sítě (2048p)</translation>
-    </message>
-    <message>
-        <source>COLOR SPACE &amp; ICC PROFILE</source>
-        <translation>BAREVNÝ PROSTOR A PROFIL ICC</translation>
-    </message>
-    <message>
-        <source>Universal Web / Social</source>
-        <translation>Univerzální web / sociální sítě</translation>
-    </message>
-    <message>
-        <source>Apple / Wide OLED</source>
-        <translation>Apple / široký OLED</translation>
-    </message>
-    <message>
-        <source>Ultra-Wide Gamut HDR</source>
-        <translation>HDR s velmi širokým gamutem</translation>
-    </message>
-    <message>
-        <source>Academy Color Standard</source>
-        <translation>Barevný standard Akademie</translation>
-    </message>
-    <message>
-        <source>Pro Photography / Print</source>
-        <translation>Profesionální fotografie / tisk</translation>
-    </message>
-    <message>
-        <source>16-Bit Master Archival</source>
-        <translation>16bitový archivní master</translation>
-    </message>
-    <message>
-        <source>Intent</source>
-        <translation>Záměr</translation>
-    </message>
     <message>
         <source>Perceptual</source>
         <translation>Perceptuální</translation>
     </message>
     <message>
-        <source>Compresses the whole gamut; smooth, saturated colours keep their relations</source>
-        <translation>Stlačí celý gamut; jemné, syté barvy zachovají své vztahy</translation>
+        <source>8-bit · universal</source>
+        <translation>8 bitů · univerzální</translation>
+    </message>
+    <message>
+        <source>16-bit · lossless</source>
+        <translation>16 bitů · bezeztrátový</translation>
+    </message>
+    <message>
+        <source>16-bit · print, archive</source>
+        <translation>16 bitů · tisk, archiv</translation>
+    </message>
+    <message>
+        <source>8-bit · web</source>
+        <translation>8 bitů · web</translation>
+    </message>
+    <message>
+        <source>12-bit · HDR-ready</source>
+        <translation>12 bitů · připraveno pro HDR</translation>
+    </message>
+    <message>
+        <source>10-bit · HEVC</source>
+        <translation>10 bitů · HEVC</translation>
+    </message>
+    <message>
+        <source>16-bit · modern</source>
+        <translation>16 bitů · moderní</translation>
+    </message>
+    <message>
+        <source>Float · scene-linear</source>
+        <translation>Plovoucí čárka · lineární scény</translation>
+    </message>
+    <message numerus="yes">
+        <source>Export %n photos</source>
+        <translation>
+            <numerusform>Exportovat %n fotografii</numerusform>
+            <numerusform>Exportovat %n fotografie</numerusform>
+            <numerusform>Exportovat %n fotografií</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>Export</source>
+        <translation>Exportovat</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>Zavřít</translation>
+    </message>
+    <message>
+        <source>Format</source>
+        <translation>Formát</translation>
+    </message>
+    <message>
+        <source>Quality</source>
+        <translation>Kvalita</translation>
+    </message>
+    <message>
+        <source>100 is lossless.</source>
+        <translation>100 je bezeztrátová.</translation>
+    </message>
+    <message>
+        <source>Bit depth</source>
+        <translation>Bitová hloubka</translation>
+    </message>
+    <message>
+        <source>Half float</source>
+        <translation>Poloviční přesnost s plovoucí čárkou</translation>
+    </message>
+    <message>
+        <source>Full float</source>
+        <translation>Plná přesnost s plovoucí čárkou</translation>
+    </message>
+    <message>
+        <source>%1-bit</source>
+        <translation>%1 bitů</translation>
+    </message>
+    <message>
+        <source>Compression</source>
+        <translation>Komprese</translation>
+    </message>
+    <message>
+        <source>None</source>
+        <translation>Žádná</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>Velikost</translation>
+    </message>
+    <message>
+        <source>Full</source>
+        <translation>Plná</translation>
+    </message>
+    <message>
+        <source>3840 px</source>
+        <translation>3840 px</translation>
+    </message>
+    <message>
+        <source>Long edge at most 3840 px</source>
+        <translation>Delší strana nejvýše 3840 px</translation>
+    </message>
+    <message>
+        <source>2048 px</source>
+        <translation>2048 px</translation>
+    </message>
+    <message>
+        <source>Long edge at most 2048 px</source>
+        <translation>Delší strana nejvýše 2048 px</translation>
+    </message>
+    <message>
+        <source>Colour profile</source>
+        <translation>Barevný profil</translation>
+    </message>
+    <message>
+        <source>Web, screens</source>
+        <translation>Web, obrazovky</translation>
+    </message>
+    <message>
+        <source>Wide-gamut screens</source>
+        <translation>Obrazovky se širokým gamutem</translation>
+    </message>
+    <message>
+        <source>Print</source>
+        <translation>Tisk</translation>
+    </message>
+    <message>
+        <source>Editing, archive</source>
+        <translation>Úpravy, archiv</translation>
+    </message>
+    <message>
+        <source>HDR, video</source>
+        <translation>HDR, video</translation>
+    </message>
+    <message>
+        <source>Linear, VFX</source>
+        <translation>Lineární, vizuální efekty</translation>
+    </message>
+    <message>
+        <source>OpenEXR is written scene-linear in the chosen primaries.</source>
+        <translation>OpenEXR se zapisuje lineárně ve zvolených primárních barvách.</translation>
+    </message>
+    <message>
+        <source>Rendering intent</source>
+        <translation>Způsob vykreslení</translation>
+    </message>
+    <message>
+        <source>Compresses the whole gamut; colour relations are kept</source>
+        <translation>Komprimuje celý gamut; vztahy mezi barvami zůstávají zachovány</translation>
     </message>
     <message>
         <source>Relative</source>
@@ -529,47 +565,55 @@
         <translation>Přesné barvy včetně bílého bodu zdroje; pro nátisky</translation>
     </message>
     <message>
-        <source>Preserve Camera EXIF</source>
-        <translation>Zachovat EXIF fotoaparátu</translation>
+        <source>Metadata</source>
+        <translation>Metadata</translation>
     </message>
     <message>
-        <source>Strip GPS (Privacy)</source>
-        <translation>Odstranit GPS (soukromí)</translation>
+        <source>Keep camera metadata (EXIF)</source>
+        <translation>Zachovat metadata fotoaparátu (EXIF)</translation>
     </message>
     <message>
-        <source>Apply Photography Watermark / EXIF Signature</source>
-        <translation>Použít vodoznak / podpis EXIF</translation>
+        <source>Remove location (GPS)</source>
+        <translation>Odstranit polohu (GPS)</translation>
     </message>
     <message>
-        <source>Exporting Batch...</source>
-        <translation>Exportuje se dávka...</translation>
+        <source>Prepare for</source>
+        <translation>Připravit pro</translation>
     </message>
     <message>
-        <source>Exporting Full Resolution...</source>
-        <translation>Exportuje se v plném rozlišení...</translation>
-    </message>
-    <message numerus="yes">
-        <source>Start Parallel Batch Export (%n Photos)</source>
-        <translation>
-            <numerusform>Spustit paralelní dávkový export (%n fotografie)</numerusform>
-            <numerusform>Spustit paralelní dávkový export (%n fotografie)</numerusform>
-            <numerusform>Spustit paralelní dávkový export (%n fotografií)</numerusform>
-        </translation>
+        <source>Sets the crop and output sharpening for a platform. Reset restores your own.</source>
+        <translation>Nastaví ořez a výstupní doostření pro platformu. Obnovit vrátí vaše vlastní nastavení.</translation>
     </message>
     <message>
-        <source>Start Export (%1 / %2)</source>
-        <translation>Spustit export (%1 / %2)</translation>
+        <source>Watermark</source>
+        <translation>Vodoznak</translation>
+    </message>
+    <message>
+        <source>Folder</source>
+        <translation>Složka</translation>
+    </message>
+    <message>
+        <source>Hide</source>
+        <translation>Skrýt</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Zrušit</translation>
+    </message>
+    <message>
+        <source>Exporting…</source>
+        <translation>Exportuje se…</translation>
     </message>
 </context>
 <context>
     <name>FilmGrainPanel</name>
     <message>
-        <source>SILVER-HALIDE FILM GRAIN</source>
-        <translation>ZRNO STŘÍBRNÉHO FILMU</translation>
+        <source>Grain</source>
+        <translation>Zrno</translation>
     </message>
     <message>
-        <source>RESET</source>
-        <translation>OBNOVIT</translation>
+        <source>Reset</source>
+        <translation>Obnovit</translation>
     </message>
     <message>
         <source>Grain Amount</source>
@@ -703,12 +747,16 @@
         <translation>Panoramatický filmový kontrast 35 mm</translation>
     </message>
     <message>
-        <source>FILM SIMULATION &amp; SENSOR PROFILES</source>
-        <translation>SIMULACE FILMU A PROFILY SNÍMAČE</translation>
+        <source>Profile</source>
+        <translation>Profil</translation>
     </message>
     <message>
-        <source>RESET</source>
-        <translation>OBNOVIT</translation>
+        <source>Reset</source>
+        <translation>Obnovit</translation>
+    </message>
+    <message>
+        <source>Amount</source>
+        <translation>Síla</translation>
     </message>
     <message>
         <source>All</source>
@@ -718,17 +766,9 @@
         <source>Acros B&amp;W</source>
         <translation>Acros ČB</translation>
     </message>
-    <message>
-        <source>SIMULATION INTENSITY</source>
-        <translation>INTENZITA SIMULACE</translation>
-    </message>
 </context>
 <context>
     <name>Filmstrip</name>
-    <message>
-        <source>Local Photos</source>
-        <translation>Místní fotografie</translation>
-    </message>
     <message>
         <source>Studio Catalog</source>
         <translation>Katalog studia</translation>
@@ -736,6 +776,14 @@
     <message>
         <source>Up</source>
         <translation>Nahoru</translation>
+    </message>
+    <message>
+        <source>Folders</source>
+        <translation>Složky</translation>
+    </message>
+    <message>
+        <source>Catalog</source>
+        <translation>Katalog</translation>
     </message>
     <message>
         <source>Scanning Catalog...</source>
@@ -762,21 +810,20 @@
         <translation>V této složce nebyly nalezeny žádné fotografie.</translation>
     </message>
     <message>
-        <source>DIR</source>
-        <comment>folder badge</comment>
-        <translation>SLOŽ</translation>
+        <source>Folder</source>
+        <translation>Složka</translation>
     </message>
     <message>
-        <source>FETCHING</source>
-        <translation>STAHOVÁNÍ</translation>
+        <source>Downloading</source>
+        <translation>Stahuje se</translation>
     </message>
     <message>
-        <source>RAW CLOUD</source>
-        <translation>RAW V CLOUDU</translation>
+        <source>Remote</source>
+        <translation>Vzdálené</translation>
     </message>
     <message>
-        <source>NO PREVIEW</source>
-        <translation>BEZ NÁHLEDU</translation>
+        <source>No preview</source>
+        <translation>Bez náhledu</translation>
     </message>
     <message>
         <source>Loading...</source>
@@ -839,40 +886,60 @@
         <translation>Recepty Fujifilm</translation>
     </message>
     <message>
-        <source>FUJIFILM RECIPES</source>
-        <translation>RECEPTY FUJIFILM</translation>
+        <source>Import</source>
+        <translation>Importovat</translation>
     </message>
     <message>
-        <source>IMPORT</source>
-        <translation>IMPORTOVAT</translation>
+        <source>Apply photo&apos;s recipe</source>
+        <translation>Použít recept fotografie</translation>
     </message>
     <message>
-        <source>APPLY PHOTO&apos;S RECIPE</source>
-        <translation>POUŽÍT RECEPT Z FOTOGRAFIE</translation>
+        <source>Save</source>
+        <translation>Uložit</translation>
     </message>
     <message>
-        <source>SAVE</source>
-        <translation>ULOŽIT</translation>
+        <source>Apply recipe</source>
+        <translation>Použít recept</translation>
+    </message>
+    <message>
+        <source>Camera (USB)</source>
+        <translation>Fotoaparát (USB)</translation>
+    </message>
+    <message>
+        <source>Reconnect</source>
+        <translation>Znovu připojit</translation>
+    </message>
+    <message>
+        <source>Connect</source>
+        <translation>Připojit</translation>
+    </message>
+    <message>
+        <source>Read C1–C7</source>
+        <translation>Načíst C1–C7</translation>
+    </message>
+    <message>
+        <source>Convert in camera</source>
+        <translation>Převést ve fotoaparátu</translation>
+    </message>
+    <message>
+        <source>Write recipe to C%1</source>
+        <translation>Zapsat recept do C%1</translation>
+    </message>
+    <message>
+        <source>Pixel shift</source>
+        <translation>Pixel Shift</translation>
+    </message>
+    <message>
+        <source>Merge %1 frames to DNG</source>
+        <translation>Sloučit %1 snímků do DNG</translation>
+    </message>
+    <message>
+        <source>Merge frames to DNG</source>
+        <translation>Sloučit snímky do DNG</translation>
     </message>
     <message>
         <source>No saved recipes. Import an X RAW Studio profile, recipe text or a Fujifilm photo.</source>
         <translation>Žádné uložené recepty. Importujte profil X RAW Studio, text receptu nebo fotografii Fujifilm.</translation>
-    </message>
-    <message>
-        <source>APPLY SELECTED RECIPE</source>
-        <translation>POUŽÍT VYBRANÝ RECEPT</translation>
-    </message>
-    <message>
-        <source>CAMERA (USB)</source>
-        <translation>FOTOAPARÁT (USB)</translation>
-    </message>
-    <message>
-        <source>RECONNECT</source>
-        <translation>ZNOVU PŘIPOJIT</translation>
-    </message>
-    <message>
-        <source>CONNECT</source>
-        <translation>PŘIPOJIT</translation>
     </message>
     <message>
         <source>%1  ·  in-camera RAW conversion</source>
@@ -887,24 +954,8 @@
         <translation>Nastavte režim USB fotoaparátu na %1 a připojte jej.</translation>
     </message>
     <message>
-        <source>READ C1-C7</source>
-        <translation>NAČÍST C1-C7</translation>
-    </message>
-    <message>
-        <source>CONVERT IN CAMERA</source>
-        <translation>PŘEVÉST VE FOTOAPARÁTU</translation>
-    </message>
-    <message>
         <source>Unnamed</source>
         <translation>Bez názvu</translation>
-    </message>
-    <message>
-        <source>WRITE SELECTED RECIPE TO C%1</source>
-        <translation>ZAPSAT VYBRANÝ RECEPT DO C%1</translation>
-    </message>
-    <message>
-        <source>PIXEL SHIFT MULTI-SHOT</source>
-        <translation>PIXEL SHIFT – VÍCE SNÍMKŮ</translation>
     </message>
     <message numerus="yes">
         <source>%n RAF frames selected. 4 frames give full colour per pixel, 16 frames double the resolution.</source>
@@ -918,24 +969,12 @@
         <source>Select the RAF frames of one GFX Pixel Shift sequence in the filmstrip.</source>
         <translation>Na pásu snímků vyberte snímky RAF jedné sekvence Pixel Shift z GFX.</translation>
     </message>
-    <message numerus="yes">
-        <source>MERGE %n FRAMES TO DNG</source>
-        <translation>
-            <numerusform>SLOUČIT %n SNÍMEK DO DNG</numerusform>
-            <numerusform>SLOUČIT %n SNÍMKY DO DNG</numerusform>
-            <numerusform>SLOUČIT %n SNÍMKŮ DO DNG</numerusform>
-        </translation>
-    </message>
-    <message>
-        <source>MERGE FRAMES TO DNG</source>
-        <translation>SLOUČIT SNÍMKY DO DNG</translation>
-    </message>
 </context>
 <context>
     <name>GradeVersionsBar</name>
     <message>
-        <source>GRADE VERSION</source>
-        <translation>VERZE GRADINGU</translation>
+        <source>Version</source>
+        <translation>Verze</translation>
     </message>
 </context>
 <context>
@@ -946,8 +985,8 @@
         <translation>[St] %1%</translation>
     </message>
     <message>
-        <source>RGB HISTOGRAM</source>
-        <translation>HISTOGRAM RGB</translation>
+        <source>Histogram</source>
+        <translation>Histogram</translation>
     </message>
     <message>
         <source>[H] %1%</source>
@@ -994,12 +1033,12 @@
         <translation>Kanál %1</translation>
     </message>
     <message>
-        <source>RESET CH</source>
-        <translation>OBNOVIT KANÁL</translation>
+        <source>Reset colour</source>
+        <translation>Obnovit barvu</translation>
     </message>
     <message>
-        <source>RESET ALL</source>
-        <translation>OBNOVIT VŠE</translation>
+        <source>Reset all</source>
+        <translation>Obnovit vše</translation>
     </message>
     <message>
         <source>Hue Shift</source>
@@ -1107,32 +1146,32 @@
         <translation>Maska %1 připravena (%2)</translation>
     </message>
     <message>
-        <source>DETECTING...</source>
-        <translation>ROZPOZNÁVÁNÍ...</translation>
+        <source>Detecting…</source>
+        <translation>Rozpoznává se…</translation>
     </message>
     <message>
-        <source>LOCAL ADJUSTMENT LAYERS</source>
-        <translation>VRSTVY MÍSTNÍCH ÚPRAV</translation>
+        <source>Masks</source>
+        <translation>Masky</translation>
     </message>
     <message>
-        <source>+ GRADIENT</source>
-        <translation>+ PŘECHOD</translation>
+        <source>+ Linear</source>
+        <translation>+ Lineární</translation>
+    </message>
+    <message>
+        <source>+ Radial</source>
+        <translation>+ Radiální</translation>
+    </message>
+    <message>
+        <source>+ Luminance</source>
+        <translation>+ Jas</translation>
     </message>
     <message>
         <source>Linear Gradient %1</source>
         <translation>Lineární přechod %1</translation>
     </message>
     <message>
-        <source>+ RADIAL</source>
-        <translation>+ RADIÁLNÍ</translation>
-    </message>
-    <message>
         <source>Radial Mask %1</source>
         <translation>Radiální maska %1</translation>
-    </message>
-    <message>
-        <source>+ LUMA</source>
-        <translation>+ JAS</translation>
     </message>
     <message>
         <source>Luma Range %1</source>
@@ -1150,10 +1189,6 @@
         <source>I</source>
         <comment>invert mask toggle, first letter of Invert</comment>
         <translation>I</translation>
-    </message>
-    <message>
-        <source>SELECTED LAYER CONTROLS (%1)</source>
-        <translation>OVLÁDÁNÍ VYBRANÉ VRSTVY (%1)</translation>
     </message>
     <message>
         <source>Layer Opacity</source>
@@ -1175,48 +1210,32 @@
 <context>
     <name>LutSelector</name>
     <message>
-        <source>DAVINCI 3D LUT ENGINE (.CUBE)</source>
-        <translation>JÁDRO 3D LUT DAVINCI (.CUBE)</translation>
+        <source>Load 3D LUT</source>
+        <translation>Načíst 3D LUT</translation>
     </message>
     <message>
-        <source>RESET</source>
-        <translation>OBNOVIT</translation>
+        <source>3D LUT</source>
+        <translation>3D LUT</translation>
     </message>
     <message>
-        <source>Hollywood Print</source>
-        <translation>Hollywoodská kopie</translation>
+        <source>Reset</source>
+        <translation>Obnovit</translation>
     </message>
     <message>
-        <source>Cinema Blockbuster</source>
-        <translation>Filmový trhák</translation>
+        <source>Load .cube file…</source>
+        <translation>Načíst soubor .cube…</translation>
     </message>
     <message>
-        <source>35mm Soft Stock</source>
-        <translation>Měkký film 35 mm</translation>
+        <source>Saved look: %1</source>
+        <translation>Uložený vzhled: %1</translation>
     </message>
     <message>
-        <source>High-Acutance B&amp;W</source>
-        <translation>ČB s vysokou ostrostí</translation>
-    </message>
-    <message>
-        <source>LUT Intensity (Mix)</source>
-        <translation>Intenzita LUT (mix)</translation>
+        <source>Amount</source>
+        <translation>Síla</translation>
     </message>
 </context>
 <context>
     <name>MainWindow</name>
-    <message>
-        <source>Switched to version %1</source>
-        <translation>Přepnuto na verzi %1</translation>
-    </message>
-    <message>
-        <source>Version %1 initialized</source>
-        <translation>Verze %1 vytvořena</translation>
-    </message>
-    <message>
-        <source>Copied current grade to version %1</source>
-        <translation>Aktuální grading zkopírován do verze %1</translation>
-    </message>
     <message numerus="yes">
         <source>Rating: %n star(s)</source>
         <translation>
@@ -1246,36 +1265,8 @@
         <translation>Není co vrátit</translation>
     </message>
     <message>
-        <source>Undo (Ctrl+Z)</source>
-        <translation>Zpět (Ctrl+Z)</translation>
-    </message>
-    <message>
         <source>Nothing to redo</source>
         <translation>Není co opakovat</translation>
-    </message>
-    <message>
-        <source>Redo (Ctrl+Shift+Z)</source>
-        <translation>Opakovat (Ctrl+Shift+Z)</translation>
-    </message>
-    <message>
-        <source>Adjustments copied (Ctrl+Shift+C)</source>
-        <translation>Úpravy zkopírovány (Ctrl+Shift+C)</translation>
-    </message>
-    <message>
-        <source>No adjustments in clipboard</source>
-        <translation>Ve schránce nejsou žádné úpravy</translation>
-    </message>
-    <message>
-        <source>Adjustments pasted (Ctrl+Shift+V)</source>
-        <translation>Úpravy vloženy (Ctrl+Shift+V)</translation>
-    </message>
-    <message>
-        <source>Reset to defaults (Ctrl+R)</source>
-        <translation>Obnoveny výchozí hodnoty (Ctrl+R)</translation>
-    </message>
-    <message>
-        <source>Social framing and adjustments reset</source>
-        <translation>Ořez pro sociální sítě a úpravy obnoveny</translation>
     </message>
     <message>
         <source>Failed to load RAW: %1</source>
@@ -1298,28 +1289,8 @@
         <translation>Vykreslení náhledu selhalo</translation>
     </message>
     <message>
-        <source>Auto tone applied</source>
-        <translation>Automatický tón použit</translation>
-    </message>
-    <message>
-        <source>AI decisions applied</source>
-        <translation>Rozhodnutí AI použita</translation>
-    </message>
-    <message>
-        <source>Local heuristic applied</source>
-        <translation>Místní heuristika použita</translation>
-    </message>
-    <message>
         <source>%1 applied (%2)</source>
         <translation>%1 použito (%2)</translation>
-    </message>
-    <message>
-        <source>Recipe sidecar saved</source>
-        <translation>Doprovodný soubor receptu uložen</translation>
-    </message>
-    <message>
-        <source>Batch finished: %1/%2 photos exported</source>
-        <translation>Dávka dokončena: exportováno %1/%2 fotografií</translation>
     </message>
     <message>
         <source>Batch export: %1 succeeded, %2 failed</source>
@@ -1342,14 +1313,6 @@
         <translation>Zapsáno %1</translation>
     </message>
     <message>
-        <source>Analyzing dynamic range and scene...</source>
-        <translation>Analyzuje se dynamický rozsah a scéna...</translation>
-    </message>
-    <message>
-        <source>Asking the AI for edit decisions...</source>
-        <translation>Žádost o rozhodnutí úprav od AI...</translation>
-    </message>
-    <message>
         <source>Open RAW Photo</source>
         <translation>Otevřít fotografii RAW</translation>
     </message>
@@ -1358,20 +1321,8 @@
         <translation>Fotografie RAW</translation>
     </message>
     <message>
-        <source>Saved to: %1</source>
-        <translation>Uloženo do: %1</translation>
-    </message>
-    <message>
-        <source>Export error: %1</source>
-        <translation>Chyba exportu: %1</translation>
-    </message>
-    <message>
         <source>Export finished without a result</source>
         <translation>Export skončil bez výsledku</translation>
-    </message>
-    <message>
-        <source>The folder scan gave no answer</source>
-        <translation>Prohledání složky neodpovědělo</translation>
     </message>
     <message>
         <source>Crop mode: on (C)</source>
@@ -1382,36 +1333,12 @@
         <translation>Režim ořezu: vypnuto</translation>
     </message>
     <message>
-        <source>Open a photo first to export</source>
-        <translation>Nejprve otevřete fotografii k exportu</translation>
-    </message>
-    <message>
-        <source>Panels hidden (Tab)</source>
-        <translation>Panely skryty (Tab)</translation>
-    </message>
-    <message>
-        <source>Panels restored (Tab)</source>
-        <translation>Panely obnoveny (Tab)</translation>
-    </message>
-    <message>
-        <source>Optimizing for %1...</source>
-        <translation>Optimalizace pro %1...</translation>
-    </message>
-    <message>
-        <source>AI SCENE INSIGHT</source>
-        <translation>ANALÝZA SCÉNY AI</translation>
-    </message>
-    <message>
         <source>Analyzing...</source>
         <translation>Analýza...</translation>
     </message>
     <message>
         <source>Extracting dynamic range...</source>
         <translation>Zjišťování dynamického rozsahu...</translation>
-    </message>
-    <message>
-        <source>Grade versions • Alt+1..4 to switch</source>
-        <translation>Verze gradingu • Alt+1..4 pro přepnutí</translation>
     </message>
     <message>
         <source>Opened %1</source>
@@ -1422,36 +1349,8 @@
         <translation>Prohledává se složka %1</translation>
     </message>
     <message>
-        <source>AI edit applied</source>
-        <translation>Úprava AI použita</translation>
-    </message>
-    <message>
-        <source>ESSENTIAL ADJUSTMENTS</source>
-        <translation>ZÁKLADNÍ ÚPRAVY</translation>
-    </message>
-    <message>
-        <source>RESET</source>
-        <translation>OBNOVIT</translation>
-    </message>
-    <message>
-        <source>Exposure (Light)</source>
-        <translation>Expozice (světlo)</translation>
-    </message>
-    <message>
-        <source>Warmth (Temperature)</source>
-        <translation>Teplota barev (teplo)</translation>
-    </message>
-    <message>
-        <source>Vibrance (Color Punch)</source>
-        <translation>Živost (síla barev)</translation>
-    </message>
-    <message>
         <source>Contrast</source>
         <translation>Kontrast</translation>
-    </message>
-    <message>
-        <source>WHITE BALANCE</source>
-        <translation>VYVÁŽENÍ BÍLÉ</translation>
     </message>
     <message>
         <source>Temp (Kelvin)</source>
@@ -1460,10 +1359,6 @@
     <message>
         <source>Tint (Green / Magenta)</source>
         <translation>Odstín (zelená / purpurová)</translation>
-    </message>
-    <message>
-        <source>LIGHT &amp; DYNAMIC RANGE</source>
-        <translation>SVĚTLO A DYNAMICKÝ ROZSAH</translation>
     </message>
     <message>
         <source>Exposure</source>
@@ -1486,10 +1381,6 @@
         <translation>Černé</translation>
     </message>
     <message>
-        <source>TONE CURVE (PARAMETRIC)</source>
-        <translation>TÓNOVÁ KŘIVKA (PARAMETRICKÁ)</translation>
-    </message>
-    <message>
         <source>Curve Highlights</source>
         <translation>Křivka: světla</translation>
     </message>
@@ -1504,10 +1395,6 @@
     <message>
         <source>Curve Shadows</source>
         <translation>Křivka: stíny</translation>
-    </message>
-    <message>
-        <source>PRESENCE &amp; TEXTURE</source>
-        <translation>PŮSOBIVOST A TEXTURA</translation>
     </message>
     <message>
         <source>Texture</source>
@@ -1528,14 +1415,6 @@
     <message>
         <source>Saturation</source>
         <translation>Sytost</translation>
-    </message>
-    <message>
-        <source>COLOR MIXER (8-BAND HSL)</source>
-        <translation>MIXÉR BAREV (HSL S 8 PÁSMY)</translation>
-    </message>
-    <message>
-        <source>DETAIL &amp; OPTICS</source>
-        <translation>DETAIL A OPTIKA</translation>
     </message>
     <message>
         <source>Sharpening</source>
@@ -1566,12 +1445,200 @@
         <translation>Nejprve otevřete fotografii</translation>
     </message>
     <message>
+        <source>Version %1</source>
+        <translation>Verze %1</translation>
+    </message>
+    <message>
+        <source>Version %1 started</source>
+        <translation>Verze %1 zahájena</translation>
+    </message>
+    <message>
+        <source>Copied to version %1</source>
+        <translation>Zkopírováno do verze %1</translation>
+    </message>
+    <message>
+        <source>Undo</source>
+        <translation>Zpět</translation>
+    </message>
+    <message>
+        <source>Redo</source>
+        <translation>Opakovat</translation>
+    </message>
+    <message>
+        <source>Settings copied</source>
+        <translation>Nastavení zkopírováno</translation>
+    </message>
+    <message>
+        <source>Nothing copied yet</source>
+        <translation>Zatím nebylo nic zkopírováno</translation>
+    </message>
+    <message>
+        <source>Settings pasted</source>
+        <translation>Nastavení vloženo</translation>
+    </message>
+    <message>
+        <source>Reset to defaults</source>
+        <translation>Výchozí hodnoty obnoveny</translation>
+    </message>
+    <message>
+        <source>Platform crop reset</source>
+        <translation>Ořez pro platformu obnoven</translation>
+    </message>
+    <message>
+        <source>Auto applied</source>
+        <translation>Automatická úprava použita</translation>
+    </message>
+    <message>
+        <source>Settings saved</source>
+        <translation>Nastavení uloženo</translation>
+    </message>
+    <message>
+        <source>%1 of %2 photos exported</source>
+        <translation>Exportováno %1 z %2 fotografií</translation>
+    </message>
+    <message>
+        <source>Auto: analysing the photo…</source>
+        <translation>Automaticky: analyzuje se fotografie…</translation>
+    </message>
+    <message>
+        <source>Saved to %1</source>
+        <translation>Uloženo do %1</translation>
+    </message>
+    <message>
+        <source>Export failed</source>
+        <translation>Export se nezdařil</translation>
+    </message>
+    <message>
+        <source>The scan did not respond.</source>
+        <translation>Prohledávání složky neodpovědělo.</translation>
+    </message>
+    <message>
+        <source>Rating: ★</source>
+        <translation>Hodnocení: ★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★</source>
+        <translation>Hodnocení: ★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★</source>
+        <translation>Hodnocení: ★★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★★</source>
+        <translation>Hodnocení: ★★★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★★★</source>
+        <translation>Hodnocení: ★★★★★</translation>
+    </message>
+    <message>
+        <source>Flag cleared</source>
+        <translation>Označení odstraněno</translation>
+    </message>
+    <message>
+        <source>Preparing for %1…</source>
+        <translation>Připravuje se pro %1…</translation>
+    </message>
+    <message>
+        <source>Rating: %1</source>
+        <translation>Hodnocení: %1</translation>
+    </message>
+    <message>
+        <source>Picked</source>
+        <translation>Vybráno</translation>
+    </message>
+    <message>
+        <source>Rejected</source>
+        <translation>Zamítnuto</translation>
+    </message>
+    <message>
+        <source>Scene</source>
+        <translation>Scéna</translation>
+    </message>
+    <message>
+        <source>Adjust</source>
+        <translation>Upravit</translation>
+    </message>
+    <message>
+        <source>Masks</source>
+        <translation>Masky</translation>
+    </message>
+    <message>
+        <source>Looks</source>
+        <translation>Styly</translation>
+    </message>
+    <message>
+        <source>AI</source>
+        <translation>AI</translation>
+    </message>
+    <message>
+        <source>Profile</source>
+        <translation>Profil</translation>
+    </message>
+    <message>
         <source>Color Chrome Effect</source>
         <translation>Efekt Color Chrome</translation>
     </message>
     <message>
         <source>Color Chrome FX Blue</source>
         <translation>Color Chrome FX Modrá</translation>
+    </message>
+    <message>
+        <source>White balance</source>
+        <translation>Vyvážení bílé</translation>
+    </message>
+    <message>
+        <source>Tone</source>
+        <translation>Tóny</translation>
+    </message>
+    <message>
+        <source>Presence</source>
+        <translation>Výraznost</translation>
+    </message>
+    <message>
+        <source>Tone curve</source>
+        <translation>Tónová křivka</translation>
+    </message>
+    <message>
+        <source>Colour mixer</source>
+        <translation>Míchání barev</translation>
+    </message>
+    <message>
+        <source>Colour grading</source>
+        <translation>Barevné korekce</translation>
+    </message>
+    <message>
+        <source>Detail and optics</source>
+        <translation>Detaily a optika</translation>
+    </message>
+    <message>
+        <source>Grain</source>
+        <translation>Zrno</translation>
+    </message>
+    <message>
+        <source>Colour management</source>
+        <translation>Správa barev</translation>
+    </message>
+    <message>
+        <source>Local adjustments</source>
+        <translation>Místní úpravy</translation>
+    </message>
+    <message>
+        <source>Presets</source>
+        <translation>Předvolby</translation>
+    </message>
+    <message>
+        <source>LUT</source>
+        <translation>LUT</translation>
+    </message>
+    <message>
+        <source>Edit assistant</source>
+        <translation>Asistent úprav</translation>
+    </message>
+    <message>
+        <source>Assistant edit applied</source>
+        <translation>Úprava asistenta použita</translation>
     </message>
     <message>
         <source>Copy</source>
@@ -1606,31 +1673,31 @@
         <translation>Otevírá se %1</translation>
     </message>
     <message>
-        <source>Loading the studio catalog...</source>
-        <translation>Načítá se katalog studia...</translation>
+        <source>Loading the catalog…</source>
+        <translation>Načítá se katalog…</translation>
     </message>
     <message>
-        <source>Refreshing the studio catalog...</source>
-        <translation>Obnovuje se katalog studia...</translation>
+        <source>Refreshing the catalog…</source>
+        <translation>Obnovuje se katalog…</translation>
     </message>
     <message numerus="yes">
-        <source>Exporting %n photo(s) in parallel...</source>
+        <source>Exporting %n photos…</source>
         <translation>
-            <numerusform>Paralelní export %n fotografie...</numerusform>
-            <numerusform>Paralelní export %n fotografií...</numerusform>
-            <numerusform>Paralelní export %n fotografií...</numerusform>
+            <numerusform>Exportuje se %n fotografie…</numerusform>
+            <numerusform>Exportují se %n fotografie…</numerusform>
+            <numerusform>Exportuje se %n fotografií…</numerusform>
         </translation>
     </message>
     <message>
-        <source>Developing at full resolution and encoding...</source>
-        <translation>Vyvolávání v plném rozlišení a kódování...</translation>
+        <source>Developing at full resolution…</source>
+        <translation>Vyvolává se v plném rozlišení…</translation>
     </message>
 </context>
 <context>
     <name>Navigator</name>
     <message>
-        <source>NAVIGATOR</source>
-        <translation>NAVIGÁTOR</translation>
+        <source>Navigator</source>
+        <translation>Navigátor</translation>
     </message>
     <message>
         <source>FIT</source>
@@ -1638,65 +1705,92 @@
     </message>
 </context>
 <context>
+    <name>PanelSection</name>
+    <message>
+        <source>Reset %1</source>
+        <translation>Obnovit: %1</translation>
+    </message>
+</context>
+<context>
     <name>PresetSelector</name>
     <message>
-        <source>FILM LOOKS &amp; STYLES</source>
-        <translation>FILMOVÉ VZHLEDY A STYLY</translation>
+        <source>Looks</source>
+        <translation>Styly</translation>
     </message>
     <message>
-        <source>RESET</source>
-        <translation>OBNOVIT</translation>
+        <source>Reset</source>
+        <translation>Obnovit</translation>
     </message>
     <message>
-        <source>AI Auto Enhance</source>
-        <translation>Automatické vylepšení AI</translation>
+        <source>Auto</source>
+        <translation>Automaticky</translation>
     </message>
     <message>
-        <source>RUN</source>
-        <translation>SPUSTIT</translation>
+        <source>Run</source>
+        <translation>Spustit</translation>
     </message>
     <message>
-        <source>Documentary Muted</source>
-        <translation>Tlumený dokument</translation>
+        <source>Muted</source>
+        <translation>Tlumené</translation>
     </message>
     <message>
-        <source>Vivid Landscapes</source>
-        <translation>Živé krajiny</translation>
+        <source>Documentary, low saturation</source>
+        <translation>Dokumentární, nízká sytost</translation>
     </message>
     <message>
-        <source>Warm Skin Tones</source>
-        <translation>Teplé tóny pleti</translation>
+        <source>Vivid</source>
+        <translation>Živé</translation>
     </message>
     <message>
-        <source>High Contrast B&amp;W</source>
-        <translation>Kontrastní ČB</translation>
+        <source>Landscapes, rich colour</source>
+        <translation>Krajiny, syté barvy</translation>
     </message>
     <message>
-        <source>Film Grade</source>
-        <translation>Filmový grading</translation>
+        <source>Warm portrait</source>
+        <translation>Teplý portrét</translation>
+    </message>
+    <message>
+        <source>Soft contrast, warm skin</source>
+        <translation>Měkký kontrast, teplá pleť</translation>
+    </message>
+    <message>
+        <source>Black and white</source>
+        <translation>Černobílé</translation>
+    </message>
+    <message>
+        <source>High contrast</source>
+        <translation>Vysoký kontrast</translation>
+    </message>
+    <message>
+        <source>Teal and orange</source>
+        <translation>Modrozelená a oranžová</translation>
+    </message>
+    <message>
+        <source>Split toning</source>
+        <translation>Dělené tónování</translation>
     </message>
 </context>
 <context>
     <name>RgbMixerPanel</name>
     <message>
-        <source>DAVINCI RGB PRIMARY MIXER</source>
-        <translation>PRIMÁRNÍ MIXÉR RGB DAVINCI</translation>
-    </message>
-    <message>
-        <source>RESET</source>
-        <translation>OBNOVIT</translation>
-    </message>
-    <message>
         <source>Monochrome Mixing</source>
         <translation>Monochromatické míchání</translation>
     </message>
     <message>
-        <source>MONOCHROME LUMA MIX</source>
-        <translation>MONOCHROMATICKÝ MIX JASU</translation>
+        <source>Channel mixer</source>
+        <translation>Míchání kanálů</translation>
     </message>
     <message>
-        <source>RED OUTPUT CHANNEL</source>
-        <translation>ČERVENÝ VÝSTUPNÍ KANÁL</translation>
+        <source>Reset</source>
+        <translation>Obnovit</translation>
+    </message>
+    <message>
+        <source>Monochrome mix</source>
+        <translation>Monochromatické míchání</translation>
+    </message>
+    <message>
+        <source>Red output</source>
+        <translation>Červený výstup</translation>
     </message>
     <message>
         <source>Red in Red</source>
@@ -1711,8 +1805,12 @@
         <translation>Modrá v červené</translation>
     </message>
     <message>
-        <source>GREEN OUTPUT CHANNEL</source>
-        <translation>ZELENÝ VÝSTUPNÍ KANÁL</translation>
+        <source>Green output</source>
+        <translation>Zelený výstup</translation>
+    </message>
+    <message>
+        <source>Blue output</source>
+        <translation>Modrý výstup</translation>
     </message>
     <message>
         <source>Red in Green</source>
@@ -1725,10 +1823,6 @@
     <message>
         <source>Blue in Green</source>
         <translation>Modrá v zelené</translation>
-    </message>
-    <message>
-        <source>BLUE OUTPUT CHANNEL</source>
-        <translation>MODRÝ VÝSTUPNÍ KANÁL</translation>
     </message>
     <message>
         <source>Red in Blue</source>
@@ -1772,8 +1866,8 @@
         <translation>[Sv] %1%</translation>
     </message>
     <message>
-        <source>NO SIGNAL / LOAD RAW</source>
-        <translation>ŽÁDNÝ SIGNÁL / NAČTĚTE RAW</translation>
+        <source>No photo</source>
+        <translation>Žádná fotografie</translation>
     </message>
     <message>
         <source>RED</source>
@@ -1795,12 +1889,12 @@
 <context>
     <name>SkinTonePanel</name>
     <message>
-        <source>CAPTURE ONE SKIN TONE</source>
-        <translation>TÓN PLETI CAPTURE ONE</translation>
+        <source>Skin tone</source>
+        <translation>Tón pleti</translation>
     </message>
     <message>
-        <source>RESET</source>
-        <translation>OBNOVIT</translation>
+        <source>Reset</source>
+        <translation>Obnovit</translation>
     </message>
     <message>
         <source>Vectorscope 123° flesh line (target: %1°)</source>
@@ -1841,52 +1935,28 @@
 <context>
     <name>SocialOptimizer</name>
     <message>
-        <source>AI SOCIAL MEDIA OPTIMIZER</source>
-        <translation>OPTIMALIZACE AI PRO SOCIÁLNÍ SÍTĚ</translation>
+        <source>Prepare for</source>
+        <translation>Připravit pro</translation>
     </message>
     <message>
-        <source>RESET</source>
-        <translation>OBNOVIT</translation>
+        <source>Reset</source>
+        <translation>Obnovit</translation>
     </message>
     <message>
-        <source>Instagram Feed</source>
-        <translation>Kanál Instagramu</translation>
+        <source>Instagram post</source>
+        <translation>Příspěvek na Instagram</translation>
     </message>
     <message>
-        <source>Max Screen</source>
-        <translation>Maximální obrazovka</translation>
+        <source>Stories and Reels</source>
+        <translation>Příběhy a Reels</translation>
     </message>
     <message>
-        <source>Stories / Reels</source>
-        <translation>Příběhy / Reels</translation>
+        <source>Square</source>
+        <translation>Čtverec</translation>
     </message>
     <message>
-        <source>Full Mobile</source>
-        <translation>Celý mobil</translation>
-    </message>
-    <message>
-        <source>Crisp Feed</source>
-        <translation>Ostrý kanál</translation>
-    </message>
-    <message>
-        <source>Classic Square</source>
-        <translation>Klasický čtverec</translation>
-    </message>
-    <message>
-        <source>Grid Post</source>
-        <translation>Příspěvek v mřížce</translation>
-    </message>
-    <message>
-        <source>High Res</source>
-        <translation>Vysoké rozlišení</translation>
-    </message>
-    <message>
-        <source>YouTube Thumb</source>
+        <source>YouTube thumbnail</source>
         <translation>Miniatura YouTube</translation>
-    </message>
-    <message>
-        <source>High CTR</source>
-        <translation>Vysoké CTR</translation>
     </message>
 </context>
 <context>
@@ -1921,8 +1991,8 @@
         <translation>Základy</translation>
     </message>
     <message>
-        <source>Pro Studio</source>
-        <translation>Pro Studio</translation>
+        <source>Pro</source>
+        <translation>Pro</translation>
     </message>
     <message>
         <source>Undo (Ctrl+Z)</source>
@@ -1960,16 +2030,16 @@
 <context>
     <name>Viewport</name>
     <message>
-        <source>RESET 0°</source>
-        <translation>OBNOVIT 0°</translation>
+        <source>Reset 0°</source>
+        <translation>Obnovit na 0°</translation>
     </message>
     <message>
-        <source>FIT</source>
-        <translation>PŘIZPŮSOBIT</translation>
+        <source>Fit</source>
+        <translation>Přizpůsobit</translation>
     </message>
     <message>
-        <source>CROP &amp; COMPOSE</source>
-        <translation>OŘEZ A KOMPOZICE</translation>
+        <source>Crop</source>
+        <translation>Oříznout</translation>
     </message>
     <message>
         <source>Original</source>
@@ -1996,12 +2066,20 @@
         <translation>Mřížka: vypnuto</translation>
     </message>
     <message>
-        <source>RESET</source>
-        <translation>OBNOVIT</translation>
+        <source>Reset</source>
+        <translation>Obnovit</translation>
     </message>
     <message>
-        <source>DONE</source>
-        <translation>HOTOVO</translation>
+        <source>Done</source>
+        <translation>Hotovo</translation>
+    </message>
+    <message>
+        <source>Shadow clipping</source>
+        <translation>Oříznutí stínů</translation>
+    </message>
+    <message>
+        <source>Highlight clipping</source>
+        <translation>Oříznutí světel</translation>
     </message>
     <message>
         <source>ORIGINAL RAW (Before)</source>
@@ -2010,18 +2088,6 @@
     <message>
         <source>EDITED RECIPE (After)</source>
         <translation>UPRAVENÝ RECEPT (po)</translation>
-    </message>
-    <message>
-        <source>[S] SHADOW CLIPPING (BLUE)</source>
-        <translation>[St] OŘEZ STÍNŮ (MODRÁ)</translation>
-    </message>
-    <message>
-        <source>[H] HIGHLIGHT CLIPPING (RED)</source>
-        <translation>[Sv] OŘEZ SVĚTEL (ČERVENÁ)</translation>
-    </message>
-    <message>
-        <source>Pinch: Zoom | 2-Finger Twist: Rotate | 2-Finger Pan | Double-Tap: Reset</source>
-        <translation>Sevření: zoom | Otočení 2 prsty: rotace | Posun 2 prsty | Dvojité klepnutí: obnovit</translation>
     </message>
     <message>
         <source>Open a RAW (Ctrl+O) or drop a photo / folder here</source>
@@ -2035,8 +2101,8 @@
 <context>
     <name>WatermarkConfig</name>
     <message>
-        <source>WATERMARK &amp; BRANDING</source>
-        <translation>VODOZNAK A ZNAČKA</translation>
+        <source>Watermark</source>
+        <translation>Vodoznak</translation>
     </message>
     <message>
         <source>Text / EXIF Tag</source>
@@ -2047,28 +2113,28 @@
         <translation>Vlastní logo PNG</translation>
     </message>
     <message>
-        <source>WATERMARK TEXT OR TEMPLATE</source>
-        <translation>TEXT NEBO ŠABLONA VODOZNAKU</translation>
+        <source>Text or template</source>
+        <translation>Text nebo šablona</translation>
     </message>
     <message>
-        <source>LOGO FILE PATH (.PNG)</source>
-        <translation>CESTA K LOGU (.PNG)</translation>
+        <source>Logo file (PNG)</source>
+        <translation>Soubor loga (PNG)</translation>
     </message>
     <message>
-        <source>POSITION</source>
-        <translation>POLOHA</translation>
+        <source>Position</source>
+        <translation>Umístění</translation>
+    </message>
+    <message>
+        <source>Opacity</source>
+        <translation>Krytí</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>Velikost</translation>
     </message>
     <message>
         <source>Drop Shadow</source>
         <translation>Vržený stín</translation>
-    </message>
-    <message>
-        <source>OPACITY</source>
-        <translation>KRYTÍ</translation>
-    </message>
-    <message>
-        <source>SIZE MULTIPLIER</source>
-        <translation>NÁSOBITEL VELIKOSTI</translation>
     </message>
 </context>
 </TS>

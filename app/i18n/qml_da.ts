@@ -175,28 +175,36 @@
         <translation>Mislykkedes</translation>
     </message>
     <message>
-        <source>AI EDIT ASSISTANT</source>
-        <translation>AI-REDIGERINGSASSISTENT</translation>
+        <source>Assistant</source>
+        <translation>Assistent</translation>
     </message>
     <message>
-        <source>DONE</source>
-        <translation>FÆRDIG</translation>
+        <source>Done</source>
+        <translation>Færdig</translation>
     </message>
     <message>
-        <source>SETUP</source>
-        <translation>OPSÆTNING</translation>
+        <source>Set up</source>
+        <translation>Konfigurer</translation>
+    </message>
+    <message>
+        <source>Working…</source>
+        <translation>Arbejder…</translation>
+    </message>
+    <message>
+        <source>Edit</source>
+        <translation>Rediger</translation>
+    </message>
+    <message>
+        <source>Store key</source>
+        <translation>Gem nøgle</translation>
+    </message>
+    <message>
+        <source>Use %1</source>
+        <translation>Brug %1</translation>
     </message>
     <message>
         <source>e.g. warmer, moody evening light, recover the sky</source>
         <translation>f.eks. varmere, stemningsfuldt aftenlys, genskab himlen</translation>
-    </message>
-    <message>
-        <source>THINKING...</source>
-        <translation>TÆNKER...</translation>
-    </message>
-    <message>
-        <source>EDIT WITH AI</source>
-        <translation>REDIGÉR MED AI</translation>
     </message>
     <message>
         <source>Running. Models: %1</source>
@@ -222,14 +230,6 @@
         <source>API key</source>
         <translation>API-nøgle</translation>
     </message>
-    <message>
-        <source>STORE KEY</source>
-        <translation>GEM NØGLE</translation>
-    </message>
-    <message>
-        <source>USE %1</source>
-        <translation>BRUG %1</translation>
-    </message>
 </context>
 <context>
     <name>BoundedTextInput</name>
@@ -241,48 +241,16 @@
 <context>
     <name>ColorGradingWheels</name>
     <message>
-        <source>DAVINCI PRIMARIES WHEELS</source>
-        <translation>DAVINCI PRIMÆRHJUL</translation>
-    </message>
-    <message>
-        <source>4-WHEEL</source>
-        <translation>4 HJUL</translation>
-    </message>
-    <message>
-        <source>TABBED</source>
-        <translation>FANER</translation>
-    </message>
-    <message>
-        <source>RESET</source>
-        <translation>NULSTIL</translation>
-    </message>
-    <message>
-        <source>LIFT</source>
-        <translation>LIFT</translation>
-    </message>
-    <message>
         <source>Shadows</source>
         <translation>Skygger</translation>
-    </message>
-    <message>
-        <source>GAMMA</source>
-        <translation>GAMMA</translation>
     </message>
     <message>
         <source>Mids</source>
         <translation>Mellemtoner</translation>
     </message>
     <message>
-        <source>GAIN</source>
-        <translation>GAIN</translation>
-    </message>
-    <message>
         <source>Highlights</source>
         <translation>Højlys</translation>
-    </message>
-    <message>
-        <source>OFFSET</source>
-        <translation>OFFSET</translation>
     </message>
     <message>
         <source>Global</source>
@@ -307,6 +275,22 @@
     <message>
         <source>Lift</source>
         <translation>Lift</translation>
+    </message>
+    <message>
+        <source>Colour grading</source>
+        <translation>Farvegradering</translation>
+    </message>
+    <message>
+        <source>4 wheels</source>
+        <translation>4 hjul</translation>
+    </message>
+    <message>
+        <source>Tabs</source>
+        <translation>Faner</translation>
+    </message>
+    <message>
+        <source>Reset</source>
+        <translation>Nulstil</translation>
     </message>
     <message>
         <source>Gamma</source>
@@ -368,8 +352,12 @@
         <translation>Bredt AP1</translation>
     </message>
     <message>
-        <source>COLOR MANAGEMENT &amp; ACES 1.3</source>
-        <translation>FARVESTYRING OG ACES 1.3</translation>
+        <source>Colour management</source>
+        <translation>Farvestyring</translation>
+    </message>
+    <message>
+        <source>Gamut compression</source>
+        <translation>Gamutkomprimering</translation>
     </message>
     <message>
         <source>%1 (%2)</source>
@@ -394,114 +382,162 @@
 <context>
     <name>ExifCard</name>
     <message>
-        <source>No camera loaded</source>
-        <translation>Intet kamera indlæst</translation>
-    </message>
-    <message>
-        <source>Unknown lens</source>
-        <translation>Ukendt objektiv</translation>
+        <source>No photo</source>
+        <translation>Intet foto</translation>
     </message>
 </context>
 <context>
     <name>ExportDialog</name>
-    <message numerus="yes">
-        <source>Batch Export (%n Photos)</source>
-        <translation>
-            <numerusform>Batcheksport (%n foto)</numerusform>
-            <numerusform>Batcheksport (%n fotos)</numerusform>
-        </translation>
-    </message>
-    <message>
-        <source>Export Master Photo</source>
-        <translation>Eksportér masterfoto</translation>
-    </message>
-    <message>
-        <source>MODERN OPEN FORMAT</source>
-        <translation>MODERNE ÅBENT FORMAT</translation>
-    </message>
-    <message>
-        <source>Next-Gen 16-bit HDR</source>
-        <translation>16-bit HDR af næste generation</translation>
-    </message>
-    <message>
-        <source>AV1 Web/Mobile</source>
-        <translation>AV1 web/mobil</translation>
-    </message>
-    <message>
-        <source>Ultra Compact</source>
-        <translation>Ultrakompakt</translation>
-    </message>
-    <message>
-        <source>16-bit TIFF</source>
-        <translation>16-bit TIFF</translation>
-    </message>
-    <message>
-        <source>Master Print Lossless</source>
-        <translation>Tabsfrit mastertryk</translation>
-    </message>
-    <message>
-        <source>Graphic Lossless</source>
-        <translation>Tabsfri grafik</translation>
-    </message>
-    <message>
-        <source>Universal MozJPEG</source>
-        <translation>Universel MozJPEG</translation>
-    </message>
-    <message>
-        <source>Export Compression Quality</source>
-        <translation>Komprimeringskvalitet ved eksport</translation>
-    </message>
-    <message>
-        <source>RESOLUTION &amp; SCALING</source>
-        <translation>OPLØSNING OG SKALERING</translation>
-    </message>
-    <message>
-        <source>100% Full</source>
-        <translation>100 % fuld</translation>
-    </message>
-    <message>
-        <source>Social (2048p)</source>
-        <translation>Sociale medier (2048p)</translation>
-    </message>
-    <message>
-        <source>COLOR SPACE &amp; ICC PROFILE</source>
-        <translation>FARVERUM OG ICC-PROFIL</translation>
-    </message>
-    <message>
-        <source>Universal Web / Social</source>
-        <translation>Universel web / sociale medier</translation>
-    </message>
-    <message>
-        <source>Apple / Wide OLED</source>
-        <translation>Apple / bred OLED</translation>
-    </message>
-    <message>
-        <source>Ultra-Wide Gamut HDR</source>
-        <translation>HDR med ultrabredt farveområde</translation>
-    </message>
-    <message>
-        <source>Academy Color Standard</source>
-        <translation>Akademiets farvestandard</translation>
-    </message>
-    <message>
-        <source>Pro Photography / Print</source>
-        <translation>Professionel fotografi / tryk</translation>
-    </message>
-    <message>
-        <source>16-Bit Master Archival</source>
-        <translation>16-bit masterarkiv</translation>
-    </message>
-    <message>
-        <source>Intent</source>
-        <translation>Gengivelse</translation>
-    </message>
     <message>
         <source>Perceptual</source>
         <translation>Perceptuel</translation>
     </message>
     <message>
-        <source>Compresses the whole gamut; smooth, saturated colours keep their relations</source>
-        <translation>Komprimerer hele farveområdet; bløde, mættede farver bevarer deres indbyrdes forhold</translation>
+        <source>8-bit · universal</source>
+        <translation>8 bit · universelt</translation>
+    </message>
+    <message>
+        <source>16-bit · lossless</source>
+        <translation>16 bit · tabsfrit</translation>
+    </message>
+    <message>
+        <source>16-bit · print, archive</source>
+        <translation>16 bit · tryk, arkiv</translation>
+    </message>
+    <message>
+        <source>8-bit · web</source>
+        <translation>8 bit · web</translation>
+    </message>
+    <message>
+        <source>12-bit · HDR-ready</source>
+        <translation>12 bit · klar til HDR</translation>
+    </message>
+    <message>
+        <source>10-bit · HEVC</source>
+        <translation>10 bit · HEVC</translation>
+    </message>
+    <message>
+        <source>16-bit · modern</source>
+        <translation>16 bit · moderne</translation>
+    </message>
+    <message>
+        <source>Float · scene-linear</source>
+        <translation>Flydende komma · scenelineært</translation>
+    </message>
+    <message numerus="yes">
+        <source>Export %n photos</source>
+        <translation>
+            <numerusform>Eksportér %n foto</numerusform>
+            <numerusform>Eksportér %n fotos</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>Export</source>
+        <translation>Eksportér</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>Luk</translation>
+    </message>
+    <message>
+        <source>Format</source>
+        <translation>Filformat</translation>
+    </message>
+    <message>
+        <source>Quality</source>
+        <translation>Kvalitet</translation>
+    </message>
+    <message>
+        <source>100 is lossless.</source>
+        <translation>100 er tabsfrit.</translation>
+    </message>
+    <message>
+        <source>Bit depth</source>
+        <translation>Bitdybde</translation>
+    </message>
+    <message>
+        <source>Half float</source>
+        <translation>Halv flydende komma</translation>
+    </message>
+    <message>
+        <source>Full float</source>
+        <translation>Fuld flydende komma</translation>
+    </message>
+    <message>
+        <source>%1-bit</source>
+        <translation>%1 bit</translation>
+    </message>
+    <message>
+        <source>Compression</source>
+        <translation>Komprimering</translation>
+    </message>
+    <message>
+        <source>None</source>
+        <translation>Ingen</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>Størrelse</translation>
+    </message>
+    <message>
+        <source>Full</source>
+        <translation>Fuld</translation>
+    </message>
+    <message>
+        <source>3840 px</source>
+        <translation>3840 px</translation>
+    </message>
+    <message>
+        <source>Long edge at most 3840 px</source>
+        <translation>Lange side højst 3840 px</translation>
+    </message>
+    <message>
+        <source>2048 px</source>
+        <translation>2048 px</translation>
+    </message>
+    <message>
+        <source>Long edge at most 2048 px</source>
+        <translation>Lange side højst 2048 px</translation>
+    </message>
+    <message>
+        <source>Colour profile</source>
+        <translation>Farveprofil</translation>
+    </message>
+    <message>
+        <source>Web, screens</source>
+        <translation>Web, skærme</translation>
+    </message>
+    <message>
+        <source>Wide-gamut screens</source>
+        <translation>Skærme med bredt farveområde</translation>
+    </message>
+    <message>
+        <source>Print</source>
+        <translation>Tryk</translation>
+    </message>
+    <message>
+        <source>Editing, archive</source>
+        <translation>Redigering, arkiv</translation>
+    </message>
+    <message>
+        <source>HDR, video</source>
+        <translation>HDR, video</translation>
+    </message>
+    <message>
+        <source>Linear, VFX</source>
+        <translation>Lineært, VFX</translation>
+    </message>
+    <message>
+        <source>OpenEXR is written scene-linear in the chosen primaries.</source>
+        <translation>OpenEXR skrives scenelineært i de valgte primærfarver.</translation>
+    </message>
+    <message>
+        <source>Rendering intent</source>
+        <translation>Gengivelseshensigt</translation>
+    </message>
+    <message>
+        <source>Compresses the whole gamut; colour relations are kept</source>
+        <translation>Komprimerer hele farveområdet; forholdet mellem farverne bevares</translation>
     </message>
     <message>
         <source>Relative</source>
@@ -528,46 +564,55 @@
         <translation>Nøjagtige farver inklusive kildens hvidpunkt; til prøvetryk</translation>
     </message>
     <message>
-        <source>Preserve Camera EXIF</source>
-        <translation>Bevar kameraets EXIF</translation>
+        <source>Metadata</source>
+        <translation>Metadata</translation>
     </message>
     <message>
-        <source>Strip GPS (Privacy)</source>
-        <translation>Fjern GPS (privatliv)</translation>
+        <source>Keep camera metadata (EXIF)</source>
+        <translation>Behold kameraets metadata (EXIF)</translation>
     </message>
     <message>
-        <source>Apply Photography Watermark / EXIF Signature</source>
-        <translation>Tilføj vandmærke / EXIF-signatur</translation>
+        <source>Remove location (GPS)</source>
+        <translation>Fjern placering (GPS)</translation>
     </message>
     <message>
-        <source>Exporting Batch...</source>
-        <translation>Eksporterer batch...</translation>
+        <source>Prepare for</source>
+        <translation>Forbered til</translation>
     </message>
     <message>
-        <source>Exporting Full Resolution...</source>
-        <translation>Eksporterer i fuld opløsning...</translation>
-    </message>
-    <message numerus="yes">
-        <source>Start Parallel Batch Export (%n Photos)</source>
-        <translation>
-            <numerusform>Start parallel batcheksport (%n foto)</numerusform>
-            <numerusform>Start parallel batcheksport (%n fotos)</numerusform>
-        </translation>
+        <source>Sets the crop and output sharpening for a platform. Reset restores your own.</source>
+        <translation>Indstiller beskæring og outputskarphed til en platform. Nulstil gendanner dine egne indstillinger.</translation>
     </message>
     <message>
-        <source>Start Export (%1 / %2)</source>
-        <translation>Start eksport (%1 / %2)</translation>
+        <source>Watermark</source>
+        <translation>Vandmærke</translation>
+    </message>
+    <message>
+        <source>Folder</source>
+        <translation>Mappe</translation>
+    </message>
+    <message>
+        <source>Hide</source>
+        <translation>Skjul</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Annuller</translation>
+    </message>
+    <message>
+        <source>Exporting…</source>
+        <translation>Eksporterer…</translation>
     </message>
 </context>
 <context>
     <name>FilmGrainPanel</name>
     <message>
-        <source>SILVER-HALIDE FILM GRAIN</source>
-        <translation>SØLVHALOGENID-FILMKORN</translation>
+        <source>Grain</source>
+        <translation>Korn</translation>
     </message>
     <message>
-        <source>RESET</source>
-        <translation>NULSTIL</translation>
+        <source>Reset</source>
+        <translation>Nulstil</translation>
     </message>
     <message>
         <source>Grain Amount</source>
@@ -701,12 +746,16 @@
         <translation>Panoramisk filmisk 35 mm-kontrast</translation>
     </message>
     <message>
-        <source>FILM SIMULATION &amp; SENSOR PROFILES</source>
-        <translation>FILMSIMULERING OG SENSORPROFILER</translation>
+        <source>Profile</source>
+        <translation>Profil</translation>
     </message>
     <message>
-        <source>RESET</source>
-        <translation>NULSTIL</translation>
+        <source>Reset</source>
+        <translation>Nulstil</translation>
+    </message>
+    <message>
+        <source>Amount</source>
+        <translation>Styrke</translation>
     </message>
     <message>
         <source>All</source>
@@ -716,17 +765,9 @@
         <source>Acros B&amp;W</source>
         <translation>Acros S/H</translation>
     </message>
-    <message>
-        <source>SIMULATION INTENSITY</source>
-        <translation>SIMULERINGENS STYRKE</translation>
-    </message>
 </context>
 <context>
     <name>Filmstrip</name>
-    <message>
-        <source>Local Photos</source>
-        <translation>Lokale fotos</translation>
-    </message>
     <message>
         <source>Studio Catalog</source>
         <translation>Studiekatalog</translation>
@@ -734,6 +775,14 @@
     <message>
         <source>Up</source>
         <translation>Op</translation>
+    </message>
+    <message>
+        <source>Folders</source>
+        <translation>Mapper</translation>
+    </message>
+    <message>
+        <source>Catalog</source>
+        <translation>Katalog</translation>
     </message>
     <message>
         <source>Scanning Catalog...</source>
@@ -760,21 +809,20 @@
         <translation>Ingen fotos fundet i denne mappe.</translation>
     </message>
     <message>
-        <source>DIR</source>
-        <comment>folder badge</comment>
-        <translation>MAPPE</translation>
+        <source>Folder</source>
+        <translation>Mappe</translation>
     </message>
     <message>
-        <source>FETCHING</source>
-        <translation>HENTER</translation>
+        <source>Downloading</source>
+        <translation>Henter</translation>
     </message>
     <message>
-        <source>RAW CLOUD</source>
-        <translation>RAW I SKYEN</translation>
+        <source>Remote</source>
+        <translation>Fjern</translation>
     </message>
     <message>
-        <source>NO PREVIEW</source>
-        <translation>INGEN EKSEMPEL</translation>
+        <source>No preview</source>
+        <translation>Ingen forhåndsvisning</translation>
     </message>
     <message>
         <source>Loading...</source>
@@ -836,40 +884,60 @@
         <translation>Fujifilm-opskrifter</translation>
     </message>
     <message>
-        <source>FUJIFILM RECIPES</source>
-        <translation>FUJIFILM-OPSKRIFTER</translation>
+        <source>Import</source>
+        <translation>Importér</translation>
     </message>
     <message>
-        <source>IMPORT</source>
-        <translation>IMPORTÉR</translation>
+        <source>Apply photo&apos;s recipe</source>
+        <translation>Anvend fotoets opskrift</translation>
     </message>
     <message>
-        <source>APPLY PHOTO&apos;S RECIPE</source>
-        <translation>ANVEND FOTOETS OPSKRIFT</translation>
+        <source>Save</source>
+        <translation>Gem</translation>
     </message>
     <message>
-        <source>SAVE</source>
-        <translation>GEM</translation>
+        <source>Apply recipe</source>
+        <translation>Anvend opskrift</translation>
+    </message>
+    <message>
+        <source>Camera (USB)</source>
+        <translation>Kamera (USB)</translation>
+    </message>
+    <message>
+        <source>Reconnect</source>
+        <translation>Genopret forbindelse</translation>
+    </message>
+    <message>
+        <source>Connect</source>
+        <translation>Forbind</translation>
+    </message>
+    <message>
+        <source>Read C1–C7</source>
+        <translation>Læs C1–C7</translation>
+    </message>
+    <message>
+        <source>Convert in camera</source>
+        <translation>Konvertér i kameraet</translation>
+    </message>
+    <message>
+        <source>Write recipe to C%1</source>
+        <translation>Skriv opskriften til C%1</translation>
+    </message>
+    <message>
+        <source>Pixel shift</source>
+        <translation>Pixel Shift</translation>
+    </message>
+    <message>
+        <source>Merge %1 frames to DNG</source>
+        <translation>Flet %1 billeder til DNG</translation>
+    </message>
+    <message>
+        <source>Merge frames to DNG</source>
+        <translation>Flet billeder til DNG</translation>
     </message>
     <message>
         <source>No saved recipes. Import an X RAW Studio profile, recipe text or a Fujifilm photo.</source>
         <translation>Ingen gemte opskrifter. Importér en X RAW Studio-profil, opskriftstekst eller et Fujifilm-foto.</translation>
-    </message>
-    <message>
-        <source>APPLY SELECTED RECIPE</source>
-        <translation>ANVEND VALGT OPSKRIFT</translation>
-    </message>
-    <message>
-        <source>CAMERA (USB)</source>
-        <translation>KAMERA (USB)</translation>
-    </message>
-    <message>
-        <source>RECONNECT</source>
-        <translation>GENFORBIND</translation>
-    </message>
-    <message>
-        <source>CONNECT</source>
-        <translation>FORBIND</translation>
     </message>
     <message>
         <source>%1  ·  in-camera RAW conversion</source>
@@ -884,24 +952,8 @@
         <translation>Sæt kameraets USB-tilstand til %1, og tilslut det.</translation>
     </message>
     <message>
-        <source>READ C1-C7</source>
-        <translation>LÆS C1-C7</translation>
-    </message>
-    <message>
-        <source>CONVERT IN CAMERA</source>
-        <translation>KONVERTÉR I KAMERAET</translation>
-    </message>
-    <message>
         <source>Unnamed</source>
         <translation>Unavngivet</translation>
-    </message>
-    <message>
-        <source>WRITE SELECTED RECIPE TO C%1</source>
-        <translation>SKRIV VALGT OPSKRIFT TIL C%1</translation>
-    </message>
-    <message>
-        <source>PIXEL SHIFT MULTI-SHOT</source>
-        <translation>PIXEL SHIFT MULTI-SHOT</translation>
     </message>
     <message numerus="yes">
         <source>%n RAF frames selected. 4 frames give full colour per pixel, 16 frames double the resolution.</source>
@@ -914,23 +966,12 @@
         <source>Select the RAF frames of one GFX Pixel Shift sequence in the filmstrip.</source>
         <translation>Vælg RAF-billederne fra én GFX Pixel Shift-sekvens i filmstrimlen.</translation>
     </message>
-    <message numerus="yes">
-        <source>MERGE %n FRAMES TO DNG</source>
-        <translation>
-            <numerusform>FLET %n BILLEDE TIL DNG</numerusform>
-            <numerusform>FLET %n BILLEDER TIL DNG</numerusform>
-        </translation>
-    </message>
-    <message>
-        <source>MERGE FRAMES TO DNG</source>
-        <translation>FLET BILLEDER TIL DNG</translation>
-    </message>
 </context>
 <context>
     <name>GradeVersionsBar</name>
     <message>
-        <source>GRADE VERSION</source>
-        <translation>GRADERINGSVERSION</translation>
+        <source>Version</source>
+        <translation>Version</translation>
     </message>
 </context>
 <context>
@@ -941,8 +982,8 @@
         <translation>[S] %1%</translation>
     </message>
     <message>
-        <source>RGB HISTOGRAM</source>
-        <translation>RGB-HISTOGRAM</translation>
+        <source>Histogram</source>
+        <translation>Histogram</translation>
     </message>
     <message>
         <source>[H] %1%</source>
@@ -989,12 +1030,12 @@
         <translation>Kanal %1</translation>
     </message>
     <message>
-        <source>RESET CH</source>
-        <translation>NULST. KANAL</translation>
+        <source>Reset colour</source>
+        <translation>Nulstil farve</translation>
     </message>
     <message>
-        <source>RESET ALL</source>
-        <translation>NULSTIL ALT</translation>
+        <source>Reset all</source>
+        <translation>Nulstil alt</translation>
     </message>
     <message>
         <source>Hue Shift</source>
@@ -1102,32 +1143,32 @@
         <translation>Masken %1 er klar (%2)</translation>
     </message>
     <message>
-        <source>DETECTING...</source>
-        <translation>REGISTRERER...</translation>
+        <source>Detecting…</source>
+        <translation>Registrerer…</translation>
     </message>
     <message>
-        <source>LOCAL ADJUSTMENT LAYERS</source>
-        <translation>LOKALE JUSTERINGSLAG</translation>
+        <source>Masks</source>
+        <translation>Masker</translation>
     </message>
     <message>
-        <source>+ GRADIENT</source>
-        <translation>+ GRADUERING</translation>
+        <source>+ Linear</source>
+        <translation>+ Lineær</translation>
+    </message>
+    <message>
+        <source>+ Radial</source>
+        <translation>+ Radial</translation>
+    </message>
+    <message>
+        <source>+ Luminance</source>
+        <translation>+ Luminans</translation>
     </message>
     <message>
         <source>Linear Gradient %1</source>
         <translation>Lineær graduering %1</translation>
     </message>
     <message>
-        <source>+ RADIAL</source>
-        <translation>+ RADIAL</translation>
-    </message>
-    <message>
         <source>Radial Mask %1</source>
         <translation>Radial maske %1</translation>
-    </message>
-    <message>
-        <source>+ LUMA</source>
-        <translation>+ LUMINANS</translation>
     </message>
     <message>
         <source>Luma Range %1</source>
@@ -1145,10 +1186,6 @@
         <source>I</source>
         <comment>invert mask toggle, first letter of Invert</comment>
         <translation>I</translation>
-    </message>
-    <message>
-        <source>SELECTED LAYER CONTROLS (%1)</source>
-        <translation>KONTROLLER FOR VALGT LAG (%1)</translation>
     </message>
     <message>
         <source>Layer Opacity</source>
@@ -1170,48 +1207,32 @@
 <context>
     <name>LutSelector</name>
     <message>
-        <source>DAVINCI 3D LUT ENGINE (.CUBE)</source>
-        <translation>DAVINCI 3D LUT-MOTOR (.CUBE)</translation>
+        <source>Load 3D LUT</source>
+        <translation>Indlæs 3D-LUT</translation>
     </message>
     <message>
-        <source>RESET</source>
-        <translation>NULSTIL</translation>
+        <source>3D LUT</source>
+        <translation>3D-LUT</translation>
     </message>
     <message>
-        <source>Hollywood Print</source>
-        <translation>Hollywood-kopi</translation>
+        <source>Reset</source>
+        <translation>Nulstil</translation>
     </message>
     <message>
-        <source>Cinema Blockbuster</source>
-        <translation>Kassesucces</translation>
+        <source>Load .cube file…</source>
+        <translation>Indlæs .cube-fil…</translation>
     </message>
     <message>
-        <source>35mm Soft Stock</source>
-        <translation>Blød 35 mm-film</translation>
+        <source>Saved look: %1</source>
+        <translation>Gemt stil: %1</translation>
     </message>
     <message>
-        <source>High-Acutance B&amp;W</source>
-        <translation>S/H med høj skarphed</translation>
-    </message>
-    <message>
-        <source>LUT Intensity (Mix)</source>
-        <translation>LUT-styrke (mix)</translation>
+        <source>Amount</source>
+        <translation>Styrke</translation>
     </message>
 </context>
 <context>
     <name>MainWindow</name>
-    <message>
-        <source>Switched to version %1</source>
-        <translation>Skiftede til version %1</translation>
-    </message>
-    <message>
-        <source>Version %1 initialized</source>
-        <translation>Version %1 oprettet</translation>
-    </message>
-    <message>
-        <source>Copied current grade to version %1</source>
-        <translation>Aktuel gradering kopieret til version %1</translation>
-    </message>
     <message numerus="yes">
         <source>Rating: %n star(s)</source>
         <translation>
@@ -1240,36 +1261,8 @@
         <translation>Intet at fortryde</translation>
     </message>
     <message>
-        <source>Undo (Ctrl+Z)</source>
-        <translation>Fortryd (Ctrl+Z)</translation>
-    </message>
-    <message>
         <source>Nothing to redo</source>
         <translation>Intet at gentage</translation>
-    </message>
-    <message>
-        <source>Redo (Ctrl+Shift+Z)</source>
-        <translation>Gentag (Ctrl+Shift+Z)</translation>
-    </message>
-    <message>
-        <source>Adjustments copied (Ctrl+Shift+C)</source>
-        <translation>Justeringer kopieret (Ctrl+Shift+C)</translation>
-    </message>
-    <message>
-        <source>No adjustments in clipboard</source>
-        <translation>Ingen justeringer i udklipsholderen</translation>
-    </message>
-    <message>
-        <source>Adjustments pasted (Ctrl+Shift+V)</source>
-        <translation>Justeringer indsat (Ctrl+Shift+V)</translation>
-    </message>
-    <message>
-        <source>Reset to defaults (Ctrl+R)</source>
-        <translation>Standardværdier gendannet (Ctrl+R)</translation>
-    </message>
-    <message>
-        <source>Social framing and adjustments reset</source>
-        <translation>Beskæring til sociale medier og justeringer nulstillet</translation>
     </message>
     <message>
         <source>Failed to load RAW: %1</source>
@@ -1292,28 +1285,8 @@
         <translation>Eksemplet kunne ikke gengives</translation>
     </message>
     <message>
-        <source>Auto tone applied</source>
-        <translation>Automatisk tone anvendt</translation>
-    </message>
-    <message>
-        <source>AI decisions applied</source>
-        <translation>AI-beslutninger anvendt</translation>
-    </message>
-    <message>
-        <source>Local heuristic applied</source>
-        <translation>Lokal heuristik anvendt</translation>
-    </message>
-    <message>
         <source>%1 applied (%2)</source>
         <translation>%1 anvendt (%2)</translation>
-    </message>
-    <message>
-        <source>Recipe sidecar saved</source>
-        <translation>Opskriftsfil gemt</translation>
-    </message>
-    <message>
-        <source>Batch finished: %1/%2 photos exported</source>
-        <translation>Batch færdig: %1/%2 fotos eksporteret</translation>
     </message>
     <message>
         <source>Batch export: %1 succeeded, %2 failed</source>
@@ -1336,14 +1309,6 @@
         <translation>Skrev %1</translation>
     </message>
     <message>
-        <source>Analyzing dynamic range and scene...</source>
-        <translation>Analyserer dynamikområde og scene...</translation>
-    </message>
-    <message>
-        <source>Asking the AI for edit decisions...</source>
-        <translation>Beder AI om redigeringsbeslutninger...</translation>
-    </message>
-    <message>
         <source>Open RAW Photo</source>
         <translation>Åbn RAW-foto</translation>
     </message>
@@ -1352,20 +1317,8 @@
         <translation>RAW-fotos</translation>
     </message>
     <message>
-        <source>Saved to: %1</source>
-        <translation>Gemt i: %1</translation>
-    </message>
-    <message>
-        <source>Export error: %1</source>
-        <translation>Eksportfejl: %1</translation>
-    </message>
-    <message>
         <source>Export finished without a result</source>
         <translation>Eksporten sluttede uden resultat</translation>
-    </message>
-    <message>
-        <source>The folder scan gave no answer</source>
-        <translation>Mappescanningen svarede ikke</translation>
     </message>
     <message>
         <source>Crop mode: on (C)</source>
@@ -1376,36 +1329,12 @@
         <translation>Beskæringstilstand: fra</translation>
     </message>
     <message>
-        <source>Open a photo first to export</source>
-        <translation>Åbn et foto først for at eksportere</translation>
-    </message>
-    <message>
-        <source>Panels hidden (Tab)</source>
-        <translation>Paneler skjult (Tab)</translation>
-    </message>
-    <message>
-        <source>Panels restored (Tab)</source>
-        <translation>Paneler gendannet (Tab)</translation>
-    </message>
-    <message>
-        <source>Optimizing for %1...</source>
-        <translation>Optimerer til %1...</translation>
-    </message>
-    <message>
-        <source>AI SCENE INSIGHT</source>
-        <translation>AI-SCENEANALYSE</translation>
-    </message>
-    <message>
         <source>Analyzing...</source>
         <translation>Analyserer...</translation>
     </message>
     <message>
         <source>Extracting dynamic range...</source>
         <translation>Udtrækker dynamikområde...</translation>
-    </message>
-    <message>
-        <source>Grade versions • Alt+1..4 to switch</source>
-        <translation>Graderingsversioner • Alt+1..4 for at skifte</translation>
     </message>
     <message>
         <source>Opened %1</source>
@@ -1416,36 +1345,8 @@
         <translation>Scanner mappen %1</translation>
     </message>
     <message>
-        <source>AI edit applied</source>
-        <translation>AI-redigering anvendt</translation>
-    </message>
-    <message>
-        <source>ESSENTIAL ADJUSTMENTS</source>
-        <translation>GRUNDLÆGGENDE JUSTERINGER</translation>
-    </message>
-    <message>
-        <source>RESET</source>
-        <translation>NULSTIL</translation>
-    </message>
-    <message>
-        <source>Exposure (Light)</source>
-        <translation>Eksponering (lys)</translation>
-    </message>
-    <message>
-        <source>Warmth (Temperature)</source>
-        <translation>Varme (temperatur)</translation>
-    </message>
-    <message>
-        <source>Vibrance (Color Punch)</source>
-        <translation>Livlighed (farvekraft)</translation>
-    </message>
-    <message>
         <source>Contrast</source>
         <translation>Kontrast</translation>
-    </message>
-    <message>
-        <source>WHITE BALANCE</source>
-        <translation>HVIDBALANCE</translation>
     </message>
     <message>
         <source>Temp (Kelvin)</source>
@@ -1454,10 +1355,6 @@
     <message>
         <source>Tint (Green / Magenta)</source>
         <translation>Farvetone (grøn / magenta)</translation>
-    </message>
-    <message>
-        <source>LIGHT &amp; DYNAMIC RANGE</source>
-        <translation>LYS OG DYNAMIKOMRÅDE</translation>
     </message>
     <message>
         <source>Exposure</source>
@@ -1480,10 +1377,6 @@
         <translation>Sorte</translation>
     </message>
     <message>
-        <source>TONE CURVE (PARAMETRIC)</source>
-        <translation>TONEKURVE (PARAMETRISK)</translation>
-    </message>
-    <message>
         <source>Curve Highlights</source>
         <translation>Kurve: højlys</translation>
     </message>
@@ -1498,10 +1391,6 @@
     <message>
         <source>Curve Shadows</source>
         <translation>Kurve: skygger</translation>
-    </message>
-    <message>
-        <source>PRESENCE &amp; TEXTURE</source>
-        <translation>TILSTEDEVÆRELSE OG STRUKTUR</translation>
     </message>
     <message>
         <source>Texture</source>
@@ -1522,14 +1411,6 @@
     <message>
         <source>Saturation</source>
         <translation>Mætning</translation>
-    </message>
-    <message>
-        <source>COLOR MIXER (8-BAND HSL)</source>
-        <translation>FARVEMIXER (8-BÅNDS HSL)</translation>
-    </message>
-    <message>
-        <source>DETAIL &amp; OPTICS</source>
-        <translation>DETALJE OG OPTIK</translation>
     </message>
     <message>
         <source>Sharpening</source>
@@ -1560,12 +1441,200 @@
         <translation>Åbn et foto først</translation>
     </message>
     <message>
+        <source>Version %1</source>
+        <translation>Version %1</translation>
+    </message>
+    <message>
+        <source>Version %1 started</source>
+        <translation>Version %1 påbegyndt</translation>
+    </message>
+    <message>
+        <source>Copied to version %1</source>
+        <translation>Kopieret til version %1</translation>
+    </message>
+    <message>
+        <source>Undo</source>
+        <translation>Fortryd</translation>
+    </message>
+    <message>
+        <source>Redo</source>
+        <translation>Gentag</translation>
+    </message>
+    <message>
+        <source>Settings copied</source>
+        <translation>Indstillinger kopieret</translation>
+    </message>
+    <message>
+        <source>Nothing copied yet</source>
+        <translation>Intet kopieret endnu</translation>
+    </message>
+    <message>
+        <source>Settings pasted</source>
+        <translation>Indstillinger indsat</translation>
+    </message>
+    <message>
+        <source>Reset to defaults</source>
+        <translation>Standardværdier gendannet</translation>
+    </message>
+    <message>
+        <source>Platform crop reset</source>
+        <translation>Platformsbeskæring nulstillet</translation>
+    </message>
+    <message>
+        <source>Auto applied</source>
+        <translation>Automatisk justering anvendt</translation>
+    </message>
+    <message>
+        <source>Settings saved</source>
+        <translation>Indstillinger gemt</translation>
+    </message>
+    <message>
+        <source>%1 of %2 photos exported</source>
+        <translation>%1 af %2 fotos eksporteret</translation>
+    </message>
+    <message>
+        <source>Auto: analysing the photo…</source>
+        <translation>Automatisk: fotoet analyseres…</translation>
+    </message>
+    <message>
+        <source>Saved to %1</source>
+        <translation>Gemt i %1</translation>
+    </message>
+    <message>
+        <source>Export failed</source>
+        <translation>Eksporten mislykkedes</translation>
+    </message>
+    <message>
+        <source>The scan did not respond.</source>
+        <translation>Mappescanningen svarede ikke.</translation>
+    </message>
+    <message>
+        <source>Rating: ★</source>
+        <translation>Bedømmelse: ★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★</source>
+        <translation>Bedømmelse: ★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★</source>
+        <translation>Bedømmelse: ★★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★★</source>
+        <translation>Bedømmelse: ★★★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★★★</source>
+        <translation>Bedømmelse: ★★★★★</translation>
+    </message>
+    <message>
+        <source>Flag cleared</source>
+        <translation>Markering fjernet</translation>
+    </message>
+    <message>
+        <source>Preparing for %1…</source>
+        <translation>Forbereder til %1…</translation>
+    </message>
+    <message>
+        <source>Rating: %1</source>
+        <translation>Bedømmelse: %1</translation>
+    </message>
+    <message>
+        <source>Picked</source>
+        <translation>Valgt</translation>
+    </message>
+    <message>
+        <source>Rejected</source>
+        <translation>Afvist</translation>
+    </message>
+    <message>
+        <source>Scene</source>
+        <translation>Scene</translation>
+    </message>
+    <message>
+        <source>Adjust</source>
+        <translation>Juster</translation>
+    </message>
+    <message>
+        <source>Masks</source>
+        <translation>Masker</translation>
+    </message>
+    <message>
+        <source>Looks</source>
+        <translation>Stilarter</translation>
+    </message>
+    <message>
+        <source>AI</source>
+        <translation>AI</translation>
+    </message>
+    <message>
+        <source>Profile</source>
+        <translation>Profil</translation>
+    </message>
+    <message>
         <source>Color Chrome Effect</source>
         <translation>Color Chrome-effekt</translation>
     </message>
     <message>
         <source>Color Chrome FX Blue</source>
         <translation>Color Chrome FX Blå</translation>
+    </message>
+    <message>
+        <source>White balance</source>
+        <translation>Hvidbalance</translation>
+    </message>
+    <message>
+        <source>Tone</source>
+        <translation>Tone</translation>
+    </message>
+    <message>
+        <source>Presence</source>
+        <translation>Nærvær</translation>
+    </message>
+    <message>
+        <source>Tone curve</source>
+        <translation>Tonekurve</translation>
+    </message>
+    <message>
+        <source>Colour mixer</source>
+        <translation>Farvemixer</translation>
+    </message>
+    <message>
+        <source>Colour grading</source>
+        <translation>Farvegradering</translation>
+    </message>
+    <message>
+        <source>Detail and optics</source>
+        <translation>Detaljer og optik</translation>
+    </message>
+    <message>
+        <source>Grain</source>
+        <translation>Korn</translation>
+    </message>
+    <message>
+        <source>Colour management</source>
+        <translation>Farvestyring</translation>
+    </message>
+    <message>
+        <source>Local adjustments</source>
+        <translation>Lokale justeringer</translation>
+    </message>
+    <message>
+        <source>Presets</source>
+        <translation>Forudindstillinger</translation>
+    </message>
+    <message>
+        <source>LUT</source>
+        <translation>LUT</translation>
+    </message>
+    <message>
+        <source>Edit assistant</source>
+        <translation>Redigeringsassistent</translation>
+    </message>
+    <message>
+        <source>Assistant edit applied</source>
+        <translation>Assistentens redigering anvendt</translation>
     </message>
     <message>
         <source>Copy</source>
@@ -1600,30 +1669,30 @@
         <translation>Åbner %1</translation>
     </message>
     <message>
-        <source>Loading the studio catalog...</source>
-        <translation>Indlæser studiekataloget...</translation>
+        <source>Loading the catalog…</source>
+        <translation>Indlæser kataloget…</translation>
     </message>
     <message>
-        <source>Refreshing the studio catalog...</source>
-        <translation>Opdaterer studiekataloget...</translation>
+        <source>Refreshing the catalog…</source>
+        <translation>Opdaterer kataloget…</translation>
     </message>
     <message numerus="yes">
-        <source>Exporting %n photo(s) in parallel...</source>
+        <source>Exporting %n photos…</source>
         <translation>
-            <numerusform>Eksporterer %n foto parallelt...</numerusform>
-            <numerusform>Eksporterer %n fotos parallelt...</numerusform>
+            <numerusform>Eksporterer %n foto…</numerusform>
+            <numerusform>Eksporterer %n fotos…</numerusform>
         </translation>
     </message>
     <message>
-        <source>Developing at full resolution and encoding...</source>
-        <translation>Fremkalder i fuld opløsning og koder...</translation>
+        <source>Developing at full resolution…</source>
+        <translation>Fremkalder i fuld opløsning…</translation>
     </message>
 </context>
 <context>
     <name>Navigator</name>
     <message>
-        <source>NAVIGATOR</source>
-        <translation>NAVIGATØR</translation>
+        <source>Navigator</source>
+        <translation>Navigator</translation>
     </message>
     <message>
         <source>FIT</source>
@@ -1631,65 +1700,92 @@
     </message>
 </context>
 <context>
+    <name>PanelSection</name>
+    <message>
+        <source>Reset %1</source>
+        <translation>Nulstil %1</translation>
+    </message>
+</context>
+<context>
     <name>PresetSelector</name>
     <message>
-        <source>FILM LOOKS &amp; STYLES</source>
-        <translation>FILMLOOKS OG STILE</translation>
+        <source>Looks</source>
+        <translation>Stilarter</translation>
     </message>
     <message>
-        <source>RESET</source>
-        <translation>NULSTIL</translation>
+        <source>Reset</source>
+        <translation>Nulstil</translation>
     </message>
     <message>
-        <source>AI Auto Enhance</source>
-        <translation>Automatisk AI-forbedring</translation>
+        <source>Auto</source>
+        <translation>Automatisk</translation>
     </message>
     <message>
-        <source>RUN</source>
-        <translation>KØR</translation>
+        <source>Run</source>
+        <translation>Kør</translation>
     </message>
     <message>
-        <source>Documentary Muted</source>
-        <translation>Dæmpet dokumentar</translation>
+        <source>Muted</source>
+        <translation>Dæmpet</translation>
     </message>
     <message>
-        <source>Vivid Landscapes</source>
-        <translation>Livlige landskaber</translation>
+        <source>Documentary, low saturation</source>
+        <translation>Dokumentarisk, lav mætning</translation>
     </message>
     <message>
-        <source>Warm Skin Tones</source>
-        <translation>Varme hudtoner</translation>
+        <source>Vivid</source>
+        <translation>Livlig</translation>
     </message>
     <message>
-        <source>High Contrast B&amp;W</source>
-        <translation>S/H med høj kontrast</translation>
+        <source>Landscapes, rich colour</source>
+        <translation>Landskaber, mættede farver</translation>
     </message>
     <message>
-        <source>Film Grade</source>
-        <translation>Filmgradering</translation>
+        <source>Warm portrait</source>
+        <translation>Varmt portræt</translation>
+    </message>
+    <message>
+        <source>Soft contrast, warm skin</source>
+        <translation>Blød kontrast, varm hud</translation>
+    </message>
+    <message>
+        <source>Black and white</source>
+        <translation>Sort-hvid</translation>
+    </message>
+    <message>
+        <source>High contrast</source>
+        <translation>Høj kontrast</translation>
+    </message>
+    <message>
+        <source>Teal and orange</source>
+        <translation>Blågrøn og orange</translation>
+    </message>
+    <message>
+        <source>Split toning</source>
+        <translation>Delt toning</translation>
     </message>
 </context>
 <context>
     <name>RgbMixerPanel</name>
     <message>
-        <source>DAVINCI RGB PRIMARY MIXER</source>
-        <translation>DAVINCI RGB-PRIMÆRMIXER</translation>
-    </message>
-    <message>
-        <source>RESET</source>
-        <translation>NULSTIL</translation>
-    </message>
-    <message>
         <source>Monochrome Mixing</source>
         <translation>Monokrom blanding</translation>
     </message>
     <message>
-        <source>MONOCHROME LUMA MIX</source>
-        <translation>MONOKROM LUMINANSBLANDING</translation>
+        <source>Channel mixer</source>
+        <translation>Kanalmixer</translation>
     </message>
     <message>
-        <source>RED OUTPUT CHANNEL</source>
-        <translation>RØD UDGANGSKANAL</translation>
+        <source>Reset</source>
+        <translation>Nulstil</translation>
+    </message>
+    <message>
+        <source>Monochrome mix</source>
+        <translation>Monokrom blanding</translation>
+    </message>
+    <message>
+        <source>Red output</source>
+        <translation>Rød udgang</translation>
     </message>
     <message>
         <source>Red in Red</source>
@@ -1704,8 +1800,12 @@
         <translation>Blå i rød</translation>
     </message>
     <message>
-        <source>GREEN OUTPUT CHANNEL</source>
-        <translation>GRØN UDGANGSKANAL</translation>
+        <source>Green output</source>
+        <translation>Grøn udgang</translation>
+    </message>
+    <message>
+        <source>Blue output</source>
+        <translation>Blå udgang</translation>
     </message>
     <message>
         <source>Red in Green</source>
@@ -1718,10 +1818,6 @@
     <message>
         <source>Blue in Green</source>
         <translation>Blå i grøn</translation>
-    </message>
-    <message>
-        <source>BLUE OUTPUT CHANNEL</source>
-        <translation>BLÅ UDGANGSKANAL</translation>
     </message>
     <message>
         <source>Red in Blue</source>
@@ -1765,8 +1861,8 @@
         <translation>[H] %1%</translation>
     </message>
     <message>
-        <source>NO SIGNAL / LOAD RAW</source>
-        <translation>INTET SIGNAL / INDLÆS RAW</translation>
+        <source>No photo</source>
+        <translation>Intet foto</translation>
     </message>
     <message>
         <source>RED</source>
@@ -1788,12 +1884,12 @@
 <context>
     <name>SkinTonePanel</name>
     <message>
-        <source>CAPTURE ONE SKIN TONE</source>
-        <translation>CAPTURE ONE HUDTONE</translation>
+        <source>Skin tone</source>
+        <translation>Hudtone</translation>
     </message>
     <message>
-        <source>RESET</source>
-        <translation>NULSTIL</translation>
+        <source>Reset</source>
+        <translation>Nulstil</translation>
     </message>
     <message>
         <source>Vectorscope 123° flesh line (target: %1°)</source>
@@ -1834,52 +1930,28 @@
 <context>
     <name>SocialOptimizer</name>
     <message>
-        <source>AI SOCIAL MEDIA OPTIMIZER</source>
-        <translation>AI-OPTIMERING TIL SOCIALE MEDIER</translation>
+        <source>Prepare for</source>
+        <translation>Forbered til</translation>
     </message>
     <message>
-        <source>RESET</source>
-        <translation>NULSTIL</translation>
+        <source>Reset</source>
+        <translation>Nulstil</translation>
     </message>
     <message>
-        <source>Instagram Feed</source>
-        <translation>Instagram-feed</translation>
+        <source>Instagram post</source>
+        <translation>Instagram-opslag</translation>
     </message>
     <message>
-        <source>Max Screen</source>
-        <translation>Maksimal skærm</translation>
+        <source>Stories and Reels</source>
+        <translation>Stories og Reels</translation>
     </message>
     <message>
-        <source>Stories / Reels</source>
-        <translation>Stories / Reels</translation>
+        <source>Square</source>
+        <translation>Kvadrat</translation>
     </message>
     <message>
-        <source>Full Mobile</source>
-        <translation>Hel mobilskærm</translation>
-    </message>
-    <message>
-        <source>Crisp Feed</source>
-        <translation>Skarpt feed</translation>
-    </message>
-    <message>
-        <source>Classic Square</source>
-        <translation>Klassisk kvadrat</translation>
-    </message>
-    <message>
-        <source>Grid Post</source>
-        <translation>Gitteropslag</translation>
-    </message>
-    <message>
-        <source>High Res</source>
-        <translation>Høj opløsning</translation>
-    </message>
-    <message>
-        <source>YouTube Thumb</source>
+        <source>YouTube thumbnail</source>
         <translation>YouTube-miniature</translation>
-    </message>
-    <message>
-        <source>High CTR</source>
-        <translation>Høj CTR</translation>
     </message>
 </context>
 <context>
@@ -1914,8 +1986,8 @@
         <translation>Grundlæggende</translation>
     </message>
     <message>
-        <source>Pro Studio</source>
-        <translation>Pro Studio</translation>
+        <source>Pro</source>
+        <translation>Pro</translation>
     </message>
     <message>
         <source>Undo (Ctrl+Z)</source>
@@ -1953,16 +2025,16 @@
 <context>
     <name>Viewport</name>
     <message>
-        <source>RESET 0°</source>
-        <translation>NULSTIL 0°</translation>
+        <source>Reset 0°</source>
+        <translation>Nulstil til 0°</translation>
     </message>
     <message>
-        <source>FIT</source>
-        <translation>TILPAS</translation>
+        <source>Fit</source>
+        <translation>Tilpas</translation>
     </message>
     <message>
-        <source>CROP &amp; COMPOSE</source>
-        <translation>BESKÆRING OG KOMPOSITION</translation>
+        <source>Crop</source>
+        <translation>Beskær</translation>
     </message>
     <message>
         <source>Original</source>
@@ -1989,12 +2061,20 @@
         <translation>Gitter: fra</translation>
     </message>
     <message>
-        <source>RESET</source>
-        <translation>NULSTIL</translation>
+        <source>Reset</source>
+        <translation>Nulstil</translation>
     </message>
     <message>
-        <source>DONE</source>
-        <translation>FÆRDIG</translation>
+        <source>Done</source>
+        <translation>Færdig</translation>
+    </message>
+    <message>
+        <source>Shadow clipping</source>
+        <translation>Klipning i skygger</translation>
+    </message>
+    <message>
+        <source>Highlight clipping</source>
+        <translation>Klipning i højlys</translation>
     </message>
     <message>
         <source>ORIGINAL RAW (Before)</source>
@@ -2003,18 +2083,6 @@
     <message>
         <source>EDITED RECIPE (After)</source>
         <translation>REDIGERET OPSKRIFT (efter)</translation>
-    </message>
-    <message>
-        <source>[S] SHADOW CLIPPING (BLUE)</source>
-        <translation>[S] KLIPPEDE SKYGGER (BLÅ)</translation>
-    </message>
-    <message>
-        <source>[H] HIGHLIGHT CLIPPING (RED)</source>
-        <translation>[H] KLIPPET HØJLYS (RØD)</translation>
-    </message>
-    <message>
-        <source>Pinch: Zoom | 2-Finger Twist: Rotate | 2-Finger Pan | Double-Tap: Reset</source>
-        <translation>Knib: zoom | Drej med 2 fingre: rotér | Panorér med 2 fingre | Dobbelttryk: nulstil</translation>
     </message>
     <message>
         <source>Open a RAW (Ctrl+O) or drop a photo / folder here</source>
@@ -2028,8 +2096,8 @@
 <context>
     <name>WatermarkConfig</name>
     <message>
-        <source>WATERMARK &amp; BRANDING</source>
-        <translation>VANDMÆRKE OG BRANDING</translation>
+        <source>Watermark</source>
+        <translation>Vandmærke</translation>
     </message>
     <message>
         <source>Text / EXIF Tag</source>
@@ -2040,28 +2108,28 @@
         <translation>Eget PNG-logo</translation>
     </message>
     <message>
-        <source>WATERMARK TEXT OR TEMPLATE</source>
-        <translation>VANDMÆRKETS TEKST ELLER SKABELON</translation>
+        <source>Text or template</source>
+        <translation>Tekst eller skabelon</translation>
     </message>
     <message>
-        <source>LOGO FILE PATH (.PNG)</source>
-        <translation>STI TIL LOGO (.PNG)</translation>
+        <source>Logo file (PNG)</source>
+        <translation>Logofil (PNG)</translation>
     </message>
     <message>
-        <source>POSITION</source>
-        <translation>PLACERING</translation>
+        <source>Position</source>
+        <translation>Placering</translation>
+    </message>
+    <message>
+        <source>Opacity</source>
+        <translation>Uigennemsigtighed</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>Størrelse</translation>
     </message>
     <message>
         <source>Drop Shadow</source>
         <translation>Skygge</translation>
-    </message>
-    <message>
-        <source>OPACITY</source>
-        <translation>OPACITET</translation>
-    </message>
-    <message>
-        <source>SIZE MULTIPLIER</source>
-        <translation>STØRRELSESFAKTOR</translation>
     </message>
 </context>
 </TS>

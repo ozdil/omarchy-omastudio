@@ -5,6 +5,8 @@ import OmaStudio.Host
 
 Rectangle {
     id: root
+    // Inside a panel section, which shows the title
+    property bool embedded: false
     Layout.fillWidth: true
     implicitHeight: mainCol.implicitHeight + 20
     radius: Theme.radiusMd
@@ -84,7 +86,7 @@ Rectangle {
         border.width: 1
         Text {
             anchors.centerIn: parent
-            text: aiProc.running && root.aiKind === ab.kind ? qsTr("DETECTING...") : ab.label
+            text: aiProc.running && root.aiKind === ab.kind ? qsTr("Detecting…") : ab.label
             textFormat: Text.PlainText
             font.family: Theme.monoFont
             font.pixelSize: Theme.px(8)
@@ -112,7 +114,8 @@ Rectangle {
             spacing: 6
 
             Text {
-                text: qsTr("LOCAL ADJUSTMENT LAYERS")
+                visible: !root.embedded
+                text: qsTr("Masks")
                 textFormat: Text.PlainText
                 font.family: Theme.fontFamily
                 font.pixelSize: Theme.px(10)
@@ -134,7 +137,7 @@ Rectangle {
                 Text {
                     id: addLinText
                     anchors.centerIn: parent
-                    text: qsTr("+ GRADIENT")
+                    text: qsTr("+ Linear")
                     textFormat: Text.PlainText
                     font.family: Theme.monoFont
                     font.pixelSize: Theme.px(8)
@@ -194,7 +197,7 @@ Rectangle {
                 Text {
                     id: addRadText
                     anchors.centerIn: parent
-                    text: qsTr("+ RADIAL")
+                    text: qsTr("+ Radial")
                     textFormat: Text.PlainText
                     font.family: Theme.monoFont
                     font.pixelSize: Theme.px(8)
@@ -255,7 +258,7 @@ Rectangle {
                 Text {
                     id: addLumaText
                     anchors.centerIn: parent
-                    text: qsTr("+ LUMA")
+                    text: qsTr("+ Luminance")
                     textFormat: Text.PlainText
                     font.family: Theme.monoFont
                     font.pixelSize: Theme.px(8)
@@ -447,7 +450,7 @@ Rectangle {
             Rectangle { Layout.fillWidth: true; height: 1; color: Theme.border }
 
             Text {
-                text: qsTr("SELECTED LAYER CONTROLS (%1)").arg(activeL ? activeL.name : "")
+                text: activeL ? activeL.name : ""
                 textFormat: Text.PlainText
                 font.family: Theme.fontFamily
                 font.pixelSize: Theme.px(9)

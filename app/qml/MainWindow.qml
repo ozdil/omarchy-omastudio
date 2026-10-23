@@ -25,6 +25,14 @@ Rectangle {
     property bool showLeftPanel: true
 
     property bool showRightPanel: true
+    property bool showFilmstrip: true
+    // Right panel tab: adjust, masks, looks, ai, output
+    property string rightTab: "adjust"
+    // Section key -> true when the section is collapsed
+    property var collapsedSections: ({})
+    // Photo surround: "dark", "grey" (18 %) or "light"; independent of the theme
+    property string surround: "dark"
+    property bool uiStateLoaded: false
     property int photoRating: 0
     property string photoFlag: "none"
 
@@ -161,11 +169,11 @@ Rectangle {
             root.gradeVersions = vMap;
             // Grade versions hold the edit, not the photo's culling state
             root.applyRecipeObject(Object.assign({}, vMap[ver], { "rating": root.photoRating, "flag": root.photoFlag }));
-            root.showToast(qsTr("Switched to version %1").arg(ver), Theme.accentCyan);
+            root.showToast(qsTr("Version %1").arg(ver), Theme.accentCyan);
         } else {
             vMap[ver] = cur;
             root.gradeVersions = vMap;
-            root.showToast(qsTr("Version %1 initialized").arg(ver), Theme.accentYellow);
+            root.showToast(qsTr("Version %1 started").arg(ver), Theme.accentYellow);
         }
         root.requestRender();
     }
@@ -175,7 +183,7 @@ Rectangle {
         var vMap = Object.assign({}, root.gradeVersions);
         vMap[ver] = cur;
         root.gradeVersions = vMap;
-        root.showToast(qsTr("Copied current grade to version %1").arg(ver), Theme.accentGreen);
+        root.showToast(qsTr("Copied to version %1").arg(ver), Theme.accentGreen);
     }
 
     // Optics & Crop State
@@ -206,7 +214,8 @@ Rectangle {
     }
 
     function showToast(msg, col) {
-        root.toastMessage = msg;
+        // Older call sites tag messages ("[OK] ...", "[Catalog] ..."); the colour carries that
+        root.toastMessage = String(msg).replace(/^\[[^\]]*\]\s*/, "");
         root.toastColor = col || Theme.accent;
         toastTimer.restart();
     }
@@ -303,7 +312,7 @@ Rectangle {
         prev = Object.assign({}, prev, { "rating": root.photoRating, "flag": root.photoFlag });
         root.applyRecipeObject(prev);
         root.isPerformingUndoRedo = false;
-        root.showToast(qsTr("Undo (Ctrl+Z)"), Theme.accentCyan);
+        root.showToast(qsTr("Undo"), Theme.accentCyan);
     }
 
     function redo() {
@@ -326,22 +335,22 @@ Rectangle {
         next = Object.assign({}, next, { "rating": root.photoRating, "flag": root.photoFlag });
         root.applyRecipeObject(next);
         root.isPerformingUndoRedo = false;
-        root.showToast(qsTr("Redo (Ctrl+Shift+Z)"), Theme.accentCyan);
+        root.showToast(qsTr("Redo"), Theme.accentCyan);
     }
 
     function copyRecipe() {
         root.copiedRecipe = root.buildRecipeObject();
-        root.showToast(qsTr("Adjustments copied (Ctrl+Shift+C)"), Theme.accentGreen);
+        root.showToast(qsTr("Settings copied"), Theme.accentGreen);
     }
 
     function pasteRecipe() {
         if (!root.copiedRecipe) {
-            root.showToast(qsTr("No adjustments in clipboard"), Theme.accentMagenta);
+            root.showToast(qsTr("Nothing copied yet"), Theme.accentMagenta);
             return;
         }
         root.pushUndoState();
         root.applyRecipeObject(root.copiedRecipe);
-        root.showToast(qsTr("Adjustments pasted (Ctrl+Shift+V)"), Theme.accentGreen);
+        root.showToast(qsTr("Settings pasted"), Theme.accentGreen);
     }
 
     function resetRecipe() {
@@ -424,13 +433,13 @@ Rectangle {
         viewport.flipH = false;
         viewport.flipV = false;
         if (typeof presetSel !== "undefined" && presetSel) presetSel.activePreset = "";
-        if (typeof socialOpt !== "undefined" && socialOpt) socialOpt.activePlatform = "";
+        exportDialog.socialOptimizer.activePlatform = "";
         if (typeof hslMixer !== "undefined" && hslMixer) hslMixer.resetAll();
         if (typeof colorWheels !== "undefined" && colorWheels) colorWheels.resetAllWheels();
         root.highlightReconstruct = true;
         root.filmicAgx = false;
         try { root.syncPanels(); } catch (e) { console.warn("syncPanels failed: " + e); }
-        root.showToast(qsTr("Reset to defaults (Ctrl+R)"), Theme.textDim);
+        root.showToast(qsTr("Reset to defaults"), Theme.textDim);
         root.requestRender();
     }
 
@@ -447,11 +456,9 @@ Rectangle {
         root.vibranceValue = 0.0;
         root.shadowsValue = 0.0;
         root.whitesValue = 0.0;
-        if (typeof socialOpt !== "undefined" && socialOpt) {
-            socialOpt.activePlatform = "";
-        }
+        exportDialog.socialOptimizer.activePlatform = "";
         root.requestRender();
-        root.showToast(qsTr("Social framing and adjustments reset"), Theme.accentCyan);
+        root.showToast(qsTr("Platform crop reset"), Theme.accentCyan);
     }
 
     function buildRecipeObject() {
@@ -783,8 +790,8 @@ Rectangle {
                 console.warn("Daemon returned error for action " + resp.action + ": " + resp.error);
                 if (resp.action === "load") {
                     root.showToast(qsTr("Failed to load RAW: %1").arg(resp.error || qsTr("Unknown error")), Theme.highlightClip);
-                } else if (resp.action === "ai_auto" || resp.action === "ai_social" || resp.action === "ai_jev") {
-                    root.showToast((resp.error || qsTr("AI action failed")), Theme.highlightClip);
+                } else if (resp.action === "ai_auto" || resp.action === "ai_social") {
+                    root.showToast(resp.error || qsTr("AI action failed"), Theme.highlightClip);
                 } else if (resp.action === "batch_export") {
                     // Without this the dialog stays stuck on "Exporting Batch..."
                     exportDialog.isExporting = false;
@@ -826,13 +833,7 @@ Rectangle {
                 if (data) {
                     root.applyRecipeObject(data.recipe);
                     root.activeScene = data.scene;
-                    root.showToast(qsTr("Auto tone applied"), Theme.accentCyan);
-                }
-            } else if (act === "ai_jev") {
-                if (data) {
-                    root.applyRecipeObject(data.recipe);
-                    root.activeScene = data.scene;
-                    root.showToast(data.jev_decisions ? qsTr("AI decisions applied") : qsTr("Local heuristic applied"), Theme.accentCyan);
+                    root.showToast(qsTr("Auto applied"), Theme.accentCyan);
                 }
             } else if (act === "ai_social") {
                 if (data) {
@@ -842,12 +843,11 @@ Rectangle {
                     root.showToast(qsTr("%1 applied (%2)").arg(data.platform).arg(data.target_resolution), Theme.accentCyan);
                 }
             } else if (act === "save_recipe") {
-                root.showToast(qsTr("Recipe sidecar saved"), Theme.accentGreen);
+                root.showToast(qsTr("Settings saved"), Theme.accentGreen);
             } else if (act === "batch_export") {
                 exportDialog.isExporting = false;
                 if (data) {
-                    exportDialog.exportStatusIsError = false;
-                    exportDialog.exportStatusText = qsTr("Batch finished: %1/%2 photos exported").arg(data.succeeded).arg(data.total);
+                    exportDialog.exportStatusText = qsTr("%1 of %2 photos exported").arg(data.succeeded).arg(data.total);
                     root.showToast(qsTr("Batch export: %1 succeeded, %2 failed").arg(data.succeeded).arg(data.failed), Theme.accentGreen);
                 }
             }
@@ -902,14 +902,8 @@ Rectangle {
 
     function triggerAiAuto() {
         root.pushUndoState();
-        root.showToast(qsTr("Analyzing dynamic range and scene..."), Theme.accentCyan);
+        root.showToast(qsTr("Auto: analysing the photo…"), Theme.accentCyan);
         root.sendDaemonCommand({ cmd: "ai_auto" });
-    }
-
-    function triggerAiJev() {
-        root.pushUndoState();
-        root.showToast(qsTr("Asking the AI for edit decisions..."), Theme.accentCyan);
-        root.sendDaemonCommand({ cmd: "ai_jev" });
     }
 
     function requestRender() {
@@ -1008,11 +1002,9 @@ Rectangle {
             try {
                 var resp = JSON.parse(output);
                 if (resp.success && resp.data) {
-                    exportDialog.exportStatusIsError = false;
-                    exportDialog.exportStatusText = qsTr("Saved to: %1").arg(resp.data.exported_path);
+                    exportDialog.exportStatusText = "[OK] " + qsTr("Saved to %1").arg(resp.data.exported_path);
                 } else {
-                    exportDialog.exportStatusIsError = true;
-                    exportDialog.exportStatusText = qsTr("Export error: %1").arg(resp.error || qsTr("Unknown error"));
+                    exportDialog.exportStatusText = "[ERR] " + (resp.error || qsTr("Export failed"));
                 }
             } catch(e) {
                 exportDialog.exportStatusIsError = true;
@@ -1061,7 +1053,7 @@ Rectangle {
                     root.showToast(cleanMsg, Theme.accentMagenta);
                 }
             } catch(e) {
-                root.showToast(qsTr("The folder scan gave no answer"), Theme.accentMagenta);
+                root.showToast(qsTr("The scan did not respond."), Theme.accentMagenta);
             }
         }
     }
@@ -1134,27 +1126,27 @@ Rectangle {
     // Lightroom Studio Culling & Ergonomics (1-5 Stars, Flags, Cinematic View)
     Shortcut {
         sequence: "1"
-        onActivated: { root.photoRating = 1; root.showToast(root.ratingMessage(1), Theme.accentYellow); root.saveSidecar(); }
+        onActivated: { root.photoRating = 1; root.showToast(qsTr("Rating: ★"), Theme.accentYellow); root.saveSidecar(); }
     }
     Shortcut {
         sequence: "2"
-        onActivated: { root.photoRating = 2; root.showToast(root.ratingMessage(2), Theme.accentYellow); root.saveSidecar(); }
+        onActivated: { root.photoRating = 2; root.showToast(qsTr("Rating: ★★"), Theme.accentYellow); root.saveSidecar(); }
     }
     Shortcut {
         sequence: "3"
-        onActivated: { root.photoRating = 3; root.showToast(root.ratingMessage(3), Theme.accentYellow); root.saveSidecar(); }
+        onActivated: { root.photoRating = 3; root.showToast(qsTr("Rating: ★★★"), Theme.accentYellow); root.saveSidecar(); }
     }
     Shortcut {
         sequence: "4"
-        onActivated: { root.photoRating = 4; root.showToast(root.ratingMessage(4), Theme.accentYellow); root.saveSidecar(); }
+        onActivated: { root.photoRating = 4; root.showToast(qsTr("Rating: ★★★★"), Theme.accentYellow); root.saveSidecar(); }
     }
     Shortcut {
         sequence: "5"
-        onActivated: { root.photoRating = 5; root.showToast(root.ratingMessage(5), Theme.accentYellow); root.saveSidecar(); }
+        onActivated: { root.photoRating = 5; root.showToast(qsTr("Rating: ★★★★★"), Theme.accentYellow); root.saveSidecar(); }
     }
     Shortcut {
         sequence: "0"
-        onActivated: { root.photoRating = 0; root.showToast(root.ratingMessage(0), Theme.textDim); root.saveSidecar(); }
+        onActivated: { root.photoRating = 0; root.showToast(qsTr("Rating cleared"), Theme.textDim); root.saveSidecar(); }
     }
     Shortcut {
         sequence: "X"
@@ -1166,13 +1158,13 @@ Rectangle {
     }
     Shortcut {
         sequence: "U"
-        onActivated: { root.photoFlag = "none"; root.showToast(root.flagMessage("none"), Theme.textDim); root.saveSidecar(); }
+        onActivated: { root.photoFlag = "none"; root.showToast(qsTr("Flag cleared"), Theme.textDim); root.saveSidecar(); }
     }
     Shortcut {
         sequence: "E"
         onActivated: {
             if (root.activePhotoPath === "" && !root.showExportModal) {
-                root.showToast(qsTr("Open a photo first to export"), Theme.textDim);
+                root.showToast(qsTr("Open a photo first"), Theme.textDim);
                 return;
             }
             root.showExportModal = !root.showExportModal;
@@ -1219,12 +1211,65 @@ Rectangle {
     Shortcut {
         sequence: "Tab"
         onActivated: {
-            var bothOpen = root.showLeftPanel || root.showRightPanel;
-            root.showLeftPanel = !bothOpen;
-            root.showRightPanel = !bothOpen;
-            root.showToast(bothOpen ? qsTr("Panels hidden (Tab)") : qsTr("Panels restored (Tab)"), Theme.accentCyan);
+            var anyOpen = root.showLeftPanel || root.showRightPanel || root.showFilmstrip;
+            root.showLeftPanel = !anyOpen;
+            root.showRightPanel = !anyOpen;
+            root.showFilmstrip = !anyOpen;
         }
     }
+
+    function toggleSection(key) {
+        var m = Object.assign({}, root.collapsedSections);
+        if (m[key] === true) delete m[key]; else m[key] = true;
+        root.collapsedSections = m;
+    }
+
+    // Collapses every section of the current tab except `key`
+    function soloSection(key) {
+        var keys = ["profile", "wb", "tone", "presence", "curve", "hsl", "grading", "detail", "grain",
+                    "colour", "layers", "looks", "lut", "assistant"];
+        var m = {};
+        for (var i = 0; i < keys.length; i++) if (keys[i] !== key) m[keys[i]] = true;
+        root.collapsedSections = m;
+    }
+
+    function loadUiState() {
+        var st = {};
+        try { st = JSON.parse(Host.uiState() || "{}"); } catch (e) { st = {}; }
+        if (typeof st.showLeftPanel === "boolean") root.showLeftPanel = st.showLeftPanel;
+        if (typeof st.showRightPanel === "boolean") root.showRightPanel = st.showRightPanel;
+        if (typeof st.showFilmstrip === "boolean") root.showFilmstrip = st.showFilmstrip;
+        if (["adjust", "masks", "looks", "ai"].indexOf(st.rightTab) >= 0) root.rightTab = st.rightTab;
+        if (st.collapsedSections && typeof st.collapsedSections === "object") root.collapsedSections = st.collapsedSections;
+        if (["dark", "grey", "light"].indexOf(st.surround) >= 0) root.surround = st.surround;
+        root.uiStateLoaded = true;
+    }
+
+    function saveUiStateSoon() {
+        if (root.uiStateLoaded) uiStateTimer.restart();
+    }
+
+    Timer {
+        id: uiStateTimer
+        interval: 600
+        onTriggered: Host.saveUiState(JSON.stringify({
+            "showLeftPanel": root.showLeftPanel,
+            "showRightPanel": root.showRightPanel,
+            "showFilmstrip": root.showFilmstrip,
+            "rightTab": root.rightTab,
+            "collapsedSections": root.collapsedSections,
+            "surround": root.surround
+        }))
+    }
+
+    onShowLeftPanelChanged: saveUiStateSoon()
+    onShowRightPanelChanged: saveUiStateSoon()
+    onShowFilmstripChanged: saveUiStateSoon()
+    onRightTabChanged: saveUiStateSoon()
+    onIsProModeChanged: if (!root.isProMode && root.rightTab === "masks") root.rightTab = "adjust"
+
+    onCollapsedSectionsChanged: saveUiStateSoon()
+    onSurroundChanged: saveUiStateSoon()
 
     // Viewport zoom: "fit", or screen pixels per photo pixel (1 = 100 %)
     function viewState() {
@@ -1320,7 +1365,7 @@ Rectangle {
     function triggerSocial(platformCode) {
         if (!platformCode || platformCode.length === 0) return;
         root.pushUndoState();
-        root.showToast(qsTr("Optimizing for %1...").arg(platformCode), Theme.accentCyan);
+        root.showToast(qsTr("Preparing for %1…").arg(platformCode), Theme.accentCyan);
         root.sendDaemonCommand({
             cmd: "ai_social",
             platform: String(platformCode)
@@ -1368,12 +1413,12 @@ Rectangle {
             }
             onRatingChanged: function(r) {
                 root.photoRating = r;
-                root.showToast(root.ratingMessage(r), Theme.accentYellow);
+                root.showToast(r > 0 ? qsTr("Rating: %1").arg("★".repeat(r)) : qsTr("Rating cleared"), Theme.accentYellow);
                 root.saveSidecar();
             }
             onFlagChanged: function(f) {
                 root.photoFlag = f;
-                root.showToast(root.flagMessage(f), f === "pick" ? Theme.accentGreen : (f === "reject" ? Theme.highlightClip : Theme.textDim));
+                root.showToast(f === "pick" ? qsTr("Picked") : (f === "reject" ? qsTr("Rejected") : qsTr("Flag cleared")), f === "pick" ? Theme.accentGreen : (f === "reject" ? Theme.highlightClip : Theme.textDim));
                 root.saveSidecar();
             }
             onToggleMode: root.isProMode = !root.isProMode
@@ -1476,8 +1521,9 @@ Rectangle {
                             metadata: root.activeMetadata
                         }
 
-                        // 4. AI SCENE INSIGHT
+                        // 4. Scene analysis (after Auto)
                         Rectangle {
+                            visible: root.activeScene !== null
                             Layout.fillWidth: true
                             implicitHeight: 70
                             radius: Theme.radiusMd
@@ -1498,7 +1544,7 @@ Rectangle {
                                         color: Theme.accentPurple
                                     }
                                     Text {
-                                        text: qsTr("AI SCENE INSIGHT")
+                                        text: qsTr("Scene")
                                         textFormat: Text.PlainText
                                         font.family: Theme.fontFamily
                                         font.pixelSize: Theme.px(9)
@@ -1575,14 +1621,6 @@ Rectangle {
                         }
 
                         Item { Layout.fillWidth: true }
-
-                        Text {
-                            text: qsTr("Grade versions • Alt+1..4 to switch")
-                            textFormat: Text.PlainText
-                            font.pixelSize: Theme.px(8)
-                            font.family: Theme.monoFont
-                            color: Theme.textDim
-                        }
                     }
                 }
 
@@ -1649,8 +1687,70 @@ Rectangle {
                 border.color: Theme.border
                 border.width: root.showRightPanel ? 1 : 0
 
+                RowLayout {
+                    id: rightTabs
+                    anchors.top: parent.top
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.margins: 1
+                    height: Theme.px(36)
+                    spacing: 0
+
+                    Repeater {
+                        model: root.isProMode
+                            ? [{ "id": "adjust", "label": qsTr("Adjust") }, { "id": "masks", "label": qsTr("Masks") },
+                               { "id": "looks", "label": qsTr("Looks") }, { "id": "ai", "label": qsTr("AI") }]
+                            : [{ "id": "adjust", "label": qsTr("Adjust") }, { "id": "looks", "label": qsTr("Looks") },
+                               { "id": "ai", "label": qsTr("AI") }]
+                        delegate: Item {
+                            required property var modelData
+                            readonly property bool active: root.rightTab === modelData.id
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+
+                            Text {
+                                anchors.centerIn: parent
+                                text: modelData.label
+                                textFormat: Text.PlainText
+                                font.family: Theme.fontFamily
+                                font.pixelSize: Theme.px(11)
+                                font.weight: parent.active ? Font.DemiBold : Font.Medium
+                                color: parent.active ? Theme.textMain : (tabMouse.containsMouse ? Theme.textMain : Theme.textMuted)
+                            }
+                            Rectangle {
+                                anchors.bottom: parent.bottom
+                                anchors.left: parent.left
+                                anchors.right: parent.right
+                                height: 2
+                                color: parent.active ? Theme.accent : "transparent"
+                            }
+                            MouseArea {
+                                id: tabMouse
+                                anchors.fill: parent
+                                hoverEnabled: true
+                                cursorShape: Qt.PointingHandCursor
+                                onClicked: root.rightTab = modelData.id
+                                Accessible.role: Accessible.PageTab
+                                Accessible.name: modelData.label
+                            }
+                        }
+                    }
+                }
+
+                Rectangle {
+                    id: rightTabsLine
+                    anchors.top: rightTabs.bottom
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    height: 1
+                    color: Theme.border
+                }
+
                 ScrollView {
-                    anchors.fill: parent
+                    anchors.top: rightTabsLine.bottom
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.bottom: parent.bottom
                     anchors.margins: 12
                     clip: true
                     contentWidth: availableWidth
@@ -1659,953 +1759,608 @@ Rectangle {
                         width: parent.width
                         spacing: 12
 
-                        // Film Presets at top of adjustments
-                        PresetSelector {
-                            id: presetSel
-                            Layout.fillWidth: true
-                            onApplyPreset: function(n) { root.applyPresetNamed(n) }
-                            onTriggerAiAuto: {
-                                root.triggerAiAuto();
-                            }
-                            onResetPreset: {
-                                root.resetRecipe();
-                            }
-                        }
-
-                        // AI edit assistant (Claude, OpenAI, OpenRouter, Gemini, Ollama, LM Studio)
-                        AiAssistPanel {
-                            id: aiAssist
-                            Layout.fillWidth: true
-                            enginePath: root.resolveEnginePath()
-                            activePhotoPath: root.activePhotoPath
-                            recipeProvider: function() { return root.buildRecipeObject(); }
-                            onRecipeSuggested: function(recipe, explanation) {
-                                root.pushUndoState();
-                                root.applyRecipeObject(recipe);
-                                root.showToast(qsTr("AI edit applied"), Theme.accentGreen);
-                            }
-                            onNotify: function(text, isError) {
-                                root.showToast(text, isError ? Theme.accentMagenta : Theme.accentGreen);
-                            }
-                        }
-
-                        // AI Social Media Optimizer (One-click multi-platform framing & grading)
-                        SocialOptimizer {
-                            id: socialOpt
-                            Layout.fillWidth: true
-                            onTriggerSocialOptimize: function(platformCode) {
-                                root.triggerSocial(platformCode);
-                            }
-                            onResetSocial: {
-                                root.resetSocialOptimization();
-                            }
-                        }
-
-                        // SIMPLE MODE: Only essential master sliders
                         ColumnLayout {
-                            visible: !root.isProMode
+                            visible: root.rightTab === "adjust"
                             Layout.fillWidth: true
-                            spacing: 12
+                            spacing: 0
 
-                            Rectangle {
-                                Layout.fillWidth: true
-                                height: 1
-                                color: Theme.border
-                            }
+                            PanelSection {
+                                key: "profile"
+                                title: qsTr("Profile")
+                                host: root
+                                resettable: false
 
-                            RowLayout {
-                                Layout.fillWidth: true
-                                spacing: 6
-
-                                Text {
-                                    text: qsTr("ESSENTIAL ADJUSTMENTS")
-                                    textFormat: Text.PlainText
-                                    font.family: Theme.fontFamily
-                                    font.pixelSize: Theme.px(10)
-                                    font.weight: Font.DemiBold
-                                    font.letterSpacing: 1
-                                    color: Theme.textDim
+                                FilmSimulationPanel {
+                                    embedded: true
+                                    id: filmSimPanel
                                     Layout.fillWidth: true
-                                }
-
-                                Rectangle {
-                                    implicitWidth: resetEssentialText.implicitWidth + 10
-                                    implicitHeight: 18
-                                    radius: Theme.r(4)
-                                    color: resetEssentialMouse.containsMouse ? Theme.bgCardHover : "transparent"
-                                    border.color: Theme.border
-                                    border.width: 1
-
-                                    Text {
-                                        id: resetEssentialText
-                                        anchors.centerIn: parent
-                                        text: qsTr("RESET")
-                                        textFormat: Text.PlainText
-                                        font.family: Theme.monoFont
-                                        font.pixelSize: Theme.px(8)
-                                        font.weight: Font.Bold
-                                        color: Theme.textDim
+                                    activeSimulation: root.activeFilmSimulation
+                                    intensity: root.activeFilmSimIntensity
+                                    onSimulationChanged: function(id, intensity) {
+                                        root.activeFilmSimulation = id;
+                                        root.activeFilmSimIntensity = intensity;
+                                        root.requestRender();
                                     }
-
-                                    MouseArea {
-                                        id: resetEssentialMouse
-                                        anchors.fill: parent
-                                        cursorShape: Qt.PointingHandCursor
-                                        hoverEnabled: true
-                                        onClicked: {
-                                            root.expValue = 0.0;
-                                            root.wbTemp = 5500.0;
-                                            root.vibranceValue = 0.0;
-                                            root.contrastValue = 0.0;
-                                            root.requestRender();
+                                }
+                                SliderGroup {
+                                    title: qsTr("Color Chrome Effect")
+                                    from: 0.0
+                                    to: 100.0
+                                    value: root.colorChrome
+                                    defaultValue: 0.0
+                                    stepSize: 1.0
+                                    accentColor: Theme.accentOrange
+                                    onSliderMoved: function(v) { root.colorChrome = v; root.requestRender() }
+                                }
+                                SliderGroup {
+                                    title: qsTr("Color Chrome FX Blue")
+                                    from: 0.0
+                                    to: 100.0
+                                    value: root.colorChromeBlue
+                                    defaultValue: 0.0
+                                    stepSize: 1.0
+                                    accentColor: Theme.accentCyan
+                                    onSliderMoved: function(v) { root.colorChromeBlue = v; root.requestRender() }
+                                }
+                                FujiPanel {
+                                    id: fujiPanel
+                                    Layout.fillWidth: true
+                                    enginePath: root.resolveEnginePath()
+                                    activePhotoPath: root.activePhotoPath
+                                    selectedPaths: filmstrip.selectedPaths
+                                    onRecipeApplied: function(recipe, label) {
+                                        if (root.activePhotoPath === "") {
+                                            root.showToast(qsTr("Open a photo first"), Theme.accentMagenta);
+                                            return;
                                         }
+                                        root.pushUndoState();
+                                        root.applyRecipeObject(recipe);
+                                        root.showToast(label, Theme.accentGreen);
+                                    }
+                                    onFileProduced: function(path, openIt) {
+                                        if (openIt) root.loadPhoto(path);
+                                    }
+                                    onNotify: function(text, isError) {
+                                        root.showToast(text, isError ? Theme.accentMagenta : Theme.accentGreen);
                                     }
                                 }
                             }
+                            PanelSection {
+                                key: "wb"
+                                title: qsTr("White balance")
+                                host: root
+                                onReset: {
+                                    root.wbTemp = 5500.0;
+                                    root.wbTint = 0.0;
+                                    root.requestRender();
+                                }
 
-                            SliderGroup {
-                                title: qsTr("Exposure (Light)")
-                                from: -5.0
-                                to: 5.0
-                                value: root.expValue
-                                defaultValue: 0.0
-                                stepSize: 0.05
-                                decimals: 2
-                                suffix: " EV"
-                                accentColor: Theme.accentYellow
-                                onSliderMoved: function(v) { root.expValue = v; root.requestRender() }
+                                SliderGroup {
+                                    title: qsTr("Temp (Kelvin)")
+                                    from: 2000.0
+                                    to: 12000.0
+                                    value: root.wbTemp
+                                    defaultValue: 5500.0
+                                    stepSize: 25.0
+                                    suffix: " K"
+                                    accentColor: Theme.accentOrange
+                                    onSliderMoved: function(v) { root.wbTemp = v; root.requestRender() }
+                                }
+                                SliderGroup {
+                                    title: qsTr("Tint (Green / Magenta)")
+                                    from: -100.0
+                                    to: 100.0
+                                    value: root.wbTint
+                                    defaultValue: 0.0
+                                    accentColor: Theme.accentMagenta
+                                    onSliderMoved: function(v) { root.wbTint = v; root.requestRender() }
+                                }
                             }
+                            PanelSection {
+                                key: "tone"
+                                title: qsTr("Tone")
+                                host: root
+                                onReset: {
+                                    root.expValue = 0.0;
+                                    root.contrastValue = 0.0;
+                                    root.highlightsValue = 0.0;
+                                    root.shadowsValue = 0.0;
+                                    root.whitesValue = 0.0;
+                                    root.blacksValue = 0.0;
+                                    root.requestRender();
+                                }
 
-                            SliderGroup {
-                                title: qsTr("Warmth (Temperature)")
-                                from: 2000.0
-                                to: 12000.0
-                                value: root.wbTemp
-                                defaultValue: 5500.0
-                                stepSize: 50.0
-                                suffix: " K"
-                                accentColor: Theme.accentOrange
-                                onSliderMoved: function(v) { root.wbTemp = v; root.requestRender() }
+                                SliderGroup {
+                                    title: qsTr("Exposure")
+                                    from: -5.0
+                                    to: 5.0
+                                    value: root.expValue
+                                    defaultValue: 0.0
+                                    stepSize: 0.05
+                                    decimals: 2
+                                    suffix: " EV"
+                                    onSliderMoved: function(v) { root.expValue = v; root.requestRender() }
+                                }
+                                SliderGroup {
+                                    title: qsTr("Contrast")
+                                    from: -100.0
+                                    to: 100.0
+                                    value: root.contrastValue
+                                    defaultValue: 0.0
+                                    onSliderMoved: function(v) { root.contrastValue = v; root.requestRender() }
+                                }
+                                SliderGroup {
+                                    title: qsTr("Highlights")
+                                    from: -100.0
+                                    to: 100.0
+                                    value: root.highlightsValue
+                                    defaultValue: 0.0
+                                    onSliderMoved: function(v) { root.highlightsValue = v; root.requestRender() }
+                                }
+                                SliderGroup {
+                                    title: qsTr("Shadows")
+                                    from: -100.0
+                                    to: 100.0
+                                    value: root.shadowsValue
+                                    defaultValue: 0.0
+                                    onSliderMoved: function(v) { root.shadowsValue = v; root.requestRender() }
+                                }
+                                SliderGroup {
+                                    title: qsTr("Whites")
+                                    from: -100.0
+                                    to: 100.0
+                                    value: root.whitesValue
+                                    defaultValue: 0.0
+                                    onSliderMoved: function(v) { root.whitesValue = v; root.requestRender() }
+                                }
+                                SliderGroup {
+                                    title: qsTr("Blacks")
+                                    from: -100.0
+                                    to: 100.0
+                                    value: root.blacksValue
+                                    defaultValue: 0.0
+                                    onSliderMoved: function(v) { root.blacksValue = v; root.requestRender() }
+                                }
                             }
+                            PanelSection {
+                                key: "presence"
+                                title: qsTr("Presence")
+                                host: root
+                                onReset: {
+                                    root.textureValue = 0.0;
+                                    root.clarityValue = 0.0;
+                                    root.dehazeValue = 0.0;
+                                    root.vibranceValue = 0.0;
+                                    root.saturationValue = 0.0;
+                                    root.requestRender();
+                                }
 
-                            SliderGroup {
-                                title: qsTr("Vibrance (Color Punch)")
-                                from: -100.0
-                                to: 100.0
-                                value: root.vibranceValue
-                                defaultValue: 0.0
-                                accentColor: Theme.accentCyan
-                                onSliderMoved: function(v) { root.vibranceValue = v; root.requestRender() }
+                                SliderGroup {
+                                    title: qsTr("Texture")
+                                    from: -100.0
+                                    to: 100.0
+                                    value: root.textureValue
+                                    defaultValue: 0.0
+                                    onSliderMoved: function(v) { root.textureValue = v; root.requestRender() }
+                                }
+                                SliderGroup {
+                                    title: qsTr("Clarity (Midtone Contrast)")
+                                    from: -100.0
+                                    to: 100.0
+                                    value: root.clarityValue
+                                    defaultValue: 0.0
+                                    onSliderMoved: function(v) { root.clarityValue = v; root.requestRender() }
+                                }
+                                SliderGroup {
+                                    title: qsTr("Dehaze")
+                                    from: -100.0
+                                    to: 100.0
+                                    value: root.dehazeValue
+                                    defaultValue: 0.0
+                                    onSliderMoved: function(v) { root.dehazeValue = v; root.requestRender() }
+                                }
+                                SliderGroup {
+                                    title: qsTr("Vibrance")
+                                    from: -100.0
+                                    to: 100.0
+                                    value: root.vibranceValue
+                                    defaultValue: 0.0
+                                    onSliderMoved: function(v) { root.vibranceValue = v; root.requestRender() }
+                                }
+                                SliderGroup {
+                                    title: qsTr("Saturation")
+                                    from: -100.0
+                                    to: 100.0
+                                    value: root.saturationValue
+                                    defaultValue: 0.0
+                                    onSliderMoved: function(v) { root.saturationValue = v; root.requestRender() }
+                                }
                             }
+                            PanelSection {
+                                key: "curve"
+                                title: qsTr("Tone curve")
+                                host: root
+                                visible: root.isProMode
+                                onReset: {
+                                    root.pushUndoState();
+                                    root.curveHighlights = 0.0;
+                                    root.curveLights = 0.0;
+                                    root.curveDarks = 0.0;
+                                    root.curveShadows = 0.0;
+                                    root.requestRender();
+                                }
 
-                            SliderGroup {
-                                title: qsTr("Contrast")
-                                from: -100.0
-                                to: 100.0
-                                value: root.contrastValue
-                                defaultValue: 0.0
-                                accentColor: Theme.accent
-                                onSliderMoved: function(v) { root.contrastValue = v; root.requestRender() }
+                                SliderGroup {
+                                    title: qsTr("Curve Highlights")
+                                    from: -100.0
+                                    to: 100.0
+                                    value: root.curveHighlights
+                                    defaultValue: 0.0
+                                    accentColor: Theme.accent
+                                    onSliderMoved: function(v) { root.curveHighlights = v; root.requestRender() }
+                                }
+                                SliderGroup {
+                                    title: qsTr("Curve Lights (Upper Mids)")
+                                    from: -100.0
+                                    to: 100.0
+                                    value: root.curveLights
+                                    defaultValue: 0.0
+                                    accentColor: Theme.accentCyan
+                                    onSliderMoved: function(v) { root.curveLights = v; root.requestRender() }
+                                }
+                                SliderGroup {
+                                    title: qsTr("Curve Darks (Lower Mids)")
+                                    from: -100.0
+                                    to: 100.0
+                                    value: root.curveDarks
+                                    defaultValue: 0.0
+                                    accentColor: Theme.accentYellow
+                                    onSliderMoved: function(v) { root.curveDarks = v; root.requestRender() }
+                                }
+                                SliderGroup {
+                                    title: qsTr("Curve Shadows")
+                                    from: -100.0
+                                    to: 100.0
+                                    value: root.curveShadows
+                                    defaultValue: 0.0
+                                    accentColor: Theme.accentOrange
+                                    onSliderMoved: function(v) { root.curveShadows = v; root.requestRender() }
+                                }
+                            }
+                            PanelSection {
+                                key: "hsl"
+                                title: qsTr("Colour mixer")
+                                host: root
+                                visible: root.isProMode
+                                onReset: {
+                                    root.hslH = [0, 0, 0, 0, 0, 0, 0, 0];
+                                    root.hslS = [0, 0, 0, 0, 0, 0, 0, 0];
+                                    root.hslL = [0, 0, 0, 0, 0, 0, 0, 0];
+                                    hslMixer.resetAll();
+                                    root.requestRender();
+                                }
+
+                                HslMixer {
+                                    id: hslMixer
+                                    Layout.fillWidth: true
+                                    hslHue: root.hslH
+                                    hslSat: root.hslS
+                                    hslLum: root.hslL
+                                    onHslValuesChanged: function(h, s, l) {
+                                        root.hslH = h;
+                                        root.hslS = s;
+                                        root.hslL = l;
+                                    }
+                                    onColorChanged: root.requestRender()
+                                }
+                            }
+                            PanelSection {
+                                key: "grading"
+                                title: qsTr("Colour grading")
+                                host: root
+                                visible: root.isProMode
+                                resettable: false
+
+                                ColorGradingWheels {
+                                    embedded: true
+                                    id: colorWheels
+                                    Layout.fillWidth: true
+                                    liftRgb: root.liftRgb
+                                    liftLuma: root.liftLuma
+                                    gammaRgb: root.gammaRgb
+                                    gammaLuma: root.gammaLuma
+                                    gainRgb: root.gainRgb
+                                    gainLuma: root.gainLuma
+                                    offsetRgb: root.offsetRgb
+                                    offsetLuma: root.offsetLuma
+                                    colorBoost: root.colorBoost
+                                    midtoneDetail: root.midtoneDetail
+                                    contrastPivot: root.contrastPivot
+                                    onGradingChanged: {
+                                        root.liftRgb = colorWheels.liftRgb;
+                                        root.liftLuma = colorWheels.liftLuma;
+                                        root.gammaRgb = colorWheels.gammaRgb;
+                                        root.gammaLuma = colorWheels.gammaLuma;
+                                        root.gainRgb = colorWheels.gainRgb;
+                                        root.gainLuma = colorWheels.gainLuma;
+                                        root.offsetRgb = colorWheels.offsetRgb;
+                                        root.offsetLuma = colorWheels.offsetLuma;
+                                        root.colorBoost = colorWheels.colorBoost;
+                                        root.midtoneDetail = colorWheels.midtoneDetail;
+                                        root.contrastPivot = colorWheels.contrastPivot;
+                                        root.requestRender();
+                                    }
+                                }
+                                RgbMixerPanel {
+                                    embedded: true
+                                    id: rgbMixerPanel
+                                    Layout.fillWidth: true
+                                    mixerEnabled: root.rgbMixerEnabled
+                                    monochrome: root.rgbMixerMonochrome
+                                    redInR: root.mixerRedInR
+                                    greenInR: root.mixerGreenInR
+                                    blueInR: root.mixerBlueInR
+                                    redInG: root.mixerRedInG
+                                    greenInG: root.mixerGreenInG
+                                    blueInG: root.mixerBlueInG
+                                    redInB: root.mixerRedInB
+                                    greenInB: root.mixerGreenInB
+                                    blueInB: root.mixerBlueInB
+                                    onMixerChanged: {
+                                        root.rgbMixerEnabled = rgbMixerPanel.mixerEnabled;
+                                        root.rgbMixerMonochrome = rgbMixerPanel.monochrome;
+                                        root.mixerRedInR = rgbMixerPanel.redInR;
+                                        root.mixerGreenInR = rgbMixerPanel.greenInR;
+                                        root.mixerBlueInR = rgbMixerPanel.blueInR;
+                                        root.mixerRedInG = rgbMixerPanel.redInG;
+                                        root.mixerGreenInG = rgbMixerPanel.greenInG;
+                                        root.mixerBlueInG = rgbMixerPanel.blueInG;
+                                        root.mixerRedInB = rgbMixerPanel.redInB;
+                                        root.mixerGreenInB = rgbMixerPanel.greenInB;
+                                        root.mixerBlueInB = rgbMixerPanel.blueInB;
+                                        root.requestRender();
+                                    }
+                                }
+                                SkinTonePanel {
+                                    embedded: true
+                                    id: skinTonePanel
+                                    Layout.fillWidth: true
+                                    skinToneEnabled: root.skinToneEnabled
+                                    skinTargetHue: root.skinTargetHue
+                                    skinHueRange: root.skinHueRange
+                                    skinUniformityHue: root.skinUniformityHue
+                                    skinUniformitySat: root.skinUniformitySat
+                                    skinAmountHue: root.skinAmountHue
+                                    skinAmountSat: root.skinAmountSat
+                                    onSkinToneChanged: {
+                                        root.skinToneEnabled = skinTonePanel.skinToneEnabled;
+                                        root.skinTargetHue = skinTonePanel.skinTargetHue;
+                                        root.skinHueRange = skinTonePanel.skinHueRange;
+                                        root.skinUniformityHue = skinTonePanel.skinUniformityHue;
+                                        root.skinUniformitySat = skinTonePanel.skinUniformitySat;
+                                        root.skinAmountHue = skinTonePanel.skinAmountHue;
+                                        root.skinAmountSat = skinTonePanel.skinAmountSat;
+                                        root.requestRender();
+                                    }
+                                }
+                            }
+                            PanelSection {
+                                key: "detail"
+                                title: qsTr("Detail and optics")
+                                host: root
+                                visible: root.isProMode
+                                onReset: {
+                                    root.sharpnessVal = 25.0;
+                                    root.denoiseLumVal = 0.0;
+                                    root.denoiseColVal = 10.0;
+                                    root.vignetteVal = 0.0;
+                                    root.defringeVal = 0.0;
+                                    root.lensDistortionVal = 0.0;
+                                    root.requestRender();
+                                }
+
+                                SliderGroup {
+                                    title: qsTr("Sharpening")
+                                    from: 0.0
+                                    to: 100.0
+                                    value: root.sharpnessVal
+                                    defaultValue: 25.0
+                                    onSliderMoved: function(v) { root.sharpnessVal = v; root.requestRender() }
+                                }
+                                SliderGroup {
+                                    title: qsTr("Noise Reduction (Luma)")
+                                    from: 0.0
+                                    to: 100.0
+                                    value: root.denoiseLumVal
+                                    defaultValue: 0.0
+                                    onSliderMoved: function(v) { root.denoiseLumVal = v; root.requestRender() }
+                                }
+                                SliderGroup {
+                                    title: qsTr("Noise Reduction (Color)")
+                                    from: 0.0
+                                    to: 100.0
+                                    value: root.denoiseColVal
+                                    defaultValue: 10.0
+                                    accentColor: Theme.accentYellow
+                                    onSliderMoved: function(v) { root.denoiseColVal = v; root.requestRender() }
+                                }
+                                SliderGroup {
+                                    title: qsTr("Vignette")
+                                    from: -100.0
+                                    to: 100.0
+                                    value: root.vignetteVal
+                                    defaultValue: 0.0
+                                    onSliderMoved: function(v) { root.vignetteVal = v; root.requestRender() }
+                                }
+                                SliderGroup {
+                                    title: qsTr("Defringe (Chromatic Aberration)")
+                                    from: 0.0
+                                    to: 100.0
+                                    value: root.defringeVal
+                                    defaultValue: 0.0
+                                    accentColor: Theme.accentMagenta
+                                    onSliderMoved: function(v) { root.defringeVal = v; root.requestRender() }
+                                }
+                                SliderGroup {
+                                    title: qsTr("Lens Distortion Correction")
+                                    from: -50.0
+                                    to: 50.0
+                                    value: root.lensDistortionVal
+                                    defaultValue: 0.0
+                                    accentColor: Theme.accentCyan
+                                    onSliderMoved: function(v) { root.lensDistortionVal = v; root.requestRender() }
+                                }
+                            }
+                            PanelSection {
+                                key: "grain"
+                                title: qsTr("Grain")
+                                host: root
+                                visible: root.isProMode
+                                resettable: false
+
+                                FilmGrainPanel {
+                                    embedded: true
+                                    id: filmGrainPanel
+                                    Layout.fillWidth: true
+                                    grainAmount: root.grainAmount
+                                    grainSize: root.grainSize
+                                    grainRoughness: root.grainRoughness
+                                    onGrainChanged: {
+                                        root.grainAmount = filmGrainPanel.grainAmount;
+                                        root.grainSize = filmGrainPanel.grainSize;
+                                        root.grainRoughness = filmGrainPanel.grainRoughness;
+                                        root.requestRender();
+                                    }
+                                }
+                            }
+                            PanelSection {
+                                key: "colour"
+                                title: qsTr("Colour management")
+                                host: root
+                                visible: root.isProMode
+                                resettable: false
+
+                                ColorSpaceSelector {
+                                    embedded: true
+                                    id: colorSpaceSelector
+                                    Layout.fillWidth: true
+                                    activeColorSpace: root.activeColorSpace
+                                    acesTonemap: root.activeAcesTonemap
+                                    onColorSpaceSelected: function(space) {
+                                        root.activeColorSpace = space;
+                                        root.requestRender();
+                                    }
+                                    onAcesTonemapToggled: function(enabled) {
+                                        root.activeAcesTonemap = enabled;
+                                        root.requestRender();
+                                    }
+                                }
                             }
                         }
 
-                        // PRO MODE: Complete Lightroom RAW Suite
                         ColumnLayout {
-                            visible: root.isProMode
+                            visible: root.rightTab === "masks"
                             Layout.fillWidth: true
-                            spacing: 14
+                            spacing: 0
 
-                            // White Balance
-                            RowLayout {
-                                Layout.fillWidth: true
-                                spacing: 6
+                            PanelSection {
+                                key: "layers"
+                                title: qsTr("Local adjustments")
+                                host: root
+                                resettable: false
 
-                                Text {
-                                    text: qsTr("WHITE BALANCE")
-                                    textFormat: Text.PlainText
-                                    font.family: Theme.fontFamily
-                                    font.pixelSize: Theme.px(10)
-                                    font.weight: Font.DemiBold
-                                    font.letterSpacing: 1
-                                    color: Theme.textDim
+                                LayersPanel {
+                                    embedded: true
+                                    id: layersPanel
                                     Layout.fillWidth: true
-                                }
-
-                                Rectangle {
-                                    implicitWidth: resetWbText.implicitWidth + 10
-                                    implicitHeight: 18
-                                    radius: Theme.r(4)
-                                    color: resetWbMouse.containsMouse ? Theme.bgCardHover : "transparent"
-                                    border.color: Theme.border
-                                    border.width: 1
-
-                                    Text {
-                                        id: resetWbText
-                                        anchors.centerIn: parent
-                                        text: qsTr("RESET")
-                                        textFormat: Text.PlainText
-                                        font.family: Theme.monoFont
-                                        font.pixelSize: Theme.px(8)
-                                        font.weight: Font.Bold
-                                        color: Theme.textDim
+                                    layersList: root.adjustmentLayers
+                                    enginePath: root.resolveEnginePath()
+                                    activePhotoPath: root.activePhotoPath
+                                    onNotify: function(text, isError) {
+                                        root.showToast(text, isError ? Theme.accentMagenta : Theme.accentGreen);
                                     }
-
-                                    MouseArea {
-                                        id: resetWbMouse
-                                        anchors.fill: parent
-                                        cursorShape: Qt.PointingHandCursor
-                                        hoverEnabled: true
-                                        onClicked: {
-                                            root.wbTemp = 5500.0;
-                                            root.wbTint = 0.0;
-                                            root.requestRender();
-                                        }
+                                    onLayersChanged: {
+                                        root.adjustmentLayers = layersPanel.layersList;
+                                        root.requestRender();
                                     }
                                 }
                             }
+                        }
 
-                            SliderGroup {
-                                title: qsTr("Temp (Kelvin)")
-                                from: 2000.0
-                                to: 12000.0
-                                value: root.wbTemp
-                                defaultValue: 5500.0
-                                stepSize: 25.0
-                                suffix: " K"
-                                accentColor: Theme.accentOrange
-                                onSliderMoved: function(v) { root.wbTemp = v; root.requestRender() }
-                            }
+                        ColumnLayout {
+                            visible: root.rightTab === "looks"
+                            Layout.fillWidth: true
+                            spacing: 0
 
-                            SliderGroup {
-                                title: qsTr("Tint (Green / Magenta)")
-                                from: -100.0
-                                to: 100.0
-                                value: root.wbTint
-                                defaultValue: 0.0
-                                accentColor: Theme.accentMagenta
-                                onSliderMoved: function(v) { root.wbTint = v; root.requestRender() }
-                            }
+                            PanelSection {
+                                key: "looks"
+                                title: qsTr("Presets")
+                                host: root
+                                resettable: false
 
-                            // Tone
-                            Rectangle { Layout.fillWidth: true; height: 1; color: Theme.border }
-                            RowLayout {
+                            PresetSelector {
+                                embedded: true
+                                id: presetSel
                                 Layout.fillWidth: true
-                                spacing: 6
+                                onApplyPreset: function(n) { root.applyPresetNamed(n) }
+                                onTriggerAiAuto: {
+                                    root.triggerAiAuto();
+                                }
+                                onResetPreset: {
+                                    root.resetRecipe();
+                                }
+                            }
+                            }
+                            PanelSection {
+                                key: "lut"
+                                title: qsTr("LUT")
+                                host: root
+                                resettable: false
 
-                                Text {
-                                    text: qsTr("LIGHT & DYNAMIC RANGE")
-                                    textFormat: Text.PlainText
-                                    font.family: Theme.fontFamily
-                                    font.pixelSize: Theme.px(10)
-                                    font.weight: Font.DemiBold
-                                    font.letterSpacing: 1
-                                    color: Theme.textDim
+                                LutSelector {
+                                    embedded: true
+                                    id: lutSelector
                                     Layout.fillWidth: true
-                                }
-
-                                Rectangle {
-                                    implicitWidth: resetLightText.implicitWidth + 10
-                                    implicitHeight: 18
-                                    radius: Theme.r(4)
-                                    color: resetLightMouse.containsMouse ? Theme.bgCardHover : "transparent"
-                                    border.color: Theme.border
-                                    border.width: 1
-
-                                    Text {
-                                        id: resetLightText
-                                        anchors.centerIn: parent
-                                        text: qsTr("RESET")
-                                        textFormat: Text.PlainText
-                                        font.family: Theme.monoFont
-                                        font.pixelSize: Theme.px(8)
-                                        font.weight: Font.Bold
-                                        color: Theme.textDim
-                                    }
-
-                                    MouseArea {
-                                        id: resetLightMouse
-                                        anchors.fill: parent
-                                        cursorShape: Qt.PointingHandCursor
-                                        hoverEnabled: true
-                                        onClicked: {
-                                            root.expValue = 0.0;
-                                            root.contrastValue = 0.0;
-                                            root.highlightsValue = 0.0;
-                                            root.shadowsValue = 0.0;
-                                            root.whitesValue = 0.0;
-                                            root.blacksValue = 0.0;
-                                            root.requestRender();
-                                        }
+                                    activeLut: root.activeLutName
+                                    lutIntensity: root.activeLutIntensity
+                                    customLutPath: root.activeLutPath
+                                    onLutChanged: function(name, intensity, path) {
+                                        root.activeLutName = name;
+                                        root.activeLutIntensity = intensity;
+                                        root.activeLutPath = path;
+                                        root.requestRender();
                                     }
                                 }
                             }
+                        }
 
-                            SliderGroup {
-                                title: qsTr("Exposure")
-                                from: -5.0
-                                to: 5.0
-                                value: root.expValue
-                                defaultValue: 0.0
-                                stepSize: 0.05
-                                decimals: 2
-                                suffix: " EV"
-                                onSliderMoved: function(v) { root.expValue = v; root.requestRender() }
-                            }
+                        ColumnLayout {
+                            visible: root.rightTab === "ai"
+                            Layout.fillWidth: true
+                            spacing: 0
 
-                            SliderGroup {
-                                title: qsTr("Contrast")
-                                from: -100.0
-                                to: 100.0
-                                value: root.contrastValue
-                                defaultValue: 0.0
-                                onSliderMoved: function(v) { root.contrastValue = v; root.requestRender() }
-                            }
+                            PanelSection {
+                                key: "assistant"
+                                title: qsTr("Edit assistant")
+                                host: root
+                                resettable: false
 
-                            SliderGroup {
-                                title: qsTr("Highlights")
-                                from: -100.0
-                                to: 100.0
-                                value: root.highlightsValue
-                                defaultValue: 0.0
-                                onSliderMoved: function(v) { root.highlightsValue = v; root.requestRender() }
-                            }
-
-                            SliderGroup {
-                                title: qsTr("Shadows")
-                                from: -100.0
-                                to: 100.0
-                                value: root.shadowsValue
-                                defaultValue: 0.0
-                                onSliderMoved: function(v) { root.shadowsValue = v; root.requestRender() }
-                            }
-
-                            SliderGroup {
-                                title: qsTr("Whites")
-                                from: -100.0
-                                to: 100.0
-                                value: root.whitesValue
-                                defaultValue: 0.0
-                                onSliderMoved: function(v) { root.whitesValue = v; root.requestRender() }
-                            }
-
-                            SliderGroup {
-                                title: qsTr("Blacks")
-                                from: -100.0
-                                to: 100.0
-                                value: root.blacksValue
-                                defaultValue: 0.0
-                                onSliderMoved: function(v) { root.blacksValue = v; root.requestRender() }
-                            }
-
-                            // Tone Curve (Parametric 4-Zone)
-                            Rectangle { Layout.fillWidth: true; height: 1; color: Theme.border }
-                            RowLayout {
-                                Layout.fillWidth: true
-                                spacing: 6
-
-                                Text {
-                                    text: qsTr("TONE CURVE (PARAMETRIC)")
-                                    textFormat: Text.PlainText
-                                    font.family: Theme.fontFamily
-                                    font.pixelSize: Theme.px(10)
-                                    font.weight: Font.DemiBold
-                                    font.letterSpacing: 1
-                                    color: Theme.textDim
-                                    Layout.fillWidth: true
-                                }
-
-                                Rectangle {
-                                    implicitWidth: resetCurveText.implicitWidth + 10
-                                    implicitHeight: 18
-                                    radius: Theme.r(4)
-                                    color: resetCurveMouse.containsMouse ? Theme.bgCardHover : "transparent"
-                                    border.color: Theme.border
-                                    border.width: 1
-
-                                    Text {
-                                        id: resetCurveText
-                                        anchors.centerIn: parent
-                                        text: qsTr("RESET")
-                                        textFormat: Text.PlainText
-                                        font.family: Theme.monoFont
-                                        font.pixelSize: Theme.px(8)
-                                        font.weight: Font.Bold
-                                        color: Theme.textDim
-                                    }
-
-                                    MouseArea {
-                                        id: resetCurveMouse
-                                        anchors.fill: parent
-                                        cursorShape: Qt.PointingHandCursor
-                                        hoverEnabled: true
-                                        onClicked: {
-                                            root.pushUndoState();
-                                            root.curveHighlights = 0.0;
-                                            root.curveLights = 0.0;
-                                            root.curveDarks = 0.0;
-                                            root.curveShadows = 0.0;
-                                            root.requestRender();
-                                        }
-                                    }
-                                }
-                            }
-
-                            SliderGroup {
-                                title: qsTr("Curve Highlights")
-                                from: -100.0
-                                to: 100.0
-                                value: root.curveHighlights
-                                defaultValue: 0.0
-                                accentColor: Theme.accent
-                                onSliderMoved: function(v) { root.curveHighlights = v; root.requestRender() }
-                            }
-
-                            SliderGroup {
-                                title: qsTr("Curve Lights (Upper Mids)")
-                                from: -100.0
-                                to: 100.0
-                                value: root.curveLights
-                                defaultValue: 0.0
-                                accentColor: Theme.accentCyan
-                                onSliderMoved: function(v) { root.curveLights = v; root.requestRender() }
-                            }
-
-                            SliderGroup {
-                                title: qsTr("Curve Darks (Lower Mids)")
-                                from: -100.0
-                                to: 100.0
-                                value: root.curveDarks
-                                defaultValue: 0.0
-                                accentColor: Theme.accentYellow
-                                onSliderMoved: function(v) { root.curveDarks = v; root.requestRender() }
-                            }
-
-                            SliderGroup {
-                                title: qsTr("Curve Shadows")
-                                from: -100.0
-                                to: 100.0
-                                value: root.curveShadows
-                                defaultValue: 0.0
-                                accentColor: Theme.accentOrange
-                                onSliderMoved: function(v) { root.curveShadows = v; root.requestRender() }
-                            }
-
-                            // Presence
-                            Rectangle { Layout.fillWidth: true; height: 1; color: Theme.border }
-                            RowLayout {
-                                Layout.fillWidth: true
-                                spacing: 6
-
-                                Text {
-                                    text: qsTr("PRESENCE & TEXTURE")
-                                    textFormat: Text.PlainText
-                                    font.family: Theme.fontFamily
-                                    font.pixelSize: Theme.px(10)
-                                    font.weight: Font.DemiBold
-                                    font.letterSpacing: 1
-                                    color: Theme.textDim
-                                    Layout.fillWidth: true
-                                }
-
-                                Rectangle {
-                                    implicitWidth: resetPresenceText.implicitWidth + 10
-                                    implicitHeight: 18
-                                    radius: Theme.r(4)
-                                    color: resetPresenceMouse.containsMouse ? Theme.bgCardHover : "transparent"
-                                    border.color: Theme.border
-                                    border.width: 1
-
-                                    Text {
-                                        id: resetPresenceText
-                                        anchors.centerIn: parent
-                                        text: qsTr("RESET")
-                                        textFormat: Text.PlainText
-                                        font.family: Theme.monoFont
-                                        font.pixelSize: Theme.px(8)
-                                        font.weight: Font.Bold
-                                        color: Theme.textDim
-                                    }
-
-                                    MouseArea {
-                                        id: resetPresenceMouse
-                                        anchors.fill: parent
-                                        cursorShape: Qt.PointingHandCursor
-                                        hoverEnabled: true
-                                        onClicked: {
-                                            root.textureValue = 0.0;
-                                            root.clarityValue = 0.0;
-                                            root.dehazeValue = 0.0;
-                                            root.vibranceValue = 0.0;
-                                            root.saturationValue = 0.0;
-                                            root.requestRender();
-                                        }
-                                    }
-                                }
-                            }
-
-                            SliderGroup {
-                                title: qsTr("Texture")
-                                from: -100.0
-                                to: 100.0
-                                value: root.textureValue
-                                defaultValue: 0.0
-                                onSliderMoved: function(v) { root.textureValue = v; root.requestRender() }
-                            }
-
-                            SliderGroup {
-                                title: qsTr("Clarity (Midtone Contrast)")
-                                from: -100.0
-                                to: 100.0
-                                value: root.clarityValue
-                                defaultValue: 0.0
-                                onSliderMoved: function(v) { root.clarityValue = v; root.requestRender() }
-                            }
-
-                            SliderGroup {
-                                title: qsTr("Dehaze")
-                                from: -100.0
-                                to: 100.0
-                                value: root.dehazeValue
-                                defaultValue: 0.0
-                                onSliderMoved: function(v) { root.dehazeValue = v; root.requestRender() }
-                            }
-
-                            SliderGroup {
-                                title: qsTr("Vibrance")
-                                from: -100.0
-                                to: 100.0
-                                value: root.vibranceValue
-                                defaultValue: 0.0
-                                onSliderMoved: function(v) { root.vibranceValue = v; root.requestRender() }
-                            }
-
-                            SliderGroup {
-                                title: qsTr("Saturation")
-                                from: -100.0
-                                to: 100.0
-                                value: root.saturationValue
-                                defaultValue: 0.0
-                                onSliderMoved: function(v) { root.saturationValue = v; root.requestRender() }
-                            }
-
-                            // HSL Color Mixer
-                            Rectangle { Layout.fillWidth: true; height: 1; color: Theme.border }
-                            RowLayout {
-                                Layout.fillWidth: true
-                                spacing: 6
-
-                                Text {
-                                    text: qsTr("COLOR MIXER (8-BAND HSL)")
-                                    textFormat: Text.PlainText
-                                    font.family: Theme.fontFamily
-                                    font.pixelSize: Theme.px(10)
-                                    font.weight: Font.DemiBold
-                                    font.letterSpacing: 1
-                                    color: Theme.textDim
-                                    Layout.fillWidth: true
-                                }
-
-                                Rectangle {
-                                    implicitWidth: resetHslText.implicitWidth + 10
-                                    implicitHeight: 18
-                                    radius: Theme.r(4)
-                                    color: resetHslMouse.containsMouse ? Theme.bgCardHover : "transparent"
-                                    border.color: Theme.border
-                                    border.width: 1
-
-                                    Text {
-                                        id: resetHslText
-                                        anchors.centerIn: parent
-                                        text: qsTr("RESET")
-                                        textFormat: Text.PlainText
-                                        font.family: Theme.monoFont
-                                        font.pixelSize: Theme.px(8)
-                                        font.weight: Font.Bold
-                                        color: Theme.textDim
-                                    }
-
-                                    MouseArea {
-                                        id: resetHslMouse
-                                        anchors.fill: parent
-                                        cursorShape: Qt.PointingHandCursor
-                                        hoverEnabled: true
-                                        onClicked: {
-                                            root.hslH = [0, 0, 0, 0, 0, 0, 0, 0];
-                                            root.hslS = [0, 0, 0, 0, 0, 0, 0, 0];
-                                            root.hslL = [0, 0, 0, 0, 0, 0, 0, 0];
-                                            hslMixer.resetAll();
-                                            root.requestRender();
-                                        }
-                                    }
-                                }
-                            }
-
-                            HslMixer {
-                                id: hslMixer
-                                Layout.fillWidth: true
-                                hslHue: root.hslH
-                                hslSat: root.hslS
-                                hslLum: root.hslL
-                                onHslValuesChanged: function(h, s, l) {
-                                    root.hslH = h;
-                                    root.hslS = s;
-                                    root.hslL = l;
-                                }
-                                onColorChanged: root.requestRender()
-                            }
-
-                            // DaVinci 3D LUT Engine (.cube)
-                            Rectangle { Layout.fillWidth: true; height: 1; color: Theme.border }
-                            LutSelector {
-                                id: lutSelector
-                                Layout.fillWidth: true
-                                activeLut: root.activeLutName
-                                lutIntensity: root.activeLutIntensity
-                                customLutPath: root.activeLutPath
-                                onLutChanged: function(name, intensity, path) {
-                                    root.activeLutName = name;
-                                    root.activeLutIntensity = intensity;
-                                    root.activeLutPath = path;
-                                    root.requestRender();
-                                }
-                            }
-
-                            // DaVinci Resolve Primaries (Color Wheels + MD + Color Boost + Pivot)
-                            Rectangle { Layout.fillWidth: true; height: 1; color: Theme.border }
-                            ColorGradingWheels {
-                                id: colorWheels
-                                Layout.fillWidth: true
-                                liftRgb: root.liftRgb
-                                liftLuma: root.liftLuma
-                                gammaRgb: root.gammaRgb
-                                gammaLuma: root.gammaLuma
-                                gainRgb: root.gainRgb
-                                gainLuma: root.gainLuma
-                                offsetRgb: root.offsetRgb
-                                offsetLuma: root.offsetLuma
-                                colorBoost: root.colorBoost
-                                midtoneDetail: root.midtoneDetail
-                                contrastPivot: root.contrastPivot
-                                onGradingChanged: {
-                                    root.liftRgb = colorWheels.liftRgb;
-                                    root.liftLuma = colorWheels.liftLuma;
-                                    root.gammaRgb = colorWheels.gammaRgb;
-                                    root.gammaLuma = colorWheels.gammaLuma;
-                                    root.gainRgb = colorWheels.gainRgb;
-                                    root.gainLuma = colorWheels.gainLuma;
-                                    root.offsetRgb = colorWheels.offsetRgb;
-                                    root.offsetLuma = colorWheels.offsetLuma;
-                                    root.colorBoost = colorWheels.colorBoost;
-                                    root.midtoneDetail = colorWheels.midtoneDetail;
-                                    root.contrastPivot = colorWheels.contrastPivot;
-                                    root.requestRender();
-                                }
-                            }
-
-                            // Detail & Optics
-                            Rectangle { Layout.fillWidth: true; height: 1; color: Theme.border }
-                            RowLayout {
-                                Layout.fillWidth: true
-                                spacing: 6
-
-                                Text {
-                                    text: qsTr("DETAIL & OPTICS")
-                                    textFormat: Text.PlainText
-                                    font.family: Theme.fontFamily
-                                    font.pixelSize: Theme.px(10)
-                                    font.weight: Font.DemiBold
-                                    font.letterSpacing: 1
-                                    color: Theme.textDim
-                                    Layout.fillWidth: true
-                                }
-
-                                Rectangle {
-                                    implicitWidth: resetDetailText.implicitWidth + 10
-                                    implicitHeight: 18
-                                    radius: Theme.r(4)
-                                    color: resetDetailMouse.containsMouse ? Theme.bgCardHover : "transparent"
-                                    border.color: Theme.border
-                                    border.width: 1
-
-                                    Text {
-                                        id: resetDetailText
-                                        anchors.centerIn: parent
-                                        text: qsTr("RESET")
-                                        textFormat: Text.PlainText
-                                        font.family: Theme.monoFont
-                                        font.pixelSize: Theme.px(8)
-                                        font.weight: Font.Bold
-                                        color: Theme.textDim
-                                    }
-
-                                    MouseArea {
-                                        id: resetDetailMouse
-                                        anchors.fill: parent
-                                        cursorShape: Qt.PointingHandCursor
-                                        hoverEnabled: true
-                                        onClicked: {
-                                            root.sharpnessVal = 25.0;
-                                            root.denoiseLumVal = 0.0;
-                                            root.denoiseColVal = 10.0;
-                                            root.vignetteVal = 0.0;
-                                            root.defringeVal = 0.0;
-                                            root.lensDistortionVal = 0.0;
-                                            root.requestRender();
-                                        }
-                                    }
-                                }
-                            }
-
-                            SliderGroup {
-                                title: qsTr("Sharpening")
-                                from: 0.0
-                                to: 100.0
-                                value: root.sharpnessVal
-                                defaultValue: 25.0
-                                onSliderMoved: function(v) { root.sharpnessVal = v; root.requestRender() }
-                            }
-
-                            SliderGroup {
-                                title: qsTr("Noise Reduction (Luma)")
-                                from: 0.0
-                                to: 100.0
-                                value: root.denoiseLumVal
-                                defaultValue: 0.0
-                                onSliderMoved: function(v) { root.denoiseLumVal = v; root.requestRender() }
-                            }
-
-                            SliderGroup {
-                                title: qsTr("Noise Reduction (Color)")
-                                from: 0.0
-                                to: 100.0
-                                value: root.denoiseColVal
-                                defaultValue: 10.0
-                                accentColor: Theme.accentYellow
-                                onSliderMoved: function(v) { root.denoiseColVal = v; root.requestRender() }
-                            }
-
-                            SliderGroup {
-                                title: qsTr("Vignette")
-                                from: -100.0
-                                to: 100.0
-                                value: root.vignetteVal
-                                defaultValue: 0.0
-                                onSliderMoved: function(v) { root.vignetteVal = v; root.requestRender() }
-                            }
-
-                            SliderGroup {
-                                title: qsTr("Defringe (Chromatic Aberration)")
-                                from: 0.0
-                                to: 100.0
-                                value: root.defringeVal
-                                defaultValue: 0.0
-                                accentColor: Theme.accentMagenta
-                                onSliderMoved: function(v) { root.defringeVal = v; root.requestRender() }
-                            }
-
-                            SliderGroup {
-                                title: qsTr("Lens Distortion Correction")
-                                from: -50.0
-                                to: 50.0
-                                value: root.lensDistortionVal
-                                defaultValue: 0.0
-                                accentColor: Theme.accentCyan
-                                onSliderMoved: function(v) { root.lensDistortionVal = v; root.requestRender() }
-                            }
-
-                            // DaVinci Resolve RGB Primary Matrix Mixer
-                            Rectangle { Layout.fillWidth: true; height: 1; color: Theme.border }
-                            RgbMixerPanel {
-                                id: rgbMixerPanel
-                                Layout.fillWidth: true
-                                mixerEnabled: root.rgbMixerEnabled
-                                monochrome: root.rgbMixerMonochrome
-                                redInR: root.mixerRedInR
-                                greenInR: root.mixerGreenInR
-                                blueInR: root.mixerBlueInR
-                                redInG: root.mixerRedInG
-                                greenInG: root.mixerGreenInG
-                                blueInG: root.mixerBlueInG
-                                redInB: root.mixerRedInB
-                                greenInB: root.mixerGreenInB
-                                blueInB: root.mixerBlueInB
-                                onMixerChanged: {
-                                    root.rgbMixerEnabled = rgbMixerPanel.mixerEnabled;
-                                    root.rgbMixerMonochrome = rgbMixerPanel.monochrome;
-                                    root.mixerRedInR = rgbMixerPanel.redInR;
-                                    root.mixerGreenInR = rgbMixerPanel.greenInR;
-                                    root.mixerBlueInR = rgbMixerPanel.blueInR;
-                                    root.mixerRedInG = rgbMixerPanel.redInG;
-                                    root.mixerGreenInG = rgbMixerPanel.greenInG;
-                                    root.mixerBlueInG = rgbMixerPanel.blueInG;
-                                    root.mixerRedInB = rgbMixerPanel.redInB;
-                                    root.mixerGreenInB = rgbMixerPanel.greenInB;
-                                    root.mixerBlueInB = rgbMixerPanel.blueInB;
-                                    root.requestRender();
-                                }
-                            }
-
-                            // Capture One Skin Tone Uniformity Engine
-                            Rectangle { Layout.fillWidth: true; height: 1; color: Theme.border }
-                            SkinTonePanel {
-                                id: skinTonePanel
-                                Layout.fillWidth: true
-                                skinToneEnabled: root.skinToneEnabled
-                                skinTargetHue: root.skinTargetHue
-                                skinHueRange: root.skinHueRange
-                                skinUniformityHue: root.skinUniformityHue
-                                skinUniformitySat: root.skinUniformitySat
-                                skinAmountHue: root.skinAmountHue
-                                skinAmountSat: root.skinAmountSat
-                                onSkinToneChanged: {
-                                    root.skinToneEnabled = skinTonePanel.skinToneEnabled;
-                                    root.skinTargetHue = skinTonePanel.skinTargetHue;
-                                    root.skinHueRange = skinTonePanel.skinHueRange;
-                                    root.skinUniformityHue = skinTonePanel.skinUniformityHue;
-                                    root.skinUniformitySat = skinTonePanel.skinUniformitySat;
-                                    root.skinAmountHue = skinTonePanel.skinAmountHue;
-                                    root.skinAmountSat = skinTonePanel.skinAmountSat;
-                                    root.requestRender();
-                                }
-                            }
-
-                            // Film Simulation Panel (Fujifilm & Hasselblad)
-                            Rectangle { Layout.fillWidth: true; height: 1; color: Theme.border }
-                            FilmSimulationPanel {
-                                id: filmSimPanel
-                                Layout.fillWidth: true
-                                activeSimulation: root.activeFilmSimulation
-                                intensity: root.activeFilmSimIntensity
-                                onSimulationChanged: function(id, intensity) {
-                                    root.activeFilmSimulation = id;
-                                    root.activeFilmSimIntensity = intensity;
-                                    root.requestRender();
-                                }
-                            }
-
-                            // Fujifilm recipe library, camera on USB, Pixel Shift
-                            FujiPanel {
-                                id: fujiPanel
+                            AiAssistPanel {
+                                id: aiAssist
+                                embedded: true
                                 Layout.fillWidth: true
                                 enginePath: root.resolveEnginePath()
                                 activePhotoPath: root.activePhotoPath
-                                selectedPaths: filmstrip.selectedPaths
-                                onRecipeApplied: function(recipe, label) {
-                                    if (root.activePhotoPath === "") {
-                                        root.showToast(qsTr("Open a photo first"), Theme.accentMagenta);
-                                        return;
-                                    }
+                                recipeProvider: function() { return root.buildRecipeObject(); }
+                                onRecipeSuggested: function(recipe, explanation) {
                                     root.pushUndoState();
                                     root.applyRecipeObject(recipe);
-                                    root.showToast(label, Theme.accentGreen);
-                                }
-                                onFileProduced: function(path, openIt) {
-                                    if (openIt) root.loadPhoto(path);
+                                    root.showToast(qsTr("Assistant edit applied"), Theme.accentGreen);
                                 }
                                 onNotify: function(text, isError) {
                                     root.showToast(text, isError ? Theme.accentMagenta : Theme.accentGreen);
                                 }
                             }
-
-                            // Fujifilm Color Chrome Effect / FX Blue (Weak = 50, Strong = 100)
-                            SliderGroup {
-                                title: qsTr("Color Chrome Effect")
-                                from: 0.0
-                                to: 100.0
-                                value: root.colorChrome
-                                defaultValue: 0.0
-                                stepSize: 1.0
-                                accentColor: Theme.accentOrange
-                                onSliderMoved: function(v) { root.colorChrome = v; root.requestRender() }
-                            }
-                            SliderGroup {
-                                title: qsTr("Color Chrome FX Blue")
-                                from: 0.0
-                                to: 100.0
-                                value: root.colorChromeBlue
-                                defaultValue: 0.0
-                                stepSize: 1.0
-                                accentColor: Theme.accentCyan
-                                onSliderMoved: function(v) { root.colorChromeBlue = v; root.requestRender() }
-                            }
-
-                            // Photochemical Silver-Halide Film Grain
-                            Rectangle { Layout.fillWidth: true; height: 1; color: Theme.border }
-                            FilmGrainPanel {
-                                id: filmGrainPanel
-                                Layout.fillWidth: true
-                                grainAmount: root.grainAmount
-                                grainSize: root.grainSize
-                                grainRoughness: root.grainRoughness
-                                onGrainChanged: {
-                                    root.grainAmount = filmGrainPanel.grainAmount;
-                                    root.grainSize = filmGrainPanel.grainSize;
-                                    root.grainRoughness = filmGrainPanel.grainRoughness;
-                                    root.requestRender();
-                                }
-                            }
-
-                            // Local Layered Adjustments (Linear / Radial / Luma Range Masks)
-                            Rectangle { Layout.fillWidth: true; height: 1; color: Theme.border }
-                            LayersPanel {
-                                id: layersPanel
-                                Layout.fillWidth: true
-                                layersList: root.adjustmentLayers
-                                enginePath: root.resolveEnginePath()
-                                activePhotoPath: root.activePhotoPath
-                                onNotify: function(text, isError) {
-                                    root.showToast(text, isError ? Theme.accentMagenta : Theme.accentGreen);
-                                }
-                                onLayersChanged: {
-                                    root.adjustmentLayers = layersPanel.layersList;
-                                    root.requestRender();
-                                }
-                            }
-
-                            // ACES 1.3 & Color Management Panel
-                            Rectangle { Layout.fillWidth: true; height: 1; color: Theme.border }
-                            ColorSpaceSelector {
-                                id: colorSpaceSelector
-                                Layout.fillWidth: true
-                                activeColorSpace: root.activeColorSpace
-                                acesTonemap: root.activeAcesTonemap
-                                onColorSpaceSelected: function(space) {
-                                    root.activeColorSpace = space;
-                                    root.requestRender();
-                                }
-                                onAcesTonemapToggled: function(enabled) {
-                                    root.activeAcesTonemap = enabled;
-                                    root.requestRender();
-                                }
-                            }
-
-                            // Watermark & Branding Config
-                            Rectangle { Layout.fillWidth: true; height: 1; color: Theme.border }
-                            WatermarkConfig {
-                                id: watermarkConfig
-                                Layout.fillWidth: true
-                                watermarkEnabled: root.watermarkEnabled
-                                watermarkType: root.watermarkType
-                                text: root.watermarkText
-                                logoPath: root.watermarkLogoPath
-                                positionIndex: root.watermarkPositionIndex
-                                watermarkOpacity: root.watermarkOpacity
-                                size: root.watermarkSize
-                                margin: root.watermarkMargin
-                                colorHex: root.watermarkColorHex
-                                dropShadow: root.watermarkDropShadow
-                                onWatermarkChanged: function(opts) {
-                                    root.watermarkEnabled = opts.enabled;
-                                    root.watermarkType = opts.watermark_type;
-                                    root.watermarkText = opts.text;
-                                    root.watermarkLogoPath = opts.logo_path || "";
-                                    root.watermarkPositionIndex = opts.position_index;
-                                    root.watermarkOpacity = opts.opacity;
-                                    root.watermarkSize = opts.size;
-                                    root.watermarkMargin = opts.margin;
-                                    root.watermarkColorHex = opts.color;
-                                    root.watermarkDropShadow = opts.drop_shadow;
-                                }
                             }
                         }
 
@@ -2775,7 +2530,7 @@ Rectangle {
             }
             onSwitchSource: function(isCatalog) {
                 if (isCatalog) {
-                    root.showToast(qsTr("Loading the studio catalog..."), Theme.accentCyan);
+                    root.showToast(qsTr("Loading the catalog…"), Theme.accentCyan);
                     root.loadStudioCatalog("");
                 } else {
                     filmstrip.currentFolder = "~/Pictures";
@@ -2784,7 +2539,7 @@ Rectangle {
             }
             onRefreshRequested: {
                 if (filmstrip.isCatalogMode) {
-                    root.showToast(qsTr("Refreshing the studio catalog..."), Theme.accentCyan);
+                    root.showToast(qsTr("Refreshing the catalog…"), Theme.accentCyan);
                     root.loadStudioCatalog("");
                 } else {
                     root.scanLocalFolder(filmstrip.currentFolder || "~/Pictures");
@@ -2848,14 +2603,14 @@ Rectangle {
         ExportDialog {
             id: exportDialog
             anchors.centerIn: parent
+            host: root
             watermarkEnabled: root.watermarkEnabled
             watermarkOptions: root.buildWatermarkOptions()
             onCloseRequested: root.showExportModal = false
             onDoExport: function(opts) {
                 exportDialog.isExporting = true;
                 if (exportDialog.isBatchMode && filmstrip.selectedPaths.length > 0) {
-                    exportDialog.exportStatusIsError = false;
-                    exportDialog.exportStatusText = qsTr("Exporting %n photo(s) in parallel...", "", filmstrip.selectedPaths.length);
+                    exportDialog.exportStatusText = qsTr("Exporting %n photos…", "", filmstrip.selectedPaths.length);
                     var batchItems = [];
                     for (var i = 0; i < filmstrip.selectedPaths.length; i++) {
                         var p = filmstrip.selectedPaths[i];
@@ -2870,8 +2625,7 @@ Rectangle {
                         options: opts
                     });
                 } else {
-                    exportDialog.exportStatusIsError = false;
-                    exportDialog.exportStatusText = qsTr("Developing at full resolution and encoding...");
+                    exportDialog.exportStatusText = qsTr("Developing at full resolution…");
                     var recipeJson = JSON.stringify(root.buildRecipeObject());
                     var optsJson = JSON.stringify(opts);
                     exportProc.command = [
@@ -2908,6 +2662,7 @@ Rectangle {
 
 
     Component.onCompleted: {
+        loadUiState();
         scanLocalFolder("~/Pictures");
         // Photo passed on the command line (`omastudio photo.NEF`, desktop "Open with")
         var openPath = Host.openPath;

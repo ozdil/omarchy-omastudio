@@ -121,7 +121,7 @@ fn tools() -> Vec<Value> {
         tool("inspect_photo", "Metadata (camera, lens, exposure), histogram and scene analysis of a RAW or image file.", schema(json!({ "path": path }), &["path"]), true),
         tool("auto_enhance", "Suggests a recipe for a photo: tone, white balance and contrast from its analysis.", schema(json!({ "path": path }), &["path"]), true),
         tool("render_preview", "Renders a photo with a recipe and returns the preview image and its histogram.", schema(json!({ "path": path, "recipe": recipe }), &["path"]), true),
-        tool("export_photo", "Develops a photo at full resolution and writes it to disk. options: format (jxl, avif, webp, tiff, png, jpeg), quality, scale_percent, max_dimension, icc_profile (sRGB, DisplayP3, AdobeRGB1998, ProPhotoRGB, Rec2020), rendering_intent, output_dir.",
+        tool("export_photo", "Develops a photo at full resolution and writes it to disk. options: format (jpeg, png, tiff, webp, avif, heic, jxl, exr), quality (100 = lossless), bit_depth (8, 10, 12, 16, 32; 0 = best for the format), tiff_compression (none, lzw, deflate), scale_percent, max_dimension, icc_profile (sRGB, DisplayP3, AdobeRGB1998, ProPhotoRGB, Rec2020, ACEScg), rendering_intent, output_dir.",
             schema(json!({ "path": path, "recipe": recipe, "options": { "type": "object" } }), &["path"]), false),
         tool("scan_folder", "Lists the photos OmaStudio can open in a folder.", schema(json!({ "dir": { "type": "string" } }), &["dir"]), true),
         tool("catalog_query", "Searches the photo catalog by rating, flag, camera model or text.",

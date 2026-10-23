@@ -86,6 +86,14 @@ Window {
             case "reset":
                 mainWin.resetRecipe();
                 return "OK";
+            case "showExport":
+                if (mainWin.activePhotoPath === "") return "Error: no photo open";
+                mainWin.showExportModal = true;
+                return "OK";
+            case "setRightTab":
+                if (["adjust", "masks", "looks", "ai"].indexOf(str(a[0])) < 0) return "Error: unknown tab";
+                mainWin.rightTab = str(a[0]);
+                return "OK";
             case "toggleCrop":
                 return mainWin.toggleCropMode();
             case "toggleSplit":

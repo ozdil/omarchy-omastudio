@@ -4,6 +4,8 @@ import QtQuick.Controls
 
 ColumnLayout {
     id: root
+    // Inside a panel section, which shows the title
+    property bool embedded: false
     spacing: 8
     Layout.fillWidth: true
 
@@ -66,8 +68,9 @@ ColumnLayout {
         spacing: 4
 
         Text {
+            visible: !root.embedded
             font.family: Theme.fontFamily
-            text: qsTr("DAVINCI PRIMARIES WHEELS")
+            text: qsTr("Colour grading")
             textFormat: Text.PlainText
             font.pixelSize: Theme.px(10)
             font.weight: Font.DemiBold
@@ -88,7 +91,7 @@ ColumnLayout {
             Text {
                 id: viewToggleText
                 anchors.centerIn: parent
-                text: root.fourWheelsMode ? qsTr("4-WHEEL") : qsTr("TABBED")
+                text: root.fourWheelsMode ? qsTr("4 wheels") : qsTr("Tabs")
                 textFormat: Text.PlainText
                 font.pixelSize: Theme.px(8)
                 font.weight: Font.Bold
@@ -117,7 +120,7 @@ ColumnLayout {
             Text {
                 id: resetAllText
                 anchors.centerIn: parent
-                text: qsTr("RESET")
+                text: qsTr("Reset")
                 textFormat: Text.PlainText
                 font.pixelSize: Theme.px(8)
                 font.weight: Font.Bold
@@ -142,10 +145,10 @@ ColumnLayout {
         visible: !root.fourWheelsMode
 
         property var tabs: [
-            { name: qsTr("LIFT"), sub: qsTr("Shadows") },
-            { name: qsTr("GAMMA"), sub: qsTr("Mids") },
-            { name: qsTr("GAIN"), sub: qsTr("Highlights") },
-            { name: qsTr("OFFSET"), sub: qsTr("Global") }
+            { name: qsTr("Lift"), sub: qsTr("Shadows") },
+            { name: qsTr("Gamma"), sub: qsTr("Mids") },
+            { name: qsTr("Gain"), sub: qsTr("Highlights") },
+            { name: qsTr("Offset"), sub: qsTr("Global") }
         ]
 
         Repeater {

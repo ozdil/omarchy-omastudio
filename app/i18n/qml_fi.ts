@@ -175,28 +175,36 @@
         <translation>Epäonnistui</translation>
     </message>
     <message>
-        <source>AI EDIT ASSISTANT</source>
-        <translation>TEKOÄLYMUOKKAUKSEN AVUSTAJA</translation>
+        <source>Assistant</source>
+        <translation>Avustaja</translation>
     </message>
     <message>
-        <source>DONE</source>
-        <translation>VALMIS</translation>
+        <source>Done</source>
+        <translation>Valmis</translation>
     </message>
     <message>
-        <source>SETUP</source>
-        <translation>ASETUKSET</translation>
+        <source>Set up</source>
+        <translation>Määritä</translation>
+    </message>
+    <message>
+        <source>Working…</source>
+        <translation>Käsitellään…</translation>
+    </message>
+    <message>
+        <source>Edit</source>
+        <translation>Muokkaa</translation>
+    </message>
+    <message>
+        <source>Store key</source>
+        <translation>Tallenna avain</translation>
+    </message>
+    <message>
+        <source>Use %1</source>
+        <translation>Käytä: %1</translation>
     </message>
     <message>
         <source>e.g. warmer, moody evening light, recover the sky</source>
         <translation>esim. lämpimämpi, tunnelmallinen iltavalo, palauta taivas</translation>
-    </message>
-    <message>
-        <source>THINKING...</source>
-        <translation>MIETITÄÄN...</translation>
-    </message>
-    <message>
-        <source>EDIT WITH AI</source>
-        <translation>MUOKKAA TEKOÄLYLLÄ</translation>
     </message>
     <message>
         <source>Running. Models: %1</source>
@@ -222,14 +230,6 @@
         <source>API key</source>
         <translation>API-avain</translation>
     </message>
-    <message>
-        <source>STORE KEY</source>
-        <translation>TALLENNA AVAIN</translation>
-    </message>
-    <message>
-        <source>USE %1</source>
-        <translation>KÄYTÄ %1</translation>
-    </message>
 </context>
 <context>
     <name>BoundedTextInput</name>
@@ -241,48 +241,16 @@
 <context>
     <name>ColorGradingWheels</name>
     <message>
-        <source>DAVINCI PRIMARIES WHEELS</source>
-        <translation>DAVINCI-PÄÄVÄRIPYÖRÄT</translation>
-    </message>
-    <message>
-        <source>4-WHEEL</source>
-        <translation>4 PYÖRÄÄ</translation>
-    </message>
-    <message>
-        <source>TABBED</source>
-        <translation>VÄLILEHDET</translation>
-    </message>
-    <message>
-        <source>RESET</source>
-        <translation>PALAUTA</translation>
-    </message>
-    <message>
-        <source>LIFT</source>
-        <translation>LIFT</translation>
-    </message>
-    <message>
         <source>Shadows</source>
         <translation>Varjot</translation>
-    </message>
-    <message>
-        <source>GAMMA</source>
-        <translation>GAMMA</translation>
     </message>
     <message>
         <source>Mids</source>
         <translation>Keskisävyt</translation>
     </message>
     <message>
-        <source>GAIN</source>
-        <translation>GAIN</translation>
-    </message>
-    <message>
         <source>Highlights</source>
         <translation>Kirkkaat sävyt</translation>
-    </message>
-    <message>
-        <source>OFFSET</source>
-        <translation>OFFSET</translation>
     </message>
     <message>
         <source>Global</source>
@@ -307,6 +275,22 @@
     <message>
         <source>Lift</source>
         <translation>Lift</translation>
+    </message>
+    <message>
+        <source>Colour grading</source>
+        <translation>Värimäärittely</translation>
+    </message>
+    <message>
+        <source>4 wheels</source>
+        <translation>4 kiekkoa</translation>
+    </message>
+    <message>
+        <source>Tabs</source>
+        <translation>Välilehdet</translation>
+    </message>
+    <message>
+        <source>Reset</source>
+        <translation>Palauta</translation>
     </message>
     <message>
         <source>Gamma</source>
@@ -368,8 +352,12 @@
         <translation>Laaja AP1</translation>
     </message>
     <message>
-        <source>COLOR MANAGEMENT &amp; ACES 1.3</source>
-        <translation>VÄRINHALLINTA JA ACES 1.3</translation>
+        <source>Colour management</source>
+        <translation>Värinhallinta</translation>
+    </message>
+    <message>
+        <source>Gamut compression</source>
+        <translation>Värialueen pakkaus</translation>
     </message>
     <message>
         <source>%1 (%2)</source>
@@ -394,114 +382,162 @@
 <context>
     <name>ExifCard</name>
     <message>
-        <source>No camera loaded</source>
-        <translation>Kameraa ei ole ladattu</translation>
-    </message>
-    <message>
-        <source>Unknown lens</source>
-        <translation>Tuntematon objektiivi</translation>
+        <source>No photo</source>
+        <translation>Ei kuvaa</translation>
     </message>
 </context>
 <context>
     <name>ExportDialog</name>
-    <message numerus="yes">
-        <source>Batch Export (%n Photos)</source>
-        <translation>
-            <numerusform>Erävienti (%n kuva)</numerusform>
-            <numerusform>Erävienti (%n kuvaa)</numerusform>
-        </translation>
-    </message>
-    <message>
-        <source>Export Master Photo</source>
-        <translation>Vie pääkuva</translation>
-    </message>
-    <message>
-        <source>MODERN OPEN FORMAT</source>
-        <translation>MODERNI AVOIN MUOTO</translation>
-    </message>
-    <message>
-        <source>Next-Gen 16-bit HDR</source>
-        <translation>Uuden sukupolven 16-bittinen HDR</translation>
-    </message>
-    <message>
-        <source>AV1 Web/Mobile</source>
-        <translation>AV1 verkko/mobiili</translation>
-    </message>
-    <message>
-        <source>Ultra Compact</source>
-        <translation>Erittäin pieni</translation>
-    </message>
-    <message>
-        <source>16-bit TIFF</source>
-        <translation>16-bittinen TIFF</translation>
-    </message>
-    <message>
-        <source>Master Print Lossless</source>
-        <translation>Häviötön master-tuloste</translation>
-    </message>
-    <message>
-        <source>Graphic Lossless</source>
-        <translation>Häviötön grafiikka</translation>
-    </message>
-    <message>
-        <source>Universal MozJPEG</source>
-        <translation>Yleiskäyttöinen MozJPEG</translation>
-    </message>
-    <message>
-        <source>Export Compression Quality</source>
-        <translation>Viennin pakkauslaatu</translation>
-    </message>
-    <message>
-        <source>RESOLUTION &amp; SCALING</source>
-        <translation>TARKKUUS JA SKAALAUS</translation>
-    </message>
-    <message>
-        <source>100% Full</source>
-        <translation>100 % täysi</translation>
-    </message>
-    <message>
-        <source>Social (2048p)</source>
-        <translation>Some (2048p)</translation>
-    </message>
-    <message>
-        <source>COLOR SPACE &amp; ICC PROFILE</source>
-        <translation>VÄRIAVARUUS JA ICC-PROFIILI</translation>
-    </message>
-    <message>
-        <source>Universal Web / Social</source>
-        <translation>Yleinen verkko / some</translation>
-    </message>
-    <message>
-        <source>Apple / Wide OLED</source>
-        <translation>Apple / laaja OLED</translation>
-    </message>
-    <message>
-        <source>Ultra-Wide Gamut HDR</source>
-        <translation>Erittäin laajan väriavaruuden HDR</translation>
-    </message>
-    <message>
-        <source>Academy Color Standard</source>
-        <translation>Akatemian väristandardi</translation>
-    </message>
-    <message>
-        <source>Pro Photography / Print</source>
-        <translation>Ammattivalokuvaus / tuloste</translation>
-    </message>
-    <message>
-        <source>16-Bit Master Archival</source>
-        <translation>16-bittinen master-arkisto</translation>
-    </message>
-    <message>
-        <source>Intent</source>
-        <translation>Toistotapa</translation>
-    </message>
     <message>
         <source>Perceptual</source>
         <translation>Havainnollinen</translation>
     </message>
     <message>
-        <source>Compresses the whole gamut; smooth, saturated colours keep their relations</source>
-        <translation>Pakkaa koko väriavaruuden; pehmeät, kylläiset värit säilyttävät keskinäiset suhteensa</translation>
+        <source>8-bit · universal</source>
+        <translation>8-bittinen · yleinen</translation>
+    </message>
+    <message>
+        <source>16-bit · lossless</source>
+        <translation>16-bittinen · häviötön</translation>
+    </message>
+    <message>
+        <source>16-bit · print, archive</source>
+        <translation>16-bittinen · tulostus, arkisto</translation>
+    </message>
+    <message>
+        <source>8-bit · web</source>
+        <translation>8-bittinen · verkko</translation>
+    </message>
+    <message>
+        <source>12-bit · HDR-ready</source>
+        <translation>12-bittinen · HDR-valmis</translation>
+    </message>
+    <message>
+        <source>10-bit · HEVC</source>
+        <translation>10-bittinen · HEVC</translation>
+    </message>
+    <message>
+        <source>16-bit · modern</source>
+        <translation>16-bittinen · moderni</translation>
+    </message>
+    <message>
+        <source>Float · scene-linear</source>
+        <translation>Liukuluku · näkymälineaarinen</translation>
+    </message>
+    <message numerus="yes">
+        <source>Export %n photos</source>
+        <translation>
+            <numerusform>Vie %n kuva</numerusform>
+            <numerusform>Vie %n kuvaa</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>Export</source>
+        <translation>Vie</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>Sulje</translation>
+    </message>
+    <message>
+        <source>Format</source>
+        <translation>Tiedostomuoto</translation>
+    </message>
+    <message>
+        <source>Quality</source>
+        <translation>Laatu</translation>
+    </message>
+    <message>
+        <source>100 is lossless.</source>
+        <translation>100 on häviötön.</translation>
+    </message>
+    <message>
+        <source>Bit depth</source>
+        <translation>Bittisyvyys</translation>
+    </message>
+    <message>
+        <source>Half float</source>
+        <translation>Puolitarkka liukuluku</translation>
+    </message>
+    <message>
+        <source>Full float</source>
+        <translation>Täysitarkka liukuluku</translation>
+    </message>
+    <message>
+        <source>%1-bit</source>
+        <translation>%1-bittinen</translation>
+    </message>
+    <message>
+        <source>Compression</source>
+        <translation>Pakkaus</translation>
+    </message>
+    <message>
+        <source>None</source>
+        <translation>Ei mitään</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>Koko</translation>
+    </message>
+    <message>
+        <source>Full</source>
+        <translation>Täysi</translation>
+    </message>
+    <message>
+        <source>3840 px</source>
+        <translation>3840 px</translation>
+    </message>
+    <message>
+        <source>Long edge at most 3840 px</source>
+        <translation>Pitkä sivu enintään 3840 px</translation>
+    </message>
+    <message>
+        <source>2048 px</source>
+        <translation>2048 px</translation>
+    </message>
+    <message>
+        <source>Long edge at most 2048 px</source>
+        <translation>Pitkä sivu enintään 2048 px</translation>
+    </message>
+    <message>
+        <source>Colour profile</source>
+        <translation>Väriprofiili</translation>
+    </message>
+    <message>
+        <source>Web, screens</source>
+        <translation>Verkko, näytöt</translation>
+    </message>
+    <message>
+        <source>Wide-gamut screens</source>
+        <translation>Laajan värialueen näytöt</translation>
+    </message>
+    <message>
+        <source>Print</source>
+        <translation>Tulostus</translation>
+    </message>
+    <message>
+        <source>Editing, archive</source>
+        <translation>Muokkaus, arkisto</translation>
+    </message>
+    <message>
+        <source>HDR, video</source>
+        <translation>HDR, video</translation>
+    </message>
+    <message>
+        <source>Linear, VFX</source>
+        <translation>Lineaarinen, VFX</translation>
+    </message>
+    <message>
+        <source>OpenEXR is written scene-linear in the chosen primaries.</source>
+        <translation>OpenEXR kirjoitetaan näkymälineaarisena valituilla pääväreillä.</translation>
+    </message>
+    <message>
+        <source>Rendering intent</source>
+        <translation>Toistotapa</translation>
+    </message>
+    <message>
+        <source>Compresses the whole gamut; colour relations are kept</source>
+        <translation>Pakkaa koko värialueen; värien väliset suhteet säilyvät</translation>
     </message>
     <message>
         <source>Relative</source>
@@ -528,46 +564,55 @@
         <translation>Tarkat värit lähteen valkopiste mukaan lukien; vedostukseen</translation>
     </message>
     <message>
-        <source>Preserve Camera EXIF</source>
-        <translation>Säilytä kameran EXIF</translation>
+        <source>Metadata</source>
+        <translation>Metatiedot</translation>
     </message>
     <message>
-        <source>Strip GPS (Privacy)</source>
-        <translation>Poista GPS (yksityisyys)</translation>
+        <source>Keep camera metadata (EXIF)</source>
+        <translation>Säilytä kameran metatiedot (EXIF)</translation>
     </message>
     <message>
-        <source>Apply Photography Watermark / EXIF Signature</source>
-        <translation>Lisää vesileima / EXIF-allekirjoitus</translation>
+        <source>Remove location (GPS)</source>
+        <translation>Poista sijainti (GPS)</translation>
     </message>
     <message>
-        <source>Exporting Batch...</source>
-        <translation>Viedään erää...</translation>
+        <source>Prepare for</source>
+        <translation>Valmistele kohteelle</translation>
     </message>
     <message>
-        <source>Exporting Full Resolution...</source>
-        <translation>Viedään täydellä tarkkuudella...</translation>
-    </message>
-    <message numerus="yes">
-        <source>Start Parallel Batch Export (%n Photos)</source>
-        <translation>
-            <numerusform>Aloita rinnakkainen erävienti (%n kuva)</numerusform>
-            <numerusform>Aloita rinnakkainen erävienti (%n kuvaa)</numerusform>
-        </translation>
+        <source>Sets the crop and output sharpening for a platform. Reset restores your own.</source>
+        <translation>Asettaa rajauksen ja tulosteen terävöinnin alustalle. Palauta tuo omat asetuksesi takaisin.</translation>
     </message>
     <message>
-        <source>Start Export (%1 / %2)</source>
-        <translation>Aloita vienti (%1 / %2)</translation>
+        <source>Watermark</source>
+        <translation>Vesileima</translation>
+    </message>
+    <message>
+        <source>Folder</source>
+        <translation>Kansio</translation>
+    </message>
+    <message>
+        <source>Hide</source>
+        <translation>Piilota</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Peruuta</translation>
+    </message>
+    <message>
+        <source>Exporting…</source>
+        <translation>Viedään…</translation>
     </message>
 </context>
 <context>
     <name>FilmGrainPanel</name>
     <message>
-        <source>SILVER-HALIDE FILM GRAIN</source>
-        <translation>HOPEAHALOGENIDIFILMIN RAKEISUUS</translation>
+        <source>Grain</source>
+        <translation>Rakeisuus</translation>
     </message>
     <message>
-        <source>RESET</source>
-        <translation>PALAUTA</translation>
+        <source>Reset</source>
+        <translation>Palauta</translation>
     </message>
     <message>
         <source>Grain Amount</source>
@@ -701,12 +746,16 @@
         <translation>Panoraamamainen elokuvakontrasti 35 mm</translation>
     </message>
     <message>
-        <source>FILM SIMULATION &amp; SENSOR PROFILES</source>
-        <translation>FILMISIMULAATIO JA KENNOPROFIILIT</translation>
+        <source>Profile</source>
+        <translation>Profiili</translation>
     </message>
     <message>
-        <source>RESET</source>
-        <translation>PALAUTA</translation>
+        <source>Reset</source>
+        <translation>Palauta</translation>
+    </message>
+    <message>
+        <source>Amount</source>
+        <translation>Voimakkuus</translation>
     </message>
     <message>
         <source>All</source>
@@ -716,17 +765,9 @@
         <source>Acros B&amp;W</source>
         <translation>Acros MV</translation>
     </message>
-    <message>
-        <source>SIMULATION INTENSITY</source>
-        <translation>SIMULAATION VOIMAKKUUS</translation>
-    </message>
 </context>
 <context>
     <name>Filmstrip</name>
-    <message>
-        <source>Local Photos</source>
-        <translation>Paikalliset kuvat</translation>
-    </message>
     <message>
         <source>Studio Catalog</source>
         <translation>Studion luettelo</translation>
@@ -734,6 +775,14 @@
     <message>
         <source>Up</source>
         <translation>Ylös</translation>
+    </message>
+    <message>
+        <source>Folders</source>
+        <translation>Kansiot</translation>
+    </message>
+    <message>
+        <source>Catalog</source>
+        <translation>Luettelo</translation>
     </message>
     <message>
         <source>Scanning Catalog...</source>
@@ -760,21 +809,20 @@
         <translation>Tästä kansiosta ei löytynyt kuvia.</translation>
     </message>
     <message>
-        <source>DIR</source>
-        <comment>folder badge</comment>
-        <translation>KANS</translation>
+        <source>Folder</source>
+        <translation>Kansio</translation>
     </message>
     <message>
-        <source>FETCHING</source>
-        <translation>HAETAAN</translation>
+        <source>Downloading</source>
+        <translation>Ladataan</translation>
     </message>
     <message>
-        <source>RAW CLOUD</source>
-        <translation>RAW PILVESSÄ</translation>
+        <source>Remote</source>
+        <translation>Etä</translation>
     </message>
     <message>
-        <source>NO PREVIEW</source>
-        <translation>EI ESIKATSELUA</translation>
+        <source>No preview</source>
+        <translation>Ei esikatselua</translation>
     </message>
     <message>
         <source>Loading...</source>
@@ -836,40 +884,60 @@
         <translation>Fujifilm-reseptit</translation>
     </message>
     <message>
-        <source>FUJIFILM RECIPES</source>
-        <translation>FUJIFILM-RESEPTIT</translation>
+        <source>Import</source>
+        <translation>Tuo</translation>
     </message>
     <message>
-        <source>IMPORT</source>
-        <translation>TUO</translation>
+        <source>Apply photo&apos;s recipe</source>
+        <translation>Käytä kuvan reseptiä</translation>
     </message>
     <message>
-        <source>APPLY PHOTO&apos;S RECIPE</source>
-        <translation>KÄYTÄ KUVAN RESEPTIÄ</translation>
+        <source>Save</source>
+        <translation>Tallenna</translation>
     </message>
     <message>
-        <source>SAVE</source>
-        <translation>TALLENNA</translation>
+        <source>Apply recipe</source>
+        <translation>Käytä reseptiä</translation>
+    </message>
+    <message>
+        <source>Camera (USB)</source>
+        <translation>Kamera (USB)</translation>
+    </message>
+    <message>
+        <source>Reconnect</source>
+        <translation>Yhdistä uudelleen</translation>
+    </message>
+    <message>
+        <source>Connect</source>
+        <translation>Yhdistä</translation>
+    </message>
+    <message>
+        <source>Read C1–C7</source>
+        <translation>Lue C1–C7</translation>
+    </message>
+    <message>
+        <source>Convert in camera</source>
+        <translation>Muunna kamerassa</translation>
+    </message>
+    <message>
+        <source>Write recipe to C%1</source>
+        <translation>Kirjoita resepti paikkaan C%1</translation>
+    </message>
+    <message>
+        <source>Pixel shift</source>
+        <translation>Pixel Shift</translation>
+    </message>
+    <message>
+        <source>Merge %1 frames to DNG</source>
+        <translation>Yhdistä %1 ruutua DNG:ksi</translation>
+    </message>
+    <message>
+        <source>Merge frames to DNG</source>
+        <translation>Yhdistä ruudut DNG:ksi</translation>
     </message>
     <message>
         <source>No saved recipes. Import an X RAW Studio profile, recipe text or a Fujifilm photo.</source>
         <translation>Ei tallennettuja reseptejä. Tuo X RAW Studio -profiili, reseptiteksti tai Fujifilm-kuva.</translation>
-    </message>
-    <message>
-        <source>APPLY SELECTED RECIPE</source>
-        <translation>KÄYTÄ VALITTUA RESEPTIÄ</translation>
-    </message>
-    <message>
-        <source>CAMERA (USB)</source>
-        <translation>KAMERA (USB)</translation>
-    </message>
-    <message>
-        <source>RECONNECT</source>
-        <translation>YHDISTÄ UUDELLEEN</translation>
-    </message>
-    <message>
-        <source>CONNECT</source>
-        <translation>YHDISTÄ</translation>
     </message>
     <message>
         <source>%1  ·  in-camera RAW conversion</source>
@@ -884,24 +952,8 @@
         <translation>Aseta kameran USB-tilaksi %1 ja yhdistä se.</translation>
     </message>
     <message>
-        <source>READ C1-C7</source>
-        <translation>LUE C1-C7</translation>
-    </message>
-    <message>
-        <source>CONVERT IN CAMERA</source>
-        <translation>MUUNNA KAMERASSA</translation>
-    </message>
-    <message>
         <source>Unnamed</source>
         <translation>Nimetön</translation>
-    </message>
-    <message>
-        <source>WRITE SELECTED RECIPE TO C%1</source>
-        <translation>KIRJOITA VALITTU RESEPTI KOHTEESEEN C%1</translation>
-    </message>
-    <message>
-        <source>PIXEL SHIFT MULTI-SHOT</source>
-        <translation>PIXEL SHIFT -MONIKUVAUS</translation>
     </message>
     <message numerus="yes">
         <source>%n RAF frames selected. 4 frames give full colour per pixel, 16 frames double the resolution.</source>
@@ -914,23 +966,12 @@
         <source>Select the RAF frames of one GFX Pixel Shift sequence in the filmstrip.</source>
         <translation>Valitse filminauhasta yhden GFX Pixel Shift -sarjan RAF-kuvat.</translation>
     </message>
-    <message numerus="yes">
-        <source>MERGE %n FRAMES TO DNG</source>
-        <translation>
-            <numerusform>YHDISTÄ %n KUVA DNG:KSI</numerusform>
-            <numerusform>YHDISTÄ %n KUVAA DNG:KSI</numerusform>
-        </translation>
-    </message>
-    <message>
-        <source>MERGE FRAMES TO DNG</source>
-        <translation>YHDISTÄ KUVAT DNG:KSI</translation>
-    </message>
 </context>
 <context>
     <name>GradeVersionsBar</name>
     <message>
-        <source>GRADE VERSION</source>
-        <translation>SÄVYTYSVERSIO</translation>
+        <source>Version</source>
+        <translation>Versio</translation>
     </message>
 </context>
 <context>
@@ -941,8 +982,8 @@
         <translation>[V] %1%</translation>
     </message>
     <message>
-        <source>RGB HISTOGRAM</source>
-        <translation>RGB-HISTOGRAMMI</translation>
+        <source>Histogram</source>
+        <translation>Histogrammi</translation>
     </message>
     <message>
         <source>[H] %1%</source>
@@ -989,12 +1030,12 @@
         <translation>Kanava %1</translation>
     </message>
     <message>
-        <source>RESET CH</source>
-        <translation>PALAUTA KANAVA</translation>
+        <source>Reset colour</source>
+        <translation>Palauta väri</translation>
     </message>
     <message>
-        <source>RESET ALL</source>
-        <translation>PALAUTA KAIKKI</translation>
+        <source>Reset all</source>
+        <translation>Palauta kaikki</translation>
     </message>
     <message>
         <source>Hue Shift</source>
@@ -1102,32 +1143,32 @@
         <translation>Maski %1 valmis (%2)</translation>
     </message>
     <message>
-        <source>DETECTING...</source>
-        <translation>TUNNISTETAAN...</translation>
+        <source>Detecting…</source>
+        <translation>Tunnistetaan…</translation>
     </message>
     <message>
-        <source>LOCAL ADJUSTMENT LAYERS</source>
-        <translation>PAIKALLISET SÄÄTÖTASOT</translation>
+        <source>Masks</source>
+        <translation>Maskit</translation>
     </message>
     <message>
-        <source>+ GRADIENT</source>
-        <translation>+ LIUKUMA</translation>
+        <source>+ Linear</source>
+        <translation>+ Lineaarinen</translation>
+    </message>
+    <message>
+        <source>+ Radial</source>
+        <translation>+ Säteittäinen</translation>
+    </message>
+    <message>
+        <source>+ Luminance</source>
+        <translation>+ Luminanssi</translation>
     </message>
     <message>
         <source>Linear Gradient %1</source>
         <translation>Lineaarinen liukuma %1</translation>
     </message>
     <message>
-        <source>+ RADIAL</source>
-        <translation>+ SÄTEITTÄINEN</translation>
-    </message>
-    <message>
         <source>Radial Mask %1</source>
         <translation>Säteittäinen maski %1</translation>
-    </message>
-    <message>
-        <source>+ LUMA</source>
-        <translation>+ LUMINANSSI</translation>
     </message>
     <message>
         <source>Luma Range %1</source>
@@ -1145,10 +1186,6 @@
         <source>I</source>
         <comment>invert mask toggle, first letter of Invert</comment>
         <translation>K</translation>
-    </message>
-    <message>
-        <source>SELECTED LAYER CONTROLS (%1)</source>
-        <translation>VALITUN TASON SÄÄTIMET (%1)</translation>
     </message>
     <message>
         <source>Layer Opacity</source>
@@ -1170,48 +1207,32 @@
 <context>
     <name>LutSelector</name>
     <message>
-        <source>DAVINCI 3D LUT ENGINE (.CUBE)</source>
-        <translation>DAVINCI 3D LUT -MOOTTORI (.CUBE)</translation>
+        <source>Load 3D LUT</source>
+        <translation>Lataa 3D-LUT</translation>
     </message>
     <message>
-        <source>RESET</source>
-        <translation>PALAUTA</translation>
+        <source>3D LUT</source>
+        <translation>3D-LUT</translation>
     </message>
     <message>
-        <source>Hollywood Print</source>
-        <translation>Hollywood-kopio</translation>
+        <source>Reset</source>
+        <translation>Palauta</translation>
     </message>
     <message>
-        <source>Cinema Blockbuster</source>
-        <translation>Elokuvamenestys</translation>
+        <source>Load .cube file…</source>
+        <translation>Lataa .cube-tiedosto…</translation>
     </message>
     <message>
-        <source>35mm Soft Stock</source>
-        <translation>Pehmeä 35 mm:n filmi</translation>
+        <source>Saved look: %1</source>
+        <translation>Tallennettu tyyli: %1</translation>
     </message>
     <message>
-        <source>High-Acutance B&amp;W</source>
-        <translation>Terävä mustavalko</translation>
-    </message>
-    <message>
-        <source>LUT Intensity (Mix)</source>
-        <translation>LUT:n voimakkuus (sekoitus)</translation>
+        <source>Amount</source>
+        <translation>Voimakkuus</translation>
     </message>
 </context>
 <context>
     <name>MainWindow</name>
-    <message>
-        <source>Switched to version %1</source>
-        <translation>Vaihdettu versioon %1</translation>
-    </message>
-    <message>
-        <source>Version %1 initialized</source>
-        <translation>Versio %1 luotu</translation>
-    </message>
-    <message>
-        <source>Copied current grade to version %1</source>
-        <translation>Nykyinen sävytys kopioitu versioon %1</translation>
-    </message>
     <message numerus="yes">
         <source>Rating: %n star(s)</source>
         <translation>
@@ -1240,36 +1261,8 @@
         <translation>Ei mitään kumottavaa</translation>
     </message>
     <message>
-        <source>Undo (Ctrl+Z)</source>
-        <translation>Kumoa (Ctrl+Z)</translation>
-    </message>
-    <message>
         <source>Nothing to redo</source>
         <translation>Ei mitään tehtävää uudelleen</translation>
-    </message>
-    <message>
-        <source>Redo (Ctrl+Shift+Z)</source>
-        <translation>Tee uudelleen (Ctrl+Shift+Z)</translation>
-    </message>
-    <message>
-        <source>Adjustments copied (Ctrl+Shift+C)</source>
-        <translation>Säädöt kopioitu (Ctrl+Shift+C)</translation>
-    </message>
-    <message>
-        <source>No adjustments in clipboard</source>
-        <translation>Leikepöydällä ei ole säätöjä</translation>
-    </message>
-    <message>
-        <source>Adjustments pasted (Ctrl+Shift+V)</source>
-        <translation>Säädöt liitetty (Ctrl+Shift+V)</translation>
-    </message>
-    <message>
-        <source>Reset to defaults (Ctrl+R)</source>
-        <translation>Oletukset palautettu (Ctrl+R)</translation>
-    </message>
-    <message>
-        <source>Social framing and adjustments reset</source>
-        <translation>Somerajaus ja säädöt palautettu</translation>
     </message>
     <message>
         <source>Failed to load RAW: %1</source>
@@ -1292,28 +1285,8 @@
         <translation>Esikatselun hahmonnus epäonnistui</translation>
     </message>
     <message>
-        <source>Auto tone applied</source>
-        <translation>Automaattinen sävy käytetty</translation>
-    </message>
-    <message>
-        <source>AI decisions applied</source>
-        <translation>Tekoälyn päätökset käytetty</translation>
-    </message>
-    <message>
-        <source>Local heuristic applied</source>
-        <translation>Paikallinen heuristiikka käytetty</translation>
-    </message>
-    <message>
         <source>%1 applied (%2)</source>
         <translation>%1 käytetty (%2)</translation>
-    </message>
-    <message>
-        <source>Recipe sidecar saved</source>
-        <translation>Reseptin sivutiedosto tallennettu</translation>
-    </message>
-    <message>
-        <source>Batch finished: %1/%2 photos exported</source>
-        <translation>Erä valmis: %1/%2 kuvaa viety</translation>
     </message>
     <message>
         <source>Batch export: %1 succeeded, %2 failed</source>
@@ -1336,14 +1309,6 @@
         <translation>Kirjoitettu %1</translation>
     </message>
     <message>
-        <source>Analyzing dynamic range and scene...</source>
-        <translation>Analysoidaan dynamiikka-aluetta ja kuvaa...</translation>
-    </message>
-    <message>
-        <source>Asking the AI for edit decisions...</source>
-        <translation>Pyydetään tekoälyltä muokkauspäätöksiä...</translation>
-    </message>
-    <message>
         <source>Open RAW Photo</source>
         <translation>Avaa RAW-kuva</translation>
     </message>
@@ -1352,20 +1317,8 @@
         <translation>RAW-kuvat</translation>
     </message>
     <message>
-        <source>Saved to: %1</source>
-        <translation>Tallennettu: %1</translation>
-    </message>
-    <message>
-        <source>Export error: %1</source>
-        <translation>Vientivirhe: %1</translation>
-    </message>
-    <message>
         <source>Export finished without a result</source>
         <translation>Vienti päättyi ilman tulosta</translation>
-    </message>
-    <message>
-        <source>The folder scan gave no answer</source>
-        <translation>Kansion tutkinta ei vastannut</translation>
     </message>
     <message>
         <source>Crop mode: on (C)</source>
@@ -1376,36 +1329,12 @@
         <translation>Rajaustila: pois</translation>
     </message>
     <message>
-        <source>Open a photo first to export</source>
-        <translation>Avaa ensin vietävä kuva</translation>
-    </message>
-    <message>
-        <source>Panels hidden (Tab)</source>
-        <translation>Paneelit piilotettu (Tab)</translation>
-    </message>
-    <message>
-        <source>Panels restored (Tab)</source>
-        <translation>Paneelit palautettu (Tab)</translation>
-    </message>
-    <message>
-        <source>Optimizing for %1...</source>
-        <translation>Optimoidaan kohteelle %1...</translation>
-    </message>
-    <message>
-        <source>AI SCENE INSIGHT</source>
-        <translation>TEKOÄLYN KUVA-ANALYYSI</translation>
-    </message>
-    <message>
         <source>Analyzing...</source>
         <translation>Analysoidaan...</translation>
     </message>
     <message>
         <source>Extracting dynamic range...</source>
         <translation>Selvitetään dynamiikka-aluetta...</translation>
-    </message>
-    <message>
-        <source>Grade versions • Alt+1..4 to switch</source>
-        <translation>Sävytysversiot • vaihda Alt+1..4</translation>
     </message>
     <message>
         <source>Opened %1</source>
@@ -1416,36 +1345,8 @@
         <translation>Tutkitaan kansiota %1</translation>
     </message>
     <message>
-        <source>AI edit applied</source>
-        <translation>Tekoälymuokkaus käytetty</translation>
-    </message>
-    <message>
-        <source>ESSENTIAL ADJUSTMENTS</source>
-        <translation>PERUSSÄÄDÖT</translation>
-    </message>
-    <message>
-        <source>RESET</source>
-        <translation>PALAUTA</translation>
-    </message>
-    <message>
-        <source>Exposure (Light)</source>
-        <translation>Valotus (valo)</translation>
-    </message>
-    <message>
-        <source>Warmth (Temperature)</source>
-        <translation>Lämpö (värilämpötila)</translation>
-    </message>
-    <message>
-        <source>Vibrance (Color Punch)</source>
-        <translation>Eloisuus (värien voima)</translation>
-    </message>
-    <message>
         <source>Contrast</source>
         <translation>Kontrasti</translation>
-    </message>
-    <message>
-        <source>WHITE BALANCE</source>
-        <translation>VALKOTASAPAINO</translation>
     </message>
     <message>
         <source>Temp (Kelvin)</source>
@@ -1454,10 +1355,6 @@
     <message>
         <source>Tint (Green / Magenta)</source>
         <translation>Sävy (vihreä / magenta)</translation>
-    </message>
-    <message>
-        <source>LIGHT &amp; DYNAMIC RANGE</source>
-        <translation>VALO JA DYNAMIIKKA-ALUE</translation>
     </message>
     <message>
         <source>Exposure</source>
@@ -1480,10 +1377,6 @@
         <translation>Mustat</translation>
     </message>
     <message>
-        <source>TONE CURVE (PARAMETRIC)</source>
-        <translation>SÄVYKÄYRÄ (PARAMETRINEN)</translation>
-    </message>
-    <message>
         <source>Curve Highlights</source>
         <translation>Käyrä: kirkkaat sävyt</translation>
     </message>
@@ -1498,10 +1391,6 @@
     <message>
         <source>Curve Shadows</source>
         <translation>Käyrä: varjot</translation>
-    </message>
-    <message>
-        <source>PRESENCE &amp; TEXTURE</source>
-        <translation>LÄSNÄOLO JA RAKENNE</translation>
     </message>
     <message>
         <source>Texture</source>
@@ -1522,14 +1411,6 @@
     <message>
         <source>Saturation</source>
         <translation>Kylläisyys</translation>
-    </message>
-    <message>
-        <source>COLOR MIXER (8-BAND HSL)</source>
-        <translation>VÄRIMIKSERI (8 KAISTAN HSL)</translation>
-    </message>
-    <message>
-        <source>DETAIL &amp; OPTICS</source>
-        <translation>YKSITYISKOHDAT JA OPTIIKKA</translation>
     </message>
     <message>
         <source>Sharpening</source>
@@ -1560,12 +1441,200 @@
         <translation>Avaa ensin kuva</translation>
     </message>
     <message>
+        <source>Version %1</source>
+        <translation>Versio %1</translation>
+    </message>
+    <message>
+        <source>Version %1 started</source>
+        <translation>Versio %1 aloitettu</translation>
+    </message>
+    <message>
+        <source>Copied to version %1</source>
+        <translation>Kopioitu versioon %1</translation>
+    </message>
+    <message>
+        <source>Undo</source>
+        <translation>Kumoa</translation>
+    </message>
+    <message>
+        <source>Redo</source>
+        <translation>Tee uudelleen</translation>
+    </message>
+    <message>
+        <source>Settings copied</source>
+        <translation>Asetukset kopioitu</translation>
+    </message>
+    <message>
+        <source>Nothing copied yet</source>
+        <translation>Mitään ei ole vielä kopioitu</translation>
+    </message>
+    <message>
+        <source>Settings pasted</source>
+        <translation>Asetukset liitetty</translation>
+    </message>
+    <message>
+        <source>Reset to defaults</source>
+        <translation>Oletusarvot palautettu</translation>
+    </message>
+    <message>
+        <source>Platform crop reset</source>
+        <translation>Alustan rajaus palautettu</translation>
+    </message>
+    <message>
+        <source>Auto applied</source>
+        <translation>Automaattinen säätö käytetty</translation>
+    </message>
+    <message>
+        <source>Settings saved</source>
+        <translation>Asetukset tallennettu</translation>
+    </message>
+    <message>
+        <source>%1 of %2 photos exported</source>
+        <translation>%1/%2 kuvaa viety</translation>
+    </message>
+    <message>
+        <source>Auto: analysing the photo…</source>
+        <translation>Automaattinen: kuvaa analysoidaan…</translation>
+    </message>
+    <message>
+        <source>Saved to %1</source>
+        <translation>Tallennettu: %1</translation>
+    </message>
+    <message>
+        <source>Export failed</source>
+        <translation>Vienti epäonnistui</translation>
+    </message>
+    <message>
+        <source>The scan did not respond.</source>
+        <translation>Kansion tarkistus ei vastannut.</translation>
+    </message>
+    <message>
+        <source>Rating: ★</source>
+        <translation>Arvio: ★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★</source>
+        <translation>Arvio: ★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★</source>
+        <translation>Arvio: ★★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★★</source>
+        <translation>Arvio: ★★★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★★★</source>
+        <translation>Arvio: ★★★★★</translation>
+    </message>
+    <message>
+        <source>Flag cleared</source>
+        <translation>Merkintä poistettu</translation>
+    </message>
+    <message>
+        <source>Preparing for %1…</source>
+        <translation>Valmistellaan kohteelle %1…</translation>
+    </message>
+    <message>
+        <source>Rating: %1</source>
+        <translation>Arvio: %1</translation>
+    </message>
+    <message>
+        <source>Picked</source>
+        <translation>Valittu</translation>
+    </message>
+    <message>
+        <source>Rejected</source>
+        <translation>Hylätty</translation>
+    </message>
+    <message>
+        <source>Scene</source>
+        <translation>Näkymä</translation>
+    </message>
+    <message>
+        <source>Adjust</source>
+        <translation>Säädä</translation>
+    </message>
+    <message>
+        <source>Masks</source>
+        <translation>Maskit</translation>
+    </message>
+    <message>
+        <source>Looks</source>
+        <translation>Tyylit</translation>
+    </message>
+    <message>
+        <source>AI</source>
+        <translation>Tekoäly</translation>
+    </message>
+    <message>
+        <source>Profile</source>
+        <translation>Profiili</translation>
+    </message>
+    <message>
         <source>Color Chrome Effect</source>
         <translation>Color Chrome -tehoste</translation>
     </message>
     <message>
         <source>Color Chrome FX Blue</source>
         <translation>Color Chrome FX Sininen</translation>
+    </message>
+    <message>
+        <source>White balance</source>
+        <translation>Valkotasapaino</translation>
+    </message>
+    <message>
+        <source>Tone</source>
+        <translation>Sävy</translation>
+    </message>
+    <message>
+        <source>Presence</source>
+        <translation>Läsnäolo</translation>
+    </message>
+    <message>
+        <source>Tone curve</source>
+        <translation>Sävykäyrä</translation>
+    </message>
+    <message>
+        <source>Colour mixer</source>
+        <translation>Värimikseri</translation>
+    </message>
+    <message>
+        <source>Colour grading</source>
+        <translation>Värimäärittely</translation>
+    </message>
+    <message>
+        <source>Detail and optics</source>
+        <translation>Yksityiskohdat ja optiikka</translation>
+    </message>
+    <message>
+        <source>Grain</source>
+        <translation>Rakeisuus</translation>
+    </message>
+    <message>
+        <source>Colour management</source>
+        <translation>Värinhallinta</translation>
+    </message>
+    <message>
+        <source>Local adjustments</source>
+        <translation>Paikalliset säädöt</translation>
+    </message>
+    <message>
+        <source>Presets</source>
+        <translation>Esiasetukset</translation>
+    </message>
+    <message>
+        <source>LUT</source>
+        <translation>LUT</translation>
+    </message>
+    <message>
+        <source>Edit assistant</source>
+        <translation>Muokkausavustaja</translation>
+    </message>
+    <message>
+        <source>Assistant edit applied</source>
+        <translation>Avustajan muokkaus käytetty</translation>
     </message>
     <message>
         <source>Copy</source>
@@ -1600,30 +1669,30 @@
         <translation>Avataan %1</translation>
     </message>
     <message>
-        <source>Loading the studio catalog...</source>
-        <translation>Ladataan studion luetteloa...</translation>
+        <source>Loading the catalog…</source>
+        <translation>Ladataan luetteloa…</translation>
     </message>
     <message>
-        <source>Refreshing the studio catalog...</source>
-        <translation>Päivitetään studion luetteloa...</translation>
+        <source>Refreshing the catalog…</source>
+        <translation>Päivitetään luetteloa…</translation>
     </message>
     <message numerus="yes">
-        <source>Exporting %n photo(s) in parallel...</source>
+        <source>Exporting %n photos…</source>
         <translation>
-            <numerusform>Viedään %n kuva rinnakkain...</numerusform>
-            <numerusform>Viedään %n kuvaa rinnakkain...</numerusform>
+            <numerusform>Viedään %n kuva…</numerusform>
+            <numerusform>Viedään %n kuvaa…</numerusform>
         </translation>
     </message>
     <message>
-        <source>Developing at full resolution and encoding...</source>
-        <translation>Kehitetään täydellä tarkkuudella ja koodataan...</translation>
+        <source>Developing at full resolution…</source>
+        <translation>Kehitetään täydellä tarkkuudella…</translation>
     </message>
 </context>
 <context>
     <name>Navigator</name>
     <message>
-        <source>NAVIGATOR</source>
-        <translation>NAVIGAATTORI</translation>
+        <source>Navigator</source>
+        <translation>Navigaattori</translation>
     </message>
     <message>
         <source>FIT</source>
@@ -1631,65 +1700,92 @@
     </message>
 </context>
 <context>
+    <name>PanelSection</name>
+    <message>
+        <source>Reset %1</source>
+        <translation>Palauta %1</translation>
+    </message>
+</context>
+<context>
     <name>PresetSelector</name>
     <message>
-        <source>FILM LOOKS &amp; STYLES</source>
-        <translation>FILMITYYLIT</translation>
+        <source>Looks</source>
+        <translation>Tyylit</translation>
     </message>
     <message>
-        <source>RESET</source>
-        <translation>PALAUTA</translation>
+        <source>Reset</source>
+        <translation>Palauta</translation>
     </message>
     <message>
-        <source>AI Auto Enhance</source>
-        <translation>Automaattinen tekoälyparannus</translation>
+        <source>Auto</source>
+        <translation>Automaattinen</translation>
     </message>
     <message>
-        <source>RUN</source>
-        <translation>SUORITA</translation>
+        <source>Run</source>
+        <translation>Suorita</translation>
     </message>
     <message>
-        <source>Documentary Muted</source>
-        <translation>Hillitty dokumentaarinen</translation>
+        <source>Muted</source>
+        <translation>Hillitty</translation>
     </message>
     <message>
-        <source>Vivid Landscapes</source>
-        <translation>Eloisat maisemat</translation>
+        <source>Documentary, low saturation</source>
+        <translation>Dokumentaarinen, matala kylläisyys</translation>
     </message>
     <message>
-        <source>Warm Skin Tones</source>
-        <translation>Lämpimät ihon sävyt</translation>
+        <source>Vivid</source>
+        <translation>Eloisa</translation>
     </message>
     <message>
-        <source>High Contrast B&amp;W</source>
-        <translation>Suurikontrastinen mustavalko</translation>
+        <source>Landscapes, rich colour</source>
+        <translation>Maisemat, runsaat värit</translation>
     </message>
     <message>
-        <source>Film Grade</source>
-        <translation>Filmisävytys</translation>
+        <source>Warm portrait</source>
+        <translation>Lämmin muotokuva</translation>
+    </message>
+    <message>
+        <source>Soft contrast, warm skin</source>
+        <translation>Pehmeä kontrasti, lämmin iho</translation>
+    </message>
+    <message>
+        <source>Black and white</source>
+        <translation>Mustavalko</translation>
+    </message>
+    <message>
+        <source>High contrast</source>
+        <translation>Korkea kontrasti</translation>
+    </message>
+    <message>
+        <source>Teal and orange</source>
+        <translation>Sinivihreä ja oranssi</translation>
+    </message>
+    <message>
+        <source>Split toning</source>
+        <translation>Jaettu sävytys</translation>
     </message>
 </context>
 <context>
     <name>RgbMixerPanel</name>
     <message>
-        <source>DAVINCI RGB PRIMARY MIXER</source>
-        <translation>DAVINCI RGB -PÄÄMIKSERI</translation>
-    </message>
-    <message>
-        <source>RESET</source>
-        <translation>PALAUTA</translation>
-    </message>
-    <message>
         <source>Monochrome Mixing</source>
         <translation>Yksivärinen sekoitus</translation>
     </message>
     <message>
-        <source>MONOCHROME LUMA MIX</source>
-        <translation>YKSIVÄRINEN LUMINANSSISEKOITUS</translation>
+        <source>Channel mixer</source>
+        <translation>Kanavamikseri</translation>
     </message>
     <message>
-        <source>RED OUTPUT CHANNEL</source>
-        <translation>PUNAINEN LÄHTÖKANAVA</translation>
+        <source>Reset</source>
+        <translation>Palauta</translation>
+    </message>
+    <message>
+        <source>Monochrome mix</source>
+        <translation>Yksivärinen sekoitus</translation>
+    </message>
+    <message>
+        <source>Red output</source>
+        <translation>Punainen lähtö</translation>
     </message>
     <message>
         <source>Red in Red</source>
@@ -1704,8 +1800,12 @@
         <translation>Sininen punaisessa</translation>
     </message>
     <message>
-        <source>GREEN OUTPUT CHANNEL</source>
-        <translation>VIHREÄ LÄHTÖKANAVA</translation>
+        <source>Green output</source>
+        <translation>Vihreä lähtö</translation>
+    </message>
+    <message>
+        <source>Blue output</source>
+        <translation>Sininen lähtö</translation>
     </message>
     <message>
         <source>Red in Green</source>
@@ -1718,10 +1818,6 @@
     <message>
         <source>Blue in Green</source>
         <translation>Sininen vihreässä</translation>
-    </message>
-    <message>
-        <source>BLUE OUTPUT CHANNEL</source>
-        <translation>SININEN LÄHTÖKANAVA</translation>
     </message>
     <message>
         <source>Red in Blue</source>
@@ -1765,8 +1861,8 @@
         <translation>[K] %1%</translation>
     </message>
     <message>
-        <source>NO SIGNAL / LOAD RAW</source>
-        <translation>EI SIGNAALIA / LATAA RAW</translation>
+        <source>No photo</source>
+        <translation>Ei kuvaa</translation>
     </message>
     <message>
         <source>RED</source>
@@ -1788,12 +1884,12 @@
 <context>
     <name>SkinTonePanel</name>
     <message>
-        <source>CAPTURE ONE SKIN TONE</source>
-        <translation>CAPTURE ONE -IHONSÄVY</translation>
+        <source>Skin tone</source>
+        <translation>Ihon sävy</translation>
     </message>
     <message>
-        <source>RESET</source>
-        <translation>PALAUTA</translation>
+        <source>Reset</source>
+        <translation>Palauta</translation>
     </message>
     <message>
         <source>Vectorscope 123° flesh line (target: %1°)</source>
@@ -1834,52 +1930,28 @@
 <context>
     <name>SocialOptimizer</name>
     <message>
-        <source>AI SOCIAL MEDIA OPTIMIZER</source>
-        <translation>TEKOÄLYN SOMEOPTIMOINTI</translation>
+        <source>Prepare for</source>
+        <translation>Valmistele kohteelle</translation>
     </message>
     <message>
-        <source>RESET</source>
-        <translation>PALAUTA</translation>
+        <source>Reset</source>
+        <translation>Palauta</translation>
     </message>
     <message>
-        <source>Instagram Feed</source>
-        <translation>Instagram-syöte</translation>
+        <source>Instagram post</source>
+        <translation>Instagram-julkaisu</translation>
     </message>
     <message>
-        <source>Max Screen</source>
-        <translation>Suurin näyttö</translation>
+        <source>Stories and Reels</source>
+        <translation>Tarinat ja Reels</translation>
     </message>
     <message>
-        <source>Stories / Reels</source>
-        <translation>Tarinat / Reels</translation>
+        <source>Square</source>
+        <translation>Neliö</translation>
     </message>
     <message>
-        <source>Full Mobile</source>
-        <translation>Koko mobiilinäyttö</translation>
-    </message>
-    <message>
-        <source>Crisp Feed</source>
-        <translation>Terävä syöte</translation>
-    </message>
-    <message>
-        <source>Classic Square</source>
-        <translation>Klassinen neliö</translation>
-    </message>
-    <message>
-        <source>Grid Post</source>
-        <translation>Ruudukkojulkaisu</translation>
-    </message>
-    <message>
-        <source>High Res</source>
-        <translation>Suuri tarkkuus</translation>
-    </message>
-    <message>
-        <source>YouTube Thumb</source>
+        <source>YouTube thumbnail</source>
         <translation>YouTube-pikkukuva</translation>
-    </message>
-    <message>
-        <source>High CTR</source>
-        <translation>Korkea CTR</translation>
     </message>
 </context>
 <context>
@@ -1914,8 +1986,8 @@
         <translation>Perusteet</translation>
     </message>
     <message>
-        <source>Pro Studio</source>
-        <translation>Pro Studio</translation>
+        <source>Pro</source>
+        <translation>Pro</translation>
     </message>
     <message>
         <source>Undo (Ctrl+Z)</source>
@@ -1953,16 +2025,16 @@
 <context>
     <name>Viewport</name>
     <message>
-        <source>RESET 0°</source>
-        <translation>PALAUTA 0°</translation>
+        <source>Reset 0°</source>
+        <translation>Palauta 0°:een</translation>
     </message>
     <message>
-        <source>FIT</source>
-        <translation>SOVITA</translation>
+        <source>Fit</source>
+        <translation>Sovita</translation>
     </message>
     <message>
-        <source>CROP &amp; COMPOSE</source>
-        <translation>RAJAUS JA SOMMITTELU</translation>
+        <source>Crop</source>
+        <translation>Rajaa</translation>
     </message>
     <message>
         <source>Original</source>
@@ -1989,12 +2061,20 @@
         <translation>Ruudukko: pois</translation>
     </message>
     <message>
-        <source>RESET</source>
-        <translation>PALAUTA</translation>
+        <source>Reset</source>
+        <translation>Palauta</translation>
     </message>
     <message>
-        <source>DONE</source>
-        <translation>VALMIS</translation>
+        <source>Done</source>
+        <translation>Valmis</translation>
+    </message>
+    <message>
+        <source>Shadow clipping</source>
+        <translation>Varjojen leikkautuminen</translation>
+    </message>
+    <message>
+        <source>Highlight clipping</source>
+        <translation>Kohokohtien leikkautuminen</translation>
     </message>
     <message>
         <source>ORIGINAL RAW (Before)</source>
@@ -2003,18 +2083,6 @@
     <message>
         <source>EDITED RECIPE (After)</source>
         <translation>MUOKATTU RESEPTI (jälkeen)</translation>
-    </message>
-    <message>
-        <source>[S] SHADOW CLIPPING (BLUE)</source>
-        <translation>[V] LEIKATUT VARJOT (SININEN)</translation>
-    </message>
-    <message>
-        <source>[H] HIGHLIGHT CLIPPING (RED)</source>
-        <translation>[K] LEIKATUT KIRKKAAT SÄVYT (PUNAINEN)</translation>
-    </message>
-    <message>
-        <source>Pinch: Zoom | 2-Finger Twist: Rotate | 2-Finger Pan | Double-Tap: Reset</source>
-        <translation>Nipistys: zoomaus | Kierto 2 sormella: kiertäminen | Panorointi 2 sormella | Kaksoisnapautus: palautus</translation>
     </message>
     <message>
         <source>Open a RAW (Ctrl+O) or drop a photo / folder here</source>
@@ -2028,8 +2096,8 @@
 <context>
     <name>WatermarkConfig</name>
     <message>
-        <source>WATERMARK &amp; BRANDING</source>
-        <translation>VESILEIMA JA BRÄNDÄYS</translation>
+        <source>Watermark</source>
+        <translation>Vesileima</translation>
     </message>
     <message>
         <source>Text / EXIF Tag</source>
@@ -2040,28 +2108,28 @@
         <translation>Oma PNG-logo</translation>
     </message>
     <message>
-        <source>WATERMARK TEXT OR TEMPLATE</source>
-        <translation>VESILEIMAN TEKSTI TAI MALLI</translation>
+        <source>Text or template</source>
+        <translation>Teksti tai malli</translation>
     </message>
     <message>
-        <source>LOGO FILE PATH (.PNG)</source>
-        <translation>LOGON POLKU (.PNG)</translation>
+        <source>Logo file (PNG)</source>
+        <translation>Logotiedosto (PNG)</translation>
     </message>
     <message>
-        <source>POSITION</source>
-        <translation>SIJAINTI</translation>
+        <source>Position</source>
+        <translation>Sijainti</translation>
+    </message>
+    <message>
+        <source>Opacity</source>
+        <translation>Peittävyys</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>Koko</translation>
     </message>
     <message>
         <source>Drop Shadow</source>
         <translation>Varjostus</translation>
-    </message>
-    <message>
-        <source>OPACITY</source>
-        <translation>PEITTÄVYYS</translation>
-    </message>
-    <message>
-        <source>SIZE MULTIPLIER</source>
-        <translation>KOON KERROIN</translation>
     </message>
 </context>
 </TS>

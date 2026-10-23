@@ -175,28 +175,36 @@
         <translation>Sikertelen</translation>
     </message>
     <message>
-        <source>AI EDIT ASSISTANT</source>
-        <translation>MI-SZERKESZTŐ ASSZISZTENS</translation>
+        <source>Assistant</source>
+        <translation>Asszisztens</translation>
     </message>
     <message>
-        <source>DONE</source>
-        <translation>KÉSZ</translation>
+        <source>Done</source>
+        <translation>Kész</translation>
     </message>
     <message>
-        <source>SETUP</source>
-        <translation>BEÁLLÍTÁS</translation>
+        <source>Set up</source>
+        <translation>Beállítás</translation>
+    </message>
+    <message>
+        <source>Working…</source>
+        <translation>Feldolgozás…</translation>
+    </message>
+    <message>
+        <source>Edit</source>
+        <translation>Szerkesztés</translation>
+    </message>
+    <message>
+        <source>Store key</source>
+        <translation>Kulcs mentése</translation>
+    </message>
+    <message>
+        <source>Use %1</source>
+        <translation>%1 használata</translation>
     </message>
     <message>
         <source>e.g. warmer, moody evening light, recover the sky</source>
         <translation>pl. melegebb, hangulatos esti fény, az ég visszaállítása</translation>
-    </message>
-    <message>
-        <source>THINKING...</source>
-        <translation>GONDOLKODIK...</translation>
-    </message>
-    <message>
-        <source>EDIT WITH AI</source>
-        <translation>SZERKESZTÉS MI-VEL</translation>
     </message>
     <message>
         <source>Running. Models: %1</source>
@@ -222,14 +230,6 @@
         <source>API key</source>
         <translation>API-kulcs</translation>
     </message>
-    <message>
-        <source>STORE KEY</source>
-        <translation>KULCS MENTÉSE</translation>
-    </message>
-    <message>
-        <source>USE %1</source>
-        <translation>%1 HASZNÁLATA</translation>
-    </message>
 </context>
 <context>
     <name>BoundedTextInput</name>
@@ -241,48 +241,16 @@
 <context>
     <name>ColorGradingWheels</name>
     <message>
-        <source>DAVINCI PRIMARIES WHEELS</source>
-        <translation>DAVINCI ELSŐDLEGES KEREKEK</translation>
-    </message>
-    <message>
-        <source>4-WHEEL</source>
-        <translation>4 KERÉK</translation>
-    </message>
-    <message>
-        <source>TABBED</source>
-        <translation>LAPOK</translation>
-    </message>
-    <message>
-        <source>RESET</source>
-        <translation>VISSZAÁLLÍTÁS</translation>
-    </message>
-    <message>
-        <source>LIFT</source>
-        <translation>LIFT</translation>
-    </message>
-    <message>
         <source>Shadows</source>
         <translation>Árnyékok</translation>
-    </message>
-    <message>
-        <source>GAMMA</source>
-        <translation>GAMMA</translation>
     </message>
     <message>
         <source>Mids</source>
         <translation>Középtónusok</translation>
     </message>
     <message>
-        <source>GAIN</source>
-        <translation>GAIN</translation>
-    </message>
-    <message>
         <source>Highlights</source>
         <translation>Csúcsfények</translation>
-    </message>
-    <message>
-        <source>OFFSET</source>
-        <translation>OFFSET</translation>
     </message>
     <message>
         <source>Global</source>
@@ -307,6 +275,22 @@
     <message>
         <source>Lift</source>
         <translation>Lift</translation>
+    </message>
+    <message>
+        <source>Colour grading</source>
+        <translation>Színkorrekció</translation>
+    </message>
+    <message>
+        <source>4 wheels</source>
+        <translation>4 kerék</translation>
+    </message>
+    <message>
+        <source>Tabs</source>
+        <translation>Lapok</translation>
+    </message>
+    <message>
+        <source>Reset</source>
+        <translation>Visszaállítás</translation>
     </message>
     <message>
         <source>Gamma</source>
@@ -368,8 +352,12 @@
         <translation>Széles AP1</translation>
     </message>
     <message>
-        <source>COLOR MANAGEMENT &amp; ACES 1.3</source>
-        <translation>SZÍNKEZELÉS ÉS ACES 1.3</translation>
+        <source>Colour management</source>
+        <translation>Színkezelés</translation>
+    </message>
+    <message>
+        <source>Gamut compression</source>
+        <translation>Színtartomány-tömörítés</translation>
     </message>
     <message>
         <source>%1 (%2)</source>
@@ -394,113 +382,161 @@
 <context>
     <name>ExifCard</name>
     <message>
-        <source>No camera loaded</source>
-        <translation>Nincs betöltött fényképezőgép</translation>
-    </message>
-    <message>
-        <source>Unknown lens</source>
-        <translation>Ismeretlen objektív</translation>
+        <source>No photo</source>
+        <translation>Nincs fotó</translation>
     </message>
 </context>
 <context>
     <name>ExportDialog</name>
-    <message numerus="yes">
-        <source>Batch Export (%n Photos)</source>
-        <translation>
-            <numerusform>Kötegelt exportálás (%n fotó)</numerusform>
-        </translation>
-    </message>
-    <message>
-        <source>Export Master Photo</source>
-        <translation>Mesterfotó exportálása</translation>
-    </message>
-    <message>
-        <source>MODERN OPEN FORMAT</source>
-        <translation>MODERN NYÍLT FORMÁTUM</translation>
-    </message>
-    <message>
-        <source>Next-Gen 16-bit HDR</source>
-        <translation>Új generációs 16 bites HDR</translation>
-    </message>
-    <message>
-        <source>AV1 Web/Mobile</source>
-        <translation>AV1 web/mobil</translation>
-    </message>
-    <message>
-        <source>Ultra Compact</source>
-        <translation>Rendkívül tömör</translation>
-    </message>
-    <message>
-        <source>16-bit TIFF</source>
-        <translation>16 bites TIFF</translation>
-    </message>
-    <message>
-        <source>Master Print Lossless</source>
-        <translation>Veszteségmentes mesternyomat</translation>
-    </message>
-    <message>
-        <source>Graphic Lossless</source>
-        <translation>Veszteségmentes grafika</translation>
-    </message>
-    <message>
-        <source>Universal MozJPEG</source>
-        <translation>Univerzális MozJPEG</translation>
-    </message>
-    <message>
-        <source>Export Compression Quality</source>
-        <translation>Exportálás tömörítési minősége</translation>
-    </message>
-    <message>
-        <source>RESOLUTION &amp; SCALING</source>
-        <translation>FELBONTÁS ÉS MÉRETEZÉS</translation>
-    </message>
-    <message>
-        <source>100% Full</source>
-        <translation>100% teljes</translation>
-    </message>
-    <message>
-        <source>Social (2048p)</source>
-        <translation>Közösségi (2048p)</translation>
-    </message>
-    <message>
-        <source>COLOR SPACE &amp; ICC PROFILE</source>
-        <translation>SZÍNTÉR ÉS ICC-PROFIL</translation>
-    </message>
-    <message>
-        <source>Universal Web / Social</source>
-        <translation>Univerzális web / közösségi média</translation>
-    </message>
-    <message>
-        <source>Apple / Wide OLED</source>
-        <translation>Apple / széles OLED</translation>
-    </message>
-    <message>
-        <source>Ultra-Wide Gamut HDR</source>
-        <translation>Rendkívül széles színtartományú HDR</translation>
-    </message>
-    <message>
-        <source>Academy Color Standard</source>
-        <translation>Az Akadémia színszabványa</translation>
-    </message>
-    <message>
-        <source>Pro Photography / Print</source>
-        <translation>Profi fotózás / nyomtatás</translation>
-    </message>
-    <message>
-        <source>16-Bit Master Archival</source>
-        <translation>16 bites mesterarchívum</translation>
-    </message>
-    <message>
-        <source>Intent</source>
-        <translation>Leképezési mód</translation>
-    </message>
     <message>
         <source>Perceptual</source>
         <translation>Érzékelési</translation>
     </message>
     <message>
-        <source>Compresses the whole gamut; smooth, saturated colours keep their relations</source>
-        <translation>A teljes színtartományt tömöríti; a lágy, telített színek megtartják egymáshoz viszonyított arányukat</translation>
+        <source>8-bit · universal</source>
+        <translation>8 bites · általános</translation>
+    </message>
+    <message>
+        <source>16-bit · lossless</source>
+        <translation>16 bites · veszteségmentes</translation>
+    </message>
+    <message>
+        <source>16-bit · print, archive</source>
+        <translation>16 bites · nyomtatás, archívum</translation>
+    </message>
+    <message>
+        <source>8-bit · web</source>
+        <translation>8 bites · web</translation>
+    </message>
+    <message>
+        <source>12-bit · HDR-ready</source>
+        <translation>12 bites · HDR-kompatibilis</translation>
+    </message>
+    <message>
+        <source>10-bit · HEVC</source>
+        <translation>10 bites · HEVC</translation>
+    </message>
+    <message>
+        <source>16-bit · modern</source>
+        <translation>16 bites · modern</translation>
+    </message>
+    <message>
+        <source>Float · scene-linear</source>
+        <translation>Lebegőpontos · jelenetlineáris</translation>
+    </message>
+    <message numerus="yes">
+        <source>Export %n photos</source>
+        <translation>
+            <numerusform>%n fotó exportálása</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>Export</source>
+        <translation>Exportálás</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>Bezárás</translation>
+    </message>
+    <message>
+        <source>Format</source>
+        <translation>Fájlformátum</translation>
+    </message>
+    <message>
+        <source>Quality</source>
+        <translation>Minőség</translation>
+    </message>
+    <message>
+        <source>100 is lossless.</source>
+        <translation>A 100 veszteségmentes.</translation>
+    </message>
+    <message>
+        <source>Bit depth</source>
+        <translation>Bitmélység</translation>
+    </message>
+    <message>
+        <source>Half float</source>
+        <translation>Fél pontosságú lebegőpontos</translation>
+    </message>
+    <message>
+        <source>Full float</source>
+        <translation>Teljes pontosságú lebegőpontos</translation>
+    </message>
+    <message>
+        <source>%1-bit</source>
+        <translation>%1 bites</translation>
+    </message>
+    <message>
+        <source>Compression</source>
+        <translation>Tömörítés</translation>
+    </message>
+    <message>
+        <source>None</source>
+        <translation>Nincs</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>Méret</translation>
+    </message>
+    <message>
+        <source>Full</source>
+        <translation>Teljes</translation>
+    </message>
+    <message>
+        <source>3840 px</source>
+        <translation>3840 px</translation>
+    </message>
+    <message>
+        <source>Long edge at most 3840 px</source>
+        <translation>A hosszabb oldal legfeljebb 3840 px</translation>
+    </message>
+    <message>
+        <source>2048 px</source>
+        <translation>2048 px</translation>
+    </message>
+    <message>
+        <source>Long edge at most 2048 px</source>
+        <translation>A hosszabb oldal legfeljebb 2048 px</translation>
+    </message>
+    <message>
+        <source>Colour profile</source>
+        <translation>Színprofil</translation>
+    </message>
+    <message>
+        <source>Web, screens</source>
+        <translation>Web, képernyők</translation>
+    </message>
+    <message>
+        <source>Wide-gamut screens</source>
+        <translation>Széles színtartományú képernyők</translation>
+    </message>
+    <message>
+        <source>Print</source>
+        <translation>Nyomtatás</translation>
+    </message>
+    <message>
+        <source>Editing, archive</source>
+        <translation>Szerkesztés, archívum</translation>
+    </message>
+    <message>
+        <source>HDR, video</source>
+        <translation>HDR, videó</translation>
+    </message>
+    <message>
+        <source>Linear, VFX</source>
+        <translation>Lineáris, vizuális effektek</translation>
+    </message>
+    <message>
+        <source>OpenEXR is written scene-linear in the chosen primaries.</source>
+        <translation>Az OpenEXR jelenetlineárisan, a választott alapszínekkel készül.</translation>
+    </message>
+    <message>
+        <source>Rendering intent</source>
+        <translation>Megjelenítési mód</translation>
+    </message>
+    <message>
+        <source>Compresses the whole gamut; colour relations are kept</source>
+        <translation>A teljes színtartományt tömöríti; a színek közötti viszony megmarad</translation>
     </message>
     <message>
         <source>Relative</source>
@@ -527,45 +563,55 @@
         <translation>Pontos színek a forrás fehérpontjával együtt; próbanyomathoz</translation>
     </message>
     <message>
-        <source>Preserve Camera EXIF</source>
-        <translation>A fényképezőgép EXIF-adatainak megőrzése</translation>
+        <source>Metadata</source>
+        <translation>Metaadatok</translation>
     </message>
     <message>
-        <source>Strip GPS (Privacy)</source>
-        <translation>GPS eltávolítása (adatvédelem)</translation>
+        <source>Keep camera metadata (EXIF)</source>
+        <translation>Fényképezőgép metaadatainak megtartása (EXIF)</translation>
     </message>
     <message>
-        <source>Apply Photography Watermark / EXIF Signature</source>
-        <translation>Vízjel / EXIF-aláírás alkalmazása</translation>
+        <source>Remove location (GPS)</source>
+        <translation>Helyadatok eltávolítása (GPS)</translation>
     </message>
     <message>
-        <source>Exporting Batch...</source>
-        <translation>Köteg exportálása...</translation>
+        <source>Prepare for</source>
+        <translation>Előkészítés ehhez:</translation>
     </message>
     <message>
-        <source>Exporting Full Resolution...</source>
-        <translation>Exportálás teljes felbontásban...</translation>
-    </message>
-    <message numerus="yes">
-        <source>Start Parallel Batch Export (%n Photos)</source>
-        <translation>
-            <numerusform>Párhuzamos kötegelt exportálás indítása (%n fotó)</numerusform>
-        </translation>
+        <source>Sets the crop and output sharpening for a platform. Reset restores your own.</source>
+        <translation>Beállítja a vágást és a kimeneti élesítést egy platformhoz. A Visszaállítás visszahozza a saját beállításait.</translation>
     </message>
     <message>
-        <source>Start Export (%1 / %2)</source>
-        <translation>Exportálás indítása (%1 / %2)</translation>
+        <source>Watermark</source>
+        <translation>Vízjel</translation>
+    </message>
+    <message>
+        <source>Folder</source>
+        <translation>Mappa</translation>
+    </message>
+    <message>
+        <source>Hide</source>
+        <translation>Elrejtés</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Mégse</translation>
+    </message>
+    <message>
+        <source>Exporting…</source>
+        <translation>Exportálás…</translation>
     </message>
 </context>
 <context>
     <name>FilmGrainPanel</name>
     <message>
-        <source>SILVER-HALIDE FILM GRAIN</source>
-        <translation>EZÜST-HALOGENID FILMSZEMCSE</translation>
+        <source>Grain</source>
+        <translation>Szemcse</translation>
     </message>
     <message>
-        <source>RESET</source>
-        <translation>VISSZAÁLLÍTÁS</translation>
+        <source>Reset</source>
+        <translation>Visszaállítás</translation>
     </message>
     <message>
         <source>Grain Amount</source>
@@ -699,12 +745,16 @@
         <translation>Panorámás filmes kontraszt, 35 mm</translation>
     </message>
     <message>
-        <source>FILM SIMULATION &amp; SENSOR PROFILES</source>
-        <translation>FILMSZIMULÁCIÓ ÉS SZENZORPROFILOK</translation>
+        <source>Profile</source>
+        <translation>Profil</translation>
     </message>
     <message>
-        <source>RESET</source>
-        <translation>VISSZAÁLLÍTÁS</translation>
+        <source>Reset</source>
+        <translation>Visszaállítás</translation>
+    </message>
+    <message>
+        <source>Amount</source>
+        <translation>Erősség</translation>
     </message>
     <message>
         <source>All</source>
@@ -714,17 +764,9 @@
         <source>Acros B&amp;W</source>
         <translation>Acros FF</translation>
     </message>
-    <message>
-        <source>SIMULATION INTENSITY</source>
-        <translation>SZIMULÁCIÓ ERŐSSÉGE</translation>
-    </message>
 </context>
 <context>
     <name>Filmstrip</name>
-    <message>
-        <source>Local Photos</source>
-        <translation>Helyi fotók</translation>
-    </message>
     <message>
         <source>Studio Catalog</source>
         <translation>Stúdiókatalógus</translation>
@@ -732,6 +774,14 @@
     <message>
         <source>Up</source>
         <translation>Fel</translation>
+    </message>
+    <message>
+        <source>Folders</source>
+        <translation>Mappák</translation>
+    </message>
+    <message>
+        <source>Catalog</source>
+        <translation>Katalógus</translation>
     </message>
     <message>
         <source>Scanning Catalog...</source>
@@ -758,21 +808,20 @@
         <translation>Nem található fotó ebben a mappában.</translation>
     </message>
     <message>
-        <source>DIR</source>
-        <comment>folder badge</comment>
-        <translation>MAPPA</translation>
+        <source>Folder</source>
+        <translation>Mappa</translation>
     </message>
     <message>
-        <source>FETCHING</source>
-        <translation>LETÖLTÉS</translation>
+        <source>Downloading</source>
+        <translation>Letöltés</translation>
     </message>
     <message>
-        <source>RAW CLOUD</source>
-        <translation>RAW A FELHŐBEN</translation>
+        <source>Remote</source>
+        <translation>Távoli</translation>
     </message>
     <message>
-        <source>NO PREVIEW</source>
-        <translation>NINCS ELŐNÉZET</translation>
+        <source>No preview</source>
+        <translation>Nincs előnézet</translation>
     </message>
     <message>
         <source>Loading...</source>
@@ -833,40 +882,60 @@
         <translation>Fujifilm-receptek</translation>
     </message>
     <message>
-        <source>FUJIFILM RECIPES</source>
-        <translation>FUJIFILM-RECEPTEK</translation>
+        <source>Import</source>
+        <translation>Importálás</translation>
     </message>
     <message>
-        <source>IMPORT</source>
-        <translation>IMPORTÁLÁS</translation>
+        <source>Apply photo&apos;s recipe</source>
+        <translation>A fotó receptjének alkalmazása</translation>
     </message>
     <message>
-        <source>APPLY PHOTO&apos;S RECIPE</source>
-        <translation>A FOTÓ RECEPTJÉNEK ALKALMAZÁSA</translation>
+        <source>Save</source>
+        <translation>Mentés</translation>
     </message>
     <message>
-        <source>SAVE</source>
-        <translation>MENTÉS</translation>
+        <source>Apply recipe</source>
+        <translation>Recept alkalmazása</translation>
+    </message>
+    <message>
+        <source>Camera (USB)</source>
+        <translation>Fényképezőgép (USB)</translation>
+    </message>
+    <message>
+        <source>Reconnect</source>
+        <translation>Újracsatlakozás</translation>
+    </message>
+    <message>
+        <source>Connect</source>
+        <translation>Csatlakozás</translation>
+    </message>
+    <message>
+        <source>Read C1–C7</source>
+        <translation>C1–C7 beolvasása</translation>
+    </message>
+    <message>
+        <source>Convert in camera</source>
+        <translation>Konvertálás a fényképezőgépen</translation>
+    </message>
+    <message>
+        <source>Write recipe to C%1</source>
+        <translation>Recept írása ide: C%1</translation>
+    </message>
+    <message>
+        <source>Pixel shift</source>
+        <translation>Pixel Shift</translation>
+    </message>
+    <message>
+        <source>Merge %1 frames to DNG</source>
+        <translation>%1 képkocka egyesítése DNG-be</translation>
+    </message>
+    <message>
+        <source>Merge frames to DNG</source>
+        <translation>Képkockák egyesítése DNG-be</translation>
     </message>
     <message>
         <source>No saved recipes. Import an X RAW Studio profile, recipe text or a Fujifilm photo.</source>
         <translation>Nincsenek mentett receptek. Importáljon X RAW Studio-profilt, recept szövegét vagy Fujifilm-fotót.</translation>
-    </message>
-    <message>
-        <source>APPLY SELECTED RECIPE</source>
-        <translation>A KIVÁLASZTOTT RECEPT ALKALMAZÁSA</translation>
-    </message>
-    <message>
-        <source>CAMERA (USB)</source>
-        <translation>FÉNYKÉPEZŐGÉP (USB)</translation>
-    </message>
-    <message>
-        <source>RECONNECT</source>
-        <translation>ÚJRACSATLAKOZÁS</translation>
-    </message>
-    <message>
-        <source>CONNECT</source>
-        <translation>CSATLAKOZÁS</translation>
     </message>
     <message>
         <source>%1  ·  in-camera RAW conversion</source>
@@ -881,24 +950,8 @@
         <translation>Állítsa a gép USB-módját erre: %1, majd csatlakoztassa.</translation>
     </message>
     <message>
-        <source>READ C1-C7</source>
-        <translation>C1-C7 BEOLVASÁSA</translation>
-    </message>
-    <message>
-        <source>CONVERT IN CAMERA</source>
-        <translation>KONVERTÁLÁS A GÉPBEN</translation>
-    </message>
-    <message>
         <source>Unnamed</source>
         <translation>Névtelen</translation>
-    </message>
-    <message>
-        <source>WRITE SELECTED RECIPE TO C%1</source>
-        <translation>A KIVÁLASZTOTT RECEPT ÍRÁSA IDE: C%1</translation>
-    </message>
-    <message>
-        <source>PIXEL SHIFT MULTI-SHOT</source>
-        <translation>PIXEL SHIFT TÖBBKÉPES FELVÉTEL</translation>
     </message>
     <message numerus="yes">
         <source>%n RAF frames selected. 4 frames give full colour per pixel, 16 frames double the resolution.</source>
@@ -910,22 +963,12 @@
         <source>Select the RAF frames of one GFX Pixel Shift sequence in the filmstrip.</source>
         <translation>Válassza ki a filmszalagon egy GFX Pixel Shift-sorozat RAF-képkockáit.</translation>
     </message>
-    <message numerus="yes">
-        <source>MERGE %n FRAMES TO DNG</source>
-        <translation>
-            <numerusform>%n KÉPKOCKA EGYESÍTÉSE DNG-BE</numerusform>
-        </translation>
-    </message>
-    <message>
-        <source>MERGE FRAMES TO DNG</source>
-        <translation>KÉPKOCKÁK EGYESÍTÉSE DNG-BE</translation>
-    </message>
 </context>
 <context>
     <name>GradeVersionsBar</name>
     <message>
-        <source>GRADE VERSION</source>
-        <translation>SZÍNKORREKCIÓS VÁLTOZAT</translation>
+        <source>Version</source>
+        <translation>Változat</translation>
     </message>
 </context>
 <context>
@@ -936,8 +979,8 @@
         <translation>[Á] %1%</translation>
     </message>
     <message>
-        <source>RGB HISTOGRAM</source>
-        <translation>RGB HISZTOGRAM</translation>
+        <source>Histogram</source>
+        <translation>Hisztogram</translation>
     </message>
     <message>
         <source>[H] %1%</source>
@@ -984,12 +1027,12 @@
         <translation>%1 csatorna</translation>
     </message>
     <message>
-        <source>RESET CH</source>
-        <translation>CSAT. VISSZAÁLL.</translation>
+        <source>Reset colour</source>
+        <translation>Szín visszaállítása</translation>
     </message>
     <message>
-        <source>RESET ALL</source>
-        <translation>MINDEN VISSZAÁLLÍTÁSA</translation>
+        <source>Reset all</source>
+        <translation>Minden visszaállítása</translation>
     </message>
     <message>
         <source>Hue Shift</source>
@@ -1097,32 +1140,32 @@
         <translation>%1 maszk kész (%2)</translation>
     </message>
     <message>
-        <source>DETECTING...</source>
-        <translation>FELISMERÉS...</translation>
+        <source>Detecting…</source>
+        <translation>Felismerés…</translation>
     </message>
     <message>
-        <source>LOCAL ADJUSTMENT LAYERS</source>
-        <translation>HELYI KORREKCIÓS RÉTEGEK</translation>
+        <source>Masks</source>
+        <translation>Maszkok</translation>
     </message>
     <message>
-        <source>+ GRADIENT</source>
-        <translation>+ ÁTMENET</translation>
+        <source>+ Linear</source>
+        <translation>+ Lineáris</translation>
+    </message>
+    <message>
+        <source>+ Radial</source>
+        <translation>+ Sugaras</translation>
+    </message>
+    <message>
+        <source>+ Luminance</source>
+        <translation>+ Fénysűrűség</translation>
     </message>
     <message>
         <source>Linear Gradient %1</source>
         <translation>Lineáris átmenet %1</translation>
     </message>
     <message>
-        <source>+ RADIAL</source>
-        <translation>+ KÖRKÖRÖS</translation>
-    </message>
-    <message>
         <source>Radial Mask %1</source>
         <translation>Körkörös maszk %1</translation>
-    </message>
-    <message>
-        <source>+ LUMA</source>
-        <translation>+ FÉNYSŰRŰSÉG</translation>
     </message>
     <message>
         <source>Luma Range %1</source>
@@ -1140,10 +1183,6 @@
         <source>I</source>
         <comment>invert mask toggle, first letter of Invert</comment>
         <translation>F</translation>
-    </message>
-    <message>
-        <source>SELECTED LAYER CONTROLS (%1)</source>
-        <translation>A KIVÁLASZTOTT RÉTEG BEÁLLÍTÁSAI (%1)</translation>
     </message>
     <message>
         <source>Layer Opacity</source>
@@ -1165,48 +1204,32 @@
 <context>
     <name>LutSelector</name>
     <message>
-        <source>DAVINCI 3D LUT ENGINE (.CUBE)</source>
-        <translation>DAVINCI 3D LUT MOTOR (.CUBE)</translation>
+        <source>Load 3D LUT</source>
+        <translation>3D LUT betöltése</translation>
     </message>
     <message>
-        <source>RESET</source>
-        <translation>VISSZAÁLLÍTÁS</translation>
+        <source>3D LUT</source>
+        <translation>3D LUT</translation>
     </message>
     <message>
-        <source>Hollywood Print</source>
-        <translation>Hollywoodi kópia</translation>
+        <source>Reset</source>
+        <translation>Visszaállítás</translation>
     </message>
     <message>
-        <source>Cinema Blockbuster</source>
-        <translation>Mozis kasszasiker</translation>
+        <source>Load .cube file…</source>
+        <translation>.cube fájl betöltése…</translation>
     </message>
     <message>
-        <source>35mm Soft Stock</source>
-        <translation>Lágy 35 mm-es film</translation>
+        <source>Saved look: %1</source>
+        <translation>Mentett megjelenés: %1</translation>
     </message>
     <message>
-        <source>High-Acutance B&amp;W</source>
-        <translation>Nagy élességű FF</translation>
-    </message>
-    <message>
-        <source>LUT Intensity (Mix)</source>
-        <translation>LUT erőssége (keverés)</translation>
+        <source>Amount</source>
+        <translation>Erősség</translation>
     </message>
 </context>
 <context>
     <name>MainWindow</name>
-    <message>
-        <source>Switched to version %1</source>
-        <translation>Átváltva a(z) %1. változatra</translation>
-    </message>
-    <message>
-        <source>Version %1 initialized</source>
-        <translation>%1. változat létrehozva</translation>
-    </message>
-    <message>
-        <source>Copied current grade to version %1</source>
-        <translation>A jelenlegi színkorrekció átmásolva a(z) %1. változatba</translation>
-    </message>
     <message numerus="yes">
         <source>Rating: %n star(s)</source>
         <translation>
@@ -1234,36 +1257,8 @@
         <translation>Nincs mit visszavonni</translation>
     </message>
     <message>
-        <source>Undo (Ctrl+Z)</source>
-        <translation>Visszavonás (Ctrl+Z)</translation>
-    </message>
-    <message>
         <source>Nothing to redo</source>
         <translation>Nincs mit újra végrehajtani</translation>
-    </message>
-    <message>
-        <source>Redo (Ctrl+Shift+Z)</source>
-        <translation>Újra (Ctrl+Shift+Z)</translation>
-    </message>
-    <message>
-        <source>Adjustments copied (Ctrl+Shift+C)</source>
-        <translation>Korrekciók másolva (Ctrl+Shift+C)</translation>
-    </message>
-    <message>
-        <source>No adjustments in clipboard</source>
-        <translation>Nincs korrekció a vágólapon</translation>
-    </message>
-    <message>
-        <source>Adjustments pasted (Ctrl+Shift+V)</source>
-        <translation>Korrekciók beillesztve (Ctrl+Shift+V)</translation>
-    </message>
-    <message>
-        <source>Reset to defaults (Ctrl+R)</source>
-        <translation>Alapértékek visszaállítva (Ctrl+R)</translation>
-    </message>
-    <message>
-        <source>Social framing and adjustments reset</source>
-        <translation>Közösségi vágás és korrekciók visszaállítva</translation>
     </message>
     <message>
         <source>Failed to load RAW: %1</source>
@@ -1286,28 +1281,8 @@
         <translation>Az előnézet megjelenítése sikertelen</translation>
     </message>
     <message>
-        <source>Auto tone applied</source>
-        <translation>Automatikus tónus alkalmazva</translation>
-    </message>
-    <message>
-        <source>AI decisions applied</source>
-        <translation>MI-döntések alkalmazva</translation>
-    </message>
-    <message>
-        <source>Local heuristic applied</source>
-        <translation>Helyi heurisztika alkalmazva</translation>
-    </message>
-    <message>
         <source>%1 applied (%2)</source>
         <translation>%1 alkalmazva (%2)</translation>
-    </message>
-    <message>
-        <source>Recipe sidecar saved</source>
-        <translation>Recept kísérőfájl mentve</translation>
-    </message>
-    <message>
-        <source>Batch finished: %1/%2 photos exported</source>
-        <translation>Köteg kész: %1/%2 fotó exportálva</translation>
     </message>
     <message>
         <source>Batch export: %1 succeeded, %2 failed</source>
@@ -1330,14 +1305,6 @@
         <translation>Kiírva: %1</translation>
     </message>
     <message>
-        <source>Analyzing dynamic range and scene...</source>
-        <translation>A dinamikatartomány és a jelenet elemzése...</translation>
-    </message>
-    <message>
-        <source>Asking the AI for edit decisions...</source>
-        <translation>Szerkesztési döntések kérése a MI-től...</translation>
-    </message>
-    <message>
         <source>Open RAW Photo</source>
         <translation>RAW fotó megnyitása</translation>
     </message>
@@ -1346,20 +1313,8 @@
         <translation>RAW fotók</translation>
     </message>
     <message>
-        <source>Saved to: %1</source>
-        <translation>Mentve ide: %1</translation>
-    </message>
-    <message>
-        <source>Export error: %1</source>
-        <translation>Exportálási hiba: %1</translation>
-    </message>
-    <message>
         <source>Export finished without a result</source>
         <translation>Az exportálás eredmény nélkül ért véget</translation>
-    </message>
-    <message>
-        <source>The folder scan gave no answer</source>
-        <translation>A mappa beolvasása nem adott választ</translation>
     </message>
     <message>
         <source>Crop mode: on (C)</source>
@@ -1370,36 +1325,12 @@
         <translation>Vágás mód: ki</translation>
     </message>
     <message>
-        <source>Open a photo first to export</source>
-        <translation>Exportáláshoz előbb nyisson meg egy fotót</translation>
-    </message>
-    <message>
-        <source>Panels hidden (Tab)</source>
-        <translation>Panelek elrejtve (Tab)</translation>
-    </message>
-    <message>
-        <source>Panels restored (Tab)</source>
-        <translation>Panelek visszaállítva (Tab)</translation>
-    </message>
-    <message>
-        <source>Optimizing for %1...</source>
-        <translation>Optimalizálás ehhez: %1...</translation>
-    </message>
-    <message>
-        <source>AI SCENE INSIGHT</source>
-        <translation>MI JELENETELEMZÉS</translation>
-    </message>
-    <message>
         <source>Analyzing...</source>
         <translation>Elemzés...</translation>
     </message>
     <message>
         <source>Extracting dynamic range...</source>
         <translation>Dinamikatartomány kinyerése...</translation>
-    </message>
-    <message>
-        <source>Grade versions • Alt+1..4 to switch</source>
-        <translation>Színkorrekciós változatok • váltás: Alt+1..4</translation>
     </message>
     <message>
         <source>Opened %1</source>
@@ -1410,36 +1341,8 @@
         <translation>Mappa beolvasása: %1</translation>
     </message>
     <message>
-        <source>AI edit applied</source>
-        <translation>MI-szerkesztés alkalmazva</translation>
-    </message>
-    <message>
-        <source>ESSENTIAL ADJUSTMENTS</source>
-        <translation>ALAPVETŐ KORREKCIÓK</translation>
-    </message>
-    <message>
-        <source>RESET</source>
-        <translation>VISSZAÁLLÍTÁS</translation>
-    </message>
-    <message>
-        <source>Exposure (Light)</source>
-        <translation>Expozíció (fény)</translation>
-    </message>
-    <message>
-        <source>Warmth (Temperature)</source>
-        <translation>Melegség (színhőmérséklet)</translation>
-    </message>
-    <message>
-        <source>Vibrance (Color Punch)</source>
-        <translation>Élénkség (színerő)</translation>
-    </message>
-    <message>
         <source>Contrast</source>
         <translation>Kontraszt</translation>
-    </message>
-    <message>
-        <source>WHITE BALANCE</source>
-        <translation>FEHÉREGYENSÚLY</translation>
     </message>
     <message>
         <source>Temp (Kelvin)</source>
@@ -1448,10 +1351,6 @@
     <message>
         <source>Tint (Green / Magenta)</source>
         <translation>Színárnyalat (zöld / bíbor)</translation>
-    </message>
-    <message>
-        <source>LIGHT &amp; DYNAMIC RANGE</source>
-        <translation>FÉNY ÉS DINAMIKATARTOMÁNY</translation>
     </message>
     <message>
         <source>Exposure</source>
@@ -1474,10 +1373,6 @@
         <translation>Feketék</translation>
     </message>
     <message>
-        <source>TONE CURVE (PARAMETRIC)</source>
-        <translation>TÓNUSGÖRBE (PARAMETRIKUS)</translation>
-    </message>
-    <message>
         <source>Curve Highlights</source>
         <translation>Görbe: csúcsfények</translation>
     </message>
@@ -1492,10 +1387,6 @@
     <message>
         <source>Curve Shadows</source>
         <translation>Görbe: árnyékok</translation>
-    </message>
-    <message>
-        <source>PRESENCE &amp; TEXTURE</source>
-        <translation>JELENLÉT ÉS TEXTÚRA</translation>
     </message>
     <message>
         <source>Texture</source>
@@ -1516,14 +1407,6 @@
     <message>
         <source>Saturation</source>
         <translation>Telítettség</translation>
-    </message>
-    <message>
-        <source>COLOR MIXER (8-BAND HSL)</source>
-        <translation>SZÍNKEVERŐ (8 SÁVOS HSL)</translation>
-    </message>
-    <message>
-        <source>DETAIL &amp; OPTICS</source>
-        <translation>RÉSZLETEK ÉS OPTIKA</translation>
     </message>
     <message>
         <source>Sharpening</source>
@@ -1554,12 +1437,200 @@
         <translation>Előbb nyisson meg egy fotót</translation>
     </message>
     <message>
+        <source>Version %1</source>
+        <translation>%1. verzió</translation>
+    </message>
+    <message>
+        <source>Version %1 started</source>
+        <translation>%1. változat elindítva</translation>
+    </message>
+    <message>
+        <source>Copied to version %1</source>
+        <translation>Másolva a(z) %1. változatba</translation>
+    </message>
+    <message>
+        <source>Undo</source>
+        <translation>Visszavonás</translation>
+    </message>
+    <message>
+        <source>Redo</source>
+        <translation>Újra</translation>
+    </message>
+    <message>
+        <source>Settings copied</source>
+        <translation>Beállítások másolva</translation>
+    </message>
+    <message>
+        <source>Nothing copied yet</source>
+        <translation>Még nincs semmi másolva</translation>
+    </message>
+    <message>
+        <source>Settings pasted</source>
+        <translation>Beállítások beillesztve</translation>
+    </message>
+    <message>
+        <source>Reset to defaults</source>
+        <translation>Alapértékek visszaállítva</translation>
+    </message>
+    <message>
+        <source>Platform crop reset</source>
+        <translation>Platformvágás visszaállítva</translation>
+    </message>
+    <message>
+        <source>Auto applied</source>
+        <translation>Automatikus korrekció alkalmazva</translation>
+    </message>
+    <message>
+        <source>Settings saved</source>
+        <translation>Beállítások mentve</translation>
+    </message>
+    <message>
+        <source>%1 of %2 photos exported</source>
+        <translation>%2 fotóból %1 exportálva</translation>
+    </message>
+    <message>
+        <source>Auto: analysing the photo…</source>
+        <translation>Automatikus: a fotó elemzése…</translation>
+    </message>
+    <message>
+        <source>Saved to %1</source>
+        <translation>Mentve ide: %1</translation>
+    </message>
+    <message>
+        <source>Export failed</source>
+        <translation>Az exportálás sikertelen</translation>
+    </message>
+    <message>
+        <source>The scan did not respond.</source>
+        <translation>A mappa átvizsgálása nem válaszolt.</translation>
+    </message>
+    <message>
+        <source>Rating: ★</source>
+        <translation>Értékelés: ★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★</source>
+        <translation>Értékelés: ★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★</source>
+        <translation>Értékelés: ★★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★★</source>
+        <translation>Értékelés: ★★★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★★★</source>
+        <translation>Értékelés: ★★★★★</translation>
+    </message>
+    <message>
+        <source>Flag cleared</source>
+        <translation>Jelölés törölve</translation>
+    </message>
+    <message>
+        <source>Preparing for %1…</source>
+        <translation>Előkészítés ehhez: %1…</translation>
+    </message>
+    <message>
+        <source>Rating: %1</source>
+        <translation>Értékelés: %1</translation>
+    </message>
+    <message>
+        <source>Picked</source>
+        <translation>Kiválasztva</translation>
+    </message>
+    <message>
+        <source>Rejected</source>
+        <translation>Elutasítva</translation>
+    </message>
+    <message>
+        <source>Scene</source>
+        <translation>Jelenet</translation>
+    </message>
+    <message>
+        <source>Adjust</source>
+        <translation>Beállítások</translation>
+    </message>
+    <message>
+        <source>Masks</source>
+        <translation>Maszkok</translation>
+    </message>
+    <message>
+        <source>Looks</source>
+        <translation>Stílusok</translation>
+    </message>
+    <message>
+        <source>AI</source>
+        <translation>MI</translation>
+    </message>
+    <message>
+        <source>Profile</source>
+        <translation>Profil</translation>
+    </message>
+    <message>
         <source>Color Chrome Effect</source>
         <translation>Color Chrome effektus</translation>
     </message>
     <message>
         <source>Color Chrome FX Blue</source>
         <translation>Color Chrome FX Kék</translation>
+    </message>
+    <message>
+        <source>White balance</source>
+        <translation>Fehéregyensúly</translation>
+    </message>
+    <message>
+        <source>Tone</source>
+        <translation>Tónus</translation>
+    </message>
+    <message>
+        <source>Presence</source>
+        <translation>Jelenlét</translation>
+    </message>
+    <message>
+        <source>Tone curve</source>
+        <translation>Tónusgörbe</translation>
+    </message>
+    <message>
+        <source>Colour mixer</source>
+        <translation>Színkeverő</translation>
+    </message>
+    <message>
+        <source>Colour grading</source>
+        <translation>Színkorrekció</translation>
+    </message>
+    <message>
+        <source>Detail and optics</source>
+        <translation>Részletek és optika</translation>
+    </message>
+    <message>
+        <source>Grain</source>
+        <translation>Szemcse</translation>
+    </message>
+    <message>
+        <source>Colour management</source>
+        <translation>Színkezelés</translation>
+    </message>
+    <message>
+        <source>Local adjustments</source>
+        <translation>Helyi korrekciók</translation>
+    </message>
+    <message>
+        <source>Presets</source>
+        <translation>Előbeállítások</translation>
+    </message>
+    <message>
+        <source>LUT</source>
+        <translation>LUT</translation>
+    </message>
+    <message>
+        <source>Edit assistant</source>
+        <translation>Szerkesztési asszisztens</translation>
+    </message>
+    <message>
+        <source>Assistant edit applied</source>
+        <translation>Az asszisztens szerkesztése alkalmazva</translation>
     </message>
     <message>
         <source>Copy</source>
@@ -1594,29 +1665,29 @@
         <translation>Megnyitás: %1</translation>
     </message>
     <message>
-        <source>Loading the studio catalog...</source>
-        <translation>A stúdiókatalógus betöltése...</translation>
+        <source>Loading the catalog…</source>
+        <translation>A katalógus betöltése…</translation>
     </message>
     <message>
-        <source>Refreshing the studio catalog...</source>
-        <translation>A stúdiókatalógus frissítése...</translation>
+        <source>Refreshing the catalog…</source>
+        <translation>A katalógus frissítése…</translation>
     </message>
     <message numerus="yes">
-        <source>Exporting %n photo(s) in parallel...</source>
+        <source>Exporting %n photos…</source>
         <translation>
-            <numerusform>%n fotó párhuzamos exportálása...</numerusform>
+            <numerusform>%n fotó exportálása…</numerusform>
         </translation>
     </message>
     <message>
-        <source>Developing at full resolution and encoding...</source>
-        <translation>Előhívás teljes felbontásban és kódolás...</translation>
+        <source>Developing at full resolution…</source>
+        <translation>Előhívás teljes felbontásban…</translation>
     </message>
 </context>
 <context>
     <name>Navigator</name>
     <message>
-        <source>NAVIGATOR</source>
-        <translation>NAVIGÁTOR</translation>
+        <source>Navigator</source>
+        <translation>Navigátor</translation>
     </message>
     <message>
         <source>FIT</source>
@@ -1624,65 +1695,92 @@
     </message>
 </context>
 <context>
+    <name>PanelSection</name>
+    <message>
+        <source>Reset %1</source>
+        <translation>%1 visszaállítása</translation>
+    </message>
+</context>
+<context>
     <name>PresetSelector</name>
     <message>
-        <source>FILM LOOKS &amp; STYLES</source>
-        <translation>FILMES MEGJELENÉSEK ÉS STÍLUSOK</translation>
+        <source>Looks</source>
+        <translation>Stílusok</translation>
     </message>
     <message>
-        <source>RESET</source>
-        <translation>VISSZAÁLLÍTÁS</translation>
+        <source>Reset</source>
+        <translation>Visszaállítás</translation>
     </message>
     <message>
-        <source>AI Auto Enhance</source>
-        <translation>Automatikus MI-javítás</translation>
+        <source>Auto</source>
+        <translation>Automatikus</translation>
     </message>
     <message>
-        <source>RUN</source>
-        <translation>FUTTATÁS</translation>
+        <source>Run</source>
+        <translation>Futtatás</translation>
     </message>
     <message>
-        <source>Documentary Muted</source>
-        <translation>Tompa dokumentarista</translation>
+        <source>Muted</source>
+        <translation>Tompa</translation>
     </message>
     <message>
-        <source>Vivid Landscapes</source>
-        <translation>Élénk tájképek</translation>
+        <source>Documentary, low saturation</source>
+        <translation>Dokumentarista, alacsony telítettség</translation>
     </message>
     <message>
-        <source>Warm Skin Tones</source>
-        <translation>Meleg bőrtónusok</translation>
+        <source>Vivid</source>
+        <translation>Élénk</translation>
     </message>
     <message>
-        <source>High Contrast B&amp;W</source>
-        <translation>Nagy kontrasztú FF</translation>
+        <source>Landscapes, rich colour</source>
+        <translation>Tájképek, gazdag színek</translation>
     </message>
     <message>
-        <source>Film Grade</source>
-        <translation>Filmes színkorrekció</translation>
+        <source>Warm portrait</source>
+        <translation>Meleg portré</translation>
+    </message>
+    <message>
+        <source>Soft contrast, warm skin</source>
+        <translation>Lágy kontraszt, meleg bőr</translation>
+    </message>
+    <message>
+        <source>Black and white</source>
+        <translation>Fekete-fehér</translation>
+    </message>
+    <message>
+        <source>High contrast</source>
+        <translation>Magas kontraszt</translation>
+    </message>
+    <message>
+        <source>Teal and orange</source>
+        <translation>Kékeszöld és narancs</translation>
+    </message>
+    <message>
+        <source>Split toning</source>
+        <translation>Osztott tónusozás</translation>
     </message>
 </context>
 <context>
     <name>RgbMixerPanel</name>
     <message>
-        <source>DAVINCI RGB PRIMARY MIXER</source>
-        <translation>DAVINCI RGB ELSŐDLEGES KEVERŐ</translation>
-    </message>
-    <message>
-        <source>RESET</source>
-        <translation>VISSZAÁLLÍTÁS</translation>
-    </message>
-    <message>
         <source>Monochrome Mixing</source>
         <translation>Monokróm keverés</translation>
     </message>
     <message>
-        <source>MONOCHROME LUMA MIX</source>
-        <translation>MONOKRÓM FÉNYSŰRŰSÉG-KEVERÉS</translation>
+        <source>Channel mixer</source>
+        <translation>Csatornakeverő</translation>
     </message>
     <message>
-        <source>RED OUTPUT CHANNEL</source>
-        <translation>VÖRÖS KIMENETI CSATORNA</translation>
+        <source>Reset</source>
+        <translation>Visszaállítás</translation>
+    </message>
+    <message>
+        <source>Monochrome mix</source>
+        <translation>Monokróm keverés</translation>
+    </message>
+    <message>
+        <source>Red output</source>
+        <translation>Vörös kimenet</translation>
     </message>
     <message>
         <source>Red in Red</source>
@@ -1697,8 +1795,12 @@
         <translation>Kék a vörösben</translation>
     </message>
     <message>
-        <source>GREEN OUTPUT CHANNEL</source>
-        <translation>ZÖLD KIMENETI CSATORNA</translation>
+        <source>Green output</source>
+        <translation>Zöld kimenet</translation>
+    </message>
+    <message>
+        <source>Blue output</source>
+        <translation>Kék kimenet</translation>
     </message>
     <message>
         <source>Red in Green</source>
@@ -1711,10 +1813,6 @@
     <message>
         <source>Blue in Green</source>
         <translation>Kék a zöldben</translation>
-    </message>
-    <message>
-        <source>BLUE OUTPUT CHANNEL</source>
-        <translation>KÉK KIMENETI CSATORNA</translation>
     </message>
     <message>
         <source>Red in Blue</source>
@@ -1758,8 +1856,8 @@
         <translation>[Cs] %1%</translation>
     </message>
     <message>
-        <source>NO SIGNAL / LOAD RAW</source>
-        <translation>NINCS JEL / TÖLTSÖN BE RAW-T</translation>
+        <source>No photo</source>
+        <translation>Nincs fotó</translation>
     </message>
     <message>
         <source>RED</source>
@@ -1781,12 +1879,12 @@
 <context>
     <name>SkinTonePanel</name>
     <message>
-        <source>CAPTURE ONE SKIN TONE</source>
-        <translation>CAPTURE ONE BŐRTÓNUS</translation>
+        <source>Skin tone</source>
+        <translation>Bőrtónus</translation>
     </message>
     <message>
-        <source>RESET</source>
-        <translation>VISSZAÁLLÍTÁS</translation>
+        <source>Reset</source>
+        <translation>Visszaállítás</translation>
     </message>
     <message>
         <source>Vectorscope 123° flesh line (target: %1°)</source>
@@ -1827,52 +1925,28 @@
 <context>
     <name>SocialOptimizer</name>
     <message>
-        <source>AI SOCIAL MEDIA OPTIMIZER</source>
-        <translation>MI KÖZÖSSÉGIMÉDIA-OPTIMALIZÁLÓ</translation>
+        <source>Prepare for</source>
+        <translation>Előkészítés ehhez:</translation>
     </message>
     <message>
-        <source>RESET</source>
-        <translation>VISSZAÁLLÍTÁS</translation>
+        <source>Reset</source>
+        <translation>Visszaállítás</translation>
     </message>
     <message>
-        <source>Instagram Feed</source>
-        <translation>Instagram-hírfolyam</translation>
+        <source>Instagram post</source>
+        <translation>Instagram-bejegyzés</translation>
     </message>
     <message>
-        <source>Max Screen</source>
-        <translation>Maximális képernyő</translation>
+        <source>Stories and Reels</source>
+        <translation>Történetek és Reels</translation>
     </message>
     <message>
-        <source>Stories / Reels</source>
-        <translation>Történetek / Reels</translation>
+        <source>Square</source>
+        <translation>Négyzet</translation>
     </message>
     <message>
-        <source>Full Mobile</source>
-        <translation>Teljes mobilkijelző</translation>
-    </message>
-    <message>
-        <source>Crisp Feed</source>
-        <translation>Éles hírfolyam</translation>
-    </message>
-    <message>
-        <source>Classic Square</source>
-        <translation>Klasszikus négyzet</translation>
-    </message>
-    <message>
-        <source>Grid Post</source>
-        <translation>Rácsos bejegyzés</translation>
-    </message>
-    <message>
-        <source>High Res</source>
-        <translation>Nagy felbontás</translation>
-    </message>
-    <message>
-        <source>YouTube Thumb</source>
+        <source>YouTube thumbnail</source>
         <translation>YouTube-bélyegkép</translation>
-    </message>
-    <message>
-        <source>High CTR</source>
-        <translation>Magas CTR</translation>
     </message>
 </context>
 <context>
@@ -1907,8 +1981,8 @@
         <translation>Alapok</translation>
     </message>
     <message>
-        <source>Pro Studio</source>
-        <translation>Pro Studio</translation>
+        <source>Pro</source>
+        <translation>Pro</translation>
     </message>
     <message>
         <source>Undo (Ctrl+Z)</source>
@@ -1946,16 +2020,16 @@
 <context>
     <name>Viewport</name>
     <message>
-        <source>RESET 0°</source>
-        <translation>0° VISSZAÁLLÍTÁSA</translation>
+        <source>Reset 0°</source>
+        <translation>Visszaállítás 0°-ra</translation>
     </message>
     <message>
-        <source>FIT</source>
-        <translation>IGAZÍTÁS</translation>
+        <source>Fit</source>
+        <translation>Igazítás</translation>
     </message>
     <message>
-        <source>CROP &amp; COMPOSE</source>
-        <translation>VÁGÁS ÉS KOMPOZÍCIÓ</translation>
+        <source>Crop</source>
+        <translation>Vágás</translation>
     </message>
     <message>
         <source>Original</source>
@@ -1982,12 +2056,20 @@
         <translation>Rács: ki</translation>
     </message>
     <message>
-        <source>RESET</source>
-        <translation>VISSZAÁLLÍTÁS</translation>
+        <source>Reset</source>
+        <translation>Visszaállítás</translation>
     </message>
     <message>
-        <source>DONE</source>
-        <translation>KÉSZ</translation>
+        <source>Done</source>
+        <translation>Kész</translation>
+    </message>
+    <message>
+        <source>Shadow clipping</source>
+        <translation>Árnyékok levágása</translation>
+    </message>
+    <message>
+        <source>Highlight clipping</source>
+        <translation>Csúcsfények levágása</translation>
     </message>
     <message>
         <source>ORIGINAL RAW (Before)</source>
@@ -1996,18 +2078,6 @@
     <message>
         <source>EDITED RECIPE (After)</source>
         <translation>SZERKESZTETT RECEPT (utána)</translation>
-    </message>
-    <message>
-        <source>[S] SHADOW CLIPPING (BLUE)</source>
-        <translation>[Á] LEVÁGOTT ÁRNYÉKOK (KÉK)</translation>
-    </message>
-    <message>
-        <source>[H] HIGHLIGHT CLIPPING (RED)</source>
-        <translation>[Cs] LEVÁGOTT CSÚCSFÉNYEK (VÖRÖS)</translation>
-    </message>
-    <message>
-        <source>Pinch: Zoom | 2-Finger Twist: Rotate | 2-Finger Pan | Double-Tap: Reset</source>
-        <translation>Csippentés: nagyítás | Forgatás 2 ujjal: elforgatás | Mozgatás 2 ujjal | Dupla koppintás: visszaállítás</translation>
     </message>
     <message>
         <source>Open a RAW (Ctrl+O) or drop a photo / folder here</source>
@@ -2021,8 +2091,8 @@
 <context>
     <name>WatermarkConfig</name>
     <message>
-        <source>WATERMARK &amp; BRANDING</source>
-        <translation>VÍZJEL ÉS ARCULAT</translation>
+        <source>Watermark</source>
+        <translation>Vízjel</translation>
     </message>
     <message>
         <source>Text / EXIF Tag</source>
@@ -2033,28 +2103,28 @@
         <translation>Egyéni PNG-logó</translation>
     </message>
     <message>
-        <source>WATERMARK TEXT OR TEMPLATE</source>
-        <translation>A VÍZJEL SZÖVEGE VAGY SABLONJA</translation>
+        <source>Text or template</source>
+        <translation>Szöveg vagy sablon</translation>
     </message>
     <message>
-        <source>LOGO FILE PATH (.PNG)</source>
-        <translation>A LOGÓ ELÉRÉSI ÚTJA (.PNG)</translation>
+        <source>Logo file (PNG)</source>
+        <translation>Logófájl (PNG)</translation>
     </message>
     <message>
-        <source>POSITION</source>
-        <translation>POZÍCIÓ</translation>
+        <source>Position</source>
+        <translation>Pozíció</translation>
+    </message>
+    <message>
+        <source>Opacity</source>
+        <translation>Átlátszatlanság</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>Méret</translation>
     </message>
     <message>
         <source>Drop Shadow</source>
         <translation>Vetett árnyék</translation>
-    </message>
-    <message>
-        <source>OPACITY</source>
-        <translation>ÁTLÁTSZATLANSÁG</translation>
-    </message>
-    <message>
-        <source>SIZE MULTIPLIER</source>
-        <translation>MÉRETSZORZÓ</translation>
     </message>
 </context>
 </TS>

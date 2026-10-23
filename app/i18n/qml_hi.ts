@@ -175,28 +175,36 @@
         <translation>विफल</translation>
     </message>
     <message>
-        <source>AI EDIT ASSISTANT</source>
-        <translation>AI संपादन सहायक</translation>
+        <source>Assistant</source>
+        <translation>सहायक</translation>
     </message>
     <message>
-        <source>DONE</source>
+        <source>Done</source>
         <translation>हो गया</translation>
     </message>
     <message>
-        <source>SETUP</source>
-        <translation>सेटअप</translation>
+        <source>Set up</source>
+        <translation>सेट अप करें</translation>
+    </message>
+    <message>
+        <source>Working…</source>
+        <translation>काम जारी है…</translation>
+    </message>
+    <message>
+        <source>Edit</source>
+        <translation>संपादित करें</translation>
+    </message>
+    <message>
+        <source>Store key</source>
+        <translation>कुंजी सहेजें</translation>
+    </message>
+    <message>
+        <source>Use %1</source>
+        <translation>%1 का उपयोग करें</translation>
     </message>
     <message>
         <source>e.g. warmer, moody evening light, recover the sky</source>
         <translation>उदा. अधिक गर्म, उदास शाम की रोशनी, आसमान वापस लाएँ</translation>
-    </message>
-    <message>
-        <source>THINKING...</source>
-        <translation>सोच रहा है...</translation>
-    </message>
-    <message>
-        <source>EDIT WITH AI</source>
-        <translation>AI से संपादित करें</translation>
     </message>
     <message>
         <source>Running. Models: %1</source>
@@ -222,14 +230,6 @@
         <source>API key</source>
         <translation>API कुंजी</translation>
     </message>
-    <message>
-        <source>STORE KEY</source>
-        <translation>कुंजी सहेजें</translation>
-    </message>
-    <message>
-        <source>USE %1</source>
-        <translation>%1 उपयोग करें</translation>
-    </message>
 </context>
 <context>
     <name>BoundedTextInput</name>
@@ -241,48 +241,16 @@
 <context>
     <name>ColorGradingWheels</name>
     <message>
-        <source>DAVINCI PRIMARIES WHEELS</source>
-        <translation>DaVinci प्राथमिक व्हील</translation>
-    </message>
-    <message>
-        <source>4-WHEEL</source>
-        <translation>4 व्हील</translation>
-    </message>
-    <message>
-        <source>TABBED</source>
-        <translation>टैब</translation>
-    </message>
-    <message>
-        <source>RESET</source>
-        <translation>रीसेट</translation>
-    </message>
-    <message>
-        <source>LIFT</source>
-        <translation>LIFT</translation>
-    </message>
-    <message>
         <source>Shadows</source>
         <translation>छाया</translation>
-    </message>
-    <message>
-        <source>GAMMA</source>
-        <translation>GAMMA</translation>
     </message>
     <message>
         <source>Mids</source>
         <translation>मध्य टोन</translation>
     </message>
     <message>
-        <source>GAIN</source>
-        <translation>GAIN</translation>
-    </message>
-    <message>
         <source>Highlights</source>
         <translation>हाइलाइट</translation>
-    </message>
-    <message>
-        <source>OFFSET</source>
-        <translation>OFFSET</translation>
     </message>
     <message>
         <source>Global</source>
@@ -307,6 +275,22 @@
     <message>
         <source>Lift</source>
         <translation>Lift</translation>
+    </message>
+    <message>
+        <source>Colour grading</source>
+        <translation>रंग ग्रेडिंग</translation>
+    </message>
+    <message>
+        <source>4 wheels</source>
+        <translation>4 पहिए</translation>
+    </message>
+    <message>
+        <source>Tabs</source>
+        <translation>टैब</translation>
+    </message>
+    <message>
+        <source>Reset</source>
+        <translation>रीसेट</translation>
     </message>
     <message>
         <source>Gamma</source>
@@ -368,8 +352,12 @@
         <translation>विस्तृत AP1</translation>
     </message>
     <message>
-        <source>COLOR MANAGEMENT &amp; ACES 1.3</source>
-        <translation>रंग प्रबंधन और ACES 1.3</translation>
+        <source>Colour management</source>
+        <translation>रंग प्रबंधन</translation>
+    </message>
+    <message>
+        <source>Gamut compression</source>
+        <translation>गैमट संपीड़न</translation>
     </message>
     <message>
         <source>%1 (%2)</source>
@@ -394,114 +382,162 @@
 <context>
     <name>ExifCard</name>
     <message>
-        <source>No camera loaded</source>
-        <translation>कोई कैमरा लोड नहीं है</translation>
-    </message>
-    <message>
-        <source>Unknown lens</source>
-        <translation>अज्ञात लेंस</translation>
+        <source>No photo</source>
+        <translation>कोई फ़ोटो नहीं</translation>
     </message>
 </context>
 <context>
     <name>ExportDialog</name>
-    <message numerus="yes">
-        <source>Batch Export (%n Photos)</source>
-        <translation>
-            <numerusform>बैच निर्यात (%n फ़ोटो)</numerusform>
-            <numerusform>बैच निर्यात (%n फ़ोटो)</numerusform>
-        </translation>
-    </message>
-    <message>
-        <source>Export Master Photo</source>
-        <translation>मास्टर फ़ोटो निर्यात करें</translation>
-    </message>
-    <message>
-        <source>MODERN OPEN FORMAT</source>
-        <translation>आधुनिक ओपन फ़ॉर्मेट</translation>
-    </message>
-    <message>
-        <source>Next-Gen 16-bit HDR</source>
-        <translation>नई पीढ़ी का 16-बिट HDR</translation>
-    </message>
-    <message>
-        <source>AV1 Web/Mobile</source>
-        <translation>AV1 वेब/मोबाइल</translation>
-    </message>
-    <message>
-        <source>Ultra Compact</source>
-        <translation>अति संक्षिप्त</translation>
-    </message>
-    <message>
-        <source>16-bit TIFF</source>
-        <translation>16-बिट TIFF</translation>
-    </message>
-    <message>
-        <source>Master Print Lossless</source>
-        <translation>लॉसलेस मास्टर प्रिंट</translation>
-    </message>
-    <message>
-        <source>Graphic Lossless</source>
-        <translation>लॉसलेस ग्राफ़िक</translation>
-    </message>
-    <message>
-        <source>Universal MozJPEG</source>
-        <translation>सार्वभौमिक MozJPEG</translation>
-    </message>
-    <message>
-        <source>Export Compression Quality</source>
-        <translation>निर्यात संपीड़न गुणवत्ता</translation>
-    </message>
-    <message>
-        <source>RESOLUTION &amp; SCALING</source>
-        <translation>रिज़ॉल्यूशन और स्केलिंग</translation>
-    </message>
-    <message>
-        <source>100% Full</source>
-        <translation>100% पूर्ण</translation>
-    </message>
-    <message>
-        <source>Social (2048p)</source>
-        <translation>सोशल (2048p)</translation>
-    </message>
-    <message>
-        <source>COLOR SPACE &amp; ICC PROFILE</source>
-        <translation>रंग स्थान और ICC प्रोफ़ाइल</translation>
-    </message>
-    <message>
-        <source>Universal Web / Social</source>
-        <translation>सार्वभौमिक वेब / सोशल</translation>
-    </message>
-    <message>
-        <source>Apple / Wide OLED</source>
-        <translation>Apple / विस्तृत OLED</translation>
-    </message>
-    <message>
-        <source>Ultra-Wide Gamut HDR</source>
-        <translation>अति विस्तृत रंग सीमा HDR</translation>
-    </message>
-    <message>
-        <source>Academy Color Standard</source>
-        <translation>अकादमी रंग मानक</translation>
-    </message>
-    <message>
-        <source>Pro Photography / Print</source>
-        <translation>पेशेवर फ़ोटोग्राफ़ी / प्रिंट</translation>
-    </message>
-    <message>
-        <source>16-Bit Master Archival</source>
-        <translation>16-बिट मास्टर संग्रह</translation>
-    </message>
-    <message>
-        <source>Intent</source>
-        <translation>रूपांतरण विधि</translation>
-    </message>
     <message>
         <source>Perceptual</source>
         <translation>बोधात्मक</translation>
     </message>
     <message>
-        <source>Compresses the whole gamut; smooth, saturated colours keep their relations</source>
-        <translation>पूरी रंग सीमा को संपीड़ित करता है; नरम, संतृप्त रंग आपसी संबंध बनाए रखते हैं</translation>
+        <source>8-bit · universal</source>
+        <translation>8-बिट · सार्वभौमिक</translation>
+    </message>
+    <message>
+        <source>16-bit · lossless</source>
+        <translation>16-बिट · लॉसलेस</translation>
+    </message>
+    <message>
+        <source>16-bit · print, archive</source>
+        <translation>16-बिट · प्रिंट, संग्रह</translation>
+    </message>
+    <message>
+        <source>8-bit · web</source>
+        <translation>8-बिट · वेब</translation>
+    </message>
+    <message>
+        <source>12-bit · HDR-ready</source>
+        <translation>12-बिट · HDR के लिए तैयार</translation>
+    </message>
+    <message>
+        <source>10-bit · HEVC</source>
+        <translation>10-बिट · HEVC</translation>
+    </message>
+    <message>
+        <source>16-bit · modern</source>
+        <translation>16-बिट · आधुनिक</translation>
+    </message>
+    <message>
+        <source>Float · scene-linear</source>
+        <translation>फ़्लोटिंग पॉइंट · दृश्य-रैखिक</translation>
+    </message>
+    <message numerus="yes">
+        <source>Export %n photos</source>
+        <translation>
+            <numerusform>%n फ़ोटो निर्यात करें</numerusform>
+            <numerusform>%n फ़ोटो निर्यात करें</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>Export</source>
+        <translation>निर्यात</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>बंद करें</translation>
+    </message>
+    <message>
+        <source>Format</source>
+        <translation>फ़ाइल फ़ॉर्मैट</translation>
+    </message>
+    <message>
+        <source>Quality</source>
+        <translation>गुणवत्ता</translation>
+    </message>
+    <message>
+        <source>100 is lossless.</source>
+        <translation>100 का अर्थ लॉसलेस है।</translation>
+    </message>
+    <message>
+        <source>Bit depth</source>
+        <translation>बिट गहराई</translation>
+    </message>
+    <message>
+        <source>Half float</source>
+        <translation>आधी सटीकता वाला फ़्लोटिंग पॉइंट</translation>
+    </message>
+    <message>
+        <source>Full float</source>
+        <translation>पूरी सटीकता वाला फ़्लोटिंग पॉइंट</translation>
+    </message>
+    <message>
+        <source>%1-bit</source>
+        <translation>%1-बिट</translation>
+    </message>
+    <message>
+        <source>Compression</source>
+        <translation>संपीड़न</translation>
+    </message>
+    <message>
+        <source>None</source>
+        <translation>कोई नहीं</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>आकार</translation>
+    </message>
+    <message>
+        <source>Full</source>
+        <translation>पूर्ण</translation>
+    </message>
+    <message>
+        <source>3840 px</source>
+        <translation>3840 पिक्सेल</translation>
+    </message>
+    <message>
+        <source>Long edge at most 3840 px</source>
+        <translation>लंबी भुजा अधिकतम 3840 पिक्सेल</translation>
+    </message>
+    <message>
+        <source>2048 px</source>
+        <translation>2048 पिक्सेल</translation>
+    </message>
+    <message>
+        <source>Long edge at most 2048 px</source>
+        <translation>लंबी भुजा अधिकतम 2048 पिक्सेल</translation>
+    </message>
+    <message>
+        <source>Colour profile</source>
+        <translation>रंग प्रोफ़ाइल</translation>
+    </message>
+    <message>
+        <source>Web, screens</source>
+        <translation>वेब, स्क्रीन</translation>
+    </message>
+    <message>
+        <source>Wide-gamut screens</source>
+        <translation>वाइड-गैमट स्क्रीन</translation>
+    </message>
+    <message>
+        <source>Print</source>
+        <translation>प्रिंट</translation>
+    </message>
+    <message>
+        <source>Editing, archive</source>
+        <translation>संपादन, संग्रह</translation>
+    </message>
+    <message>
+        <source>HDR, video</source>
+        <translation>HDR, वीडियो</translation>
+    </message>
+    <message>
+        <source>Linear, VFX</source>
+        <translation>रैखिक, VFX</translation>
+    </message>
+    <message>
+        <source>OpenEXR is written scene-linear in the chosen primaries.</source>
+        <translation>OpenEXR को चुने गए प्राथमिक रंगों में दृश्य-रैखिक रूप में लिखा जाता है।</translation>
+    </message>
+    <message>
+        <source>Rendering intent</source>
+        <translation>रेंडरिंग इंटेंट</translation>
+    </message>
+    <message>
+        <source>Compresses the whole gamut; colour relations are kept</source>
+        <translation>पूरे गैमट को संपीड़ित करता है; रंगों के आपसी संबंध बने रहते हैं</translation>
     </message>
     <message>
         <source>Relative</source>
@@ -528,45 +564,54 @@
         <translation>स्रोत के श्वेत बिंदु सहित सटीक रंग; प्रूफ़िंग के लिए</translation>
     </message>
     <message>
-        <source>Preserve Camera EXIF</source>
-        <translation>कैमरा EXIF सुरक्षित रखें</translation>
+        <source>Metadata</source>
+        <translation>मेटाडेटा</translation>
     </message>
     <message>
-        <source>Strip GPS (Privacy)</source>
-        <translation>GPS हटाएँ (गोपनीयता)</translation>
+        <source>Keep camera metadata (EXIF)</source>
+        <translation>कैमरा मेटाडेटा रखें (EXIF)</translation>
     </message>
     <message>
-        <source>Apply Photography Watermark / EXIF Signature</source>
-        <translation>वॉटरमार्क / EXIF हस्ताक्षर लगाएँ</translation>
+        <source>Remove location (GPS)</source>
+        <translation>स्थान हटाएँ (GPS)</translation>
     </message>
     <message>
-        <source>Exporting Batch...</source>
-        <translation>बैच निर्यात हो रहा है...</translation>
+        <source>Prepare for</source>
+        <translation>इसके लिए तैयार करें</translation>
     </message>
     <message>
-        <source>Exporting Full Resolution...</source>
-        <translation>पूर्ण रिज़ॉल्यूशन में निर्यात हो रहा है...</translation>
-    </message>
-    <message numerus="yes">
-        <source>Start Parallel Batch Export (%n Photos)</source>
-        <translation>
-            <numerusform>समानांतर बैच निर्यात शुरू करें (%n फ़ोटो)</numerusform>
-            <numerusform>समानांतर बैच निर्यात शुरू करें (%n फ़ोटो)</numerusform>
-        </translation>
+        <source>Sets the crop and output sharpening for a platform. Reset restores your own.</source>
+        <translation>किसी प्लेटफ़ॉर्म के लिए क्रॉप और आउटपुट शार्पनिंग सेट करता है। रीसेट आपकी अपनी सेटिंग वापस लाता है।</translation>
     </message>
     <message>
-        <source>Start Export (%1 / %2)</source>
-        <translation>निर्यात शुरू करें (%1 / %2)</translation>
+        <source>Watermark</source>
+        <translation>वॉटरमार्क</translation>
+    </message>
+    <message>
+        <source>Folder</source>
+        <translation>फ़ोल्डर</translation>
+    </message>
+    <message>
+        <source>Hide</source>
+        <translation>छिपाएँ</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>रद्द करें</translation>
+    </message>
+    <message>
+        <source>Exporting…</source>
+        <translation>निर्यात हो रहा है…</translation>
     </message>
 </context>
 <context>
     <name>FilmGrainPanel</name>
     <message>
-        <source>SILVER-HALIDE FILM GRAIN</source>
-        <translation>सिल्वर हैलाइड फ़िल्म ग्रेन</translation>
+        <source>Grain</source>
+        <translation>ग्रेन</translation>
     </message>
     <message>
-        <source>RESET</source>
+        <source>Reset</source>
         <translation>रीसेट</translation>
     </message>
     <message>
@@ -701,12 +746,16 @@
         <translation>35 मिमी पैनोरमिक सिनेमाई कंट्रास्ट</translation>
     </message>
     <message>
-        <source>FILM SIMULATION &amp; SENSOR PROFILES</source>
-        <translation>फ़िल्म सिमुलेशन और सेंसर प्रोफ़ाइल</translation>
+        <source>Profile</source>
+        <translation>प्रोफ़ाइल</translation>
     </message>
     <message>
-        <source>RESET</source>
+        <source>Reset</source>
         <translation>रीसेट</translation>
+    </message>
+    <message>
+        <source>Amount</source>
+        <translation>मात्रा</translation>
     </message>
     <message>
         <source>All</source>
@@ -716,17 +765,9 @@
         <source>Acros B&amp;W</source>
         <translation>Acros श्वेत-श्याम</translation>
     </message>
-    <message>
-        <source>SIMULATION INTENSITY</source>
-        <translation>सिमुलेशन तीव्रता</translation>
-    </message>
 </context>
 <context>
     <name>Filmstrip</name>
-    <message>
-        <source>Local Photos</source>
-        <translation>स्थानीय फ़ोटो</translation>
-    </message>
     <message>
         <source>Studio Catalog</source>
         <translation>स्टूडियो कैटलॉग</translation>
@@ -734,6 +775,14 @@
     <message>
         <source>Up</source>
         <translation>ऊपर</translation>
+    </message>
+    <message>
+        <source>Folders</source>
+        <translation>फ़ोल्डर</translation>
+    </message>
+    <message>
+        <source>Catalog</source>
+        <translation>कैटलॉग</translation>
     </message>
     <message>
         <source>Scanning Catalog...</source>
@@ -760,20 +809,19 @@
         <translation>इस फ़ोल्डर में कोई फ़ोटो नहीं मिली।</translation>
     </message>
     <message>
-        <source>DIR</source>
-        <comment>folder badge</comment>
+        <source>Folder</source>
         <translation>फ़ोल्डर</translation>
     </message>
     <message>
-        <source>FETCHING</source>
-        <translation>ला रहा है</translation>
+        <source>Downloading</source>
+        <translation>डाउनलोड हो रहा है</translation>
     </message>
     <message>
-        <source>RAW CLOUD</source>
-        <translation>क्लाउड में RAW</translation>
+        <source>Remote</source>
+        <translation>दूरस्थ</translation>
     </message>
     <message>
-        <source>NO PREVIEW</source>
+        <source>No preview</source>
         <translation>कोई पूर्वावलोकन नहीं</translation>
     </message>
     <message>
@@ -836,40 +884,60 @@
         <translation>Fujifilm रेसिपी</translation>
     </message>
     <message>
-        <source>FUJIFILM RECIPES</source>
-        <translation>FUJIFILM रेसिपी</translation>
-    </message>
-    <message>
-        <source>IMPORT</source>
+        <source>Import</source>
         <translation>आयात करें</translation>
     </message>
     <message>
-        <source>APPLY PHOTO&apos;S RECIPE</source>
+        <source>Apply photo&apos;s recipe</source>
         <translation>फ़ोटो की रेसिपी लागू करें</translation>
     </message>
     <message>
-        <source>SAVE</source>
+        <source>Save</source>
         <translation>सहेजें</translation>
+    </message>
+    <message>
+        <source>Apply recipe</source>
+        <translation>रेसिपी लागू करें</translation>
+    </message>
+    <message>
+        <source>Camera (USB)</source>
+        <translation>कैमरा (USB)</translation>
+    </message>
+    <message>
+        <source>Reconnect</source>
+        <translation>फिर से कनेक्ट करें</translation>
+    </message>
+    <message>
+        <source>Connect</source>
+        <translation>कनेक्ट करें</translation>
+    </message>
+    <message>
+        <source>Read C1–C7</source>
+        <translation>C1–C7 पढ़ें</translation>
+    </message>
+    <message>
+        <source>Convert in camera</source>
+        <translation>कैमरे में बदलें</translation>
+    </message>
+    <message>
+        <source>Write recipe to C%1</source>
+        <translation>रेसिपी C%1 में लिखें</translation>
+    </message>
+    <message>
+        <source>Pixel shift</source>
+        <translation>पिक्सेल शिफ़्ट</translation>
+    </message>
+    <message>
+        <source>Merge %1 frames to DNG</source>
+        <translation>%1 फ़्रेम को DNG में मिलाएँ</translation>
+    </message>
+    <message>
+        <source>Merge frames to DNG</source>
+        <translation>फ़्रेम को DNG में मिलाएँ</translation>
     </message>
     <message>
         <source>No saved recipes. Import an X RAW Studio profile, recipe text or a Fujifilm photo.</source>
         <translation>कोई सहेजी गई रेसिपी नहीं। X RAW Studio प्रोफ़ाइल, रेसिपी टेक्स्ट या Fujifilm फ़ोटो आयात करें।</translation>
-    </message>
-    <message>
-        <source>APPLY SELECTED RECIPE</source>
-        <translation>चुनी गई रेसिपी लागू करें</translation>
-    </message>
-    <message>
-        <source>CAMERA (USB)</source>
-        <translation>कैमरा (USB)</translation>
-    </message>
-    <message>
-        <source>RECONNECT</source>
-        <translation>फिर से कनेक्ट करें</translation>
-    </message>
-    <message>
-        <source>CONNECT</source>
-        <translation>कनेक्ट करें</translation>
     </message>
     <message>
         <source>%1  ·  in-camera RAW conversion</source>
@@ -884,24 +952,8 @@
         <translation>कैमरे का USB मोड %1 पर सेट करें और उसे कनेक्ट करें।</translation>
     </message>
     <message>
-        <source>READ C1-C7</source>
-        <translation>C1-C7 पढ़ें</translation>
-    </message>
-    <message>
-        <source>CONVERT IN CAMERA</source>
-        <translation>कैमरे में रूपांतरित करें</translation>
-    </message>
-    <message>
         <source>Unnamed</source>
         <translation>बेनाम</translation>
-    </message>
-    <message>
-        <source>WRITE SELECTED RECIPE TO C%1</source>
-        <translation>चुनी गई रेसिपी C%1 में लिखें</translation>
-    </message>
-    <message>
-        <source>PIXEL SHIFT MULTI-SHOT</source>
-        <translation>PIXEL SHIFT मल्टी-शॉट</translation>
     </message>
     <message numerus="yes">
         <source>%n RAF frames selected. 4 frames give full colour per pixel, 16 frames double the resolution.</source>
@@ -914,23 +966,12 @@
         <source>Select the RAF frames of one GFX Pixel Shift sequence in the filmstrip.</source>
         <translation>फ़िल्मस्ट्रिप में एक GFX Pixel Shift क्रम के RAF फ़्रेम चुनें।</translation>
     </message>
-    <message numerus="yes">
-        <source>MERGE %n FRAMES TO DNG</source>
-        <translation>
-            <numerusform>%n फ़्रेम को DNG में मिलाएँ</numerusform>
-            <numerusform>%n फ़्रेम को DNG में मिलाएँ</numerusform>
-        </translation>
-    </message>
-    <message>
-        <source>MERGE FRAMES TO DNG</source>
-        <translation>फ़्रेम को DNG में मिलाएँ</translation>
-    </message>
 </context>
 <context>
     <name>GradeVersionsBar</name>
     <message>
-        <source>GRADE VERSION</source>
-        <translation>ग्रेडिंग संस्करण</translation>
+        <source>Version</source>
+        <translation>संस्करण</translation>
     </message>
 </context>
 <context>
@@ -941,8 +982,8 @@
         <translation>[छ] %1%</translation>
     </message>
     <message>
-        <source>RGB HISTOGRAM</source>
-        <translation>RGB हिस्टोग्राम</translation>
+        <source>Histogram</source>
+        <translation>हिस्टोग्राम</translation>
     </message>
     <message>
         <source>[H] %1%</source>
@@ -989,11 +1030,11 @@
         <translation>%1 चैनल</translation>
     </message>
     <message>
-        <source>RESET CH</source>
-        <translation>चैनल रीसेट</translation>
+        <source>Reset colour</source>
+        <translation>रंग रीसेट करें</translation>
     </message>
     <message>
-        <source>RESET ALL</source>
+        <source>Reset all</source>
         <translation>सब रीसेट करें</translation>
     </message>
     <message>
@@ -1102,32 +1143,32 @@
         <translation>%1 मास्क तैयार (%2)</translation>
     </message>
     <message>
-        <source>DETECTING...</source>
-        <translation>पहचान रहा है...</translation>
+        <source>Detecting…</source>
+        <translation>पहचान हो रही है…</translation>
     </message>
     <message>
-        <source>LOCAL ADJUSTMENT LAYERS</source>
-        <translation>स्थानीय समायोजन लेयर</translation>
+        <source>Masks</source>
+        <translation>मास्क</translation>
     </message>
     <message>
-        <source>+ GRADIENT</source>
-        <translation>+ ग्रेडिएंट</translation>
+        <source>+ Linear</source>
+        <translation>+ रैखिक</translation>
+    </message>
+    <message>
+        <source>+ Radial</source>
+        <translation>+ रेडियल</translation>
+    </message>
+    <message>
+        <source>+ Luminance</source>
+        <translation>+ ल्यूमिनेंस</translation>
     </message>
     <message>
         <source>Linear Gradient %1</source>
         <translation>रैखिक ग्रेडिएंट %1</translation>
     </message>
     <message>
-        <source>+ RADIAL</source>
-        <translation>+ रेडियल</translation>
-    </message>
-    <message>
         <source>Radial Mask %1</source>
         <translation>रेडियल मास्क %1</translation>
-    </message>
-    <message>
-        <source>+ LUMA</source>
-        <translation>+ ल्यूमा</translation>
     </message>
     <message>
         <source>Luma Range %1</source>
@@ -1145,10 +1186,6 @@
         <source>I</source>
         <comment>invert mask toggle, first letter of Invert</comment>
         <translation>उ</translation>
-    </message>
-    <message>
-        <source>SELECTED LAYER CONTROLS (%1)</source>
-        <translation>चुनी गई लेयर के नियंत्रण (%1)</translation>
     </message>
     <message>
         <source>Layer Opacity</source>
@@ -1170,48 +1207,32 @@
 <context>
     <name>LutSelector</name>
     <message>
-        <source>DAVINCI 3D LUT ENGINE (.CUBE)</source>
-        <translation>DaVinci 3D LUT इंजन (.CUBE)</translation>
+        <source>Load 3D LUT</source>
+        <translation>3D LUT लोड करें</translation>
     </message>
     <message>
-        <source>RESET</source>
+        <source>3D LUT</source>
+        <translation>3D LUT</translation>
+    </message>
+    <message>
+        <source>Reset</source>
         <translation>रीसेट</translation>
     </message>
     <message>
-        <source>Hollywood Print</source>
-        <translation>हॉलीवुड प्रिंट</translation>
+        <source>Load .cube file…</source>
+        <translation>.cube फ़ाइल लोड करें…</translation>
     </message>
     <message>
-        <source>Cinema Blockbuster</source>
-        <translation>सिनेमा ब्लॉकबस्टर</translation>
+        <source>Saved look: %1</source>
+        <translation>सहेजा गया लुक: %1</translation>
     </message>
     <message>
-        <source>35mm Soft Stock</source>
-        <translation>नरम 35 मिमी फ़िल्म</translation>
-    </message>
-    <message>
-        <source>High-Acutance B&amp;W</source>
-        <translation>उच्च तीक्ष्णता श्वेत-श्याम</translation>
-    </message>
-    <message>
-        <source>LUT Intensity (Mix)</source>
-        <translation>LUT तीव्रता (मिश्रण)</translation>
+        <source>Amount</source>
+        <translation>मात्रा</translation>
     </message>
 </context>
 <context>
     <name>MainWindow</name>
-    <message>
-        <source>Switched to version %1</source>
-        <translation>संस्करण %1 पर स्विच किया</translation>
-    </message>
-    <message>
-        <source>Version %1 initialized</source>
-        <translation>संस्करण %1 बनाया गया</translation>
-    </message>
-    <message>
-        <source>Copied current grade to version %1</source>
-        <translation>वर्तमान ग्रेड संस्करण %1 में कॉपी किया</translation>
-    </message>
     <message numerus="yes">
         <source>Rating: %n star(s)</source>
         <translation>
@@ -1240,36 +1261,8 @@
         <translation>पूर्ववत करने के लिए कुछ नहीं</translation>
     </message>
     <message>
-        <source>Undo (Ctrl+Z)</source>
-        <translation>पूर्ववत करें (Ctrl+Z)</translation>
-    </message>
-    <message>
         <source>Nothing to redo</source>
         <translation>फिर से करने के लिए कुछ नहीं</translation>
-    </message>
-    <message>
-        <source>Redo (Ctrl+Shift+Z)</source>
-        <translation>फिर से करें (Ctrl+Shift+Z)</translation>
-    </message>
-    <message>
-        <source>Adjustments copied (Ctrl+Shift+C)</source>
-        <translation>समायोजन कॉपी किए गए (Ctrl+Shift+C)</translation>
-    </message>
-    <message>
-        <source>No adjustments in clipboard</source>
-        <translation>क्लिपबोर्ड में कोई समायोजन नहीं</translation>
-    </message>
-    <message>
-        <source>Adjustments pasted (Ctrl+Shift+V)</source>
-        <translation>समायोजन चिपकाए गए (Ctrl+Shift+V)</translation>
-    </message>
-    <message>
-        <source>Reset to defaults (Ctrl+R)</source>
-        <translation>डिफ़ॉल्ट पर रीसेट किया (Ctrl+R)</translation>
-    </message>
-    <message>
-        <source>Social framing and adjustments reset</source>
-        <translation>सोशल फ़्रेमिंग और समायोजन रीसेट हुए</translation>
     </message>
     <message>
         <source>Failed to load RAW: %1</source>
@@ -1292,28 +1285,8 @@
         <translation>पूर्वावलोकन रेंडर विफल रहा</translation>
     </message>
     <message>
-        <source>Auto tone applied</source>
-        <translation>ऑटो टोन लागू हुआ</translation>
-    </message>
-    <message>
-        <source>AI decisions applied</source>
-        <translation>AI निर्णय लागू हुए</translation>
-    </message>
-    <message>
-        <source>Local heuristic applied</source>
-        <translation>स्थानीय अनुमान पद्धति लागू हुई</translation>
-    </message>
-    <message>
         <source>%1 applied (%2)</source>
         <translation>%1 लागू हुआ (%2)</translation>
-    </message>
-    <message>
-        <source>Recipe sidecar saved</source>
-        <translation>रेसिपी साइडकार सहेजी गई</translation>
-    </message>
-    <message>
-        <source>Batch finished: %1/%2 photos exported</source>
-        <translation>बैच पूरा: %1/%2 फ़ोटो निर्यात हुईं</translation>
     </message>
     <message>
         <source>Batch export: %1 succeeded, %2 failed</source>
@@ -1336,14 +1309,6 @@
         <translation>%1 लिखा गया</translation>
     </message>
     <message>
-        <source>Analyzing dynamic range and scene...</source>
-        <translation>डायनामिक रेंज और दृश्य का विश्लेषण हो रहा है...</translation>
-    </message>
-    <message>
-        <source>Asking the AI for edit decisions...</source>
-        <translation>AI से संपादन निर्णय माँगे जा रहे हैं...</translation>
-    </message>
-    <message>
         <source>Open RAW Photo</source>
         <translation>RAW फ़ोटो खोलें</translation>
     </message>
@@ -1352,20 +1317,8 @@
         <translation>RAW फ़ोटो</translation>
     </message>
     <message>
-        <source>Saved to: %1</source>
-        <translation>यहाँ सहेजा गया: %1</translation>
-    </message>
-    <message>
-        <source>Export error: %1</source>
-        <translation>निर्यात त्रुटि: %1</translation>
-    </message>
-    <message>
         <source>Export finished without a result</source>
         <translation>निर्यात बिना परिणाम के समाप्त हुआ</translation>
-    </message>
-    <message>
-        <source>The folder scan gave no answer</source>
-        <translation>फ़ोल्डर स्कैन ने कोई उत्तर नहीं दिया</translation>
     </message>
     <message>
         <source>Crop mode: on (C)</source>
@@ -1376,36 +1329,12 @@
         <translation>क्रॉप मोड: बंद</translation>
     </message>
     <message>
-        <source>Open a photo first to export</source>
-        <translation>निर्यात के लिए पहले कोई फ़ोटो खोलें</translation>
-    </message>
-    <message>
-        <source>Panels hidden (Tab)</source>
-        <translation>पैनल छिपे (Tab)</translation>
-    </message>
-    <message>
-        <source>Panels restored (Tab)</source>
-        <translation>पैनल वापस आए (Tab)</translation>
-    </message>
-    <message>
-        <source>Optimizing for %1...</source>
-        <translation>%1 के लिए अनुकूलित हो रहा है...</translation>
-    </message>
-    <message>
-        <source>AI SCENE INSIGHT</source>
-        <translation>AI दृश्य विश्लेषण</translation>
-    </message>
-    <message>
         <source>Analyzing...</source>
         <translation>विश्लेषण हो रहा है...</translation>
     </message>
     <message>
         <source>Extracting dynamic range...</source>
         <translation>डायनामिक रेंज निकाली जा रही है...</translation>
-    </message>
-    <message>
-        <source>Grade versions • Alt+1..4 to switch</source>
-        <translation>ग्रेडिंग संस्करण • बदलने के लिए Alt+1..4</translation>
     </message>
     <message>
         <source>Opened %1</source>
@@ -1416,36 +1345,8 @@
         <translation>फ़ोल्डर %1 स्कैन हो रहा है</translation>
     </message>
     <message>
-        <source>AI edit applied</source>
-        <translation>AI संपादन लागू हुआ</translation>
-    </message>
-    <message>
-        <source>ESSENTIAL ADJUSTMENTS</source>
-        <translation>आवश्यक समायोजन</translation>
-    </message>
-    <message>
-        <source>RESET</source>
-        <translation>रीसेट</translation>
-    </message>
-    <message>
-        <source>Exposure (Light)</source>
-        <translation>एक्सपोज़र (प्रकाश)</translation>
-    </message>
-    <message>
-        <source>Warmth (Temperature)</source>
-        <translation>गर्माहट (तापमान)</translation>
-    </message>
-    <message>
-        <source>Vibrance (Color Punch)</source>
-        <translation>वाइब्रेंस (रंग की तीव्रता)</translation>
-    </message>
-    <message>
         <source>Contrast</source>
         <translation>कंट्रास्ट</translation>
-    </message>
-    <message>
-        <source>WHITE BALANCE</source>
-        <translation>व्हाइट बैलेंस</translation>
     </message>
     <message>
         <source>Temp (Kelvin)</source>
@@ -1454,10 +1355,6 @@
     <message>
         <source>Tint (Green / Magenta)</source>
         <translation>टिंट (हरा / मैजेंटा)</translation>
-    </message>
-    <message>
-        <source>LIGHT &amp; DYNAMIC RANGE</source>
-        <translation>प्रकाश और डायनामिक रेंज</translation>
     </message>
     <message>
         <source>Exposure</source>
@@ -1480,10 +1377,6 @@
         <translation>काले</translation>
     </message>
     <message>
-        <source>TONE CURVE (PARAMETRIC)</source>
-        <translation>टोन कर्व (पैरामीट्रिक)</translation>
-    </message>
-    <message>
         <source>Curve Highlights</source>
         <translation>कर्व: हाइलाइट</translation>
     </message>
@@ -1498,10 +1391,6 @@
     <message>
         <source>Curve Shadows</source>
         <translation>कर्व: छाया</translation>
-    </message>
-    <message>
-        <source>PRESENCE &amp; TEXTURE</source>
-        <translation>उपस्थिति और बनावट</translation>
     </message>
     <message>
         <source>Texture</source>
@@ -1522,14 +1411,6 @@
     <message>
         <source>Saturation</source>
         <translation>संतृप्ति</translation>
-    </message>
-    <message>
-        <source>COLOR MIXER (8-BAND HSL)</source>
-        <translation>रंग मिक्सर (8-बैंड HSL)</translation>
-    </message>
-    <message>
-        <source>DETAIL &amp; OPTICS</source>
-        <translation>विवरण और प्रकाशिकी</translation>
     </message>
     <message>
         <source>Sharpening</source>
@@ -1560,12 +1441,200 @@
         <translation>पहले कोई फ़ोटो खोलें</translation>
     </message>
     <message>
+        <source>Version %1</source>
+        <translation>संस्करण %1</translation>
+    </message>
+    <message>
+        <source>Version %1 started</source>
+        <translation>संस्करण %1 शुरू हुआ</translation>
+    </message>
+    <message>
+        <source>Copied to version %1</source>
+        <translation>संस्करण %1 में कॉपी किया गया</translation>
+    </message>
+    <message>
+        <source>Undo</source>
+        <translation>पूर्ववत करें</translation>
+    </message>
+    <message>
+        <source>Redo</source>
+        <translation>फिर से करें</translation>
+    </message>
+    <message>
+        <source>Settings copied</source>
+        <translation>सेटिंग कॉपी की गईं</translation>
+    </message>
+    <message>
+        <source>Nothing copied yet</source>
+        <translation>अभी तक कुछ कॉपी नहीं किया गया</translation>
+    </message>
+    <message>
+        <source>Settings pasted</source>
+        <translation>सेटिंग पेस्ट की गईं</translation>
+    </message>
+    <message>
+        <source>Reset to defaults</source>
+        <translation>डिफ़ॉल्ट पर रीसेट किया गया</translation>
+    </message>
+    <message>
+        <source>Platform crop reset</source>
+        <translation>प्लेटफ़ॉर्म क्रॉप रीसेट किया गया</translation>
+    </message>
+    <message>
+        <source>Auto applied</source>
+        <translation>स्वचालित सुधार लागू किया गया</translation>
+    </message>
+    <message>
+        <source>Settings saved</source>
+        <translation>सेटिंग सहेजी गईं</translation>
+    </message>
+    <message>
+        <source>%1 of %2 photos exported</source>
+        <translation>%2 में से %1 फ़ोटो निर्यात की गईं</translation>
+    </message>
+    <message>
+        <source>Auto: analysing the photo…</source>
+        <translation>स्वचालित: फ़ोटो का विश्लेषण हो रहा है…</translation>
+    </message>
+    <message>
+        <source>Saved to %1</source>
+        <translation>%1 में सहेजा गया</translation>
+    </message>
+    <message>
+        <source>Export failed</source>
+        <translation>निर्यात विफल रहा</translation>
+    </message>
+    <message>
+        <source>The scan did not respond.</source>
+        <translation>फ़ोल्डर स्कैन ने जवाब नहीं दिया।</translation>
+    </message>
+    <message>
+        <source>Rating: ★</source>
+        <translation>रेटिंग: ★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★</source>
+        <translation>रेटिंग: ★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★</source>
+        <translation>रेटिंग: ★★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★★</source>
+        <translation>रेटिंग: ★★★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★★★</source>
+        <translation>रेटिंग: ★★★★★</translation>
+    </message>
+    <message>
+        <source>Flag cleared</source>
+        <translation>फ़्लैग हटाया गया</translation>
+    </message>
+    <message>
+        <source>Preparing for %1…</source>
+        <translation>%1 के लिए तैयार किया जा रहा है…</translation>
+    </message>
+    <message>
+        <source>Rating: %1</source>
+        <translation>रेटिंग: %1</translation>
+    </message>
+    <message>
+        <source>Picked</source>
+        <translation>चुनी गई</translation>
+    </message>
+    <message>
+        <source>Rejected</source>
+        <translation>अस्वीकृत</translation>
+    </message>
+    <message>
+        <source>Scene</source>
+        <translation>दृश्य</translation>
+    </message>
+    <message>
+        <source>Adjust</source>
+        <translation>समायोजन</translation>
+    </message>
+    <message>
+        <source>Masks</source>
+        <translation>मास्क</translation>
+    </message>
+    <message>
+        <source>Looks</source>
+        <translation>लुक</translation>
+    </message>
+    <message>
+        <source>AI</source>
+        <translation>AI</translation>
+    </message>
+    <message>
+        <source>Profile</source>
+        <translation>प्रोफ़ाइल</translation>
+    </message>
+    <message>
         <source>Color Chrome Effect</source>
         <translation>Color Chrome प्रभाव</translation>
     </message>
     <message>
         <source>Color Chrome FX Blue</source>
         <translation>Color Chrome FX नीला</translation>
+    </message>
+    <message>
+        <source>White balance</source>
+        <translation>व्हाइट बैलेंस</translation>
+    </message>
+    <message>
+        <source>Tone</source>
+        <translation>टोन</translation>
+    </message>
+    <message>
+        <source>Presence</source>
+        <translation>प्रेज़ेंस</translation>
+    </message>
+    <message>
+        <source>Tone curve</source>
+        <translation>टोन कर्व</translation>
+    </message>
+    <message>
+        <source>Colour mixer</source>
+        <translation>रंग मिक्सर</translation>
+    </message>
+    <message>
+        <source>Colour grading</source>
+        <translation>रंग ग्रेडिंग</translation>
+    </message>
+    <message>
+        <source>Detail and optics</source>
+        <translation>विवरण और ऑप्टिक्स</translation>
+    </message>
+    <message>
+        <source>Grain</source>
+        <translation>ग्रेन</translation>
+    </message>
+    <message>
+        <source>Colour management</source>
+        <translation>रंग प्रबंधन</translation>
+    </message>
+    <message>
+        <source>Local adjustments</source>
+        <translation>स्थानीय समायोजन</translation>
+    </message>
+    <message>
+        <source>Presets</source>
+        <translation>प्रीसेट</translation>
+    </message>
+    <message>
+        <source>LUT</source>
+        <translation>LUT</translation>
+    </message>
+    <message>
+        <source>Edit assistant</source>
+        <translation>संपादन सहायक</translation>
+    </message>
+    <message>
+        <source>Assistant edit applied</source>
+        <translation>सहायक का संपादन लागू किया गया</translation>
     </message>
     <message>
         <source>Copy</source>
@@ -1600,29 +1669,29 @@
         <translation>%1 खोला जा रहा है</translation>
     </message>
     <message>
-        <source>Loading the studio catalog...</source>
-        <translation>स्टूडियो कैटलॉग लोड हो रहा है...</translation>
+        <source>Loading the catalog…</source>
+        <translation>कैटलॉग लोड हो रहा है…</translation>
     </message>
     <message>
-        <source>Refreshing the studio catalog...</source>
-        <translation>स्टूडियो कैटलॉग ताज़ा हो रहा है...</translation>
+        <source>Refreshing the catalog…</source>
+        <translation>कैटलॉग रीफ़्रेश हो रहा है…</translation>
     </message>
     <message numerus="yes">
-        <source>Exporting %n photo(s) in parallel...</source>
+        <source>Exporting %n photos…</source>
         <translation>
-            <numerusform>%n फ़ोटो समानांतर रूप से निर्यात हो रही है...</numerusform>
-            <numerusform>%n फ़ोटो समानांतर रूप से निर्यात हो रही हैं...</numerusform>
+            <numerusform>%n फ़ोटो निर्यात हो रही है…</numerusform>
+            <numerusform>%n फ़ोटो निर्यात हो रही हैं…</numerusform>
         </translation>
     </message>
     <message>
-        <source>Developing at full resolution and encoding...</source>
-        <translation>पूर्ण रिज़ॉल्यूशन पर डेवलप और एन्कोड हो रहा है...</translation>
+        <source>Developing at full resolution…</source>
+        <translation>पूरे रिज़ॉल्यूशन पर डेवलप हो रहा है…</translation>
     </message>
 </context>
 <context>
     <name>Navigator</name>
     <message>
-        <source>NAVIGATOR</source>
+        <source>Navigator</source>
         <translation>नेविगेटर</translation>
     </message>
     <message>
@@ -1631,65 +1700,92 @@
     </message>
 </context>
 <context>
+    <name>PanelSection</name>
+    <message>
+        <source>Reset %1</source>
+        <translation>%1 रीसेट करें</translation>
+    </message>
+</context>
+<context>
     <name>PresetSelector</name>
     <message>
-        <source>FILM LOOKS &amp; STYLES</source>
-        <translation>फ़िल्म लुक और शैलियाँ</translation>
+        <source>Looks</source>
+        <translation>लुक</translation>
     </message>
     <message>
-        <source>RESET</source>
+        <source>Reset</source>
         <translation>रीसेट</translation>
     </message>
     <message>
-        <source>AI Auto Enhance</source>
-        <translation>AI स्वतः सुधार</translation>
+        <source>Auto</source>
+        <translation>स्वचालित</translation>
     </message>
     <message>
-        <source>RUN</source>
+        <source>Run</source>
         <translation>चलाएँ</translation>
     </message>
     <message>
-        <source>Documentary Muted</source>
-        <translation>धीमा डॉक्यूमेंट्री</translation>
+        <source>Muted</source>
+        <translation>हल्का</translation>
     </message>
     <message>
-        <source>Vivid Landscapes</source>
-        <translation>जीवंत परिदृश्य</translation>
+        <source>Documentary, low saturation</source>
+        <translation>डॉक्यूमेंट्री, कम संतृप्ति</translation>
     </message>
     <message>
-        <source>Warm Skin Tones</source>
-        <translation>गर्म त्वचा टोन</translation>
+        <source>Vivid</source>
+        <translation>चटकीला</translation>
     </message>
     <message>
-        <source>High Contrast B&amp;W</source>
-        <translation>उच्च कंट्रास्ट श्वेत-श्याम</translation>
+        <source>Landscapes, rich colour</source>
+        <translation>लैंडस्केप, गहरे रंग</translation>
     </message>
     <message>
-        <source>Film Grade</source>
-        <translation>फ़िल्म ग्रेड</translation>
+        <source>Warm portrait</source>
+        <translation>गर्म पोर्ट्रेट</translation>
+    </message>
+    <message>
+        <source>Soft contrast, warm skin</source>
+        <translation>मृदु कंट्रास्ट, गर्म त्वचा</translation>
+    </message>
+    <message>
+        <source>Black and white</source>
+        <translation>श्वेत-श्याम</translation>
+    </message>
+    <message>
+        <source>High contrast</source>
+        <translation>उच्च कंट्रास्ट</translation>
+    </message>
+    <message>
+        <source>Teal and orange</source>
+        <translation>टील और नारंगी</translation>
+    </message>
+    <message>
+        <source>Split toning</source>
+        <translation>स्प्लिट टोनिंग</translation>
     </message>
 </context>
 <context>
     <name>RgbMixerPanel</name>
     <message>
-        <source>DAVINCI RGB PRIMARY MIXER</source>
-        <translation>DaVinci RGB प्राथमिक मिक्सर</translation>
-    </message>
-    <message>
-        <source>RESET</source>
-        <translation>रीसेट</translation>
-    </message>
-    <message>
         <source>Monochrome Mixing</source>
         <translation>मोनोक्रोम मिश्रण</translation>
     </message>
     <message>
-        <source>MONOCHROME LUMA MIX</source>
-        <translation>मोनोक्रोम ल्यूमा मिश्रण</translation>
+        <source>Channel mixer</source>
+        <translation>चैनल मिक्सर</translation>
     </message>
     <message>
-        <source>RED OUTPUT CHANNEL</source>
-        <translation>लाल आउटपुट चैनल</translation>
+        <source>Reset</source>
+        <translation>रीसेट</translation>
+    </message>
+    <message>
+        <source>Monochrome mix</source>
+        <translation>मोनोक्रोम मिश्रण</translation>
+    </message>
+    <message>
+        <source>Red output</source>
+        <translation>लाल आउटपुट</translation>
     </message>
     <message>
         <source>Red in Red</source>
@@ -1704,8 +1800,12 @@
         <translation>लाल में नीला</translation>
     </message>
     <message>
-        <source>GREEN OUTPUT CHANNEL</source>
-        <translation>हरा आउटपुट चैनल</translation>
+        <source>Green output</source>
+        <translation>हरा आउटपुट</translation>
+    </message>
+    <message>
+        <source>Blue output</source>
+        <translation>नीला आउटपुट</translation>
     </message>
     <message>
         <source>Red in Green</source>
@@ -1718,10 +1818,6 @@
     <message>
         <source>Blue in Green</source>
         <translation>हरे में नीला</translation>
-    </message>
-    <message>
-        <source>BLUE OUTPUT CHANNEL</source>
-        <translation>नीला आउटपुट चैनल</translation>
     </message>
     <message>
         <source>Red in Blue</source>
@@ -1765,8 +1861,8 @@
         <translation>[हा] %1%</translation>
     </message>
     <message>
-        <source>NO SIGNAL / LOAD RAW</source>
-        <translation>कोई सिग्नल नहीं / RAW लोड करें</translation>
+        <source>No photo</source>
+        <translation>कोई फ़ोटो नहीं</translation>
     </message>
     <message>
         <source>RED</source>
@@ -1788,11 +1884,11 @@
 <context>
     <name>SkinTonePanel</name>
     <message>
-        <source>CAPTURE ONE SKIN TONE</source>
-        <translation>CAPTURE ONE त्वचा टोन</translation>
+        <source>Skin tone</source>
+        <translation>त्वचा का रंग</translation>
     </message>
     <message>
-        <source>RESET</source>
+        <source>Reset</source>
         <translation>रीसेट</translation>
     </message>
     <message>
@@ -1834,52 +1930,28 @@
 <context>
     <name>SocialOptimizer</name>
     <message>
-        <source>AI SOCIAL MEDIA OPTIMIZER</source>
-        <translation>AI सोशल मीडिया अनुकूलक</translation>
+        <source>Prepare for</source>
+        <translation>इसके लिए तैयार करें</translation>
     </message>
     <message>
-        <source>RESET</source>
+        <source>Reset</source>
         <translation>रीसेट</translation>
     </message>
     <message>
-        <source>Instagram Feed</source>
-        <translation>Instagram फ़ीड</translation>
+        <source>Instagram post</source>
+        <translation>Instagram पोस्ट</translation>
     </message>
     <message>
-        <source>Max Screen</source>
-        <translation>अधिकतम स्क्रीन</translation>
+        <source>Stories and Reels</source>
+        <translation>Stories और Reels</translation>
     </message>
     <message>
-        <source>Stories / Reels</source>
-        <translation>स्टोरीज़ / Reels</translation>
+        <source>Square</source>
+        <translation>वर्गाकार</translation>
     </message>
     <message>
-        <source>Full Mobile</source>
-        <translation>पूरी मोबाइल स्क्रीन</translation>
-    </message>
-    <message>
-        <source>Crisp Feed</source>
-        <translation>स्पष्ट फ़ीड</translation>
-    </message>
-    <message>
-        <source>Classic Square</source>
-        <translation>क्लासिक वर्ग</translation>
-    </message>
-    <message>
-        <source>Grid Post</source>
-        <translation>ग्रिड पोस्ट</translation>
-    </message>
-    <message>
-        <source>High Res</source>
-        <translation>उच्च रिज़ॉल्यूशन</translation>
-    </message>
-    <message>
-        <source>YouTube Thumb</source>
+        <source>YouTube thumbnail</source>
         <translation>YouTube थंबनेल</translation>
-    </message>
-    <message>
-        <source>High CTR</source>
-        <translation>उच्च CTR</translation>
     </message>
 </context>
 <context>
@@ -1914,8 +1986,8 @@
         <translation>आवश्यक</translation>
     </message>
     <message>
-        <source>Pro Studio</source>
-        <translation>Pro Studio</translation>
+        <source>Pro</source>
+        <translation>Pro</translation>
     </message>
     <message>
         <source>Undo (Ctrl+Z)</source>
@@ -1953,16 +2025,16 @@
 <context>
     <name>Viewport</name>
     <message>
-        <source>RESET 0°</source>
-        <translation>0° पर रीसेट</translation>
+        <source>Reset 0°</source>
+        <translation>0° पर रीसेट करें</translation>
     </message>
     <message>
-        <source>FIT</source>
+        <source>Fit</source>
         <translation>फ़िट</translation>
     </message>
     <message>
-        <source>CROP &amp; COMPOSE</source>
-        <translation>क्रॉप और संरचना</translation>
+        <source>Crop</source>
+        <translation>क्रॉप</translation>
     </message>
     <message>
         <source>Original</source>
@@ -1989,12 +2061,20 @@
         <translation>ग्रिड: बंद</translation>
     </message>
     <message>
-        <source>RESET</source>
+        <source>Reset</source>
         <translation>रीसेट</translation>
     </message>
     <message>
-        <source>DONE</source>
+        <source>Done</source>
         <translation>हो गया</translation>
+    </message>
+    <message>
+        <source>Shadow clipping</source>
+        <translation>छाया क्लिपिंग</translation>
+    </message>
+    <message>
+        <source>Highlight clipping</source>
+        <translation>हाइलाइट क्लिपिंग</translation>
     </message>
     <message>
         <source>ORIGINAL RAW (Before)</source>
@@ -2003,18 +2083,6 @@
     <message>
         <source>EDITED RECIPE (After)</source>
         <translation>संपादित रेसिपी (बाद में)</translation>
-    </message>
-    <message>
-        <source>[S] SHADOW CLIPPING (BLUE)</source>
-        <translation>[छ] छाया क्लिपिंग (नीला)</translation>
-    </message>
-    <message>
-        <source>[H] HIGHLIGHT CLIPPING (RED)</source>
-        <translation>[हा] हाइलाइट क्लिपिंग (लाल)</translation>
-    </message>
-    <message>
-        <source>Pinch: Zoom | 2-Finger Twist: Rotate | 2-Finger Pan | Double-Tap: Reset</source>
-        <translation>पिंच: ज़ूम | 2 उँगलियों से घुमाएँ: रोटेट | 2 उँगलियों से खिसकाएँ | डबल टैप: रीसेट</translation>
     </message>
     <message>
         <source>Open a RAW (Ctrl+O) or drop a photo / folder here</source>
@@ -2028,8 +2096,8 @@
 <context>
     <name>WatermarkConfig</name>
     <message>
-        <source>WATERMARK &amp; BRANDING</source>
-        <translation>वॉटरमार्क और ब्रांडिंग</translation>
+        <source>Watermark</source>
+        <translation>वॉटरमार्क</translation>
     </message>
     <message>
         <source>Text / EXIF Tag</source>
@@ -2040,28 +2108,28 @@
         <translation>कस्टम PNG लोगो</translation>
     </message>
     <message>
-        <source>WATERMARK TEXT OR TEMPLATE</source>
-        <translation>वॉटरमार्क टेक्स्ट या टेम्पलेट</translation>
+        <source>Text or template</source>
+        <translation>टेक्स्ट या टेम्पलेट</translation>
     </message>
     <message>
-        <source>LOGO FILE PATH (.PNG)</source>
-        <translation>लोगो फ़ाइल पथ (.PNG)</translation>
+        <source>Logo file (PNG)</source>
+        <translation>लोगो फ़ाइल (PNG)</translation>
     </message>
     <message>
-        <source>POSITION</source>
+        <source>Position</source>
         <translation>स्थिति</translation>
+    </message>
+    <message>
+        <source>Opacity</source>
+        <translation>अपारदर्शिता</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>आकार</translation>
     </message>
     <message>
         <source>Drop Shadow</source>
         <translation>ड्रॉप शैडो</translation>
-    </message>
-    <message>
-        <source>OPACITY</source>
-        <translation>अपारदर्शिता</translation>
-    </message>
-    <message>
-        <source>SIZE MULTIPLIER</source>
-        <translation>आकार गुणक</translation>
     </message>
 </context>
 </TS>

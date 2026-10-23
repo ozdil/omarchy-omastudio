@@ -175,28 +175,36 @@
         <translation>Помилка</translation>
     </message>
     <message>
-        <source>AI EDIT ASSISTANT</source>
-        <translation>ПОМІЧНИК РЕДАГУВАННЯ З ШІ</translation>
+        <source>Assistant</source>
+        <translation>Асистент</translation>
     </message>
     <message>
-        <source>DONE</source>
-        <translation>ГОТОВО</translation>
+        <source>Done</source>
+        <translation>Готово</translation>
     </message>
     <message>
-        <source>SETUP</source>
-        <translation>НАЛАШТУВАННЯ</translation>
+        <source>Set up</source>
+        <translation>Налаштувати</translation>
+    </message>
+    <message>
+        <source>Working…</source>
+        <translation>Обробка…</translation>
+    </message>
+    <message>
+        <source>Edit</source>
+        <translation>Змінити</translation>
+    </message>
+    <message>
+        <source>Store key</source>
+        <translation>Зберегти ключ</translation>
+    </message>
+    <message>
+        <source>Use %1</source>
+        <translation>Використати %1</translation>
     </message>
     <message>
         <source>e.g. warmer, moody evening light, recover the sky</source>
         <translation>наприклад: тепліше, похмуре вечірнє світло, відновити небо</translation>
-    </message>
-    <message>
-        <source>THINKING...</source>
-        <translation>ДУМАЮ...</translation>
-    </message>
-    <message>
-        <source>EDIT WITH AI</source>
-        <translation>РЕДАГУВАТИ З ШІ</translation>
     </message>
     <message>
         <source>Running. Models: %1</source>
@@ -222,14 +230,6 @@
         <source>API key</source>
         <translation>Ключ API</translation>
     </message>
-    <message>
-        <source>STORE KEY</source>
-        <translation>ЗБЕРЕГТИ КЛЮЧ</translation>
-    </message>
-    <message>
-        <source>USE %1</source>
-        <translation>ВИКОРИСТАТИ %1</translation>
-    </message>
 </context>
 <context>
     <name>BoundedTextInput</name>
@@ -241,48 +241,16 @@
 <context>
     <name>ColorGradingWheels</name>
     <message>
-        <source>DAVINCI PRIMARIES WHEELS</source>
-        <translation>ОСНОВНІ КОЛЕСА DAVINCI</translation>
-    </message>
-    <message>
-        <source>4-WHEEL</source>
-        <translation>4 КОЛЕСА</translation>
-    </message>
-    <message>
-        <source>TABBED</source>
-        <translation>ВКЛАДКИ</translation>
-    </message>
-    <message>
-        <source>RESET</source>
-        <translation>СКИНУТИ</translation>
-    </message>
-    <message>
-        <source>LIFT</source>
-        <translation>LIFT</translation>
-    </message>
-    <message>
         <source>Shadows</source>
         <translation>Тіні</translation>
-    </message>
-    <message>
-        <source>GAMMA</source>
-        <translation>GAMMA</translation>
     </message>
     <message>
         <source>Mids</source>
         <translation>Середні</translation>
     </message>
     <message>
-        <source>GAIN</source>
-        <translation>GAIN</translation>
-    </message>
-    <message>
         <source>Highlights</source>
         <translation>Світла</translation>
-    </message>
-    <message>
-        <source>OFFSET</source>
-        <translation>OFFSET</translation>
     </message>
     <message>
         <source>Global</source>
@@ -307,6 +275,22 @@
     <message>
         <source>Lift</source>
         <translation>Lift</translation>
+    </message>
+    <message>
+        <source>Colour grading</source>
+        <translation>Кольорокорекція</translation>
+    </message>
+    <message>
+        <source>4 wheels</source>
+        <translation>4 кола</translation>
+    </message>
+    <message>
+        <source>Tabs</source>
+        <translation>Вкладки</translation>
+    </message>
+    <message>
+        <source>Reset</source>
+        <translation>Скинути</translation>
     </message>
     <message>
         <source>Gamma</source>
@@ -368,8 +352,12 @@
         <translation>Широкий AP1</translation>
     </message>
     <message>
-        <source>COLOR MANAGEMENT &amp; ACES 1.3</source>
-        <translation>КЕРУВАННЯ КОЛЬОРОМ І ACES 1.3</translation>
+        <source>Colour management</source>
+        <translation>Керування кольором</translation>
+    </message>
+    <message>
+        <source>Gamut compression</source>
+        <translation>Стиснення охоплення</translation>
     </message>
     <message>
         <source>%1 (%2)</source>
@@ -394,115 +382,163 @@
 <context>
     <name>ExifCard</name>
     <message>
-        <source>No camera loaded</source>
-        <translation>Камеру не завантажено</translation>
-    </message>
-    <message>
-        <source>Unknown lens</source>
-        <translation>Невідомий об&apos;єктив</translation>
+        <source>No photo</source>
+        <translation>Немає фото</translation>
     </message>
 </context>
 <context>
     <name>ExportDialog</name>
-    <message numerus="yes">
-        <source>Batch Export (%n Photos)</source>
-        <translation>
-            <numerusform>Пакетний експорт (%n фото)</numerusform>
-            <numerusform>Пакетний експорт (%n фото)</numerusform>
-            <numerusform>Пакетний експорт (%n фото)</numerusform>
-        </translation>
-    </message>
-    <message>
-        <source>Export Master Photo</source>
-        <translation>Експортувати основне фото</translation>
-    </message>
-    <message>
-        <source>MODERN OPEN FORMAT</source>
-        <translation>СУЧАСНИЙ ВІДКРИТИЙ ФОРМАТ</translation>
-    </message>
-    <message>
-        <source>Next-Gen 16-bit HDR</source>
-        <translation>16-бітний HDR нового покоління</translation>
-    </message>
-    <message>
-        <source>AV1 Web/Mobile</source>
-        <translation>AV1 для вебу та мобільних</translation>
-    </message>
-    <message>
-        <source>Ultra Compact</source>
-        <translation>Надкомпактний</translation>
-    </message>
-    <message>
-        <source>16-bit TIFF</source>
-        <translation>16-бітний TIFF</translation>
-    </message>
-    <message>
-        <source>Master Print Lossless</source>
-        <translation>Мастер-друк без втрат</translation>
-    </message>
-    <message>
-        <source>Graphic Lossless</source>
-        <translation>Графіка без втрат</translation>
-    </message>
-    <message>
-        <source>Universal MozJPEG</source>
-        <translation>Універсальний MozJPEG</translation>
-    </message>
-    <message>
-        <source>Export Compression Quality</source>
-        <translation>Якість стиснення під час експорту</translation>
-    </message>
-    <message>
-        <source>RESOLUTION &amp; SCALING</source>
-        <translation>РОЗДІЛЬНІСТЬ І МАСШТАБ</translation>
-    </message>
-    <message>
-        <source>100% Full</source>
-        <translation>100% повна</translation>
-    </message>
-    <message>
-        <source>Social (2048p)</source>
-        <translation>Соцмережі (2048p)</translation>
-    </message>
-    <message>
-        <source>COLOR SPACE &amp; ICC PROFILE</source>
-        <translation>КОЛІРНИЙ ПРОСТІР І ПРОФІЛЬ ICC</translation>
-    </message>
-    <message>
-        <source>Universal Web / Social</source>
-        <translation>Універсальний веб / соцмережі</translation>
-    </message>
-    <message>
-        <source>Apple / Wide OLED</source>
-        <translation>Apple / широкий OLED</translation>
-    </message>
-    <message>
-        <source>Ultra-Wide Gamut HDR</source>
-        <translation>HDR із надшироким охопленням</translation>
-    </message>
-    <message>
-        <source>Academy Color Standard</source>
-        <translation>Колірний стандарт Академії</translation>
-    </message>
-    <message>
-        <source>Pro Photography / Print</source>
-        <translation>Професійна фотографія / друк</translation>
-    </message>
-    <message>
-        <source>16-Bit Master Archival</source>
-        <translation>16-бітний архівний мастер</translation>
-    </message>
-    <message>
-        <source>Intent</source>
-        <translation>Метод</translation>
-    </message>
     <message>
         <source>Perceptual</source>
         <translation>Перцептивний</translation>
     </message>
     <message>
-        <source>Compresses the whole gamut; smooth, saturated colours keep their relations</source>
-        <translation>Стискає все охоплення; м&apos;які насичені кольори зберігають свої співвідношення</translation>
+        <source>8-bit · universal</source>
+        <translation>8 біт · універсальний</translation>
+    </message>
+    <message>
+        <source>16-bit · lossless</source>
+        <translation>16 біт · без втрат</translation>
+    </message>
+    <message>
+        <source>16-bit · print, archive</source>
+        <translation>16 біт · друк, архів</translation>
+    </message>
+    <message>
+        <source>8-bit · web</source>
+        <translation>8 біт · веб</translation>
+    </message>
+    <message>
+        <source>12-bit · HDR-ready</source>
+        <translation>12 біт · готовий до HDR</translation>
+    </message>
+    <message>
+        <source>10-bit · HEVC</source>
+        <translation>10 біт · HEVC</translation>
+    </message>
+    <message>
+        <source>16-bit · modern</source>
+        <translation>16 біт · сучасний</translation>
+    </message>
+    <message>
+        <source>Float · scene-linear</source>
+        <translation>З рухомою комою · лінійний сцени</translation>
+    </message>
+    <message numerus="yes">
+        <source>Export %n photos</source>
+        <translation>
+            <numerusform>Експортувати %n фото</numerusform>
+            <numerusform>Експортувати %n фото</numerusform>
+            <numerusform>Експортувати %n фото</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>Export</source>
+        <translation>Експорт</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>Закрити</translation>
+    </message>
+    <message>
+        <source>Format</source>
+        <translation>Формат</translation>
+    </message>
+    <message>
+        <source>Quality</source>
+        <translation>Якість</translation>
+    </message>
+    <message>
+        <source>100 is lossless.</source>
+        <translation>100 — без втрат.</translation>
+    </message>
+    <message>
+        <source>Bit depth</source>
+        <translation>Глибина кольору</translation>
+    </message>
+    <message>
+        <source>Half float</source>
+        <translation>Половинна точність з рухомою комою</translation>
+    </message>
+    <message>
+        <source>Full float</source>
+        <translation>Повна точність з рухомою комою</translation>
+    </message>
+    <message>
+        <source>%1-bit</source>
+        <translation>%1 біт</translation>
+    </message>
+    <message>
+        <source>Compression</source>
+        <translation>Стиснення</translation>
+    </message>
+    <message>
+        <source>None</source>
+        <translation>Немає</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>Розмір</translation>
+    </message>
+    <message>
+        <source>Full</source>
+        <translation>Повний</translation>
+    </message>
+    <message>
+        <source>3840 px</source>
+        <translation>3840 пікс.</translation>
+    </message>
+    <message>
+        <source>Long edge at most 3840 px</source>
+        <translation>Довга сторона не більше 3840 пікс.</translation>
+    </message>
+    <message>
+        <source>2048 px</source>
+        <translation>2048 пікс.</translation>
+    </message>
+    <message>
+        <source>Long edge at most 2048 px</source>
+        <translation>Довга сторона не більше 2048 пікс.</translation>
+    </message>
+    <message>
+        <source>Colour profile</source>
+        <translation>Колірний профіль</translation>
+    </message>
+    <message>
+        <source>Web, screens</source>
+        <translation>Веб, екрани</translation>
+    </message>
+    <message>
+        <source>Wide-gamut screens</source>
+        <translation>Екрани з широким охопленням</translation>
+    </message>
+    <message>
+        <source>Print</source>
+        <translation>Друк</translation>
+    </message>
+    <message>
+        <source>Editing, archive</source>
+        <translation>Обробка, архів</translation>
+    </message>
+    <message>
+        <source>HDR, video</source>
+        <translation>HDR, відео</translation>
+    </message>
+    <message>
+        <source>Linear, VFX</source>
+        <translation>Лінійний, VFX</translation>
+    </message>
+    <message>
+        <source>OpenEXR is written scene-linear in the chosen primaries.</source>
+        <translation>OpenEXR записується лінійно відносно сцени у вибраних основних кольорах.</translation>
+    </message>
+    <message>
+        <source>Rendering intent</source>
+        <translation>Метод рендерингу</translation>
+    </message>
+    <message>
+        <source>Compresses the whole gamut; colour relations are kept</source>
+        <translation>Стискає все охоплення; співвідношення між кольорами зберігаються</translation>
     </message>
     <message>
         <source>Relative</source>
@@ -529,47 +565,55 @@
         <translation>Точні кольори, включно з білою точкою джерела; для кольоропроби</translation>
     </message>
     <message>
-        <source>Preserve Camera EXIF</source>
-        <translation>Зберігати EXIF камери</translation>
+        <source>Metadata</source>
+        <translation>Метадані</translation>
     </message>
     <message>
-        <source>Strip GPS (Privacy)</source>
-        <translation>Вилучати GPS (приватність)</translation>
+        <source>Keep camera metadata (EXIF)</source>
+        <translation>Зберігати метадані камери (EXIF)</translation>
     </message>
     <message>
-        <source>Apply Photography Watermark / EXIF Signature</source>
-        <translation>Додати водяний знак / підпис EXIF</translation>
+        <source>Remove location (GPS)</source>
+        <translation>Видалити місцезнаходження (GPS)</translation>
     </message>
     <message>
-        <source>Exporting Batch...</source>
-        <translation>Експорт пакета...</translation>
+        <source>Prepare for</source>
+        <translation>Підготувати для</translation>
     </message>
     <message>
-        <source>Exporting Full Resolution...</source>
-        <translation>Експорт у повній роздільності...</translation>
-    </message>
-    <message numerus="yes">
-        <source>Start Parallel Batch Export (%n Photos)</source>
-        <translation>
-            <numerusform>Почати паралельний пакетний експорт (%n фото)</numerusform>
-            <numerusform>Почати паралельний пакетний експорт (%n фото)</numerusform>
-            <numerusform>Почати паралельний пакетний експорт (%n фото)</numerusform>
-        </translation>
+        <source>Sets the crop and output sharpening for a platform. Reset restores your own.</source>
+        <translation>Задає кадрування та вихідну різкість для платформи. «Скинути» повертає ваші власні налаштування.</translation>
     </message>
     <message>
-        <source>Start Export (%1 / %2)</source>
-        <translation>Почати експорт (%1 / %2)</translation>
+        <source>Watermark</source>
+        <translation>Водяний знак</translation>
+    </message>
+    <message>
+        <source>Folder</source>
+        <translation>Тека</translation>
+    </message>
+    <message>
+        <source>Hide</source>
+        <translation>Сховати</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Скасувати</translation>
+    </message>
+    <message>
+        <source>Exporting…</source>
+        <translation>Експорт…</translation>
     </message>
 </context>
 <context>
     <name>FilmGrainPanel</name>
     <message>
-        <source>SILVER-HALIDE FILM GRAIN</source>
-        <translation>ЗЕРНО СРІБНОЇ ПЛІВКИ</translation>
+        <source>Grain</source>
+        <translation>Зерно</translation>
     </message>
     <message>
-        <source>RESET</source>
-        <translation>СКИНУТИ</translation>
+        <source>Reset</source>
+        <translation>Скинути</translation>
     </message>
     <message>
         <source>Grain Amount</source>
@@ -703,12 +747,16 @@
         <translation>Панорамний кінематографічний контраст 35 мм</translation>
     </message>
     <message>
-        <source>FILM SIMULATION &amp; SENSOR PROFILES</source>
-        <translation>СИМУЛЯЦІЯ ПЛІВКИ ТА ПРОФІЛІ МАТРИЦІ</translation>
+        <source>Profile</source>
+        <translation>Профіль</translation>
     </message>
     <message>
-        <source>RESET</source>
-        <translation>СКИНУТИ</translation>
+        <source>Reset</source>
+        <translation>Скинути</translation>
+    </message>
+    <message>
+        <source>Amount</source>
+        <translation>Сила</translation>
     </message>
     <message>
         <source>All</source>
@@ -718,17 +766,9 @@
         <source>Acros B&amp;W</source>
         <translation>Acros Ч/Б</translation>
     </message>
-    <message>
-        <source>SIMULATION INTENSITY</source>
-        <translation>ІНТЕНСИВНІСТЬ СИМУЛЯЦІЇ</translation>
-    </message>
 </context>
 <context>
     <name>Filmstrip</name>
-    <message>
-        <source>Local Photos</source>
-        <translation>Локальні фото</translation>
-    </message>
     <message>
         <source>Studio Catalog</source>
         <translation>Каталог студії</translation>
@@ -736,6 +776,14 @@
     <message>
         <source>Up</source>
         <translation>Угору</translation>
+    </message>
+    <message>
+        <source>Folders</source>
+        <translation>Теки</translation>
+    </message>
+    <message>
+        <source>Catalog</source>
+        <translation>Каталог</translation>
     </message>
     <message>
         <source>Scanning Catalog...</source>
@@ -762,21 +810,20 @@
         <translation>У цій теці немає фотографій.</translation>
     </message>
     <message>
-        <source>DIR</source>
-        <comment>folder badge</comment>
-        <translation>ТЕКА</translation>
+        <source>Folder</source>
+        <translation>Тека</translation>
     </message>
     <message>
-        <source>FETCHING</source>
-        <translation>ОТРИМАННЯ</translation>
+        <source>Downloading</source>
+        <translation>Завантаження</translation>
     </message>
     <message>
-        <source>RAW CLOUD</source>
-        <translation>RAW У ХМАРІ</translation>
+        <source>Remote</source>
+        <translation>Віддалене</translation>
     </message>
     <message>
-        <source>NO PREVIEW</source>
-        <translation>НЕМАЄ ПЕРЕГЛЯДУ</translation>
+        <source>No preview</source>
+        <translation>Немає попереднього перегляду</translation>
     </message>
     <message>
         <source>Loading...</source>
@@ -839,40 +886,60 @@
         <translation>Рецепти Fujifilm</translation>
     </message>
     <message>
-        <source>FUJIFILM RECIPES</source>
-        <translation>РЕЦЕПТИ FUJIFILM</translation>
+        <source>Import</source>
+        <translation>Імпорт</translation>
     </message>
     <message>
-        <source>IMPORT</source>
-        <translation>ІМПОРТ</translation>
+        <source>Apply photo&apos;s recipe</source>
+        <translation>Застосувати рецепт фото</translation>
     </message>
     <message>
-        <source>APPLY PHOTO&apos;S RECIPE</source>
-        <translation>ЗАСТОСУВАТИ РЕЦЕПТ ФОТО</translation>
+        <source>Save</source>
+        <translation>Зберегти</translation>
     </message>
     <message>
-        <source>SAVE</source>
-        <translation>ЗБЕРЕГТИ</translation>
+        <source>Apply recipe</source>
+        <translation>Застосувати рецепт</translation>
+    </message>
+    <message>
+        <source>Camera (USB)</source>
+        <translation>Камера (USB)</translation>
+    </message>
+    <message>
+        <source>Reconnect</source>
+        <translation>Перепідключити</translation>
+    </message>
+    <message>
+        <source>Connect</source>
+        <translation>Підключити</translation>
+    </message>
+    <message>
+        <source>Read C1–C7</source>
+        <translation>Прочитати C1–C7</translation>
+    </message>
+    <message>
+        <source>Convert in camera</source>
+        <translation>Конвертувати в камері</translation>
+    </message>
+    <message>
+        <source>Write recipe to C%1</source>
+        <translation>Записати рецепт у C%1</translation>
+    </message>
+    <message>
+        <source>Pixel shift</source>
+        <translation>Pixel Shift</translation>
+    </message>
+    <message>
+        <source>Merge %1 frames to DNG</source>
+        <translation>Об’єднати кадри (%1) у DNG</translation>
+    </message>
+    <message>
+        <source>Merge frames to DNG</source>
+        <translation>Об’єднати кадри у DNG</translation>
     </message>
     <message>
         <source>No saved recipes. Import an X RAW Studio profile, recipe text or a Fujifilm photo.</source>
         <translation>Немає збережених рецептів. Імпортуйте профіль X RAW Studio, текст рецепта або фото Fujifilm.</translation>
-    </message>
-    <message>
-        <source>APPLY SELECTED RECIPE</source>
-        <translation>ЗАСТОСУВАТИ ВИБРАНИЙ РЕЦЕПТ</translation>
-    </message>
-    <message>
-        <source>CAMERA (USB)</source>
-        <translation>КАМЕРА (USB)</translation>
-    </message>
-    <message>
-        <source>RECONNECT</source>
-        <translation>ПЕРЕПІД&apos;ЄДНАТИ</translation>
-    </message>
-    <message>
-        <source>CONNECT</source>
-        <translation>ПІД&apos;ЄДНАТИ</translation>
     </message>
     <message>
         <source>%1  ·  in-camera RAW conversion</source>
@@ -887,24 +954,8 @@
         <translation>Встановіть режим USB камери на %1 і під&apos;єднайте її.</translation>
     </message>
     <message>
-        <source>READ C1-C7</source>
-        <translation>ПРОЧИТАТИ C1-C7</translation>
-    </message>
-    <message>
-        <source>CONVERT IN CAMERA</source>
-        <translation>КОНВЕРТУВАТИ В КАМЕРІ</translation>
-    </message>
-    <message>
         <source>Unnamed</source>
         <translation>Без назви</translation>
-    </message>
-    <message>
-        <source>WRITE SELECTED RECIPE TO C%1</source>
-        <translation>ЗАПИСАТИ ВИБРАНИЙ РЕЦЕПТ У C%1</translation>
-    </message>
-    <message>
-        <source>PIXEL SHIFT MULTI-SHOT</source>
-        <translation>PIXEL SHIFT: КІЛЬКА КАДРІВ</translation>
     </message>
     <message numerus="yes">
         <source>%n RAF frames selected. 4 frames give full colour per pixel, 16 frames double the resolution.</source>
@@ -918,24 +969,12 @@
         <source>Select the RAF frames of one GFX Pixel Shift sequence in the filmstrip.</source>
         <translation>Виберіть на стрічці кадри RAF однієї серії GFX Pixel Shift.</translation>
     </message>
-    <message numerus="yes">
-        <source>MERGE %n FRAMES TO DNG</source>
-        <translation>
-            <numerusform>ОБ&apos;ЄДНАТИ %n КАДР У DNG</numerusform>
-            <numerusform>ОБ&apos;ЄДНАТИ %n КАДРИ У DNG</numerusform>
-            <numerusform>ОБ&apos;ЄДНАТИ %n КАДРІВ У DNG</numerusform>
-        </translation>
-    </message>
-    <message>
-        <source>MERGE FRAMES TO DNG</source>
-        <translation>ОБ&apos;ЄДНАТИ КАДРИ У DNG</translation>
-    </message>
 </context>
 <context>
     <name>GradeVersionsBar</name>
     <message>
-        <source>GRADE VERSION</source>
-        <translation>ВЕРСІЯ ГРЕЙДИНГУ</translation>
+        <source>Version</source>
+        <translation>Версія</translation>
     </message>
 </context>
 <context>
@@ -946,8 +985,8 @@
         <translation>[Т] %1%</translation>
     </message>
     <message>
-        <source>RGB HISTOGRAM</source>
-        <translation>ГІСТОГРАМА RGB</translation>
+        <source>Histogram</source>
+        <translation>Гістограма</translation>
     </message>
     <message>
         <source>[H] %1%</source>
@@ -994,12 +1033,12 @@
         <translation>Канал %1</translation>
     </message>
     <message>
-        <source>RESET CH</source>
-        <translation>СКИНУТИ КАНАЛ</translation>
+        <source>Reset colour</source>
+        <translation>Скинути колір</translation>
     </message>
     <message>
-        <source>RESET ALL</source>
-        <translation>СКИНУТИ ВСЕ</translation>
+        <source>Reset all</source>
+        <translation>Скинути все</translation>
     </message>
     <message>
         <source>Hue Shift</source>
@@ -1107,32 +1146,32 @@
         <translation>Маска %1 готова (%2)</translation>
     </message>
     <message>
-        <source>DETECTING...</source>
-        <translation>ВИЗНАЧЕННЯ...</translation>
+        <source>Detecting…</source>
+        <translation>Розпізнавання…</translation>
     </message>
     <message>
-        <source>LOCAL ADJUSTMENT LAYERS</source>
-        <translation>ШАРИ ЛОКАЛЬНОГО КОРИГУВАННЯ</translation>
+        <source>Masks</source>
+        <translation>Маски</translation>
     </message>
     <message>
-        <source>+ GRADIENT</source>
-        <translation>+ ГРАДІЄНТ</translation>
+        <source>+ Linear</source>
+        <translation>+ Лінійна</translation>
+    </message>
+    <message>
+        <source>+ Radial</source>
+        <translation>+ Радіальна</translation>
+    </message>
+    <message>
+        <source>+ Luminance</source>
+        <translation>+ Яскравість</translation>
     </message>
     <message>
         <source>Linear Gradient %1</source>
         <translation>Лінійний градієнт %1</translation>
     </message>
     <message>
-        <source>+ RADIAL</source>
-        <translation>+ РАДІАЛЬНИЙ</translation>
-    </message>
-    <message>
         <source>Radial Mask %1</source>
         <translation>Радіальна маска %1</translation>
-    </message>
-    <message>
-        <source>+ LUMA</source>
-        <translation>+ ЯСКРАВІСТЬ</translation>
     </message>
     <message>
         <source>Luma Range %1</source>
@@ -1150,10 +1189,6 @@
         <source>I</source>
         <comment>invert mask toggle, first letter of Invert</comment>
         <translation>І</translation>
-    </message>
-    <message>
-        <source>SELECTED LAYER CONTROLS (%1)</source>
-        <translation>НАЛАШТУВАННЯ ВИБРАНОГО ШАРУ (%1)</translation>
     </message>
     <message>
         <source>Layer Opacity</source>
@@ -1175,48 +1210,32 @@
 <context>
     <name>LutSelector</name>
     <message>
-        <source>DAVINCI 3D LUT ENGINE (.CUBE)</source>
-        <translation>РУШІЙ 3D LUT DAVINCI (.CUBE)</translation>
+        <source>Load 3D LUT</source>
+        <translation>Завантажити 3D LUT</translation>
     </message>
     <message>
-        <source>RESET</source>
-        <translation>СКИНУТИ</translation>
+        <source>3D LUT</source>
+        <translation>3D LUT</translation>
     </message>
     <message>
-        <source>Hollywood Print</source>
-        <translation>Голлівудська копія</translation>
+        <source>Reset</source>
+        <translation>Скинути</translation>
     </message>
     <message>
-        <source>Cinema Blockbuster</source>
-        <translation>Кіноблокбастер</translation>
+        <source>Load .cube file…</source>
+        <translation>Завантажити файл .cube…</translation>
     </message>
     <message>
-        <source>35mm Soft Stock</source>
-        <translation>М&apos;яка плівка 35 мм</translation>
+        <source>Saved look: %1</source>
+        <translation>Збережений стиль: %1</translation>
     </message>
     <message>
-        <source>High-Acutance B&amp;W</source>
-        <translation>Ч/Б з високою різкістю</translation>
-    </message>
-    <message>
-        <source>LUT Intensity (Mix)</source>
-        <translation>Інтенсивність LUT (змішування)</translation>
+        <source>Amount</source>
+        <translation>Сила</translation>
     </message>
 </context>
 <context>
     <name>MainWindow</name>
-    <message>
-        <source>Switched to version %1</source>
-        <translation>Перемкнено на версію %1</translation>
-    </message>
-    <message>
-        <source>Version %1 initialized</source>
-        <translation>Версію %1 створено</translation>
-    </message>
-    <message>
-        <source>Copied current grade to version %1</source>
-        <translation>Поточний грейдинг скопійовано у версію %1</translation>
-    </message>
     <message numerus="yes">
         <source>Rating: %n star(s)</source>
         <translation>
@@ -1246,36 +1265,8 @@
         <translation>Нічого скасовувати</translation>
     </message>
     <message>
-        <source>Undo (Ctrl+Z)</source>
-        <translation>Скасувати (Ctrl+Z)</translation>
-    </message>
-    <message>
         <source>Nothing to redo</source>
         <translation>Нічого повторювати</translation>
-    </message>
-    <message>
-        <source>Redo (Ctrl+Shift+Z)</source>
-        <translation>Повторити (Ctrl+Shift+Z)</translation>
-    </message>
-    <message>
-        <source>Adjustments copied (Ctrl+Shift+C)</source>
-        <translation>Налаштування скопійовано (Ctrl+Shift+C)</translation>
-    </message>
-    <message>
-        <source>No adjustments in clipboard</source>
-        <translation>У буфері обміну немає налаштувань</translation>
-    </message>
-    <message>
-        <source>Adjustments pasted (Ctrl+Shift+V)</source>
-        <translation>Налаштування вставлено (Ctrl+Shift+V)</translation>
-    </message>
-    <message>
-        <source>Reset to defaults (Ctrl+R)</source>
-        <translation>Відновлено типові значення (Ctrl+R)</translation>
-    </message>
-    <message>
-        <source>Social framing and adjustments reset</source>
-        <translation>Кадрування для соцмереж і налаштування скинуто</translation>
     </message>
     <message>
         <source>Failed to load RAW: %1</source>
@@ -1298,28 +1289,8 @@
         <translation>Не вдалося відобразити перегляд</translation>
     </message>
     <message>
-        <source>Auto tone applied</source>
-        <translation>Автотон застосовано</translation>
-    </message>
-    <message>
-        <source>AI decisions applied</source>
-        <translation>Рішення ШІ застосовано</translation>
-    </message>
-    <message>
-        <source>Local heuristic applied</source>
-        <translation>Локальну евристику застосовано</translation>
-    </message>
-    <message>
         <source>%1 applied (%2)</source>
         <translation>%1 застосовано (%2)</translation>
-    </message>
-    <message>
-        <source>Recipe sidecar saved</source>
-        <translation>Файл рецепта збережено</translation>
-    </message>
-    <message>
-        <source>Batch finished: %1/%2 photos exported</source>
-        <translation>Пакет завершено: експортовано %1/%2 фото</translation>
     </message>
     <message>
         <source>Batch export: %1 succeeded, %2 failed</source>
@@ -1342,14 +1313,6 @@
         <translation>Записано: %1</translation>
     </message>
     <message>
-        <source>Analyzing dynamic range and scene...</source>
-        <translation>Аналіз динамічного діапазону та сцени...</translation>
-    </message>
-    <message>
-        <source>Asking the AI for edit decisions...</source>
-        <translation>Запит рішень щодо редагування в ШІ...</translation>
-    </message>
-    <message>
         <source>Open RAW Photo</source>
         <translation>Відкрити фото RAW</translation>
     </message>
@@ -1358,20 +1321,8 @@
         <translation>Фото RAW</translation>
     </message>
     <message>
-        <source>Saved to: %1</source>
-        <translation>Збережено в: %1</translation>
-    </message>
-    <message>
-        <source>Export error: %1</source>
-        <translation>Помилка експорту: %1</translation>
-    </message>
-    <message>
         <source>Export finished without a result</source>
         <translation>Експорт завершився без результату</translation>
-    </message>
-    <message>
-        <source>The folder scan gave no answer</source>
-        <translation>Сканування теки не дало відповіді</translation>
     </message>
     <message>
         <source>Crop mode: on (C)</source>
@@ -1382,36 +1333,12 @@
         <translation>Режим кадрування: вимк.</translation>
     </message>
     <message>
-        <source>Open a photo first to export</source>
-        <translation>Спершу відкрийте фото для експорту</translation>
-    </message>
-    <message>
-        <source>Panels hidden (Tab)</source>
-        <translation>Панелі приховано (Tab)</translation>
-    </message>
-    <message>
-        <source>Panels restored (Tab)</source>
-        <translation>Панелі відновлено (Tab)</translation>
-    </message>
-    <message>
-        <source>Optimizing for %1...</source>
-        <translation>Оптимізація для %1...</translation>
-    </message>
-    <message>
-        <source>AI SCENE INSIGHT</source>
-        <translation>АНАЛІЗ СЦЕНИ ШІ</translation>
-    </message>
-    <message>
         <source>Analyzing...</source>
         <translation>Аналіз...</translation>
     </message>
     <message>
         <source>Extracting dynamic range...</source>
         <translation>Визначення динамічного діапазону...</translation>
-    </message>
-    <message>
-        <source>Grade versions • Alt+1..4 to switch</source>
-        <translation>Версії грейдингу • Alt+1..4 для перемикання</translation>
     </message>
     <message>
         <source>Opened %1</source>
@@ -1422,36 +1349,8 @@
         <translation>Сканування теки %1</translation>
     </message>
     <message>
-        <source>AI edit applied</source>
-        <translation>Редагування ШІ застосовано</translation>
-    </message>
-    <message>
-        <source>ESSENTIAL ADJUSTMENTS</source>
-        <translation>ОСНОВНІ НАЛАШТУВАННЯ</translation>
-    </message>
-    <message>
-        <source>RESET</source>
-        <translation>СКИНУТИ</translation>
-    </message>
-    <message>
-        <source>Exposure (Light)</source>
-        <translation>Експозиція (світло)</translation>
-    </message>
-    <message>
-        <source>Warmth (Temperature)</source>
-        <translation>Теплота (температура)</translation>
-    </message>
-    <message>
-        <source>Vibrance (Color Punch)</source>
-        <translation>Соковитість (сила кольору)</translation>
-    </message>
-    <message>
         <source>Contrast</source>
         <translation>Контраст</translation>
-    </message>
-    <message>
-        <source>WHITE BALANCE</source>
-        <translation>БАЛАНС БІЛОГО</translation>
     </message>
     <message>
         <source>Temp (Kelvin)</source>
@@ -1460,10 +1359,6 @@
     <message>
         <source>Tint (Green / Magenta)</source>
         <translation>Відтінок (зелений / пурпуровий)</translation>
-    </message>
-    <message>
-        <source>LIGHT &amp; DYNAMIC RANGE</source>
-        <translation>СВІТЛО ТА ДИНАМІЧНИЙ ДІАПАЗОН</translation>
     </message>
     <message>
         <source>Exposure</source>
@@ -1486,10 +1381,6 @@
         <translation>Чорні</translation>
     </message>
     <message>
-        <source>TONE CURVE (PARAMETRIC)</source>
-        <translation>ТОНОВА КРИВА (ПАРАМЕТРИЧНА)</translation>
-    </message>
-    <message>
         <source>Curve Highlights</source>
         <translation>Крива: світла</translation>
     </message>
@@ -1504,10 +1395,6 @@
     <message>
         <source>Curve Shadows</source>
         <translation>Крива: тіні</translation>
-    </message>
-    <message>
-        <source>PRESENCE &amp; TEXTURE</source>
-        <translation>ВИРАЗНІСТЬ І ТЕКСТУРА</translation>
     </message>
     <message>
         <source>Texture</source>
@@ -1528,14 +1415,6 @@
     <message>
         <source>Saturation</source>
         <translation>Насиченість</translation>
-    </message>
-    <message>
-        <source>COLOR MIXER (8-BAND HSL)</source>
-        <translation>КОЛЬОРОВИЙ МІКШЕР (HSL, 8 СМУГ)</translation>
-    </message>
-    <message>
-        <source>DETAIL &amp; OPTICS</source>
-        <translation>ДЕТАЛІ ТА ОПТИКА</translation>
     </message>
     <message>
         <source>Sharpening</source>
@@ -1566,12 +1445,200 @@
         <translation>Спершу відкрийте фото</translation>
     </message>
     <message>
+        <source>Version %1</source>
+        <translation>Версія %1</translation>
+    </message>
+    <message>
+        <source>Version %1 started</source>
+        <translation>Розпочато версію %1</translation>
+    </message>
+    <message>
+        <source>Copied to version %1</source>
+        <translation>Скопійовано до версії %1</translation>
+    </message>
+    <message>
+        <source>Undo</source>
+        <translation>Скасувати</translation>
+    </message>
+    <message>
+        <source>Redo</source>
+        <translation>Повторити</translation>
+    </message>
+    <message>
+        <source>Settings copied</source>
+        <translation>Налаштування скопійовано</translation>
+    </message>
+    <message>
+        <source>Nothing copied yet</source>
+        <translation>Ще нічого не скопійовано</translation>
+    </message>
+    <message>
+        <source>Settings pasted</source>
+        <translation>Налаштування вставлено</translation>
+    </message>
+    <message>
+        <source>Reset to defaults</source>
+        <translation>Відновлено типові значення</translation>
+    </message>
+    <message>
+        <source>Platform crop reset</source>
+        <translation>Кадрування для платформи скинуто</translation>
+    </message>
+    <message>
+        <source>Auto applied</source>
+        <translation>Автокорекцію застосовано</translation>
+    </message>
+    <message>
+        <source>Settings saved</source>
+        <translation>Налаштування збережено</translation>
+    </message>
+    <message>
+        <source>%1 of %2 photos exported</source>
+        <translation>Експортовано фото: %1 з %2</translation>
+    </message>
+    <message>
+        <source>Auto: analysing the photo…</source>
+        <translation>Авто: аналіз фото…</translation>
+    </message>
+    <message>
+        <source>Saved to %1</source>
+        <translation>Збережено в %1</translation>
+    </message>
+    <message>
+        <source>Export failed</source>
+        <translation>Помилка експорту</translation>
+    </message>
+    <message>
+        <source>The scan did not respond.</source>
+        <translation>Сканування теки не відповіло.</translation>
+    </message>
+    <message>
+        <source>Rating: ★</source>
+        <translation>Оцінка: ★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★</source>
+        <translation>Оцінка: ★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★</source>
+        <translation>Оцінка: ★★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★★</source>
+        <translation>Оцінка: ★★★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★★★</source>
+        <translation>Оцінка: ★★★★★</translation>
+    </message>
+    <message>
+        <source>Flag cleared</source>
+        <translation>Позначку знято</translation>
+    </message>
+    <message>
+        <source>Preparing for %1…</source>
+        <translation>Підготовка для %1…</translation>
+    </message>
+    <message>
+        <source>Rating: %1</source>
+        <translation>Оцінка: %1</translation>
+    </message>
+    <message>
+        <source>Picked</source>
+        <translation>Вибрано</translation>
+    </message>
+    <message>
+        <source>Rejected</source>
+        <translation>Відхилено</translation>
+    </message>
+    <message>
+        <source>Scene</source>
+        <translation>Сцена</translation>
+    </message>
+    <message>
+        <source>Adjust</source>
+        <translation>Налаштування</translation>
+    </message>
+    <message>
+        <source>Masks</source>
+        <translation>Маски</translation>
+    </message>
+    <message>
+        <source>Looks</source>
+        <translation>Стилі</translation>
+    </message>
+    <message>
+        <source>AI</source>
+        <translation>ШІ</translation>
+    </message>
+    <message>
+        <source>Profile</source>
+        <translation>Профіль</translation>
+    </message>
+    <message>
         <source>Color Chrome Effect</source>
         <translation>Ефект Color Chrome</translation>
     </message>
     <message>
         <source>Color Chrome FX Blue</source>
         <translation>Color Chrome FX Синій</translation>
+    </message>
+    <message>
+        <source>White balance</source>
+        <translation>Баланс білого</translation>
+    </message>
+    <message>
+        <source>Tone</source>
+        <translation>Тон</translation>
+    </message>
+    <message>
+        <source>Presence</source>
+        <translation>Присутність</translation>
+    </message>
+    <message>
+        <source>Tone curve</source>
+        <translation>Тонова крива</translation>
+    </message>
+    <message>
+        <source>Colour mixer</source>
+        <translation>Мікшер кольорів</translation>
+    </message>
+    <message>
+        <source>Colour grading</source>
+        <translation>Кольорокорекція</translation>
+    </message>
+    <message>
+        <source>Detail and optics</source>
+        <translation>Деталізація та оптика</translation>
+    </message>
+    <message>
+        <source>Grain</source>
+        <translation>Зерно</translation>
+    </message>
+    <message>
+        <source>Colour management</source>
+        <translation>Керування кольором</translation>
+    </message>
+    <message>
+        <source>Local adjustments</source>
+        <translation>Локальні корекції</translation>
+    </message>
+    <message>
+        <source>Presets</source>
+        <translation>Пресети</translation>
+    </message>
+    <message>
+        <source>LUT</source>
+        <translation>LUT</translation>
+    </message>
+    <message>
+        <source>Edit assistant</source>
+        <translation>Асистент редагування</translation>
+    </message>
+    <message>
+        <source>Assistant edit applied</source>
+        <translation>Правку асистента застосовано</translation>
     </message>
     <message>
         <source>Copy</source>
@@ -1606,31 +1673,31 @@
         <translation>Відкриття %1</translation>
     </message>
     <message>
-        <source>Loading the studio catalog...</source>
-        <translation>Завантаження каталогу студії...</translation>
+        <source>Loading the catalog…</source>
+        <translation>Завантаження каталогу…</translation>
     </message>
     <message>
-        <source>Refreshing the studio catalog...</source>
-        <translation>Оновлення каталогу студії...</translation>
+        <source>Refreshing the catalog…</source>
+        <translation>Оновлення каталогу…</translation>
     </message>
     <message numerus="yes">
-        <source>Exporting %n photo(s) in parallel...</source>
+        <source>Exporting %n photos…</source>
         <translation>
-            <numerusform>Паралельний експорт %n фото...</numerusform>
-            <numerusform>Паралельний експорт %n фото...</numerusform>
-            <numerusform>Паралельний експорт %n фото...</numerusform>
+            <numerusform>Експорт %n фото…</numerusform>
+            <numerusform>Експорт %n фото…</numerusform>
+            <numerusform>Експорт %n фото…</numerusform>
         </translation>
     </message>
     <message>
-        <source>Developing at full resolution and encoding...</source>
-        <translation>Проявлення в повній роздільності та кодування...</translation>
+        <source>Developing at full resolution…</source>
+        <translation>Проявлення в повній роздільності…</translation>
     </message>
 </context>
 <context>
     <name>Navigator</name>
     <message>
-        <source>NAVIGATOR</source>
-        <translation>НАВІГАТОР</translation>
+        <source>Navigator</source>
+        <translation>Навігатор</translation>
     </message>
     <message>
         <source>FIT</source>
@@ -1638,65 +1705,92 @@
     </message>
 </context>
 <context>
+    <name>PanelSection</name>
+    <message>
+        <source>Reset %1</source>
+        <translation>Скинути: %1</translation>
+    </message>
+</context>
+<context>
     <name>PresetSelector</name>
     <message>
-        <source>FILM LOOKS &amp; STYLES</source>
-        <translation>ПЛІВКОВІ ОБРАЗИ ТА СТИЛІ</translation>
+        <source>Looks</source>
+        <translation>Стилі</translation>
     </message>
     <message>
-        <source>RESET</source>
-        <translation>СКИНУТИ</translation>
+        <source>Reset</source>
+        <translation>Скинути</translation>
     </message>
     <message>
-        <source>AI Auto Enhance</source>
-        <translation>Автопокращення ШІ</translation>
+        <source>Auto</source>
+        <translation>Авто</translation>
     </message>
     <message>
-        <source>RUN</source>
-        <translation>ЗАПУСК</translation>
+        <source>Run</source>
+        <translation>Запустити</translation>
     </message>
     <message>
-        <source>Documentary Muted</source>
-        <translation>Приглушений документальний</translation>
+        <source>Muted</source>
+        <translation>Приглушений</translation>
     </message>
     <message>
-        <source>Vivid Landscapes</source>
-        <translation>Яскраві пейзажі</translation>
+        <source>Documentary, low saturation</source>
+        <translation>Документальний, низька насиченість</translation>
     </message>
     <message>
-        <source>Warm Skin Tones</source>
-        <translation>Теплі тони шкіри</translation>
+        <source>Vivid</source>
+        <translation>Яскравий</translation>
     </message>
     <message>
-        <source>High Contrast B&amp;W</source>
-        <translation>Контрастне Ч/Б</translation>
+        <source>Landscapes, rich colour</source>
+        <translation>Пейзажі, насичений колір</translation>
     </message>
     <message>
-        <source>Film Grade</source>
-        <translation>Плівковий грейдинг</translation>
+        <source>Warm portrait</source>
+        <translation>Теплий портрет</translation>
+    </message>
+    <message>
+        <source>Soft contrast, warm skin</source>
+        <translation>М’який контраст, тепла шкіра</translation>
+    </message>
+    <message>
+        <source>Black and white</source>
+        <translation>Чорно-білий</translation>
+    </message>
+    <message>
+        <source>High contrast</source>
+        <translation>Високий контраст</translation>
+    </message>
+    <message>
+        <source>Teal and orange</source>
+        <translation>Бірюзовий і помаранчевий</translation>
+    </message>
+    <message>
+        <source>Split toning</source>
+        <translation>Роздільне тонування</translation>
     </message>
 </context>
 <context>
     <name>RgbMixerPanel</name>
     <message>
-        <source>DAVINCI RGB PRIMARY MIXER</source>
-        <translation>ОСНОВНИЙ RGB-МІКШЕР DAVINCI</translation>
-    </message>
-    <message>
-        <source>RESET</source>
-        <translation>СКИНУТИ</translation>
-    </message>
-    <message>
         <source>Monochrome Mixing</source>
         <translation>Монохромне змішування</translation>
     </message>
     <message>
-        <source>MONOCHROME LUMA MIX</source>
-        <translation>МОНОХРОМНЕ ЗМІШУВАННЯ ЯСКРАВОСТІ</translation>
+        <source>Channel mixer</source>
+        <translation>Мікшер каналів</translation>
     </message>
     <message>
-        <source>RED OUTPUT CHANNEL</source>
-        <translation>ЧЕРВОНИЙ ВИХІДНИЙ КАНАЛ</translation>
+        <source>Reset</source>
+        <translation>Скинути</translation>
+    </message>
+    <message>
+        <source>Monochrome mix</source>
+        <translation>Монохромне змішування</translation>
+    </message>
+    <message>
+        <source>Red output</source>
+        <translation>Червоний вихід</translation>
     </message>
     <message>
         <source>Red in Red</source>
@@ -1711,8 +1805,12 @@
         <translation>Синій у червоному</translation>
     </message>
     <message>
-        <source>GREEN OUTPUT CHANNEL</source>
-        <translation>ЗЕЛЕНИЙ ВИХІДНИЙ КАНАЛ</translation>
+        <source>Green output</source>
+        <translation>Зелений вихід</translation>
+    </message>
+    <message>
+        <source>Blue output</source>
+        <translation>Синій вихід</translation>
     </message>
     <message>
         <source>Red in Green</source>
@@ -1725,10 +1823,6 @@
     <message>
         <source>Blue in Green</source>
         <translation>Синій у зеленому</translation>
-    </message>
-    <message>
-        <source>BLUE OUTPUT CHANNEL</source>
-        <translation>СИНІЙ ВИХІДНИЙ КАНАЛ</translation>
     </message>
     <message>
         <source>Red in Blue</source>
@@ -1772,8 +1866,8 @@
         <translation>[С] %1%</translation>
     </message>
     <message>
-        <source>NO SIGNAL / LOAD RAW</source>
-        <translation>НЕМАЄ СИГНАЛУ / ЗАВАНТАЖТЕ RAW</translation>
+        <source>No photo</source>
+        <translation>Немає фото</translation>
     </message>
     <message>
         <source>RED</source>
@@ -1795,12 +1889,12 @@
 <context>
     <name>SkinTonePanel</name>
     <message>
-        <source>CAPTURE ONE SKIN TONE</source>
-        <translation>ТОН ШКІРИ CAPTURE ONE</translation>
+        <source>Skin tone</source>
+        <translation>Тон шкіри</translation>
     </message>
     <message>
-        <source>RESET</source>
-        <translation>СКИНУТИ</translation>
+        <source>Reset</source>
+        <translation>Скинути</translation>
     </message>
     <message>
         <source>Vectorscope 123° flesh line (target: %1°)</source>
@@ -1841,52 +1935,28 @@
 <context>
     <name>SocialOptimizer</name>
     <message>
-        <source>AI SOCIAL MEDIA OPTIMIZER</source>
-        <translation>ОПТИМІЗАЦІЯ ДЛЯ СОЦМЕРЕЖ З ШІ</translation>
+        <source>Prepare for</source>
+        <translation>Підготувати для</translation>
     </message>
     <message>
-        <source>RESET</source>
-        <translation>СКИНУТИ</translation>
+        <source>Reset</source>
+        <translation>Скинути</translation>
     </message>
     <message>
-        <source>Instagram Feed</source>
-        <translation>Стрічка Instagram</translation>
+        <source>Instagram post</source>
+        <translation>Допис в Instagram</translation>
     </message>
     <message>
-        <source>Max Screen</source>
-        <translation>Максимальний екран</translation>
+        <source>Stories and Reels</source>
+        <translation>Історії та Reels</translation>
     </message>
     <message>
-        <source>Stories / Reels</source>
-        <translation>Історії / Reels</translation>
+        <source>Square</source>
+        <translation>Квадрат</translation>
     </message>
     <message>
-        <source>Full Mobile</source>
-        <translation>Повний екран телефона</translation>
-    </message>
-    <message>
-        <source>Crisp Feed</source>
-        <translation>Чітка стрічка</translation>
-    </message>
-    <message>
-        <source>Classic Square</source>
-        <translation>Класичний квадрат</translation>
-    </message>
-    <message>
-        <source>Grid Post</source>
-        <translation>Допис у сітці</translation>
-    </message>
-    <message>
-        <source>High Res</source>
-        <translation>Висока роздільність</translation>
-    </message>
-    <message>
-        <source>YouTube Thumb</source>
-        <translation>Мініатюра YouTube</translation>
-    </message>
-    <message>
-        <source>High CTR</source>
-        <translation>Високий CTR</translation>
+        <source>YouTube thumbnail</source>
+        <translation>Обкладинка YouTube</translation>
     </message>
 </context>
 <context>
@@ -1921,8 +1991,8 @@
         <translation>Основне</translation>
     </message>
     <message>
-        <source>Pro Studio</source>
-        <translation>Pro Studio</translation>
+        <source>Pro</source>
+        <translation>Pro</translation>
     </message>
     <message>
         <source>Undo (Ctrl+Z)</source>
@@ -1960,16 +2030,16 @@
 <context>
     <name>Viewport</name>
     <message>
-        <source>RESET 0°</source>
-        <translation>СКИНУТИ 0°</translation>
+        <source>Reset 0°</source>
+        <translation>Скинути до 0°</translation>
     </message>
     <message>
-        <source>FIT</source>
-        <translation>ВПИСАТИ</translation>
+        <source>Fit</source>
+        <translation>Вписати</translation>
     </message>
     <message>
-        <source>CROP &amp; COMPOSE</source>
-        <translation>КАДРУВАННЯ ТА КОМПОЗИЦІЯ</translation>
+        <source>Crop</source>
+        <translation>Кадрувати</translation>
     </message>
     <message>
         <source>Original</source>
@@ -1996,12 +2066,20 @@
         <translation>Сітка: вимк.</translation>
     </message>
     <message>
-        <source>RESET</source>
-        <translation>СКИНУТИ</translation>
+        <source>Reset</source>
+        <translation>Скинути</translation>
     </message>
     <message>
-        <source>DONE</source>
-        <translation>ГОТОВО</translation>
+        <source>Done</source>
+        <translation>Готово</translation>
+    </message>
+    <message>
+        <source>Shadow clipping</source>
+        <translation>Обрізання тіней</translation>
+    </message>
+    <message>
+        <source>Highlight clipping</source>
+        <translation>Обрізання світел</translation>
     </message>
     <message>
         <source>ORIGINAL RAW (Before)</source>
@@ -2010,18 +2088,6 @@
     <message>
         <source>EDITED RECIPE (After)</source>
         <translation>ЗМІНЕНИЙ РЕЦЕПТ (після)</translation>
-    </message>
-    <message>
-        <source>[S] SHADOW CLIPPING (BLUE)</source>
-        <translation>[Т] ОБРІЗАННЯ ТІНЕЙ (СИНІЙ)</translation>
-    </message>
-    <message>
-        <source>[H] HIGHLIGHT CLIPPING (RED)</source>
-        <translation>[С] ОБРІЗАННЯ СВІТЕЛ (ЧЕРВОНИЙ)</translation>
-    </message>
-    <message>
-        <source>Pinch: Zoom | 2-Finger Twist: Rotate | 2-Finger Pan | Double-Tap: Reset</source>
-        <translation>Щипок: масштаб | Поворот двома пальцями: обертання | Зсув двома пальцями | Подвійний дотик: скидання</translation>
     </message>
     <message>
         <source>Open a RAW (Ctrl+O) or drop a photo / folder here</source>
@@ -2035,8 +2101,8 @@
 <context>
     <name>WatermarkConfig</name>
     <message>
-        <source>WATERMARK &amp; BRANDING</source>
-        <translation>ВОДЯНИЙ ЗНАК І ФІРМОВИЙ СТИЛЬ</translation>
+        <source>Watermark</source>
+        <translation>Водяний знак</translation>
     </message>
     <message>
         <source>Text / EXIF Tag</source>
@@ -2047,28 +2113,28 @@
         <translation>Власний логотип PNG</translation>
     </message>
     <message>
-        <source>WATERMARK TEXT OR TEMPLATE</source>
-        <translation>ТЕКСТ АБО ШАБЛОН ВОДЯНОГО ЗНАКА</translation>
+        <source>Text or template</source>
+        <translation>Текст або шаблон</translation>
     </message>
     <message>
-        <source>LOGO FILE PATH (.PNG)</source>
-        <translation>ШЛЯХ ДО ЛОГОТИПА (.PNG)</translation>
+        <source>Logo file (PNG)</source>
+        <translation>Файл логотипа (PNG)</translation>
     </message>
     <message>
-        <source>POSITION</source>
-        <translation>ПОЛОЖЕННЯ</translation>
+        <source>Position</source>
+        <translation>Положення</translation>
+    </message>
+    <message>
+        <source>Opacity</source>
+        <translation>Непрозорість</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>Розмір</translation>
     </message>
     <message>
         <source>Drop Shadow</source>
         <translation>Тінь</translation>
-    </message>
-    <message>
-        <source>OPACITY</source>
-        <translation>НЕПРОЗОРІСТЬ</translation>
-    </message>
-    <message>
-        <source>SIZE MULTIPLIER</source>
-        <translation>МНОЖНИК РОЗМІРУ</translation>
     </message>
 </context>
 </TS>

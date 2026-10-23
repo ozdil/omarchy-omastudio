@@ -4,6 +4,8 @@ import QtQuick.Controls
 
 Rectangle {
     id: root
+    // Inside a panel section, which shows the title
+    property bool embedded: false
     Layout.fillWidth: true
     implicitHeight: mainCol.implicitHeight + 20
     radius: Theme.radiusMd
@@ -29,7 +31,8 @@ Rectangle {
             spacing: 6
 
             Text {
-                text: qsTr("SILVER-HALIDE FILM GRAIN")
+                visible: !root.embedded
+                text: qsTr("Grain")
                 textFormat: Text.PlainText
                 font.family: Theme.fontFamily
                 font.pixelSize: Theme.px(10)
@@ -50,7 +53,7 @@ Rectangle {
                 Text {
                     id: resetGrainText
                     anchors.centerIn: parent
-                    text: qsTr("RESET")
+                    text: qsTr("Reset")
                     textFormat: Text.PlainText
                     font.family: Theme.monoFont
                     font.pixelSize: Theme.px(8)

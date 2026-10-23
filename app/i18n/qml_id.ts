@@ -175,28 +175,36 @@
         <translation>Gagal</translation>
     </message>
     <message>
-        <source>AI EDIT ASSISTANT</source>
-        <translation>ASISTEN EDIT AI</translation>
+        <source>Assistant</source>
+        <translation>Asisten</translation>
     </message>
     <message>
-        <source>DONE</source>
-        <translation>SELESAI</translation>
+        <source>Done</source>
+        <translation>Selesai</translation>
     </message>
     <message>
-        <source>SETUP</source>
-        <translation>PENYIAPAN</translation>
+        <source>Set up</source>
+        <translation>Siapkan</translation>
+    </message>
+    <message>
+        <source>Working…</source>
+        <translation>Sedang bekerja…</translation>
+    </message>
+    <message>
+        <source>Edit</source>
+        <translation>Sunting</translation>
+    </message>
+    <message>
+        <source>Store key</source>
+        <translation>Simpan kunci</translation>
+    </message>
+    <message>
+        <source>Use %1</source>
+        <translation>Gunakan %1</translation>
     </message>
     <message>
         <source>e.g. warmer, moody evening light, recover the sky</source>
         <translation>mis. lebih hangat, cahaya senja yang muram, pulihkan langit</translation>
-    </message>
-    <message>
-        <source>THINKING...</source>
-        <translation>BERPIKIR...</translation>
-    </message>
-    <message>
-        <source>EDIT WITH AI</source>
-        <translation>EDIT DENGAN AI</translation>
     </message>
     <message>
         <source>Running. Models: %1</source>
@@ -222,14 +230,6 @@
         <source>API key</source>
         <translation>Kunci API</translation>
     </message>
-    <message>
-        <source>STORE KEY</source>
-        <translation>SIMPAN KUNCI</translation>
-    </message>
-    <message>
-        <source>USE %1</source>
-        <translation>PAKAI %1</translation>
-    </message>
 </context>
 <context>
     <name>BoundedTextInput</name>
@@ -241,48 +241,16 @@
 <context>
     <name>ColorGradingWheels</name>
     <message>
-        <source>DAVINCI PRIMARIES WHEELS</source>
-        <translation>RODA PRIMER DAVINCI</translation>
-    </message>
-    <message>
-        <source>4-WHEEL</source>
-        <translation>4 RODA</translation>
-    </message>
-    <message>
-        <source>TABBED</source>
-        <translation>TAB</translation>
-    </message>
-    <message>
-        <source>RESET</source>
-        <translation>ATUR ULANG</translation>
-    </message>
-    <message>
-        <source>LIFT</source>
-        <translation>LIFT</translation>
-    </message>
-    <message>
         <source>Shadows</source>
         <translation>Bayangan</translation>
-    </message>
-    <message>
-        <source>GAMMA</source>
-        <translation>GAMMA</translation>
     </message>
     <message>
         <source>Mids</source>
         <translation>Nada tengah</translation>
     </message>
     <message>
-        <source>GAIN</source>
-        <translation>GAIN</translation>
-    </message>
-    <message>
         <source>Highlights</source>
         <translation>Sorotan</translation>
-    </message>
-    <message>
-        <source>OFFSET</source>
-        <translation>OFFSET</translation>
     </message>
     <message>
         <source>Global</source>
@@ -307,6 +275,22 @@
     <message>
         <source>Lift</source>
         <translation>Lift</translation>
+    </message>
+    <message>
+        <source>Colour grading</source>
+        <translation>Gradasi warna</translation>
+    </message>
+    <message>
+        <source>4 wheels</source>
+        <translation>4 roda</translation>
+    </message>
+    <message>
+        <source>Tabs</source>
+        <translation>Tab</translation>
+    </message>
+    <message>
+        <source>Reset</source>
+        <translation>Atur ulang</translation>
     </message>
     <message>
         <source>Gamma</source>
@@ -368,8 +352,12 @@
         <translation>AP1 lebar</translation>
     </message>
     <message>
-        <source>COLOR MANAGEMENT &amp; ACES 1.3</source>
-        <translation>MANAJEMEN WARNA &amp; ACES 1.3</translation>
+        <source>Colour management</source>
+        <translation>Manajemen warna</translation>
+    </message>
+    <message>
+        <source>Gamut compression</source>
+        <translation>Kompresi gamut</translation>
     </message>
     <message>
         <source>%1 (%2)</source>
@@ -394,113 +382,161 @@
 <context>
     <name>ExifCard</name>
     <message>
-        <source>No camera loaded</source>
-        <translation>Tidak ada kamera yang dimuat</translation>
-    </message>
-    <message>
-        <source>Unknown lens</source>
-        <translation>Lensa tidak dikenal</translation>
+        <source>No photo</source>
+        <translation>Tidak ada foto</translation>
     </message>
 </context>
 <context>
     <name>ExportDialog</name>
-    <message numerus="yes">
-        <source>Batch Export (%n Photos)</source>
-        <translation>
-            <numerusform>Ekspor massal (%n foto)</numerusform>
-        </translation>
-    </message>
-    <message>
-        <source>Export Master Photo</source>
-        <translation>Ekspor foto master</translation>
-    </message>
-    <message>
-        <source>MODERN OPEN FORMAT</source>
-        <translation>FORMAT TERBUKA MODERN</translation>
-    </message>
-    <message>
-        <source>Next-Gen 16-bit HDR</source>
-        <translation>HDR 16-bit generasi baru</translation>
-    </message>
-    <message>
-        <source>AV1 Web/Mobile</source>
-        <translation>AV1 web/seluler</translation>
-    </message>
-    <message>
-        <source>Ultra Compact</source>
-        <translation>Sangat ringkas</translation>
-    </message>
-    <message>
-        <source>16-bit TIFF</source>
-        <translation>TIFF 16-bit</translation>
-    </message>
-    <message>
-        <source>Master Print Lossless</source>
-        <translation>Cetak master lossless</translation>
-    </message>
-    <message>
-        <source>Graphic Lossless</source>
-        <translation>Grafik lossless</translation>
-    </message>
-    <message>
-        <source>Universal MozJPEG</source>
-        <translation>MozJPEG universal</translation>
-    </message>
-    <message>
-        <source>Export Compression Quality</source>
-        <translation>Kualitas kompresi ekspor</translation>
-    </message>
-    <message>
-        <source>RESOLUTION &amp; SCALING</source>
-        <translation>RESOLUSI &amp; SKALA</translation>
-    </message>
-    <message>
-        <source>100% Full</source>
-        <translation>100% penuh</translation>
-    </message>
-    <message>
-        <source>Social (2048p)</source>
-        <translation>Media sosial (2048p)</translation>
-    </message>
-    <message>
-        <source>COLOR SPACE &amp; ICC PROFILE</source>
-        <translation>RUANG WARNA &amp; PROFIL ICC</translation>
-    </message>
-    <message>
-        <source>Universal Web / Social</source>
-        <translation>Web / media sosial universal</translation>
-    </message>
-    <message>
-        <source>Apple / Wide OLED</source>
-        <translation>Apple / OLED lebar</translation>
-    </message>
-    <message>
-        <source>Ultra-Wide Gamut HDR</source>
-        <translation>HDR gamut sangat lebar</translation>
-    </message>
-    <message>
-        <source>Academy Color Standard</source>
-        <translation>Standar warna Academy</translation>
-    </message>
-    <message>
-        <source>Pro Photography / Print</source>
-        <translation>Fotografi profesional / cetak</translation>
-    </message>
-    <message>
-        <source>16-Bit Master Archival</source>
-        <translation>Arsip master 16-bit</translation>
-    </message>
-    <message>
-        <source>Intent</source>
-        <translation>Metode rendering</translation>
-    </message>
     <message>
         <source>Perceptual</source>
         <translation>Perseptual</translation>
     </message>
     <message>
-        <source>Compresses the whole gamut; smooth, saturated colours keep their relations</source>
-        <translation>Memampatkan seluruh gamut; warna lembut dan jenuh tetap menjaga hubungannya</translation>
+        <source>8-bit · universal</source>
+        <translation>8-bit · umum</translation>
+    </message>
+    <message>
+        <source>16-bit · lossless</source>
+        <translation>16-bit · tanpa kehilangan</translation>
+    </message>
+    <message>
+        <source>16-bit · print, archive</source>
+        <translation>16-bit · cetak, arsip</translation>
+    </message>
+    <message>
+        <source>8-bit · web</source>
+        <translation>8-bit · web</translation>
+    </message>
+    <message>
+        <source>12-bit · HDR-ready</source>
+        <translation>12-bit · siap HDR</translation>
+    </message>
+    <message>
+        <source>10-bit · HEVC</source>
+        <translation>10-bit · HEVC</translation>
+    </message>
+    <message>
+        <source>16-bit · modern</source>
+        <translation>16-bit · modern</translation>
+    </message>
+    <message>
+        <source>Float · scene-linear</source>
+        <translation>Floating point · linear adegan</translation>
+    </message>
+    <message numerus="yes">
+        <source>Export %n photos</source>
+        <translation>
+            <numerusform>Ekspor %n foto</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>Export</source>
+        <translation>Ekspor</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>Tutup</translation>
+    </message>
+    <message>
+        <source>Format</source>
+        <translation>Format berkas</translation>
+    </message>
+    <message>
+        <source>Quality</source>
+        <translation>Kualitas</translation>
+    </message>
+    <message>
+        <source>100 is lossless.</source>
+        <translation>100 berarti tanpa kehilangan.</translation>
+    </message>
+    <message>
+        <source>Bit depth</source>
+        <translation>Kedalaman bit</translation>
+    </message>
+    <message>
+        <source>Half float</source>
+        <translation>Floating point setengah presisi</translation>
+    </message>
+    <message>
+        <source>Full float</source>
+        <translation>Floating point presisi penuh</translation>
+    </message>
+    <message>
+        <source>%1-bit</source>
+        <translation>%1-bit</translation>
+    </message>
+    <message>
+        <source>Compression</source>
+        <translation>Kompresi</translation>
+    </message>
+    <message>
+        <source>None</source>
+        <translation>Tidak ada</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>Ukuran</translation>
+    </message>
+    <message>
+        <source>Full</source>
+        <translation>Penuh</translation>
+    </message>
+    <message>
+        <source>3840 px</source>
+        <translation>3840 piksel</translation>
+    </message>
+    <message>
+        <source>Long edge at most 3840 px</source>
+        <translation>Sisi panjang maksimal 3840 piksel</translation>
+    </message>
+    <message>
+        <source>2048 px</source>
+        <translation>2048 piksel</translation>
+    </message>
+    <message>
+        <source>Long edge at most 2048 px</source>
+        <translation>Sisi panjang maksimal 2048 piksel</translation>
+    </message>
+    <message>
+        <source>Colour profile</source>
+        <translation>Profil warna</translation>
+    </message>
+    <message>
+        <source>Web, screens</source>
+        <translation>Web, layar</translation>
+    </message>
+    <message>
+        <source>Wide-gamut screens</source>
+        <translation>Layar gamut lebar</translation>
+    </message>
+    <message>
+        <source>Print</source>
+        <translation>Cetak</translation>
+    </message>
+    <message>
+        <source>Editing, archive</source>
+        <translation>Penyuntingan, arsip</translation>
+    </message>
+    <message>
+        <source>HDR, video</source>
+        <translation>HDR, video</translation>
+    </message>
+    <message>
+        <source>Linear, VFX</source>
+        <translation>Linear, efek visual</translation>
+    </message>
+    <message>
+        <source>OpenEXR is written scene-linear in the chosen primaries.</source>
+        <translation>OpenEXR ditulis linear adegan dalam warna primer yang dipilih.</translation>
+    </message>
+    <message>
+        <source>Rendering intent</source>
+        <translation>Tujuan rendering</translation>
+    </message>
+    <message>
+        <source>Compresses the whole gamut; colour relations are kept</source>
+        <translation>Memampatkan seluruh gamut; hubungan antarwarna tetap terjaga</translation>
     </message>
     <message>
         <source>Relative</source>
@@ -527,45 +563,55 @@
         <translation>Warna tepat termasuk titik putih sumber; untuk proofing</translation>
     </message>
     <message>
-        <source>Preserve Camera EXIF</source>
-        <translation>Pertahankan EXIF kamera</translation>
+        <source>Metadata</source>
+        <translation>Metadata</translation>
     </message>
     <message>
-        <source>Strip GPS (Privacy)</source>
-        <translation>Hapus GPS (privasi)</translation>
+        <source>Keep camera metadata (EXIF)</source>
+        <translation>Pertahankan metadata kamera (EXIF)</translation>
     </message>
     <message>
-        <source>Apply Photography Watermark / EXIF Signature</source>
-        <translation>Terapkan tanda air / tanda tangan EXIF</translation>
+        <source>Remove location (GPS)</source>
+        <translation>Hapus lokasi (GPS)</translation>
     </message>
     <message>
-        <source>Exporting Batch...</source>
-        <translation>Mengekspor batch...</translation>
+        <source>Prepare for</source>
+        <translation>Siapkan untuk</translation>
     </message>
     <message>
-        <source>Exporting Full Resolution...</source>
-        <translation>Mengekspor dalam resolusi penuh...</translation>
-    </message>
-    <message numerus="yes">
-        <source>Start Parallel Batch Export (%n Photos)</source>
-        <translation>
-            <numerusform>Mulai ekspor massal paralel (%n foto)</numerusform>
-        </translation>
+        <source>Sets the crop and output sharpening for a platform. Reset restores your own.</source>
+        <translation>Mengatur pemangkasan dan penajaman keluaran untuk sebuah platform. Atur ulang mengembalikan pengaturan Anda sendiri.</translation>
     </message>
     <message>
-        <source>Start Export (%1 / %2)</source>
-        <translation>Mulai ekspor (%1 / %2)</translation>
+        <source>Watermark</source>
+        <translation>Tanda air</translation>
+    </message>
+    <message>
+        <source>Folder</source>
+        <translation>Folder</translation>
+    </message>
+    <message>
+        <source>Hide</source>
+        <translation>Sembunyikan</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Batal</translation>
+    </message>
+    <message>
+        <source>Exporting…</source>
+        <translation>Mengekspor…</translation>
     </message>
 </context>
 <context>
     <name>FilmGrainPanel</name>
     <message>
-        <source>SILVER-HALIDE FILM GRAIN</source>
-        <translation>BUTIRAN FILM PERAK HALIDA</translation>
+        <source>Grain</source>
+        <translation>Butiran</translation>
     </message>
     <message>
-        <source>RESET</source>
-        <translation>ATUR ULANG</translation>
+        <source>Reset</source>
+        <translation>Atur ulang</translation>
     </message>
     <message>
         <source>Grain Amount</source>
@@ -699,12 +745,16 @@
         <translation>Kontras sinematik panorama 35 mm</translation>
     </message>
     <message>
-        <source>FILM SIMULATION &amp; SENSOR PROFILES</source>
-        <translation>SIMULASI FILM &amp; PROFIL SENSOR</translation>
+        <source>Profile</source>
+        <translation>Profil</translation>
     </message>
     <message>
-        <source>RESET</source>
-        <translation>ATUR ULANG</translation>
+        <source>Reset</source>
+        <translation>Atur ulang</translation>
+    </message>
+    <message>
+        <source>Amount</source>
+        <translation>Jumlah</translation>
     </message>
     <message>
         <source>All</source>
@@ -714,17 +764,9 @@
         <source>Acros B&amp;W</source>
         <translation>Acros H/P</translation>
     </message>
-    <message>
-        <source>SIMULATION INTENSITY</source>
-        <translation>INTENSITAS SIMULASI</translation>
-    </message>
 </context>
 <context>
     <name>Filmstrip</name>
-    <message>
-        <source>Local Photos</source>
-        <translation>Foto lokal</translation>
-    </message>
     <message>
         <source>Studio Catalog</source>
         <translation>Katalog studio</translation>
@@ -732,6 +774,14 @@
     <message>
         <source>Up</source>
         <translation>Naik</translation>
+    </message>
+    <message>
+        <source>Folders</source>
+        <translation>Folder</translation>
+    </message>
+    <message>
+        <source>Catalog</source>
+        <translation>Katalog</translation>
     </message>
     <message>
         <source>Scanning Catalog...</source>
@@ -758,21 +808,20 @@
         <translation>Tidak ada foto di folder ini.</translation>
     </message>
     <message>
-        <source>DIR</source>
-        <comment>folder badge</comment>
-        <translation>MAP</translation>
+        <source>Folder</source>
+        <translation>Folder</translation>
     </message>
     <message>
-        <source>FETCHING</source>
-        <translation>MENGAMBIL</translation>
+        <source>Downloading</source>
+        <translation>Mengunduh</translation>
     </message>
     <message>
-        <source>RAW CLOUD</source>
-        <translation>RAW DI CLOUD</translation>
+        <source>Remote</source>
+        <translation>Jarak jauh</translation>
     </message>
     <message>
-        <source>NO PREVIEW</source>
-        <translation>TANPA PRATINJAU</translation>
+        <source>No preview</source>
+        <translation>Tidak ada pratinjau</translation>
     </message>
     <message>
         <source>Loading...</source>
@@ -833,40 +882,60 @@
         <translation>Resep Fujifilm</translation>
     </message>
     <message>
-        <source>FUJIFILM RECIPES</source>
-        <translation>RESEP FUJIFILM</translation>
+        <source>Import</source>
+        <translation>Impor</translation>
     </message>
     <message>
-        <source>IMPORT</source>
-        <translation>IMPOR</translation>
+        <source>Apply photo&apos;s recipe</source>
+        <translation>Terapkan resep foto</translation>
     </message>
     <message>
-        <source>APPLY PHOTO&apos;S RECIPE</source>
-        <translation>TERAPKAN RESEP FOTO</translation>
+        <source>Save</source>
+        <translation>Simpan</translation>
     </message>
     <message>
-        <source>SAVE</source>
-        <translation>SIMPAN</translation>
+        <source>Apply recipe</source>
+        <translation>Terapkan resep</translation>
+    </message>
+    <message>
+        <source>Camera (USB)</source>
+        <translation>Kamera (USB)</translation>
+    </message>
+    <message>
+        <source>Reconnect</source>
+        <translation>Sambungkan ulang</translation>
+    </message>
+    <message>
+        <source>Connect</source>
+        <translation>Sambungkan</translation>
+    </message>
+    <message>
+        <source>Read C1–C7</source>
+        <translation>Baca C1–C7</translation>
+    </message>
+    <message>
+        <source>Convert in camera</source>
+        <translation>Konversi di kamera</translation>
+    </message>
+    <message>
+        <source>Write recipe to C%1</source>
+        <translation>Tulis resep ke C%1</translation>
+    </message>
+    <message>
+        <source>Pixel shift</source>
+        <translation>Pixel Shift</translation>
+    </message>
+    <message>
+        <source>Merge %1 frames to DNG</source>
+        <translation>Gabungkan %1 bingkai menjadi DNG</translation>
+    </message>
+    <message>
+        <source>Merge frames to DNG</source>
+        <translation>Gabungkan bingkai menjadi DNG</translation>
     </message>
     <message>
         <source>No saved recipes. Import an X RAW Studio profile, recipe text or a Fujifilm photo.</source>
         <translation>Belum ada resep tersimpan. Impor profil X RAW Studio, teks resep, atau foto Fujifilm.</translation>
-    </message>
-    <message>
-        <source>APPLY SELECTED RECIPE</source>
-        <translation>TERAPKAN RESEP TERPILIH</translation>
-    </message>
-    <message>
-        <source>CAMERA (USB)</source>
-        <translation>KAMERA (USB)</translation>
-    </message>
-    <message>
-        <source>RECONNECT</source>
-        <translation>SAMBUNGKAN ULANG</translation>
-    </message>
-    <message>
-        <source>CONNECT</source>
-        <translation>SAMBUNGKAN</translation>
     </message>
     <message>
         <source>%1  ·  in-camera RAW conversion</source>
@@ -881,24 +950,8 @@
         <translation>Atur mode USB kamera ke %1 lalu sambungkan.</translation>
     </message>
     <message>
-        <source>READ C1-C7</source>
-        <translation>BACA C1-C7</translation>
-    </message>
-    <message>
-        <source>CONVERT IN CAMERA</source>
-        <translation>KONVERSI DI KAMERA</translation>
-    </message>
-    <message>
         <source>Unnamed</source>
         <translation>Tanpa nama</translation>
-    </message>
-    <message>
-        <source>WRITE SELECTED RECIPE TO C%1</source>
-        <translation>TULIS RESEP TERPILIH KE C%1</translation>
-    </message>
-    <message>
-        <source>PIXEL SHIFT MULTI-SHOT</source>
-        <translation>PIXEL SHIFT MULTI-SHOT</translation>
     </message>
     <message numerus="yes">
         <source>%n RAF frames selected. 4 frames give full colour per pixel, 16 frames double the resolution.</source>
@@ -910,22 +963,12 @@
         <source>Select the RAF frames of one GFX Pixel Shift sequence in the filmstrip.</source>
         <translation>Pilih bingkai RAF dari satu urutan GFX Pixel Shift di strip film.</translation>
     </message>
-    <message numerus="yes">
-        <source>MERGE %n FRAMES TO DNG</source>
-        <translation>
-            <numerusform>GABUNGKAN %n BINGKAI KE DNG</numerusform>
-        </translation>
-    </message>
-    <message>
-        <source>MERGE FRAMES TO DNG</source>
-        <translation>GABUNGKAN BINGKAI KE DNG</translation>
-    </message>
 </context>
 <context>
     <name>GradeVersionsBar</name>
     <message>
-        <source>GRADE VERSION</source>
-        <translation>VERSI GRADING</translation>
+        <source>Version</source>
+        <translation>Versi</translation>
     </message>
 </context>
 <context>
@@ -936,8 +979,8 @@
         <translation>[B] %1%</translation>
     </message>
     <message>
-        <source>RGB HISTOGRAM</source>
-        <translation>HISTOGRAM RGB</translation>
+        <source>Histogram</source>
+        <translation>Histogram</translation>
     </message>
     <message>
         <source>[H] %1%</source>
@@ -984,12 +1027,12 @@
         <translation>Kanal %1</translation>
     </message>
     <message>
-        <source>RESET CH</source>
-        <translation>ATUR ULANG KANAL</translation>
+        <source>Reset colour</source>
+        <translation>Atur ulang warna</translation>
     </message>
     <message>
-        <source>RESET ALL</source>
-        <translation>ATUR ULANG SEMUA</translation>
+        <source>Reset all</source>
+        <translation>Atur ulang semua</translation>
     </message>
     <message>
         <source>Hue Shift</source>
@@ -1097,32 +1140,32 @@
         <translation>Masker %1 siap (%2)</translation>
     </message>
     <message>
-        <source>DETECTING...</source>
-        <translation>MENDETEKSI...</translation>
+        <source>Detecting…</source>
+        <translation>Mendeteksi…</translation>
     </message>
     <message>
-        <source>LOCAL ADJUSTMENT LAYERS</source>
-        <translation>LAPISAN PENYESUAIAN LOKAL</translation>
+        <source>Masks</source>
+        <translation>Masker</translation>
     </message>
     <message>
-        <source>+ GRADIENT</source>
-        <translation>+ GRADASI</translation>
+        <source>+ Linear</source>
+        <translation>+ Linear</translation>
+    </message>
+    <message>
+        <source>+ Radial</source>
+        <translation>+ Radial</translation>
+    </message>
+    <message>
+        <source>+ Luminance</source>
+        <translation>+ Luminans</translation>
     </message>
     <message>
         <source>Linear Gradient %1</source>
         <translation>Gradasi linear %1</translation>
     </message>
     <message>
-        <source>+ RADIAL</source>
-        <translation>+ RADIAL</translation>
-    </message>
-    <message>
         <source>Radial Mask %1</source>
         <translation>Masker radial %1</translation>
-    </message>
-    <message>
-        <source>+ LUMA</source>
-        <translation>+ LUMA</translation>
     </message>
     <message>
         <source>Luma Range %1</source>
@@ -1140,10 +1183,6 @@
         <source>I</source>
         <comment>invert mask toggle, first letter of Invert</comment>
         <translation>B</translation>
-    </message>
-    <message>
-        <source>SELECTED LAYER CONTROLS (%1)</source>
-        <translation>KONTROL LAPISAN TERPILIH (%1)</translation>
     </message>
     <message>
         <source>Layer Opacity</source>
@@ -1165,48 +1204,32 @@
 <context>
     <name>LutSelector</name>
     <message>
-        <source>DAVINCI 3D LUT ENGINE (.CUBE)</source>
-        <translation>MESIN 3D LUT DAVINCI (.CUBE)</translation>
+        <source>Load 3D LUT</source>
+        <translation>Muat LUT 3D</translation>
     </message>
     <message>
-        <source>RESET</source>
-        <translation>ATUR ULANG</translation>
+        <source>3D LUT</source>
+        <translation>LUT 3D</translation>
     </message>
     <message>
-        <source>Hollywood Print</source>
-        <translation>Cetak Hollywood</translation>
+        <source>Reset</source>
+        <translation>Atur ulang</translation>
     </message>
     <message>
-        <source>Cinema Blockbuster</source>
-        <translation>Film laris bioskop</translation>
+        <source>Load .cube file…</source>
+        <translation>Muat berkas .cube…</translation>
     </message>
     <message>
-        <source>35mm Soft Stock</source>
-        <translation>Film 35 mm lembut</translation>
+        <source>Saved look: %1</source>
+        <translation>Tampilan tersimpan: %1</translation>
     </message>
     <message>
-        <source>High-Acutance B&amp;W</source>
-        <translation>H/P ketajaman tinggi</translation>
-    </message>
-    <message>
-        <source>LUT Intensity (Mix)</source>
-        <translation>Intensitas LUT (campuran)</translation>
+        <source>Amount</source>
+        <translation>Jumlah</translation>
     </message>
 </context>
 <context>
     <name>MainWindow</name>
-    <message>
-        <source>Switched to version %1</source>
-        <translation>Beralih ke versi %1</translation>
-    </message>
-    <message>
-        <source>Version %1 initialized</source>
-        <translation>Versi %1 dibuat</translation>
-    </message>
-    <message>
-        <source>Copied current grade to version %1</source>
-        <translation>Grading saat ini disalin ke versi %1</translation>
-    </message>
     <message numerus="yes">
         <source>Rating: %n star(s)</source>
         <translation>
@@ -1234,36 +1257,8 @@
         <translation>Tidak ada yang bisa diurungkan</translation>
     </message>
     <message>
-        <source>Undo (Ctrl+Z)</source>
-        <translation>Urungkan (Ctrl+Z)</translation>
-    </message>
-    <message>
         <source>Nothing to redo</source>
         <translation>Tidak ada yang bisa diulang</translation>
-    </message>
-    <message>
-        <source>Redo (Ctrl+Shift+Z)</source>
-        <translation>Ulangi (Ctrl+Shift+Z)</translation>
-    </message>
-    <message>
-        <source>Adjustments copied (Ctrl+Shift+C)</source>
-        <translation>Penyesuaian disalin (Ctrl+Shift+C)</translation>
-    </message>
-    <message>
-        <source>No adjustments in clipboard</source>
-        <translation>Tidak ada penyesuaian di papan klip</translation>
-    </message>
-    <message>
-        <source>Adjustments pasted (Ctrl+Shift+V)</source>
-        <translation>Penyesuaian ditempel (Ctrl+Shift+V)</translation>
-    </message>
-    <message>
-        <source>Reset to defaults (Ctrl+R)</source>
-        <translation>Diatur ulang ke bawaan (Ctrl+R)</translation>
-    </message>
-    <message>
-        <source>Social framing and adjustments reset</source>
-        <translation>Pembingkaian media sosial dan penyesuaian diatur ulang</translation>
     </message>
     <message>
         <source>Failed to load RAW: %1</source>
@@ -1286,28 +1281,8 @@
         <translation>Render pratinjau gagal</translation>
     </message>
     <message>
-        <source>Auto tone applied</source>
-        <translation>Nada otomatis diterapkan</translation>
-    </message>
-    <message>
-        <source>AI decisions applied</source>
-        <translation>Keputusan AI diterapkan</translation>
-    </message>
-    <message>
-        <source>Local heuristic applied</source>
-        <translation>Heuristik lokal diterapkan</translation>
-    </message>
-    <message>
         <source>%1 applied (%2)</source>
         <translation>%1 diterapkan (%2)</translation>
-    </message>
-    <message>
-        <source>Recipe sidecar saved</source>
-        <translation>File pendamping resep disimpan</translation>
-    </message>
-    <message>
-        <source>Batch finished: %1/%2 photos exported</source>
-        <translation>Batch selesai: %1/%2 foto diekspor</translation>
     </message>
     <message>
         <source>Batch export: %1 succeeded, %2 failed</source>
@@ -1330,14 +1305,6 @@
         <translation>Menulis %1</translation>
     </message>
     <message>
-        <source>Analyzing dynamic range and scene...</source>
-        <translation>Menganalisis rentang dinamis dan adegan...</translation>
-    </message>
-    <message>
-        <source>Asking the AI for edit decisions...</source>
-        <translation>Meminta keputusan edit dari AI...</translation>
-    </message>
-    <message>
         <source>Open RAW Photo</source>
         <translation>Buka foto RAW</translation>
     </message>
@@ -1346,20 +1313,8 @@
         <translation>Foto RAW</translation>
     </message>
     <message>
-        <source>Saved to: %1</source>
-        <translation>Disimpan ke: %1</translation>
-    </message>
-    <message>
-        <source>Export error: %1</source>
-        <translation>Galat ekspor: %1</translation>
-    </message>
-    <message>
         <source>Export finished without a result</source>
         <translation>Ekspor selesai tanpa hasil</translation>
-    </message>
-    <message>
-        <source>The folder scan gave no answer</source>
-        <translation>Pemindaian folder tidak menjawab</translation>
     </message>
     <message>
         <source>Crop mode: on (C)</source>
@@ -1370,36 +1325,12 @@
         <translation>Mode pangkas: mati</translation>
     </message>
     <message>
-        <source>Open a photo first to export</source>
-        <translation>Buka foto terlebih dahulu untuk mengekspor</translation>
-    </message>
-    <message>
-        <source>Panels hidden (Tab)</source>
-        <translation>Panel disembunyikan (Tab)</translation>
-    </message>
-    <message>
-        <source>Panels restored (Tab)</source>
-        <translation>Panel dipulihkan (Tab)</translation>
-    </message>
-    <message>
-        <source>Optimizing for %1...</source>
-        <translation>Mengoptimalkan untuk %1...</translation>
-    </message>
-    <message>
-        <source>AI SCENE INSIGHT</source>
-        <translation>ANALISIS ADEGAN AI</translation>
-    </message>
-    <message>
         <source>Analyzing...</source>
         <translation>Menganalisis...</translation>
     </message>
     <message>
         <source>Extracting dynamic range...</source>
         <translation>Mengekstrak rentang dinamis...</translation>
-    </message>
-    <message>
-        <source>Grade versions • Alt+1..4 to switch</source>
-        <translation>Versi grading • Alt+1..4 untuk beralih</translation>
     </message>
     <message>
         <source>Opened %1</source>
@@ -1410,36 +1341,8 @@
         <translation>Memindai folder %1</translation>
     </message>
     <message>
-        <source>AI edit applied</source>
-        <translation>Edit AI diterapkan</translation>
-    </message>
-    <message>
-        <source>ESSENTIAL ADJUSTMENTS</source>
-        <translation>PENYESUAIAN DASAR</translation>
-    </message>
-    <message>
-        <source>RESET</source>
-        <translation>ATUR ULANG</translation>
-    </message>
-    <message>
-        <source>Exposure (Light)</source>
-        <translation>Eksposur (cahaya)</translation>
-    </message>
-    <message>
-        <source>Warmth (Temperature)</source>
-        <translation>Kehangatan (suhu)</translation>
-    </message>
-    <message>
-        <source>Vibrance (Color Punch)</source>
-        <translation>Vibransi (kekuatan warna)</translation>
-    </message>
-    <message>
         <source>Contrast</source>
         <translation>Kontras</translation>
-    </message>
-    <message>
-        <source>WHITE BALANCE</source>
-        <translation>KESEIMBANGAN PUTIH</translation>
     </message>
     <message>
         <source>Temp (Kelvin)</source>
@@ -1448,10 +1351,6 @@
     <message>
         <source>Tint (Green / Magenta)</source>
         <translation>Rona (hijau / magenta)</translation>
-    </message>
-    <message>
-        <source>LIGHT &amp; DYNAMIC RANGE</source>
-        <translation>CAHAYA &amp; RENTANG DINAMIS</translation>
     </message>
     <message>
         <source>Exposure</source>
@@ -1474,10 +1373,6 @@
         <translation>Hitam</translation>
     </message>
     <message>
-        <source>TONE CURVE (PARAMETRIC)</source>
-        <translation>KURVA NADA (PARAMETRIK)</translation>
-    </message>
-    <message>
         <source>Curve Highlights</source>
         <translation>Kurva sorotan</translation>
     </message>
@@ -1492,10 +1387,6 @@
     <message>
         <source>Curve Shadows</source>
         <translation>Kurva bayangan</translation>
-    </message>
-    <message>
-        <source>PRESENCE &amp; TEXTURE</source>
-        <translation>KEHADIRAN &amp; TEKSTUR</translation>
     </message>
     <message>
         <source>Texture</source>
@@ -1516,14 +1407,6 @@
     <message>
         <source>Saturation</source>
         <translation>Saturasi</translation>
-    </message>
-    <message>
-        <source>COLOR MIXER (8-BAND HSL)</source>
-        <translation>PENCAMPUR WARNA (HSL 8 PITA)</translation>
-    </message>
-    <message>
-        <source>DETAIL &amp; OPTICS</source>
-        <translation>DETAIL &amp; OPTIK</translation>
     </message>
     <message>
         <source>Sharpening</source>
@@ -1554,12 +1437,200 @@
         <translation>Buka foto terlebih dahulu</translation>
     </message>
     <message>
+        <source>Version %1</source>
+        <translation>Versi %1</translation>
+    </message>
+    <message>
+        <source>Version %1 started</source>
+        <translation>Versi %1 dimulai</translation>
+    </message>
+    <message>
+        <source>Copied to version %1</source>
+        <translation>Disalin ke versi %1</translation>
+    </message>
+    <message>
+        <source>Undo</source>
+        <translation>Urungkan</translation>
+    </message>
+    <message>
+        <source>Redo</source>
+        <translation>Ulangi</translation>
+    </message>
+    <message>
+        <source>Settings copied</source>
+        <translation>Pengaturan disalin</translation>
+    </message>
+    <message>
+        <source>Nothing copied yet</source>
+        <translation>Belum ada yang disalin</translation>
+    </message>
+    <message>
+        <source>Settings pasted</source>
+        <translation>Pengaturan ditempel</translation>
+    </message>
+    <message>
+        <source>Reset to defaults</source>
+        <translation>Diatur ulang ke bawaan</translation>
+    </message>
+    <message>
+        <source>Platform crop reset</source>
+        <translation>Pemangkasan platform diatur ulang</translation>
+    </message>
+    <message>
+        <source>Auto applied</source>
+        <translation>Penyesuaian otomatis diterapkan</translation>
+    </message>
+    <message>
+        <source>Settings saved</source>
+        <translation>Pengaturan disimpan</translation>
+    </message>
+    <message>
+        <source>%1 of %2 photos exported</source>
+        <translation>%1 dari %2 foto diekspor</translation>
+    </message>
+    <message>
+        <source>Auto: analysing the photo…</source>
+        <translation>Otomatis: menganalisis foto…</translation>
+    </message>
+    <message>
+        <source>Saved to %1</source>
+        <translation>Disimpan ke %1</translation>
+    </message>
+    <message>
+        <source>Export failed</source>
+        <translation>Ekspor gagal</translation>
+    </message>
+    <message>
+        <source>The scan did not respond.</source>
+        <translation>Pemindaian folder tidak merespons.</translation>
+    </message>
+    <message>
+        <source>Rating: ★</source>
+        <translation>Peringkat: ★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★</source>
+        <translation>Peringkat: ★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★</source>
+        <translation>Peringkat: ★★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★★</source>
+        <translation>Peringkat: ★★★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★★★</source>
+        <translation>Peringkat: ★★★★★</translation>
+    </message>
+    <message>
+        <source>Flag cleared</source>
+        <translation>Tanda dihapus</translation>
+    </message>
+    <message>
+        <source>Preparing for %1…</source>
+        <translation>Menyiapkan untuk %1…</translation>
+    </message>
+    <message>
+        <source>Rating: %1</source>
+        <translation>Peringkat: %1</translation>
+    </message>
+    <message>
+        <source>Picked</source>
+        <translation>Dipilih</translation>
+    </message>
+    <message>
+        <source>Rejected</source>
+        <translation>Ditolak</translation>
+    </message>
+    <message>
+        <source>Scene</source>
+        <translation>Adegan</translation>
+    </message>
+    <message>
+        <source>Adjust</source>
+        <translation>Sesuaikan</translation>
+    </message>
+    <message>
+        <source>Masks</source>
+        <translation>Masker</translation>
+    </message>
+    <message>
+        <source>Looks</source>
+        <translation>Gaya</translation>
+    </message>
+    <message>
+        <source>AI</source>
+        <translation>AI</translation>
+    </message>
+    <message>
+        <source>Profile</source>
+        <translation>Profil</translation>
+    </message>
+    <message>
         <source>Color Chrome Effect</source>
         <translation>Efek Color Chrome</translation>
     </message>
     <message>
         <source>Color Chrome FX Blue</source>
         <translation>Color Chrome FX Biru</translation>
+    </message>
+    <message>
+        <source>White balance</source>
+        <translation>Keseimbangan putih</translation>
+    </message>
+    <message>
+        <source>Tone</source>
+        <translation>Nada</translation>
+    </message>
+    <message>
+        <source>Presence</source>
+        <translation>Kehadiran</translation>
+    </message>
+    <message>
+        <source>Tone curve</source>
+        <translation>Kurva nada</translation>
+    </message>
+    <message>
+        <source>Colour mixer</source>
+        <translation>Mixer warna</translation>
+    </message>
+    <message>
+        <source>Colour grading</source>
+        <translation>Gradasi warna</translation>
+    </message>
+    <message>
+        <source>Detail and optics</source>
+        <translation>Detail dan optik</translation>
+    </message>
+    <message>
+        <source>Grain</source>
+        <translation>Butiran</translation>
+    </message>
+    <message>
+        <source>Colour management</source>
+        <translation>Manajemen warna</translation>
+    </message>
+    <message>
+        <source>Local adjustments</source>
+        <translation>Penyesuaian lokal</translation>
+    </message>
+    <message>
+        <source>Presets</source>
+        <translation>Preset</translation>
+    </message>
+    <message>
+        <source>LUT</source>
+        <translation>LUT</translation>
+    </message>
+    <message>
+        <source>Edit assistant</source>
+        <translation>Asisten penyuntingan</translation>
+    </message>
+    <message>
+        <source>Assistant edit applied</source>
+        <translation>Suntingan asisten diterapkan</translation>
     </message>
     <message>
         <source>Copy</source>
@@ -1594,29 +1665,29 @@
         <translation>Membuka %1</translation>
     </message>
     <message>
-        <source>Loading the studio catalog...</source>
-        <translation>Memuat katalog studio...</translation>
+        <source>Loading the catalog…</source>
+        <translation>Memuat katalog…</translation>
     </message>
     <message>
-        <source>Refreshing the studio catalog...</source>
-        <translation>Menyegarkan katalog studio...</translation>
+        <source>Refreshing the catalog…</source>
+        <translation>Menyegarkan katalog…</translation>
     </message>
     <message numerus="yes">
-        <source>Exporting %n photo(s) in parallel...</source>
+        <source>Exporting %n photos…</source>
         <translation>
-            <numerusform>Mengekspor %n foto secara paralel...</numerusform>
+            <numerusform>Mengekspor %n foto…</numerusform>
         </translation>
     </message>
     <message>
-        <source>Developing at full resolution and encoding...</source>
-        <translation>Mengembangkan dalam resolusi penuh dan menyandikan...</translation>
+        <source>Developing at full resolution…</source>
+        <translation>Mengembangkan dalam resolusi penuh…</translation>
     </message>
 </context>
 <context>
     <name>Navigator</name>
     <message>
-        <source>NAVIGATOR</source>
-        <translation>NAVIGATOR</translation>
+        <source>Navigator</source>
+        <translation>Navigator</translation>
     </message>
     <message>
         <source>FIT</source>
@@ -1624,65 +1695,92 @@
     </message>
 </context>
 <context>
+    <name>PanelSection</name>
+    <message>
+        <source>Reset %1</source>
+        <translation>Atur ulang %1</translation>
+    </message>
+</context>
+<context>
     <name>PresetSelector</name>
     <message>
-        <source>FILM LOOKS &amp; STYLES</source>
-        <translation>TAMPILAN &amp; GAYA FILM</translation>
+        <source>Looks</source>
+        <translation>Gaya</translation>
     </message>
     <message>
-        <source>RESET</source>
-        <translation>ATUR ULANG</translation>
+        <source>Reset</source>
+        <translation>Atur ulang</translation>
     </message>
     <message>
-        <source>AI Auto Enhance</source>
-        <translation>Peningkatan otomatis AI</translation>
+        <source>Auto</source>
+        <translation>Otomatis</translation>
     </message>
     <message>
-        <source>RUN</source>
-        <translation>JALANKAN</translation>
+        <source>Run</source>
+        <translation>Jalankan</translation>
     </message>
     <message>
-        <source>Documentary Muted</source>
-        <translation>Dokumenter redup</translation>
+        <source>Muted</source>
+        <translation>Redup</translation>
     </message>
     <message>
-        <source>Vivid Landscapes</source>
-        <translation>Lanskap hidup</translation>
+        <source>Documentary, low saturation</source>
+        <translation>Dokumenter, saturasi rendah</translation>
     </message>
     <message>
-        <source>Warm Skin Tones</source>
-        <translation>Warna kulit hangat</translation>
+        <source>Vivid</source>
+        <translation>Cerah</translation>
     </message>
     <message>
-        <source>High Contrast B&amp;W</source>
-        <translation>H/P kontras tinggi</translation>
+        <source>Landscapes, rich colour</source>
+        <translation>Lanskap, warna kaya</translation>
     </message>
     <message>
-        <source>Film Grade</source>
-        <translation>Grading film</translation>
+        <source>Warm portrait</source>
+        <translation>Potret hangat</translation>
+    </message>
+    <message>
+        <source>Soft contrast, warm skin</source>
+        <translation>Kontras lembut, kulit hangat</translation>
+    </message>
+    <message>
+        <source>Black and white</source>
+        <translation>Hitam putih</translation>
+    </message>
+    <message>
+        <source>High contrast</source>
+        <translation>Kontras tinggi</translation>
+    </message>
+    <message>
+        <source>Teal and orange</source>
+        <translation>Teal dan oranye</translation>
+    </message>
+    <message>
+        <source>Split toning</source>
+        <translation>Pewarnaan terpisah</translation>
     </message>
 </context>
 <context>
     <name>RgbMixerPanel</name>
     <message>
-        <source>DAVINCI RGB PRIMARY MIXER</source>
-        <translation>PENCAMPUR RGB PRIMER DAVINCI</translation>
-    </message>
-    <message>
-        <source>RESET</source>
-        <translation>ATUR ULANG</translation>
-    </message>
-    <message>
         <source>Monochrome Mixing</source>
         <translation>Pencampuran monokrom</translation>
     </message>
     <message>
-        <source>MONOCHROME LUMA MIX</source>
-        <translation>CAMPURAN LUMA MONOKROM</translation>
+        <source>Channel mixer</source>
+        <translation>Mixer kanal</translation>
     </message>
     <message>
-        <source>RED OUTPUT CHANNEL</source>
-        <translation>KANAL KELUARAN MERAH</translation>
+        <source>Reset</source>
+        <translation>Atur ulang</translation>
+    </message>
+    <message>
+        <source>Monochrome mix</source>
+        <translation>Campuran monokrom</translation>
+    </message>
+    <message>
+        <source>Red output</source>
+        <translation>Keluaran merah</translation>
     </message>
     <message>
         <source>Red in Red</source>
@@ -1697,8 +1795,12 @@
         <translation>Biru di merah</translation>
     </message>
     <message>
-        <source>GREEN OUTPUT CHANNEL</source>
-        <translation>KANAL KELUARAN HIJAU</translation>
+        <source>Green output</source>
+        <translation>Keluaran hijau</translation>
+    </message>
+    <message>
+        <source>Blue output</source>
+        <translation>Keluaran biru</translation>
     </message>
     <message>
         <source>Red in Green</source>
@@ -1711,10 +1813,6 @@
     <message>
         <source>Blue in Green</source>
         <translation>Biru di hijau</translation>
-    </message>
-    <message>
-        <source>BLUE OUTPUT CHANNEL</source>
-        <translation>KANAL KELUARAN BIRU</translation>
     </message>
     <message>
         <source>Red in Blue</source>
@@ -1758,8 +1856,8 @@
         <translation>[S] %1%</translation>
     </message>
     <message>
-        <source>NO SIGNAL / LOAD RAW</source>
-        <translation>TANPA SINYAL / MUAT RAW</translation>
+        <source>No photo</source>
+        <translation>Tidak ada foto</translation>
     </message>
     <message>
         <source>RED</source>
@@ -1781,12 +1879,12 @@
 <context>
     <name>SkinTonePanel</name>
     <message>
-        <source>CAPTURE ONE SKIN TONE</source>
-        <translation>WARNA KULIT CAPTURE ONE</translation>
+        <source>Skin tone</source>
+        <translation>Warna kulit</translation>
     </message>
     <message>
-        <source>RESET</source>
-        <translation>ATUR ULANG</translation>
+        <source>Reset</source>
+        <translation>Atur ulang</translation>
     </message>
     <message>
         <source>Vectorscope 123° flesh line (target: %1°)</source>
@@ -1827,52 +1925,28 @@
 <context>
     <name>SocialOptimizer</name>
     <message>
-        <source>AI SOCIAL MEDIA OPTIMIZER</source>
-        <translation>PENGOPTIMAL MEDIA SOSIAL AI</translation>
+        <source>Prepare for</source>
+        <translation>Siapkan untuk</translation>
     </message>
     <message>
-        <source>RESET</source>
-        <translation>ATUR ULANG</translation>
+        <source>Reset</source>
+        <translation>Atur ulang</translation>
     </message>
     <message>
-        <source>Instagram Feed</source>
-        <translation>Feed Instagram</translation>
+        <source>Instagram post</source>
+        <translation>Postingan Instagram</translation>
     </message>
     <message>
-        <source>Max Screen</source>
-        <translation>Layar maksimum</translation>
+        <source>Stories and Reels</source>
+        <translation>Stories dan Reels</translation>
     </message>
     <message>
-        <source>Stories / Reels</source>
-        <translation>Stories / Reels</translation>
+        <source>Square</source>
+        <translation>Persegi</translation>
     </message>
     <message>
-        <source>Full Mobile</source>
-        <translation>Layar ponsel penuh</translation>
-    </message>
-    <message>
-        <source>Crisp Feed</source>
-        <translation>Feed tajam</translation>
-    </message>
-    <message>
-        <source>Classic Square</source>
-        <translation>Persegi klasik</translation>
-    </message>
-    <message>
-        <source>Grid Post</source>
-        <translation>Postingan grid</translation>
-    </message>
-    <message>
-        <source>High Res</source>
-        <translation>Resolusi tinggi</translation>
-    </message>
-    <message>
-        <source>YouTube Thumb</source>
-        <translation>Gambar mini YouTube</translation>
-    </message>
-    <message>
-        <source>High CTR</source>
-        <translation>CTR tinggi</translation>
+        <source>YouTube thumbnail</source>
+        <translation>Thumbnail YouTube</translation>
     </message>
 </context>
 <context>
@@ -1907,8 +1981,8 @@
         <translation>Dasar</translation>
     </message>
     <message>
-        <source>Pro Studio</source>
-        <translation>Pro Studio</translation>
+        <source>Pro</source>
+        <translation>Pro</translation>
     </message>
     <message>
         <source>Undo (Ctrl+Z)</source>
@@ -1946,16 +2020,16 @@
 <context>
     <name>Viewport</name>
     <message>
-        <source>RESET 0°</source>
-        <translation>ATUR ULANG 0°</translation>
+        <source>Reset 0°</source>
+        <translation>Atur ulang ke 0°</translation>
     </message>
     <message>
-        <source>FIT</source>
-        <translation>PAS</translation>
+        <source>Fit</source>
+        <translation>Pas</translation>
     </message>
     <message>
-        <source>CROP &amp; COMPOSE</source>
-        <translation>PANGKAS &amp; KOMPOSISI</translation>
+        <source>Crop</source>
+        <translation>Pangkas</translation>
     </message>
     <message>
         <source>Original</source>
@@ -1982,12 +2056,20 @@
         <translation>Kisi: mati</translation>
     </message>
     <message>
-        <source>RESET</source>
-        <translation>ATUR ULANG</translation>
+        <source>Reset</source>
+        <translation>Atur ulang</translation>
     </message>
     <message>
-        <source>DONE</source>
-        <translation>SELESAI</translation>
+        <source>Done</source>
+        <translation>Selesai</translation>
+    </message>
+    <message>
+        <source>Shadow clipping</source>
+        <translation>Kliping bayangan</translation>
+    </message>
+    <message>
+        <source>Highlight clipping</source>
+        <translation>Kliping sorotan</translation>
     </message>
     <message>
         <source>ORIGINAL RAW (Before)</source>
@@ -1996,18 +2078,6 @@
     <message>
         <source>EDITED RECIPE (After)</source>
         <translation>RESEP TEREDIT (sesudah)</translation>
-    </message>
-    <message>
-        <source>[S] SHADOW CLIPPING (BLUE)</source>
-        <translation>[B] BAYANGAN TERPOTONG (BIRU)</translation>
-    </message>
-    <message>
-        <source>[H] HIGHLIGHT CLIPPING (RED)</source>
-        <translation>[S] SOROTAN TERPOTONG (MERAH)</translation>
-    </message>
-    <message>
-        <source>Pinch: Zoom | 2-Finger Twist: Rotate | 2-Finger Pan | Double-Tap: Reset</source>
-        <translation>Cubit: zoom | Putar 2 jari: rotasi | Geser 2 jari | Ketuk ganda: atur ulang</translation>
     </message>
     <message>
         <source>Open a RAW (Ctrl+O) or drop a photo / folder here</source>
@@ -2021,8 +2091,8 @@
 <context>
     <name>WatermarkConfig</name>
     <message>
-        <source>WATERMARK &amp; BRANDING</source>
-        <translation>TANDA AIR &amp; IDENTITAS</translation>
+        <source>Watermark</source>
+        <translation>Tanda air</translation>
     </message>
     <message>
         <source>Text / EXIF Tag</source>
@@ -2033,28 +2103,28 @@
         <translation>Logo PNG kustom</translation>
     </message>
     <message>
-        <source>WATERMARK TEXT OR TEMPLATE</source>
-        <translation>TEKS ATAU TEMPLAT TANDA AIR</translation>
+        <source>Text or template</source>
+        <translation>Teks atau templat</translation>
     </message>
     <message>
-        <source>LOGO FILE PATH (.PNG)</source>
-        <translation>JALUR FILE LOGO (.PNG)</translation>
+        <source>Logo file (PNG)</source>
+        <translation>Berkas logo (PNG)</translation>
     </message>
     <message>
-        <source>POSITION</source>
-        <translation>POSISI</translation>
+        <source>Position</source>
+        <translation>Posisi</translation>
+    </message>
+    <message>
+        <source>Opacity</source>
+        <translation>Opasitas</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>Ukuran</translation>
     </message>
     <message>
         <source>Drop Shadow</source>
         <translation>Bayangan jatuh</translation>
-    </message>
-    <message>
-        <source>OPACITY</source>
-        <translation>OPASITAS</translation>
-    </message>
-    <message>
-        <source>SIZE MULTIPLIER</source>
-        <translation>PENGALI UKURAN</translation>
     </message>
 </context>
 </TS>

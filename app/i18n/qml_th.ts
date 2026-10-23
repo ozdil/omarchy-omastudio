@@ -175,28 +175,36 @@
         <translation>ล้มเหลว</translation>
     </message>
     <message>
-        <source>AI EDIT ASSISTANT</source>
-        <translation>ผู้ช่วยแก้ไขด้วย AI</translation>
+        <source>Assistant</source>
+        <translation>ผู้ช่วย</translation>
     </message>
     <message>
-        <source>DONE</source>
+        <source>Done</source>
         <translation>เสร็จสิ้น</translation>
     </message>
     <message>
-        <source>SETUP</source>
+        <source>Set up</source>
         <translation>ตั้งค่า</translation>
+    </message>
+    <message>
+        <source>Working…</source>
+        <translation>กำลังทำงาน…</translation>
+    </message>
+    <message>
+        <source>Edit</source>
+        <translation>แก้ไข</translation>
+    </message>
+    <message>
+        <source>Store key</source>
+        <translation>บันทึกคีย์</translation>
+    </message>
+    <message>
+        <source>Use %1</source>
+        <translation>ใช้ %1</translation>
     </message>
     <message>
         <source>e.g. warmer, moody evening light, recover the sky</source>
         <translation>เช่น อุ่นขึ้น แสงยามเย็นหม่น ๆ กู้คืนท้องฟ้า</translation>
-    </message>
-    <message>
-        <source>THINKING...</source>
-        <translation>กำลังคิด...</translation>
-    </message>
-    <message>
-        <source>EDIT WITH AI</source>
-        <translation>แก้ไขด้วย AI</translation>
     </message>
     <message>
         <source>Running. Models: %1</source>
@@ -222,14 +230,6 @@
         <source>API key</source>
         <translation>คีย์ API</translation>
     </message>
-    <message>
-        <source>STORE KEY</source>
-        <translation>บันทึกคีย์</translation>
-    </message>
-    <message>
-        <source>USE %1</source>
-        <translation>ใช้ %1</translation>
-    </message>
 </context>
 <context>
     <name>BoundedTextInput</name>
@@ -241,48 +241,16 @@
 <context>
     <name>ColorGradingWheels</name>
     <message>
-        <source>DAVINCI PRIMARIES WHEELS</source>
-        <translation>วงล้อหลัก DaVinci</translation>
-    </message>
-    <message>
-        <source>4-WHEEL</source>
-        <translation>4 วงล้อ</translation>
-    </message>
-    <message>
-        <source>TABBED</source>
-        <translation>แท็บ</translation>
-    </message>
-    <message>
-        <source>RESET</source>
-        <translation>รีเซ็ต</translation>
-    </message>
-    <message>
-        <source>LIFT</source>
-        <translation>LIFT</translation>
-    </message>
-    <message>
         <source>Shadows</source>
         <translation>เงา</translation>
-    </message>
-    <message>
-        <source>GAMMA</source>
-        <translation>GAMMA</translation>
     </message>
     <message>
         <source>Mids</source>
         <translation>โทนกลาง</translation>
     </message>
     <message>
-        <source>GAIN</source>
-        <translation>GAIN</translation>
-    </message>
-    <message>
         <source>Highlights</source>
         <translation>ไฮไลต์</translation>
-    </message>
-    <message>
-        <source>OFFSET</source>
-        <translation>OFFSET</translation>
     </message>
     <message>
         <source>Global</source>
@@ -307,6 +275,22 @@
     <message>
         <source>Lift</source>
         <translation>Lift</translation>
+    </message>
+    <message>
+        <source>Colour grading</source>
+        <translation>การเกรดสี</translation>
+    </message>
+    <message>
+        <source>4 wheels</source>
+        <translation>4 วงล้อ</translation>
+    </message>
+    <message>
+        <source>Tabs</source>
+        <translation>แท็บ</translation>
+    </message>
+    <message>
+        <source>Reset</source>
+        <translation>รีเซ็ต</translation>
     </message>
     <message>
         <source>Gamma</source>
@@ -368,8 +352,12 @@
         <translation>AP1 กว้าง</translation>
     </message>
     <message>
-        <source>COLOR MANAGEMENT &amp; ACES 1.3</source>
-        <translation>การจัดการสีและ ACES 1.3</translation>
+        <source>Colour management</source>
+        <translation>การจัดการสี</translation>
+    </message>
+    <message>
+        <source>Gamut compression</source>
+        <translation>การบีบอัดขอบเขตสี</translation>
     </message>
     <message>
         <source>%1 (%2)</source>
@@ -394,113 +382,161 @@
 <context>
     <name>ExifCard</name>
     <message>
-        <source>No camera loaded</source>
-        <translation>ยังไม่ได้โหลดกล้อง</translation>
-    </message>
-    <message>
-        <source>Unknown lens</source>
-        <translation>ไม่ทราบเลนส์</translation>
+        <source>No photo</source>
+        <translation>ไม่มีภาพ</translation>
     </message>
 </context>
 <context>
     <name>ExportDialog</name>
-    <message numerus="yes">
-        <source>Batch Export (%n Photos)</source>
-        <translation>
-            <numerusform>ส่งออกเป็นชุด (%n ภาพ)</numerusform>
-        </translation>
-    </message>
-    <message>
-        <source>Export Master Photo</source>
-        <translation>ส่งออกภาพต้นฉบับ</translation>
-    </message>
-    <message>
-        <source>MODERN OPEN FORMAT</source>
-        <translation>รูปแบบเปิดสมัยใหม่</translation>
-    </message>
-    <message>
-        <source>Next-Gen 16-bit HDR</source>
-        <translation>HDR 16 บิตรุ่นใหม่</translation>
-    </message>
-    <message>
-        <source>AV1 Web/Mobile</source>
-        <translation>AV1 เว็บ/มือถือ</translation>
-    </message>
-    <message>
-        <source>Ultra Compact</source>
-        <translation>กะทัดรัดพิเศษ</translation>
-    </message>
-    <message>
-        <source>16-bit TIFF</source>
-        <translation>TIFF 16 บิต</translation>
-    </message>
-    <message>
-        <source>Master Print Lossless</source>
-        <translation>งานพิมพ์ต้นฉบับแบบไม่สูญเสีย</translation>
-    </message>
-    <message>
-        <source>Graphic Lossless</source>
-        <translation>กราฟิกแบบไม่สูญเสีย</translation>
-    </message>
-    <message>
-        <source>Universal MozJPEG</source>
-        <translation>MozJPEG สากล</translation>
-    </message>
-    <message>
-        <source>Export Compression Quality</source>
-        <translation>คุณภาพการบีบอัดเมื่อส่งออก</translation>
-    </message>
-    <message>
-        <source>RESOLUTION &amp; SCALING</source>
-        <translation>ความละเอียดและการปรับขนาด</translation>
-    </message>
-    <message>
-        <source>100% Full</source>
-        <translation>100% เต็ม</translation>
-    </message>
-    <message>
-        <source>Social (2048p)</source>
-        <translation>โซเชียล (2048p)</translation>
-    </message>
-    <message>
-        <source>COLOR SPACE &amp; ICC PROFILE</source>
-        <translation>ปริภูมิสีและโปรไฟล์ ICC</translation>
-    </message>
-    <message>
-        <source>Universal Web / Social</source>
-        <translation>เว็บ / โซเชียลทั่วไป</translation>
-    </message>
-    <message>
-        <source>Apple / Wide OLED</source>
-        <translation>Apple / OLED กว้าง</translation>
-    </message>
-    <message>
-        <source>Ultra-Wide Gamut HDR</source>
-        <translation>HDR ขอบเขตสีกว้างพิเศษ</translation>
-    </message>
-    <message>
-        <source>Academy Color Standard</source>
-        <translation>มาตรฐานสีของ Academy</translation>
-    </message>
-    <message>
-        <source>Pro Photography / Print</source>
-        <translation>การถ่ายภาพมืออาชีพ / งานพิมพ์</translation>
-    </message>
-    <message>
-        <source>16-Bit Master Archival</source>
-        <translation>คลังต้นฉบับ 16 บิต</translation>
-    </message>
-    <message>
-        <source>Intent</source>
-        <translation>วิธีแปลงสี</translation>
-    </message>
     <message>
         <source>Perceptual</source>
         <translation>ตามการรับรู้</translation>
     </message>
     <message>
-        <source>Compresses the whole gamut; smooth, saturated colours keep their relations</source>
-        <translation>บีบอัดขอบเขตสีทั้งหมด สีนุ่มและอิ่มตัวยังคงความสัมพันธ์กัน</translation>
+        <source>8-bit · universal</source>
+        <translation>8 บิต · ใช้ได้ทั่วไป</translation>
+    </message>
+    <message>
+        <source>16-bit · lossless</source>
+        <translation>16 บิต · ไม่สูญเสียข้อมูล</translation>
+    </message>
+    <message>
+        <source>16-bit · print, archive</source>
+        <translation>16 บิต · งานพิมพ์ เก็บถาวร</translation>
+    </message>
+    <message>
+        <source>8-bit · web</source>
+        <translation>8 บิต · เว็บ</translation>
+    </message>
+    <message>
+        <source>12-bit · HDR-ready</source>
+        <translation>12 บิต · พร้อมสำหรับ HDR</translation>
+    </message>
+    <message>
+        <source>10-bit · HEVC</source>
+        <translation>10 บิต · HEVC</translation>
+    </message>
+    <message>
+        <source>16-bit · modern</source>
+        <translation>16 บิต · ทันสมัย</translation>
+    </message>
+    <message>
+        <source>Float · scene-linear</source>
+        <translation>ทศนิยมลอยตัว · เชิงเส้นตามฉาก</translation>
+    </message>
+    <message numerus="yes">
+        <source>Export %n photos</source>
+        <translation>
+            <numerusform>ส่งออก %n ภาพ</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>Export</source>
+        <translation>ส่งออก</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>ปิด</translation>
+    </message>
+    <message>
+        <source>Format</source>
+        <translation>รูปแบบไฟล์</translation>
+    </message>
+    <message>
+        <source>Quality</source>
+        <translation>คุณภาพ</translation>
+    </message>
+    <message>
+        <source>100 is lossless.</source>
+        <translation>100 คือไม่สูญเสียข้อมูล</translation>
+    </message>
+    <message>
+        <source>Bit depth</source>
+        <translation>ความลึกบิต</translation>
+    </message>
+    <message>
+        <source>Half float</source>
+        <translation>ทศนิยมลอยตัวครึ่งความแม่นยำ</translation>
+    </message>
+    <message>
+        <source>Full float</source>
+        <translation>ทศนิยมลอยตัวเต็มความแม่นยำ</translation>
+    </message>
+    <message>
+        <source>%1-bit</source>
+        <translation>%1 บิต</translation>
+    </message>
+    <message>
+        <source>Compression</source>
+        <translation>การบีบอัด</translation>
+    </message>
+    <message>
+        <source>None</source>
+        <translation>ไม่มี</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>ขนาด</translation>
+    </message>
+    <message>
+        <source>Full</source>
+        <translation>เต็ม</translation>
+    </message>
+    <message>
+        <source>3840 px</source>
+        <translation>3840 พิกเซล</translation>
+    </message>
+    <message>
+        <source>Long edge at most 3840 px</source>
+        <translation>ด้านยาวไม่เกิน 3840 พิกเซล</translation>
+    </message>
+    <message>
+        <source>2048 px</source>
+        <translation>2048 พิกเซล</translation>
+    </message>
+    <message>
+        <source>Long edge at most 2048 px</source>
+        <translation>ด้านยาวไม่เกิน 2048 พิกเซล</translation>
+    </message>
+    <message>
+        <source>Colour profile</source>
+        <translation>โปรไฟล์สี</translation>
+    </message>
+    <message>
+        <source>Web, screens</source>
+        <translation>เว็บ หน้าจอ</translation>
+    </message>
+    <message>
+        <source>Wide-gamut screens</source>
+        <translation>หน้าจอขอบเขตสีกว้าง</translation>
+    </message>
+    <message>
+        <source>Print</source>
+        <translation>งานพิมพ์</translation>
+    </message>
+    <message>
+        <source>Editing, archive</source>
+        <translation>การแก้ไข เก็บถาวร</translation>
+    </message>
+    <message>
+        <source>HDR, video</source>
+        <translation>HDR วิดีโอ</translation>
+    </message>
+    <message>
+        <source>Linear, VFX</source>
+        <translation>เชิงเส้น เอฟเฟกต์ภาพ</translation>
+    </message>
+    <message>
+        <source>OpenEXR is written scene-linear in the chosen primaries.</source>
+        <translation>OpenEXR จะถูกเขียนแบบเชิงเส้นตามฉากด้วยแม่สีที่เลือก</translation>
+    </message>
+    <message>
+        <source>Rendering intent</source>
+        <translation>วิธีการเรนเดอร์</translation>
+    </message>
+    <message>
+        <source>Compresses the whole gamut; colour relations are kept</source>
+        <translation>บีบอัดขอบเขตสีทั้งหมด โดยคงความสัมพันธ์ระหว่างสีไว้</translation>
     </message>
     <message>
         <source>Relative</source>
@@ -527,44 +563,54 @@
         <translation>สีแม่นยำรวมถึงจุดขาวของต้นฉบับ สำหรับการพิสูจน์สี</translation>
     </message>
     <message>
-        <source>Preserve Camera EXIF</source>
-        <translation>เก็บ EXIF ของกล้องไว้</translation>
+        <source>Metadata</source>
+        <translation>ข้อมูลเมตา</translation>
     </message>
     <message>
-        <source>Strip GPS (Privacy)</source>
-        <translation>ลบ GPS (ความเป็นส่วนตัว)</translation>
+        <source>Keep camera metadata (EXIF)</source>
+        <translation>เก็บข้อมูลเมตาของกล้อง (EXIF)</translation>
     </message>
     <message>
-        <source>Apply Photography Watermark / EXIF Signature</source>
-        <translation>ใส่ลายน้ำ / ลายเซ็น EXIF</translation>
+        <source>Remove location (GPS)</source>
+        <translation>ลบตำแหน่ง (GPS)</translation>
     </message>
     <message>
-        <source>Exporting Batch...</source>
-        <translation>กำลังส่งออกชุด...</translation>
+        <source>Prepare for</source>
+        <translation>เตรียมสำหรับ</translation>
     </message>
     <message>
-        <source>Exporting Full Resolution...</source>
-        <translation>กำลังส่งออกที่ความละเอียดเต็ม...</translation>
-    </message>
-    <message numerus="yes">
-        <source>Start Parallel Batch Export (%n Photos)</source>
-        <translation>
-            <numerusform>เริ่มส่งออกเป็นชุดแบบขนาน (%n ภาพ)</numerusform>
-        </translation>
+        <source>Sets the crop and output sharpening for a platform. Reset restores your own.</source>
+        <translation>ตั้งค่าการครอปและความคมชัดของผลลัพธ์สำหรับแพลตฟอร์ม รีเซ็ตจะคืนค่าการตั้งค่าของคุณเอง</translation>
     </message>
     <message>
-        <source>Start Export (%1 / %2)</source>
-        <translation>เริ่มส่งออก (%1 / %2)</translation>
+        <source>Watermark</source>
+        <translation>ลายน้ำ</translation>
+    </message>
+    <message>
+        <source>Folder</source>
+        <translation>โฟลเดอร์</translation>
+    </message>
+    <message>
+        <source>Hide</source>
+        <translation>ซ่อน</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>ยกเลิก</translation>
+    </message>
+    <message>
+        <source>Exporting…</source>
+        <translation>กำลังส่งออก…</translation>
     </message>
 </context>
 <context>
     <name>FilmGrainPanel</name>
     <message>
-        <source>SILVER-HALIDE FILM GRAIN</source>
-        <translation>เกรนฟิล์มซิลเวอร์เฮไลด์</translation>
+        <source>Grain</source>
+        <translation>เกรน</translation>
     </message>
     <message>
-        <source>RESET</source>
+        <source>Reset</source>
         <translation>รีเซ็ต</translation>
     </message>
     <message>
@@ -699,12 +745,16 @@
         <translation>คอนทราสต์ภาพยนตร์พาโนรามา 35 มม.</translation>
     </message>
     <message>
-        <source>FILM SIMULATION &amp; SENSOR PROFILES</source>
-        <translation>การจำลองฟิล์มและโปรไฟล์เซนเซอร์</translation>
+        <source>Profile</source>
+        <translation>โปรไฟล์</translation>
     </message>
     <message>
-        <source>RESET</source>
+        <source>Reset</source>
         <translation>รีเซ็ต</translation>
+    </message>
+    <message>
+        <source>Amount</source>
+        <translation>ปริมาณ</translation>
     </message>
     <message>
         <source>All</source>
@@ -714,17 +764,9 @@
         <source>Acros B&amp;W</source>
         <translation>Acros ขาวดำ</translation>
     </message>
-    <message>
-        <source>SIMULATION INTENSITY</source>
-        <translation>ความเข้มของการจำลอง</translation>
-    </message>
 </context>
 <context>
     <name>Filmstrip</name>
-    <message>
-        <source>Local Photos</source>
-        <translation>ภาพในเครื่อง</translation>
-    </message>
     <message>
         <source>Studio Catalog</source>
         <translation>แค็ตตาล็อกสตูดิโอ</translation>
@@ -732,6 +774,14 @@
     <message>
         <source>Up</source>
         <translation>ขึ้น</translation>
+    </message>
+    <message>
+        <source>Folders</source>
+        <translation>โฟลเดอร์</translation>
+    </message>
+    <message>
+        <source>Catalog</source>
+        <translation>แค็ตตาล็อก</translation>
     </message>
     <message>
         <source>Scanning Catalog...</source>
@@ -758,20 +808,19 @@
         <translation>ไม่พบภาพในโฟลเดอร์นี้</translation>
     </message>
     <message>
-        <source>DIR</source>
-        <comment>folder badge</comment>
+        <source>Folder</source>
         <translation>โฟลเดอร์</translation>
     </message>
     <message>
-        <source>FETCHING</source>
-        <translation>กำลังดึงข้อมูล</translation>
+        <source>Downloading</source>
+        <translation>กำลังดาวน์โหลด</translation>
     </message>
     <message>
-        <source>RAW CLOUD</source>
-        <translation>RAW บนคลาวด์</translation>
+        <source>Remote</source>
+        <translation>ระยะไกล</translation>
     </message>
     <message>
-        <source>NO PREVIEW</source>
+        <source>No preview</source>
         <translation>ไม่มีภาพตัวอย่าง</translation>
     </message>
     <message>
@@ -833,40 +882,60 @@
         <translation>สูตร Fujifilm</translation>
     </message>
     <message>
-        <source>FUJIFILM RECIPES</source>
-        <translation>สูตร FUJIFILM</translation>
-    </message>
-    <message>
-        <source>IMPORT</source>
+        <source>Import</source>
         <translation>นำเข้า</translation>
     </message>
     <message>
-        <source>APPLY PHOTO&apos;S RECIPE</source>
+        <source>Apply photo&apos;s recipe</source>
         <translation>ใช้สูตรของภาพ</translation>
     </message>
     <message>
-        <source>SAVE</source>
+        <source>Save</source>
         <translation>บันทึก</translation>
+    </message>
+    <message>
+        <source>Apply recipe</source>
+        <translation>ใช้สูตร</translation>
+    </message>
+    <message>
+        <source>Camera (USB)</source>
+        <translation>กล้อง (USB)</translation>
+    </message>
+    <message>
+        <source>Reconnect</source>
+        <translation>เชื่อมต่อใหม่</translation>
+    </message>
+    <message>
+        <source>Connect</source>
+        <translation>เชื่อมต่อ</translation>
+    </message>
+    <message>
+        <source>Read C1–C7</source>
+        <translation>อ่าน C1–C7</translation>
+    </message>
+    <message>
+        <source>Convert in camera</source>
+        <translation>แปลงในกล้อง</translation>
+    </message>
+    <message>
+        <source>Write recipe to C%1</source>
+        <translation>เขียนสูตรลง C%1</translation>
+    </message>
+    <message>
+        <source>Pixel shift</source>
+        <translation>การเลื่อนพิกเซล</translation>
+    </message>
+    <message>
+        <source>Merge %1 frames to DNG</source>
+        <translation>รวม %1 เฟรมเป็น DNG</translation>
+    </message>
+    <message>
+        <source>Merge frames to DNG</source>
+        <translation>รวมเฟรมเป็น DNG</translation>
     </message>
     <message>
         <source>No saved recipes. Import an X RAW Studio profile, recipe text or a Fujifilm photo.</source>
         <translation>ยังไม่มีสูตรที่บันทึกไว้ นำเข้าโปรไฟล์ X RAW Studio ข้อความสูตร หรือภาพ Fujifilm</translation>
-    </message>
-    <message>
-        <source>APPLY SELECTED RECIPE</source>
-        <translation>ใช้สูตรที่เลือก</translation>
-    </message>
-    <message>
-        <source>CAMERA (USB)</source>
-        <translation>กล้อง (USB)</translation>
-    </message>
-    <message>
-        <source>RECONNECT</source>
-        <translation>เชื่อมต่อใหม่</translation>
-    </message>
-    <message>
-        <source>CONNECT</source>
-        <translation>เชื่อมต่อ</translation>
     </message>
     <message>
         <source>%1  ·  in-camera RAW conversion</source>
@@ -881,24 +950,8 @@
         <translation>ตั้งโหมด USB ของกล้องเป็น %1 แล้วเชื่อมต่อ</translation>
     </message>
     <message>
-        <source>READ C1-C7</source>
-        <translation>อ่าน C1-C7</translation>
-    </message>
-    <message>
-        <source>CONVERT IN CAMERA</source>
-        <translation>แปลงในกล้อง</translation>
-    </message>
-    <message>
         <source>Unnamed</source>
         <translation>ไม่มีชื่อ</translation>
-    </message>
-    <message>
-        <source>WRITE SELECTED RECIPE TO C%1</source>
-        <translation>เขียนสูตรที่เลือกลง C%1</translation>
-    </message>
-    <message>
-        <source>PIXEL SHIFT MULTI-SHOT</source>
-        <translation>PIXEL SHIFT หลายช็อต</translation>
     </message>
     <message numerus="yes">
         <source>%n RAF frames selected. 4 frames give full colour per pixel, 16 frames double the resolution.</source>
@@ -910,22 +963,12 @@
         <source>Select the RAF frames of one GFX Pixel Shift sequence in the filmstrip.</source>
         <translation>เลือกเฟรม RAF ของลำดับ GFX Pixel Shift หนึ่งชุดในแถบภาพ</translation>
     </message>
-    <message numerus="yes">
-        <source>MERGE %n FRAMES TO DNG</source>
-        <translation>
-            <numerusform>รวม %n เฟรมเป็น DNG</numerusform>
-        </translation>
-    </message>
-    <message>
-        <source>MERGE FRAMES TO DNG</source>
-        <translation>รวมเฟรมเป็น DNG</translation>
-    </message>
 </context>
 <context>
     <name>GradeVersionsBar</name>
     <message>
-        <source>GRADE VERSION</source>
-        <translation>เวอร์ชันการเกรดสี</translation>
+        <source>Version</source>
+        <translation>เวอร์ชัน</translation>
     </message>
 </context>
 <context>
@@ -936,8 +979,8 @@
         <translation>[ง] %1%</translation>
     </message>
     <message>
-        <source>RGB HISTOGRAM</source>
-        <translation>ฮิสโทแกรม RGB</translation>
+        <source>Histogram</source>
+        <translation>ฮิสโตแกรม</translation>
     </message>
     <message>
         <source>[H] %1%</source>
@@ -984,11 +1027,11 @@
         <translation>ช่อง %1</translation>
     </message>
     <message>
-        <source>RESET CH</source>
-        <translation>รีเซ็ตช่อง</translation>
+        <source>Reset colour</source>
+        <translation>รีเซ็ตสี</translation>
     </message>
     <message>
-        <source>RESET ALL</source>
+        <source>Reset all</source>
         <translation>รีเซ็ตทั้งหมด</translation>
     </message>
     <message>
@@ -1097,32 +1140,32 @@
         <translation>มาสก์ %1 พร้อมแล้ว (%2)</translation>
     </message>
     <message>
-        <source>DETECTING...</source>
-        <translation>กำลังตรวจจับ...</translation>
+        <source>Detecting…</source>
+        <translation>กำลังตรวจจับ…</translation>
     </message>
     <message>
-        <source>LOCAL ADJUSTMENT LAYERS</source>
-        <translation>เลเยอร์ปรับแต่งเฉพาะจุด</translation>
+        <source>Masks</source>
+        <translation>มาสก์</translation>
     </message>
     <message>
-        <source>+ GRADIENT</source>
-        <translation>+ ไล่ระดับ</translation>
+        <source>+ Linear</source>
+        <translation>+ เชิงเส้น</translation>
+    </message>
+    <message>
+        <source>+ Radial</source>
+        <translation>+ รัศมี</translation>
+    </message>
+    <message>
+        <source>+ Luminance</source>
+        <translation>+ ความสว่าง</translation>
     </message>
     <message>
         <source>Linear Gradient %1</source>
         <translation>ไล่ระดับเชิงเส้น %1</translation>
     </message>
     <message>
-        <source>+ RADIAL</source>
-        <translation>+ รัศมี</translation>
-    </message>
-    <message>
         <source>Radial Mask %1</source>
         <translation>มาสก์รัศมี %1</translation>
-    </message>
-    <message>
-        <source>+ LUMA</source>
-        <translation>+ ความสว่าง</translation>
     </message>
     <message>
         <source>Luma Range %1</source>
@@ -1140,10 +1183,6 @@
         <source>I</source>
         <comment>invert mask toggle, first letter of Invert</comment>
         <translation>ก</translation>
-    </message>
-    <message>
-        <source>SELECTED LAYER CONTROLS (%1)</source>
-        <translation>ตัวควบคุมเลเยอร์ที่เลือก (%1)</translation>
     </message>
     <message>
         <source>Layer Opacity</source>
@@ -1165,48 +1204,32 @@
 <context>
     <name>LutSelector</name>
     <message>
-        <source>DAVINCI 3D LUT ENGINE (.CUBE)</source>
-        <translation>เอนจิน 3D LUT ของ DaVinci (.CUBE)</translation>
+        <source>Load 3D LUT</source>
+        <translation>โหลด 3D LUT</translation>
     </message>
     <message>
-        <source>RESET</source>
+        <source>3D LUT</source>
+        <translation>3D LUT</translation>
+    </message>
+    <message>
+        <source>Reset</source>
         <translation>รีเซ็ต</translation>
     </message>
     <message>
-        <source>Hollywood Print</source>
-        <translation>ฟิล์มฉายฮอลลีวูด</translation>
+        <source>Load .cube file…</source>
+        <translation>โหลดไฟล์ .cube…</translation>
     </message>
     <message>
-        <source>Cinema Blockbuster</source>
-        <translation>ภาพยนตร์ฟอร์มยักษ์</translation>
+        <source>Saved look: %1</source>
+        <translation>ลุคที่บันทึกไว้: %1</translation>
     </message>
     <message>
-        <source>35mm Soft Stock</source>
-        <translation>ฟิล์ม 35 มม. แบบนุ่ม</translation>
-    </message>
-    <message>
-        <source>High-Acutance B&amp;W</source>
-        <translation>ขาวดำคมชัดสูง</translation>
-    </message>
-    <message>
-        <source>LUT Intensity (Mix)</source>
-        <translation>ความเข้ม LUT (ผสม)</translation>
+        <source>Amount</source>
+        <translation>ปริมาณ</translation>
     </message>
 </context>
 <context>
     <name>MainWindow</name>
-    <message>
-        <source>Switched to version %1</source>
-        <translation>สลับไปเวอร์ชัน %1 แล้ว</translation>
-    </message>
-    <message>
-        <source>Version %1 initialized</source>
-        <translation>สร้างเวอร์ชัน %1 แล้ว</translation>
-    </message>
-    <message>
-        <source>Copied current grade to version %1</source>
-        <translation>คัดลอกการเกรดปัจจุบันไปยังเวอร์ชัน %1 แล้ว</translation>
-    </message>
     <message numerus="yes">
         <source>Rating: %n star(s)</source>
         <translation>
@@ -1234,36 +1257,8 @@
         <translation>ไม่มีอะไรให้เลิกทำ</translation>
     </message>
     <message>
-        <source>Undo (Ctrl+Z)</source>
-        <translation>เลิกทำ (Ctrl+Z)</translation>
-    </message>
-    <message>
         <source>Nothing to redo</source>
         <translation>ไม่มีอะไรให้ทำซ้ำ</translation>
-    </message>
-    <message>
-        <source>Redo (Ctrl+Shift+Z)</source>
-        <translation>ทำซ้ำ (Ctrl+Shift+Z)</translation>
-    </message>
-    <message>
-        <source>Adjustments copied (Ctrl+Shift+C)</source>
-        <translation>คัดลอกการปรับแต่งแล้ว (Ctrl+Shift+C)</translation>
-    </message>
-    <message>
-        <source>No adjustments in clipboard</source>
-        <translation>ไม่มีการปรับแต่งในคลิปบอร์ด</translation>
-    </message>
-    <message>
-        <source>Adjustments pasted (Ctrl+Shift+V)</source>
-        <translation>วางการปรับแต่งแล้ว (Ctrl+Shift+V)</translation>
-    </message>
-    <message>
-        <source>Reset to defaults (Ctrl+R)</source>
-        <translation>รีเซ็ตเป็นค่าเริ่มต้นแล้ว (Ctrl+R)</translation>
-    </message>
-    <message>
-        <source>Social framing and adjustments reset</source>
-        <translation>รีเซ็ตการจัดเฟรมโซเชียลและการปรับแต่งแล้ว</translation>
     </message>
     <message>
         <source>Failed to load RAW: %1</source>
@@ -1286,28 +1281,8 @@
         <translation>การเรนเดอร์ภาพตัวอย่างล้มเหลว</translation>
     </message>
     <message>
-        <source>Auto tone applied</source>
-        <translation>ใช้โทนอัตโนมัติแล้ว</translation>
-    </message>
-    <message>
-        <source>AI decisions applied</source>
-        <translation>ใช้การตัดสินใจของ AI แล้ว</translation>
-    </message>
-    <message>
-        <source>Local heuristic applied</source>
-        <translation>ใช้วิธีฮิวริสติกภายในเครื่องแล้ว</translation>
-    </message>
-    <message>
         <source>%1 applied (%2)</source>
         <translation>ใช้ %1 แล้ว (%2)</translation>
-    </message>
-    <message>
-        <source>Recipe sidecar saved</source>
-        <translation>บันทึกไฟล์ประกอบสูตรแล้ว</translation>
-    </message>
-    <message>
-        <source>Batch finished: %1/%2 photos exported</source>
-        <translation>ชุดเสร็จสิ้น: ส่งออกแล้ว %1/%2 ภาพ</translation>
     </message>
     <message>
         <source>Batch export: %1 succeeded, %2 failed</source>
@@ -1330,14 +1305,6 @@
         <translation>เขียน %1 แล้ว</translation>
     </message>
     <message>
-        <source>Analyzing dynamic range and scene...</source>
-        <translation>กำลังวิเคราะห์ช่วงไดนามิกและฉาก...</translation>
-    </message>
-    <message>
-        <source>Asking the AI for edit decisions...</source>
-        <translation>กำลังขอการตัดสินใจแก้ไขจาก AI...</translation>
-    </message>
-    <message>
         <source>Open RAW Photo</source>
         <translation>เปิดภาพ RAW</translation>
     </message>
@@ -1346,20 +1313,8 @@
         <translation>ภาพ RAW</translation>
     </message>
     <message>
-        <source>Saved to: %1</source>
-        <translation>บันทึกที่: %1</translation>
-    </message>
-    <message>
-        <source>Export error: %1</source>
-        <translation>ข้อผิดพลาดในการส่งออก: %1</translation>
-    </message>
-    <message>
         <source>Export finished without a result</source>
         <translation>การส่งออกสิ้นสุดโดยไม่มีผลลัพธ์</translation>
-    </message>
-    <message>
-        <source>The folder scan gave no answer</source>
-        <translation>การสแกนโฟลเดอร์ไม่ตอบสนอง</translation>
     </message>
     <message>
         <source>Crop mode: on (C)</source>
@@ -1370,36 +1325,12 @@
         <translation>โหมดครอป: ปิด</translation>
     </message>
     <message>
-        <source>Open a photo first to export</source>
-        <translation>เปิดภาพก่อนส่งออก</translation>
-    </message>
-    <message>
-        <source>Panels hidden (Tab)</source>
-        <translation>ซ่อนแผงแล้ว (Tab)</translation>
-    </message>
-    <message>
-        <source>Panels restored (Tab)</source>
-        <translation>คืนค่าแผงแล้ว (Tab)</translation>
-    </message>
-    <message>
-        <source>Optimizing for %1...</source>
-        <translation>กำลังปรับให้เหมาะกับ %1...</translation>
-    </message>
-    <message>
-        <source>AI SCENE INSIGHT</source>
-        <translation>การวิเคราะห์ฉากด้วย AI</translation>
-    </message>
-    <message>
         <source>Analyzing...</source>
         <translation>กำลังวิเคราะห์...</translation>
     </message>
     <message>
         <source>Extracting dynamic range...</source>
         <translation>กำลังดึงช่วงไดนามิก...</translation>
-    </message>
-    <message>
-        <source>Grade versions • Alt+1..4 to switch</source>
-        <translation>เวอร์ชันการเกรด • Alt+1..4 เพื่อสลับ</translation>
     </message>
     <message>
         <source>Opened %1</source>
@@ -1410,36 +1341,8 @@
         <translation>กำลังสแกนโฟลเดอร์ %1</translation>
     </message>
     <message>
-        <source>AI edit applied</source>
-        <translation>ใช้การแก้ไขด้วย AI แล้ว</translation>
-    </message>
-    <message>
-        <source>ESSENTIAL ADJUSTMENTS</source>
-        <translation>การปรับแต่งพื้นฐาน</translation>
-    </message>
-    <message>
-        <source>RESET</source>
-        <translation>รีเซ็ต</translation>
-    </message>
-    <message>
-        <source>Exposure (Light)</source>
-        <translation>การเปิดรับแสง (แสง)</translation>
-    </message>
-    <message>
-        <source>Warmth (Temperature)</source>
-        <translation>ความอุ่น (อุณหภูมิ)</translation>
-    </message>
-    <message>
-        <source>Vibrance (Color Punch)</source>
-        <translation>ความสดใส (พลังสี)</translation>
-    </message>
-    <message>
         <source>Contrast</source>
         <translation>คอนทราสต์</translation>
-    </message>
-    <message>
-        <source>WHITE BALANCE</source>
-        <translation>สมดุลแสงขาว</translation>
     </message>
     <message>
         <source>Temp (Kelvin)</source>
@@ -1448,10 +1351,6 @@
     <message>
         <source>Tint (Green / Magenta)</source>
         <translation>ทินต์ (เขียว / ม่วงแดง)</translation>
-    </message>
-    <message>
-        <source>LIGHT &amp; DYNAMIC RANGE</source>
-        <translation>แสงและช่วงไดนามิก</translation>
     </message>
     <message>
         <source>Exposure</source>
@@ -1474,10 +1373,6 @@
         <translation>ส่วนดำ</translation>
     </message>
     <message>
-        <source>TONE CURVE (PARAMETRIC)</source>
-        <translation>เส้นโค้งโทน (พาราเมตริก)</translation>
-    </message>
-    <message>
         <source>Curve Highlights</source>
         <translation>เส้นโค้ง: ไฮไลต์</translation>
     </message>
@@ -1492,10 +1387,6 @@
     <message>
         <source>Curve Shadows</source>
         <translation>เส้นโค้ง: เงา</translation>
-    </message>
-    <message>
-        <source>PRESENCE &amp; TEXTURE</source>
-        <translation>การแสดงตนและพื้นผิว</translation>
     </message>
     <message>
         <source>Texture</source>
@@ -1516,14 +1407,6 @@
     <message>
         <source>Saturation</source>
         <translation>ความอิ่มตัว</translation>
-    </message>
-    <message>
-        <source>COLOR MIXER (8-BAND HSL)</source>
-        <translation>มิกเซอร์สี (HSL 8 ย่าน)</translation>
-    </message>
-    <message>
-        <source>DETAIL &amp; OPTICS</source>
-        <translation>รายละเอียดและออปติก</translation>
     </message>
     <message>
         <source>Sharpening</source>
@@ -1554,12 +1437,200 @@
         <translation>เปิดภาพก่อน</translation>
     </message>
     <message>
+        <source>Version %1</source>
+        <translation>เวอร์ชัน %1</translation>
+    </message>
+    <message>
+        <source>Version %1 started</source>
+        <translation>เริ่มเวอร์ชัน %1 แล้ว</translation>
+    </message>
+    <message>
+        <source>Copied to version %1</source>
+        <translation>คัดลอกไปยังเวอร์ชัน %1 แล้ว</translation>
+    </message>
+    <message>
+        <source>Undo</source>
+        <translation>เลิกทำ</translation>
+    </message>
+    <message>
+        <source>Redo</source>
+        <translation>ทำซ้ำ</translation>
+    </message>
+    <message>
+        <source>Settings copied</source>
+        <translation>คัดลอกการตั้งค่าแล้ว</translation>
+    </message>
+    <message>
+        <source>Nothing copied yet</source>
+        <translation>ยังไม่ได้คัดลอกอะไร</translation>
+    </message>
+    <message>
+        <source>Settings pasted</source>
+        <translation>วางการตั้งค่าแล้ว</translation>
+    </message>
+    <message>
+        <source>Reset to defaults</source>
+        <translation>รีเซ็ตเป็นค่าเริ่มต้นแล้ว</translation>
+    </message>
+    <message>
+        <source>Platform crop reset</source>
+        <translation>รีเซ็ตการครอปสำหรับแพลตฟอร์มแล้ว</translation>
+    </message>
+    <message>
+        <source>Auto applied</source>
+        <translation>ใช้การปรับอัตโนมัติแล้ว</translation>
+    </message>
+    <message>
+        <source>Settings saved</source>
+        <translation>บันทึกการตั้งค่าแล้ว</translation>
+    </message>
+    <message>
+        <source>%1 of %2 photos exported</source>
+        <translation>ส่งออกแล้ว %1 จาก %2 ภาพ</translation>
+    </message>
+    <message>
+        <source>Auto: analysing the photo…</source>
+        <translation>อัตโนมัติ: กำลังวิเคราะห์ภาพ…</translation>
+    </message>
+    <message>
+        <source>Saved to %1</source>
+        <translation>บันทึกไปยัง %1 แล้ว</translation>
+    </message>
+    <message>
+        <source>Export failed</source>
+        <translation>การส่งออกล้มเหลว</translation>
+    </message>
+    <message>
+        <source>The scan did not respond.</source>
+        <translation>การสแกนโฟลเดอร์ไม่ตอบสนอง</translation>
+    </message>
+    <message>
+        <source>Rating: ★</source>
+        <translation>คะแนน: ★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★</source>
+        <translation>คะแนน: ★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★</source>
+        <translation>คะแนน: ★★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★★</source>
+        <translation>คะแนน: ★★★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★★★</source>
+        <translation>คะแนน: ★★★★★</translation>
+    </message>
+    <message>
+        <source>Flag cleared</source>
+        <translation>ล้างธงแล้ว</translation>
+    </message>
+    <message>
+        <source>Preparing for %1…</source>
+        <translation>กำลังเตรียมสำหรับ %1…</translation>
+    </message>
+    <message>
+        <source>Rating: %1</source>
+        <translation>คะแนน: %1</translation>
+    </message>
+    <message>
+        <source>Picked</source>
+        <translation>เลือกไว้</translation>
+    </message>
+    <message>
+        <source>Rejected</source>
+        <translation>ปฏิเสธ</translation>
+    </message>
+    <message>
+        <source>Scene</source>
+        <translation>ฉาก</translation>
+    </message>
+    <message>
+        <source>Adjust</source>
+        <translation>ปรับ</translation>
+    </message>
+    <message>
+        <source>Masks</source>
+        <translation>มาสก์</translation>
+    </message>
+    <message>
+        <source>Looks</source>
+        <translation>ลุค</translation>
+    </message>
+    <message>
+        <source>AI</source>
+        <translation>ปัญญาประดิษฐ์</translation>
+    </message>
+    <message>
+        <source>Profile</source>
+        <translation>โปรไฟล์</translation>
+    </message>
+    <message>
         <source>Color Chrome Effect</source>
         <translation>เอฟเฟกต์ Color Chrome</translation>
     </message>
     <message>
         <source>Color Chrome FX Blue</source>
         <translation>Color Chrome FX น้ำเงิน</translation>
+    </message>
+    <message>
+        <source>White balance</source>
+        <translation>สมดุลแสงขาว</translation>
+    </message>
+    <message>
+        <source>Tone</source>
+        <translation>โทน</translation>
+    </message>
+    <message>
+        <source>Presence</source>
+        <translation>ความโดดเด่น</translation>
+    </message>
+    <message>
+        <source>Tone curve</source>
+        <translation>เส้นโค้งโทน</translation>
+    </message>
+    <message>
+        <source>Colour mixer</source>
+        <translation>มิกเซอร์สี</translation>
+    </message>
+    <message>
+        <source>Colour grading</source>
+        <translation>การเกรดสี</translation>
+    </message>
+    <message>
+        <source>Detail and optics</source>
+        <translation>รายละเอียดและออปติก</translation>
+    </message>
+    <message>
+        <source>Grain</source>
+        <translation>เกรน</translation>
+    </message>
+    <message>
+        <source>Colour management</source>
+        <translation>การจัดการสี</translation>
+    </message>
+    <message>
+        <source>Local adjustments</source>
+        <translation>การปรับเฉพาะจุด</translation>
+    </message>
+    <message>
+        <source>Presets</source>
+        <translation>พรีเซ็ต</translation>
+    </message>
+    <message>
+        <source>LUT</source>
+        <translation>LUT</translation>
+    </message>
+    <message>
+        <source>Edit assistant</source>
+        <translation>ผู้ช่วยแก้ไข</translation>
+    </message>
+    <message>
+        <source>Assistant edit applied</source>
+        <translation>ใช้การแก้ไขของผู้ช่วยแล้ว</translation>
     </message>
     <message>
         <source>Copy</source>
@@ -1594,28 +1665,28 @@
         <translation>กำลังเปิด %1</translation>
     </message>
     <message>
-        <source>Loading the studio catalog...</source>
-        <translation>กำลังโหลดแค็ตตาล็อกสตูดิโอ...</translation>
+        <source>Loading the catalog…</source>
+        <translation>กำลังโหลดแค็ตตาล็อก…</translation>
     </message>
     <message>
-        <source>Refreshing the studio catalog...</source>
-        <translation>กำลังรีเฟรชแค็ตตาล็อกสตูดิโอ...</translation>
+        <source>Refreshing the catalog…</source>
+        <translation>กำลังรีเฟรชแค็ตตาล็อก…</translation>
     </message>
     <message numerus="yes">
-        <source>Exporting %n photo(s) in parallel...</source>
+        <source>Exporting %n photos…</source>
         <translation>
-            <numerusform>กำลังส่งออก %n ภาพแบบขนาน...</numerusform>
+            <numerusform>กำลังส่งออก %n ภาพ…</numerusform>
         </translation>
     </message>
     <message>
-        <source>Developing at full resolution and encoding...</source>
-        <translation>กำลังล้างภาพที่ความละเอียดเต็มและเข้ารหัส...</translation>
+        <source>Developing at full resolution…</source>
+        <translation>กำลังล้างภาพที่ความละเอียดเต็ม…</translation>
     </message>
 </context>
 <context>
     <name>Navigator</name>
     <message>
-        <source>NAVIGATOR</source>
+        <source>Navigator</source>
         <translation>ตัวนำทาง</translation>
     </message>
     <message>
@@ -1624,65 +1695,92 @@
     </message>
 </context>
 <context>
+    <name>PanelSection</name>
+    <message>
+        <source>Reset %1</source>
+        <translation>รีเซ็ต %1</translation>
+    </message>
+</context>
+<context>
     <name>PresetSelector</name>
     <message>
-        <source>FILM LOOKS &amp; STYLES</source>
-        <translation>ลุคและสไตล์ฟิล์ม</translation>
+        <source>Looks</source>
+        <translation>ลุค</translation>
     </message>
     <message>
-        <source>RESET</source>
+        <source>Reset</source>
         <translation>รีเซ็ต</translation>
     </message>
     <message>
-        <source>AI Auto Enhance</source>
-        <translation>ปรับปรุงอัตโนมัติด้วย AI</translation>
+        <source>Auto</source>
+        <translation>อัตโนมัติ</translation>
     </message>
     <message>
-        <source>RUN</source>
+        <source>Run</source>
         <translation>เรียกใช้</translation>
     </message>
     <message>
-        <source>Documentary Muted</source>
-        <translation>สารคดีโทนหม่น</translation>
+        <source>Muted</source>
+        <translation>นุ่มนวล</translation>
     </message>
     <message>
-        <source>Vivid Landscapes</source>
-        <translation>ทิวทัศน์สดใส</translation>
+        <source>Documentary, low saturation</source>
+        <translation>สารคดี ความอิ่มสีต่ำ</translation>
     </message>
     <message>
-        <source>Warm Skin Tones</source>
-        <translation>โทนผิวอุ่น</translation>
+        <source>Vivid</source>
+        <translation>สดใส</translation>
     </message>
     <message>
-        <source>High Contrast B&amp;W</source>
-        <translation>ขาวดำคอนทราสต์สูง</translation>
+        <source>Landscapes, rich colour</source>
+        <translation>ภาพทิวทัศน์ สีเข้มข้น</translation>
     </message>
     <message>
-        <source>Film Grade</source>
-        <translation>เกรดสีแบบฟิล์ม</translation>
+        <source>Warm portrait</source>
+        <translation>ภาพบุคคลโทนอุ่น</translation>
+    </message>
+    <message>
+        <source>Soft contrast, warm skin</source>
+        <translation>คอนทราสต์นุ่ม ผิวอุ่น</translation>
+    </message>
+    <message>
+        <source>Black and white</source>
+        <translation>ขาวดำ</translation>
+    </message>
+    <message>
+        <source>High contrast</source>
+        <translation>คอนทราสต์สูง</translation>
+    </message>
+    <message>
+        <source>Teal and orange</source>
+        <translation>ฟ้าอมเขียวและส้ม</translation>
+    </message>
+    <message>
+        <source>Split toning</source>
+        <translation>แยกโทนสี</translation>
     </message>
 </context>
 <context>
     <name>RgbMixerPanel</name>
     <message>
-        <source>DAVINCI RGB PRIMARY MIXER</source>
-        <translation>มิกเซอร์ RGB หลักของ DaVinci</translation>
-    </message>
-    <message>
-        <source>RESET</source>
-        <translation>รีเซ็ต</translation>
-    </message>
-    <message>
         <source>Monochrome Mixing</source>
         <translation>การผสมขาวดำ</translation>
     </message>
     <message>
-        <source>MONOCHROME LUMA MIX</source>
-        <translation>การผสมความสว่างขาวดำ</translation>
+        <source>Channel mixer</source>
+        <translation>มิกเซอร์ช่องสี</translation>
     </message>
     <message>
-        <source>RED OUTPUT CHANNEL</source>
-        <translation>ช่องเอาต์พุตสีแดง</translation>
+        <source>Reset</source>
+        <translation>รีเซ็ต</translation>
+    </message>
+    <message>
+        <source>Monochrome mix</source>
+        <translation>การผสมขาวดำ</translation>
+    </message>
+    <message>
+        <source>Red output</source>
+        <translation>เอาต์พุตแดง</translation>
     </message>
     <message>
         <source>Red in Red</source>
@@ -1697,8 +1795,12 @@
         <translation>น้ำเงินในแดง</translation>
     </message>
     <message>
-        <source>GREEN OUTPUT CHANNEL</source>
-        <translation>ช่องเอาต์พุตสีเขียว</translation>
+        <source>Green output</source>
+        <translation>เอาต์พุตเขียว</translation>
+    </message>
+    <message>
+        <source>Blue output</source>
+        <translation>เอาต์พุตน้ำเงิน</translation>
     </message>
     <message>
         <source>Red in Green</source>
@@ -1711,10 +1813,6 @@
     <message>
         <source>Blue in Green</source>
         <translation>น้ำเงินในเขียว</translation>
-    </message>
-    <message>
-        <source>BLUE OUTPUT CHANNEL</source>
-        <translation>ช่องเอาต์พุตสีน้ำเงิน</translation>
     </message>
     <message>
         <source>Red in Blue</source>
@@ -1758,8 +1856,8 @@
         <translation>[ฮ] %1%</translation>
     </message>
     <message>
-        <source>NO SIGNAL / LOAD RAW</source>
-        <translation>ไม่มีสัญญาณ / โหลด RAW</translation>
+        <source>No photo</source>
+        <translation>ไม่มีภาพ</translation>
     </message>
     <message>
         <source>RED</source>
@@ -1781,11 +1879,11 @@
 <context>
     <name>SkinTonePanel</name>
     <message>
-        <source>CAPTURE ONE SKIN TONE</source>
-        <translation>โทนผิว CAPTURE ONE</translation>
+        <source>Skin tone</source>
+        <translation>สีผิว</translation>
     </message>
     <message>
-        <source>RESET</source>
+        <source>Reset</source>
         <translation>รีเซ็ต</translation>
     </message>
     <message>
@@ -1827,52 +1925,28 @@
 <context>
     <name>SocialOptimizer</name>
     <message>
-        <source>AI SOCIAL MEDIA OPTIMIZER</source>
-        <translation>ตัวปรับภาพสำหรับโซเชียลด้วย AI</translation>
+        <source>Prepare for</source>
+        <translation>เตรียมสำหรับ</translation>
     </message>
     <message>
-        <source>RESET</source>
+        <source>Reset</source>
         <translation>รีเซ็ต</translation>
     </message>
     <message>
-        <source>Instagram Feed</source>
-        <translation>ฟีด Instagram</translation>
+        <source>Instagram post</source>
+        <translation>โพสต์ Instagram</translation>
     </message>
     <message>
-        <source>Max Screen</source>
-        <translation>หน้าจอสูงสุด</translation>
+        <source>Stories and Reels</source>
+        <translation>สตอรี่และ Reels</translation>
     </message>
     <message>
-        <source>Stories / Reels</source>
-        <translation>สตอรี่ / Reels</translation>
+        <source>Square</source>
+        <translation>สี่เหลี่ยมจัตุรัส</translation>
     </message>
     <message>
-        <source>Full Mobile</source>
-        <translation>เต็มจอมือถือ</translation>
-    </message>
-    <message>
-        <source>Crisp Feed</source>
-        <translation>ฟีดคมชัด</translation>
-    </message>
-    <message>
-        <source>Classic Square</source>
-        <translation>สี่เหลี่ยมจัตุรัสคลาสสิก</translation>
-    </message>
-    <message>
-        <source>Grid Post</source>
-        <translation>โพสต์แบบตาราง</translation>
-    </message>
-    <message>
-        <source>High Res</source>
-        <translation>ความละเอียดสูง</translation>
-    </message>
-    <message>
-        <source>YouTube Thumb</source>
-        <translation>ภาพปก YouTube</translation>
-    </message>
-    <message>
-        <source>High CTR</source>
-        <translation>CTR สูง</translation>
+        <source>YouTube thumbnail</source>
+        <translation>ภาพขนาดย่อ YouTube</translation>
     </message>
 </context>
 <context>
@@ -1907,8 +1981,8 @@
         <translation>พื้นฐาน</translation>
     </message>
     <message>
-        <source>Pro Studio</source>
-        <translation>Pro Studio</translation>
+        <source>Pro</source>
+        <translation>Pro</translation>
     </message>
     <message>
         <source>Undo (Ctrl+Z)</source>
@@ -1946,16 +2020,16 @@
 <context>
     <name>Viewport</name>
     <message>
-        <source>RESET 0°</source>
-        <translation>รีเซ็ต 0°</translation>
+        <source>Reset 0°</source>
+        <translation>รีเซ็ตเป็น 0°</translation>
     </message>
     <message>
-        <source>FIT</source>
+        <source>Fit</source>
         <translation>พอดี</translation>
     </message>
     <message>
-        <source>CROP &amp; COMPOSE</source>
-        <translation>ครอปและการจัดองค์ประกอบ</translation>
+        <source>Crop</source>
+        <translation>ครอป</translation>
     </message>
     <message>
         <source>Original</source>
@@ -1982,12 +2056,20 @@
         <translation>เส้นตาราง: ปิด</translation>
     </message>
     <message>
-        <source>RESET</source>
+        <source>Reset</source>
         <translation>รีเซ็ต</translation>
     </message>
     <message>
-        <source>DONE</source>
+        <source>Done</source>
         <translation>เสร็จสิ้น</translation>
+    </message>
+    <message>
+        <source>Shadow clipping</source>
+        <translation>การตัดส่วนเงา</translation>
+    </message>
+    <message>
+        <source>Highlight clipping</source>
+        <translation>การตัดส่วนไฮไลต์</translation>
     </message>
     <message>
         <source>ORIGINAL RAW (Before)</source>
@@ -1996,18 +2078,6 @@
     <message>
         <source>EDITED RECIPE (After)</source>
         <translation>สูตรที่แก้ไข (หลัง)</translation>
-    </message>
-    <message>
-        <source>[S] SHADOW CLIPPING (BLUE)</source>
-        <translation>[ง] เงาถูกตัด (น้ำเงิน)</translation>
-    </message>
-    <message>
-        <source>[H] HIGHLIGHT CLIPPING (RED)</source>
-        <translation>[ฮ] ไฮไลต์ถูกตัด (แดง)</translation>
-    </message>
-    <message>
-        <source>Pinch: Zoom | 2-Finger Twist: Rotate | 2-Finger Pan | Double-Tap: Reset</source>
-        <translation>บีบนิ้ว: ซูม | หมุน 2 นิ้ว: หมุนภาพ | เลื่อน 2 นิ้ว | แตะสองครั้ง: รีเซ็ต</translation>
     </message>
     <message>
         <source>Open a RAW (Ctrl+O) or drop a photo / folder here</source>
@@ -2021,8 +2091,8 @@
 <context>
     <name>WatermarkConfig</name>
     <message>
-        <source>WATERMARK &amp; BRANDING</source>
-        <translation>ลายน้ำและแบรนด์</translation>
+        <source>Watermark</source>
+        <translation>ลายน้ำ</translation>
     </message>
     <message>
         <source>Text / EXIF Tag</source>
@@ -2033,28 +2103,28 @@
         <translation>โลโก้ PNG ที่กำหนดเอง</translation>
     </message>
     <message>
-        <source>WATERMARK TEXT OR TEMPLATE</source>
-        <translation>ข้อความหรือเทมเพลตลายน้ำ</translation>
+        <source>Text or template</source>
+        <translation>ข้อความหรือเทมเพลต</translation>
     </message>
     <message>
-        <source>LOGO FILE PATH (.PNG)</source>
-        <translation>พาธไฟล์โลโก้ (.PNG)</translation>
+        <source>Logo file (PNG)</source>
+        <translation>ไฟล์โลโก้ (PNG)</translation>
     </message>
     <message>
-        <source>POSITION</source>
+        <source>Position</source>
         <translation>ตำแหน่ง</translation>
+    </message>
+    <message>
+        <source>Opacity</source>
+        <translation>ความทึบ</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>ขนาด</translation>
     </message>
     <message>
         <source>Drop Shadow</source>
         <translation>เงาตกกระทบ</translation>
-    </message>
-    <message>
-        <source>OPACITY</source>
-        <translation>ความทึบ</translation>
-    </message>
-    <message>
-        <source>SIZE MULTIPLIER</source>
-        <translation>ตัวคูณขนาด</translation>
     </message>
 </context>
 </TS>

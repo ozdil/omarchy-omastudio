@@ -1,9 +1,12 @@
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
+import OmaStudio.Host
 
 Rectangle {
     id: root
+    // Inside a panel section, which shows the title
+    property bool embedded: false
     Layout.fillWidth: true
     implicitHeight: mainCol.implicitHeight + 16
     radius: Theme.radiusMd
@@ -16,6 +19,19 @@ Rectangle {
     property string customLutPath: ""
 
     signal lutChanged(string name, real intensity, string path)
+
+    Process {
+        id: cubePick
+        command: ["zenity", "--file-selection", "--title=" + qsTr("Load 3D LUT"),
+                  "--file-filter=" + qsTr("3D LUT") + " | *.cube *.CUBE"]
+        onFinished: function(exitCode, output) {
+            var p = String(output || "").trim();
+            if (exitCode !== 0 || p.length === 0) return;
+            root.activeLut = p.split("/").pop().replace(/\.cube$/i, "");
+            root.customLutPath = p;
+            root.lutChanged(root.activeLut, root.lutIntensity, p);
+        }
+    }
 
     ColumnLayout {
         id: mainCol
@@ -31,8 +47,9 @@ Rectangle {
             spacing: 6
 
             Text {
+                visible: !root.embedded
                 font.family: Theme.fontFamily
-                text: qsTr("DAVINCI 3D LUT ENGINE (.CUBE)")
+                text: qsTr("3D LUT")
                 textFormat: Text.PlainText
                 font.pixelSize: Theme.px(10)
                 font.weight: Font.DemiBold
@@ -54,9 +71,9 @@ Rectangle {
                     font.family: Theme.fontFamily
                     id: resetText
                     anchors.centerIn: parent
-                    text: qsTr("RESET")
+                    text: qsTr("Reset")
                     textFormat: Text.PlainText
-                    font.pixelSize: Theme.px(8)
+                    font.pixelSize: Theme.px(10)
                     font.weight: Font.Bold
                     color: Theme.textDim
                 }
@@ -76,85 +93,42 @@ Rectangle {
             }
         }
 
-        // LUT Selection Buttons Grid
-        GridLayout {
+        Rectangle {
             Layout.fillWidth: true
-            columns: 2
-            rowSpacing: 4
-            columnSpacing: 4
-
-            property var presets: [
-                { name: "Kodak 2383", sub: qsTr("Hollywood Print"), col: Theme.accentOrange },
-                { name: "Teal & Orange", sub: qsTr("Cinema Blockbuster"), col: Theme.accentCyan },
-                { name: "Fuji Eterna", sub: qsTr("35mm Soft Stock"), col: Theme.accentGreen },
-                { name: "Silver Nitrate", sub: qsTr("High-Acutance B&W"), col: Theme.accentPurple }
-            ]
-
-            Repeater {
-                model: parent.presets
-                delegate: Rectangle {
-                    Layout.fillWidth: true
-                    implicitHeight: 32
-                    radius: Theme.r(4)
-                    property bool isCur: root.activeLut === modelData.name
-                    color: isCur ? Qt.rgba(Theme.accent.r, Theme.accent.g, Theme.accent.b, 0.2) : (mouseArea.containsMouse ? Theme.bgCardHover : Theme.bgCard)
-                    border.color: isCur ? modelData.col : Theme.border
-                    border.width: 1
-
-                    RowLayout {
-                        anchors.fill: parent
-                        anchors.margins: 6
-                        spacing: 4
-
-                        Rectangle {
-                            implicitWidth: 6
-                            implicitHeight: 6
-                            radius: Theme.r(3)
-                            color: modelData.col
-                        }
-
-                        ColumnLayout {
-                            spacing: 0
-                            Layout.fillWidth: true
-                            Text {
-                                text: modelData.name
-                                textFormat: Text.PlainText
-                                font.pixelSize: Theme.px(9)
-                                font.weight: Font.Bold
-                                font.family: Theme.monoFont
-                                color: parent.parent.parent.isCur ? modelData.col : Theme.textMain
-                                elide: Text.ElideRight
-                                Layout.fillWidth: true
-                            }
-                            Text {
-                                font.family: Theme.fontFamily
-                                text: modelData.sub
-                                textFormat: Text.PlainText
-                                font.pixelSize: Theme.px(7)
-                                color: Theme.textDim
-                                elide: Text.ElideRight
-                                Layout.fillWidth: true
-                            }
-                        }
-                    }
-
-                    MouseArea {
-                        id: mouseArea
-                        anchors.fill: parent
-                        cursorShape: Qt.PointingHandCursor
-                        hoverEnabled: true
-                        onClicked: {
-                            if (root.activeLut === modelData.name) {
-                                root.activeLut = "";
-                            } else {
-                                root.activeLut = modelData.name;
-                                root.customLutPath = "";
-                            }
-                            root.lutChanged(root.activeLut, root.lutIntensity, root.customLutPath);
-                        }
-                    }
-                }
+            implicitHeight: Theme.px(28)
+            radius: Theme.radiusSm
+            color: loadMouse.containsMouse ? Theme.bgCardHover : Theme.bgCard
+            border.color: Theme.border
+            Text {
+                anchors.centerIn: parent
+                text: root.customLutPath !== "" ? root.customLutPath.split("/").pop() : qsTr("Load .cube file…")
+                textFormat: Text.PlainText
+                font.family: Theme.fontFamily
+                font.pixelSize: Theme.px(11)
+                color: root.customLutPath !== "" ? Theme.accent : Theme.textMain
+                elide: Text.ElideMiddle
+                width: parent.width - Theme.px(16)
+                horizontalAlignment: Text.AlignHCenter
             }
+            MouseArea {
+                id: loadMouse
+                anchors.fill: parent
+                hoverEnabled: true
+                cursorShape: Qt.PointingHandCursor
+                onClicked: if (!cubePick.running) cubePick.running = true
+            }
+        }
+
+        // A look saved by an older version (no file); shown so it can be removed
+        Text {
+            visible: root.activeLut !== "" && root.customLutPath === ""
+            text: qsTr("Saved look: %1").arg(root.activeLut)
+            textFormat: Text.PlainText
+            font.family: Theme.fontFamily
+            font.pixelSize: Theme.px(11)
+            color: Theme.textMuted
+            elide: Text.ElideRight
+            Layout.fillWidth: true
         }
 
         // Intensity Slider (Visible when a LUT is active)
@@ -167,7 +141,7 @@ Rectangle {
                 Layout.fillWidth: true
                 Text {
                     font.family: Theme.fontFamily
-                    text: qsTr("LUT Intensity (Mix)")
+                    text: qsTr("Amount")
                     textFormat: Text.PlainText
                     font.pixelSize: Theme.px(9)
                     color: Theme.textDim

@@ -175,28 +175,36 @@
         <translation>Misslyckades</translation>
     </message>
     <message>
-        <source>AI EDIT ASSISTANT</source>
-        <translation>AI-REDIGERINGSASSISTENT</translation>
+        <source>Assistant</source>
+        <translation>Assistent</translation>
     </message>
     <message>
-        <source>DONE</source>
-        <translation>KLAR</translation>
+        <source>Done</source>
+        <translation>Klar</translation>
     </message>
     <message>
-        <source>SETUP</source>
-        <translation>KONFIGURERA</translation>
+        <source>Set up</source>
+        <translation>Konfigurera</translation>
+    </message>
+    <message>
+        <source>Working…</source>
+        <translation>Arbetar…</translation>
+    </message>
+    <message>
+        <source>Edit</source>
+        <translation>Redigera</translation>
+    </message>
+    <message>
+        <source>Store key</source>
+        <translation>Spara nyckel</translation>
+    </message>
+    <message>
+        <source>Use %1</source>
+        <translation>Använd %1</translation>
     </message>
     <message>
         <source>e.g. warmer, moody evening light, recover the sky</source>
         <translation>t.ex. varmare, stämningsfullt kvällsljus, återställ himlen</translation>
-    </message>
-    <message>
-        <source>THINKING...</source>
-        <translation>TÄNKER...</translation>
-    </message>
-    <message>
-        <source>EDIT WITH AI</source>
-        <translation>REDIGERA MED AI</translation>
     </message>
     <message>
         <source>Running. Models: %1</source>
@@ -222,14 +230,6 @@
         <source>API key</source>
         <translation>API-nyckel</translation>
     </message>
-    <message>
-        <source>STORE KEY</source>
-        <translation>SPARA NYCKEL</translation>
-    </message>
-    <message>
-        <source>USE %1</source>
-        <translation>ANVÄND %1</translation>
-    </message>
 </context>
 <context>
     <name>BoundedTextInput</name>
@@ -241,48 +241,16 @@
 <context>
     <name>ColorGradingWheels</name>
     <message>
-        <source>DAVINCI PRIMARIES WHEELS</source>
-        <translation>DAVINCI PRIMÄRHJUL</translation>
-    </message>
-    <message>
-        <source>4-WHEEL</source>
-        <translation>4 HJUL</translation>
-    </message>
-    <message>
-        <source>TABBED</source>
-        <translation>FLIKAR</translation>
-    </message>
-    <message>
-        <source>RESET</source>
-        <translation>ÅTERSTÄLL</translation>
-    </message>
-    <message>
-        <source>LIFT</source>
-        <translation>LIFT</translation>
-    </message>
-    <message>
         <source>Shadows</source>
         <translation>Skuggor</translation>
-    </message>
-    <message>
-        <source>GAMMA</source>
-        <translation>GAMMA</translation>
     </message>
     <message>
         <source>Mids</source>
         <translation>Mellantoner</translation>
     </message>
     <message>
-        <source>GAIN</source>
-        <translation>GAIN</translation>
-    </message>
-    <message>
         <source>Highlights</source>
         <translation>Högdagrar</translation>
-    </message>
-    <message>
-        <source>OFFSET</source>
-        <translation>OFFSET</translation>
     </message>
     <message>
         <source>Global</source>
@@ -307,6 +275,22 @@
     <message>
         <source>Lift</source>
         <translation>Lift</translation>
+    </message>
+    <message>
+        <source>Colour grading</source>
+        <translation>Färggradering</translation>
+    </message>
+    <message>
+        <source>4 wheels</source>
+        <translation>4 hjul</translation>
+    </message>
+    <message>
+        <source>Tabs</source>
+        <translation>Flikar</translation>
+    </message>
+    <message>
+        <source>Reset</source>
+        <translation>Återställ</translation>
     </message>
     <message>
         <source>Gamma</source>
@@ -368,8 +352,12 @@
         <translation>Brett AP1</translation>
     </message>
     <message>
-        <source>COLOR MANAGEMENT &amp; ACES 1.3</source>
-        <translation>FÄRGHANTERING OCH ACES 1.3</translation>
+        <source>Colour management</source>
+        <translation>Färghantering</translation>
+    </message>
+    <message>
+        <source>Gamut compression</source>
+        <translation>Gamutkomprimering</translation>
     </message>
     <message>
         <source>%1 (%2)</source>
@@ -394,114 +382,162 @@
 <context>
     <name>ExifCard</name>
     <message>
-        <source>No camera loaded</source>
-        <translation>Ingen kamera laddad</translation>
-    </message>
-    <message>
-        <source>Unknown lens</source>
-        <translation>Okänt objektiv</translation>
+        <source>No photo</source>
+        <translation>Inget foto</translation>
     </message>
 </context>
 <context>
     <name>ExportDialog</name>
-    <message numerus="yes">
-        <source>Batch Export (%n Photos)</source>
-        <translation>
-            <numerusform>Batchexport (%n foto)</numerusform>
-            <numerusform>Batchexport (%n foton)</numerusform>
-        </translation>
-    </message>
-    <message>
-        <source>Export Master Photo</source>
-        <translation>Exportera masterfoto</translation>
-    </message>
-    <message>
-        <source>MODERN OPEN FORMAT</source>
-        <translation>MODERNT ÖPPET FORMAT</translation>
-    </message>
-    <message>
-        <source>Next-Gen 16-bit HDR</source>
-        <translation>16-bitars HDR av nästa generation</translation>
-    </message>
-    <message>
-        <source>AV1 Web/Mobile</source>
-        <translation>AV1 webb/mobil</translation>
-    </message>
-    <message>
-        <source>Ultra Compact</source>
-        <translation>Ultrakompakt</translation>
-    </message>
-    <message>
-        <source>16-bit TIFF</source>
-        <translation>16-bitars TIFF</translation>
-    </message>
-    <message>
-        <source>Master Print Lossless</source>
-        <translation>Förlustfri mastertryck</translation>
-    </message>
-    <message>
-        <source>Graphic Lossless</source>
-        <translation>Förlustfri grafik</translation>
-    </message>
-    <message>
-        <source>Universal MozJPEG</source>
-        <translation>Universell MozJPEG</translation>
-    </message>
-    <message>
-        <source>Export Compression Quality</source>
-        <translation>Komprimeringskvalitet vid export</translation>
-    </message>
-    <message>
-        <source>RESOLUTION &amp; SCALING</source>
-        <translation>UPPLÖSNING OCH SKALNING</translation>
-    </message>
-    <message>
-        <source>100% Full</source>
-        <translation>100 % full</translation>
-    </message>
-    <message>
-        <source>Social (2048p)</source>
-        <translation>Sociala medier (2048p)</translation>
-    </message>
-    <message>
-        <source>COLOR SPACE &amp; ICC PROFILE</source>
-        <translation>FÄRGRYMD OCH ICC-PROFIL</translation>
-    </message>
-    <message>
-        <source>Universal Web / Social</source>
-        <translation>Universell webb / sociala medier</translation>
-    </message>
-    <message>
-        <source>Apple / Wide OLED</source>
-        <translation>Apple / brett OLED</translation>
-    </message>
-    <message>
-        <source>Ultra-Wide Gamut HDR</source>
-        <translation>HDR med ultrabrett färgomfång</translation>
-    </message>
-    <message>
-        <source>Academy Color Standard</source>
-        <translation>Akademiens färgstandard</translation>
-    </message>
-    <message>
-        <source>Pro Photography / Print</source>
-        <translation>Professionell fotografi / tryck</translation>
-    </message>
-    <message>
-        <source>16-Bit Master Archival</source>
-        <translation>16-bitars masterarkiv</translation>
-    </message>
-    <message>
-        <source>Intent</source>
-        <translation>Återgivning</translation>
-    </message>
     <message>
         <source>Perceptual</source>
         <translation>Perceptuell</translation>
     </message>
     <message>
-        <source>Compresses the whole gamut; smooth, saturated colours keep their relations</source>
-        <translation>Komprimerar hela färgomfånget; mjuka, mättade färger behåller sina inbördes förhållanden</translation>
+        <source>8-bit · universal</source>
+        <translation>8 bitar · universellt</translation>
+    </message>
+    <message>
+        <source>16-bit · lossless</source>
+        <translation>16 bitar · förlustfritt</translation>
+    </message>
+    <message>
+        <source>16-bit · print, archive</source>
+        <translation>16 bitar · utskrift, arkiv</translation>
+    </message>
+    <message>
+        <source>8-bit · web</source>
+        <translation>8 bitar · webb</translation>
+    </message>
+    <message>
+        <source>12-bit · HDR-ready</source>
+        <translation>12 bitar · redo för HDR</translation>
+    </message>
+    <message>
+        <source>10-bit · HEVC</source>
+        <translation>10 bitar · HEVC</translation>
+    </message>
+    <message>
+        <source>16-bit · modern</source>
+        <translation>16 bitar · modernt</translation>
+    </message>
+    <message>
+        <source>Float · scene-linear</source>
+        <translation>Flyttal · scenlinjärt</translation>
+    </message>
+    <message numerus="yes">
+        <source>Export %n photos</source>
+        <translation>
+            <numerusform>Exportera %n foto</numerusform>
+            <numerusform>Exportera %n foton</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>Export</source>
+        <translation>Exportera</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>Stäng</translation>
+    </message>
+    <message>
+        <source>Format</source>
+        <translation>Filformat</translation>
+    </message>
+    <message>
+        <source>Quality</source>
+        <translation>Kvalitet</translation>
+    </message>
+    <message>
+        <source>100 is lossless.</source>
+        <translation>100 är förlustfritt.</translation>
+    </message>
+    <message>
+        <source>Bit depth</source>
+        <translation>Bitdjup</translation>
+    </message>
+    <message>
+        <source>Half float</source>
+        <translation>Halv flyttalsprecision</translation>
+    </message>
+    <message>
+        <source>Full float</source>
+        <translation>Full flyttalsprecision</translation>
+    </message>
+    <message>
+        <source>%1-bit</source>
+        <translation>%1 bitar</translation>
+    </message>
+    <message>
+        <source>Compression</source>
+        <translation>Komprimering</translation>
+    </message>
+    <message>
+        <source>None</source>
+        <translation>Ingen</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>Storlek</translation>
+    </message>
+    <message>
+        <source>Full</source>
+        <translation>Full</translation>
+    </message>
+    <message>
+        <source>3840 px</source>
+        <translation>3840 px</translation>
+    </message>
+    <message>
+        <source>Long edge at most 3840 px</source>
+        <translation>Långsidan högst 3840 px</translation>
+    </message>
+    <message>
+        <source>2048 px</source>
+        <translation>2048 px</translation>
+    </message>
+    <message>
+        <source>Long edge at most 2048 px</source>
+        <translation>Långsidan högst 2048 px</translation>
+    </message>
+    <message>
+        <source>Colour profile</source>
+        <translation>Färgprofil</translation>
+    </message>
+    <message>
+        <source>Web, screens</source>
+        <translation>Webb, skärmar</translation>
+    </message>
+    <message>
+        <source>Wide-gamut screens</source>
+        <translation>Skärmar med stort färgomfång</translation>
+    </message>
+    <message>
+        <source>Print</source>
+        <translation>Utskrift</translation>
+    </message>
+    <message>
+        <source>Editing, archive</source>
+        <translation>Redigering, arkiv</translation>
+    </message>
+    <message>
+        <source>HDR, video</source>
+        <translation>HDR, video</translation>
+    </message>
+    <message>
+        <source>Linear, VFX</source>
+        <translation>Linjärt, VFX</translation>
+    </message>
+    <message>
+        <source>OpenEXR is written scene-linear in the chosen primaries.</source>
+        <translation>OpenEXR skrivs scenlinjärt i de valda primärfärgerna.</translation>
+    </message>
+    <message>
+        <source>Rendering intent</source>
+        <translation>Återgivningsavsikt</translation>
+    </message>
+    <message>
+        <source>Compresses the whole gamut; colour relations are kept</source>
+        <translation>Komprimerar hela färgomfånget; förhållandet mellan färgerna behålls</translation>
     </message>
     <message>
         <source>Relative</source>
@@ -528,46 +564,55 @@
         <translation>Exakta färger inklusive källans vitpunkt; för provtryck</translation>
     </message>
     <message>
-        <source>Preserve Camera EXIF</source>
-        <translation>Behåll kamerans EXIF</translation>
+        <source>Metadata</source>
+        <translation>Metadata</translation>
     </message>
     <message>
-        <source>Strip GPS (Privacy)</source>
-        <translation>Ta bort GPS (integritet)</translation>
+        <source>Keep camera metadata (EXIF)</source>
+        <translation>Behåll kamerans metadata (EXIF)</translation>
     </message>
     <message>
-        <source>Apply Photography Watermark / EXIF Signature</source>
-        <translation>Lägg till vattenstämpel / EXIF-signatur</translation>
+        <source>Remove location (GPS)</source>
+        <translation>Ta bort plats (GPS)</translation>
     </message>
     <message>
-        <source>Exporting Batch...</source>
-        <translation>Exporterar batch...</translation>
+        <source>Prepare for</source>
+        <translation>Förbered för</translation>
     </message>
     <message>
-        <source>Exporting Full Resolution...</source>
-        <translation>Exporterar i full upplösning...</translation>
-    </message>
-    <message numerus="yes">
-        <source>Start Parallel Batch Export (%n Photos)</source>
-        <translation>
-            <numerusform>Starta parallell batchexport (%n foto)</numerusform>
-            <numerusform>Starta parallell batchexport (%n foton)</numerusform>
-        </translation>
+        <source>Sets the crop and output sharpening for a platform. Reset restores your own.</source>
+        <translation>Ställer in beskärning och utdataskärpa för en plattform. Återställ tar tillbaka dina egna inställningar.</translation>
     </message>
     <message>
-        <source>Start Export (%1 / %2)</source>
-        <translation>Starta export (%1 / %2)</translation>
+        <source>Watermark</source>
+        <translation>Vattenstämpel</translation>
+    </message>
+    <message>
+        <source>Folder</source>
+        <translation>Mapp</translation>
+    </message>
+    <message>
+        <source>Hide</source>
+        <translation>Dölj</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Avbryt</translation>
+    </message>
+    <message>
+        <source>Exporting…</source>
+        <translation>Exporterar…</translation>
     </message>
 </context>
 <context>
     <name>FilmGrainPanel</name>
     <message>
-        <source>SILVER-HALIDE FILM GRAIN</source>
-        <translation>SILVERHALOGENIDFILMKORN</translation>
+        <source>Grain</source>
+        <translation>Korn</translation>
     </message>
     <message>
-        <source>RESET</source>
-        <translation>ÅTERSTÄLL</translation>
+        <source>Reset</source>
+        <translation>Återställ</translation>
     </message>
     <message>
         <source>Grain Amount</source>
@@ -701,12 +746,16 @@
         <translation>Panoramisk filmisk 35 mm-kontrast</translation>
     </message>
     <message>
-        <source>FILM SIMULATION &amp; SENSOR PROFILES</source>
-        <translation>FILMSIMULERING OCH SENSORPROFILER</translation>
+        <source>Profile</source>
+        <translation>Profil</translation>
     </message>
     <message>
-        <source>RESET</source>
-        <translation>ÅTERSTÄLL</translation>
+        <source>Reset</source>
+        <translation>Återställ</translation>
+    </message>
+    <message>
+        <source>Amount</source>
+        <translation>Styrka</translation>
     </message>
     <message>
         <source>All</source>
@@ -716,17 +765,9 @@
         <source>Acros B&amp;W</source>
         <translation>Acros S/V</translation>
     </message>
-    <message>
-        <source>SIMULATION INTENSITY</source>
-        <translation>SIMULERINGENS STYRKA</translation>
-    </message>
 </context>
 <context>
     <name>Filmstrip</name>
-    <message>
-        <source>Local Photos</source>
-        <translation>Lokala foton</translation>
-    </message>
     <message>
         <source>Studio Catalog</source>
         <translation>Studiokatalog</translation>
@@ -734,6 +775,14 @@
     <message>
         <source>Up</source>
         <translation>Upp</translation>
+    </message>
+    <message>
+        <source>Folders</source>
+        <translation>Mappar</translation>
+    </message>
+    <message>
+        <source>Catalog</source>
+        <translation>Katalog</translation>
     </message>
     <message>
         <source>Scanning Catalog...</source>
@@ -760,21 +809,20 @@
         <translation>Inga foton hittades i den här mappen.</translation>
     </message>
     <message>
-        <source>DIR</source>
-        <comment>folder badge</comment>
-        <translation>MAPP</translation>
+        <source>Folder</source>
+        <translation>Mapp</translation>
     </message>
     <message>
-        <source>FETCHING</source>
-        <translation>HÄMTAR</translation>
+        <source>Downloading</source>
+        <translation>Hämtar</translation>
     </message>
     <message>
-        <source>RAW CLOUD</source>
-        <translation>RAW I MOLNET</translation>
+        <source>Remote</source>
+        <translation>Fjärr</translation>
     </message>
     <message>
-        <source>NO PREVIEW</source>
-        <translation>INGEN FÖRHANDSVISNING</translation>
+        <source>No preview</source>
+        <translation>Ingen förhandsvisning</translation>
     </message>
     <message>
         <source>Loading...</source>
@@ -836,40 +884,60 @@
         <translation>Fujifilm-recept</translation>
     </message>
     <message>
-        <source>FUJIFILM RECIPES</source>
-        <translation>FUJIFILM-RECEPT</translation>
+        <source>Import</source>
+        <translation>Importera</translation>
     </message>
     <message>
-        <source>IMPORT</source>
-        <translation>IMPORTERA</translation>
+        <source>Apply photo&apos;s recipe</source>
+        <translation>Använd fotots recept</translation>
     </message>
     <message>
-        <source>APPLY PHOTO&apos;S RECIPE</source>
-        <translation>ANVÄND FOTOTS RECEPT</translation>
+        <source>Save</source>
+        <translation>Spara</translation>
     </message>
     <message>
-        <source>SAVE</source>
-        <translation>SPARA</translation>
+        <source>Apply recipe</source>
+        <translation>Använd recept</translation>
+    </message>
+    <message>
+        <source>Camera (USB)</source>
+        <translation>Kamera (USB)</translation>
+    </message>
+    <message>
+        <source>Reconnect</source>
+        <translation>Återanslut</translation>
+    </message>
+    <message>
+        <source>Connect</source>
+        <translation>Anslut</translation>
+    </message>
+    <message>
+        <source>Read C1–C7</source>
+        <translation>Läs C1–C7</translation>
+    </message>
+    <message>
+        <source>Convert in camera</source>
+        <translation>Konvertera i kameran</translation>
+    </message>
+    <message>
+        <source>Write recipe to C%1</source>
+        <translation>Skriv receptet till C%1</translation>
+    </message>
+    <message>
+        <source>Pixel shift</source>
+        <translation>Pixel Shift</translation>
+    </message>
+    <message>
+        <source>Merge %1 frames to DNG</source>
+        <translation>Slå ihop %1 bildrutor till DNG</translation>
+    </message>
+    <message>
+        <source>Merge frames to DNG</source>
+        <translation>Slå ihop bildrutor till DNG</translation>
     </message>
     <message>
         <source>No saved recipes. Import an X RAW Studio profile, recipe text or a Fujifilm photo.</source>
         <translation>Inga sparade recept. Importera en X RAW Studio-profil, recepttext eller ett Fujifilm-foto.</translation>
-    </message>
-    <message>
-        <source>APPLY SELECTED RECIPE</source>
-        <translation>ANVÄND VALT RECEPT</translation>
-    </message>
-    <message>
-        <source>CAMERA (USB)</source>
-        <translation>KAMERA (USB)</translation>
-    </message>
-    <message>
-        <source>RECONNECT</source>
-        <translation>ÅTERANSLUT</translation>
-    </message>
-    <message>
-        <source>CONNECT</source>
-        <translation>ANSLUT</translation>
     </message>
     <message>
         <source>%1  ·  in-camera RAW conversion</source>
@@ -884,24 +952,8 @@
         <translation>Ställ kamerans USB-läge på %1 och anslut den.</translation>
     </message>
     <message>
-        <source>READ C1-C7</source>
-        <translation>LÄS C1-C7</translation>
-    </message>
-    <message>
-        <source>CONVERT IN CAMERA</source>
-        <translation>KONVERTERA I KAMERAN</translation>
-    </message>
-    <message>
         <source>Unnamed</source>
         <translation>Namnlöst</translation>
-    </message>
-    <message>
-        <source>WRITE SELECTED RECIPE TO C%1</source>
-        <translation>SKRIV VALT RECEPT TILL C%1</translation>
-    </message>
-    <message>
-        <source>PIXEL SHIFT MULTI-SHOT</source>
-        <translation>PIXEL SHIFT MULTI-SHOT</translation>
     </message>
     <message numerus="yes">
         <source>%n RAF frames selected. 4 frames give full colour per pixel, 16 frames double the resolution.</source>
@@ -914,23 +966,12 @@
         <source>Select the RAF frames of one GFX Pixel Shift sequence in the filmstrip.</source>
         <translation>Välj RAF-bilderna från en GFX Pixel Shift-sekvens i filmremsan.</translation>
     </message>
-    <message numerus="yes">
-        <source>MERGE %n FRAMES TO DNG</source>
-        <translation>
-            <numerusform>SLÅ SAMMAN %n BILD TILL DNG</numerusform>
-            <numerusform>SLÅ SAMMAN %n BILDER TILL DNG</numerusform>
-        </translation>
-    </message>
-    <message>
-        <source>MERGE FRAMES TO DNG</source>
-        <translation>SLÅ SAMMAN BILDER TILL DNG</translation>
-    </message>
 </context>
 <context>
     <name>GradeVersionsBar</name>
     <message>
-        <source>GRADE VERSION</source>
-        <translation>GRADERINGSVERSION</translation>
+        <source>Version</source>
+        <translation>Version</translation>
     </message>
 </context>
 <context>
@@ -941,8 +982,8 @@
         <translation>[S] %1%</translation>
     </message>
     <message>
-        <source>RGB HISTOGRAM</source>
-        <translation>RGB-HISTOGRAM</translation>
+        <source>Histogram</source>
+        <translation>Histogram</translation>
     </message>
     <message>
         <source>[H] %1%</source>
@@ -989,12 +1030,12 @@
         <translation>Kanal %1</translation>
     </message>
     <message>
-        <source>RESET CH</source>
-        <translation>ÅTERST. KANAL</translation>
+        <source>Reset colour</source>
+        <translation>Återställ färg</translation>
     </message>
     <message>
-        <source>RESET ALL</source>
-        <translation>ÅTERSTÄLL ALLT</translation>
+        <source>Reset all</source>
+        <translation>Återställ allt</translation>
     </message>
     <message>
         <source>Hue Shift</source>
@@ -1102,32 +1143,32 @@
         <translation>Masken %1 är klar (%2)</translation>
     </message>
     <message>
-        <source>DETECTING...</source>
-        <translation>IDENTIFIERAR...</translation>
+        <source>Detecting…</source>
+        <translation>Identifierar…</translation>
     </message>
     <message>
-        <source>LOCAL ADJUSTMENT LAYERS</source>
-        <translation>LOKALA JUSTERINGSLAGER</translation>
+        <source>Masks</source>
+        <translation>Masker</translation>
     </message>
     <message>
-        <source>+ GRADIENT</source>
-        <translation>+ TONING</translation>
+        <source>+ Linear</source>
+        <translation>+ Linjär</translation>
+    </message>
+    <message>
+        <source>+ Radial</source>
+        <translation>+ Radiell</translation>
+    </message>
+    <message>
+        <source>+ Luminance</source>
+        <translation>+ Luminans</translation>
     </message>
     <message>
         <source>Linear Gradient %1</source>
         <translation>Linjär toning %1</translation>
     </message>
     <message>
-        <source>+ RADIAL</source>
-        <translation>+ RADIELL</translation>
-    </message>
-    <message>
         <source>Radial Mask %1</source>
         <translation>Radiell mask %1</translation>
-    </message>
-    <message>
-        <source>+ LUMA</source>
-        <translation>+ LUMINANS</translation>
     </message>
     <message>
         <source>Luma Range %1</source>
@@ -1145,10 +1186,6 @@
         <source>I</source>
         <comment>invert mask toggle, first letter of Invert</comment>
         <translation>I</translation>
-    </message>
-    <message>
-        <source>SELECTED LAYER CONTROLS (%1)</source>
-        <translation>KONTROLLER FÖR VALT LAGER (%1)</translation>
     </message>
     <message>
         <source>Layer Opacity</source>
@@ -1170,48 +1207,32 @@
 <context>
     <name>LutSelector</name>
     <message>
-        <source>DAVINCI 3D LUT ENGINE (.CUBE)</source>
-        <translation>DAVINCI 3D LUT-MOTOR (.CUBE)</translation>
+        <source>Load 3D LUT</source>
+        <translation>Läs in 3D-LUT</translation>
     </message>
     <message>
-        <source>RESET</source>
-        <translation>ÅTERSTÄLL</translation>
+        <source>3D LUT</source>
+        <translation>3D-LUT</translation>
     </message>
     <message>
-        <source>Hollywood Print</source>
-        <translation>Hollywoodkopia</translation>
+        <source>Reset</source>
+        <translation>Återställ</translation>
     </message>
     <message>
-        <source>Cinema Blockbuster</source>
-        <translation>Kassasuccé</translation>
+        <source>Load .cube file…</source>
+        <translation>Läs in .cube-fil…</translation>
     </message>
     <message>
-        <source>35mm Soft Stock</source>
-        <translation>Mjuk 35 mm-film</translation>
+        <source>Saved look: %1</source>
+        <translation>Sparad stil: %1</translation>
     </message>
     <message>
-        <source>High-Acutance B&amp;W</source>
-        <translation>S/V med hög skärpa</translation>
-    </message>
-    <message>
-        <source>LUT Intensity (Mix)</source>
-        <translation>LUT-styrka (mix)</translation>
+        <source>Amount</source>
+        <translation>Styrka</translation>
     </message>
 </context>
 <context>
     <name>MainWindow</name>
-    <message>
-        <source>Switched to version %1</source>
-        <translation>Bytte till version %1</translation>
-    </message>
-    <message>
-        <source>Version %1 initialized</source>
-        <translation>Version %1 skapad</translation>
-    </message>
-    <message>
-        <source>Copied current grade to version %1</source>
-        <translation>Aktuell gradering kopierad till version %1</translation>
-    </message>
     <message numerus="yes">
         <source>Rating: %n star(s)</source>
         <translation>
@@ -1240,36 +1261,8 @@
         <translation>Inget att ångra</translation>
     </message>
     <message>
-        <source>Undo (Ctrl+Z)</source>
-        <translation>Ångra (Ctrl+Z)</translation>
-    </message>
-    <message>
         <source>Nothing to redo</source>
         <translation>Inget att göra om</translation>
-    </message>
-    <message>
-        <source>Redo (Ctrl+Shift+Z)</source>
-        <translation>Gör om (Ctrl+Shift+Z)</translation>
-    </message>
-    <message>
-        <source>Adjustments copied (Ctrl+Shift+C)</source>
-        <translation>Justeringar kopierade (Ctrl+Shift+C)</translation>
-    </message>
-    <message>
-        <source>No adjustments in clipboard</source>
-        <translation>Inga justeringar i urklipp</translation>
-    </message>
-    <message>
-        <source>Adjustments pasted (Ctrl+Shift+V)</source>
-        <translation>Justeringar inklistrade (Ctrl+Shift+V)</translation>
-    </message>
-    <message>
-        <source>Reset to defaults (Ctrl+R)</source>
-        <translation>Standardvärden återställda (Ctrl+R)</translation>
-    </message>
-    <message>
-        <source>Social framing and adjustments reset</source>
-        <translation>Beskärning för sociala medier och justeringar återställda</translation>
     </message>
     <message>
         <source>Failed to load RAW: %1</source>
@@ -1292,28 +1285,8 @@
         <translation>Förhandsvisningen kunde inte renderas</translation>
     </message>
     <message>
-        <source>Auto tone applied</source>
-        <translation>Automatisk ton tillämpad</translation>
-    </message>
-    <message>
-        <source>AI decisions applied</source>
-        <translation>AI-beslut tillämpade</translation>
-    </message>
-    <message>
-        <source>Local heuristic applied</source>
-        <translation>Lokal heuristik tillämpad</translation>
-    </message>
-    <message>
         <source>%1 applied (%2)</source>
         <translation>%1 tillämpad (%2)</translation>
-    </message>
-    <message>
-        <source>Recipe sidecar saved</source>
-        <translation>Receptfil sparad</translation>
-    </message>
-    <message>
-        <source>Batch finished: %1/%2 photos exported</source>
-        <translation>Batchen klar: %1/%2 foton exporterade</translation>
     </message>
     <message>
         <source>Batch export: %1 succeeded, %2 failed</source>
@@ -1336,14 +1309,6 @@
         <translation>Skrev %1</translation>
     </message>
     <message>
-        <source>Analyzing dynamic range and scene...</source>
-        <translation>Analyserar dynamiskt omfång och scen...</translation>
-    </message>
-    <message>
-        <source>Asking the AI for edit decisions...</source>
-        <translation>Ber AI:n om redigeringsbeslut...</translation>
-    </message>
-    <message>
         <source>Open RAW Photo</source>
         <translation>Öppna RAW-foto</translation>
     </message>
@@ -1352,20 +1317,8 @@
         <translation>RAW-foton</translation>
     </message>
     <message>
-        <source>Saved to: %1</source>
-        <translation>Sparat i: %1</translation>
-    </message>
-    <message>
-        <source>Export error: %1</source>
-        <translation>Exportfel: %1</translation>
-    </message>
-    <message>
         <source>Export finished without a result</source>
         <translation>Exporten avslutades utan resultat</translation>
-    </message>
-    <message>
-        <source>The folder scan gave no answer</source>
-        <translation>Mappskanningen svarade inte</translation>
     </message>
     <message>
         <source>Crop mode: on (C)</source>
@@ -1376,36 +1329,12 @@
         <translation>Beskärningsläge: av</translation>
     </message>
     <message>
-        <source>Open a photo first to export</source>
-        <translation>Öppna ett foto först för att exportera</translation>
-    </message>
-    <message>
-        <source>Panels hidden (Tab)</source>
-        <translation>Paneler dolda (Tab)</translation>
-    </message>
-    <message>
-        <source>Panels restored (Tab)</source>
-        <translation>Paneler återställda (Tab)</translation>
-    </message>
-    <message>
-        <source>Optimizing for %1...</source>
-        <translation>Optimerar för %1...</translation>
-    </message>
-    <message>
-        <source>AI SCENE INSIGHT</source>
-        <translation>AI-SCENANALYS</translation>
-    </message>
-    <message>
         <source>Analyzing...</source>
         <translation>Analyserar...</translation>
     </message>
     <message>
         <source>Extracting dynamic range...</source>
         <translation>Tar fram dynamiskt omfång...</translation>
-    </message>
-    <message>
-        <source>Grade versions • Alt+1..4 to switch</source>
-        <translation>Graderingsversioner • Alt+1..4 för att byta</translation>
     </message>
     <message>
         <source>Opened %1</source>
@@ -1416,36 +1345,8 @@
         <translation>Skannar mappen %1</translation>
     </message>
     <message>
-        <source>AI edit applied</source>
-        <translation>AI-redigering tillämpad</translation>
-    </message>
-    <message>
-        <source>ESSENTIAL ADJUSTMENTS</source>
-        <translation>GRUNDLÄGGANDE JUSTERINGAR</translation>
-    </message>
-    <message>
-        <source>RESET</source>
-        <translation>ÅTERSTÄLL</translation>
-    </message>
-    <message>
-        <source>Exposure (Light)</source>
-        <translation>Exponering (ljus)</translation>
-    </message>
-    <message>
-        <source>Warmth (Temperature)</source>
-        <translation>Värme (temperatur)</translation>
-    </message>
-    <message>
-        <source>Vibrance (Color Punch)</source>
-        <translation>Lyster (färgkraft)</translation>
-    </message>
-    <message>
         <source>Contrast</source>
         <translation>Kontrast</translation>
-    </message>
-    <message>
-        <source>WHITE BALANCE</source>
-        <translation>VITBALANS</translation>
     </message>
     <message>
         <source>Temp (Kelvin)</source>
@@ -1454,10 +1355,6 @@
     <message>
         <source>Tint (Green / Magenta)</source>
         <translation>Färgton (grön / magenta)</translation>
-    </message>
-    <message>
-        <source>LIGHT &amp; DYNAMIC RANGE</source>
-        <translation>LJUS OCH DYNAMISKT OMFÅNG</translation>
     </message>
     <message>
         <source>Exposure</source>
@@ -1480,10 +1377,6 @@
         <translation>Svarta</translation>
     </message>
     <message>
-        <source>TONE CURVE (PARAMETRIC)</source>
-        <translation>TONKURVA (PARAMETRISK)</translation>
-    </message>
-    <message>
         <source>Curve Highlights</source>
         <translation>Kurva: högdagrar</translation>
     </message>
@@ -1498,10 +1391,6 @@
     <message>
         <source>Curve Shadows</source>
         <translation>Kurva: skuggor</translation>
-    </message>
-    <message>
-        <source>PRESENCE &amp; TEXTURE</source>
-        <translation>NÄRVARO OCH STRUKTUR</translation>
     </message>
     <message>
         <source>Texture</source>
@@ -1522,14 +1411,6 @@
     <message>
         <source>Saturation</source>
         <translation>Mättnad</translation>
-    </message>
-    <message>
-        <source>COLOR MIXER (8-BAND HSL)</source>
-        <translation>FÄRGMIXER (8-BANDS HSL)</translation>
-    </message>
-    <message>
-        <source>DETAIL &amp; OPTICS</source>
-        <translation>DETALJ OCH OPTIK</translation>
     </message>
     <message>
         <source>Sharpening</source>
@@ -1560,12 +1441,200 @@
         <translation>Öppna ett foto först</translation>
     </message>
     <message>
+        <source>Version %1</source>
+        <translation>Version %1</translation>
+    </message>
+    <message>
+        <source>Version %1 started</source>
+        <translation>Version %1 påbörjad</translation>
+    </message>
+    <message>
+        <source>Copied to version %1</source>
+        <translation>Kopierat till version %1</translation>
+    </message>
+    <message>
+        <source>Undo</source>
+        <translation>Ångra</translation>
+    </message>
+    <message>
+        <source>Redo</source>
+        <translation>Gör om</translation>
+    </message>
+    <message>
+        <source>Settings copied</source>
+        <translation>Inställningar kopierade</translation>
+    </message>
+    <message>
+        <source>Nothing copied yet</source>
+        <translation>Inget har kopierats än</translation>
+    </message>
+    <message>
+        <source>Settings pasted</source>
+        <translation>Inställningar inklistrade</translation>
+    </message>
+    <message>
+        <source>Reset to defaults</source>
+        <translation>Standardvärden återställda</translation>
+    </message>
+    <message>
+        <source>Platform crop reset</source>
+        <translation>Plattformsbeskärning återställd</translation>
+    </message>
+    <message>
+        <source>Auto applied</source>
+        <translation>Automatisk justering tillämpad</translation>
+    </message>
+    <message>
+        <source>Settings saved</source>
+        <translation>Inställningar sparade</translation>
+    </message>
+    <message>
+        <source>%1 of %2 photos exported</source>
+        <translation>%1 av %2 foton exporterade</translation>
+    </message>
+    <message>
+        <source>Auto: analysing the photo…</source>
+        <translation>Automatiskt: fotot analyseras…</translation>
+    </message>
+    <message>
+        <source>Saved to %1</source>
+        <translation>Sparat i %1</translation>
+    </message>
+    <message>
+        <source>Export failed</source>
+        <translation>Exporten misslyckades</translation>
+    </message>
+    <message>
+        <source>The scan did not respond.</source>
+        <translation>Mappgenomsökningen svarade inte.</translation>
+    </message>
+    <message>
+        <source>Rating: ★</source>
+        <translation>Betyg: ★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★</source>
+        <translation>Betyg: ★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★</source>
+        <translation>Betyg: ★★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★★</source>
+        <translation>Betyg: ★★★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★★★</source>
+        <translation>Betyg: ★★★★★</translation>
+    </message>
+    <message>
+        <source>Flag cleared</source>
+        <translation>Flagga borttagen</translation>
+    </message>
+    <message>
+        <source>Preparing for %1…</source>
+        <translation>Förbereder för %1…</translation>
+    </message>
+    <message>
+        <source>Rating: %1</source>
+        <translation>Betyg: %1</translation>
+    </message>
+    <message>
+        <source>Picked</source>
+        <translation>Vald</translation>
+    </message>
+    <message>
+        <source>Rejected</source>
+        <translation>Avvisad</translation>
+    </message>
+    <message>
+        <source>Scene</source>
+        <translation>Scen</translation>
+    </message>
+    <message>
+        <source>Adjust</source>
+        <translation>Justera</translation>
+    </message>
+    <message>
+        <source>Masks</source>
+        <translation>Masker</translation>
+    </message>
+    <message>
+        <source>Looks</source>
+        <translation>Stilar</translation>
+    </message>
+    <message>
+        <source>AI</source>
+        <translation>AI</translation>
+    </message>
+    <message>
+        <source>Profile</source>
+        <translation>Profil</translation>
+    </message>
+    <message>
         <source>Color Chrome Effect</source>
         <translation>Color Chrome-effekt</translation>
     </message>
     <message>
         <source>Color Chrome FX Blue</source>
         <translation>Color Chrome FX Blå</translation>
+    </message>
+    <message>
+        <source>White balance</source>
+        <translation>Vitbalans</translation>
+    </message>
+    <message>
+        <source>Tone</source>
+        <translation>Ton</translation>
+    </message>
+    <message>
+        <source>Presence</source>
+        <translation>Närvaro</translation>
+    </message>
+    <message>
+        <source>Tone curve</source>
+        <translation>Tonkurva</translation>
+    </message>
+    <message>
+        <source>Colour mixer</source>
+        <translation>Färgmixer</translation>
+    </message>
+    <message>
+        <source>Colour grading</source>
+        <translation>Färggradering</translation>
+    </message>
+    <message>
+        <source>Detail and optics</source>
+        <translation>Detalj och optik</translation>
+    </message>
+    <message>
+        <source>Grain</source>
+        <translation>Korn</translation>
+    </message>
+    <message>
+        <source>Colour management</source>
+        <translation>Färghantering</translation>
+    </message>
+    <message>
+        <source>Local adjustments</source>
+        <translation>Lokala justeringar</translation>
+    </message>
+    <message>
+        <source>Presets</source>
+        <translation>Förinställningar</translation>
+    </message>
+    <message>
+        <source>LUT</source>
+        <translation>LUT</translation>
+    </message>
+    <message>
+        <source>Edit assistant</source>
+        <translation>Redigeringsassistent</translation>
+    </message>
+    <message>
+        <source>Assistant edit applied</source>
+        <translation>Assistentens redigering tillämpad</translation>
     </message>
     <message>
         <source>Copy</source>
@@ -1600,30 +1669,30 @@
         <translation>Öppnar %1</translation>
     </message>
     <message>
-        <source>Loading the studio catalog...</source>
-        <translation>Läser in studiokatalogen...</translation>
+        <source>Loading the catalog…</source>
+        <translation>Läser in katalogen…</translation>
     </message>
     <message>
-        <source>Refreshing the studio catalog...</source>
-        <translation>Uppdaterar studiokatalogen...</translation>
+        <source>Refreshing the catalog…</source>
+        <translation>Uppdaterar katalogen…</translation>
     </message>
     <message numerus="yes">
-        <source>Exporting %n photo(s) in parallel...</source>
+        <source>Exporting %n photos…</source>
         <translation>
-            <numerusform>Exporterar %n foto parallellt...</numerusform>
-            <numerusform>Exporterar %n foton parallellt...</numerusform>
+            <numerusform>Exporterar %n foto…</numerusform>
+            <numerusform>Exporterar %n foton…</numerusform>
         </translation>
     </message>
     <message>
-        <source>Developing at full resolution and encoding...</source>
-        <translation>Framkallar i full upplösning och kodar...</translation>
+        <source>Developing at full resolution…</source>
+        <translation>Framkallar i full upplösning…</translation>
     </message>
 </context>
 <context>
     <name>Navigator</name>
     <message>
-        <source>NAVIGATOR</source>
-        <translation>NAVIGATOR</translation>
+        <source>Navigator</source>
+        <translation>Navigator</translation>
     </message>
     <message>
         <source>FIT</source>
@@ -1631,65 +1700,92 @@
     </message>
 </context>
 <context>
+    <name>PanelSection</name>
+    <message>
+        <source>Reset %1</source>
+        <translation>Återställ %1</translation>
+    </message>
+</context>
+<context>
     <name>PresetSelector</name>
     <message>
-        <source>FILM LOOKS &amp; STYLES</source>
-        <translation>FILMLOOKER OCH STILAR</translation>
+        <source>Looks</source>
+        <translation>Stilar</translation>
     </message>
     <message>
-        <source>RESET</source>
-        <translation>ÅTERSTÄLL</translation>
+        <source>Reset</source>
+        <translation>Återställ</translation>
     </message>
     <message>
-        <source>AI Auto Enhance</source>
-        <translation>Automatisk AI-förbättring</translation>
+        <source>Auto</source>
+        <translation>Automatiskt</translation>
     </message>
     <message>
-        <source>RUN</source>
-        <translation>KÖR</translation>
+        <source>Run</source>
+        <translation>Kör</translation>
     </message>
     <message>
-        <source>Documentary Muted</source>
-        <translation>Dämpat dokumentärt</translation>
+        <source>Muted</source>
+        <translation>Dämpad</translation>
     </message>
     <message>
-        <source>Vivid Landscapes</source>
-        <translation>Livfulla landskap</translation>
+        <source>Documentary, low saturation</source>
+        <translation>Dokumentär, låg mättnad</translation>
     </message>
     <message>
-        <source>Warm Skin Tones</source>
-        <translation>Varma hudtoner</translation>
+        <source>Vivid</source>
+        <translation>Livfull</translation>
     </message>
     <message>
-        <source>High Contrast B&amp;W</source>
-        <translation>S/V med hög kontrast</translation>
+        <source>Landscapes, rich colour</source>
+        <translation>Landskap, mättade färger</translation>
     </message>
     <message>
-        <source>Film Grade</source>
-        <translation>Filmgradering</translation>
+        <source>Warm portrait</source>
+        <translation>Varmt porträtt</translation>
+    </message>
+    <message>
+        <source>Soft contrast, warm skin</source>
+        <translation>Mjuk kontrast, varm hud</translation>
+    </message>
+    <message>
+        <source>Black and white</source>
+        <translation>Svartvitt</translation>
+    </message>
+    <message>
+        <source>High contrast</source>
+        <translation>Hög kontrast</translation>
+    </message>
+    <message>
+        <source>Teal and orange</source>
+        <translation>Blågrönt och orange</translation>
+    </message>
+    <message>
+        <source>Split toning</source>
+        <translation>Delad toning</translation>
     </message>
 </context>
 <context>
     <name>RgbMixerPanel</name>
     <message>
-        <source>DAVINCI RGB PRIMARY MIXER</source>
-        <translation>DAVINCI RGB-PRIMÄRMIXER</translation>
-    </message>
-    <message>
-        <source>RESET</source>
-        <translation>ÅTERSTÄLL</translation>
-    </message>
-    <message>
         <source>Monochrome Mixing</source>
         <translation>Monokrom mixning</translation>
     </message>
     <message>
-        <source>MONOCHROME LUMA MIX</source>
-        <translation>MONOKROM LUMINANSMIX</translation>
+        <source>Channel mixer</source>
+        <translation>Kanalmixer</translation>
     </message>
     <message>
-        <source>RED OUTPUT CHANNEL</source>
-        <translation>RÖD UTKANAL</translation>
+        <source>Reset</source>
+        <translation>Återställ</translation>
+    </message>
+    <message>
+        <source>Monochrome mix</source>
+        <translation>Monokrom mix</translation>
+    </message>
+    <message>
+        <source>Red output</source>
+        <translation>Röd utgång</translation>
     </message>
     <message>
         <source>Red in Red</source>
@@ -1704,8 +1800,12 @@
         <translation>Blått i rött</translation>
     </message>
     <message>
-        <source>GREEN OUTPUT CHANNEL</source>
-        <translation>GRÖN UTKANAL</translation>
+        <source>Green output</source>
+        <translation>Grön utgång</translation>
+    </message>
+    <message>
+        <source>Blue output</source>
+        <translation>Blå utgång</translation>
     </message>
     <message>
         <source>Red in Green</source>
@@ -1718,10 +1818,6 @@
     <message>
         <source>Blue in Green</source>
         <translation>Blått i grönt</translation>
-    </message>
-    <message>
-        <source>BLUE OUTPUT CHANNEL</source>
-        <translation>BLÅ UTKANAL</translation>
     </message>
     <message>
         <source>Red in Blue</source>
@@ -1765,8 +1861,8 @@
         <translation>[H] %1%</translation>
     </message>
     <message>
-        <source>NO SIGNAL / LOAD RAW</source>
-        <translation>INGEN SIGNAL / LÄS IN RAW</translation>
+        <source>No photo</source>
+        <translation>Inget foto</translation>
     </message>
     <message>
         <source>RED</source>
@@ -1788,12 +1884,12 @@
 <context>
     <name>SkinTonePanel</name>
     <message>
-        <source>CAPTURE ONE SKIN TONE</source>
-        <translation>CAPTURE ONE HUDTON</translation>
+        <source>Skin tone</source>
+        <translation>Hudton</translation>
     </message>
     <message>
-        <source>RESET</source>
-        <translation>ÅTERSTÄLL</translation>
+        <source>Reset</source>
+        <translation>Återställ</translation>
     </message>
     <message>
         <source>Vectorscope 123° flesh line (target: %1°)</source>
@@ -1834,52 +1930,28 @@
 <context>
     <name>SocialOptimizer</name>
     <message>
-        <source>AI SOCIAL MEDIA OPTIMIZER</source>
-        <translation>AI-OPTIMERING FÖR SOCIALA MEDIER</translation>
+        <source>Prepare for</source>
+        <translation>Förbered för</translation>
     </message>
     <message>
-        <source>RESET</source>
-        <translation>ÅTERSTÄLL</translation>
+        <source>Reset</source>
+        <translation>Återställ</translation>
     </message>
     <message>
-        <source>Instagram Feed</source>
-        <translation>Instagram-flöde</translation>
+        <source>Instagram post</source>
+        <translation>Instagram-inlägg</translation>
     </message>
     <message>
-        <source>Max Screen</source>
-        <translation>Maximal skärm</translation>
+        <source>Stories and Reels</source>
+        <translation>Stories och Reels</translation>
     </message>
     <message>
-        <source>Stories / Reels</source>
-        <translation>Stories / Reels</translation>
+        <source>Square</source>
+        <translation>Kvadrat</translation>
     </message>
     <message>
-        <source>Full Mobile</source>
-        <translation>Hel mobilskärm</translation>
-    </message>
-    <message>
-        <source>Crisp Feed</source>
-        <translation>Skarpt flöde</translation>
-    </message>
-    <message>
-        <source>Classic Square</source>
-        <translation>Klassisk kvadrat</translation>
-    </message>
-    <message>
-        <source>Grid Post</source>
-        <translation>Rutnätsinlägg</translation>
-    </message>
-    <message>
-        <source>High Res</source>
-        <translation>Hög upplösning</translation>
-    </message>
-    <message>
-        <source>YouTube Thumb</source>
+        <source>YouTube thumbnail</source>
         <translation>YouTube-miniatyr</translation>
-    </message>
-    <message>
-        <source>High CTR</source>
-        <translation>Hög CTR</translation>
     </message>
 </context>
 <context>
@@ -1914,8 +1986,8 @@
         <translation>Grunder</translation>
     </message>
     <message>
-        <source>Pro Studio</source>
-        <translation>Pro Studio</translation>
+        <source>Pro</source>
+        <translation>Pro</translation>
     </message>
     <message>
         <source>Undo (Ctrl+Z)</source>
@@ -1953,16 +2025,16 @@
 <context>
     <name>Viewport</name>
     <message>
-        <source>RESET 0°</source>
-        <translation>ÅTERSTÄLL 0°</translation>
+        <source>Reset 0°</source>
+        <translation>Återställ till 0°</translation>
     </message>
     <message>
-        <source>FIT</source>
-        <translation>ANPASSA</translation>
+        <source>Fit</source>
+        <translation>Anpassa</translation>
     </message>
     <message>
-        <source>CROP &amp; COMPOSE</source>
-        <translation>BESKÄRNING OCH KOMPOSITION</translation>
+        <source>Crop</source>
+        <translation>Beskär</translation>
     </message>
     <message>
         <source>Original</source>
@@ -1989,12 +2061,20 @@
         <translation>Rutnät: av</translation>
     </message>
     <message>
-        <source>RESET</source>
-        <translation>ÅTERSTÄLL</translation>
+        <source>Reset</source>
+        <translation>Återställ</translation>
     </message>
     <message>
-        <source>DONE</source>
-        <translation>KLAR</translation>
+        <source>Done</source>
+        <translation>Klar</translation>
+    </message>
+    <message>
+        <source>Shadow clipping</source>
+        <translation>Klippning i skuggor</translation>
+    </message>
+    <message>
+        <source>Highlight clipping</source>
+        <translation>Klippning i högdagrar</translation>
     </message>
     <message>
         <source>ORIGINAL RAW (Before)</source>
@@ -2003,18 +2083,6 @@
     <message>
         <source>EDITED RECIPE (After)</source>
         <translation>REDIGERAT RECEPT (efter)</translation>
-    </message>
-    <message>
-        <source>[S] SHADOW CLIPPING (BLUE)</source>
-        <translation>[S] KLIPPTA SKUGGOR (BLÅ)</translation>
-    </message>
-    <message>
-        <source>[H] HIGHLIGHT CLIPPING (RED)</source>
-        <translation>[H] KLIPPTA HÖGDAGRAR (RÖD)</translation>
-    </message>
-    <message>
-        <source>Pinch: Zoom | 2-Finger Twist: Rotate | 2-Finger Pan | Double-Tap: Reset</source>
-        <translation>Nyp: zooma | Vrid med 2 fingrar: rotera | Panorera med 2 fingrar | Dubbeltryck: återställ</translation>
     </message>
     <message>
         <source>Open a RAW (Ctrl+O) or drop a photo / folder here</source>
@@ -2028,8 +2096,8 @@
 <context>
     <name>WatermarkConfig</name>
     <message>
-        <source>WATERMARK &amp; BRANDING</source>
-        <translation>VATTENSTÄMPEL OCH VARUMÄRKE</translation>
+        <source>Watermark</source>
+        <translation>Vattenstämpel</translation>
     </message>
     <message>
         <source>Text / EXIF Tag</source>
@@ -2040,28 +2108,28 @@
         <translation>Egen PNG-logotyp</translation>
     </message>
     <message>
-        <source>WATERMARK TEXT OR TEMPLATE</source>
-        <translation>VATTENSTÄMPELNS TEXT ELLER MALL</translation>
+        <source>Text or template</source>
+        <translation>Text eller mall</translation>
     </message>
     <message>
-        <source>LOGO FILE PATH (.PNG)</source>
-        <translation>SÖKVÄG TILL LOGOTYP (.PNG)</translation>
+        <source>Logo file (PNG)</source>
+        <translation>Logotypfil (PNG)</translation>
     </message>
     <message>
-        <source>POSITION</source>
-        <translation>POSITION</translation>
+        <source>Position</source>
+        <translation>Placering</translation>
+    </message>
+    <message>
+        <source>Opacity</source>
+        <translation>Opacitet</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>Storlek</translation>
     </message>
     <message>
         <source>Drop Shadow</source>
         <translation>Skugga</translation>
-    </message>
-    <message>
-        <source>OPACITY</source>
-        <translation>OPACITET</translation>
-    </message>
-    <message>
-        <source>SIZE MULTIPLIER</source>
-        <translation>STORLEKSMULTIPLIKATOR</translation>
     </message>
 </context>
 </TS>

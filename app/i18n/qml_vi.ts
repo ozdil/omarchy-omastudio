@@ -175,28 +175,36 @@
         <translation>Thất bại</translation>
     </message>
     <message>
-        <source>AI EDIT ASSISTANT</source>
-        <translation>TRỢ LÝ CHỈNH SỬA AI</translation>
+        <source>Assistant</source>
+        <translation>Trợ lý</translation>
     </message>
     <message>
-        <source>DONE</source>
-        <translation>XONG</translation>
+        <source>Done</source>
+        <translation>Xong</translation>
     </message>
     <message>
-        <source>SETUP</source>
-        <translation>THIẾT LẬP</translation>
+        <source>Set up</source>
+        <translation>Thiết lập</translation>
+    </message>
+    <message>
+        <source>Working…</source>
+        <translation>Đang xử lý…</translation>
+    </message>
+    <message>
+        <source>Edit</source>
+        <translation>Chỉnh sửa</translation>
+    </message>
+    <message>
+        <source>Store key</source>
+        <translation>Lưu khóa</translation>
+    </message>
+    <message>
+        <source>Use %1</source>
+        <translation>Dùng %1</translation>
     </message>
     <message>
         <source>e.g. warmer, moody evening light, recover the sky</source>
         <translation>vd: ấm hơn, ánh chiều u buồn, khôi phục bầu trời</translation>
-    </message>
-    <message>
-        <source>THINKING...</source>
-        <translation>ĐANG SUY NGHĨ...</translation>
-    </message>
-    <message>
-        <source>EDIT WITH AI</source>
-        <translation>CHỈNH SỬA BẰNG AI</translation>
     </message>
     <message>
         <source>Running. Models: %1</source>
@@ -222,14 +230,6 @@
         <source>API key</source>
         <translation>Khóa API</translation>
     </message>
-    <message>
-        <source>STORE KEY</source>
-        <translation>LƯU KHÓA</translation>
-    </message>
-    <message>
-        <source>USE %1</source>
-        <translation>DÙNG %1</translation>
-    </message>
 </context>
 <context>
     <name>BoundedTextInput</name>
@@ -241,48 +241,16 @@
 <context>
     <name>ColorGradingWheels</name>
     <message>
-        <source>DAVINCI PRIMARIES WHEELS</source>
-        <translation>BÁNH XE CHÍNH DAVINCI</translation>
-    </message>
-    <message>
-        <source>4-WHEEL</source>
-        <translation>4 BÁNH XE</translation>
-    </message>
-    <message>
-        <source>TABBED</source>
-        <translation>THẺ</translation>
-    </message>
-    <message>
-        <source>RESET</source>
-        <translation>ĐẶT LẠI</translation>
-    </message>
-    <message>
-        <source>LIFT</source>
-        <translation>LIFT</translation>
-    </message>
-    <message>
         <source>Shadows</source>
         <translation>Vùng tối</translation>
-    </message>
-    <message>
-        <source>GAMMA</source>
-        <translation>GAMMA</translation>
     </message>
     <message>
         <source>Mids</source>
         <translation>Trung tính</translation>
     </message>
     <message>
-        <source>GAIN</source>
-        <translation>GAIN</translation>
-    </message>
-    <message>
         <source>Highlights</source>
         <translation>Vùng sáng</translation>
-    </message>
-    <message>
-        <source>OFFSET</source>
-        <translation>OFFSET</translation>
     </message>
     <message>
         <source>Global</source>
@@ -307,6 +275,22 @@
     <message>
         <source>Lift</source>
         <translation>Lift</translation>
+    </message>
+    <message>
+        <source>Colour grading</source>
+        <translation>Chỉnh màu</translation>
+    </message>
+    <message>
+        <source>4 wheels</source>
+        <translation>4 bánh xe</translation>
+    </message>
+    <message>
+        <source>Tabs</source>
+        <translation>Thẻ</translation>
+    </message>
+    <message>
+        <source>Reset</source>
+        <translation>Đặt lại</translation>
     </message>
     <message>
         <source>Gamma</source>
@@ -368,8 +352,12 @@
         <translation>AP1 rộng</translation>
     </message>
     <message>
-        <source>COLOR MANAGEMENT &amp; ACES 1.3</source>
-        <translation>QUẢN LÝ MÀU &amp; ACES 1.3</translation>
+        <source>Colour management</source>
+        <translation>Quản lý màu</translation>
+    </message>
+    <message>
+        <source>Gamut compression</source>
+        <translation>Nén gam màu</translation>
     </message>
     <message>
         <source>%1 (%2)</source>
@@ -394,113 +382,161 @@
 <context>
     <name>ExifCard</name>
     <message>
-        <source>No camera loaded</source>
-        <translation>Chưa nạp máy ảnh</translation>
-    </message>
-    <message>
-        <source>Unknown lens</source>
-        <translation>Ống kính không xác định</translation>
+        <source>No photo</source>
+        <translation>Không có ảnh</translation>
     </message>
 </context>
 <context>
     <name>ExportDialog</name>
-    <message numerus="yes">
-        <source>Batch Export (%n Photos)</source>
-        <translation>
-            <numerusform>Xuất hàng loạt (%n ảnh)</numerusform>
-        </translation>
-    </message>
-    <message>
-        <source>Export Master Photo</source>
-        <translation>Xuất ảnh gốc</translation>
-    </message>
-    <message>
-        <source>MODERN OPEN FORMAT</source>
-        <translation>ĐỊNH DẠNG MỞ HIỆN ĐẠI</translation>
-    </message>
-    <message>
-        <source>Next-Gen 16-bit HDR</source>
-        <translation>HDR 16 bit thế hệ mới</translation>
-    </message>
-    <message>
-        <source>AV1 Web/Mobile</source>
-        <translation>AV1 web/di động</translation>
-    </message>
-    <message>
-        <source>Ultra Compact</source>
-        <translation>Siêu gọn</translation>
-    </message>
-    <message>
-        <source>16-bit TIFF</source>
-        <translation>TIFF 16 bit</translation>
-    </message>
-    <message>
-        <source>Master Print Lossless</source>
-        <translation>Bản in gốc không mất dữ liệu</translation>
-    </message>
-    <message>
-        <source>Graphic Lossless</source>
-        <translation>Đồ họa không mất dữ liệu</translation>
-    </message>
-    <message>
-        <source>Universal MozJPEG</source>
-        <translation>MozJPEG phổ dụng</translation>
-    </message>
-    <message>
-        <source>Export Compression Quality</source>
-        <translation>Chất lượng nén khi xuất</translation>
-    </message>
-    <message>
-        <source>RESOLUTION &amp; SCALING</source>
-        <translation>ĐỘ PHÂN GIẢI &amp; TỶ LỆ</translation>
-    </message>
-    <message>
-        <source>100% Full</source>
-        <translation>100% đầy đủ</translation>
-    </message>
-    <message>
-        <source>Social (2048p)</source>
-        <translation>Mạng xã hội (2048p)</translation>
-    </message>
-    <message>
-        <source>COLOR SPACE &amp; ICC PROFILE</source>
-        <translation>KHÔNG GIAN MÀU &amp; HỒ SƠ ICC</translation>
-    </message>
-    <message>
-        <source>Universal Web / Social</source>
-        <translation>Web / mạng xã hội phổ dụng</translation>
-    </message>
-    <message>
-        <source>Apple / Wide OLED</source>
-        <translation>Apple / OLED rộng</translation>
-    </message>
-    <message>
-        <source>Ultra-Wide Gamut HDR</source>
-        <translation>HDR gam màu siêu rộng</translation>
-    </message>
-    <message>
-        <source>Academy Color Standard</source>
-        <translation>Chuẩn màu của Viện Hàn lâm</translation>
-    </message>
-    <message>
-        <source>Pro Photography / Print</source>
-        <translation>Nhiếp ảnh chuyên nghiệp / in ấn</translation>
-    </message>
-    <message>
-        <source>16-Bit Master Archival</source>
-        <translation>Lưu trữ gốc 16 bit</translation>
-    </message>
-    <message>
-        <source>Intent</source>
-        <translation>Phương pháp chuyển đổi</translation>
-    </message>
     <message>
         <source>Perceptual</source>
         <translation>Cảm nhận</translation>
     </message>
     <message>
-        <source>Compresses the whole gamut; smooth, saturated colours keep their relations</source>
-        <translation>Nén toàn bộ gam màu; các màu mềm, bão hòa giữ nguyên tương quan</translation>
+        <source>8-bit · universal</source>
+        <translation>8 bit · phổ thông</translation>
+    </message>
+    <message>
+        <source>16-bit · lossless</source>
+        <translation>16 bit · không mất dữ liệu</translation>
+    </message>
+    <message>
+        <source>16-bit · print, archive</source>
+        <translation>16 bit · in ấn, lưu trữ</translation>
+    </message>
+    <message>
+        <source>8-bit · web</source>
+        <translation>8 bit · web</translation>
+    </message>
+    <message>
+        <source>12-bit · HDR-ready</source>
+        <translation>12 bit · sẵn sàng cho HDR</translation>
+    </message>
+    <message>
+        <source>10-bit · HEVC</source>
+        <translation>10 bit · HEVC</translation>
+    </message>
+    <message>
+        <source>16-bit · modern</source>
+        <translation>16 bit · hiện đại</translation>
+    </message>
+    <message>
+        <source>Float · scene-linear</source>
+        <translation>Dấu phẩy động · tuyến tính cảnh</translation>
+    </message>
+    <message numerus="yes">
+        <source>Export %n photos</source>
+        <translation>
+            <numerusform>Xuất %n ảnh</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>Export</source>
+        <translation>Xuất</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>Đóng</translation>
+    </message>
+    <message>
+        <source>Format</source>
+        <translation>Định dạng tệp</translation>
+    </message>
+    <message>
+        <source>Quality</source>
+        <translation>Chất lượng</translation>
+    </message>
+    <message>
+        <source>100 is lossless.</source>
+        <translation>100 là không mất dữ liệu.</translation>
+    </message>
+    <message>
+        <source>Bit depth</source>
+        <translation>Độ sâu bit</translation>
+    </message>
+    <message>
+        <source>Half float</source>
+        <translation>Dấu phẩy động nửa độ chính xác</translation>
+    </message>
+    <message>
+        <source>Full float</source>
+        <translation>Dấu phẩy động độ chính xác đầy đủ</translation>
+    </message>
+    <message>
+        <source>%1-bit</source>
+        <translation>%1 bit</translation>
+    </message>
+    <message>
+        <source>Compression</source>
+        <translation>Nén</translation>
+    </message>
+    <message>
+        <source>None</source>
+        <translation>Không</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>Kích thước</translation>
+    </message>
+    <message>
+        <source>Full</source>
+        <translation>Đầy đủ</translation>
+    </message>
+    <message>
+        <source>3840 px</source>
+        <translation>3840 điểm ảnh</translation>
+    </message>
+    <message>
+        <source>Long edge at most 3840 px</source>
+        <translation>Cạnh dài tối đa 3840 điểm ảnh</translation>
+    </message>
+    <message>
+        <source>2048 px</source>
+        <translation>2048 điểm ảnh</translation>
+    </message>
+    <message>
+        <source>Long edge at most 2048 px</source>
+        <translation>Cạnh dài tối đa 2048 điểm ảnh</translation>
+    </message>
+    <message>
+        <source>Colour profile</source>
+        <translation>Hồ sơ màu</translation>
+    </message>
+    <message>
+        <source>Web, screens</source>
+        <translation>Web, màn hình</translation>
+    </message>
+    <message>
+        <source>Wide-gamut screens</source>
+        <translation>Màn hình gam màu rộng</translation>
+    </message>
+    <message>
+        <source>Print</source>
+        <translation>In ấn</translation>
+    </message>
+    <message>
+        <source>Editing, archive</source>
+        <translation>Chỉnh sửa, lưu trữ</translation>
+    </message>
+    <message>
+        <source>HDR, video</source>
+        <translation>HDR, video</translation>
+    </message>
+    <message>
+        <source>Linear, VFX</source>
+        <translation>Tuyến tính, hiệu ứng hình ảnh</translation>
+    </message>
+    <message>
+        <source>OpenEXR is written scene-linear in the chosen primaries.</source>
+        <translation>OpenEXR được ghi tuyến tính theo cảnh với các màu cơ bản đã chọn.</translation>
+    </message>
+    <message>
+        <source>Rendering intent</source>
+        <translation>Mục đích kết xuất</translation>
+    </message>
+    <message>
+        <source>Compresses the whole gamut; colour relations are kept</source>
+        <translation>Nén toàn bộ gam màu; giữ nguyên quan hệ giữa các màu</translation>
     </message>
     <message>
         <source>Relative</source>
@@ -527,45 +563,55 @@
         <translation>Màu chính xác gồm cả điểm trắng của nguồn; dành cho in thử</translation>
     </message>
     <message>
-        <source>Preserve Camera EXIF</source>
-        <translation>Giữ EXIF của máy ảnh</translation>
+        <source>Metadata</source>
+        <translation>Siêu dữ liệu</translation>
     </message>
     <message>
-        <source>Strip GPS (Privacy)</source>
-        <translation>Xóa GPS (quyền riêng tư)</translation>
+        <source>Keep camera metadata (EXIF)</source>
+        <translation>Giữ siêu dữ liệu máy ảnh (EXIF)</translation>
     </message>
     <message>
-        <source>Apply Photography Watermark / EXIF Signature</source>
-        <translation>Thêm hình mờ / chữ ký EXIF</translation>
+        <source>Remove location (GPS)</source>
+        <translation>Xóa vị trí (GPS)</translation>
     </message>
     <message>
-        <source>Exporting Batch...</source>
-        <translation>Đang xuất lô...</translation>
+        <source>Prepare for</source>
+        <translation>Chuẩn bị cho</translation>
     </message>
     <message>
-        <source>Exporting Full Resolution...</source>
-        <translation>Đang xuất độ phân giải đầy đủ...</translation>
-    </message>
-    <message numerus="yes">
-        <source>Start Parallel Batch Export (%n Photos)</source>
-        <translation>
-            <numerusform>Bắt đầu xuất hàng loạt song song (%n ảnh)</numerusform>
-        </translation>
+        <source>Sets the crop and output sharpening for a platform. Reset restores your own.</source>
+        <translation>Đặt cách cắt và độ sắc nét đầu ra cho một nền tảng. Đặt lại sẽ khôi phục cài đặt của bạn.</translation>
     </message>
     <message>
-        <source>Start Export (%1 / %2)</source>
-        <translation>Bắt đầu xuất (%1 / %2)</translation>
+        <source>Watermark</source>
+        <translation>Hình mờ</translation>
+    </message>
+    <message>
+        <source>Folder</source>
+        <translation>Thư mục</translation>
+    </message>
+    <message>
+        <source>Hide</source>
+        <translation>Ẩn</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Hủy</translation>
+    </message>
+    <message>
+        <source>Exporting…</source>
+        <translation>Đang xuất…</translation>
     </message>
 </context>
 <context>
     <name>FilmGrainPanel</name>
     <message>
-        <source>SILVER-HALIDE FILM GRAIN</source>
-        <translation>HẠT PHIM BẠC HALIDE</translation>
+        <source>Grain</source>
+        <translation>Hạt</translation>
     </message>
     <message>
-        <source>RESET</source>
-        <translation>ĐẶT LẠI</translation>
+        <source>Reset</source>
+        <translation>Đặt lại</translation>
     </message>
     <message>
         <source>Grain Amount</source>
@@ -699,12 +745,16 @@
         <translation>Tương phản điện ảnh toàn cảnh 35 mm</translation>
     </message>
     <message>
-        <source>FILM SIMULATION &amp; SENSOR PROFILES</source>
-        <translation>GIẢ LẬP PHIM &amp; HỒ SƠ CẢM BIẾN</translation>
+        <source>Profile</source>
+        <translation>Hồ sơ</translation>
     </message>
     <message>
-        <source>RESET</source>
-        <translation>ĐẶT LẠI</translation>
+        <source>Reset</source>
+        <translation>Đặt lại</translation>
+    </message>
+    <message>
+        <source>Amount</source>
+        <translation>Mức độ</translation>
     </message>
     <message>
         <source>All</source>
@@ -714,17 +764,9 @@
         <source>Acros B&amp;W</source>
         <translation>Acros Đ/T</translation>
     </message>
-    <message>
-        <source>SIMULATION INTENSITY</source>
-        <translation>CƯỜNG ĐỘ GIẢ LẬP</translation>
-    </message>
 </context>
 <context>
     <name>Filmstrip</name>
-    <message>
-        <source>Local Photos</source>
-        <translation>Ảnh cục bộ</translation>
-    </message>
     <message>
         <source>Studio Catalog</source>
         <translation>Danh mục studio</translation>
@@ -732,6 +774,14 @@
     <message>
         <source>Up</source>
         <translation>Lên</translation>
+    </message>
+    <message>
+        <source>Folders</source>
+        <translation>Thư mục</translation>
+    </message>
+    <message>
+        <source>Catalog</source>
+        <translation>Danh mục</translation>
     </message>
     <message>
         <source>Scanning Catalog...</source>
@@ -758,21 +808,20 @@
         <translation>Không tìm thấy ảnh trong thư mục này.</translation>
     </message>
     <message>
-        <source>DIR</source>
-        <comment>folder badge</comment>
-        <translation>TM</translation>
+        <source>Folder</source>
+        <translation>Thư mục</translation>
     </message>
     <message>
-        <source>FETCHING</source>
-        <translation>ĐANG TẢI</translation>
+        <source>Downloading</source>
+        <translation>Đang tải xuống</translation>
     </message>
     <message>
-        <source>RAW CLOUD</source>
-        <translation>RAW TRÊN ĐÁM MÂY</translation>
+        <source>Remote</source>
+        <translation>Từ xa</translation>
     </message>
     <message>
-        <source>NO PREVIEW</source>
-        <translation>KHÔNG CÓ XEM TRƯỚC</translation>
+        <source>No preview</source>
+        <translation>Không có bản xem trước</translation>
     </message>
     <message>
         <source>Loading...</source>
@@ -833,40 +882,60 @@
         <translation>Công thức Fujifilm</translation>
     </message>
     <message>
-        <source>FUJIFILM RECIPES</source>
-        <translation>CÔNG THỨC FUJIFILM</translation>
+        <source>Import</source>
+        <translation>Nhập</translation>
     </message>
     <message>
-        <source>IMPORT</source>
-        <translation>NHẬP</translation>
+        <source>Apply photo&apos;s recipe</source>
+        <translation>Áp dụng công thức của ảnh</translation>
     </message>
     <message>
-        <source>APPLY PHOTO&apos;S RECIPE</source>
-        <translation>ÁP DỤNG CÔNG THỨC CỦA ẢNH</translation>
+        <source>Save</source>
+        <translation>Lưu</translation>
     </message>
     <message>
-        <source>SAVE</source>
-        <translation>LƯU</translation>
+        <source>Apply recipe</source>
+        <translation>Áp dụng công thức</translation>
+    </message>
+    <message>
+        <source>Camera (USB)</source>
+        <translation>Máy ảnh (USB)</translation>
+    </message>
+    <message>
+        <source>Reconnect</source>
+        <translation>Kết nối lại</translation>
+    </message>
+    <message>
+        <source>Connect</source>
+        <translation>Kết nối</translation>
+    </message>
+    <message>
+        <source>Read C1–C7</source>
+        <translation>Đọc C1–C7</translation>
+    </message>
+    <message>
+        <source>Convert in camera</source>
+        <translation>Chuyển đổi trong máy ảnh</translation>
+    </message>
+    <message>
+        <source>Write recipe to C%1</source>
+        <translation>Ghi công thức vào C%1</translation>
+    </message>
+    <message>
+        <source>Pixel shift</source>
+        <translation>Dịch điểm ảnh</translation>
+    </message>
+    <message>
+        <source>Merge %1 frames to DNG</source>
+        <translation>Gộp %1 khung hình thành DNG</translation>
+    </message>
+    <message>
+        <source>Merge frames to DNG</source>
+        <translation>Gộp các khung hình thành DNG</translation>
     </message>
     <message>
         <source>No saved recipes. Import an X RAW Studio profile, recipe text or a Fujifilm photo.</source>
         <translation>Chưa có công thức nào được lưu. Hãy nhập hồ sơ X RAW Studio, văn bản công thức hoặc ảnh Fujifilm.</translation>
-    </message>
-    <message>
-        <source>APPLY SELECTED RECIPE</source>
-        <translation>ÁP DỤNG CÔNG THỨC ĐÃ CHỌN</translation>
-    </message>
-    <message>
-        <source>CAMERA (USB)</source>
-        <translation>MÁY ẢNH (USB)</translation>
-    </message>
-    <message>
-        <source>RECONNECT</source>
-        <translation>KẾT NỐI LẠI</translation>
-    </message>
-    <message>
-        <source>CONNECT</source>
-        <translation>KẾT NỐI</translation>
     </message>
     <message>
         <source>%1  ·  in-camera RAW conversion</source>
@@ -881,24 +950,8 @@
         <translation>Đặt chế độ USB của máy ảnh thành %1 rồi kết nối.</translation>
     </message>
     <message>
-        <source>READ C1-C7</source>
-        <translation>ĐỌC C1-C7</translation>
-    </message>
-    <message>
-        <source>CONVERT IN CAMERA</source>
-        <translation>CHUYỂN ĐỔI TRONG MÁY</translation>
-    </message>
-    <message>
         <source>Unnamed</source>
         <translation>Chưa đặt tên</translation>
-    </message>
-    <message>
-        <source>WRITE SELECTED RECIPE TO C%1</source>
-        <translation>GHI CÔNG THỨC ĐÃ CHỌN VÀO C%1</translation>
-    </message>
-    <message>
-        <source>PIXEL SHIFT MULTI-SHOT</source>
-        <translation>PIXEL SHIFT NHIỀU KHUNG</translation>
     </message>
     <message numerus="yes">
         <source>%n RAF frames selected. 4 frames give full colour per pixel, 16 frames double the resolution.</source>
@@ -910,22 +963,12 @@
         <source>Select the RAF frames of one GFX Pixel Shift sequence in the filmstrip.</source>
         <translation>Chọn các khung RAF của một chuỗi GFX Pixel Shift trên dải ảnh.</translation>
     </message>
-    <message numerus="yes">
-        <source>MERGE %n FRAMES TO DNG</source>
-        <translation>
-            <numerusform>GHÉP %n KHUNG THÀNH DNG</numerusform>
-        </translation>
-    </message>
-    <message>
-        <source>MERGE FRAMES TO DNG</source>
-        <translation>GHÉP KHUNG THÀNH DNG</translation>
-    </message>
 </context>
 <context>
     <name>GradeVersionsBar</name>
     <message>
-        <source>GRADE VERSION</source>
-        <translation>PHIÊN BẢN CHỈNH MÀU</translation>
+        <source>Version</source>
+        <translation>Phiên bản</translation>
     </message>
 </context>
 <context>
@@ -936,8 +979,8 @@
         <translation>[T] %1%</translation>
     </message>
     <message>
-        <source>RGB HISTOGRAM</source>
-        <translation>BIỂU ĐỒ RGB</translation>
+        <source>Histogram</source>
+        <translation>Biểu đồ tần suất</translation>
     </message>
     <message>
         <source>[H] %1%</source>
@@ -984,12 +1027,12 @@
         <translation>Kênh %1</translation>
     </message>
     <message>
-        <source>RESET CH</source>
-        <translation>ĐẶT LẠI KÊNH</translation>
+        <source>Reset colour</source>
+        <translation>Đặt lại màu</translation>
     </message>
     <message>
-        <source>RESET ALL</source>
-        <translation>ĐẶT LẠI TẤT CẢ</translation>
+        <source>Reset all</source>
+        <translation>Đặt lại tất cả</translation>
     </message>
     <message>
         <source>Hue Shift</source>
@@ -1097,32 +1140,32 @@
         <translation>Mặt nạ %1 đã sẵn sàng (%2)</translation>
     </message>
     <message>
-        <source>DETECTING...</source>
-        <translation>ĐANG NHẬN DIỆN...</translation>
+        <source>Detecting…</source>
+        <translation>Đang nhận diện…</translation>
     </message>
     <message>
-        <source>LOCAL ADJUSTMENT LAYERS</source>
-        <translation>LỚP ĐIỀU CHỈNH CỤC BỘ</translation>
+        <source>Masks</source>
+        <translation>Mặt nạ</translation>
     </message>
     <message>
-        <source>+ GRADIENT</source>
-        <translation>+ CHUYỂN SẮC</translation>
+        <source>+ Linear</source>
+        <translation>+ Tuyến tính</translation>
+    </message>
+    <message>
+        <source>+ Radial</source>
+        <translation>+ Xuyên tâm</translation>
+    </message>
+    <message>
+        <source>+ Luminance</source>
+        <translation>+ Độ chói</translation>
     </message>
     <message>
         <source>Linear Gradient %1</source>
         <translation>Chuyển sắc tuyến tính %1</translation>
     </message>
     <message>
-        <source>+ RADIAL</source>
-        <translation>+ HƯỚNG TÂM</translation>
-    </message>
-    <message>
         <source>Radial Mask %1</source>
         <translation>Mặt nạ hướng tâm %1</translation>
-    </message>
-    <message>
-        <source>+ LUMA</source>
-        <translation>+ ĐỘ CHÓI</translation>
     </message>
     <message>
         <source>Luma Range %1</source>
@@ -1140,10 +1183,6 @@
         <source>I</source>
         <comment>invert mask toggle, first letter of Invert</comment>
         <translation>Đ</translation>
-    </message>
-    <message>
-        <source>SELECTED LAYER CONTROLS (%1)</source>
-        <translation>ĐIỀU KHIỂN LỚP ĐÃ CHỌN (%1)</translation>
     </message>
     <message>
         <source>Layer Opacity</source>
@@ -1165,48 +1204,32 @@
 <context>
     <name>LutSelector</name>
     <message>
-        <source>DAVINCI 3D LUT ENGINE (.CUBE)</source>
-        <translation>BỘ XỬ LÝ 3D LUT DAVINCI (.CUBE)</translation>
+        <source>Load 3D LUT</source>
+        <translation>Tải LUT 3D</translation>
     </message>
     <message>
-        <source>RESET</source>
-        <translation>ĐẶT LẠI</translation>
+        <source>3D LUT</source>
+        <translation>LUT 3D</translation>
     </message>
     <message>
-        <source>Hollywood Print</source>
-        <translation>Bản in Hollywood</translation>
+        <source>Reset</source>
+        <translation>Đặt lại</translation>
     </message>
     <message>
-        <source>Cinema Blockbuster</source>
-        <translation>Bom tấn điện ảnh</translation>
+        <source>Load .cube file…</source>
+        <translation>Tải tệp .cube…</translation>
     </message>
     <message>
-        <source>35mm Soft Stock</source>
-        <translation>Phim 35 mm mềm</translation>
+        <source>Saved look: %1</source>
+        <translation>Phong cách đã lưu: %1</translation>
     </message>
     <message>
-        <source>High-Acutance B&amp;W</source>
-        <translation>Đ/T độ nét cao</translation>
-    </message>
-    <message>
-        <source>LUT Intensity (Mix)</source>
-        <translation>Cường độ LUT (pha trộn)</translation>
+        <source>Amount</source>
+        <translation>Mức độ</translation>
     </message>
 </context>
 <context>
     <name>MainWindow</name>
-    <message>
-        <source>Switched to version %1</source>
-        <translation>Đã chuyển sang phiên bản %1</translation>
-    </message>
-    <message>
-        <source>Version %1 initialized</source>
-        <translation>Đã tạo phiên bản %1</translation>
-    </message>
-    <message>
-        <source>Copied current grade to version %1</source>
-        <translation>Đã sao chép chỉnh màu hiện tại sang phiên bản %1</translation>
-    </message>
     <message numerus="yes">
         <source>Rating: %n star(s)</source>
         <translation>
@@ -1234,36 +1257,8 @@
         <translation>Không có gì để hoàn tác</translation>
     </message>
     <message>
-        <source>Undo (Ctrl+Z)</source>
-        <translation>Hoàn tác (Ctrl+Z)</translation>
-    </message>
-    <message>
         <source>Nothing to redo</source>
         <translation>Không có gì để làm lại</translation>
-    </message>
-    <message>
-        <source>Redo (Ctrl+Shift+Z)</source>
-        <translation>Làm lại (Ctrl+Shift+Z)</translation>
-    </message>
-    <message>
-        <source>Adjustments copied (Ctrl+Shift+C)</source>
-        <translation>Đã sao chép điều chỉnh (Ctrl+Shift+C)</translation>
-    </message>
-    <message>
-        <source>No adjustments in clipboard</source>
-        <translation>Không có điều chỉnh trong bảng nhớ tạm</translation>
-    </message>
-    <message>
-        <source>Adjustments pasted (Ctrl+Shift+V)</source>
-        <translation>Đã dán điều chỉnh (Ctrl+Shift+V)</translation>
-    </message>
-    <message>
-        <source>Reset to defaults (Ctrl+R)</source>
-        <translation>Đã đặt lại mặc định (Ctrl+R)</translation>
-    </message>
-    <message>
-        <source>Social framing and adjustments reset</source>
-        <translation>Đã đặt lại khung mạng xã hội và điều chỉnh</translation>
     </message>
     <message>
         <source>Failed to load RAW: %1</source>
@@ -1286,28 +1281,8 @@
         <translation>Kết xuất xem trước thất bại</translation>
     </message>
     <message>
-        <source>Auto tone applied</source>
-        <translation>Đã áp dụng tông tự động</translation>
-    </message>
-    <message>
-        <source>AI decisions applied</source>
-        <translation>Đã áp dụng quyết định của AI</translation>
-    </message>
-    <message>
-        <source>Local heuristic applied</source>
-        <translation>Đã áp dụng phương pháp cục bộ</translation>
-    </message>
-    <message>
         <source>%1 applied (%2)</source>
         <translation>Đã áp dụng %1 (%2)</translation>
-    </message>
-    <message>
-        <source>Recipe sidecar saved</source>
-        <translation>Đã lưu tệp kèm công thức</translation>
-    </message>
-    <message>
-        <source>Batch finished: %1/%2 photos exported</source>
-        <translation>Lô hoàn tất: đã xuất %1/%2 ảnh</translation>
     </message>
     <message>
         <source>Batch export: %1 succeeded, %2 failed</source>
@@ -1330,14 +1305,6 @@
         <translation>Đã ghi %1</translation>
     </message>
     <message>
-        <source>Analyzing dynamic range and scene...</source>
-        <translation>Đang phân tích dải tương phản động và cảnh...</translation>
-    </message>
-    <message>
-        <source>Asking the AI for edit decisions...</source>
-        <translation>Đang hỏi AI về quyết định chỉnh sửa...</translation>
-    </message>
-    <message>
         <source>Open RAW Photo</source>
         <translation>Mở ảnh RAW</translation>
     </message>
@@ -1346,20 +1313,8 @@
         <translation>Ảnh RAW</translation>
     </message>
     <message>
-        <source>Saved to: %1</source>
-        <translation>Đã lưu vào: %1</translation>
-    </message>
-    <message>
-        <source>Export error: %1</source>
-        <translation>Lỗi xuất: %1</translation>
-    </message>
-    <message>
         <source>Export finished without a result</source>
         <translation>Xuất kết thúc mà không có kết quả</translation>
-    </message>
-    <message>
-        <source>The folder scan gave no answer</source>
-        <translation>Quét thư mục không phản hồi</translation>
     </message>
     <message>
         <source>Crop mode: on (C)</source>
@@ -1370,36 +1325,12 @@
         <translation>Chế độ cắt: tắt</translation>
     </message>
     <message>
-        <source>Open a photo first to export</source>
-        <translation>Hãy mở ảnh trước khi xuất</translation>
-    </message>
-    <message>
-        <source>Panels hidden (Tab)</source>
-        <translation>Đã ẩn bảng (Tab)</translation>
-    </message>
-    <message>
-        <source>Panels restored (Tab)</source>
-        <translation>Đã khôi phục bảng (Tab)</translation>
-    </message>
-    <message>
-        <source>Optimizing for %1...</source>
-        <translation>Đang tối ưu cho %1...</translation>
-    </message>
-    <message>
-        <source>AI SCENE INSIGHT</source>
-        <translation>PHÂN TÍCH CẢNH BẰNG AI</translation>
-    </message>
-    <message>
         <source>Analyzing...</source>
         <translation>Đang phân tích...</translation>
     </message>
     <message>
         <source>Extracting dynamic range...</source>
         <translation>Đang trích xuất dải tương phản động...</translation>
-    </message>
-    <message>
-        <source>Grade versions • Alt+1..4 to switch</source>
-        <translation>Phiên bản chỉnh màu • Alt+1..4 để chuyển</translation>
     </message>
     <message>
         <source>Opened %1</source>
@@ -1410,36 +1341,8 @@
         <translation>Đang quét thư mục %1</translation>
     </message>
     <message>
-        <source>AI edit applied</source>
-        <translation>Đã áp dụng chỉnh sửa AI</translation>
-    </message>
-    <message>
-        <source>ESSENTIAL ADJUSTMENTS</source>
-        <translation>ĐIỀU CHỈNH CƠ BẢN</translation>
-    </message>
-    <message>
-        <source>RESET</source>
-        <translation>ĐẶT LẠI</translation>
-    </message>
-    <message>
-        <source>Exposure (Light)</source>
-        <translation>Phơi sáng (ánh sáng)</translation>
-    </message>
-    <message>
-        <source>Warmth (Temperature)</source>
-        <translation>Độ ấm (nhiệt độ)</translation>
-    </message>
-    <message>
-        <source>Vibrance (Color Punch)</source>
-        <translation>Độ rực (sức màu)</translation>
-    </message>
-    <message>
         <source>Contrast</source>
         <translation>Tương phản</translation>
-    </message>
-    <message>
-        <source>WHITE BALANCE</source>
-        <translation>CÂN BẰNG TRẮNG</translation>
     </message>
     <message>
         <source>Temp (Kelvin)</source>
@@ -1448,10 +1351,6 @@
     <message>
         <source>Tint (Green / Magenta)</source>
         <translation>Sắc thái (xanh lục / đỏ tía)</translation>
-    </message>
-    <message>
-        <source>LIGHT &amp; DYNAMIC RANGE</source>
-        <translation>ÁNH SÁNG &amp; DẢI TƯƠNG PHẢN ĐỘNG</translation>
     </message>
     <message>
         <source>Exposure</source>
@@ -1474,10 +1373,6 @@
         <translation>Vùng đen</translation>
     </message>
     <message>
-        <source>TONE CURVE (PARAMETRIC)</source>
-        <translation>ĐƯỜNG CONG TÔNG (THAM SỐ)</translation>
-    </message>
-    <message>
         <source>Curve Highlights</source>
         <translation>Đường cong vùng sáng</translation>
     </message>
@@ -1492,10 +1387,6 @@
     <message>
         <source>Curve Shadows</source>
         <translation>Đường cong vùng tối</translation>
-    </message>
-    <message>
-        <source>PRESENCE &amp; TEXTURE</source>
-        <translation>HIỆN DIỆN &amp; KẾT CẤU</translation>
     </message>
     <message>
         <source>Texture</source>
@@ -1516,14 +1407,6 @@
     <message>
         <source>Saturation</source>
         <translation>Độ bão hòa</translation>
-    </message>
-    <message>
-        <source>COLOR MIXER (8-BAND HSL)</source>
-        <translation>BỘ TRỘN MÀU (HSL 8 DẢI)</translation>
-    </message>
-    <message>
-        <source>DETAIL &amp; OPTICS</source>
-        <translation>CHI TIẾT &amp; QUANG HỌC</translation>
     </message>
     <message>
         <source>Sharpening</source>
@@ -1554,12 +1437,200 @@
         <translation>Hãy mở ảnh trước</translation>
     </message>
     <message>
+        <source>Version %1</source>
+        <translation>Phiên bản %1</translation>
+    </message>
+    <message>
+        <source>Version %1 started</source>
+        <translation>Đã bắt đầu phiên bản %1</translation>
+    </message>
+    <message>
+        <source>Copied to version %1</source>
+        <translation>Đã sao chép sang phiên bản %1</translation>
+    </message>
+    <message>
+        <source>Undo</source>
+        <translation>Hoàn tác</translation>
+    </message>
+    <message>
+        <source>Redo</source>
+        <translation>Làm lại</translation>
+    </message>
+    <message>
+        <source>Settings copied</source>
+        <translation>Đã sao chép cài đặt</translation>
+    </message>
+    <message>
+        <source>Nothing copied yet</source>
+        <translation>Chưa sao chép gì</translation>
+    </message>
+    <message>
+        <source>Settings pasted</source>
+        <translation>Đã dán cài đặt</translation>
+    </message>
+    <message>
+        <source>Reset to defaults</source>
+        <translation>Đã đặt lại về mặc định</translation>
+    </message>
+    <message>
+        <source>Platform crop reset</source>
+        <translation>Đã đặt lại khung cắt nền tảng</translation>
+    </message>
+    <message>
+        <source>Auto applied</source>
+        <translation>Đã áp dụng chỉnh tự động</translation>
+    </message>
+    <message>
+        <source>Settings saved</source>
+        <translation>Đã lưu cài đặt</translation>
+    </message>
+    <message>
+        <source>%1 of %2 photos exported</source>
+        <translation>Đã xuất %1 trên %2 ảnh</translation>
+    </message>
+    <message>
+        <source>Auto: analysing the photo…</source>
+        <translation>Tự động: đang phân tích ảnh…</translation>
+    </message>
+    <message>
+        <source>Saved to %1</source>
+        <translation>Đã lưu vào %1</translation>
+    </message>
+    <message>
+        <source>Export failed</source>
+        <translation>Xuất thất bại</translation>
+    </message>
+    <message>
+        <source>The scan did not respond.</source>
+        <translation>Quét thư mục không phản hồi.</translation>
+    </message>
+    <message>
+        <source>Rating: ★</source>
+        <translation>Xếp hạng: ★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★</source>
+        <translation>Xếp hạng: ★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★</source>
+        <translation>Xếp hạng: ★★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★★</source>
+        <translation>Xếp hạng: ★★★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★★★</source>
+        <translation>Xếp hạng: ★★★★★</translation>
+    </message>
+    <message>
+        <source>Flag cleared</source>
+        <translation>Đã bỏ cờ</translation>
+    </message>
+    <message>
+        <source>Preparing for %1…</source>
+        <translation>Đang chuẩn bị cho %1…</translation>
+    </message>
+    <message>
+        <source>Rating: %1</source>
+        <translation>Xếp hạng: %1</translation>
+    </message>
+    <message>
+        <source>Picked</source>
+        <translation>Đã chọn</translation>
+    </message>
+    <message>
+        <source>Rejected</source>
+        <translation>Đã loại</translation>
+    </message>
+    <message>
+        <source>Scene</source>
+        <translation>Cảnh</translation>
+    </message>
+    <message>
+        <source>Adjust</source>
+        <translation>Điều chỉnh</translation>
+    </message>
+    <message>
+        <source>Masks</source>
+        <translation>Mặt nạ</translation>
+    </message>
+    <message>
+        <source>Looks</source>
+        <translation>Phong cách</translation>
+    </message>
+    <message>
+        <source>AI</source>
+        <translation>AI</translation>
+    </message>
+    <message>
+        <source>Profile</source>
+        <translation>Hồ sơ</translation>
+    </message>
+    <message>
         <source>Color Chrome Effect</source>
         <translation>Hiệu ứng Color Chrome</translation>
     </message>
     <message>
         <source>Color Chrome FX Blue</source>
         <translation>Color Chrome FX Xanh lam</translation>
+    </message>
+    <message>
+        <source>White balance</source>
+        <translation>Cân bằng trắng</translation>
+    </message>
+    <message>
+        <source>Tone</source>
+        <translation>Tông</translation>
+    </message>
+    <message>
+        <source>Presence</source>
+        <translation>Độ hiện diện</translation>
+    </message>
+    <message>
+        <source>Tone curve</source>
+        <translation>Đường cong tông</translation>
+    </message>
+    <message>
+        <source>Colour mixer</source>
+        <translation>Bộ trộn màu</translation>
+    </message>
+    <message>
+        <source>Colour grading</source>
+        <translation>Chỉnh màu</translation>
+    </message>
+    <message>
+        <source>Detail and optics</source>
+        <translation>Chi tiết và quang học</translation>
+    </message>
+    <message>
+        <source>Grain</source>
+        <translation>Hạt</translation>
+    </message>
+    <message>
+        <source>Colour management</source>
+        <translation>Quản lý màu</translation>
+    </message>
+    <message>
+        <source>Local adjustments</source>
+        <translation>Điều chỉnh cục bộ</translation>
+    </message>
+    <message>
+        <source>Presets</source>
+        <translation>Cài đặt sẵn</translation>
+    </message>
+    <message>
+        <source>LUT</source>
+        <translation>LUT</translation>
+    </message>
+    <message>
+        <source>Edit assistant</source>
+        <translation>Trợ lý chỉnh sửa</translation>
+    </message>
+    <message>
+        <source>Assistant edit applied</source>
+        <translation>Đã áp dụng chỉnh sửa của trợ lý</translation>
     </message>
     <message>
         <source>Copy</source>
@@ -1594,29 +1665,29 @@
         <translation>Đang mở %1</translation>
     </message>
     <message>
-        <source>Loading the studio catalog...</source>
-        <translation>Đang tải danh mục studio...</translation>
+        <source>Loading the catalog…</source>
+        <translation>Đang tải danh mục…</translation>
     </message>
     <message>
-        <source>Refreshing the studio catalog...</source>
-        <translation>Đang làm mới danh mục studio...</translation>
+        <source>Refreshing the catalog…</source>
+        <translation>Đang làm mới danh mục…</translation>
     </message>
     <message numerus="yes">
-        <source>Exporting %n photo(s) in parallel...</source>
+        <source>Exporting %n photos…</source>
         <translation>
-            <numerusform>Đang xuất song song %n ảnh...</numerusform>
+            <numerusform>Đang xuất %n ảnh…</numerusform>
         </translation>
     </message>
     <message>
-        <source>Developing at full resolution and encoding...</source>
-        <translation>Đang xử lý ở độ phân giải đầy đủ và mã hóa...</translation>
+        <source>Developing at full resolution…</source>
+        <translation>Đang xử lý ở độ phân giải đầy đủ…</translation>
     </message>
 </context>
 <context>
     <name>Navigator</name>
     <message>
-        <source>NAVIGATOR</source>
-        <translation>ĐIỀU HƯỚNG</translation>
+        <source>Navigator</source>
+        <translation>Bộ điều hướng</translation>
     </message>
     <message>
         <source>FIT</source>
@@ -1624,65 +1695,92 @@
     </message>
 </context>
 <context>
+    <name>PanelSection</name>
+    <message>
+        <source>Reset %1</source>
+        <translation>Đặt lại %1</translation>
+    </message>
+</context>
+<context>
     <name>PresetSelector</name>
     <message>
-        <source>FILM LOOKS &amp; STYLES</source>
-        <translation>PHONG CÁCH PHIM</translation>
+        <source>Looks</source>
+        <translation>Phong cách</translation>
     </message>
     <message>
-        <source>RESET</source>
-        <translation>ĐẶT LẠI</translation>
+        <source>Reset</source>
+        <translation>Đặt lại</translation>
     </message>
     <message>
-        <source>AI Auto Enhance</source>
-        <translation>Tự động cải thiện bằng AI</translation>
+        <source>Auto</source>
+        <translation>Tự động</translation>
     </message>
     <message>
-        <source>RUN</source>
-        <translation>CHẠY</translation>
+        <source>Run</source>
+        <translation>Chạy</translation>
     </message>
     <message>
-        <source>Documentary Muted</source>
-        <translation>Phóng sự trầm</translation>
+        <source>Muted</source>
+        <translation>Dịu</translation>
     </message>
     <message>
-        <source>Vivid Landscapes</source>
-        <translation>Phong cảnh sống động</translation>
+        <source>Documentary, low saturation</source>
+        <translation>Phóng sự, độ bão hòa thấp</translation>
     </message>
     <message>
-        <source>Warm Skin Tones</source>
-        <translation>Màu da ấm</translation>
+        <source>Vivid</source>
+        <translation>Rực rỡ</translation>
     </message>
     <message>
-        <source>High Contrast B&amp;W</source>
-        <translation>Đ/T tương phản cao</translation>
+        <source>Landscapes, rich colour</source>
+        <translation>Phong cảnh, màu đậm</translation>
     </message>
     <message>
-        <source>Film Grade</source>
-        <translation>Chỉnh màu phim</translation>
+        <source>Warm portrait</source>
+        <translation>Chân dung ấm</translation>
+    </message>
+    <message>
+        <source>Soft contrast, warm skin</source>
+        <translation>Tương phản mềm, da ấm</translation>
+    </message>
+    <message>
+        <source>Black and white</source>
+        <translation>Đen trắng</translation>
+    </message>
+    <message>
+        <source>High contrast</source>
+        <translation>Tương phản cao</translation>
+    </message>
+    <message>
+        <source>Teal and orange</source>
+        <translation>Xanh mòng két và cam</translation>
+    </message>
+    <message>
+        <source>Split toning</source>
+        <translation>Tách tông</translation>
     </message>
 </context>
 <context>
     <name>RgbMixerPanel</name>
     <message>
-        <source>DAVINCI RGB PRIMARY MIXER</source>
-        <translation>BỘ TRỘN RGB CHÍNH DAVINCI</translation>
-    </message>
-    <message>
-        <source>RESET</source>
-        <translation>ĐẶT LẠI</translation>
-    </message>
-    <message>
         <source>Monochrome Mixing</source>
         <translation>Trộn đơn sắc</translation>
     </message>
     <message>
-        <source>MONOCHROME LUMA MIX</source>
-        <translation>TRỘN ĐỘ CHÓI ĐƠN SẮC</translation>
+        <source>Channel mixer</source>
+        <translation>Bộ trộn kênh</translation>
     </message>
     <message>
-        <source>RED OUTPUT CHANNEL</source>
-        <translation>KÊNH ĐẦU RA ĐỎ</translation>
+        <source>Reset</source>
+        <translation>Đặt lại</translation>
+    </message>
+    <message>
+        <source>Monochrome mix</source>
+        <translation>Trộn đơn sắc</translation>
+    </message>
+    <message>
+        <source>Red output</source>
+        <translation>Đầu ra đỏ</translation>
     </message>
     <message>
         <source>Red in Red</source>
@@ -1697,8 +1795,12 @@
         <translation>Lam trong đỏ</translation>
     </message>
     <message>
-        <source>GREEN OUTPUT CHANNEL</source>
-        <translation>KÊNH ĐẦU RA LỤC</translation>
+        <source>Green output</source>
+        <translation>Đầu ra lục</translation>
+    </message>
+    <message>
+        <source>Blue output</source>
+        <translation>Đầu ra lam</translation>
     </message>
     <message>
         <source>Red in Green</source>
@@ -1711,10 +1813,6 @@
     <message>
         <source>Blue in Green</source>
         <translation>Lam trong lục</translation>
-    </message>
-    <message>
-        <source>BLUE OUTPUT CHANNEL</source>
-        <translation>KÊNH ĐẦU RA LAM</translation>
     </message>
     <message>
         <source>Red in Blue</source>
@@ -1758,8 +1856,8 @@
         <translation>[S] %1%</translation>
     </message>
     <message>
-        <source>NO SIGNAL / LOAD RAW</source>
-        <translation>KHÔNG CÓ TÍN HIỆU / HÃY NẠP RAW</translation>
+        <source>No photo</source>
+        <translation>Không có ảnh</translation>
     </message>
     <message>
         <source>RED</source>
@@ -1781,12 +1879,12 @@
 <context>
     <name>SkinTonePanel</name>
     <message>
-        <source>CAPTURE ONE SKIN TONE</source>
-        <translation>MÀU DA CAPTURE ONE</translation>
+        <source>Skin tone</source>
+        <translation>Màu da</translation>
     </message>
     <message>
-        <source>RESET</source>
-        <translation>ĐẶT LẠI</translation>
+        <source>Reset</source>
+        <translation>Đặt lại</translation>
     </message>
     <message>
         <source>Vectorscope 123° flesh line (target: %1°)</source>
@@ -1827,52 +1925,28 @@
 <context>
     <name>SocialOptimizer</name>
     <message>
-        <source>AI SOCIAL MEDIA OPTIMIZER</source>
-        <translation>TỐI ƯU MẠNG XÃ HỘI BẰNG AI</translation>
+        <source>Prepare for</source>
+        <translation>Chuẩn bị cho</translation>
     </message>
     <message>
-        <source>RESET</source>
-        <translation>ĐẶT LẠI</translation>
+        <source>Reset</source>
+        <translation>Đặt lại</translation>
     </message>
     <message>
-        <source>Instagram Feed</source>
-        <translation>Bảng tin Instagram</translation>
+        <source>Instagram post</source>
+        <translation>Bài đăng Instagram</translation>
     </message>
     <message>
-        <source>Max Screen</source>
-        <translation>Màn hình tối đa</translation>
+        <source>Stories and Reels</source>
+        <translation>Tin và Reels</translation>
     </message>
     <message>
-        <source>Stories / Reels</source>
-        <translation>Tin / Reels</translation>
+        <source>Square</source>
+        <translation>Vuông</translation>
     </message>
     <message>
-        <source>Full Mobile</source>
-        <translation>Toàn màn hình di động</translation>
-    </message>
-    <message>
-        <source>Crisp Feed</source>
-        <translation>Bảng tin sắc nét</translation>
-    </message>
-    <message>
-        <source>Classic Square</source>
-        <translation>Vuông cổ điển</translation>
-    </message>
-    <message>
-        <source>Grid Post</source>
-        <translation>Bài đăng lưới</translation>
-    </message>
-    <message>
-        <source>High Res</source>
-        <translation>Độ phân giải cao</translation>
-    </message>
-    <message>
-        <source>YouTube Thumb</source>
+        <source>YouTube thumbnail</source>
         <translation>Ảnh thu nhỏ YouTube</translation>
-    </message>
-    <message>
-        <source>High CTR</source>
-        <translation>CTR cao</translation>
     </message>
 </context>
 <context>
@@ -1907,8 +1981,8 @@
         <translation>Cơ bản</translation>
     </message>
     <message>
-        <source>Pro Studio</source>
-        <translation>Pro Studio</translation>
+        <source>Pro</source>
+        <translation>Pro</translation>
     </message>
     <message>
         <source>Undo (Ctrl+Z)</source>
@@ -1946,16 +2020,16 @@
 <context>
     <name>Viewport</name>
     <message>
-        <source>RESET 0°</source>
-        <translation>ĐẶT LẠI 0°</translation>
+        <source>Reset 0°</source>
+        <translation>Đặt lại về 0°</translation>
     </message>
     <message>
-        <source>FIT</source>
-        <translation>VỪA KHUNG</translation>
+        <source>Fit</source>
+        <translation>Vừa khung</translation>
     </message>
     <message>
-        <source>CROP &amp; COMPOSE</source>
-        <translation>CẮT &amp; BỐ CỤC</translation>
+        <source>Crop</source>
+        <translation>Cắt</translation>
     </message>
     <message>
         <source>Original</source>
@@ -1982,12 +2056,20 @@
         <translation>Lưới: tắt</translation>
     </message>
     <message>
-        <source>RESET</source>
-        <translation>ĐẶT LẠI</translation>
+        <source>Reset</source>
+        <translation>Đặt lại</translation>
     </message>
     <message>
-        <source>DONE</source>
-        <translation>XONG</translation>
+        <source>Done</source>
+        <translation>Xong</translation>
+    </message>
+    <message>
+        <source>Shadow clipping</source>
+        <translation>Cắt mất vùng tối</translation>
+    </message>
+    <message>
+        <source>Highlight clipping</source>
+        <translation>Cắt mất vùng sáng</translation>
     </message>
     <message>
         <source>ORIGINAL RAW (Before)</source>
@@ -1996,18 +2078,6 @@
     <message>
         <source>EDITED RECIPE (After)</source>
         <translation>CÔNG THỨC ĐÃ CHỈNH (sau)</translation>
-    </message>
-    <message>
-        <source>[S] SHADOW CLIPPING (BLUE)</source>
-        <translation>[T] CẮT VÙNG TỐI (LAM)</translation>
-    </message>
-    <message>
-        <source>[H] HIGHLIGHT CLIPPING (RED)</source>
-        <translation>[S] CẮT VÙNG SÁNG (ĐỎ)</translation>
-    </message>
-    <message>
-        <source>Pinch: Zoom | 2-Finger Twist: Rotate | 2-Finger Pan | Double-Tap: Reset</source>
-        <translation>Chụm: thu phóng | Xoay 2 ngón: xoay | Kéo 2 ngón | Chạm đúp: đặt lại</translation>
     </message>
     <message>
         <source>Open a RAW (Ctrl+O) or drop a photo / folder here</source>
@@ -2021,8 +2091,8 @@
 <context>
     <name>WatermarkConfig</name>
     <message>
-        <source>WATERMARK &amp; BRANDING</source>
-        <translation>HÌNH MỜ &amp; THƯƠNG HIỆU</translation>
+        <source>Watermark</source>
+        <translation>Hình mờ</translation>
     </message>
     <message>
         <source>Text / EXIF Tag</source>
@@ -2033,28 +2103,28 @@
         <translation>Logo PNG tùy chỉnh</translation>
     </message>
     <message>
-        <source>WATERMARK TEXT OR TEMPLATE</source>
-        <translation>VĂN BẢN HOẶC MẪU HÌNH MỜ</translation>
+        <source>Text or template</source>
+        <translation>Văn bản hoặc mẫu</translation>
     </message>
     <message>
-        <source>LOGO FILE PATH (.PNG)</source>
-        <translation>ĐƯỜNG DẪN LOGO (.PNG)</translation>
+        <source>Logo file (PNG)</source>
+        <translation>Tệp logo (PNG)</translation>
     </message>
     <message>
-        <source>POSITION</source>
-        <translation>VỊ TRÍ</translation>
+        <source>Position</source>
+        <translation>Vị trí</translation>
+    </message>
+    <message>
+        <source>Opacity</source>
+        <translation>Độ mờ đục</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>Kích thước</translation>
     </message>
     <message>
         <source>Drop Shadow</source>
         <translation>Đổ bóng</translation>
-    </message>
-    <message>
-        <source>OPACITY</source>
-        <translation>ĐỘ MỜ ĐỤC</translation>
-    </message>
-    <message>
-        <source>SIZE MULTIPLIER</source>
-        <translation>HỆ SỐ KÍCH THƯỚC</translation>
     </message>
 </context>
 </TS>

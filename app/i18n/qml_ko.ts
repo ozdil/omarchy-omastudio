@@ -175,28 +175,36 @@
         <translation>실패</translation>
     </message>
     <message>
-        <source>AI EDIT ASSISTANT</source>
-        <translation>AI 편집 도우미</translation>
+        <source>Assistant</source>
+        <translation>도우미</translation>
     </message>
     <message>
-        <source>DONE</source>
+        <source>Done</source>
         <translation>완료</translation>
     </message>
     <message>
-        <source>SETUP</source>
+        <source>Set up</source>
         <translation>설정</translation>
+    </message>
+    <message>
+        <source>Working…</source>
+        <translation>작업 중…</translation>
+    </message>
+    <message>
+        <source>Edit</source>
+        <translation>편집</translation>
+    </message>
+    <message>
+        <source>Store key</source>
+        <translation>키 저장</translation>
+    </message>
+    <message>
+        <source>Use %1</source>
+        <translation>%1 사용</translation>
     </message>
     <message>
         <source>e.g. warmer, moody evening light, recover the sky</source>
         <translation>예: 더 따뜻하게, 우울한 저녁 빛, 하늘 복원</translation>
-    </message>
-    <message>
-        <source>THINKING...</source>
-        <translation>생각 중...</translation>
-    </message>
-    <message>
-        <source>EDIT WITH AI</source>
-        <translation>AI로 편집</translation>
     </message>
     <message>
         <source>Running. Models: %1</source>
@@ -222,14 +230,6 @@
         <source>API key</source>
         <translation>API 키</translation>
     </message>
-    <message>
-        <source>STORE KEY</source>
-        <translation>키 저장</translation>
-    </message>
-    <message>
-        <source>USE %1</source>
-        <translation>%1 사용</translation>
-    </message>
 </context>
 <context>
     <name>BoundedTextInput</name>
@@ -241,48 +241,16 @@
 <context>
     <name>ColorGradingWheels</name>
     <message>
-        <source>DAVINCI PRIMARIES WHEELS</source>
-        <translation>DaVinci 기본 휠</translation>
-    </message>
-    <message>
-        <source>4-WHEEL</source>
-        <translation>4개 휠</translation>
-    </message>
-    <message>
-        <source>TABBED</source>
-        <translation>탭</translation>
-    </message>
-    <message>
-        <source>RESET</source>
-        <translation>초기화</translation>
-    </message>
-    <message>
-        <source>LIFT</source>
-        <translation>LIFT</translation>
-    </message>
-    <message>
         <source>Shadows</source>
         <translation>섀도</translation>
-    </message>
-    <message>
-        <source>GAMMA</source>
-        <translation>GAMMA</translation>
     </message>
     <message>
         <source>Mids</source>
         <translation>중간톤</translation>
     </message>
     <message>
-        <source>GAIN</source>
-        <translation>GAIN</translation>
-    </message>
-    <message>
         <source>Highlights</source>
         <translation>하이라이트</translation>
-    </message>
-    <message>
-        <source>OFFSET</source>
-        <translation>OFFSET</translation>
     </message>
     <message>
         <source>Global</source>
@@ -307,6 +275,22 @@
     <message>
         <source>Lift</source>
         <translation>Lift</translation>
+    </message>
+    <message>
+        <source>Colour grading</source>
+        <translation>색 보정</translation>
+    </message>
+    <message>
+        <source>4 wheels</source>
+        <translation>휠 4개</translation>
+    </message>
+    <message>
+        <source>Tabs</source>
+        <translation>탭</translation>
+    </message>
+    <message>
+        <source>Reset</source>
+        <translation>초기화</translation>
     </message>
     <message>
         <source>Gamma</source>
@@ -368,8 +352,12 @@
         <translation>넓은 AP1</translation>
     </message>
     <message>
-        <source>COLOR MANAGEMENT &amp; ACES 1.3</source>
-        <translation>색상 관리 및 ACES 1.3</translation>
+        <source>Colour management</source>
+        <translation>색상 관리</translation>
+    </message>
+    <message>
+        <source>Gamut compression</source>
+        <translation>색 영역 압축</translation>
     </message>
     <message>
         <source>%1 (%2)</source>
@@ -394,113 +382,161 @@
 <context>
     <name>ExifCard</name>
     <message>
-        <source>No camera loaded</source>
-        <translation>불러온 카메라가 없습니다</translation>
-    </message>
-    <message>
-        <source>Unknown lens</source>
-        <translation>알 수 없는 렌즈</translation>
+        <source>No photo</source>
+        <translation>사진 없음</translation>
     </message>
 </context>
 <context>
     <name>ExportDialog</name>
-    <message numerus="yes">
-        <source>Batch Export (%n Photos)</source>
-        <translation>
-            <numerusform>일괄 내보내기 (사진 %n장)</numerusform>
-        </translation>
-    </message>
-    <message>
-        <source>Export Master Photo</source>
-        <translation>마스터 사진 내보내기</translation>
-    </message>
-    <message>
-        <source>MODERN OPEN FORMAT</source>
-        <translation>최신 개방형 형식</translation>
-    </message>
-    <message>
-        <source>Next-Gen 16-bit HDR</source>
-        <translation>차세대 16비트 HDR</translation>
-    </message>
-    <message>
-        <source>AV1 Web/Mobile</source>
-        <translation>AV1 웹/모바일</translation>
-    </message>
-    <message>
-        <source>Ultra Compact</source>
-        <translation>초소형</translation>
-    </message>
-    <message>
-        <source>16-bit TIFF</source>
-        <translation>16비트 TIFF</translation>
-    </message>
-    <message>
-        <source>Master Print Lossless</source>
-        <translation>무손실 마스터 인쇄</translation>
-    </message>
-    <message>
-        <source>Graphic Lossless</source>
-        <translation>무손실 그래픽</translation>
-    </message>
-    <message>
-        <source>Universal MozJPEG</source>
-        <translation>범용 MozJPEG</translation>
-    </message>
-    <message>
-        <source>Export Compression Quality</source>
-        <translation>내보내기 압축 품질</translation>
-    </message>
-    <message>
-        <source>RESOLUTION &amp; SCALING</source>
-        <translation>해상도 및 크기 조정</translation>
-    </message>
-    <message>
-        <source>100% Full</source>
-        <translation>100% 원본</translation>
-    </message>
-    <message>
-        <source>Social (2048p)</source>
-        <translation>소셜 (2048p)</translation>
-    </message>
-    <message>
-        <source>COLOR SPACE &amp; ICC PROFILE</source>
-        <translation>색 공간 및 ICC 프로필</translation>
-    </message>
-    <message>
-        <source>Universal Web / Social</source>
-        <translation>범용 웹 / 소셜</translation>
-    </message>
-    <message>
-        <source>Apple / Wide OLED</source>
-        <translation>Apple / 넓은 OLED</translation>
-    </message>
-    <message>
-        <source>Ultra-Wide Gamut HDR</source>
-        <translation>초광색역 HDR</translation>
-    </message>
-    <message>
-        <source>Academy Color Standard</source>
-        <translation>아카데미 색 표준</translation>
-    </message>
-    <message>
-        <source>Pro Photography / Print</source>
-        <translation>전문 사진 / 인쇄</translation>
-    </message>
-    <message>
-        <source>16-Bit Master Archival</source>
-        <translation>16비트 마스터 보관</translation>
-    </message>
-    <message>
-        <source>Intent</source>
-        <translation>렌더링 의도</translation>
-    </message>
     <message>
         <source>Perceptual</source>
         <translation>지각적</translation>
     </message>
     <message>
-        <source>Compresses the whole gamut; smooth, saturated colours keep their relations</source>
-        <translation>전체 색역을 압축합니다. 부드럽고 채도 높은 색의 관계가 유지됩니다</translation>
+        <source>8-bit · universal</source>
+        <translation>8비트 · 범용</translation>
+    </message>
+    <message>
+        <source>16-bit · lossless</source>
+        <translation>16비트 · 무손실</translation>
+    </message>
+    <message>
+        <source>16-bit · print, archive</source>
+        <translation>16비트 · 인쇄, 보관</translation>
+    </message>
+    <message>
+        <source>8-bit · web</source>
+        <translation>8비트 · 웹</translation>
+    </message>
+    <message>
+        <source>12-bit · HDR-ready</source>
+        <translation>12비트 · HDR 지원</translation>
+    </message>
+    <message>
+        <source>10-bit · HEVC</source>
+        <translation>10비트 · HEVC</translation>
+    </message>
+    <message>
+        <source>16-bit · modern</source>
+        <translation>16비트 · 최신</translation>
+    </message>
+    <message>
+        <source>Float · scene-linear</source>
+        <translation>부동 소수점 · 장면 선형</translation>
+    </message>
+    <message numerus="yes">
+        <source>Export %n photos</source>
+        <translation>
+            <numerusform>사진 %n장 내보내기</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>Export</source>
+        <translation>내보내기</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>닫기</translation>
+    </message>
+    <message>
+        <source>Format</source>
+        <translation>파일 형식</translation>
+    </message>
+    <message>
+        <source>Quality</source>
+        <translation>품질</translation>
+    </message>
+    <message>
+        <source>100 is lossless.</source>
+        <translation>100은 무손실입니다.</translation>
+    </message>
+    <message>
+        <source>Bit depth</source>
+        <translation>비트 심도</translation>
+    </message>
+    <message>
+        <source>Half float</source>
+        <translation>반정밀도 부동 소수점</translation>
+    </message>
+    <message>
+        <source>Full float</source>
+        <translation>단정밀도 부동 소수점</translation>
+    </message>
+    <message>
+        <source>%1-bit</source>
+        <translation>%1비트</translation>
+    </message>
+    <message>
+        <source>Compression</source>
+        <translation>압축</translation>
+    </message>
+    <message>
+        <source>None</source>
+        <translation>없음</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>크기</translation>
+    </message>
+    <message>
+        <source>Full</source>
+        <translation>전체</translation>
+    </message>
+    <message>
+        <source>3840 px</source>
+        <translation>3840픽셀</translation>
+    </message>
+    <message>
+        <source>Long edge at most 3840 px</source>
+        <translation>긴 변 최대 3840픽셀</translation>
+    </message>
+    <message>
+        <source>2048 px</source>
+        <translation>2048픽셀</translation>
+    </message>
+    <message>
+        <source>Long edge at most 2048 px</source>
+        <translation>긴 변 최대 2048픽셀</translation>
+    </message>
+    <message>
+        <source>Colour profile</source>
+        <translation>색상 프로필</translation>
+    </message>
+    <message>
+        <source>Web, screens</source>
+        <translation>웹, 화면</translation>
+    </message>
+    <message>
+        <source>Wide-gamut screens</source>
+        <translation>광색역 화면</translation>
+    </message>
+    <message>
+        <source>Print</source>
+        <translation>인쇄</translation>
+    </message>
+    <message>
+        <source>Editing, archive</source>
+        <translation>편집, 보관</translation>
+    </message>
+    <message>
+        <source>HDR, video</source>
+        <translation>HDR, 동영상</translation>
+    </message>
+    <message>
+        <source>Linear, VFX</source>
+        <translation>선형, 시각 효과</translation>
+    </message>
+    <message>
+        <source>OpenEXR is written scene-linear in the chosen primaries.</source>
+        <translation>OpenEXR은 선택한 원색으로 장면 선형 방식으로 저장됩니다.</translation>
+    </message>
+    <message>
+        <source>Rendering intent</source>
+        <translation>렌더링 의도</translation>
+    </message>
+    <message>
+        <source>Compresses the whole gamut; colour relations are kept</source>
+        <translation>색 영역 전체를 압축하며 색 사이의 관계는 유지됩니다</translation>
     </message>
     <message>
         <source>Relative</source>
@@ -527,44 +563,54 @@
         <translation>원본의 흰색 점을 포함해 정확한 색을 재현합니다. 교정용</translation>
     </message>
     <message>
-        <source>Preserve Camera EXIF</source>
-        <translation>카메라 EXIF 유지</translation>
+        <source>Metadata</source>
+        <translation>메타데이터</translation>
     </message>
     <message>
-        <source>Strip GPS (Privacy)</source>
-        <translation>GPS 제거 (개인정보)</translation>
+        <source>Keep camera metadata (EXIF)</source>
+        <translation>카메라 메타데이터 유지 (EXIF)</translation>
     </message>
     <message>
-        <source>Apply Photography Watermark / EXIF Signature</source>
-        <translation>워터마크 / EXIF 서명 적용</translation>
+        <source>Remove location (GPS)</source>
+        <translation>위치 정보 제거 (GPS)</translation>
     </message>
     <message>
-        <source>Exporting Batch...</source>
-        <translation>일괄 내보내는 중...</translation>
+        <source>Prepare for</source>
+        <translation>용도</translation>
     </message>
     <message>
-        <source>Exporting Full Resolution...</source>
-        <translation>원본 해상도로 내보내는 중...</translation>
-    </message>
-    <message numerus="yes">
-        <source>Start Parallel Batch Export (%n Photos)</source>
-        <translation>
-            <numerusform>병렬 일괄 내보내기 시작 (사진 %n장)</numerusform>
-        </translation>
+        <source>Sets the crop and output sharpening for a platform. Reset restores your own.</source>
+        <translation>플랫폼에 맞게 자르기와 출력 선명도를 설정합니다. 재설정하면 내 설정으로 돌아갑니다.</translation>
     </message>
     <message>
-        <source>Start Export (%1 / %2)</source>
-        <translation>내보내기 시작 (%1 / %2)</translation>
+        <source>Watermark</source>
+        <translation>워터마크</translation>
+    </message>
+    <message>
+        <source>Folder</source>
+        <translation>폴더</translation>
+    </message>
+    <message>
+        <source>Hide</source>
+        <translation>숨기기</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>취소</translation>
+    </message>
+    <message>
+        <source>Exporting…</source>
+        <translation>내보내는 중…</translation>
     </message>
 </context>
 <context>
     <name>FilmGrainPanel</name>
     <message>
-        <source>SILVER-HALIDE FILM GRAIN</source>
-        <translation>은염 필름 그레인</translation>
+        <source>Grain</source>
+        <translation>그레인</translation>
     </message>
     <message>
-        <source>RESET</source>
+        <source>Reset</source>
         <translation>초기화</translation>
     </message>
     <message>
@@ -699,12 +745,16 @@
         <translation>35mm 파노라마 영화 대비</translation>
     </message>
     <message>
-        <source>FILM SIMULATION &amp; SENSOR PROFILES</source>
-        <translation>필름 시뮬레이션 및 센서 프로필</translation>
+        <source>Profile</source>
+        <translation>프로필</translation>
     </message>
     <message>
-        <source>RESET</source>
+        <source>Reset</source>
         <translation>초기화</translation>
+    </message>
+    <message>
+        <source>Amount</source>
+        <translation>강도</translation>
     </message>
     <message>
         <source>All</source>
@@ -714,17 +764,9 @@
         <source>Acros B&amp;W</source>
         <translation>Acros 흑백</translation>
     </message>
-    <message>
-        <source>SIMULATION INTENSITY</source>
-        <translation>시뮬레이션 강도</translation>
-    </message>
 </context>
 <context>
     <name>Filmstrip</name>
-    <message>
-        <source>Local Photos</source>
-        <translation>로컬 사진</translation>
-    </message>
     <message>
         <source>Studio Catalog</source>
         <translation>스튜디오 카탈로그</translation>
@@ -732,6 +774,14 @@
     <message>
         <source>Up</source>
         <translation>위로</translation>
+    </message>
+    <message>
+        <source>Folders</source>
+        <translation>폴더</translation>
+    </message>
+    <message>
+        <source>Catalog</source>
+        <translation>카탈로그</translation>
     </message>
     <message>
         <source>Scanning Catalog...</source>
@@ -758,20 +808,19 @@
         <translation>이 폴더에 사진이 없습니다.</translation>
     </message>
     <message>
-        <source>DIR</source>
-        <comment>folder badge</comment>
+        <source>Folder</source>
         <translation>폴더</translation>
     </message>
     <message>
-        <source>FETCHING</source>
-        <translation>가져오는 중</translation>
+        <source>Downloading</source>
+        <translation>다운로드 중</translation>
     </message>
     <message>
-        <source>RAW CLOUD</source>
-        <translation>클라우드 RAW</translation>
+        <source>Remote</source>
+        <translation>원격</translation>
     </message>
     <message>
-        <source>NO PREVIEW</source>
+        <source>No preview</source>
         <translation>미리 보기 없음</translation>
     </message>
     <message>
@@ -833,40 +882,60 @@
         <translation>Fujifilm 레시피</translation>
     </message>
     <message>
-        <source>FUJIFILM RECIPES</source>
-        <translation>FUJIFILM 레시피</translation>
-    </message>
-    <message>
-        <source>IMPORT</source>
+        <source>Import</source>
         <translation>가져오기</translation>
     </message>
     <message>
-        <source>APPLY PHOTO&apos;S RECIPE</source>
+        <source>Apply photo&apos;s recipe</source>
         <translation>사진의 레시피 적용</translation>
     </message>
     <message>
-        <source>SAVE</source>
+        <source>Save</source>
         <translation>저장</translation>
+    </message>
+    <message>
+        <source>Apply recipe</source>
+        <translation>레시피 적용</translation>
+    </message>
+    <message>
+        <source>Camera (USB)</source>
+        <translation>카메라 (USB)</translation>
+    </message>
+    <message>
+        <source>Reconnect</source>
+        <translation>다시 연결</translation>
+    </message>
+    <message>
+        <source>Connect</source>
+        <translation>연결</translation>
+    </message>
+    <message>
+        <source>Read C1–C7</source>
+        <translation>C1–C7 읽기</translation>
+    </message>
+    <message>
+        <source>Convert in camera</source>
+        <translation>카메라에서 변환</translation>
+    </message>
+    <message>
+        <source>Write recipe to C%1</source>
+        <translation>레시피를 C%1에 쓰기</translation>
+    </message>
+    <message>
+        <source>Pixel shift</source>
+        <translation>픽셀 시프트</translation>
+    </message>
+    <message>
+        <source>Merge %1 frames to DNG</source>
+        <translation>프레임 %1개를 DNG로 병합</translation>
+    </message>
+    <message>
+        <source>Merge frames to DNG</source>
+        <translation>프레임을 DNG로 병합</translation>
     </message>
     <message>
         <source>No saved recipes. Import an X RAW Studio profile, recipe text or a Fujifilm photo.</source>
         <translation>저장된 레시피가 없습니다. X RAW Studio 프로필, 레시피 텍스트 또는 Fujifilm 사진을 가져오세요.</translation>
-    </message>
-    <message>
-        <source>APPLY SELECTED RECIPE</source>
-        <translation>선택한 레시피 적용</translation>
-    </message>
-    <message>
-        <source>CAMERA (USB)</source>
-        <translation>카메라 (USB)</translation>
-    </message>
-    <message>
-        <source>RECONNECT</source>
-        <translation>다시 연결</translation>
-    </message>
-    <message>
-        <source>CONNECT</source>
-        <translation>연결</translation>
     </message>
     <message>
         <source>%1  ·  in-camera RAW conversion</source>
@@ -881,24 +950,8 @@
         <translation>카메라의 USB 모드를 %1(으)로 설정하고 연결하세요.</translation>
     </message>
     <message>
-        <source>READ C1-C7</source>
-        <translation>C1-C7 읽기</translation>
-    </message>
-    <message>
-        <source>CONVERT IN CAMERA</source>
-        <translation>카메라에서 변환</translation>
-    </message>
-    <message>
         <source>Unnamed</source>
         <translation>이름 없음</translation>
-    </message>
-    <message>
-        <source>WRITE SELECTED RECIPE TO C%1</source>
-        <translation>선택한 레시피를 C%1에 쓰기</translation>
-    </message>
-    <message>
-        <source>PIXEL SHIFT MULTI-SHOT</source>
-        <translation>픽셀 시프트 멀티샷</translation>
     </message>
     <message numerus="yes">
         <source>%n RAF frames selected. 4 frames give full colour per pixel, 16 frames double the resolution.</source>
@@ -910,22 +963,12 @@
         <source>Select the RAF frames of one GFX Pixel Shift sequence in the filmstrip.</source>
         <translation>필름 스트립에서 GFX 픽셀 시프트 시퀀스 하나의 RAF 프레임을 선택하세요.</translation>
     </message>
-    <message numerus="yes">
-        <source>MERGE %n FRAMES TO DNG</source>
-        <translation>
-            <numerusform>프레임 %n개를 DNG로 병합</numerusform>
-        </translation>
-    </message>
-    <message>
-        <source>MERGE FRAMES TO DNG</source>
-        <translation>프레임을 DNG로 병합</translation>
-    </message>
 </context>
 <context>
     <name>GradeVersionsBar</name>
     <message>
-        <source>GRADE VERSION</source>
-        <translation>그레이딩 버전</translation>
+        <source>Version</source>
+        <translation>버전</translation>
     </message>
 </context>
 <context>
@@ -936,8 +979,8 @@
         <translation>[암] %1%</translation>
     </message>
     <message>
-        <source>RGB HISTOGRAM</source>
-        <translation>RGB 히스토그램</translation>
+        <source>Histogram</source>
+        <translation>히스토그램</translation>
     </message>
     <message>
         <source>[H] %1%</source>
@@ -984,12 +1027,12 @@
         <translation>%1 채널</translation>
     </message>
     <message>
-        <source>RESET CH</source>
-        <translation>채널 초기화</translation>
+        <source>Reset colour</source>
+        <translation>색상 재설정</translation>
     </message>
     <message>
-        <source>RESET ALL</source>
-        <translation>모두 초기화</translation>
+        <source>Reset all</source>
+        <translation>모두 재설정</translation>
     </message>
     <message>
         <source>Hue Shift</source>
@@ -1097,32 +1140,32 @@
         <translation>%1 마스크 준비 완료 (%2)</translation>
     </message>
     <message>
-        <source>DETECTING...</source>
-        <translation>감지 중...</translation>
+        <source>Detecting…</source>
+        <translation>감지 중…</translation>
     </message>
     <message>
-        <source>LOCAL ADJUSTMENT LAYERS</source>
-        <translation>로컬 보정 레이어</translation>
+        <source>Masks</source>
+        <translation>마스크</translation>
     </message>
     <message>
-        <source>+ GRADIENT</source>
-        <translation>+ 그라디언트</translation>
+        <source>+ Linear</source>
+        <translation>+ 선형</translation>
+    </message>
+    <message>
+        <source>+ Radial</source>
+        <translation>+ 방사형</translation>
+    </message>
+    <message>
+        <source>+ Luminance</source>
+        <translation>+ 휘도</translation>
     </message>
     <message>
         <source>Linear Gradient %1</source>
         <translation>선형 그라디언트 %1</translation>
     </message>
     <message>
-        <source>+ RADIAL</source>
-        <translation>+ 원형</translation>
-    </message>
-    <message>
         <source>Radial Mask %1</source>
         <translation>원형 마스크 %1</translation>
-    </message>
-    <message>
-        <source>+ LUMA</source>
-        <translation>+ 휘도</translation>
     </message>
     <message>
         <source>Luma Range %1</source>
@@ -1140,10 +1183,6 @@
         <source>I</source>
         <comment>invert mask toggle, first letter of Invert</comment>
         <translation>반</translation>
-    </message>
-    <message>
-        <source>SELECTED LAYER CONTROLS (%1)</source>
-        <translation>선택한 레이어 설정 (%1)</translation>
     </message>
     <message>
         <source>Layer Opacity</source>
@@ -1165,48 +1204,32 @@
 <context>
     <name>LutSelector</name>
     <message>
-        <source>DAVINCI 3D LUT ENGINE (.CUBE)</source>
-        <translation>DaVinci 3D LUT 엔진 (.CUBE)</translation>
+        <source>Load 3D LUT</source>
+        <translation>3D LUT 불러오기</translation>
     </message>
     <message>
-        <source>RESET</source>
+        <source>3D LUT</source>
+        <translation>3D LUT</translation>
+    </message>
+    <message>
+        <source>Reset</source>
         <translation>초기화</translation>
     </message>
     <message>
-        <source>Hollywood Print</source>
-        <translation>할리우드 프린트</translation>
+        <source>Load .cube file…</source>
+        <translation>.cube 파일 불러오기…</translation>
     </message>
     <message>
-        <source>Cinema Blockbuster</source>
-        <translation>블록버스터 영화</translation>
+        <source>Saved look: %1</source>
+        <translation>저장된 룩: %1</translation>
     </message>
     <message>
-        <source>35mm Soft Stock</source>
-        <translation>부드러운 35mm 필름</translation>
-    </message>
-    <message>
-        <source>High-Acutance B&amp;W</source>
-        <translation>고선예도 흑백</translation>
-    </message>
-    <message>
-        <source>LUT Intensity (Mix)</source>
-        <translation>LUT 강도 (혼합)</translation>
+        <source>Amount</source>
+        <translation>강도</translation>
     </message>
 </context>
 <context>
     <name>MainWindow</name>
-    <message>
-        <source>Switched to version %1</source>
-        <translation>버전 %1(으)로 전환했습니다</translation>
-    </message>
-    <message>
-        <source>Version %1 initialized</source>
-        <translation>버전 %1을(를) 만들었습니다</translation>
-    </message>
-    <message>
-        <source>Copied current grade to version %1</source>
-        <translation>현재 그레이드를 버전 %1에 복사했습니다</translation>
-    </message>
     <message numerus="yes">
         <source>Rating: %n star(s)</source>
         <translation>
@@ -1234,36 +1257,8 @@
         <translation>실행 취소할 항목이 없습니다</translation>
     </message>
     <message>
-        <source>Undo (Ctrl+Z)</source>
-        <translation>실행 취소 (Ctrl+Z)</translation>
-    </message>
-    <message>
         <source>Nothing to redo</source>
         <translation>다시 실행할 항목이 없습니다</translation>
-    </message>
-    <message>
-        <source>Redo (Ctrl+Shift+Z)</source>
-        <translation>다시 실행 (Ctrl+Shift+Z)</translation>
-    </message>
-    <message>
-        <source>Adjustments copied (Ctrl+Shift+C)</source>
-        <translation>보정을 복사했습니다 (Ctrl+Shift+C)</translation>
-    </message>
-    <message>
-        <source>No adjustments in clipboard</source>
-        <translation>클립보드에 보정이 없습니다</translation>
-    </message>
-    <message>
-        <source>Adjustments pasted (Ctrl+Shift+V)</source>
-        <translation>보정을 붙여 넣었습니다 (Ctrl+Shift+V)</translation>
-    </message>
-    <message>
-        <source>Reset to defaults (Ctrl+R)</source>
-        <translation>기본값으로 초기화했습니다 (Ctrl+R)</translation>
-    </message>
-    <message>
-        <source>Social framing and adjustments reset</source>
-        <translation>소셜 프레이밍과 보정을 초기화했습니다</translation>
     </message>
     <message>
         <source>Failed to load RAW: %1</source>
@@ -1286,28 +1281,8 @@
         <translation>미리 보기 렌더링에 실패했습니다</translation>
     </message>
     <message>
-        <source>Auto tone applied</source>
-        <translation>자동 톤을 적용했습니다</translation>
-    </message>
-    <message>
-        <source>AI decisions applied</source>
-        <translation>AI 결정을 적용했습니다</translation>
-    </message>
-    <message>
-        <source>Local heuristic applied</source>
-        <translation>로컬 휴리스틱을 적용했습니다</translation>
-    </message>
-    <message>
         <source>%1 applied (%2)</source>
         <translation>%1 적용됨 (%2)</translation>
-    </message>
-    <message>
-        <source>Recipe sidecar saved</source>
-        <translation>레시피 사이드카를 저장했습니다</translation>
-    </message>
-    <message>
-        <source>Batch finished: %1/%2 photos exported</source>
-        <translation>일괄 처리 완료: 사진 %1/%2장 내보냄</translation>
     </message>
     <message>
         <source>Batch export: %1 succeeded, %2 failed</source>
@@ -1330,14 +1305,6 @@
         <translation>%1을(를) 썼습니다</translation>
     </message>
     <message>
-        <source>Analyzing dynamic range and scene...</source>
-        <translation>다이내믹 레인지와 장면을 분석하는 중...</translation>
-    </message>
-    <message>
-        <source>Asking the AI for edit decisions...</source>
-        <translation>AI에 편집 결정을 요청하는 중...</translation>
-    </message>
-    <message>
         <source>Open RAW Photo</source>
         <translation>RAW 사진 열기</translation>
     </message>
@@ -1346,20 +1313,8 @@
         <translation>RAW 사진</translation>
     </message>
     <message>
-        <source>Saved to: %1</source>
-        <translation>저장 위치: %1</translation>
-    </message>
-    <message>
-        <source>Export error: %1</source>
-        <translation>내보내기 오류: %1</translation>
-    </message>
-    <message>
         <source>Export finished without a result</source>
         <translation>결과 없이 내보내기가 끝났습니다</translation>
-    </message>
-    <message>
-        <source>The folder scan gave no answer</source>
-        <translation>폴더 검색이 응답하지 않았습니다</translation>
     </message>
     <message>
         <source>Crop mode: on (C)</source>
@@ -1370,36 +1325,12 @@
         <translation>자르기 모드: 꺼짐</translation>
     </message>
     <message>
-        <source>Open a photo first to export</source>
-        <translation>내보내려면 먼저 사진을 여세요</translation>
-    </message>
-    <message>
-        <source>Panels hidden (Tab)</source>
-        <translation>패널 숨김 (Tab)</translation>
-    </message>
-    <message>
-        <source>Panels restored (Tab)</source>
-        <translation>패널 복원 (Tab)</translation>
-    </message>
-    <message>
-        <source>Optimizing for %1...</source>
-        <translation>%1에 맞게 최적화하는 중...</translation>
-    </message>
-    <message>
-        <source>AI SCENE INSIGHT</source>
-        <translation>AI 장면 분석</translation>
-    </message>
-    <message>
         <source>Analyzing...</source>
         <translation>분석 중...</translation>
     </message>
     <message>
         <source>Extracting dynamic range...</source>
         <translation>다이내믹 레인지 추출 중...</translation>
-    </message>
-    <message>
-        <source>Grade versions • Alt+1..4 to switch</source>
-        <translation>그레이딩 버전 • Alt+1..4로 전환</translation>
     </message>
     <message>
         <source>Opened %1</source>
@@ -1410,36 +1341,8 @@
         <translation>%1 폴더 검색 중</translation>
     </message>
     <message>
-        <source>AI edit applied</source>
-        <translation>AI 편집을 적용했습니다</translation>
-    </message>
-    <message>
-        <source>ESSENTIAL ADJUSTMENTS</source>
-        <translation>기본 보정</translation>
-    </message>
-    <message>
-        <source>RESET</source>
-        <translation>초기화</translation>
-    </message>
-    <message>
-        <source>Exposure (Light)</source>
-        <translation>노출 (빛)</translation>
-    </message>
-    <message>
-        <source>Warmth (Temperature)</source>
-        <translation>따뜻함 (색온도)</translation>
-    </message>
-    <message>
-        <source>Vibrance (Color Punch)</source>
-        <translation>생동감 (색 강도)</translation>
-    </message>
-    <message>
         <source>Contrast</source>
         <translation>대비</translation>
-    </message>
-    <message>
-        <source>WHITE BALANCE</source>
-        <translation>화이트 밸런스</translation>
     </message>
     <message>
         <source>Temp (Kelvin)</source>
@@ -1448,10 +1351,6 @@
     <message>
         <source>Tint (Green / Magenta)</source>
         <translation>색조 (녹색 / 마젠타)</translation>
-    </message>
-    <message>
-        <source>LIGHT &amp; DYNAMIC RANGE</source>
-        <translation>빛과 다이내믹 레인지</translation>
     </message>
     <message>
         <source>Exposure</source>
@@ -1474,10 +1373,6 @@
         <translation>검정 계열</translation>
     </message>
     <message>
-        <source>TONE CURVE (PARAMETRIC)</source>
-        <translation>톤 커브 (매개변수)</translation>
-    </message>
-    <message>
         <source>Curve Highlights</source>
         <translation>커브: 하이라이트</translation>
     </message>
@@ -1492,10 +1387,6 @@
     <message>
         <source>Curve Shadows</source>
         <translation>커브: 섀도</translation>
-    </message>
-    <message>
-        <source>PRESENCE &amp; TEXTURE</source>
-        <translation>존재감 및 텍스처</translation>
     </message>
     <message>
         <source>Texture</source>
@@ -1516,14 +1407,6 @@
     <message>
         <source>Saturation</source>
         <translation>채도</translation>
-    </message>
-    <message>
-        <source>COLOR MIXER (8-BAND HSL)</source>
-        <translation>색상 혼합 (8밴드 HSL)</translation>
-    </message>
-    <message>
-        <source>DETAIL &amp; OPTICS</source>
-        <translation>디테일 및 광학</translation>
     </message>
     <message>
         <source>Sharpening</source>
@@ -1554,12 +1437,200 @@
         <translation>먼저 사진을 여세요</translation>
     </message>
     <message>
+        <source>Version %1</source>
+        <translation>버전 %1</translation>
+    </message>
+    <message>
+        <source>Version %1 started</source>
+        <translation>버전 %1 시작됨</translation>
+    </message>
+    <message>
+        <source>Copied to version %1</source>
+        <translation>버전 %1에 복사됨</translation>
+    </message>
+    <message>
+        <source>Undo</source>
+        <translation>실행 취소</translation>
+    </message>
+    <message>
+        <source>Redo</source>
+        <translation>다시 실행</translation>
+    </message>
+    <message>
+        <source>Settings copied</source>
+        <translation>설정 복사됨</translation>
+    </message>
+    <message>
+        <source>Nothing copied yet</source>
+        <translation>아직 복사한 항목이 없습니다</translation>
+    </message>
+    <message>
+        <source>Settings pasted</source>
+        <translation>설정 붙여넣음</translation>
+    </message>
+    <message>
+        <source>Reset to defaults</source>
+        <translation>기본값으로 재설정됨</translation>
+    </message>
+    <message>
+        <source>Platform crop reset</source>
+        <translation>플랫폼 자르기 재설정됨</translation>
+    </message>
+    <message>
+        <source>Auto applied</source>
+        <translation>자동 보정 적용됨</translation>
+    </message>
+    <message>
+        <source>Settings saved</source>
+        <translation>설정 저장됨</translation>
+    </message>
+    <message>
+        <source>%1 of %2 photos exported</source>
+        <translation>사진 %2장 중 %1장 내보냄</translation>
+    </message>
+    <message>
+        <source>Auto: analysing the photo…</source>
+        <translation>자동: 사진 분석 중…</translation>
+    </message>
+    <message>
+        <source>Saved to %1</source>
+        <translation>%1에 저장됨</translation>
+    </message>
+    <message>
+        <source>Export failed</source>
+        <translation>내보내기 실패</translation>
+    </message>
+    <message>
+        <source>The scan did not respond.</source>
+        <translation>폴더 검색이 응답하지 않았습니다.</translation>
+    </message>
+    <message>
+        <source>Rating: ★</source>
+        <translation>별점: ★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★</source>
+        <translation>별점: ★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★</source>
+        <translation>별점: ★★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★★</source>
+        <translation>별점: ★★★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★★★</source>
+        <translation>별점: ★★★★★</translation>
+    </message>
+    <message>
+        <source>Flag cleared</source>
+        <translation>플래그 해제됨</translation>
+    </message>
+    <message>
+        <source>Preparing for %1…</source>
+        <translation>%1용으로 준비 중…</translation>
+    </message>
+    <message>
+        <source>Rating: %1</source>
+        <translation>별점: %1</translation>
+    </message>
+    <message>
+        <source>Picked</source>
+        <translation>선택됨</translation>
+    </message>
+    <message>
+        <source>Rejected</source>
+        <translation>거부됨</translation>
+    </message>
+    <message>
+        <source>Scene</source>
+        <translation>장면</translation>
+    </message>
+    <message>
+        <source>Adjust</source>
+        <translation>조정</translation>
+    </message>
+    <message>
+        <source>Masks</source>
+        <translation>마스크</translation>
+    </message>
+    <message>
+        <source>Looks</source>
+        <translation>룩</translation>
+    </message>
+    <message>
+        <source>AI</source>
+        <translation>AI 기능</translation>
+    </message>
+    <message>
+        <source>Profile</source>
+        <translation>프로필</translation>
+    </message>
+    <message>
         <source>Color Chrome Effect</source>
         <translation>컬러 크롬 효과</translation>
     </message>
     <message>
         <source>Color Chrome FX Blue</source>
         <translation>컬러 크롬 FX 블루</translation>
+    </message>
+    <message>
+        <source>White balance</source>
+        <translation>화이트 밸런스</translation>
+    </message>
+    <message>
+        <source>Tone</source>
+        <translation>톤</translation>
+    </message>
+    <message>
+        <source>Presence</source>
+        <translation>존재감</translation>
+    </message>
+    <message>
+        <source>Tone curve</source>
+        <translation>톤 곡선</translation>
+    </message>
+    <message>
+        <source>Colour mixer</source>
+        <translation>색상 혼합</translation>
+    </message>
+    <message>
+        <source>Colour grading</source>
+        <translation>색 보정</translation>
+    </message>
+    <message>
+        <source>Detail and optics</source>
+        <translation>디테일 및 광학</translation>
+    </message>
+    <message>
+        <source>Grain</source>
+        <translation>그레인</translation>
+    </message>
+    <message>
+        <source>Colour management</source>
+        <translation>색상 관리</translation>
+    </message>
+    <message>
+        <source>Local adjustments</source>
+        <translation>부분 조정</translation>
+    </message>
+    <message>
+        <source>Presets</source>
+        <translation>사전 설정</translation>
+    </message>
+    <message>
+        <source>LUT</source>
+        <translation>LUT</translation>
+    </message>
+    <message>
+        <source>Edit assistant</source>
+        <translation>편집 도우미</translation>
+    </message>
+    <message>
+        <source>Assistant edit applied</source>
+        <translation>도우미 편집 적용됨</translation>
     </message>
     <message>
         <source>Copy</source>
@@ -1594,29 +1665,29 @@
         <translation>%1 여는 중</translation>
     </message>
     <message>
-        <source>Loading the studio catalog...</source>
-        <translation>스튜디오 카탈로그를 불러오는 중...</translation>
+        <source>Loading the catalog…</source>
+        <translation>카탈로그 불러오는 중…</translation>
     </message>
     <message>
-        <source>Refreshing the studio catalog...</source>
-        <translation>스튜디오 카탈로그를 새로 고치는 중...</translation>
+        <source>Refreshing the catalog…</source>
+        <translation>카탈로그 새로 고치는 중…</translation>
     </message>
     <message numerus="yes">
-        <source>Exporting %n photo(s) in parallel...</source>
+        <source>Exporting %n photos…</source>
         <translation>
-            <numerusform>사진 %n장을 병렬로 내보내는 중...</numerusform>
+            <numerusform>사진 %n장 내보내는 중…</numerusform>
         </translation>
     </message>
     <message>
-        <source>Developing at full resolution and encoding...</source>
-        <translation>원본 해상도로 현상하고 인코딩하는 중...</translation>
+        <source>Developing at full resolution…</source>
+        <translation>전체 해상도로 현상 중…</translation>
     </message>
 </context>
 <context>
     <name>Navigator</name>
     <message>
-        <source>NAVIGATOR</source>
-        <translation>내비게이터</translation>
+        <source>Navigator</source>
+        <translation>탐색기</translation>
     </message>
     <message>
         <source>FIT</source>
@@ -1624,65 +1695,92 @@
     </message>
 </context>
 <context>
+    <name>PanelSection</name>
+    <message>
+        <source>Reset %1</source>
+        <translation>%1 재설정</translation>
+    </message>
+</context>
+<context>
     <name>PresetSelector</name>
     <message>
-        <source>FILM LOOKS &amp; STYLES</source>
-        <translation>필름 룩 및 스타일</translation>
+        <source>Looks</source>
+        <translation>룩</translation>
     </message>
     <message>
-        <source>RESET</source>
+        <source>Reset</source>
         <translation>초기화</translation>
     </message>
     <message>
-        <source>AI Auto Enhance</source>
-        <translation>AI 자동 보정</translation>
+        <source>Auto</source>
+        <translation>자동</translation>
     </message>
     <message>
-        <source>RUN</source>
+        <source>Run</source>
         <translation>실행</translation>
     </message>
     <message>
-        <source>Documentary Muted</source>
-        <translation>차분한 다큐멘터리</translation>
+        <source>Muted</source>
+        <translation>차분함</translation>
     </message>
     <message>
-        <source>Vivid Landscapes</source>
-        <translation>선명한 풍경</translation>
+        <source>Documentary, low saturation</source>
+        <translation>다큐멘터리, 낮은 채도</translation>
     </message>
     <message>
-        <source>Warm Skin Tones</source>
-        <translation>따뜻한 피부 톤</translation>
+        <source>Vivid</source>
+        <translation>선명함</translation>
     </message>
     <message>
-        <source>High Contrast B&amp;W</source>
-        <translation>고대비 흑백</translation>
+        <source>Landscapes, rich colour</source>
+        <translation>풍경, 풍부한 색</translation>
     </message>
     <message>
-        <source>Film Grade</source>
-        <translation>필름 그레이드</translation>
+        <source>Warm portrait</source>
+        <translation>따뜻한 인물</translation>
+    </message>
+    <message>
+        <source>Soft contrast, warm skin</source>
+        <translation>부드러운 대비, 따뜻한 피부</translation>
+    </message>
+    <message>
+        <source>Black and white</source>
+        <translation>흑백</translation>
+    </message>
+    <message>
+        <source>High contrast</source>
+        <translation>높은 대비</translation>
+    </message>
+    <message>
+        <source>Teal and orange</source>
+        <translation>틸 앤 오렌지</translation>
+    </message>
+    <message>
+        <source>Split toning</source>
+        <translation>스플릿 토닝</translation>
     </message>
 </context>
 <context>
     <name>RgbMixerPanel</name>
     <message>
-        <source>DAVINCI RGB PRIMARY MIXER</source>
-        <translation>DaVinci RGB 기본 믹서</translation>
-    </message>
-    <message>
-        <source>RESET</source>
-        <translation>초기화</translation>
-    </message>
-    <message>
         <source>Monochrome Mixing</source>
         <translation>모노크롬 혼합</translation>
     </message>
     <message>
-        <source>MONOCHROME LUMA MIX</source>
-        <translation>모노크롬 휘도 혼합</translation>
+        <source>Channel mixer</source>
+        <translation>채널 혼합</translation>
     </message>
     <message>
-        <source>RED OUTPUT CHANNEL</source>
-        <translation>빨강 출력 채널</translation>
+        <source>Reset</source>
+        <translation>초기화</translation>
+    </message>
+    <message>
+        <source>Monochrome mix</source>
+        <translation>흑백 혼합</translation>
+    </message>
+    <message>
+        <source>Red output</source>
+        <translation>빨강 출력</translation>
     </message>
     <message>
         <source>Red in Red</source>
@@ -1697,8 +1795,12 @@
         <translation>파랑 → 빨강</translation>
     </message>
     <message>
-        <source>GREEN OUTPUT CHANNEL</source>
-        <translation>초록 출력 채널</translation>
+        <source>Green output</source>
+        <translation>초록 출력</translation>
+    </message>
+    <message>
+        <source>Blue output</source>
+        <translation>파랑 출력</translation>
     </message>
     <message>
         <source>Red in Green</source>
@@ -1711,10 +1813,6 @@
     <message>
         <source>Blue in Green</source>
         <translation>파랑 → 초록</translation>
-    </message>
-    <message>
-        <source>BLUE OUTPUT CHANNEL</source>
-        <translation>파랑 출력 채널</translation>
     </message>
     <message>
         <source>Red in Blue</source>
@@ -1758,8 +1856,8 @@
         <translation>[명] %1%</translation>
     </message>
     <message>
-        <source>NO SIGNAL / LOAD RAW</source>
-        <translation>신호 없음 / RAW를 불러오세요</translation>
+        <source>No photo</source>
+        <translation>사진 없음</translation>
     </message>
     <message>
         <source>RED</source>
@@ -1781,11 +1879,11 @@
 <context>
     <name>SkinTonePanel</name>
     <message>
-        <source>CAPTURE ONE SKIN TONE</source>
-        <translation>Capture One 피부 톤</translation>
+        <source>Skin tone</source>
+        <translation>피부 톤</translation>
     </message>
     <message>
-        <source>RESET</source>
+        <source>Reset</source>
         <translation>초기화</translation>
     </message>
     <message>
@@ -1827,52 +1925,28 @@
 <context>
     <name>SocialOptimizer</name>
     <message>
-        <source>AI SOCIAL MEDIA OPTIMIZER</source>
-        <translation>AI 소셜 미디어 최적화</translation>
+        <source>Prepare for</source>
+        <translation>용도</translation>
     </message>
     <message>
-        <source>RESET</source>
+        <source>Reset</source>
         <translation>초기화</translation>
     </message>
     <message>
-        <source>Instagram Feed</source>
-        <translation>Instagram 피드</translation>
+        <source>Instagram post</source>
+        <translation>Instagram 게시물</translation>
     </message>
     <message>
-        <source>Max Screen</source>
-        <translation>최대 화면</translation>
+        <source>Stories and Reels</source>
+        <translation>스토리 및 릴스</translation>
     </message>
     <message>
-        <source>Stories / Reels</source>
-        <translation>스토리 / 릴스</translation>
+        <source>Square</source>
+        <translation>정사각형</translation>
     </message>
     <message>
-        <source>Full Mobile</source>
-        <translation>모바일 전체 화면</translation>
-    </message>
-    <message>
-        <source>Crisp Feed</source>
-        <translation>선명한 피드</translation>
-    </message>
-    <message>
-        <source>Classic Square</source>
-        <translation>클래식 정사각형</translation>
-    </message>
-    <message>
-        <source>Grid Post</source>
-        <translation>그리드 게시물</translation>
-    </message>
-    <message>
-        <source>High Res</source>
-        <translation>고해상도</translation>
-    </message>
-    <message>
-        <source>YouTube Thumb</source>
+        <source>YouTube thumbnail</source>
         <translation>YouTube 썸네일</translation>
-    </message>
-    <message>
-        <source>High CTR</source>
-        <translation>높은 클릭률</translation>
     </message>
 </context>
 <context>
@@ -1907,8 +1981,8 @@
         <translation>기본</translation>
     </message>
     <message>
-        <source>Pro Studio</source>
-        <translation>Pro Studio</translation>
+        <source>Pro</source>
+        <translation>Pro</translation>
     </message>
     <message>
         <source>Undo (Ctrl+Z)</source>
@@ -1946,16 +2020,16 @@
 <context>
     <name>Viewport</name>
     <message>
-        <source>RESET 0°</source>
-        <translation>0°로 초기화</translation>
+        <source>Reset 0°</source>
+        <translation>0°로 재설정</translation>
     </message>
     <message>
-        <source>FIT</source>
+        <source>Fit</source>
         <translation>맞춤</translation>
     </message>
     <message>
-        <source>CROP &amp; COMPOSE</source>
-        <translation>자르기 및 구도</translation>
+        <source>Crop</source>
+        <translation>자르기</translation>
     </message>
     <message>
         <source>Original</source>
@@ -1982,12 +2056,20 @@
         <translation>격자: 끄기</translation>
     </message>
     <message>
-        <source>RESET</source>
+        <source>Reset</source>
         <translation>초기화</translation>
     </message>
     <message>
-        <source>DONE</source>
+        <source>Done</source>
         <translation>완료</translation>
+    </message>
+    <message>
+        <source>Shadow clipping</source>
+        <translation>어두운 영역 클리핑</translation>
+    </message>
+    <message>
+        <source>Highlight clipping</source>
+        <translation>밝은 영역 클리핑</translation>
     </message>
     <message>
         <source>ORIGINAL RAW (Before)</source>
@@ -1996,18 +2078,6 @@
     <message>
         <source>EDITED RECIPE (After)</source>
         <translation>편집한 레시피 (후)</translation>
-    </message>
-    <message>
-        <source>[S] SHADOW CLIPPING (BLUE)</source>
-        <translation>[암] 섀도 클리핑 (파랑)</translation>
-    </message>
-    <message>
-        <source>[H] HIGHLIGHT CLIPPING (RED)</source>
-        <translation>[명] 하이라이트 클리핑 (빨강)</translation>
-    </message>
-    <message>
-        <source>Pinch: Zoom | 2-Finger Twist: Rotate | 2-Finger Pan | Double-Tap: Reset</source>
-        <translation>핀치: 확대/축소 | 두 손가락 비틀기: 회전 | 두 손가락 이동 | 두 번 탭: 초기화</translation>
     </message>
     <message>
         <source>Open a RAW (Ctrl+O) or drop a photo / folder here</source>
@@ -2021,8 +2091,8 @@
 <context>
     <name>WatermarkConfig</name>
     <message>
-        <source>WATERMARK &amp; BRANDING</source>
-        <translation>워터마크 및 브랜딩</translation>
+        <source>Watermark</source>
+        <translation>워터마크</translation>
     </message>
     <message>
         <source>Text / EXIF Tag</source>
@@ -2033,28 +2103,28 @@
         <translation>사용자 지정 PNG 로고</translation>
     </message>
     <message>
-        <source>WATERMARK TEXT OR TEMPLATE</source>
-        <translation>워터마크 텍스트 또는 템플릿</translation>
+        <source>Text or template</source>
+        <translation>텍스트 또는 템플릿</translation>
     </message>
     <message>
-        <source>LOGO FILE PATH (.PNG)</source>
-        <translation>로고 파일 경로 (.PNG)</translation>
+        <source>Logo file (PNG)</source>
+        <translation>로고 파일 (PNG)</translation>
     </message>
     <message>
-        <source>POSITION</source>
+        <source>Position</source>
         <translation>위치</translation>
+    </message>
+    <message>
+        <source>Opacity</source>
+        <translation>불투명도</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>크기</translation>
     </message>
     <message>
         <source>Drop Shadow</source>
         <translation>그림자</translation>
-    </message>
-    <message>
-        <source>OPACITY</source>
-        <translation>불투명도</translation>
-    </message>
-    <message>
-        <source>SIZE MULTIPLIER</source>
-        <translation>크기 배율</translation>
     </message>
 </context>
 </TS>

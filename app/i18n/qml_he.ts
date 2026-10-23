@@ -175,28 +175,36 @@
         <translation>נכשל</translation>
     </message>
     <message>
-        <source>AI EDIT ASSISTANT</source>
-        <translation>עוזר עריכה בבינה מלאכותית</translation>
+        <source>Assistant</source>
+        <translation>עוזר</translation>
     </message>
     <message>
-        <source>DONE</source>
+        <source>Done</source>
         <translation>סיום</translation>
     </message>
     <message>
-        <source>SETUP</source>
+        <source>Set up</source>
         <translation>הגדרה</translation>
+    </message>
+    <message>
+        <source>Working…</source>
+        <translation>מעבד…</translation>
+    </message>
+    <message>
+        <source>Edit</source>
+        <translation>עריכה</translation>
+    </message>
+    <message>
+        <source>Store key</source>
+        <translation>שמירת מפתח</translation>
+    </message>
+    <message>
+        <source>Use %1</source>
+        <translation>שימוש ב־%1</translation>
     </message>
     <message>
         <source>e.g. warmer, moody evening light, recover the sky</source>
         <translation>לדוגמה: חם יותר, אור ערב קודר, שחזור השמיים</translation>
-    </message>
-    <message>
-        <source>THINKING...</source>
-        <translation>חושב...</translation>
-    </message>
-    <message>
-        <source>EDIT WITH AI</source>
-        <translation>עריכה בבינה מלאכותית</translation>
     </message>
     <message>
         <source>Running. Models: %1</source>
@@ -222,14 +230,6 @@
         <source>API key</source>
         <translation>מפתח API</translation>
     </message>
-    <message>
-        <source>STORE KEY</source>
-        <translation>שמירת מפתח</translation>
-    </message>
-    <message>
-        <source>USE %1</source>
-        <translation>שימוש ב-%1</translation>
-    </message>
 </context>
 <context>
     <name>BoundedTextInput</name>
@@ -241,48 +241,16 @@
 <context>
     <name>ColorGradingWheels</name>
     <message>
-        <source>DAVINCI PRIMARIES WHEELS</source>
-        <translation>גלגלי DaVinci ראשיים</translation>
-    </message>
-    <message>
-        <source>4-WHEEL</source>
-        <translation>4 גלגלים</translation>
-    </message>
-    <message>
-        <source>TABBED</source>
-        <translation>לשוניות</translation>
-    </message>
-    <message>
-        <source>RESET</source>
-        <translation>איפוס</translation>
-    </message>
-    <message>
-        <source>LIFT</source>
-        <translation>LIFT</translation>
-    </message>
-    <message>
         <source>Shadows</source>
         <translation>צללים</translation>
-    </message>
-    <message>
-        <source>GAMMA</source>
-        <translation>GAMMA</translation>
     </message>
     <message>
         <source>Mids</source>
         <translation>גוונים בינוניים</translation>
     </message>
     <message>
-        <source>GAIN</source>
-        <translation>GAIN</translation>
-    </message>
-    <message>
         <source>Highlights</source>
         <translation>בהירים</translation>
-    </message>
-    <message>
-        <source>OFFSET</source>
-        <translation>OFFSET</translation>
     </message>
     <message>
         <source>Global</source>
@@ -307,6 +275,22 @@
     <message>
         <source>Lift</source>
         <translation>Lift</translation>
+    </message>
+    <message>
+        <source>Colour grading</source>
+        <translation>דירוג צבע</translation>
+    </message>
+    <message>
+        <source>4 wheels</source>
+        <translation>4 גלגלים</translation>
+    </message>
+    <message>
+        <source>Tabs</source>
+        <translation>לשוניות</translation>
+    </message>
+    <message>
+        <source>Reset</source>
+        <translation>איפוס</translation>
     </message>
     <message>
         <source>Gamma</source>
@@ -368,8 +352,12 @@
         <translation>AP1 רחב</translation>
     </message>
     <message>
-        <source>COLOR MANAGEMENT &amp; ACES 1.3</source>
-        <translation>ניהול צבע ו-ACES 1.3</translation>
+        <source>Colour management</source>
+        <translation>ניהול צבע</translation>
+    </message>
+    <message>
+        <source>Gamut compression</source>
+        <translation>דחיסת סולם צבעים</translation>
     </message>
     <message>
         <source>%1 (%2)</source>
@@ -394,114 +382,162 @@
 <context>
     <name>ExifCard</name>
     <message>
-        <source>No camera loaded</source>
-        <translation>לא נטענה מצלמה</translation>
-    </message>
-    <message>
-        <source>Unknown lens</source>
-        <translation>עדשה לא ידועה</translation>
+        <source>No photo</source>
+        <translation>אין תמונה</translation>
     </message>
 </context>
 <context>
     <name>ExportDialog</name>
-    <message numerus="yes">
-        <source>Batch Export (%n Photos)</source>
-        <translation>
-            <numerusform>ייצוא אצווה (תמונה %n)</numerusform>
-            <numerusform>ייצוא אצווה (%n תמונות)</numerusform>
-        </translation>
-    </message>
-    <message>
-        <source>Export Master Photo</source>
-        <translation>ייצוא תמונת מאסטר</translation>
-    </message>
-    <message>
-        <source>MODERN OPEN FORMAT</source>
-        <translation>תבנית פתוחה מודרנית</translation>
-    </message>
-    <message>
-        <source>Next-Gen 16-bit HDR</source>
-        <translation>HDR של 16 סיביות מהדור החדש</translation>
-    </message>
-    <message>
-        <source>AV1 Web/Mobile</source>
-        <translation>AV1 לרשת ולנייד</translation>
-    </message>
-    <message>
-        <source>Ultra Compact</source>
-        <translation>קומפקטי במיוחד</translation>
-    </message>
-    <message>
-        <source>16-bit TIFF</source>
-        <translation>TIFF של 16 סיביות</translation>
-    </message>
-    <message>
-        <source>Master Print Lossless</source>
-        <translation>הדפסת מאסטר ללא אובדן</translation>
-    </message>
-    <message>
-        <source>Graphic Lossless</source>
-        <translation>גרפיקה ללא אובדן</translation>
-    </message>
-    <message>
-        <source>Universal MozJPEG</source>
-        <translation>MozJPEG אוניברסלי</translation>
-    </message>
-    <message>
-        <source>Export Compression Quality</source>
-        <translation>איכות הדחיסה בייצוא</translation>
-    </message>
-    <message>
-        <source>RESOLUTION &amp; SCALING</source>
-        <translation>רזולוציה ושינוי גודל</translation>
-    </message>
-    <message>
-        <source>100% Full</source>
-        <translation>100% מלא</translation>
-    </message>
-    <message>
-        <source>Social (2048p)</source>
-        <translation>רשתות חברתיות (2048p)</translation>
-    </message>
-    <message>
-        <source>COLOR SPACE &amp; ICC PROFILE</source>
-        <translation>מרחב צבע ופרופיל ICC</translation>
-    </message>
-    <message>
-        <source>Universal Web / Social</source>
-        <translation>רשת / רשתות חברתיות</translation>
-    </message>
-    <message>
-        <source>Apple / Wide OLED</source>
-        <translation>Apple / ‏OLED רחב</translation>
-    </message>
-    <message>
-        <source>Ultra-Wide Gamut HDR</source>
-        <translation>HDR במרחב צבע רחב במיוחד</translation>
-    </message>
-    <message>
-        <source>Academy Color Standard</source>
-        <translation>תקן הצבע של האקדמיה</translation>
-    </message>
-    <message>
-        <source>Pro Photography / Print</source>
-        <translation>צילום מקצועי / הדפסה</translation>
-    </message>
-    <message>
-        <source>16-Bit Master Archival</source>
-        <translation>ארכיון מאסטר של 16 סיביות</translation>
-    </message>
-    <message>
-        <source>Intent</source>
-        <translation>כוונת המרה</translation>
-    </message>
     <message>
         <source>Perceptual</source>
         <translation>תפיסתית</translation>
     </message>
     <message>
-        <source>Compresses the whole gamut; smooth, saturated colours keep their relations</source>
-        <translation>דוחסת את כל המרחב; צבעים רכים ורוויים שומרים על היחסים ביניהם</translation>
+        <source>8-bit · universal</source>
+        <translation>8 סיביות · אוניברסלי</translation>
+    </message>
+    <message>
+        <source>16-bit · lossless</source>
+        <translation>16 סיביות · ללא אובדן</translation>
+    </message>
+    <message>
+        <source>16-bit · print, archive</source>
+        <translation>16 סיביות · הדפסה, ארכיון</translation>
+    </message>
+    <message>
+        <source>8-bit · web</source>
+        <translation>8 סיביות · רשת</translation>
+    </message>
+    <message>
+        <source>12-bit · HDR-ready</source>
+        <translation>12 סיביות · מוכן ל־HDR</translation>
+    </message>
+    <message>
+        <source>10-bit · HEVC</source>
+        <translation>10 סיביות · HEVC</translation>
+    </message>
+    <message>
+        <source>16-bit · modern</source>
+        <translation>16 סיביות · מודרני</translation>
+    </message>
+    <message>
+        <source>Float · scene-linear</source>
+        <translation>נקודה צפה · ליניארי לסצנה</translation>
+    </message>
+    <message numerus="yes">
+        <source>Export %n photos</source>
+        <translation>
+            <numerusform>ייצוא תמונה אחת</numerusform>
+            <numerusform>ייצוא %n תמונות</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>Export</source>
+        <translation>ייצוא</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>סגירה</translation>
+    </message>
+    <message>
+        <source>Format</source>
+        <translation>תבנית קובץ</translation>
+    </message>
+    <message>
+        <source>Quality</source>
+        <translation>איכות</translation>
+    </message>
+    <message>
+        <source>100 is lossless.</source>
+        <translation>100 הוא ללא אובדן.</translation>
+    </message>
+    <message>
+        <source>Bit depth</source>
+        <translation>עומק סיביות</translation>
+    </message>
+    <message>
+        <source>Half float</source>
+        <translation>נקודה צפה בחצי דיוק</translation>
+    </message>
+    <message>
+        <source>Full float</source>
+        <translation>נקודה צפה בדיוק מלא</translation>
+    </message>
+    <message>
+        <source>%1-bit</source>
+        <translation>%1 סיביות</translation>
+    </message>
+    <message>
+        <source>Compression</source>
+        <translation>דחיסה</translation>
+    </message>
+    <message>
+        <source>None</source>
+        <translation>ללא</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>גודל</translation>
+    </message>
+    <message>
+        <source>Full</source>
+        <translation>מלא</translation>
+    </message>
+    <message>
+        <source>3840 px</source>
+        <translation>3840 פיקסלים</translation>
+    </message>
+    <message>
+        <source>Long edge at most 3840 px</source>
+        <translation>הצלע הארוכה עד 3840 פיקסלים</translation>
+    </message>
+    <message>
+        <source>2048 px</source>
+        <translation>2048 פיקסלים</translation>
+    </message>
+    <message>
+        <source>Long edge at most 2048 px</source>
+        <translation>הצלע הארוכה עד 2048 פיקסלים</translation>
+    </message>
+    <message>
+        <source>Colour profile</source>
+        <translation>פרופיל צבע</translation>
+    </message>
+    <message>
+        <source>Web, screens</source>
+        <translation>רשת, מסכים</translation>
+    </message>
+    <message>
+        <source>Wide-gamut screens</source>
+        <translation>מסכים עם סולם צבעים רחב</translation>
+    </message>
+    <message>
+        <source>Print</source>
+        <translation>הדפסה</translation>
+    </message>
+    <message>
+        <source>Editing, archive</source>
+        <translation>עריכה, ארכיון</translation>
+    </message>
+    <message>
+        <source>HDR, video</source>
+        <translation>HDR, וידאו</translation>
+    </message>
+    <message>
+        <source>Linear, VFX</source>
+        <translation>ליניארי, אפקטים חזותיים</translation>
+    </message>
+    <message>
+        <source>OpenEXR is written scene-linear in the chosen primaries.</source>
+        <translation>OpenEXR נכתב ליניארי לסצנה בצבעי היסוד שנבחרו.</translation>
+    </message>
+    <message>
+        <source>Rendering intent</source>
+        <translation>כוונת עיבוד</translation>
+    </message>
+    <message>
+        <source>Compresses the whole gamut; colour relations are kept</source>
+        <translation>דוחס את כל סולם הצבעים; היחסים בין הצבעים נשמרים</translation>
     </message>
     <message>
         <source>Relative</source>
@@ -528,45 +564,54 @@
         <translation>צבעים מדויקים כולל נקודת הלבן של המקור; להגהה</translation>
     </message>
     <message>
-        <source>Preserve Camera EXIF</source>
-        <translation>שמירת EXIF של המצלמה</translation>
+        <source>Metadata</source>
+        <translation>מטא־נתונים</translation>
     </message>
     <message>
-        <source>Strip GPS (Privacy)</source>
-        <translation>הסרת GPS (פרטיות)</translation>
+        <source>Keep camera metadata (EXIF)</source>
+        <translation>שמירת מטא־נתוני המצלמה (EXIF)</translation>
     </message>
     <message>
-        <source>Apply Photography Watermark / EXIF Signature</source>
-        <translation>הוספת סימן מים / חתימת EXIF</translation>
+        <source>Remove location (GPS)</source>
+        <translation>הסרת מיקום (GPS)</translation>
     </message>
     <message>
-        <source>Exporting Batch...</source>
-        <translation>מייצא אצווה...</translation>
+        <source>Prepare for</source>
+        <translation>הכנה עבור</translation>
     </message>
     <message>
-        <source>Exporting Full Resolution...</source>
-        <translation>מייצא ברזולוציה מלאה...</translation>
-    </message>
-    <message numerus="yes">
-        <source>Start Parallel Batch Export (%n Photos)</source>
-        <translation>
-            <numerusform>התחלת ייצוא אצווה מקבילי (תמונה %n)</numerusform>
-            <numerusform>התחלת ייצוא אצווה מקבילי (%n תמונות)</numerusform>
-        </translation>
+        <source>Sets the crop and output sharpening for a platform. Reset restores your own.</source>
+        <translation>מגדיר חיתוך וחידוד פלט לפלטפורמה. איפוס משחזר את ההגדרות שלך.</translation>
     </message>
     <message>
-        <source>Start Export (%1 / %2)</source>
-        <translation>התחלת ייצוא (%1 / %2)</translation>
+        <source>Watermark</source>
+        <translation>סימן מים</translation>
+    </message>
+    <message>
+        <source>Folder</source>
+        <translation>תיקייה</translation>
+    </message>
+    <message>
+        <source>Hide</source>
+        <translation>הסתרה</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>ביטול</translation>
+    </message>
+    <message>
+        <source>Exporting…</source>
+        <translation>מייצא…</translation>
     </message>
 </context>
 <context>
     <name>FilmGrainPanel</name>
     <message>
-        <source>SILVER-HALIDE FILM GRAIN</source>
-        <translation>גרעיניות פילם הליד כסף</translation>
+        <source>Grain</source>
+        <translation>גרעיניות</translation>
     </message>
     <message>
-        <source>RESET</source>
+        <source>Reset</source>
         <translation>איפוס</translation>
     </message>
     <message>
@@ -701,12 +746,16 @@
         <translation>ניגודיות קולנועית פנורמית 35 מ״מ</translation>
     </message>
     <message>
-        <source>FILM SIMULATION &amp; SENSOR PROFILES</source>
-        <translation>הדמיית פילם ופרופילי חיישן</translation>
+        <source>Profile</source>
+        <translation>פרופיל</translation>
     </message>
     <message>
-        <source>RESET</source>
+        <source>Reset</source>
         <translation>איפוס</translation>
+    </message>
+    <message>
+        <source>Amount</source>
+        <translation>עוצמה</translation>
     </message>
     <message>
         <source>All</source>
@@ -716,17 +765,9 @@
         <source>Acros B&amp;W</source>
         <translation>Acros שחור-לבן</translation>
     </message>
-    <message>
-        <source>SIMULATION INTENSITY</source>
-        <translation>עוצמת ההדמיה</translation>
-    </message>
 </context>
 <context>
     <name>Filmstrip</name>
-    <message>
-        <source>Local Photos</source>
-        <translation>תמונות מקומיות</translation>
-    </message>
     <message>
         <source>Studio Catalog</source>
         <translation>קטלוג הסטודיו</translation>
@@ -734,6 +775,14 @@
     <message>
         <source>Up</source>
         <translation>למעלה</translation>
+    </message>
+    <message>
+        <source>Folders</source>
+        <translation>תיקיות</translation>
+    </message>
+    <message>
+        <source>Catalog</source>
+        <translation>קטלוג</translation>
     </message>
     <message>
         <source>Scanning Catalog...</source>
@@ -760,20 +809,19 @@
         <translation>לא נמצאו תמונות בתיקייה זו.</translation>
     </message>
     <message>
-        <source>DIR</source>
-        <comment>folder badge</comment>
+        <source>Folder</source>
         <translation>תיקייה</translation>
     </message>
     <message>
-        <source>FETCHING</source>
+        <source>Downloading</source>
         <translation>מוריד</translation>
     </message>
     <message>
-        <source>RAW CLOUD</source>
-        <translation>RAW בענן</translation>
+        <source>Remote</source>
+        <translation>מרוחק</translation>
     </message>
     <message>
-        <source>NO PREVIEW</source>
+        <source>No preview</source>
         <translation>אין תצוגה מקדימה</translation>
     </message>
     <message>
@@ -836,40 +884,60 @@
         <translation>מתכוני Fujifilm</translation>
     </message>
     <message>
-        <source>FUJIFILM RECIPES</source>
-        <translation>מתכוני FUJIFILM</translation>
-    </message>
-    <message>
-        <source>IMPORT</source>
+        <source>Import</source>
         <translation>ייבוא</translation>
     </message>
     <message>
-        <source>APPLY PHOTO&apos;S RECIPE</source>
+        <source>Apply photo&apos;s recipe</source>
         <translation>החלת המתכון של התמונה</translation>
     </message>
     <message>
-        <source>SAVE</source>
+        <source>Save</source>
         <translation>שמירה</translation>
+    </message>
+    <message>
+        <source>Apply recipe</source>
+        <translation>החלת מתכון</translation>
+    </message>
+    <message>
+        <source>Camera (USB)</source>
+        <translation>מצלמה (USB)</translation>
+    </message>
+    <message>
+        <source>Reconnect</source>
+        <translation>חיבור מחדש</translation>
+    </message>
+    <message>
+        <source>Connect</source>
+        <translation>חיבור</translation>
+    </message>
+    <message>
+        <source>Read C1–C7</source>
+        <translation>קריאת C1–C7</translation>
+    </message>
+    <message>
+        <source>Convert in camera</source>
+        <translation>המרה במצלמה</translation>
+    </message>
+    <message>
+        <source>Write recipe to C%1</source>
+        <translation>כתיבת המתכון ל־C%1</translation>
+    </message>
+    <message>
+        <source>Pixel shift</source>
+        <translation>הזזת פיקסלים</translation>
+    </message>
+    <message>
+        <source>Merge %1 frames to DNG</source>
+        <translation>מיזוג %1 פריימים ל־DNG</translation>
+    </message>
+    <message>
+        <source>Merge frames to DNG</source>
+        <translation>מיזוג פריימים ל־DNG</translation>
     </message>
     <message>
         <source>No saved recipes. Import an X RAW Studio profile, recipe text or a Fujifilm photo.</source>
         <translation>אין מתכונים שמורים. ניתן לייבא פרופיל X RAW Studio, טקסט מתכון או תמונת Fujifilm.</translation>
-    </message>
-    <message>
-        <source>APPLY SELECTED RECIPE</source>
-        <translation>החלת המתכון הנבחר</translation>
-    </message>
-    <message>
-        <source>CAMERA (USB)</source>
-        <translation>מצלמה (USB)</translation>
-    </message>
-    <message>
-        <source>RECONNECT</source>
-        <translation>חיבור מחדש</translation>
-    </message>
-    <message>
-        <source>CONNECT</source>
-        <translation>חיבור</translation>
     </message>
     <message>
         <source>%1  ·  in-camera RAW conversion</source>
@@ -884,24 +952,8 @@
         <translation>יש להגדיר את מצב ה-USB של המצלמה ל-%1 ולחבר אותה.</translation>
     </message>
     <message>
-        <source>READ C1-C7</source>
-        <translation>קריאת C1-C7</translation>
-    </message>
-    <message>
-        <source>CONVERT IN CAMERA</source>
-        <translation>המרה במצלמה</translation>
-    </message>
-    <message>
         <source>Unnamed</source>
         <translation>ללא שם</translation>
-    </message>
-    <message>
-        <source>WRITE SELECTED RECIPE TO C%1</source>
-        <translation>כתיבת המתכון הנבחר ל-C%1</translation>
-    </message>
-    <message>
-        <source>PIXEL SHIFT MULTI-SHOT</source>
-        <translation>Pixel Shift בריבוי צילומים</translation>
     </message>
     <message numerus="yes">
         <source>%n RAF frames selected. 4 frames give full colour per pixel, 16 frames double the resolution.</source>
@@ -914,23 +966,12 @@
         <source>Select the RAF frames of one GFX Pixel Shift sequence in the filmstrip.</source>
         <translation>יש לבחור ברצועת התמונות את תמונות ה-RAF של רצף GFX Pixel Shift אחד.</translation>
     </message>
-    <message numerus="yes">
-        <source>MERGE %n FRAMES TO DNG</source>
-        <translation>
-            <numerusform>מיזוג תמונה %n ל-DNG</numerusform>
-            <numerusform>מיזוג %n תמונות ל-DNG</numerusform>
-        </translation>
-    </message>
-    <message>
-        <source>MERGE FRAMES TO DNG</source>
-        <translation>מיזוג תמונות ל-DNG</translation>
-    </message>
 </context>
 <context>
     <name>GradeVersionsBar</name>
     <message>
-        <source>GRADE VERSION</source>
-        <translation>גרסת תיקון צבע</translation>
+        <source>Version</source>
+        <translation>גרסה</translation>
     </message>
 </context>
 <context>
@@ -941,8 +982,8 @@
         <translation>[צ] %1%</translation>
     </message>
     <message>
-        <source>RGB HISTOGRAM</source>
-        <translation>היסטוגרמת RGB</translation>
+        <source>Histogram</source>
+        <translation>היסטוגרמה</translation>
     </message>
     <message>
         <source>[H] %1%</source>
@@ -989,11 +1030,11 @@
         <translation>ערוץ %1</translation>
     </message>
     <message>
-        <source>RESET CH</source>
-        <translation>איפוס ערוץ</translation>
+        <source>Reset colour</source>
+        <translation>איפוס צבע</translation>
     </message>
     <message>
-        <source>RESET ALL</source>
+        <source>Reset all</source>
         <translation>איפוס הכול</translation>
     </message>
     <message>
@@ -1102,32 +1143,32 @@
         <translation>מסכת %1 מוכנה (%2)</translation>
     </message>
     <message>
-        <source>DETECTING...</source>
-        <translation>מזהה...</translation>
+        <source>Detecting…</source>
+        <translation>מזהה…</translation>
     </message>
     <message>
-        <source>LOCAL ADJUSTMENT LAYERS</source>
-        <translation>שכבות התאמה מקומית</translation>
+        <source>Masks</source>
+        <translation>מסכות</translation>
     </message>
     <message>
-        <source>+ GRADIENT</source>
-        <translation>+ מעבר הדרגתי</translation>
+        <source>+ Linear</source>
+        <translation>+ ליניארית</translation>
+    </message>
+    <message>
+        <source>+ Radial</source>
+        <translation>+ רדיאלית</translation>
+    </message>
+    <message>
+        <source>+ Luminance</source>
+        <translation>+ בהירות</translation>
     </message>
     <message>
         <source>Linear Gradient %1</source>
         <translation>מעבר הדרגתי ליניארי %1</translation>
     </message>
     <message>
-        <source>+ RADIAL</source>
-        <translation>+ רדיאלי</translation>
-    </message>
-    <message>
         <source>Radial Mask %1</source>
         <translation>מסכה רדיאלית %1</translation>
-    </message>
-    <message>
-        <source>+ LUMA</source>
-        <translation>+ בהירות</translation>
     </message>
     <message>
         <source>Luma Range %1</source>
@@ -1145,10 +1186,6 @@
         <source>I</source>
         <comment>invert mask toggle, first letter of Invert</comment>
         <translation>ה</translation>
-    </message>
-    <message>
-        <source>SELECTED LAYER CONTROLS (%1)</source>
-        <translation>פקדי השכבה הנבחרת (%1)</translation>
     </message>
     <message>
         <source>Layer Opacity</source>
@@ -1170,48 +1207,32 @@
 <context>
     <name>LutSelector</name>
     <message>
-        <source>DAVINCI 3D LUT ENGINE (.CUBE)</source>
-        <translation>מנוע DaVinci 3D LUT‏ (.CUBE)</translation>
+        <source>Load 3D LUT</source>
+        <translation>טעינת LUT תלת־ממדי</translation>
     </message>
     <message>
-        <source>RESET</source>
+        <source>3D LUT</source>
+        <translation>LUT תלת־ממדי</translation>
+    </message>
+    <message>
+        <source>Reset</source>
         <translation>איפוס</translation>
     </message>
     <message>
-        <source>Hollywood Print</source>
-        <translation>עותק הוליוודי</translation>
+        <source>Load .cube file…</source>
+        <translation>טעינת קובץ ‎.cube…</translation>
     </message>
     <message>
-        <source>Cinema Blockbuster</source>
-        <translation>שובר קופות</translation>
+        <source>Saved look: %1</source>
+        <translation>מראה שמור: %1</translation>
     </message>
     <message>
-        <source>35mm Soft Stock</source>
-        <translation>פילם 35 מ״מ רך</translation>
-    </message>
-    <message>
-        <source>High-Acutance B&amp;W</source>
-        <translation>שחור-לבן חד במיוחד</translation>
-    </message>
-    <message>
-        <source>LUT Intensity (Mix)</source>
-        <translation>עוצמת LUT (מיזוג)</translation>
+        <source>Amount</source>
+        <translation>עוצמה</translation>
     </message>
 </context>
 <context>
     <name>MainWindow</name>
-    <message>
-        <source>Switched to version %1</source>
-        <translation>עבר לגרסה %1</translation>
-    </message>
-    <message>
-        <source>Version %1 initialized</source>
-        <translation>גרסה %1 נוצרה</translation>
-    </message>
-    <message>
-        <source>Copied current grade to version %1</source>
-        <translation>תיקון הצבע הנוכחי הועתק לגרסה %1</translation>
-    </message>
     <message numerus="yes">
         <source>Rating: %n star(s)</source>
         <translation>
@@ -1240,36 +1261,8 @@
         <translation>אין מה לבטל</translation>
     </message>
     <message>
-        <source>Undo (Ctrl+Z)</source>
-        <translation>ביטול (Ctrl+Z)</translation>
-    </message>
-    <message>
         <source>Nothing to redo</source>
         <translation>אין מה לבצע שוב</translation>
-    </message>
-    <message>
-        <source>Redo (Ctrl+Shift+Z)</source>
-        <translation>ביצוע חוזר (Ctrl+Shift+Z)</translation>
-    </message>
-    <message>
-        <source>Adjustments copied (Ctrl+Shift+C)</source>
-        <translation>ההתאמות הועתקו (Ctrl+Shift+C)</translation>
-    </message>
-    <message>
-        <source>No adjustments in clipboard</source>
-        <translation>אין התאמות בלוח</translation>
-    </message>
-    <message>
-        <source>Adjustments pasted (Ctrl+Shift+V)</source>
-        <translation>ההתאמות הודבקו (Ctrl+Shift+V)</translation>
-    </message>
-    <message>
-        <source>Reset to defaults (Ctrl+R)</source>
-        <translation>שוחזרו ברירות המחדל (Ctrl+R)</translation>
-    </message>
-    <message>
-        <source>Social framing and adjustments reset</source>
-        <translation>מסגור לרשתות חברתיות וההתאמות אופסו</translation>
     </message>
     <message>
         <source>Failed to load RAW: %1</source>
@@ -1292,28 +1285,8 @@
         <translation>עיבוד התצוגה המקדימה נכשל</translation>
     </message>
     <message>
-        <source>Auto tone applied</source>
-        <translation>גוון אוטומטי הוחל</translation>
-    </message>
-    <message>
-        <source>AI decisions applied</source>
-        <translation>החלטות הבינה המלאכותית הוחלו</translation>
-    </message>
-    <message>
-        <source>Local heuristic applied</source>
-        <translation>היוריסטיקה מקומית הוחלה</translation>
-    </message>
-    <message>
         <source>%1 applied (%2)</source>
         <translation>%1 הוחל (%2)</translation>
-    </message>
-    <message>
-        <source>Recipe sidecar saved</source>
-        <translation>קובץ הלוואי של המתכון נשמר</translation>
-    </message>
-    <message>
-        <source>Batch finished: %1/%2 photos exported</source>
-        <translation>האצווה הסתיימה: יוצאו %1/%2 תמונות</translation>
     </message>
     <message>
         <source>Batch export: %1 succeeded, %2 failed</source>
@@ -1336,14 +1309,6 @@
         <translation>נכתב %1</translation>
     </message>
     <message>
-        <source>Analyzing dynamic range and scene...</source>
-        <translation>מנתח טווח דינמי וסצנה...</translation>
-    </message>
-    <message>
-        <source>Asking the AI for edit decisions...</source>
-        <translation>מבקש מהבינה המלאכותית החלטות עריכה...</translation>
-    </message>
-    <message>
         <source>Open RAW Photo</source>
         <translation>פתיחת תמונת RAW</translation>
     </message>
@@ -1352,20 +1317,8 @@
         <translation>תמונות RAW</translation>
     </message>
     <message>
-        <source>Saved to: %1</source>
-        <translation>נשמר ב: %1</translation>
-    </message>
-    <message>
-        <source>Export error: %1</source>
-        <translation>שגיאת ייצוא: %1</translation>
-    </message>
-    <message>
         <source>Export finished without a result</source>
         <translation>הייצוא הסתיים ללא תוצאה</translation>
-    </message>
-    <message>
-        <source>The folder scan gave no answer</source>
-        <translation>סריקת התיקייה לא הגיבה</translation>
     </message>
     <message>
         <source>Crop mode: on (C)</source>
@@ -1376,36 +1329,12 @@
         <translation>מצב חיתוך: כבוי</translation>
     </message>
     <message>
-        <source>Open a photo first to export</source>
-        <translation>יש לפתוח תמונה לפני הייצוא</translation>
-    </message>
-    <message>
-        <source>Panels hidden (Tab)</source>
-        <translation>הלוחות הוסתרו (Tab)</translation>
-    </message>
-    <message>
-        <source>Panels restored (Tab)</source>
-        <translation>הלוחות שוחזרו (Tab)</translation>
-    </message>
-    <message>
-        <source>Optimizing for %1...</source>
-        <translation>מבצע מיטוב עבור %1...</translation>
-    </message>
-    <message>
-        <source>AI SCENE INSIGHT</source>
-        <translation>ניתוח סצנה בבינה מלאכותית</translation>
-    </message>
-    <message>
         <source>Analyzing...</source>
         <translation>מנתח...</translation>
     </message>
     <message>
         <source>Extracting dynamic range...</source>
         <translation>מחלץ טווח דינמי...</translation>
-    </message>
-    <message>
-        <source>Grade versions • Alt+1..4 to switch</source>
-        <translation>גרסאות תיקון צבע • Alt+1..4 למעבר</translation>
     </message>
     <message>
         <source>Opened %1</source>
@@ -1416,36 +1345,8 @@
         <translation>סורק את התיקייה %1</translation>
     </message>
     <message>
-        <source>AI edit applied</source>
-        <translation>עריכת הבינה המלאכותית הוחלה</translation>
-    </message>
-    <message>
-        <source>ESSENTIAL ADJUSTMENTS</source>
-        <translation>התאמות בסיסיות</translation>
-    </message>
-    <message>
-        <source>RESET</source>
-        <translation>איפוס</translation>
-    </message>
-    <message>
-        <source>Exposure (Light)</source>
-        <translation>חשיפה (אור)</translation>
-    </message>
-    <message>
-        <source>Warmth (Temperature)</source>
-        <translation>חמימות (טמפרטורה)</translation>
-    </message>
-    <message>
-        <source>Vibrance (Color Punch)</source>
-        <translation>חיוניות (עוצמת צבע)</translation>
-    </message>
-    <message>
         <source>Contrast</source>
         <translation>ניגודיות</translation>
-    </message>
-    <message>
-        <source>WHITE BALANCE</source>
-        <translation>איזון לבן</translation>
     </message>
     <message>
         <source>Temp (Kelvin)</source>
@@ -1454,10 +1355,6 @@
     <message>
         <source>Tint (Green / Magenta)</source>
         <translation>גוון (ירוק / מג׳נטה)</translation>
-    </message>
-    <message>
-        <source>LIGHT &amp; DYNAMIC RANGE</source>
-        <translation>אור וטווח דינמי</translation>
     </message>
     <message>
         <source>Exposure</source>
@@ -1480,10 +1377,6 @@
         <translation>שחורים</translation>
     </message>
     <message>
-        <source>TONE CURVE (PARAMETRIC)</source>
-        <translation>עקומת גוונים (פרמטרית)</translation>
-    </message>
-    <message>
         <source>Curve Highlights</source>
         <translation>עקומה: בהירים</translation>
     </message>
@@ -1498,10 +1391,6 @@
     <message>
         <source>Curve Shadows</source>
         <translation>עקומה: צללים</translation>
-    </message>
-    <message>
-        <source>PRESENCE &amp; TEXTURE</source>
-        <translation>נוכחות ומרקם</translation>
     </message>
     <message>
         <source>Texture</source>
@@ -1522,14 +1411,6 @@
     <message>
         <source>Saturation</source>
         <translation>רוויה</translation>
-    </message>
-    <message>
-        <source>COLOR MIXER (8-BAND HSL)</source>
-        <translation>מערבל צבעים (HSL ב-8 פסים)</translation>
-    </message>
-    <message>
-        <source>DETAIL &amp; OPTICS</source>
-        <translation>פירוט ואופטיקה</translation>
     </message>
     <message>
         <source>Sharpening</source>
@@ -1560,12 +1441,200 @@
         <translation>יש לפתוח תמונה תחילה</translation>
     </message>
     <message>
+        <source>Version %1</source>
+        <translation>גרסה %1</translation>
+    </message>
+    <message>
+        <source>Version %1 started</source>
+        <translation>גרסה %1 התחילה</translation>
+    </message>
+    <message>
+        <source>Copied to version %1</source>
+        <translation>הועתק לגרסה %1</translation>
+    </message>
+    <message>
+        <source>Undo</source>
+        <translation>ביטול</translation>
+    </message>
+    <message>
+        <source>Redo</source>
+        <translation>ביצוע חוזר</translation>
+    </message>
+    <message>
+        <source>Settings copied</source>
+        <translation>ההגדרות הועתקו</translation>
+    </message>
+    <message>
+        <source>Nothing copied yet</source>
+        <translation>עדיין לא הועתק דבר</translation>
+    </message>
+    <message>
+        <source>Settings pasted</source>
+        <translation>ההגדרות הודבקו</translation>
+    </message>
+    <message>
+        <source>Reset to defaults</source>
+        <translation>שוחזרו ערכי ברירת המחדל</translation>
+    </message>
+    <message>
+        <source>Platform crop reset</source>
+        <translation>חיתוך הפלטפורמה אופס</translation>
+    </message>
+    <message>
+        <source>Auto applied</source>
+        <translation>תיקון אוטומטי הוחל</translation>
+    </message>
+    <message>
+        <source>Settings saved</source>
+        <translation>ההגדרות נשמרו</translation>
+    </message>
+    <message>
+        <source>%1 of %2 photos exported</source>
+        <translation>יוצאו %1 מתוך %2 תמונות</translation>
+    </message>
+    <message>
+        <source>Auto: analysing the photo…</source>
+        <translation>אוטומטי: מנתח את התמונה…</translation>
+    </message>
+    <message>
+        <source>Saved to %1</source>
+        <translation>נשמר ב־%1</translation>
+    </message>
+    <message>
+        <source>Export failed</source>
+        <translation>הייצוא נכשל</translation>
+    </message>
+    <message>
+        <source>The scan did not respond.</source>
+        <translation>סריקת התיקייה לא הגיבה.</translation>
+    </message>
+    <message>
+        <source>Rating: ★</source>
+        <translation>דירוג: ★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★</source>
+        <translation>דירוג: ★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★</source>
+        <translation>דירוג: ★★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★★</source>
+        <translation>דירוג: ★★★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★★★</source>
+        <translation>דירוג: ★★★★★</translation>
+    </message>
+    <message>
+        <source>Flag cleared</source>
+        <translation>הסימון הוסר</translation>
+    </message>
+    <message>
+        <source>Preparing for %1…</source>
+        <translation>מכין עבור %1…</translation>
+    </message>
+    <message>
+        <source>Rating: %1</source>
+        <translation>דירוג: %1</translation>
+    </message>
+    <message>
+        <source>Picked</source>
+        <translation>נבחרה</translation>
+    </message>
+    <message>
+        <source>Rejected</source>
+        <translation>נדחתה</translation>
+    </message>
+    <message>
+        <source>Scene</source>
+        <translation>סצנה</translation>
+    </message>
+    <message>
+        <source>Adjust</source>
+        <translation>כוונון</translation>
+    </message>
+    <message>
+        <source>Masks</source>
+        <translation>מסכות</translation>
+    </message>
+    <message>
+        <source>Looks</source>
+        <translation>סגנונות</translation>
+    </message>
+    <message>
+        <source>AI</source>
+        <translation>בינה מלאכותית</translation>
+    </message>
+    <message>
+        <source>Profile</source>
+        <translation>פרופיל</translation>
+    </message>
+    <message>
         <source>Color Chrome Effect</source>
         <translation>אפקט Color Chrome</translation>
     </message>
     <message>
         <source>Color Chrome FX Blue</source>
         <translation>Color Chrome FX כחול</translation>
+    </message>
+    <message>
+        <source>White balance</source>
+        <translation>איזון לבן</translation>
+    </message>
+    <message>
+        <source>Tone</source>
+        <translation>טון</translation>
+    </message>
+    <message>
+        <source>Presence</source>
+        <translation>נוכחות</translation>
+    </message>
+    <message>
+        <source>Tone curve</source>
+        <translation>עקומת טונים</translation>
+    </message>
+    <message>
+        <source>Colour mixer</source>
+        <translation>מערבל צבעים</translation>
+    </message>
+    <message>
+        <source>Colour grading</source>
+        <translation>דירוג צבע</translation>
+    </message>
+    <message>
+        <source>Detail and optics</source>
+        <translation>פרטים ואופטיקה</translation>
+    </message>
+    <message>
+        <source>Grain</source>
+        <translation>גרעיניות</translation>
+    </message>
+    <message>
+        <source>Colour management</source>
+        <translation>ניהול צבע</translation>
+    </message>
+    <message>
+        <source>Local adjustments</source>
+        <translation>כוונונים מקומיים</translation>
+    </message>
+    <message>
+        <source>Presets</source>
+        <translation>הגדרות קבועות מראש</translation>
+    </message>
+    <message>
+        <source>LUT</source>
+        <translation>LUT</translation>
+    </message>
+    <message>
+        <source>Edit assistant</source>
+        <translation>עוזר עריכה</translation>
+    </message>
+    <message>
+        <source>Assistant edit applied</source>
+        <translation>עריכת העוזר הוחלה</translation>
     </message>
     <message>
         <source>Copy</source>
@@ -1600,30 +1669,30 @@
         <translation>פותח את %1</translation>
     </message>
     <message>
-        <source>Loading the studio catalog...</source>
-        <translation>טוען את קטלוג הסטודיו...</translation>
+        <source>Loading the catalog…</source>
+        <translation>טוען את הקטלוג…</translation>
     </message>
     <message>
-        <source>Refreshing the studio catalog...</source>
-        <translation>מרענן את קטלוג הסטודיו...</translation>
+        <source>Refreshing the catalog…</source>
+        <translation>מרענן את הקטלוג…</translation>
     </message>
     <message numerus="yes">
-        <source>Exporting %n photo(s) in parallel...</source>
+        <source>Exporting %n photos…</source>
         <translation>
-            <numerusform>מייצא תמונה %n במקביל...</numerusform>
-            <numerusform>מייצא %n תמונות במקביל...</numerusform>
+            <numerusform>מייצא תמונה אחת…</numerusform>
+            <numerusform>מייצא %n תמונות…</numerusform>
         </translation>
     </message>
     <message>
-        <source>Developing at full resolution and encoding...</source>
-        <translation>מפתח ברזולוציה מלאה ומקודד...</translation>
+        <source>Developing at full resolution…</source>
+        <translation>מפתח ברזולוציה מלאה…</translation>
     </message>
 </context>
 <context>
     <name>Navigator</name>
     <message>
-        <source>NAVIGATOR</source>
-        <translation>ניווט</translation>
+        <source>Navigator</source>
+        <translation>נווט</translation>
     </message>
     <message>
         <source>FIT</source>
@@ -1631,65 +1700,92 @@
     </message>
 </context>
 <context>
+    <name>PanelSection</name>
+    <message>
+        <source>Reset %1</source>
+        <translation>איפוס %1</translation>
+    </message>
+</context>
+<context>
     <name>PresetSelector</name>
     <message>
-        <source>FILM LOOKS &amp; STYLES</source>
-        <translation>מראות וסגנונות פילם</translation>
+        <source>Looks</source>
+        <translation>סגנונות</translation>
     </message>
     <message>
-        <source>RESET</source>
+        <source>Reset</source>
         <translation>איפוס</translation>
     </message>
     <message>
-        <source>AI Auto Enhance</source>
-        <translation>שיפור אוטומטי בבינה מלאכותית</translation>
+        <source>Auto</source>
+        <translation>אוטומטי</translation>
     </message>
     <message>
-        <source>RUN</source>
+        <source>Run</source>
         <translation>הפעלה</translation>
     </message>
     <message>
-        <source>Documentary Muted</source>
-        <translation>תיעודי מעומעם</translation>
+        <source>Muted</source>
+        <translation>מעומעם</translation>
     </message>
     <message>
-        <source>Vivid Landscapes</source>
-        <translation>נופים חיים</translation>
+        <source>Documentary, low saturation</source>
+        <translation>תיעודי, רוויה נמוכה</translation>
     </message>
     <message>
-        <source>Warm Skin Tones</source>
-        <translation>גווני עור חמים</translation>
+        <source>Vivid</source>
+        <translation>עז</translation>
     </message>
     <message>
-        <source>High Contrast B&amp;W</source>
-        <translation>שחור-לבן בניגודיות גבוהה</translation>
+        <source>Landscapes, rich colour</source>
+        <translation>נופים, צבע עשיר</translation>
     </message>
     <message>
-        <source>Film Grade</source>
-        <translation>תיקון צבע קולנועי</translation>
+        <source>Warm portrait</source>
+        <translation>דיוקן חם</translation>
+    </message>
+    <message>
+        <source>Soft contrast, warm skin</source>
+        <translation>ניגודיות רכה, עור חם</translation>
+    </message>
+    <message>
+        <source>Black and white</source>
+        <translation>שחור־לבן</translation>
+    </message>
+    <message>
+        <source>High contrast</source>
+        <translation>ניגודיות גבוהה</translation>
+    </message>
+    <message>
+        <source>Teal and orange</source>
+        <translation>טורקיז וכתום</translation>
+    </message>
+    <message>
+        <source>Split toning</source>
+        <translation>גוון מפוצל</translation>
     </message>
 </context>
 <context>
     <name>RgbMixerPanel</name>
     <message>
-        <source>DAVINCI RGB PRIMARY MIXER</source>
-        <translation>מערבל RGB ראשי של DaVinci</translation>
-    </message>
-    <message>
-        <source>RESET</source>
-        <translation>איפוס</translation>
-    </message>
-    <message>
         <source>Monochrome Mixing</source>
         <translation>מיזוג מונוכרום</translation>
     </message>
     <message>
-        <source>MONOCHROME LUMA MIX</source>
-        <translation>מיזוג בהירות מונוכרום</translation>
+        <source>Channel mixer</source>
+        <translation>מערבל ערוצים</translation>
     </message>
     <message>
-        <source>RED OUTPUT CHANNEL</source>
-        <translation>ערוץ פלט אדום</translation>
+        <source>Reset</source>
+        <translation>איפוס</translation>
+    </message>
+    <message>
+        <source>Monochrome mix</source>
+        <translation>ערבוב מונוכרום</translation>
+    </message>
+    <message>
+        <source>Red output</source>
+        <translation>פלט אדום</translation>
     </message>
     <message>
         <source>Red in Red</source>
@@ -1704,8 +1800,12 @@
         <translation>כחול באדום</translation>
     </message>
     <message>
-        <source>GREEN OUTPUT CHANNEL</source>
-        <translation>ערוץ פלט ירוק</translation>
+        <source>Green output</source>
+        <translation>פלט ירוק</translation>
+    </message>
+    <message>
+        <source>Blue output</source>
+        <translation>פלט כחול</translation>
     </message>
     <message>
         <source>Red in Green</source>
@@ -1718,10 +1818,6 @@
     <message>
         <source>Blue in Green</source>
         <translation>כחול בירוק</translation>
-    </message>
-    <message>
-        <source>BLUE OUTPUT CHANNEL</source>
-        <translation>ערוץ פלט כחול</translation>
     </message>
     <message>
         <source>Red in Blue</source>
@@ -1765,8 +1861,8 @@
         <translation>[ב] %1%</translation>
     </message>
     <message>
-        <source>NO SIGNAL / LOAD RAW</source>
-        <translation>אין אות / יש לטעון RAW</translation>
+        <source>No photo</source>
+        <translation>אין תמונה</translation>
     </message>
     <message>
         <source>RED</source>
@@ -1788,11 +1884,11 @@
 <context>
     <name>SkinTonePanel</name>
     <message>
-        <source>CAPTURE ONE SKIN TONE</source>
-        <translation>גוון עור של Capture One</translation>
+        <source>Skin tone</source>
+        <translation>גוון עור</translation>
     </message>
     <message>
-        <source>RESET</source>
+        <source>Reset</source>
         <translation>איפוס</translation>
     </message>
     <message>
@@ -1834,52 +1930,28 @@
 <context>
     <name>SocialOptimizer</name>
     <message>
-        <source>AI SOCIAL MEDIA OPTIMIZER</source>
-        <translation>מיטוב לרשתות חברתיות בבינה מלאכותית</translation>
+        <source>Prepare for</source>
+        <translation>הכנה עבור</translation>
     </message>
     <message>
-        <source>RESET</source>
+        <source>Reset</source>
         <translation>איפוס</translation>
     </message>
     <message>
-        <source>Instagram Feed</source>
-        <translation>פיד Instagram</translation>
+        <source>Instagram post</source>
+        <translation>פוסט באינסטגרם</translation>
     </message>
     <message>
-        <source>Max Screen</source>
-        <translation>מסך מרבי</translation>
+        <source>Stories and Reels</source>
+        <translation>סטוריז ו־Reels</translation>
     </message>
     <message>
-        <source>Stories / Reels</source>
-        <translation>סטוריז / Reels</translation>
+        <source>Square</source>
+        <translation>ריבוע</translation>
     </message>
     <message>
-        <source>Full Mobile</source>
-        <translation>מסך נייד מלא</translation>
-    </message>
-    <message>
-        <source>Crisp Feed</source>
-        <translation>פיד חד</translation>
-    </message>
-    <message>
-        <source>Classic Square</source>
-        <translation>ריבוע קלאסי</translation>
-    </message>
-    <message>
-        <source>Grid Post</source>
-        <translation>פוסט ברשת</translation>
-    </message>
-    <message>
-        <source>High Res</source>
-        <translation>רזולוציה גבוהה</translation>
-    </message>
-    <message>
-        <source>YouTube Thumb</source>
-        <translation>תמונה ממוזערת ל-YouTube</translation>
-    </message>
-    <message>
-        <source>High CTR</source>
-        <translation>שיעור הקלקה גבוה</translation>
+        <source>YouTube thumbnail</source>
+        <translation>תמונה ממוזערת ל־YouTube</translation>
     </message>
 </context>
 <context>
@@ -1914,8 +1986,8 @@
         <translation>בסיסי</translation>
     </message>
     <message>
-        <source>Pro Studio</source>
-        <translation>Pro Studio</translation>
+        <source>Pro</source>
+        <translation>Pro</translation>
     </message>
     <message>
         <source>Undo (Ctrl+Z)</source>
@@ -1953,16 +2025,16 @@
 <context>
     <name>Viewport</name>
     <message>
-        <source>RESET 0°</source>
-        <translation>איפוס ל-0°</translation>
+        <source>Reset 0°</source>
+        <translation>איפוס ל־0°</translation>
     </message>
     <message>
-        <source>FIT</source>
+        <source>Fit</source>
         <translation>התאמה</translation>
     </message>
     <message>
-        <source>CROP &amp; COMPOSE</source>
-        <translation>חיתוך וקומפוזיציה</translation>
+        <source>Crop</source>
+        <translation>חיתוך</translation>
     </message>
     <message>
         <source>Original</source>
@@ -1989,12 +2061,20 @@
         <translation>רשת: כבויה</translation>
     </message>
     <message>
-        <source>RESET</source>
+        <source>Reset</source>
         <translation>איפוס</translation>
     </message>
     <message>
-        <source>DONE</source>
+        <source>Done</source>
         <translation>סיום</translation>
+    </message>
+    <message>
+        <source>Shadow clipping</source>
+        <translation>קיטום צללים</translation>
+    </message>
+    <message>
+        <source>Highlight clipping</source>
+        <translation>קיטום הבהרות</translation>
     </message>
     <message>
         <source>ORIGINAL RAW (Before)</source>
@@ -2003,18 +2083,6 @@
     <message>
         <source>EDITED RECIPE (After)</source>
         <translation>מתכון ערוך (אחרי)</translation>
-    </message>
-    <message>
-        <source>[S] SHADOW CLIPPING (BLUE)</source>
-        <translation>[צ] חיתוך צללים (כחול)</translation>
-    </message>
-    <message>
-        <source>[H] HIGHLIGHT CLIPPING (RED)</source>
-        <translation>[ב] חיתוך בהירים (אדום)</translation>
-    </message>
-    <message>
-        <source>Pinch: Zoom | 2-Finger Twist: Rotate | 2-Finger Pan | Double-Tap: Reset</source>
-        <translation>צביטה: זום | סיבוב בשתי אצבעות: סיבוב | גרירה בשתי אצבעות | הקשה כפולה: איפוס</translation>
     </message>
     <message>
         <source>Open a RAW (Ctrl+O) or drop a photo / folder here</source>
@@ -2028,8 +2096,8 @@
 <context>
     <name>WatermarkConfig</name>
     <message>
-        <source>WATERMARK &amp; BRANDING</source>
-        <translation>סימן מים ומיתוג</translation>
+        <source>Watermark</source>
+        <translation>סימן מים</translation>
     </message>
     <message>
         <source>Text / EXIF Tag</source>
@@ -2040,28 +2108,28 @@
         <translation>לוגו PNG מותאם אישית</translation>
     </message>
     <message>
-        <source>WATERMARK TEXT OR TEMPLATE</source>
-        <translation>טקסט או תבנית של סימן המים</translation>
+        <source>Text or template</source>
+        <translation>טקסט או תבנית</translation>
     </message>
     <message>
-        <source>LOGO FILE PATH (.PNG)</source>
-        <translation>נתיב קובץ הלוגו (.PNG)</translation>
+        <source>Logo file (PNG)</source>
+        <translation>קובץ לוגו (PNG)</translation>
     </message>
     <message>
-        <source>POSITION</source>
+        <source>Position</source>
         <translation>מיקום</translation>
+    </message>
+    <message>
+        <source>Opacity</source>
+        <translation>אטימות</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>גודל</translation>
     </message>
     <message>
         <source>Drop Shadow</source>
         <translation>הטלת צל</translation>
-    </message>
-    <message>
-        <source>OPACITY</source>
-        <translation>אטימות</translation>
-    </message>
-    <message>
-        <source>SIZE MULTIPLIER</source>
-        <translation>מכפיל גודל</translation>
     </message>
 </context>
 </TS>

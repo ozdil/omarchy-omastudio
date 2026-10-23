@@ -175,28 +175,36 @@
         <translation>失敗</translation>
     </message>
     <message>
-        <source>AI EDIT ASSISTANT</source>
-        <translation>AI 編輯助手</translation>
+        <source>Assistant</source>
+        <translation>助手</translation>
     </message>
     <message>
-        <source>DONE</source>
+        <source>Done</source>
         <translation>完成</translation>
     </message>
     <message>
-        <source>SETUP</source>
+        <source>Set up</source>
         <translation>設定</translation>
+    </message>
+    <message>
+        <source>Working…</source>
+        <translation>處理中…</translation>
+    </message>
+    <message>
+        <source>Edit</source>
+        <translation>編輯</translation>
+    </message>
+    <message>
+        <source>Store key</source>
+        <translation>儲存金鑰</translation>
+    </message>
+    <message>
+        <source>Use %1</source>
+        <translation>使用 %1</translation>
     </message>
     <message>
         <source>e.g. warmer, moody evening light, recover the sky</source>
         <translation>例如：更暖一些、憂鬱的傍晚光線、恢復天空</translation>
-    </message>
-    <message>
-        <source>THINKING...</source>
-        <translation>思考中...</translation>
-    </message>
-    <message>
-        <source>EDIT WITH AI</source>
-        <translation>用 AI 編輯</translation>
     </message>
     <message>
         <source>Running. Models: %1</source>
@@ -222,14 +230,6 @@
         <source>API key</source>
         <translation>API 金鑰</translation>
     </message>
-    <message>
-        <source>STORE KEY</source>
-        <translation>儲存金鑰</translation>
-    </message>
-    <message>
-        <source>USE %1</source>
-        <translation>使用 %1</translation>
-    </message>
 </context>
 <context>
     <name>BoundedTextInput</name>
@@ -241,48 +241,16 @@
 <context>
     <name>ColorGradingWheels</name>
     <message>
-        <source>DAVINCI PRIMARIES WHEELS</source>
-        <translation>DaVinci 一級色輪</translation>
-    </message>
-    <message>
-        <source>4-WHEEL</source>
-        <translation>4 色輪</translation>
-    </message>
-    <message>
-        <source>TABBED</source>
-        <translation>標籤頁</translation>
-    </message>
-    <message>
-        <source>RESET</source>
-        <translation>重置</translation>
-    </message>
-    <message>
-        <source>LIFT</source>
-        <translation>LIFT</translation>
-    </message>
-    <message>
         <source>Shadows</source>
         <translation>陰影</translation>
-    </message>
-    <message>
-        <source>GAMMA</source>
-        <translation>GAMMA</translation>
     </message>
     <message>
         <source>Mids</source>
         <translation>中間調</translation>
     </message>
     <message>
-        <source>GAIN</source>
-        <translation>GAIN</translation>
-    </message>
-    <message>
         <source>Highlights</source>
         <translation>高光</translation>
-    </message>
-    <message>
-        <source>OFFSET</source>
-        <translation>OFFSET</translation>
     </message>
     <message>
         <source>Global</source>
@@ -307,6 +275,22 @@
     <message>
         <source>Lift</source>
         <translation>Lift</translation>
+    </message>
+    <message>
+        <source>Colour grading</source>
+        <translation>調色</translation>
+    </message>
+    <message>
+        <source>4 wheels</source>
+        <translation>4 色輪</translation>
+    </message>
+    <message>
+        <source>Tabs</source>
+        <translation>標籤頁</translation>
+    </message>
+    <message>
+        <source>Reset</source>
+        <translation>重置</translation>
     </message>
     <message>
         <source>Gamma</source>
@@ -368,8 +352,12 @@
         <translation>寬色域 AP1</translation>
     </message>
     <message>
-        <source>COLOR MANAGEMENT &amp; ACES 1.3</source>
-        <translation>色彩管理與 ACES 1.3</translation>
+        <source>Colour management</source>
+        <translation>色彩管理</translation>
+    </message>
+    <message>
+        <source>Gamut compression</source>
+        <translation>色域壓縮</translation>
     </message>
     <message>
         <source>%1 (%2)</source>
@@ -394,113 +382,161 @@
 <context>
     <name>ExifCard</name>
     <message>
-        <source>No camera loaded</source>
-        <translation>未載入相機</translation>
-    </message>
-    <message>
-        <source>Unknown lens</source>
-        <translation>未知鏡頭</translation>
+        <source>No photo</source>
+        <translation>沒有照片</translation>
     </message>
 </context>
 <context>
     <name>ExportDialog</name>
-    <message numerus="yes">
-        <source>Batch Export (%n Photos)</source>
-        <translation>
-            <numerusform>批次匯出（%n 張照片）</numerusform>
-        </translation>
-    </message>
-    <message>
-        <source>Export Master Photo</source>
-        <translation>匯出母版照片</translation>
-    </message>
-    <message>
-        <source>MODERN OPEN FORMAT</source>
-        <translation>現代開放格式</translation>
-    </message>
-    <message>
-        <source>Next-Gen 16-bit HDR</source>
-        <translation>新一代 16 位 HDR</translation>
-    </message>
-    <message>
-        <source>AV1 Web/Mobile</source>
-        <translation>AV1 網頁/行動</translation>
-    </message>
-    <message>
-        <source>Ultra Compact</source>
-        <translation>超緊湊</translation>
-    </message>
-    <message>
-        <source>16-bit TIFF</source>
-        <translation>16 位 TIFF</translation>
-    </message>
-    <message>
-        <source>Master Print Lossless</source>
-        <translation>無損母版列印</translation>
-    </message>
-    <message>
-        <source>Graphic Lossless</source>
-        <translation>無損圖形</translation>
-    </message>
-    <message>
-        <source>Universal MozJPEG</source>
-        <translation>通用 MozJPEG</translation>
-    </message>
-    <message>
-        <source>Export Compression Quality</source>
-        <translation>匯出壓縮品質</translation>
-    </message>
-    <message>
-        <source>RESOLUTION &amp; SCALING</source>
-        <translation>解析度與縮放</translation>
-    </message>
-    <message>
-        <source>100% Full</source>
-        <translation>100% 完整</translation>
-    </message>
-    <message>
-        <source>Social (2048p)</source>
-        <translation>社交媒體（2048p）</translation>
-    </message>
-    <message>
-        <source>COLOR SPACE &amp; ICC PROFILE</source>
-        <translation>色彩空間與 ICC 配置檔案</translation>
-    </message>
-    <message>
-        <source>Universal Web / Social</source>
-        <translation>通用網頁 / 社交媒體</translation>
-    </message>
-    <message>
-        <source>Apple / Wide OLED</source>
-        <translation>Apple / 廣色域 OLED</translation>
-    </message>
-    <message>
-        <source>Ultra-Wide Gamut HDR</source>
-        <translation>超廣色域 HDR</translation>
-    </message>
-    <message>
-        <source>Academy Color Standard</source>
-        <translation>學院色彩標準</translation>
-    </message>
-    <message>
-        <source>Pro Photography / Print</source>
-        <translation>專業攝影 / 列印</translation>
-    </message>
-    <message>
-        <source>16-Bit Master Archival</source>
-        <translation>16 位母版存檔</translation>
-    </message>
-    <message>
-        <source>Intent</source>
-        <translation>渲染意圖</translation>
-    </message>
     <message>
         <source>Perceptual</source>
         <translation>可感知</translation>
     </message>
     <message>
-        <source>Compresses the whole gamut; smooth, saturated colours keep their relations</source>
-        <translation>壓縮整個色域；柔和、飽和的顏色保持彼此關係</translation>
+        <source>8-bit · universal</source>
+        <translation>8 位 · 通用</translation>
+    </message>
+    <message>
+        <source>16-bit · lossless</source>
+        <translation>16 位 · 無損</translation>
+    </message>
+    <message>
+        <source>16-bit · print, archive</source>
+        <translation>16 位 · 列印、存檔</translation>
+    </message>
+    <message>
+        <source>8-bit · web</source>
+        <translation>8 位 · 網頁</translation>
+    </message>
+    <message>
+        <source>12-bit · HDR-ready</source>
+        <translation>12 位 · 支援 HDR</translation>
+    </message>
+    <message>
+        <source>10-bit · HEVC</source>
+        <translation>10 位 · HEVC</translation>
+    </message>
+    <message>
+        <source>16-bit · modern</source>
+        <translation>16 位 · 現代</translation>
+    </message>
+    <message>
+        <source>Float · scene-linear</source>
+        <translation>浮點 · 場景線性</translation>
+    </message>
+    <message numerus="yes">
+        <source>Export %n photos</source>
+        <translation>
+            <numerusform>匯出 %n 張照片</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>Export</source>
+        <translation>匯出</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>關閉</translation>
+    </message>
+    <message>
+        <source>Format</source>
+        <translation>檔案格式</translation>
+    </message>
+    <message>
+        <source>Quality</source>
+        <translation>品質</translation>
+    </message>
+    <message>
+        <source>100 is lossless.</source>
+        <translation>100 為無損。</translation>
+    </message>
+    <message>
+        <source>Bit depth</source>
+        <translation>位深</translation>
+    </message>
+    <message>
+        <source>Half float</source>
+        <translation>半精度浮點</translation>
+    </message>
+    <message>
+        <source>Full float</source>
+        <translation>全精度浮點</translation>
+    </message>
+    <message>
+        <source>%1-bit</source>
+        <translation>%1 位</translation>
+    </message>
+    <message>
+        <source>Compression</source>
+        <translation>壓縮</translation>
+    </message>
+    <message>
+        <source>None</source>
+        <translation>無</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>尺寸</translation>
+    </message>
+    <message>
+        <source>Full</source>
+        <translation>完整</translation>
+    </message>
+    <message>
+        <source>3840 px</source>
+        <translation>3840 畫素</translation>
+    </message>
+    <message>
+        <source>Long edge at most 3840 px</source>
+        <translation>長邊最多 3840 畫素</translation>
+    </message>
+    <message>
+        <source>2048 px</source>
+        <translation>2048 畫素</translation>
+    </message>
+    <message>
+        <source>Long edge at most 2048 px</source>
+        <translation>長邊最多 2048 畫素</translation>
+    </message>
+    <message>
+        <source>Colour profile</source>
+        <translation>顏色配置檔案</translation>
+    </message>
+    <message>
+        <source>Web, screens</source>
+        <translation>網頁、螢幕</translation>
+    </message>
+    <message>
+        <source>Wide-gamut screens</source>
+        <translation>廣色域螢幕</translation>
+    </message>
+    <message>
+        <source>Print</source>
+        <translation>列印</translation>
+    </message>
+    <message>
+        <source>Editing, archive</source>
+        <translation>編輯、存檔</translation>
+    </message>
+    <message>
+        <source>HDR, video</source>
+        <translation>HDR、影片</translation>
+    </message>
+    <message>
+        <source>Linear, VFX</source>
+        <translation>線性、視覺特效</translation>
+    </message>
+    <message>
+        <source>OpenEXR is written scene-linear in the chosen primaries.</source>
+        <translation>OpenEXR 以所選原色按場景線性寫入。</translation>
+    </message>
+    <message>
+        <source>Rendering intent</source>
+        <translation>渲染意圖</translation>
+    </message>
+    <message>
+        <source>Compresses the whole gamut; colour relations are kept</source>
+        <translation>壓縮整個色域；保持顏色之間的關係</translation>
     </message>
     <message>
         <source>Relative</source>
@@ -527,44 +563,54 @@
         <translation>包括源白點在內的準確色彩；適用於打樣</translation>
     </message>
     <message>
-        <source>Preserve Camera EXIF</source>
-        <translation>保留相機 EXIF</translation>
+        <source>Metadata</source>
+        <translation>後設資料</translation>
     </message>
     <message>
-        <source>Strip GPS (Privacy)</source>
-        <translation>移除 GPS（隱私）</translation>
+        <source>Keep camera metadata (EXIF)</source>
+        <translation>保留相機後設資料（EXIF）</translation>
     </message>
     <message>
-        <source>Apply Photography Watermark / EXIF Signature</source>
-        <translation>新增水印 / EXIF 簽名</translation>
+        <source>Remove location (GPS)</source>
+        <translation>移除位置（GPS）</translation>
     </message>
     <message>
-        <source>Exporting Batch...</source>
-        <translation>正在批次匯出...</translation>
+        <source>Prepare for</source>
+        <translation>準備用於</translation>
     </message>
     <message>
-        <source>Exporting Full Resolution...</source>
-        <translation>正在以完整解析度匯出...</translation>
-    </message>
-    <message numerus="yes">
-        <source>Start Parallel Batch Export (%n Photos)</source>
-        <translation>
-            <numerusform>開始並行批次匯出（%n 張照片）</numerusform>
-        </translation>
+        <source>Sets the crop and output sharpening for a platform. Reset restores your own.</source>
+        <translation>為平臺設定裁剪和輸出銳化。重置會恢復您自己的設定。</translation>
     </message>
     <message>
-        <source>Start Export (%1 / %2)</source>
-        <translation>開始匯出（%1 / %2）</translation>
+        <source>Watermark</source>
+        <translation>水印</translation>
+    </message>
+    <message>
+        <source>Folder</source>
+        <translation>資料夾</translation>
+    </message>
+    <message>
+        <source>Hide</source>
+        <translation>隱藏</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>取消</translation>
+    </message>
+    <message>
+        <source>Exporting…</source>
+        <translation>正在匯出…</translation>
     </message>
 </context>
 <context>
     <name>FilmGrainPanel</name>
     <message>
-        <source>SILVER-HALIDE FILM GRAIN</source>
-        <translation>銀鹽膠片顆粒</translation>
+        <source>Grain</source>
+        <translation>顆粒</translation>
     </message>
     <message>
-        <source>RESET</source>
+        <source>Reset</source>
         <translation>重置</translation>
     </message>
     <message>
@@ -699,12 +745,16 @@
         <translation>35mm 全景電影對比度</translation>
     </message>
     <message>
-        <source>FILM SIMULATION &amp; SENSOR PROFILES</source>
-        <translation>膠片模擬與感測器配置檔案</translation>
+        <source>Profile</source>
+        <translation>配置檔案</translation>
     </message>
     <message>
-        <source>RESET</source>
+        <source>Reset</source>
         <translation>重置</translation>
+    </message>
+    <message>
+        <source>Amount</source>
+        <translation>數量</translation>
     </message>
     <message>
         <source>All</source>
@@ -714,17 +764,9 @@
         <source>Acros B&amp;W</source>
         <translation>Acros 黑白</translation>
     </message>
-    <message>
-        <source>SIMULATION INTENSITY</source>
-        <translation>模擬強度</translation>
-    </message>
 </context>
 <context>
     <name>Filmstrip</name>
-    <message>
-        <source>Local Photos</source>
-        <translation>本地照片</translation>
-    </message>
     <message>
         <source>Studio Catalog</source>
         <translation>工作室目錄</translation>
@@ -732,6 +774,14 @@
     <message>
         <source>Up</source>
         <translation>向上</translation>
+    </message>
+    <message>
+        <source>Folders</source>
+        <translation>資料夾</translation>
+    </message>
+    <message>
+        <source>Catalog</source>
+        <translation>目錄</translation>
     </message>
     <message>
         <source>Scanning Catalog...</source>
@@ -758,20 +808,19 @@
         <translation>此資料夾中沒有照片。</translation>
     </message>
     <message>
-        <source>DIR</source>
-        <comment>folder badge</comment>
+        <source>Folder</source>
         <translation>資料夾</translation>
     </message>
     <message>
-        <source>FETCHING</source>
-        <translation>取得中</translation>
+        <source>Downloading</source>
+        <translation>正在下載</translation>
     </message>
     <message>
-        <source>RAW CLOUD</source>
-        <translation>雲端 RAW</translation>
+        <source>Remote</source>
+        <translation>遠端</translation>
     </message>
     <message>
-        <source>NO PREVIEW</source>
+        <source>No preview</source>
         <translation>無預覽</translation>
     </message>
     <message>
@@ -833,40 +882,60 @@
         <translation>Fujifilm 配方</translation>
     </message>
     <message>
-        <source>FUJIFILM RECIPES</source>
-        <translation>FUJIFILM 配方</translation>
-    </message>
-    <message>
-        <source>IMPORT</source>
+        <source>Import</source>
         <translation>匯入</translation>
     </message>
     <message>
-        <source>APPLY PHOTO&apos;S RECIPE</source>
+        <source>Apply photo&apos;s recipe</source>
         <translation>應用照片的配方</translation>
     </message>
     <message>
-        <source>SAVE</source>
+        <source>Save</source>
         <translation>儲存</translation>
+    </message>
+    <message>
+        <source>Apply recipe</source>
+        <translation>應用配方</translation>
+    </message>
+    <message>
+        <source>Camera (USB)</source>
+        <translation>相機（USB）</translation>
+    </message>
+    <message>
+        <source>Reconnect</source>
+        <translation>重新連線</translation>
+    </message>
+    <message>
+        <source>Connect</source>
+        <translation>連線</translation>
+    </message>
+    <message>
+        <source>Read C1–C7</source>
+        <translation>讀取 C1–C7</translation>
+    </message>
+    <message>
+        <source>Convert in camera</source>
+        <translation>在相機中轉換</translation>
+    </message>
+    <message>
+        <source>Write recipe to C%1</source>
+        <translation>將配方寫入 C%1</translation>
+    </message>
+    <message>
+        <source>Pixel shift</source>
+        <translation>畫素位移</translation>
+    </message>
+    <message>
+        <source>Merge %1 frames to DNG</source>
+        <translation>將 %1 幀合併為 DNG</translation>
+    </message>
+    <message>
+        <source>Merge frames to DNG</source>
+        <translation>將幀合併為 DNG</translation>
     </message>
     <message>
         <source>No saved recipes. Import an X RAW Studio profile, recipe text or a Fujifilm photo.</source>
         <translation>沒有已儲存的配方。請匯入 X RAW Studio 配置檔案、配方文字或 Fujifilm 照片。</translation>
-    </message>
-    <message>
-        <source>APPLY SELECTED RECIPE</source>
-        <translation>應用所選配方</translation>
-    </message>
-    <message>
-        <source>CAMERA (USB)</source>
-        <translation>相機（USB）</translation>
-    </message>
-    <message>
-        <source>RECONNECT</source>
-        <translation>重新連線</translation>
-    </message>
-    <message>
-        <source>CONNECT</source>
-        <translation>連線</translation>
     </message>
     <message>
         <source>%1  ·  in-camera RAW conversion</source>
@@ -881,24 +950,8 @@
         <translation>請將相機的 USB 模式設為 %1 並連線。</translation>
     </message>
     <message>
-        <source>READ C1-C7</source>
-        <translation>讀取 C1-C7</translation>
-    </message>
-    <message>
-        <source>CONVERT IN CAMERA</source>
-        <translation>在相機中轉換</translation>
-    </message>
-    <message>
         <source>Unnamed</source>
         <translation>未命名</translation>
-    </message>
-    <message>
-        <source>WRITE SELECTED RECIPE TO C%1</source>
-        <translation>將所選配方寫入 C%1</translation>
-    </message>
-    <message>
-        <source>PIXEL SHIFT MULTI-SHOT</source>
-        <translation>畫素位移多重拍攝</translation>
     </message>
     <message numerus="yes">
         <source>%n RAF frames selected. 4 frames give full colour per pixel, 16 frames double the resolution.</source>
@@ -910,22 +963,12 @@
         <source>Select the RAF frames of one GFX Pixel Shift sequence in the filmstrip.</source>
         <translation>請在膠片條中選擇同一 GFX 畫素位移序列的 RAF 幀。</translation>
     </message>
-    <message numerus="yes">
-        <source>MERGE %n FRAMES TO DNG</source>
-        <translation>
-            <numerusform>將 %n 幀合併為 DNG</numerusform>
-        </translation>
-    </message>
-    <message>
-        <source>MERGE FRAMES TO DNG</source>
-        <translation>將幀合併為 DNG</translation>
-    </message>
 </context>
 <context>
     <name>GradeVersionsBar</name>
     <message>
-        <source>GRADE VERSION</source>
-        <translation>調色版本</translation>
+        <source>Version</source>
+        <translation>版本</translation>
     </message>
 </context>
 <context>
@@ -936,8 +979,8 @@
         <translation>[暗] %1%</translation>
     </message>
     <message>
-        <source>RGB HISTOGRAM</source>
-        <translation>RGB 直方圖</translation>
+        <source>Histogram</source>
+        <translation>直方圖</translation>
     </message>
     <message>
         <source>[H] %1%</source>
@@ -984,11 +1027,11 @@
         <translation>%1 通道</translation>
     </message>
     <message>
-        <source>RESET CH</source>
-        <translation>重置通道</translation>
+        <source>Reset colour</source>
+        <translation>重置顏色</translation>
     </message>
     <message>
-        <source>RESET ALL</source>
+        <source>Reset all</source>
         <translation>全部重置</translation>
     </message>
     <message>
@@ -1097,32 +1140,32 @@
         <translation>%1 蒙版已就緒（%2）</translation>
     </message>
     <message>
-        <source>DETECTING...</source>
-        <translation>偵測中...</translation>
+        <source>Detecting…</source>
+        <translation>偵測中…</translation>
     </message>
     <message>
-        <source>LOCAL ADJUSTMENT LAYERS</source>
-        <translation>局部調整圖層</translation>
+        <source>Masks</source>
+        <translation>蒙版</translation>
     </message>
     <message>
-        <source>+ GRADIENT</source>
-        <translation>+ 漸層</translation>
+        <source>+ Linear</source>
+        <translation>+ 線性</translation>
+    </message>
+    <message>
+        <source>+ Radial</source>
+        <translation>+ 徑向</translation>
+    </message>
+    <message>
+        <source>+ Luminance</source>
+        <translation>+ 明亮度</translation>
     </message>
     <message>
         <source>Linear Gradient %1</source>
         <translation>線性漸層 %1</translation>
     </message>
     <message>
-        <source>+ RADIAL</source>
-        <translation>+ 徑向</translation>
-    </message>
-    <message>
         <source>Radial Mask %1</source>
         <translation>徑向蒙版 %1</translation>
-    </message>
-    <message>
-        <source>+ LUMA</source>
-        <translation>+ 明亮度</translation>
     </message>
     <message>
         <source>Luma Range %1</source>
@@ -1140,10 +1183,6 @@
         <source>I</source>
         <comment>invert mask toggle, first letter of Invert</comment>
         <translation>反</translation>
-    </message>
-    <message>
-        <source>SELECTED LAYER CONTROLS (%1)</source>
-        <translation>所選圖層控制（%1）</translation>
     </message>
     <message>
         <source>Layer Opacity</source>
@@ -1165,48 +1204,32 @@
 <context>
     <name>LutSelector</name>
     <message>
-        <source>DAVINCI 3D LUT ENGINE (.CUBE)</source>
-        <translation>DaVinci 3D LUT 引擎（.CUBE）</translation>
+        <source>Load 3D LUT</source>
+        <translation>載入 3D LUT</translation>
     </message>
     <message>
-        <source>RESET</source>
+        <source>3D LUT</source>
+        <translation>3D LUT</translation>
+    </message>
+    <message>
+        <source>Reset</source>
         <translation>重置</translation>
     </message>
     <message>
-        <source>Hollywood Print</source>
-        <translation>好萊塢複製</translation>
+        <source>Load .cube file…</source>
+        <translation>載入 .cube 檔案…</translation>
     </message>
     <message>
-        <source>Cinema Blockbuster</source>
-        <translation>電影大片</translation>
+        <source>Saved look: %1</source>
+        <translation>已儲存的風格：%1</translation>
     </message>
     <message>
-        <source>35mm Soft Stock</source>
-        <translation>柔和 35mm 膠片</translation>
-    </message>
-    <message>
-        <source>High-Acutance B&amp;W</source>
-        <translation>高銳度黑白</translation>
-    </message>
-    <message>
-        <source>LUT Intensity (Mix)</source>
-        <translation>LUT 強度（混合）</translation>
+        <source>Amount</source>
+        <translation>數量</translation>
     </message>
 </context>
 <context>
     <name>MainWindow</name>
-    <message>
-        <source>Switched to version %1</source>
-        <translation>已切換到版本 %1</translation>
-    </message>
-    <message>
-        <source>Version %1 initialized</source>
-        <translation>已建立版本 %1</translation>
-    </message>
-    <message>
-        <source>Copied current grade to version %1</source>
-        <translation>已將當前調色複製到版本 %1</translation>
-    </message>
     <message numerus="yes">
         <source>Rating: %n star(s)</source>
         <translation>
@@ -1234,36 +1257,8 @@
         <translation>沒有可撤銷的操作</translation>
     </message>
     <message>
-        <source>Undo (Ctrl+Z)</source>
-        <translation>撤銷（Ctrl+Z）</translation>
-    </message>
-    <message>
         <source>Nothing to redo</source>
         <translation>沒有可重做的操作</translation>
-    </message>
-    <message>
-        <source>Redo (Ctrl+Shift+Z)</source>
-        <translation>重做（Ctrl+Shift+Z）</translation>
-    </message>
-    <message>
-        <source>Adjustments copied (Ctrl+Shift+C)</source>
-        <translation>已複製調整（Ctrl+Shift+C）</translation>
-    </message>
-    <message>
-        <source>No adjustments in clipboard</source>
-        <translation>剪貼簿中沒有調整</translation>
-    </message>
-    <message>
-        <source>Adjustments pasted (Ctrl+Shift+V)</source>
-        <translation>已貼上調整（Ctrl+Shift+V）</translation>
-    </message>
-    <message>
-        <source>Reset to defaults (Ctrl+R)</source>
-        <translation>已重置為預設值（Ctrl+R）</translation>
-    </message>
-    <message>
-        <source>Social framing and adjustments reset</source>
-        <translation>已重置社交媒體構圖與調整</translation>
     </message>
     <message>
         <source>Failed to load RAW: %1</source>
@@ -1286,28 +1281,8 @@
         <translation>預覽渲染失敗</translation>
     </message>
     <message>
-        <source>Auto tone applied</source>
-        <translation>已應用自動色調</translation>
-    </message>
-    <message>
-        <source>AI decisions applied</source>
-        <translation>已應用 AI 決策</translation>
-    </message>
-    <message>
-        <source>Local heuristic applied</source>
-        <translation>已應用本地啟發式演算法</translation>
-    </message>
-    <message>
         <source>%1 applied (%2)</source>
         <translation>已應用 %1（%2）</translation>
-    </message>
-    <message>
-        <source>Recipe sidecar saved</source>
-        <translation>配方附屬檔案已儲存</translation>
-    </message>
-    <message>
-        <source>Batch finished: %1/%2 photos exported</source>
-        <translation>批次完成：已匯出 %1/%2 張照片</translation>
     </message>
     <message>
         <source>Batch export: %1 succeeded, %2 failed</source>
@@ -1330,14 +1305,6 @@
         <translation>已寫入 %1</translation>
     </message>
     <message>
-        <source>Analyzing dynamic range and scene...</source>
-        <translation>正在分析動態範圍和場景...</translation>
-    </message>
-    <message>
-        <source>Asking the AI for edit decisions...</source>
-        <translation>正在向 AI 請求編輯決策...</translation>
-    </message>
-    <message>
         <source>Open RAW Photo</source>
         <translation>開啟 RAW 照片</translation>
     </message>
@@ -1346,20 +1313,8 @@
         <translation>RAW 照片</translation>
     </message>
     <message>
-        <source>Saved to: %1</source>
-        <translation>已儲存到：%1</translation>
-    </message>
-    <message>
-        <source>Export error: %1</source>
-        <translation>匯出錯誤：%1</translation>
-    </message>
-    <message>
         <source>Export finished without a result</source>
         <translation>匯出結束但沒有結果</translation>
-    </message>
-    <message>
-        <source>The folder scan gave no answer</source>
-        <translation>資料夾掃描沒有回應</translation>
     </message>
     <message>
         <source>Crop mode: on (C)</source>
@@ -1370,36 +1325,12 @@
         <translation>裁剪模式：關</translation>
     </message>
     <message>
-        <source>Open a photo first to export</source>
-        <translation>請先開啟要匯出的照片</translation>
-    </message>
-    <message>
-        <source>Panels hidden (Tab)</source>
-        <translation>面板已隱藏（Tab）</translation>
-    </message>
-    <message>
-        <source>Panels restored (Tab)</source>
-        <translation>面板已恢復（Tab）</translation>
-    </message>
-    <message>
-        <source>Optimizing for %1...</source>
-        <translation>正在為 %1 最佳化...</translation>
-    </message>
-    <message>
-        <source>AI SCENE INSIGHT</source>
-        <translation>AI 場景分析</translation>
-    </message>
-    <message>
         <source>Analyzing...</source>
         <translation>分析中...</translation>
     </message>
     <message>
         <source>Extracting dynamic range...</source>
         <translation>正在提取動態範圍...</translation>
-    </message>
-    <message>
-        <source>Grade versions • Alt+1..4 to switch</source>
-        <translation>調色版本 • Alt+1..4 切換</translation>
     </message>
     <message>
         <source>Opened %1</source>
@@ -1410,36 +1341,8 @@
         <translation>正在掃描資料夾 %1</translation>
     </message>
     <message>
-        <source>AI edit applied</source>
-        <translation>已應用 AI 編輯</translation>
-    </message>
-    <message>
-        <source>ESSENTIAL ADJUSTMENTS</source>
-        <translation>基本調整</translation>
-    </message>
-    <message>
-        <source>RESET</source>
-        <translation>重置</translation>
-    </message>
-    <message>
-        <source>Exposure (Light)</source>
-        <translation>曝光（光線）</translation>
-    </message>
-    <message>
-        <source>Warmth (Temperature)</source>
-        <translation>暖度（色溫）</translation>
-    </message>
-    <message>
-        <source>Vibrance (Color Punch)</source>
-        <translation>自然飽和度（色彩力度）</translation>
-    </message>
-    <message>
         <source>Contrast</source>
         <translation>對比度</translation>
-    </message>
-    <message>
-        <source>WHITE BALANCE</source>
-        <translation>白平衡</translation>
     </message>
     <message>
         <source>Temp (Kelvin)</source>
@@ -1448,10 +1351,6 @@
     <message>
         <source>Tint (Green / Magenta)</source>
         <translation>色調（綠 / 洋紅）</translation>
-    </message>
-    <message>
-        <source>LIGHT &amp; DYNAMIC RANGE</source>
-        <translation>光線與動態範圍</translation>
     </message>
     <message>
         <source>Exposure</source>
@@ -1474,10 +1373,6 @@
         <translation>黑色</translation>
     </message>
     <message>
-        <source>TONE CURVE (PARAMETRIC)</source>
-        <translation>色調曲線（參數）</translation>
-    </message>
-    <message>
         <source>Curve Highlights</source>
         <translation>曲線：高光</translation>
     </message>
@@ -1492,10 +1387,6 @@
     <message>
         <source>Curve Shadows</source>
         <translation>曲線：陰影</translation>
-    </message>
-    <message>
-        <source>PRESENCE &amp; TEXTURE</source>
-        <translation>鮮明度與紋理</translation>
     </message>
     <message>
         <source>Texture</source>
@@ -1516,14 +1407,6 @@
     <message>
         <source>Saturation</source>
         <translation>飽和度</translation>
-    </message>
-    <message>
-        <source>COLOR MIXER (8-BAND HSL)</source>
-        <translation>混色器（8 段 HSL）</translation>
-    </message>
-    <message>
-        <source>DETAIL &amp; OPTICS</source>
-        <translation>細節與光學</translation>
     </message>
     <message>
         <source>Sharpening</source>
@@ -1554,12 +1437,200 @@
         <translation>請先開啟照片</translation>
     </message>
     <message>
+        <source>Version %1</source>
+        <translation>版本 %1</translation>
+    </message>
+    <message>
+        <source>Version %1 started</source>
+        <translation>已開始版本 %1</translation>
+    </message>
+    <message>
+        <source>Copied to version %1</source>
+        <translation>已複製到版本 %1</translation>
+    </message>
+    <message>
+        <source>Undo</source>
+        <translation>撤銷</translation>
+    </message>
+    <message>
+        <source>Redo</source>
+        <translation>重做</translation>
+    </message>
+    <message>
+        <source>Settings copied</source>
+        <translation>已複製設定</translation>
+    </message>
+    <message>
+        <source>Nothing copied yet</source>
+        <translation>尚未複製任何內容</translation>
+    </message>
+    <message>
+        <source>Settings pasted</source>
+        <translation>已貼上設定</translation>
+    </message>
+    <message>
+        <source>Reset to defaults</source>
+        <translation>已重置為預設值</translation>
+    </message>
+    <message>
+        <source>Platform crop reset</source>
+        <translation>已重置平臺裁剪</translation>
+    </message>
+    <message>
+        <source>Auto applied</source>
+        <translation>已應用自動調整</translation>
+    </message>
+    <message>
+        <source>Settings saved</source>
+        <translation>已儲存設定</translation>
+    </message>
+    <message>
+        <source>%1 of %2 photos exported</source>
+        <translation>已匯出 %1/%2 張照片</translation>
+    </message>
+    <message>
+        <source>Auto: analysing the photo…</source>
+        <translation>自動：正在分析照片…</translation>
+    </message>
+    <message>
+        <source>Saved to %1</source>
+        <translation>已儲存到 %1</translation>
+    </message>
+    <message>
+        <source>Export failed</source>
+        <translation>匯出失敗</translation>
+    </message>
+    <message>
+        <source>The scan did not respond.</source>
+        <translation>資料夾掃描沒有回應。</translation>
+    </message>
+    <message>
+        <source>Rating: ★</source>
+        <translation>評級：★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★</source>
+        <translation>評級：★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★</source>
+        <translation>評級：★★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★★</source>
+        <translation>評級：★★★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★★★</source>
+        <translation>評級：★★★★★</translation>
+    </message>
+    <message>
+        <source>Flag cleared</source>
+        <translation>已清除旗標</translation>
+    </message>
+    <message>
+        <source>Preparing for %1…</source>
+        <translation>正在為 %1 準備…</translation>
+    </message>
+    <message>
+        <source>Rating: %1</source>
+        <translation>評級：%1</translation>
+    </message>
+    <message>
+        <source>Picked</source>
+        <translation>已留用</translation>
+    </message>
+    <message>
+        <source>Rejected</source>
+        <translation>已排除</translation>
+    </message>
+    <message>
+        <source>Scene</source>
+        <translation>場景</translation>
+    </message>
+    <message>
+        <source>Adjust</source>
+        <translation>調整</translation>
+    </message>
+    <message>
+        <source>Masks</source>
+        <translation>蒙版</translation>
+    </message>
+    <message>
+        <source>Looks</source>
+        <translation>風格</translation>
+    </message>
+    <message>
+        <source>AI</source>
+        <translation>AI 功能</translation>
+    </message>
+    <message>
+        <source>Profile</source>
+        <translation>配置檔案</translation>
+    </message>
+    <message>
         <source>Color Chrome Effect</source>
         <translation>彩色效果</translation>
     </message>
     <message>
         <source>Color Chrome FX Blue</source>
         <translation>彩色 FX 藍色</translation>
+    </message>
+    <message>
+        <source>White balance</source>
+        <translation>白平衡</translation>
+    </message>
+    <message>
+        <source>Tone</source>
+        <translation>色調</translation>
+    </message>
+    <message>
+        <source>Presence</source>
+        <translation>鮮明度</translation>
+    </message>
+    <message>
+        <source>Tone curve</source>
+        <translation>色調曲線</translation>
+    </message>
+    <message>
+        <source>Colour mixer</source>
+        <translation>混色器</translation>
+    </message>
+    <message>
+        <source>Colour grading</source>
+        <translation>調色</translation>
+    </message>
+    <message>
+        <source>Detail and optics</source>
+        <translation>細節與光學</translation>
+    </message>
+    <message>
+        <source>Grain</source>
+        <translation>顆粒</translation>
+    </message>
+    <message>
+        <source>Colour management</source>
+        <translation>色彩管理</translation>
+    </message>
+    <message>
+        <source>Local adjustments</source>
+        <translation>局部調整</translation>
+    </message>
+    <message>
+        <source>Presets</source>
+        <translation>預設</translation>
+    </message>
+    <message>
+        <source>LUT</source>
+        <translation>LUT</translation>
+    </message>
+    <message>
+        <source>Edit assistant</source>
+        <translation>編輯助手</translation>
+    </message>
+    <message>
+        <source>Assistant edit applied</source>
+        <translation>已應用助手的編輯</translation>
     </message>
     <message>
         <source>Copy</source>
@@ -1594,28 +1665,28 @@
         <translation>正在開啟 %1</translation>
     </message>
     <message>
-        <source>Loading the studio catalog...</source>
-        <translation>正在載入工作室目錄...</translation>
+        <source>Loading the catalog…</source>
+        <translation>正在載入目錄…</translation>
     </message>
     <message>
-        <source>Refreshing the studio catalog...</source>
-        <translation>正在重新整理工作室目錄...</translation>
+        <source>Refreshing the catalog…</source>
+        <translation>正在重新整理目錄…</translation>
     </message>
     <message numerus="yes">
-        <source>Exporting %n photo(s) in parallel...</source>
+        <source>Exporting %n photos…</source>
         <translation>
-            <numerusform>正在並行匯出 %n 張照片...</numerusform>
+            <numerusform>正在匯出 %n 張照片…</numerusform>
         </translation>
     </message>
     <message>
-        <source>Developing at full resolution and encoding...</source>
-        <translation>正在以完整解析度顯影並編碼...</translation>
+        <source>Developing at full resolution…</source>
+        <translation>正在以完整解析度顯影…</translation>
     </message>
 </context>
 <context>
     <name>Navigator</name>
     <message>
-        <source>NAVIGATOR</source>
+        <source>Navigator</source>
         <translation>導航器</translation>
     </message>
     <message>
@@ -1624,65 +1695,92 @@
     </message>
 </context>
 <context>
+    <name>PanelSection</name>
+    <message>
+        <source>Reset %1</source>
+        <translation>重置%1</translation>
+    </message>
+</context>
+<context>
     <name>PresetSelector</name>
     <message>
-        <source>FILM LOOKS &amp; STYLES</source>
-        <translation>膠片風格</translation>
+        <source>Looks</source>
+        <translation>風格</translation>
     </message>
     <message>
-        <source>RESET</source>
+        <source>Reset</source>
         <translation>重置</translation>
     </message>
     <message>
-        <source>AI Auto Enhance</source>
-        <translation>AI 自動增強</translation>
+        <source>Auto</source>
+        <translation>自動</translation>
     </message>
     <message>
-        <source>RUN</source>
+        <source>Run</source>
         <translation>執行</translation>
     </message>
     <message>
-        <source>Documentary Muted</source>
-        <translation>低飽和紀實</translation>
+        <source>Muted</source>
+        <translation>柔和</translation>
     </message>
     <message>
-        <source>Vivid Landscapes</source>
-        <translation>鮮豔風光</translation>
+        <source>Documentary, low saturation</source>
+        <translation>紀實，低飽和度</translation>
     </message>
     <message>
-        <source>Warm Skin Tones</source>
-        <translation>溫暖膚色</translation>
+        <source>Vivid</source>
+        <translation>鮮豔</translation>
     </message>
     <message>
-        <source>High Contrast B&amp;W</source>
-        <translation>高對比黑白</translation>
+        <source>Landscapes, rich colour</source>
+        <translation>風光，色彩濃郁</translation>
     </message>
     <message>
-        <source>Film Grade</source>
-        <translation>膠片調色</translation>
+        <source>Warm portrait</source>
+        <translation>暖調人像</translation>
+    </message>
+    <message>
+        <source>Soft contrast, warm skin</source>
+        <translation>柔和對比，溫暖膚色</translation>
+    </message>
+    <message>
+        <source>Black and white</source>
+        <translation>黑白</translation>
+    </message>
+    <message>
+        <source>High contrast</source>
+        <translation>高對比度</translation>
+    </message>
+    <message>
+        <source>Teal and orange</source>
+        <translation>青橙色調</translation>
+    </message>
+    <message>
+        <source>Split toning</source>
+        <translation>分離色調</translation>
     </message>
 </context>
 <context>
     <name>RgbMixerPanel</name>
     <message>
-        <source>DAVINCI RGB PRIMARY MIXER</source>
-        <translation>DaVinci RGB 一級混合器</translation>
-    </message>
-    <message>
-        <source>RESET</source>
-        <translation>重置</translation>
-    </message>
-    <message>
         <source>Monochrome Mixing</source>
         <translation>單色混合</translation>
     </message>
     <message>
-        <source>MONOCHROME LUMA MIX</source>
-        <translation>單色明亮度混合</translation>
+        <source>Channel mixer</source>
+        <translation>通道混合器</translation>
     </message>
     <message>
-        <source>RED OUTPUT CHANNEL</source>
-        <translation>紅色輸出通道</translation>
+        <source>Reset</source>
+        <translation>重置</translation>
+    </message>
+    <message>
+        <source>Monochrome mix</source>
+        <translation>單色混合</translation>
+    </message>
+    <message>
+        <source>Red output</source>
+        <translation>紅色輸出</translation>
     </message>
     <message>
         <source>Red in Red</source>
@@ -1697,8 +1795,12 @@
         <translation>藍 → 紅</translation>
     </message>
     <message>
-        <source>GREEN OUTPUT CHANNEL</source>
-        <translation>綠色輸出通道</translation>
+        <source>Green output</source>
+        <translation>綠色輸出</translation>
+    </message>
+    <message>
+        <source>Blue output</source>
+        <translation>藍色輸出</translation>
     </message>
     <message>
         <source>Red in Green</source>
@@ -1711,10 +1813,6 @@
     <message>
         <source>Blue in Green</source>
         <translation>藍 → 綠</translation>
-    </message>
-    <message>
-        <source>BLUE OUTPUT CHANNEL</source>
-        <translation>藍色輸出通道</translation>
     </message>
     <message>
         <source>Red in Blue</source>
@@ -1758,8 +1856,8 @@
         <translation>[亮] %1%</translation>
     </message>
     <message>
-        <source>NO SIGNAL / LOAD RAW</source>
-        <translation>無訊號 / 請載入 RAW</translation>
+        <source>No photo</source>
+        <translation>沒有照片</translation>
     </message>
     <message>
         <source>RED</source>
@@ -1781,11 +1879,11 @@
 <context>
     <name>SkinTonePanel</name>
     <message>
-        <source>CAPTURE ONE SKIN TONE</source>
-        <translation>CAPTURE ONE 膚色</translation>
+        <source>Skin tone</source>
+        <translation>膚色</translation>
     </message>
     <message>
-        <source>RESET</source>
+        <source>Reset</source>
         <translation>重置</translation>
     </message>
     <message>
@@ -1827,52 +1925,28 @@
 <context>
     <name>SocialOptimizer</name>
     <message>
-        <source>AI SOCIAL MEDIA OPTIMIZER</source>
-        <translation>AI 社交媒體最佳化</translation>
+        <source>Prepare for</source>
+        <translation>準備用於</translation>
     </message>
     <message>
-        <source>RESET</source>
+        <source>Reset</source>
         <translation>重置</translation>
     </message>
     <message>
-        <source>Instagram Feed</source>
-        <translation>Instagram 動態</translation>
+        <source>Instagram post</source>
+        <translation>Instagram 貼文</translation>
     </message>
     <message>
-        <source>Max Screen</source>
-        <translation>最大螢幕</translation>
+        <source>Stories and Reels</source>
+        <translation>快拍和 Reels</translation>
     </message>
     <message>
-        <source>Stories / Reels</source>
-        <translation>快拍 / Reels</translation>
+        <source>Square</source>
+        <translation>方形</translation>
     </message>
     <message>
-        <source>Full Mobile</source>
-        <translation>手機全螢幕</translation>
-    </message>
-    <message>
-        <source>Crisp Feed</source>
-        <translation>清晰動態</translation>
-    </message>
-    <message>
-        <source>Classic Square</source>
-        <translation>經典方形</translation>
-    </message>
-    <message>
-        <source>Grid Post</source>
-        <translation>網格貼文</translation>
-    </message>
-    <message>
-        <source>High Res</source>
-        <translation>高解析度</translation>
-    </message>
-    <message>
-        <source>YouTube Thumb</source>
+        <source>YouTube thumbnail</source>
         <translation>YouTube 縮圖</translation>
-    </message>
-    <message>
-        <source>High CTR</source>
-        <translation>高點選率</translation>
     </message>
 </context>
 <context>
@@ -1907,8 +1981,8 @@
         <translation>基礎</translation>
     </message>
     <message>
-        <source>Pro Studio</source>
-        <translation>Pro Studio</translation>
+        <source>Pro</source>
+        <translation>Pro</translation>
     </message>
     <message>
         <source>Undo (Ctrl+Z)</source>
@@ -1946,16 +2020,16 @@
 <context>
     <name>Viewport</name>
     <message>
-        <source>RESET 0°</source>
+        <source>Reset 0°</source>
         <translation>重置為 0°</translation>
     </message>
     <message>
-        <source>FIT</source>
+        <source>Fit</source>
         <translation>適合</translation>
     </message>
     <message>
-        <source>CROP &amp; COMPOSE</source>
-        <translation>裁剪與構圖</translation>
+        <source>Crop</source>
+        <translation>裁剪</translation>
     </message>
     <message>
         <source>Original</source>
@@ -1982,12 +2056,20 @@
         <translation>網格：關</translation>
     </message>
     <message>
-        <source>RESET</source>
+        <source>Reset</source>
         <translation>重置</translation>
     </message>
     <message>
-        <source>DONE</source>
+        <source>Done</source>
         <translation>完成</translation>
+    </message>
+    <message>
+        <source>Shadow clipping</source>
+        <translation>陰影溢位</translation>
+    </message>
+    <message>
+        <source>Highlight clipping</source>
+        <translation>高光溢位</translation>
     </message>
     <message>
         <source>ORIGINAL RAW (Before)</source>
@@ -1996,18 +2078,6 @@
     <message>
         <source>EDITED RECIPE (After)</source>
         <translation>編輯後的配方（之後）</translation>
-    </message>
-    <message>
-        <source>[S] SHADOW CLIPPING (BLUE)</source>
-        <translation>[暗] 陰影溢位（藍）</translation>
-    </message>
-    <message>
-        <source>[H] HIGHLIGHT CLIPPING (RED)</source>
-        <translation>[亮] 高光溢位（紅）</translation>
-    </message>
-    <message>
-        <source>Pinch: Zoom | 2-Finger Twist: Rotate | 2-Finger Pan | Double-Tap: Reset</source>
-        <translation>捏合：縮放 | 雙指扭轉：旋轉 | 雙指平移 | 雙擊：重置</translation>
     </message>
     <message>
         <source>Open a RAW (Ctrl+O) or drop a photo / folder here</source>
@@ -2021,8 +2091,8 @@
 <context>
     <name>WatermarkConfig</name>
     <message>
-        <source>WATERMARK &amp; BRANDING</source>
-        <translation>水印與品牌</translation>
+        <source>Watermark</source>
+        <translation>水印</translation>
     </message>
     <message>
         <source>Text / EXIF Tag</source>
@@ -2033,28 +2103,28 @@
         <translation>自訂 PNG 標誌</translation>
     </message>
     <message>
-        <source>WATERMARK TEXT OR TEMPLATE</source>
-        <translation>水印文字或模板</translation>
+        <source>Text or template</source>
+        <translation>文字或模板</translation>
     </message>
     <message>
-        <source>LOGO FILE PATH (.PNG)</source>
-        <translation>標誌檔案路徑（.PNG）</translation>
+        <source>Logo file (PNG)</source>
+        <translation>標誌檔案（PNG）</translation>
     </message>
     <message>
-        <source>POSITION</source>
+        <source>Position</source>
         <translation>位置</translation>
+    </message>
+    <message>
+        <source>Opacity</source>
+        <translation>不透明度</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>尺寸</translation>
     </message>
     <message>
         <source>Drop Shadow</source>
         <translation>投影</translation>
-    </message>
-    <message>
-        <source>OPACITY</source>
-        <translation>不透明度</translation>
-    </message>
-    <message>
-        <source>SIZE MULTIPLIER</source>
-        <translation>尺寸倍數</translation>
     </message>
 </context>
 </TS>

@@ -175,28 +175,36 @@
         <translation>Mislukt</translation>
     </message>
     <message>
-        <source>AI EDIT ASSISTANT</source>
-        <translation>AI-BEWERKINGSASSISTENT</translation>
+        <source>Assistant</source>
+        <translation>Assistent</translation>
     </message>
     <message>
-        <source>DONE</source>
-        <translation>KLAAR</translation>
+        <source>Done</source>
+        <translation>Klaar</translation>
     </message>
     <message>
-        <source>SETUP</source>
-        <translation>INSTELLEN</translation>
+        <source>Set up</source>
+        <translation>Instellen</translation>
+    </message>
+    <message>
+        <source>Working…</source>
+        <translation>Bezig…</translation>
+    </message>
+    <message>
+        <source>Edit</source>
+        <translation>Bewerken</translation>
+    </message>
+    <message>
+        <source>Store key</source>
+        <translation>Sleutel opslaan</translation>
+    </message>
+    <message>
+        <source>Use %1</source>
+        <translation>%1 gebruiken</translation>
     </message>
     <message>
         <source>e.g. warmer, moody evening light, recover the sky</source>
         <translation>bijv. warmer, sfeervol avondlicht, de lucht herstellen</translation>
-    </message>
-    <message>
-        <source>THINKING...</source>
-        <translation>BEZIG...</translation>
-    </message>
-    <message>
-        <source>EDIT WITH AI</source>
-        <translation>BEWERKEN MET AI</translation>
     </message>
     <message>
         <source>Running. Models: %1</source>
@@ -222,14 +230,6 @@
         <source>API key</source>
         <translation>API-sleutel</translation>
     </message>
-    <message>
-        <source>STORE KEY</source>
-        <translation>SLEUTEL OPSLAAN</translation>
-    </message>
-    <message>
-        <source>USE %1</source>
-        <translation>%1 GEBRUIKEN</translation>
-    </message>
 </context>
 <context>
     <name>BoundedTextInput</name>
@@ -241,48 +241,16 @@
 <context>
     <name>ColorGradingWheels</name>
     <message>
-        <source>DAVINCI PRIMARIES WHEELS</source>
-        <translation>DAVINCI-PRIMAIRE WIELEN</translation>
-    </message>
-    <message>
-        <source>4-WHEEL</source>
-        <translation>4 WIELEN</translation>
-    </message>
-    <message>
-        <source>TABBED</source>
-        <translation>TABBLADEN</translation>
-    </message>
-    <message>
-        <source>RESET</source>
-        <translation>HERSTELLEN</translation>
-    </message>
-    <message>
-        <source>LIFT</source>
-        <translation>LIFT</translation>
-    </message>
-    <message>
         <source>Shadows</source>
         <translation>Schaduwen</translation>
-    </message>
-    <message>
-        <source>GAMMA</source>
-        <translation>GAMMA</translation>
     </message>
     <message>
         <source>Mids</source>
         <translation>Middentonen</translation>
     </message>
     <message>
-        <source>GAIN</source>
-        <translation>GAIN</translation>
-    </message>
-    <message>
         <source>Highlights</source>
         <translation>Hoge lichten</translation>
-    </message>
-    <message>
-        <source>OFFSET</source>
-        <translation>OFFSET</translation>
     </message>
     <message>
         <source>Global</source>
@@ -307,6 +275,22 @@
     <message>
         <source>Lift</source>
         <translation>Lift</translation>
+    </message>
+    <message>
+        <source>Colour grading</source>
+        <translation>Kleurcorrectie</translation>
+    </message>
+    <message>
+        <source>4 wheels</source>
+        <translation>4 wielen</translation>
+    </message>
+    <message>
+        <source>Tabs</source>
+        <translation>Tabbladen</translation>
+    </message>
+    <message>
+        <source>Reset</source>
+        <translation>Herstellen</translation>
     </message>
     <message>
         <source>Gamma</source>
@@ -368,8 +352,12 @@
         <translation>Breed AP1</translation>
     </message>
     <message>
-        <source>COLOR MANAGEMENT &amp; ACES 1.3</source>
-        <translation>KLEURBEHEER EN ACES 1.3</translation>
+        <source>Colour management</source>
+        <translation>Kleurbeheer</translation>
+    </message>
+    <message>
+        <source>Gamut compression</source>
+        <translation>Gamutcompressie</translation>
     </message>
     <message>
         <source>%1 (%2)</source>
@@ -394,114 +382,162 @@
 <context>
     <name>ExifCard</name>
     <message>
-        <source>No camera loaded</source>
-        <translation>Geen camera geladen</translation>
-    </message>
-    <message>
-        <source>Unknown lens</source>
-        <translation>Onbekend objectief</translation>
+        <source>No photo</source>
+        <translation>Geen foto</translation>
     </message>
 </context>
 <context>
     <name>ExportDialog</name>
-    <message numerus="yes">
-        <source>Batch Export (%n Photos)</source>
-        <translation>
-            <numerusform>Batchexport (%n foto)</numerusform>
-            <numerusform>Batchexport (%n foto&apos;s)</numerusform>
-        </translation>
-    </message>
-    <message>
-        <source>Export Master Photo</source>
-        <translation>Masterfoto exporteren</translation>
-    </message>
-    <message>
-        <source>MODERN OPEN FORMAT</source>
-        <translation>MODERN OPEN FORMAAT</translation>
-    </message>
-    <message>
-        <source>Next-Gen 16-bit HDR</source>
-        <translation>16-bit HDR van de nieuwe generatie</translation>
-    </message>
-    <message>
-        <source>AV1 Web/Mobile</source>
-        <translation>AV1 web/mobiel</translation>
-    </message>
-    <message>
-        <source>Ultra Compact</source>
-        <translation>Ultracompact</translation>
-    </message>
-    <message>
-        <source>16-bit TIFF</source>
-        <translation>16-bit TIFF</translation>
-    </message>
-    <message>
-        <source>Master Print Lossless</source>
-        <translation>Verliesvrije masterafdruk</translation>
-    </message>
-    <message>
-        <source>Graphic Lossless</source>
-        <translation>Verliesvrije grafiek</translation>
-    </message>
-    <message>
-        <source>Universal MozJPEG</source>
-        <translation>Universele MozJPEG</translation>
-    </message>
-    <message>
-        <source>Export Compression Quality</source>
-        <translation>Compressiekwaliteit van de export</translation>
-    </message>
-    <message>
-        <source>RESOLUTION &amp; SCALING</source>
-        <translation>RESOLUTIE EN SCHALING</translation>
-    </message>
-    <message>
-        <source>100% Full</source>
-        <translation>100% volledig</translation>
-    </message>
-    <message>
-        <source>Social (2048p)</source>
-        <translation>Sociaal (2048p)</translation>
-    </message>
-    <message>
-        <source>COLOR SPACE &amp; ICC PROFILE</source>
-        <translation>KLEURRUIMTE EN ICC-PROFIEL</translation>
-    </message>
-    <message>
-        <source>Universal Web / Social</source>
-        <translation>Universeel web / sociaal</translation>
-    </message>
-    <message>
-        <source>Apple / Wide OLED</source>
-        <translation>Apple / breed OLED</translation>
-    </message>
-    <message>
-        <source>Ultra-Wide Gamut HDR</source>
-        <translation>Ultrabreed HDR-gamma</translation>
-    </message>
-    <message>
-        <source>Academy Color Standard</source>
-        <translation>Kleurstandaard van de Academy</translation>
-    </message>
-    <message>
-        <source>Pro Photography / Print</source>
-        <translation>Professionele fotografie / afdruk</translation>
-    </message>
-    <message>
-        <source>16-Bit Master Archival</source>
-        <translation>16-bit masterarchief</translation>
-    </message>
-    <message>
-        <source>Intent</source>
-        <translation>Intentie</translation>
-    </message>
     <message>
         <source>Perceptual</source>
         <translation>Perceptueel</translation>
     </message>
     <message>
-        <source>Compresses the whole gamut; smooth, saturated colours keep their relations</source>
-        <translation>Comprimeert het hele gamma; zachte, verzadigde kleuren behouden hun verhoudingen</translation>
+        <source>8-bit · universal</source>
+        <translation>8-bits · universeel</translation>
+    </message>
+    <message>
+        <source>16-bit · lossless</source>
+        <translation>16-bits · verliesvrij</translation>
+    </message>
+    <message>
+        <source>16-bit · print, archive</source>
+        <translation>16-bits · afdrukken, archief</translation>
+    </message>
+    <message>
+        <source>8-bit · web</source>
+        <translation>8-bits · web</translation>
+    </message>
+    <message>
+        <source>12-bit · HDR-ready</source>
+        <translation>12-bits · geschikt voor HDR</translation>
+    </message>
+    <message>
+        <source>10-bit · HEVC</source>
+        <translation>10-bits · HEVC</translation>
+    </message>
+    <message>
+        <source>16-bit · modern</source>
+        <translation>16-bits · modern</translation>
+    </message>
+    <message>
+        <source>Float · scene-linear</source>
+        <translation>Drijvende komma · scènelineair</translation>
+    </message>
+    <message numerus="yes">
+        <source>Export %n photos</source>
+        <translation>
+            <numerusform>%n foto exporteren</numerusform>
+            <numerusform>%n foto&apos;s exporteren</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>Export</source>
+        <translation>Exporteren</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>Sluiten</translation>
+    </message>
+    <message>
+        <source>Format</source>
+        <translation>Bestandsindeling</translation>
+    </message>
+    <message>
+        <source>Quality</source>
+        <translation>Kwaliteit</translation>
+    </message>
+    <message>
+        <source>100 is lossless.</source>
+        <translation>100 is verliesvrij.</translation>
+    </message>
+    <message>
+        <source>Bit depth</source>
+        <translation>Bitdiepte</translation>
+    </message>
+    <message>
+        <source>Half float</source>
+        <translation>Halve drijvende komma</translation>
+    </message>
+    <message>
+        <source>Full float</source>
+        <translation>Volledige drijvende komma</translation>
+    </message>
+    <message>
+        <source>%1-bit</source>
+        <translation>%1-bits</translation>
+    </message>
+    <message>
+        <source>Compression</source>
+        <translation>Compressie</translation>
+    </message>
+    <message>
+        <source>None</source>
+        <translation>Geen</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>Grootte</translation>
+    </message>
+    <message>
+        <source>Full</source>
+        <translation>Volledig</translation>
+    </message>
+    <message>
+        <source>3840 px</source>
+        <translation>3840 px</translation>
+    </message>
+    <message>
+        <source>Long edge at most 3840 px</source>
+        <translation>Lange zijde maximaal 3840 px</translation>
+    </message>
+    <message>
+        <source>2048 px</source>
+        <translation>2048 px</translation>
+    </message>
+    <message>
+        <source>Long edge at most 2048 px</source>
+        <translation>Lange zijde maximaal 2048 px</translation>
+    </message>
+    <message>
+        <source>Colour profile</source>
+        <translation>Kleurprofiel</translation>
+    </message>
+    <message>
+        <source>Web, screens</source>
+        <translation>Web, schermen</translation>
+    </message>
+    <message>
+        <source>Wide-gamut screens</source>
+        <translation>Schermen met groot kleurbereik</translation>
+    </message>
+    <message>
+        <source>Print</source>
+        <translation>Afdrukken</translation>
+    </message>
+    <message>
+        <source>Editing, archive</source>
+        <translation>Bewerken, archief</translation>
+    </message>
+    <message>
+        <source>HDR, video</source>
+        <translation>HDR, video</translation>
+    </message>
+    <message>
+        <source>Linear, VFX</source>
+        <translation>Lineair, VFX</translation>
+    </message>
+    <message>
+        <source>OpenEXR is written scene-linear in the chosen primaries.</source>
+        <translation>OpenEXR wordt scènelineair in de gekozen primaire kleuren geschreven.</translation>
+    </message>
+    <message>
+        <source>Rendering intent</source>
+        <translation>Weergave-intentie</translation>
+    </message>
+    <message>
+        <source>Compresses the whole gamut; colour relations are kept</source>
+        <translation>Comprimeert het hele kleurbereik; de verhoudingen tussen kleuren blijven behouden</translation>
     </message>
     <message>
         <source>Relative</source>
@@ -528,46 +564,55 @@
         <translation>Exacte kleuren inclusief het witpunt van de bron; voor proefdrukken</translation>
     </message>
     <message>
-        <source>Preserve Camera EXIF</source>
-        <translation>EXIF van de camera behouden</translation>
+        <source>Metadata</source>
+        <translation>Metagegevens</translation>
     </message>
     <message>
-        <source>Strip GPS (Privacy)</source>
-        <translation>GPS verwijderen (privacy)</translation>
+        <source>Keep camera metadata (EXIF)</source>
+        <translation>Cameragegevens behouden (EXIF)</translation>
     </message>
     <message>
-        <source>Apply Photography Watermark / EXIF Signature</source>
-        <translation>Watermerk / EXIF-handtekening toepassen</translation>
+        <source>Remove location (GPS)</source>
+        <translation>Locatie verwijderen (gps)</translation>
     </message>
     <message>
-        <source>Exporting Batch...</source>
-        <translation>Batch wordt geëxporteerd...</translation>
+        <source>Prepare for</source>
+        <translation>Voorbereiden voor</translation>
     </message>
     <message>
-        <source>Exporting Full Resolution...</source>
-        <translation>Volledige resolutie wordt geëxporteerd...</translation>
-    </message>
-    <message numerus="yes">
-        <source>Start Parallel Batch Export (%n Photos)</source>
-        <translation>
-            <numerusform>Parallelle batchexport starten (%n foto)</numerusform>
-            <numerusform>Parallelle batchexport starten (%n foto&apos;s)</numerusform>
-        </translation>
+        <source>Sets the crop and output sharpening for a platform. Reset restores your own.</source>
+        <translation>Stelt de uitsnede en uitvoerverscherping voor een platform in. Herstellen zet je eigen instellingen terug.</translation>
     </message>
     <message>
-        <source>Start Export (%1 / %2)</source>
-        <translation>Export starten (%1 / %2)</translation>
+        <source>Watermark</source>
+        <translation>Watermerk</translation>
+    </message>
+    <message>
+        <source>Folder</source>
+        <translation>Map</translation>
+    </message>
+    <message>
+        <source>Hide</source>
+        <translation>Verbergen</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Annuleren</translation>
+    </message>
+    <message>
+        <source>Exporting…</source>
+        <translation>Bezig met exporteren…</translation>
     </message>
 </context>
 <context>
     <name>FilmGrainPanel</name>
     <message>
-        <source>SILVER-HALIDE FILM GRAIN</source>
-        <translation>ZILVERHALOGENIDE-FILMKORREL</translation>
+        <source>Grain</source>
+        <translation>Korrel</translation>
     </message>
     <message>
-        <source>RESET</source>
-        <translation>HERSTELLEN</translation>
+        <source>Reset</source>
+        <translation>Herstellen</translation>
     </message>
     <message>
         <source>Grain Amount</source>
@@ -701,12 +746,16 @@
         <translation>Panoramisch 35mm-filmcontrast</translation>
     </message>
     <message>
-        <source>FILM SIMULATION &amp; SENSOR PROFILES</source>
-        <translation>FILMSIMULATIE EN SENSORPROFIELEN</translation>
+        <source>Profile</source>
+        <translation>Profiel</translation>
     </message>
     <message>
-        <source>RESET</source>
-        <translation>HERSTELLEN</translation>
+        <source>Reset</source>
+        <translation>Herstellen</translation>
+    </message>
+    <message>
+        <source>Amount</source>
+        <translation>Sterkte</translation>
     </message>
     <message>
         <source>All</source>
@@ -716,17 +765,9 @@
         <source>Acros B&amp;W</source>
         <translation>Acros Z/W</translation>
     </message>
-    <message>
-        <source>SIMULATION INTENSITY</source>
-        <translation>INTENSITEIT VAN DE SIMULATIE</translation>
-    </message>
 </context>
 <context>
     <name>Filmstrip</name>
-    <message>
-        <source>Local Photos</source>
-        <translation>Lokale foto&apos;s</translation>
-    </message>
     <message>
         <source>Studio Catalog</source>
         <translation>Studiocatalogus</translation>
@@ -734,6 +775,14 @@
     <message>
         <source>Up</source>
         <translation>Omhoog</translation>
+    </message>
+    <message>
+        <source>Folders</source>
+        <translation>Mappen</translation>
+    </message>
+    <message>
+        <source>Catalog</source>
+        <translation>Catalogus</translation>
     </message>
     <message>
         <source>Scanning Catalog...</source>
@@ -760,21 +809,20 @@
         <translation>Geen foto&apos;s gevonden in deze map.</translation>
     </message>
     <message>
-        <source>DIR</source>
-        <comment>folder badge</comment>
-        <translation>MAP</translation>
+        <source>Folder</source>
+        <translation>Map</translation>
     </message>
     <message>
-        <source>FETCHING</source>
-        <translation>OPHALEN</translation>
+        <source>Downloading</source>
+        <translation>Bezig met downloaden</translation>
     </message>
     <message>
-        <source>RAW CLOUD</source>
-        <translation>RAW IN DE CLOUD</translation>
+        <source>Remote</source>
+        <translation>Extern</translation>
     </message>
     <message>
-        <source>NO PREVIEW</source>
-        <translation>GEEN VOORBEELD</translation>
+        <source>No preview</source>
+        <translation>Geen voorbeeld</translation>
     </message>
     <message>
         <source>Loading...</source>
@@ -836,40 +884,60 @@
         <translation>Fujifilm-recepten</translation>
     </message>
     <message>
-        <source>FUJIFILM RECIPES</source>
-        <translation>FUJIFILM-RECEPTEN</translation>
+        <source>Import</source>
+        <translation>Importeren</translation>
     </message>
     <message>
-        <source>IMPORT</source>
-        <translation>IMPORTEREN</translation>
+        <source>Apply photo&apos;s recipe</source>
+        <translation>Recept van de foto toepassen</translation>
     </message>
     <message>
-        <source>APPLY PHOTO&apos;S RECIPE</source>
-        <translation>RECEPT VAN DE FOTO TOEPASSEN</translation>
+        <source>Save</source>
+        <translation>Opslaan</translation>
     </message>
     <message>
-        <source>SAVE</source>
-        <translation>OPSLAAN</translation>
+        <source>Apply recipe</source>
+        <translation>Recept toepassen</translation>
+    </message>
+    <message>
+        <source>Camera (USB)</source>
+        <translation>Camera (usb)</translation>
+    </message>
+    <message>
+        <source>Reconnect</source>
+        <translation>Opnieuw verbinden</translation>
+    </message>
+    <message>
+        <source>Connect</source>
+        <translation>Verbinden</translation>
+    </message>
+    <message>
+        <source>Read C1–C7</source>
+        <translation>C1–C7 lezen</translation>
+    </message>
+    <message>
+        <source>Convert in camera</source>
+        <translation>In de camera converteren</translation>
+    </message>
+    <message>
+        <source>Write recipe to C%1</source>
+        <translation>Recept naar C%1 schrijven</translation>
+    </message>
+    <message>
+        <source>Pixel shift</source>
+        <translation>Pixel Shift</translation>
+    </message>
+    <message>
+        <source>Merge %1 frames to DNG</source>
+        <translation>%1 beelden samenvoegen tot DNG</translation>
+    </message>
+    <message>
+        <source>Merge frames to DNG</source>
+        <translation>Beelden samenvoegen tot DNG</translation>
     </message>
     <message>
         <source>No saved recipes. Import an X RAW Studio profile, recipe text or a Fujifilm photo.</source>
         <translation>Geen opgeslagen recepten. Importeer een X RAW Studio-profiel, recepttekst of een Fujifilm-foto.</translation>
-    </message>
-    <message>
-        <source>APPLY SELECTED RECIPE</source>
-        <translation>GESELECTEERD RECEPT TOEPASSEN</translation>
-    </message>
-    <message>
-        <source>CAMERA (USB)</source>
-        <translation>CAMERA (USB)</translation>
-    </message>
-    <message>
-        <source>RECONNECT</source>
-        <translation>OPNIEUW VERBINDEN</translation>
-    </message>
-    <message>
-        <source>CONNECT</source>
-        <translation>VERBINDEN</translation>
     </message>
     <message>
         <source>%1  ·  in-camera RAW conversion</source>
@@ -884,24 +952,8 @@
         <translation>Zet de USB-modus van de camera op %1 en sluit hem aan.</translation>
     </message>
     <message>
-        <source>READ C1-C7</source>
-        <translation>C1-C7 LEZEN</translation>
-    </message>
-    <message>
-        <source>CONVERT IN CAMERA</source>
-        <translation>IN DE CAMERA CONVERTEREN</translation>
-    </message>
-    <message>
         <source>Unnamed</source>
         <translation>Naamloos</translation>
-    </message>
-    <message>
-        <source>WRITE SELECTED RECIPE TO C%1</source>
-        <translation>GESELECTEERD RECEPT NAAR C%1 SCHRIJVEN</translation>
-    </message>
-    <message>
-        <source>PIXEL SHIFT MULTI-SHOT</source>
-        <translation>PIXEL SHIFT MULTI-SHOT</translation>
     </message>
     <message numerus="yes">
         <source>%n RAF frames selected. 4 frames give full colour per pixel, 16 frames double the resolution.</source>
@@ -914,23 +966,12 @@
         <source>Select the RAF frames of one GFX Pixel Shift sequence in the filmstrip.</source>
         <translation>Selecteer in de filmstrip de RAF-beelden van één GFX Pixel Shift-reeks.</translation>
     </message>
-    <message numerus="yes">
-        <source>MERGE %n FRAMES TO DNG</source>
-        <translation>
-            <numerusform>%n BEELD SAMENVOEGEN TOT DNG</numerusform>
-            <numerusform>%n BEELDEN SAMENVOEGEN TOT DNG</numerusform>
-        </translation>
-    </message>
-    <message>
-        <source>MERGE FRAMES TO DNG</source>
-        <translation>BEELDEN SAMENVOEGEN TOT DNG</translation>
-    </message>
 </context>
 <context>
     <name>GradeVersionsBar</name>
     <message>
-        <source>GRADE VERSION</source>
-        <translation>GRADINGVERSIE</translation>
+        <source>Version</source>
+        <translation>Versie</translation>
     </message>
 </context>
 <context>
@@ -941,8 +982,8 @@
         <translation>[S] %1%</translation>
     </message>
     <message>
-        <source>RGB HISTOGRAM</source>
-        <translation>RGB-HISTOGRAM</translation>
+        <source>Histogram</source>
+        <translation>Histogram</translation>
     </message>
     <message>
         <source>[H] %1%</source>
@@ -989,12 +1030,12 @@
         <translation>Kanaal %1</translation>
     </message>
     <message>
-        <source>RESET CH</source>
-        <translation>KANAAL HERST.</translation>
+        <source>Reset colour</source>
+        <translation>Kleur herstellen</translation>
     </message>
     <message>
-        <source>RESET ALL</source>
-        <translation>ALLES HERSTELLEN</translation>
+        <source>Reset all</source>
+        <translation>Alles herstellen</translation>
     </message>
     <message>
         <source>Hue Shift</source>
@@ -1102,32 +1143,32 @@
         <translation>Masker %1 klaar (%2)</translation>
     </message>
     <message>
-        <source>DETECTING...</source>
-        <translation>DETECTEREN...</translation>
+        <source>Detecting…</source>
+        <translation>Bezig met detecteren…</translation>
     </message>
     <message>
-        <source>LOCAL ADJUSTMENT LAYERS</source>
-        <translation>LOKALE AANPASSINGSLAGEN</translation>
+        <source>Masks</source>
+        <translation>Maskers</translation>
     </message>
     <message>
-        <source>+ GRADIENT</source>
-        <translation>+ VERLOOP</translation>
+        <source>+ Linear</source>
+        <translation>+ Lineair</translation>
+    </message>
+    <message>
+        <source>+ Radial</source>
+        <translation>+ Radiaal</translation>
+    </message>
+    <message>
+        <source>+ Luminance</source>
+        <translation>+ Luminantie</translation>
     </message>
     <message>
         <source>Linear Gradient %1</source>
         <translation>Lineair verloop %1</translation>
     </message>
     <message>
-        <source>+ RADIAL</source>
-        <translation>+ RADIAAL</translation>
-    </message>
-    <message>
         <source>Radial Mask %1</source>
         <translation>Radiaal masker %1</translation>
-    </message>
-    <message>
-        <source>+ LUMA</source>
-        <translation>+ LUMINANTIE</translation>
     </message>
     <message>
         <source>Luma Range %1</source>
@@ -1145,10 +1186,6 @@
         <source>I</source>
         <comment>invert mask toggle, first letter of Invert</comment>
         <translation>I</translation>
-    </message>
-    <message>
-        <source>SELECTED LAYER CONTROLS (%1)</source>
-        <translation>BEDIENING VAN GESELECTEERDE LAAG (%1)</translation>
     </message>
     <message>
         <source>Layer Opacity</source>
@@ -1170,48 +1207,32 @@
 <context>
     <name>LutSelector</name>
     <message>
-        <source>DAVINCI 3D LUT ENGINE (.CUBE)</source>
-        <translation>DAVINCI 3D-LUT-ENGINE (.CUBE)</translation>
+        <source>Load 3D LUT</source>
+        <translation>3D-LUT laden</translation>
     </message>
     <message>
-        <source>RESET</source>
-        <translation>HERSTELLEN</translation>
+        <source>3D LUT</source>
+        <translation>3D-LUT</translation>
     </message>
     <message>
-        <source>Hollywood Print</source>
-        <translation>Hollywood-afdruk</translation>
+        <source>Reset</source>
+        <translation>Herstellen</translation>
     </message>
     <message>
-        <source>Cinema Blockbuster</source>
-        <translation>Kaskraker</translation>
+        <source>Load .cube file…</source>
+        <translation>.cube-bestand laden…</translation>
     </message>
     <message>
-        <source>35mm Soft Stock</source>
-        <translation>Zachte 35mm-film</translation>
+        <source>Saved look: %1</source>
+        <translation>Opgeslagen look: %1</translation>
     </message>
     <message>
-        <source>High-Acutance B&amp;W</source>
-        <translation>Z/W met hoge acutantie</translation>
-    </message>
-    <message>
-        <source>LUT Intensity (Mix)</source>
-        <translation>LUT-intensiteit (mix)</translation>
+        <source>Amount</source>
+        <translation>Sterkte</translation>
     </message>
 </context>
 <context>
     <name>MainWindow</name>
-    <message>
-        <source>Switched to version %1</source>
-        <translation>Overgeschakeld naar versie %1</translation>
-    </message>
-    <message>
-        <source>Version %1 initialized</source>
-        <translation>Versie %1 aangemaakt</translation>
-    </message>
-    <message>
-        <source>Copied current grade to version %1</source>
-        <translation>Huidige grading gekopieerd naar versie %1</translation>
-    </message>
     <message numerus="yes">
         <source>Rating: %n star(s)</source>
         <translation>
@@ -1240,36 +1261,8 @@
         <translation>Niets om ongedaan te maken</translation>
     </message>
     <message>
-        <source>Undo (Ctrl+Z)</source>
-        <translation>Ongedaan maken (Ctrl+Z)</translation>
-    </message>
-    <message>
         <source>Nothing to redo</source>
         <translation>Niets om opnieuw te doen</translation>
-    </message>
-    <message>
-        <source>Redo (Ctrl+Shift+Z)</source>
-        <translation>Opnieuw (Ctrl+Shift+Z)</translation>
-    </message>
-    <message>
-        <source>Adjustments copied (Ctrl+Shift+C)</source>
-        <translation>Aanpassingen gekopieerd (Ctrl+Shift+C)</translation>
-    </message>
-    <message>
-        <source>No adjustments in clipboard</source>
-        <translation>Geen aanpassingen op het klembord</translation>
-    </message>
-    <message>
-        <source>Adjustments pasted (Ctrl+Shift+V)</source>
-        <translation>Aanpassingen geplakt (Ctrl+Shift+V)</translation>
-    </message>
-    <message>
-        <source>Reset to defaults (Ctrl+R)</source>
-        <translation>Standaardwaarden hersteld (Ctrl+R)</translation>
-    </message>
-    <message>
-        <source>Social framing and adjustments reset</source>
-        <translation>Sociale uitsnede en aanpassingen hersteld</translation>
     </message>
     <message>
         <source>Failed to load RAW: %1</source>
@@ -1292,28 +1285,8 @@
         <translation>Voorbeeld renderen mislukt</translation>
     </message>
     <message>
-        <source>Auto tone applied</source>
-        <translation>Automatische toon toegepast</translation>
-    </message>
-    <message>
-        <source>AI decisions applied</source>
-        <translation>AI-beslissingen toegepast</translation>
-    </message>
-    <message>
-        <source>Local heuristic applied</source>
-        <translation>Lokale heuristiek toegepast</translation>
-    </message>
-    <message>
         <source>%1 applied (%2)</source>
         <translation>%1 toegepast (%2)</translation>
-    </message>
-    <message>
-        <source>Recipe sidecar saved</source>
-        <translation>Receptbestand opgeslagen</translation>
-    </message>
-    <message>
-        <source>Batch finished: %1/%2 photos exported</source>
-        <translation>Batch klaar: %1/%2 foto&apos;s geëxporteerd</translation>
     </message>
     <message>
         <source>Batch export: %1 succeeded, %2 failed</source>
@@ -1336,14 +1309,6 @@
         <translation>%1 geschreven</translation>
     </message>
     <message>
-        <source>Analyzing dynamic range and scene...</source>
-        <translation>Dynamisch bereik en scène worden geanalyseerd...</translation>
-    </message>
-    <message>
-        <source>Asking the AI for edit decisions...</source>
-        <translation>AI wordt om bewerkingsbeslissingen gevraagd...</translation>
-    </message>
-    <message>
         <source>Open RAW Photo</source>
         <translation>RAW-foto openen</translation>
     </message>
@@ -1352,20 +1317,8 @@
         <translation>RAW-foto&apos;s</translation>
     </message>
     <message>
-        <source>Saved to: %1</source>
-        <translation>Opgeslagen in: %1</translation>
-    </message>
-    <message>
-        <source>Export error: %1</source>
-        <translation>Exportfout: %1</translation>
-    </message>
-    <message>
         <source>Export finished without a result</source>
         <translation>Export beëindigd zonder resultaat</translation>
-    </message>
-    <message>
-        <source>The folder scan gave no answer</source>
-        <translation>Het scannen van de map gaf geen antwoord</translation>
     </message>
     <message>
         <source>Crop mode: on (C)</source>
@@ -1376,36 +1329,12 @@
         <translation>Uitsnijmodus: uit</translation>
     </message>
     <message>
-        <source>Open a photo first to export</source>
-        <translation>Open eerst een foto om te exporteren</translation>
-    </message>
-    <message>
-        <source>Panels hidden (Tab)</source>
-        <translation>Panelen verborgen (Tab)</translation>
-    </message>
-    <message>
-        <source>Panels restored (Tab)</source>
-        <translation>Panelen hersteld (Tab)</translation>
-    </message>
-    <message>
-        <source>Optimizing for %1...</source>
-        <translation>Optimaliseren voor %1...</translation>
-    </message>
-    <message>
-        <source>AI SCENE INSIGHT</source>
-        <translation>AI-SCÈNEANALYSE</translation>
-    </message>
-    <message>
         <source>Analyzing...</source>
         <translation>Analyseren...</translation>
     </message>
     <message>
         <source>Extracting dynamic range...</source>
         <translation>Dynamisch bereik wordt bepaald...</translation>
-    </message>
-    <message>
-        <source>Grade versions • Alt+1..4 to switch</source>
-        <translation>Gradingversies • Alt+1..4 om te wisselen</translation>
     </message>
     <message>
         <source>Opened %1</source>
@@ -1416,36 +1345,8 @@
         <translation>Map %1 wordt gescand</translation>
     </message>
     <message>
-        <source>AI edit applied</source>
-        <translation>AI-bewerking toegepast</translation>
-    </message>
-    <message>
-        <source>ESSENTIAL ADJUSTMENTS</source>
-        <translation>BASISAANPASSINGEN</translation>
-    </message>
-    <message>
-        <source>RESET</source>
-        <translation>HERSTELLEN</translation>
-    </message>
-    <message>
-        <source>Exposure (Light)</source>
-        <translation>Belichting (licht)</translation>
-    </message>
-    <message>
-        <source>Warmth (Temperature)</source>
-        <translation>Warmte (temperatuur)</translation>
-    </message>
-    <message>
-        <source>Vibrance (Color Punch)</source>
-        <translation>Levendigheid (kleurkracht)</translation>
-    </message>
-    <message>
         <source>Contrast</source>
         <translation>Contrast</translation>
-    </message>
-    <message>
-        <source>WHITE BALANCE</source>
-        <translation>WITBALANS</translation>
     </message>
     <message>
         <source>Temp (Kelvin)</source>
@@ -1454,10 +1355,6 @@
     <message>
         <source>Tint (Green / Magenta)</source>
         <translation>Tint (groen / magenta)</translation>
-    </message>
-    <message>
-        <source>LIGHT &amp; DYNAMIC RANGE</source>
-        <translation>LICHT EN DYNAMISCH BEREIK</translation>
     </message>
     <message>
         <source>Exposure</source>
@@ -1480,10 +1377,6 @@
         <translation>Zwarte tinten</translation>
     </message>
     <message>
-        <source>TONE CURVE (PARAMETRIC)</source>
-        <translation>TOONCURVE (PARAMETRISCH)</translation>
-    </message>
-    <message>
         <source>Curve Highlights</source>
         <translation>Curve: hoge lichten</translation>
     </message>
@@ -1498,10 +1391,6 @@
     <message>
         <source>Curve Shadows</source>
         <translation>Curve: schaduwen</translation>
-    </message>
-    <message>
-        <source>PRESENCE &amp; TEXTURE</source>
-        <translation>PRESENTIE EN TEXTUUR</translation>
     </message>
     <message>
         <source>Texture</source>
@@ -1522,14 +1411,6 @@
     <message>
         <source>Saturation</source>
         <translation>Verzadiging</translation>
-    </message>
-    <message>
-        <source>COLOR MIXER (8-BAND HSL)</source>
-        <translation>KLEURMIXER (8-BANDS HSL)</translation>
-    </message>
-    <message>
-        <source>DETAIL &amp; OPTICS</source>
-        <translation>DETAIL EN OPTIEK</translation>
     </message>
     <message>
         <source>Sharpening</source>
@@ -1560,12 +1441,200 @@
         <translation>Open eerst een foto</translation>
     </message>
     <message>
+        <source>Version %1</source>
+        <translation>Versie %1</translation>
+    </message>
+    <message>
+        <source>Version %1 started</source>
+        <translation>Versie %1 gestart</translation>
+    </message>
+    <message>
+        <source>Copied to version %1</source>
+        <translation>Gekopieerd naar versie %1</translation>
+    </message>
+    <message>
+        <source>Undo</source>
+        <translation>Ongedaan maken</translation>
+    </message>
+    <message>
+        <source>Redo</source>
+        <translation>Opnieuw</translation>
+    </message>
+    <message>
+        <source>Settings copied</source>
+        <translation>Instellingen gekopieerd</translation>
+    </message>
+    <message>
+        <source>Nothing copied yet</source>
+        <translation>Nog niets gekopieerd</translation>
+    </message>
+    <message>
+        <source>Settings pasted</source>
+        <translation>Instellingen geplakt</translation>
+    </message>
+    <message>
+        <source>Reset to defaults</source>
+        <translation>Standaardwaarden hersteld</translation>
+    </message>
+    <message>
+        <source>Platform crop reset</source>
+        <translation>Platformuitsnede hersteld</translation>
+    </message>
+    <message>
+        <source>Auto applied</source>
+        <translation>Automatische correctie toegepast</translation>
+    </message>
+    <message>
+        <source>Settings saved</source>
+        <translation>Instellingen opgeslagen</translation>
+    </message>
+    <message>
+        <source>%1 of %2 photos exported</source>
+        <translation>%1 van %2 foto&apos;s geëxporteerd</translation>
+    </message>
+    <message>
+        <source>Auto: analysing the photo…</source>
+        <translation>Automatisch: foto wordt geanalyseerd…</translation>
+    </message>
+    <message>
+        <source>Saved to %1</source>
+        <translation>Opgeslagen in %1</translation>
+    </message>
+    <message>
+        <source>Export failed</source>
+        <translation>Exporteren mislukt</translation>
+    </message>
+    <message>
+        <source>The scan did not respond.</source>
+        <translation>De mapscan reageerde niet.</translation>
+    </message>
+    <message>
+        <source>Rating: ★</source>
+        <translation>Beoordeling: ★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★</source>
+        <translation>Beoordeling: ★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★</source>
+        <translation>Beoordeling: ★★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★★</source>
+        <translation>Beoordeling: ★★★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★★★</source>
+        <translation>Beoordeling: ★★★★★</translation>
+    </message>
+    <message>
+        <source>Flag cleared</source>
+        <translation>Markering verwijderd</translation>
+    </message>
+    <message>
+        <source>Preparing for %1…</source>
+        <translation>Bezig met voorbereiden voor %1…</translation>
+    </message>
+    <message>
+        <source>Rating: %1</source>
+        <translation>Beoordeling: %1</translation>
+    </message>
+    <message>
+        <source>Picked</source>
+        <translation>Gekozen</translation>
+    </message>
+    <message>
+        <source>Rejected</source>
+        <translation>Afgewezen</translation>
+    </message>
+    <message>
+        <source>Scene</source>
+        <translation>Scène</translation>
+    </message>
+    <message>
+        <source>Adjust</source>
+        <translation>Aanpassen</translation>
+    </message>
+    <message>
+        <source>Masks</source>
+        <translation>Maskers</translation>
+    </message>
+    <message>
+        <source>Looks</source>
+        <translation>Stijlen</translation>
+    </message>
+    <message>
+        <source>AI</source>
+        <translation>AI</translation>
+    </message>
+    <message>
+        <source>Profile</source>
+        <translation>Profiel</translation>
+    </message>
+    <message>
         <source>Color Chrome Effect</source>
         <translation>Color Chrome-effect</translation>
     </message>
     <message>
         <source>Color Chrome FX Blue</source>
         <translation>Color Chrome FX Blauw</translation>
+    </message>
+    <message>
+        <source>White balance</source>
+        <translation>Witbalans</translation>
+    </message>
+    <message>
+        <source>Tone</source>
+        <translation>Toon</translation>
+    </message>
+    <message>
+        <source>Presence</source>
+        <translation>Presentie</translation>
+    </message>
+    <message>
+        <source>Tone curve</source>
+        <translation>Tooncurve</translation>
+    </message>
+    <message>
+        <source>Colour mixer</source>
+        <translation>Kleurmixer</translation>
+    </message>
+    <message>
+        <source>Colour grading</source>
+        <translation>Kleurcorrectie</translation>
+    </message>
+    <message>
+        <source>Detail and optics</source>
+        <translation>Detail en optiek</translation>
+    </message>
+    <message>
+        <source>Grain</source>
+        <translation>Korrel</translation>
+    </message>
+    <message>
+        <source>Colour management</source>
+        <translation>Kleurbeheer</translation>
+    </message>
+    <message>
+        <source>Local adjustments</source>
+        <translation>Lokale aanpassingen</translation>
+    </message>
+    <message>
+        <source>Presets</source>
+        <translation>Voorinstellingen</translation>
+    </message>
+    <message>
+        <source>LUT</source>
+        <translation>LUT</translation>
+    </message>
+    <message>
+        <source>Edit assistant</source>
+        <translation>Bewerkingsassistent</translation>
+    </message>
+    <message>
+        <source>Assistant edit applied</source>
+        <translation>Bewerking van de assistent toegepast</translation>
     </message>
     <message>
         <source>Copy</source>
@@ -1600,30 +1669,30 @@
         <translation>%1 wordt geopend</translation>
     </message>
     <message>
-        <source>Loading the studio catalog...</source>
-        <translation>Studiocatalogus wordt geladen...</translation>
+        <source>Loading the catalog…</source>
+        <translation>Catalogus laden…</translation>
     </message>
     <message>
-        <source>Refreshing the studio catalog...</source>
-        <translation>Studiocatalogus wordt vernieuwd...</translation>
+        <source>Refreshing the catalog…</source>
+        <translation>Catalogus vernieuwen…</translation>
     </message>
     <message numerus="yes">
-        <source>Exporting %n photo(s) in parallel...</source>
+        <source>Exporting %n photos…</source>
         <translation>
-            <numerusform>%n foto wordt parallel geëxporteerd...</numerusform>
-            <numerusform>%n foto&apos;s worden parallel geëxporteerd...</numerusform>
+            <numerusform>%n foto exporteren…</numerusform>
+            <numerusform>%n foto&apos;s exporteren…</numerusform>
         </translation>
     </message>
     <message>
-        <source>Developing at full resolution and encoding...</source>
-        <translation>Ontwikkelen op volledige resolutie en coderen...</translation>
+        <source>Developing at full resolution…</source>
+        <translation>Ontwikkelen op volledige resolutie…</translation>
     </message>
 </context>
 <context>
     <name>Navigator</name>
     <message>
-        <source>NAVIGATOR</source>
-        <translation>NAVIGATOR</translation>
+        <source>Navigator</source>
+        <translation>Navigator</translation>
     </message>
     <message>
         <source>FIT</source>
@@ -1631,65 +1700,92 @@
     </message>
 </context>
 <context>
+    <name>PanelSection</name>
+    <message>
+        <source>Reset %1</source>
+        <translation>%1 herstellen</translation>
+    </message>
+</context>
+<context>
     <name>PresetSelector</name>
     <message>
-        <source>FILM LOOKS &amp; STYLES</source>
-        <translation>FILMLOOKS EN STIJLEN</translation>
+        <source>Looks</source>
+        <translation>Stijlen</translation>
     </message>
     <message>
-        <source>RESET</source>
-        <translation>HERSTELLEN</translation>
+        <source>Reset</source>
+        <translation>Herstellen</translation>
     </message>
     <message>
-        <source>AI Auto Enhance</source>
-        <translation>Automatische AI-verbetering</translation>
+        <source>Auto</source>
+        <translation>Automatisch</translation>
     </message>
     <message>
-        <source>RUN</source>
-        <translation>UITVOEREN</translation>
+        <source>Run</source>
+        <translation>Uitvoeren</translation>
     </message>
     <message>
-        <source>Documentary Muted</source>
-        <translation>Gedempt documentair</translation>
+        <source>Muted</source>
+        <translation>Gedempt</translation>
     </message>
     <message>
-        <source>Vivid Landscapes</source>
-        <translation>Levendige landschappen</translation>
+        <source>Documentary, low saturation</source>
+        <translation>Documentair, lage verzadiging</translation>
     </message>
     <message>
-        <source>Warm Skin Tones</source>
-        <translation>Warme huidtinten</translation>
+        <source>Vivid</source>
+        <translation>Levendig</translation>
     </message>
     <message>
-        <source>High Contrast B&amp;W</source>
-        <translation>Z/W met hoog contrast</translation>
+        <source>Landscapes, rich colour</source>
+        <translation>Landschappen, rijke kleuren</translation>
     </message>
     <message>
-        <source>Film Grade</source>
-        <translation>Filmgrading</translation>
+        <source>Warm portrait</source>
+        <translation>Warm portret</translation>
+    </message>
+    <message>
+        <source>Soft contrast, warm skin</source>
+        <translation>Zacht contrast, warme huid</translation>
+    </message>
+    <message>
+        <source>Black and white</source>
+        <translation>Zwart-wit</translation>
+    </message>
+    <message>
+        <source>High contrast</source>
+        <translation>Hoog contrast</translation>
+    </message>
+    <message>
+        <source>Teal and orange</source>
+        <translation>Blauwgroen en oranje</translation>
+    </message>
+    <message>
+        <source>Split toning</source>
+        <translation>Gesplitste toning</translation>
     </message>
 </context>
 <context>
     <name>RgbMixerPanel</name>
     <message>
-        <source>DAVINCI RGB PRIMARY MIXER</source>
-        <translation>DAVINCI RGB-PRIMAIRE MIXER</translation>
-    </message>
-    <message>
-        <source>RESET</source>
-        <translation>HERSTELLEN</translation>
-    </message>
-    <message>
         <source>Monochrome Mixing</source>
         <translation>Monochroom mengen</translation>
     </message>
     <message>
-        <source>MONOCHROME LUMA MIX</source>
-        <translation>MONOCHROME LUMINANTIEMIX</translation>
+        <source>Channel mixer</source>
+        <translation>Kanaalmixer</translation>
     </message>
     <message>
-        <source>RED OUTPUT CHANNEL</source>
-        <translation>RODE UITVOERKANAAL</translation>
+        <source>Reset</source>
+        <translation>Herstellen</translation>
+    </message>
+    <message>
+        <source>Monochrome mix</source>
+        <translation>Monochrome mix</translation>
+    </message>
+    <message>
+        <source>Red output</source>
+        <translation>Rode uitvoer</translation>
     </message>
     <message>
         <source>Red in Red</source>
@@ -1704,8 +1800,12 @@
         <translation>Blauw in rood</translation>
     </message>
     <message>
-        <source>GREEN OUTPUT CHANNEL</source>
-        <translation>GROENE UITVOERKANAAL</translation>
+        <source>Green output</source>
+        <translation>Groene uitvoer</translation>
+    </message>
+    <message>
+        <source>Blue output</source>
+        <translation>Blauwe uitvoer</translation>
     </message>
     <message>
         <source>Red in Green</source>
@@ -1718,10 +1818,6 @@
     <message>
         <source>Blue in Green</source>
         <translation>Blauw in groen</translation>
-    </message>
-    <message>
-        <source>BLUE OUTPUT CHANNEL</source>
-        <translation>BLAUWE UITVOERKANAAL</translation>
     </message>
     <message>
         <source>Red in Blue</source>
@@ -1765,8 +1861,8 @@
         <translation>[H] %1%</translation>
     </message>
     <message>
-        <source>NO SIGNAL / LOAD RAW</source>
-        <translation>GEEN SIGNAAL / LAAD EEN RAW</translation>
+        <source>No photo</source>
+        <translation>Geen foto</translation>
     </message>
     <message>
         <source>RED</source>
@@ -1788,12 +1884,12 @@
 <context>
     <name>SkinTonePanel</name>
     <message>
-        <source>CAPTURE ONE SKIN TONE</source>
-        <translation>CAPTURE ONE-HUIDTINT</translation>
+        <source>Skin tone</source>
+        <translation>Huidtint</translation>
     </message>
     <message>
-        <source>RESET</source>
-        <translation>HERSTELLEN</translation>
+        <source>Reset</source>
+        <translation>Herstellen</translation>
     </message>
     <message>
         <source>Vectorscope 123° flesh line (target: %1°)</source>
@@ -1834,52 +1930,28 @@
 <context>
     <name>SocialOptimizer</name>
     <message>
-        <source>AI SOCIAL MEDIA OPTIMIZER</source>
-        <translation>AI-OPTIMALISATIE VOOR SOCIALE MEDIA</translation>
+        <source>Prepare for</source>
+        <translation>Voorbereiden voor</translation>
     </message>
     <message>
-        <source>RESET</source>
-        <translation>HERSTELLEN</translation>
+        <source>Reset</source>
+        <translation>Herstellen</translation>
     </message>
     <message>
-        <source>Instagram Feed</source>
-        <translation>Instagram-feed</translation>
+        <source>Instagram post</source>
+        <translation>Instagram-bericht</translation>
     </message>
     <message>
-        <source>Max Screen</source>
-        <translation>Maximaal scherm</translation>
+        <source>Stories and Reels</source>
+        <translation>Stories en Reels</translation>
     </message>
     <message>
-        <source>Stories / Reels</source>
-        <translation>Stories / Reels</translation>
+        <source>Square</source>
+        <translation>Vierkant</translation>
     </message>
     <message>
-        <source>Full Mobile</source>
-        <translation>Volledig mobiel</translation>
-    </message>
-    <message>
-        <source>Crisp Feed</source>
-        <translation>Scherpe feed</translation>
-    </message>
-    <message>
-        <source>Classic Square</source>
-        <translation>Klassiek vierkant</translation>
-    </message>
-    <message>
-        <source>Grid Post</source>
-        <translation>Rasterbericht</translation>
-    </message>
-    <message>
-        <source>High Res</source>
-        <translation>Hoge resolutie</translation>
-    </message>
-    <message>
-        <source>YouTube Thumb</source>
+        <source>YouTube thumbnail</source>
         <translation>YouTube-miniatuur</translation>
-    </message>
-    <message>
-        <source>High CTR</source>
-        <translation>Hoge CTR</translation>
     </message>
 </context>
 <context>
@@ -1914,8 +1986,8 @@
         <translation>Basis</translation>
     </message>
     <message>
-        <source>Pro Studio</source>
-        <translation>Pro Studio</translation>
+        <source>Pro</source>
+        <translation>Pro</translation>
     </message>
     <message>
         <source>Undo (Ctrl+Z)</source>
@@ -1953,16 +2025,16 @@
 <context>
     <name>Viewport</name>
     <message>
-        <source>RESET 0°</source>
-        <translation>0° HERSTELLEN</translation>
+        <source>Reset 0°</source>
+        <translation>Terug naar 0°</translation>
     </message>
     <message>
-        <source>FIT</source>
-        <translation>PASSEND</translation>
+        <source>Fit</source>
+        <translation>Passend</translation>
     </message>
     <message>
-        <source>CROP &amp; COMPOSE</source>
-        <translation>UITSNEDE EN COMPOSITIE</translation>
+        <source>Crop</source>
+        <translation>Uitsnijden</translation>
     </message>
     <message>
         <source>Original</source>
@@ -1989,12 +2061,20 @@
         <translation>Raster: uit</translation>
     </message>
     <message>
-        <source>RESET</source>
-        <translation>HERSTELLEN</translation>
+        <source>Reset</source>
+        <translation>Herstellen</translation>
     </message>
     <message>
-        <source>DONE</source>
-        <translation>KLAAR</translation>
+        <source>Done</source>
+        <translation>Klaar</translation>
+    </message>
+    <message>
+        <source>Shadow clipping</source>
+        <translation>Schaduwclipping</translation>
+    </message>
+    <message>
+        <source>Highlight clipping</source>
+        <translation>Hooglichtclipping</translation>
     </message>
     <message>
         <source>ORIGINAL RAW (Before)</source>
@@ -2003,18 +2083,6 @@
     <message>
         <source>EDITED RECIPE (After)</source>
         <translation>BEWERKT RECEPT (na)</translation>
-    </message>
-    <message>
-        <source>[S] SHADOW CLIPPING (BLUE)</source>
-        <translation>[S] SCHADUWEN AFGEKAPT (BLAUW)</translation>
-    </message>
-    <message>
-        <source>[H] HIGHLIGHT CLIPPING (RED)</source>
-        <translation>[H] HOGE LICHTEN AFGEKAPT (ROOD)</translation>
-    </message>
-    <message>
-        <source>Pinch: Zoom | 2-Finger Twist: Rotate | 2-Finger Pan | Double-Tap: Reset</source>
-        <translation>Knijpen: zoomen | Draaien met 2 vingers: roteren | Schuiven met 2 vingers | Dubbeltikken: herstellen</translation>
     </message>
     <message>
         <source>Open a RAW (Ctrl+O) or drop a photo / folder here</source>
@@ -2028,8 +2096,8 @@
 <context>
     <name>WatermarkConfig</name>
     <message>
-        <source>WATERMARK &amp; BRANDING</source>
-        <translation>WATERMERK EN HUISSTIJL</translation>
+        <source>Watermark</source>
+        <translation>Watermerk</translation>
     </message>
     <message>
         <source>Text / EXIF Tag</source>
@@ -2040,28 +2108,28 @@
         <translation>Eigen PNG-logo</translation>
     </message>
     <message>
-        <source>WATERMARK TEXT OR TEMPLATE</source>
-        <translation>TEKST OF SJABLOON VAN HET WATERMERK</translation>
+        <source>Text or template</source>
+        <translation>Tekst of sjabloon</translation>
     </message>
     <message>
-        <source>LOGO FILE PATH (.PNG)</source>
-        <translation>PAD NAAR HET LOGO (.PNG)</translation>
+        <source>Logo file (PNG)</source>
+        <translation>Logobestand (PNG)</translation>
     </message>
     <message>
-        <source>POSITION</source>
-        <translation>POSITIE</translation>
+        <source>Position</source>
+        <translation>Positie</translation>
+    </message>
+    <message>
+        <source>Opacity</source>
+        <translation>Dekking</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>Grootte</translation>
     </message>
     <message>
         <source>Drop Shadow</source>
         <translation>Slagschaduw</translation>
-    </message>
-    <message>
-        <source>OPACITY</source>
-        <translation>DEKKING</translation>
-    </message>
-    <message>
-        <source>SIZE MULTIPLIER</source>
-        <translation>GROOTTEVERMENIGVULDIGER</translation>
     </message>
 </context>
 </TS>

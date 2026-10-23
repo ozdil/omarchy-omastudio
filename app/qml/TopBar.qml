@@ -289,7 +289,7 @@ Rectangle {
                         }
                         Text {
                             font.family: Theme.fontFamily
-                            text: qsTr("Pro Studio")
+                            text: qsTr("Pro")
                             textFormat: Text.PlainText
                             font.pixelSize: Theme.px(10)
                             font.weight: Font.DemiBold

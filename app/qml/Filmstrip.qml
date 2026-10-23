@@ -57,7 +57,7 @@ Rectangle {
                     }
                     Text {
                         font.family: Theme.fontFamily
-                        text: qsTr("Local Photos")
+                        text: qsTr("Folders")
                         textFormat: Text.PlainText
                         font.pixelSize: Theme.px(10)
                         font.weight: Font.DemiBold
@@ -96,7 +96,7 @@ Rectangle {
                     }
                     Text {
                         font.family: Theme.fontFamily
-                        text: qsTr("Studio Catalog")
+                        text: qsTr("Catalog")
                         textFormat: Text.PlainText
                         font.pixelSize: Theme.px(10)
                         font.weight: Font.DemiBold
@@ -397,7 +397,7 @@ Rectangle {
                                 Text {
                                     font.family: Theme.fontFamily
                                     anchors.centerIn: parent
-                                    text: qsTr("DIR", "folder badge")
+                                    text: qsTr("Folder")
                                     textFormat: Text.PlainText
                                     font.pixelSize: Theme.px(8)
                                     font.weight: Font.Bold
@@ -428,7 +428,7 @@ Rectangle {
                                         Layout.alignment: Qt.AlignHCenter
                                     }
                                     Text {
-                                        text: root.isDownloadingRemote && root.activePhotoPath === modelData.path ? qsTr("FETCHING") : (modelData.is_remote ? qsTr("RAW CLOUD") : qsTr("NO PREVIEW"))
+                                        text: root.isDownloadingRemote && root.activePhotoPath === modelData.path ? qsTr("Downloading") : (modelData.is_remote ? qsTr("Remote") : qsTr("No preview"))
                                         textFormat: Text.PlainText
                                         font.pixelSize: Theme.px(7)
                                         font.weight: Font.Bold

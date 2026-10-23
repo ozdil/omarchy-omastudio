@@ -21,6 +21,7 @@ LanguageMenu 1.0 LanguageMenu.qml
 LayersPanel 1.0 LayersPanel.qml
 LutSelector 1.0 LutSelector.qml
 MainWindow 1.0 MainWindow.qml
+PanelSection 1.0 PanelSection.qml
 Navigator 1.0 Navigator.qml
 PresetSelector 1.0 PresetSelector.qml
 RgbMixerPanel 1.0 RgbMixerPanel.qml

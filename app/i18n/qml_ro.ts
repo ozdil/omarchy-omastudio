@@ -175,28 +175,36 @@
         <translation>Eșuat</translation>
     </message>
     <message>
-        <source>AI EDIT ASSISTANT</source>
-        <translation>ASISTENT DE EDITARE IA</translation>
+        <source>Assistant</source>
+        <translation>Asistent</translation>
     </message>
     <message>
-        <source>DONE</source>
-        <translation>GATA</translation>
+        <source>Done</source>
+        <translation>Gata</translation>
     </message>
     <message>
-        <source>SETUP</source>
-        <translation>CONFIGURARE</translation>
+        <source>Set up</source>
+        <translation>Configurează</translation>
+    </message>
+    <message>
+        <source>Working…</source>
+        <translation>Se procesează…</translation>
+    </message>
+    <message>
+        <source>Edit</source>
+        <translation>Editează</translation>
+    </message>
+    <message>
+        <source>Store key</source>
+        <translation>Salvează cheia</translation>
+    </message>
+    <message>
+        <source>Use %1</source>
+        <translation>Folosește %1</translation>
     </message>
     <message>
         <source>e.g. warmer, moody evening light, recover the sky</source>
         <translation>de ex. mai cald, lumină de seară melancolică, recuperează cerul</translation>
-    </message>
-    <message>
-        <source>THINKING...</source>
-        <translation>SE GÂNDEȘTE...</translation>
-    </message>
-    <message>
-        <source>EDIT WITH AI</source>
-        <translation>EDITEAZĂ CU IA</translation>
     </message>
     <message>
         <source>Running. Models: %1</source>
@@ -222,14 +230,6 @@
         <source>API key</source>
         <translation>Cheie API</translation>
     </message>
-    <message>
-        <source>STORE KEY</source>
-        <translation>SALVEAZĂ CHEIA</translation>
-    </message>
-    <message>
-        <source>USE %1</source>
-        <translation>FOLOSEȘTE %1</translation>
-    </message>
 </context>
 <context>
     <name>BoundedTextInput</name>
@@ -241,48 +241,16 @@
 <context>
     <name>ColorGradingWheels</name>
     <message>
-        <source>DAVINCI PRIMARIES WHEELS</source>
-        <translation>ROȚI PRIMARE DAVINCI</translation>
-    </message>
-    <message>
-        <source>4-WHEEL</source>
-        <translation>4 ROȚI</translation>
-    </message>
-    <message>
-        <source>TABBED</source>
-        <translation>FILE</translation>
-    </message>
-    <message>
-        <source>RESET</source>
-        <translation>RESETEAZĂ</translation>
-    </message>
-    <message>
-        <source>LIFT</source>
-        <translation>LIFT</translation>
-    </message>
-    <message>
         <source>Shadows</source>
         <translation>Umbre</translation>
-    </message>
-    <message>
-        <source>GAMMA</source>
-        <translation>GAMMA</translation>
     </message>
     <message>
         <source>Mids</source>
         <translation>Tonuri medii</translation>
     </message>
     <message>
-        <source>GAIN</source>
-        <translation>GAIN</translation>
-    </message>
-    <message>
         <source>Highlights</source>
         <translation>Lumini</translation>
-    </message>
-    <message>
-        <source>OFFSET</source>
-        <translation>OFFSET</translation>
     </message>
     <message>
         <source>Global</source>
@@ -307,6 +275,22 @@
     <message>
         <source>Lift</source>
         <translation>Lift</translation>
+    </message>
+    <message>
+        <source>Colour grading</source>
+        <translation>Corecție de culoare</translation>
+    </message>
+    <message>
+        <source>4 wheels</source>
+        <translation>4 roți</translation>
+    </message>
+    <message>
+        <source>Tabs</source>
+        <translation>File</translation>
+    </message>
+    <message>
+        <source>Reset</source>
+        <translation>Resetează</translation>
     </message>
     <message>
         <source>Gamma</source>
@@ -368,8 +352,12 @@
         <translation>AP1 larg</translation>
     </message>
     <message>
-        <source>COLOR MANAGEMENT &amp; ACES 1.3</source>
-        <translation>GESTIONAREA CULORII ȘI ACES 1.3</translation>
+        <source>Colour management</source>
+        <translation>Gestionarea culorii</translation>
+    </message>
+    <message>
+        <source>Gamut compression</source>
+        <translation>Comprimarea gamei</translation>
     </message>
     <message>
         <source>%1 (%2)</source>
@@ -394,115 +382,163 @@
 <context>
     <name>ExifCard</name>
     <message>
-        <source>No camera loaded</source>
-        <translation>Niciun aparat încărcat</translation>
-    </message>
-    <message>
-        <source>Unknown lens</source>
-        <translation>Obiectiv necunoscut</translation>
+        <source>No photo</source>
+        <translation>Nicio fotografie</translation>
     </message>
 </context>
 <context>
     <name>ExportDialog</name>
-    <message numerus="yes">
-        <source>Batch Export (%n Photos)</source>
-        <translation>
-            <numerusform>Export în lot (%n fotografie)</numerusform>
-            <numerusform>Export în lot (%n fotografii)</numerusform>
-            <numerusform>Export în lot (%n de fotografii)</numerusform>
-        </translation>
-    </message>
-    <message>
-        <source>Export Master Photo</source>
-        <translation>Exportă fotografia master</translation>
-    </message>
-    <message>
-        <source>MODERN OPEN FORMAT</source>
-        <translation>FORMAT DESCHIS MODERN</translation>
-    </message>
-    <message>
-        <source>Next-Gen 16-bit HDR</source>
-        <translation>HDR pe 16 biți de nouă generație</translation>
-    </message>
-    <message>
-        <source>AV1 Web/Mobile</source>
-        <translation>AV1 web/mobil</translation>
-    </message>
-    <message>
-        <source>Ultra Compact</source>
-        <translation>Ultracompact</translation>
-    </message>
-    <message>
-        <source>16-bit TIFF</source>
-        <translation>TIFF pe 16 biți</translation>
-    </message>
-    <message>
-        <source>Master Print Lossless</source>
-        <translation>Imprimare master fără pierderi</translation>
-    </message>
-    <message>
-        <source>Graphic Lossless</source>
-        <translation>Grafică fără pierderi</translation>
-    </message>
-    <message>
-        <source>Universal MozJPEG</source>
-        <translation>MozJPEG universal</translation>
-    </message>
-    <message>
-        <source>Export Compression Quality</source>
-        <translation>Calitatea compresiei la export</translation>
-    </message>
-    <message>
-        <source>RESOLUTION &amp; SCALING</source>
-        <translation>REZOLUȚIE ȘI SCALARE</translation>
-    </message>
-    <message>
-        <source>100% Full</source>
-        <translation>100% completă</translation>
-    </message>
-    <message>
-        <source>Social (2048p)</source>
-        <translation>Social (2048p)</translation>
-    </message>
-    <message>
-        <source>COLOR SPACE &amp; ICC PROFILE</source>
-        <translation>SPAȚIU DE CULOARE ȘI PROFIL ICC</translation>
-    </message>
-    <message>
-        <source>Universal Web / Social</source>
-        <translation>Web / social universal</translation>
-    </message>
-    <message>
-        <source>Apple / Wide OLED</source>
-        <translation>Apple / OLED larg</translation>
-    </message>
-    <message>
-        <source>Ultra-Wide Gamut HDR</source>
-        <translation>HDR cu gamă ultralargă</translation>
-    </message>
-    <message>
-        <source>Academy Color Standard</source>
-        <translation>Standardul de culoare al Academiei</translation>
-    </message>
-    <message>
-        <source>Pro Photography / Print</source>
-        <translation>Fotografie profesională / imprimare</translation>
-    </message>
-    <message>
-        <source>16-Bit Master Archival</source>
-        <translation>Arhivă master pe 16 biți</translation>
-    </message>
-    <message>
-        <source>Intent</source>
-        <translation>Intenție</translation>
-    </message>
     <message>
         <source>Perceptual</source>
         <translation>Perceptuală</translation>
     </message>
     <message>
-        <source>Compresses the whole gamut; smooth, saturated colours keep their relations</source>
-        <translation>Comprimă întreaga gamă; culorile moi și saturate își păstrează relațiile</translation>
+        <source>8-bit · universal</source>
+        <translation>8 biți · universal</translation>
+    </message>
+    <message>
+        <source>16-bit · lossless</source>
+        <translation>16 biți · fără pierderi</translation>
+    </message>
+    <message>
+        <source>16-bit · print, archive</source>
+        <translation>16 biți · tipar, arhivă</translation>
+    </message>
+    <message>
+        <source>8-bit · web</source>
+        <translation>8 biți · web</translation>
+    </message>
+    <message>
+        <source>12-bit · HDR-ready</source>
+        <translation>12 biți · pregătit pentru HDR</translation>
+    </message>
+    <message>
+        <source>10-bit · HEVC</source>
+        <translation>10 biți · HEVC</translation>
+    </message>
+    <message>
+        <source>16-bit · modern</source>
+        <translation>16 biți · modern</translation>
+    </message>
+    <message>
+        <source>Float · scene-linear</source>
+        <translation>Virgulă mobilă · liniar de scenă</translation>
+    </message>
+    <message numerus="yes">
+        <source>Export %n photos</source>
+        <translation>
+            <numerusform>Exportă %n fotografie</numerusform>
+            <numerusform>Exportă %n fotografii</numerusform>
+            <numerusform>Exportă %n de fotografii</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>Export</source>
+        <translation>Exportă</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>Închide</translation>
+    </message>
+    <message>
+        <source>Format</source>
+        <translation>Format de fișier</translation>
+    </message>
+    <message>
+        <source>Quality</source>
+        <translation>Calitate</translation>
+    </message>
+    <message>
+        <source>100 is lossless.</source>
+        <translation>100 înseamnă fără pierderi.</translation>
+    </message>
+    <message>
+        <source>Bit depth</source>
+        <translation>Adâncime de biți</translation>
+    </message>
+    <message>
+        <source>Half float</source>
+        <translation>Virgulă mobilă cu precizie pe jumătate</translation>
+    </message>
+    <message>
+        <source>Full float</source>
+        <translation>Virgulă mobilă cu precizie completă</translation>
+    </message>
+    <message>
+        <source>%1-bit</source>
+        <translation>%1 biți</translation>
+    </message>
+    <message>
+        <source>Compression</source>
+        <translation>Compresie</translation>
+    </message>
+    <message>
+        <source>None</source>
+        <translation>Niciuna</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>Dimensiune</translation>
+    </message>
+    <message>
+        <source>Full</source>
+        <translation>Completă</translation>
+    </message>
+    <message>
+        <source>3840 px</source>
+        <translation>3840 px</translation>
+    </message>
+    <message>
+        <source>Long edge at most 3840 px</source>
+        <translation>Latura lungă de cel mult 3840 px</translation>
+    </message>
+    <message>
+        <source>2048 px</source>
+        <translation>2048 px</translation>
+    </message>
+    <message>
+        <source>Long edge at most 2048 px</source>
+        <translation>Latura lungă de cel mult 2048 px</translation>
+    </message>
+    <message>
+        <source>Colour profile</source>
+        <translation>Profil de culoare</translation>
+    </message>
+    <message>
+        <source>Web, screens</source>
+        <translation>Web, ecrane</translation>
+    </message>
+    <message>
+        <source>Wide-gamut screens</source>
+        <translation>Ecrane cu gamă largă</translation>
+    </message>
+    <message>
+        <source>Print</source>
+        <translation>Tipar</translation>
+    </message>
+    <message>
+        <source>Editing, archive</source>
+        <translation>Editare, arhivă</translation>
+    </message>
+    <message>
+        <source>HDR, video</source>
+        <translation>HDR, video</translation>
+    </message>
+    <message>
+        <source>Linear, VFX</source>
+        <translation>Liniar, efecte vizuale</translation>
+    </message>
+    <message>
+        <source>OpenEXR is written scene-linear in the chosen primaries.</source>
+        <translation>OpenEXR este scris liniar de scenă în primarele alese.</translation>
+    </message>
+    <message>
+        <source>Rendering intent</source>
+        <translation>Intenție de randare</translation>
+    </message>
+    <message>
+        <source>Compresses the whole gamut; colour relations are kept</source>
+        <translation>Comprimă întreaga gamă; relațiile dintre culori se păstrează</translation>
     </message>
     <message>
         <source>Relative</source>
@@ -529,47 +565,55 @@
         <translation>Culori exacte, inclusiv punctul alb al sursei; pentru probe</translation>
     </message>
     <message>
-        <source>Preserve Camera EXIF</source>
-        <translation>Păstrează EXIF-ul aparatului</translation>
+        <source>Metadata</source>
+        <translation>Metadate</translation>
     </message>
     <message>
-        <source>Strip GPS (Privacy)</source>
-        <translation>Elimină GPS (confidențialitate)</translation>
+        <source>Keep camera metadata (EXIF)</source>
+        <translation>Păstrează metadatele camerei (EXIF)</translation>
     </message>
     <message>
-        <source>Apply Photography Watermark / EXIF Signature</source>
-        <translation>Aplică filigran / semnătură EXIF</translation>
+        <source>Remove location (GPS)</source>
+        <translation>Elimină locația (GPS)</translation>
     </message>
     <message>
-        <source>Exporting Batch...</source>
-        <translation>Se exportă lotul...</translation>
+        <source>Prepare for</source>
+        <translation>Pregătește pentru</translation>
     </message>
     <message>
-        <source>Exporting Full Resolution...</source>
-        <translation>Se exportă la rezoluție completă...</translation>
-    </message>
-    <message numerus="yes">
-        <source>Start Parallel Batch Export (%n Photos)</source>
-        <translation>
-            <numerusform>Pornește exportul paralel în lot (%n fotografie)</numerusform>
-            <numerusform>Pornește exportul paralel în lot (%n fotografii)</numerusform>
-            <numerusform>Pornește exportul paralel în lot (%n de fotografii)</numerusform>
-        </translation>
+        <source>Sets the crop and output sharpening for a platform. Reset restores your own.</source>
+        <translation>Setează decuparea și clarificarea la ieșire pentru o platformă. Resetează readuce propriile setări.</translation>
     </message>
     <message>
-        <source>Start Export (%1 / %2)</source>
-        <translation>Pornește exportul (%1 / %2)</translation>
+        <source>Watermark</source>
+        <translation>Filigran</translation>
+    </message>
+    <message>
+        <source>Folder</source>
+        <translation>Dosar</translation>
+    </message>
+    <message>
+        <source>Hide</source>
+        <translation>Ascunde</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Anulează</translation>
+    </message>
+    <message>
+        <source>Exporting…</source>
+        <translation>Se exportă…</translation>
     </message>
 </context>
 <context>
     <name>FilmGrainPanel</name>
     <message>
-        <source>SILVER-HALIDE FILM GRAIN</source>
-        <translation>GRANULAȚIE DE FILM CU HALOGENURĂ DE ARGINT</translation>
+        <source>Grain</source>
+        <translation>Granulație</translation>
     </message>
     <message>
-        <source>RESET</source>
-        <translation>RESETEAZĂ</translation>
+        <source>Reset</source>
+        <translation>Resetează</translation>
     </message>
     <message>
         <source>Grain Amount</source>
@@ -703,12 +747,16 @@
         <translation>Contrast cinematografic panoramic de 35 mm</translation>
     </message>
     <message>
-        <source>FILM SIMULATION &amp; SENSOR PROFILES</source>
-        <translation>SIMULARE DE FILM ȘI PROFILURI DE SENZOR</translation>
+        <source>Profile</source>
+        <translation>Profil</translation>
     </message>
     <message>
-        <source>RESET</source>
-        <translation>RESETEAZĂ</translation>
+        <source>Reset</source>
+        <translation>Resetează</translation>
+    </message>
+    <message>
+        <source>Amount</source>
+        <translation>Intensitate</translation>
     </message>
     <message>
         <source>All</source>
@@ -718,17 +766,9 @@
         <source>Acros B&amp;W</source>
         <translation>Acros A/N</translation>
     </message>
-    <message>
-        <source>SIMULATION INTENSITY</source>
-        <translation>INTENSITATEA SIMULĂRII</translation>
-    </message>
 </context>
 <context>
     <name>Filmstrip</name>
-    <message>
-        <source>Local Photos</source>
-        <translation>Fotografii locale</translation>
-    </message>
     <message>
         <source>Studio Catalog</source>
         <translation>Catalogul studioului</translation>
@@ -736,6 +776,14 @@
     <message>
         <source>Up</source>
         <translation>Sus</translation>
+    </message>
+    <message>
+        <source>Folders</source>
+        <translation>Dosare</translation>
+    </message>
+    <message>
+        <source>Catalog</source>
+        <translation>Catalog</translation>
     </message>
     <message>
         <source>Scanning Catalog...</source>
@@ -762,21 +810,20 @@
         <translation>Nu s-au găsit fotografii în acest dosar.</translation>
     </message>
     <message>
-        <source>DIR</source>
-        <comment>folder badge</comment>
-        <translation>DOS</translation>
+        <source>Folder</source>
+        <translation>Dosar</translation>
     </message>
     <message>
-        <source>FETCHING</source>
-        <translation>SE DESCARCĂ</translation>
+        <source>Downloading</source>
+        <translation>Se descarcă</translation>
     </message>
     <message>
-        <source>RAW CLOUD</source>
-        <translation>RAW ÎN CLOUD</translation>
+        <source>Remote</source>
+        <translation>La distanță</translation>
     </message>
     <message>
-        <source>NO PREVIEW</source>
-        <translation>FĂRĂ PREVIZUALIZARE</translation>
+        <source>No preview</source>
+        <translation>Fără previzualizare</translation>
     </message>
     <message>
         <source>Loading...</source>
@@ -839,40 +886,60 @@
         <translation>Rețete Fujifilm</translation>
     </message>
     <message>
-        <source>FUJIFILM RECIPES</source>
-        <translation>REȚETE FUJIFILM</translation>
+        <source>Import</source>
+        <translation>Importă</translation>
     </message>
     <message>
-        <source>IMPORT</source>
-        <translation>IMPORTĂ</translation>
+        <source>Apply photo&apos;s recipe</source>
+        <translation>Aplică rețeta fotografiei</translation>
     </message>
     <message>
-        <source>APPLY PHOTO&apos;S RECIPE</source>
-        <translation>APLICĂ REȚETA FOTOGRAFIEI</translation>
+        <source>Save</source>
+        <translation>Salvează</translation>
     </message>
     <message>
-        <source>SAVE</source>
-        <translation>SALVEAZĂ</translation>
+        <source>Apply recipe</source>
+        <translation>Aplică rețeta</translation>
+    </message>
+    <message>
+        <source>Camera (USB)</source>
+        <translation>Cameră (USB)</translation>
+    </message>
+    <message>
+        <source>Reconnect</source>
+        <translation>Reconectează</translation>
+    </message>
+    <message>
+        <source>Connect</source>
+        <translation>Conectează</translation>
+    </message>
+    <message>
+        <source>Read C1–C7</source>
+        <translation>Citește C1–C7</translation>
+    </message>
+    <message>
+        <source>Convert in camera</source>
+        <translation>Convertește în cameră</translation>
+    </message>
+    <message>
+        <source>Write recipe to C%1</source>
+        <translation>Scrie rețeta în C%1</translation>
+    </message>
+    <message>
+        <source>Pixel shift</source>
+        <translation>Pixel Shift</translation>
+    </message>
+    <message>
+        <source>Merge %1 frames to DNG</source>
+        <translation>Combină %1 cadre în DNG</translation>
+    </message>
+    <message>
+        <source>Merge frames to DNG</source>
+        <translation>Combină cadrele în DNG</translation>
     </message>
     <message>
         <source>No saved recipes. Import an X RAW Studio profile, recipe text or a Fujifilm photo.</source>
         <translation>Nu există rețete salvate. Importați un profil X RAW Studio, textul unei rețete sau o fotografie Fujifilm.</translation>
-    </message>
-    <message>
-        <source>APPLY SELECTED RECIPE</source>
-        <translation>APLICĂ REȚETA SELECTATĂ</translation>
-    </message>
-    <message>
-        <source>CAMERA (USB)</source>
-        <translation>APARAT (USB)</translation>
-    </message>
-    <message>
-        <source>RECONNECT</source>
-        <translation>RECONECTEAZĂ</translation>
-    </message>
-    <message>
-        <source>CONNECT</source>
-        <translation>CONECTEAZĂ</translation>
     </message>
     <message>
         <source>%1  ·  in-camera RAW conversion</source>
@@ -887,24 +954,8 @@
         <translation>Setați modul USB al aparatului la %1 și conectați-l.</translation>
     </message>
     <message>
-        <source>READ C1-C7</source>
-        <translation>CITEȘTE C1-C7</translation>
-    </message>
-    <message>
-        <source>CONVERT IN CAMERA</source>
-        <translation>CONVERTEȘTE ÎN APARAT</translation>
-    </message>
-    <message>
         <source>Unnamed</source>
         <translation>Fără nume</translation>
-    </message>
-    <message>
-        <source>WRITE SELECTED RECIPE TO C%1</source>
-        <translation>SCRIE REȚETA SELECTATĂ ÎN C%1</translation>
-    </message>
-    <message>
-        <source>PIXEL SHIFT MULTI-SHOT</source>
-        <translation>PIXEL SHIFT CU MAI MULTE CADRE</translation>
     </message>
     <message numerus="yes">
         <source>%n RAF frames selected. 4 frames give full colour per pixel, 16 frames double the resolution.</source>
@@ -918,24 +969,12 @@
         <source>Select the RAF frames of one GFX Pixel Shift sequence in the filmstrip.</source>
         <translation>Selectați în banda de fotografii cadrele RAF ale unei secvențe GFX Pixel Shift.</translation>
     </message>
-    <message numerus="yes">
-        <source>MERGE %n FRAMES TO DNG</source>
-        <translation>
-            <numerusform>COMBINĂ %n CADRU ÎN DNG</numerusform>
-            <numerusform>COMBINĂ %n CADRE ÎN DNG</numerusform>
-            <numerusform>COMBINĂ %n DE CADRE ÎN DNG</numerusform>
-        </translation>
-    </message>
-    <message>
-        <source>MERGE FRAMES TO DNG</source>
-        <translation>COMBINĂ CADRELE ÎN DNG</translation>
-    </message>
 </context>
 <context>
     <name>GradeVersionsBar</name>
     <message>
-        <source>GRADE VERSION</source>
-        <translation>VERSIUNE DE GRADARE</translation>
+        <source>Version</source>
+        <translation>Versiune</translation>
     </message>
 </context>
 <context>
@@ -946,8 +985,8 @@
         <translation>[U] %1%</translation>
     </message>
     <message>
-        <source>RGB HISTOGRAM</source>
-        <translation>HISTOGRAMĂ RGB</translation>
+        <source>Histogram</source>
+        <translation>Histogramă</translation>
     </message>
     <message>
         <source>[H] %1%</source>
@@ -994,12 +1033,12 @@
         <translation>Canal %1</translation>
     </message>
     <message>
-        <source>RESET CH</source>
-        <translation>RESET. CANAL</translation>
+        <source>Reset colour</source>
+        <translation>Resetează culoarea</translation>
     </message>
     <message>
-        <source>RESET ALL</source>
-        <translation>RESETEAZĂ TOT</translation>
+        <source>Reset all</source>
+        <translation>Resetează tot</translation>
     </message>
     <message>
         <source>Hue Shift</source>
@@ -1107,32 +1146,32 @@
         <translation>Masca %1 este gata (%2)</translation>
     </message>
     <message>
-        <source>DETECTING...</source>
-        <translation>SE DETECTEAZĂ...</translation>
+        <source>Detecting…</source>
+        <translation>Se detectează…</translation>
     </message>
     <message>
-        <source>LOCAL ADJUSTMENT LAYERS</source>
-        <translation>STRATURI DE AJUSTARE LOCALĂ</translation>
+        <source>Masks</source>
+        <translation>Măști</translation>
     </message>
     <message>
-        <source>+ GRADIENT</source>
-        <translation>+ GRADIENT</translation>
+        <source>+ Linear</source>
+        <translation>+ Liniar</translation>
+    </message>
+    <message>
+        <source>+ Radial</source>
+        <translation>+ Radial</translation>
+    </message>
+    <message>
+        <source>+ Luminance</source>
+        <translation>+ Luminanță</translation>
     </message>
     <message>
         <source>Linear Gradient %1</source>
         <translation>Gradient liniar %1</translation>
     </message>
     <message>
-        <source>+ RADIAL</source>
-        <translation>+ RADIAL</translation>
-    </message>
-    <message>
         <source>Radial Mask %1</source>
         <translation>Mască radială %1</translation>
-    </message>
-    <message>
-        <source>+ LUMA</source>
-        <translation>+ LUMINANȚĂ</translation>
     </message>
     <message>
         <source>Luma Range %1</source>
@@ -1150,10 +1189,6 @@
         <source>I</source>
         <comment>invert mask toggle, first letter of Invert</comment>
         <translation>I</translation>
-    </message>
-    <message>
-        <source>SELECTED LAYER CONTROLS (%1)</source>
-        <translation>CONTROALELE STRATULUI SELECTAT (%1)</translation>
     </message>
     <message>
         <source>Layer Opacity</source>
@@ -1175,48 +1210,32 @@
 <context>
     <name>LutSelector</name>
     <message>
-        <source>DAVINCI 3D LUT ENGINE (.CUBE)</source>
-        <translation>MOTOR LUT 3D DAVINCI (.CUBE)</translation>
+        <source>Load 3D LUT</source>
+        <translation>Încarcă LUT 3D</translation>
     </message>
     <message>
-        <source>RESET</source>
-        <translation>RESETEAZĂ</translation>
+        <source>3D LUT</source>
+        <translation>LUT 3D</translation>
     </message>
     <message>
-        <source>Hollywood Print</source>
-        <translation>Copie Hollywood</translation>
+        <source>Reset</source>
+        <translation>Resetează</translation>
     </message>
     <message>
-        <source>Cinema Blockbuster</source>
-        <translation>Succes de box-office</translation>
+        <source>Load .cube file…</source>
+        <translation>Încarcă fișier .cube…</translation>
     </message>
     <message>
-        <source>35mm Soft Stock</source>
-        <translation>Film moale de 35 mm</translation>
+        <source>Saved look: %1</source>
+        <translation>Aspect salvat: %1</translation>
     </message>
     <message>
-        <source>High-Acutance B&amp;W</source>
-        <translation>A/N cu acutanță ridicată</translation>
-    </message>
-    <message>
-        <source>LUT Intensity (Mix)</source>
-        <translation>Intensitatea LUT (amestec)</translation>
+        <source>Amount</source>
+        <translation>Intensitate</translation>
     </message>
 </context>
 <context>
     <name>MainWindow</name>
-    <message>
-        <source>Switched to version %1</source>
-        <translation>S-a trecut la versiunea %1</translation>
-    </message>
-    <message>
-        <source>Version %1 initialized</source>
-        <translation>Versiunea %1 a fost creată</translation>
-    </message>
-    <message>
-        <source>Copied current grade to version %1</source>
-        <translation>Gradarea curentă a fost copiată în versiunea %1</translation>
-    </message>
     <message numerus="yes">
         <source>Rating: %n star(s)</source>
         <translation>
@@ -1246,36 +1265,8 @@
         <translation>Nimic de anulat</translation>
     </message>
     <message>
-        <source>Undo (Ctrl+Z)</source>
-        <translation>Anulează (Ctrl+Z)</translation>
-    </message>
-    <message>
         <source>Nothing to redo</source>
         <translation>Nimic de refăcut</translation>
-    </message>
-    <message>
-        <source>Redo (Ctrl+Shift+Z)</source>
-        <translation>Refă (Ctrl+Shift+Z)</translation>
-    </message>
-    <message>
-        <source>Adjustments copied (Ctrl+Shift+C)</source>
-        <translation>Ajustări copiate (Ctrl+Shift+C)</translation>
-    </message>
-    <message>
-        <source>No adjustments in clipboard</source>
-        <translation>Nicio ajustare în clipboard</translation>
-    </message>
-    <message>
-        <source>Adjustments pasted (Ctrl+Shift+V)</source>
-        <translation>Ajustări lipite (Ctrl+Shift+V)</translation>
-    </message>
-    <message>
-        <source>Reset to defaults (Ctrl+R)</source>
-        <translation>Valorile implicite au fost restabilite (Ctrl+R)</translation>
-    </message>
-    <message>
-        <source>Social framing and adjustments reset</source>
-        <translation>Încadrarea socială și ajustările au fost resetate</translation>
     </message>
     <message>
         <source>Failed to load RAW: %1</source>
@@ -1298,28 +1289,8 @@
         <translation>Randarea previzualizării a eșuat</translation>
     </message>
     <message>
-        <source>Auto tone applied</source>
-        <translation>Ton automat aplicat</translation>
-    </message>
-    <message>
-        <source>AI decisions applied</source>
-        <translation>Deciziile IA au fost aplicate</translation>
-    </message>
-    <message>
-        <source>Local heuristic applied</source>
-        <translation>Euristică locală aplicată</translation>
-    </message>
-    <message>
         <source>%1 applied (%2)</source>
         <translation>%1 aplicat (%2)</translation>
-    </message>
-    <message>
-        <source>Recipe sidecar saved</source>
-        <translation>Fișierul auxiliar al rețetei a fost salvat</translation>
-    </message>
-    <message>
-        <source>Batch finished: %1/%2 photos exported</source>
-        <translation>Lot terminat: %1/%2 fotografii exportate</translation>
     </message>
     <message>
         <source>Batch export: %1 succeeded, %2 failed</source>
@@ -1342,14 +1313,6 @@
         <translation>Scris %1</translation>
     </message>
     <message>
-        <source>Analyzing dynamic range and scene...</source>
-        <translation>Se analizează gama dinamică și scena...</translation>
-    </message>
-    <message>
-        <source>Asking the AI for edit decisions...</source>
-        <translation>Se cer IA decizii de editare...</translation>
-    </message>
-    <message>
         <source>Open RAW Photo</source>
         <translation>Deschide fotografie RAW</translation>
     </message>
@@ -1358,20 +1321,8 @@
         <translation>Fotografii RAW</translation>
     </message>
     <message>
-        <source>Saved to: %1</source>
-        <translation>Salvat în: %1</translation>
-    </message>
-    <message>
-        <source>Export error: %1</source>
-        <translation>Eroare de export: %1</translation>
-    </message>
-    <message>
         <source>Export finished without a result</source>
         <translation>Exportul s-a încheiat fără rezultat</translation>
-    </message>
-    <message>
-        <source>The folder scan gave no answer</source>
-        <translation>Scanarea dosarului nu a răspuns</translation>
     </message>
     <message>
         <source>Crop mode: on (C)</source>
@@ -1382,36 +1333,12 @@
         <translation>Mod decupare: dezactivat</translation>
     </message>
     <message>
-        <source>Open a photo first to export</source>
-        <translation>Deschideți mai întâi o fotografie pentru export</translation>
-    </message>
-    <message>
-        <source>Panels hidden (Tab)</source>
-        <translation>Panouri ascunse (Tab)</translation>
-    </message>
-    <message>
-        <source>Panels restored (Tab)</source>
-        <translation>Panouri restaurate (Tab)</translation>
-    </message>
-    <message>
-        <source>Optimizing for %1...</source>
-        <translation>Se optimizează pentru %1...</translation>
-    </message>
-    <message>
-        <source>AI SCENE INSIGHT</source>
-        <translation>ANALIZA SCENEI CU IA</translation>
-    </message>
-    <message>
         <source>Analyzing...</source>
         <translation>Se analizează...</translation>
     </message>
     <message>
         <source>Extracting dynamic range...</source>
         <translation>Se extrage gama dinamică...</translation>
-    </message>
-    <message>
-        <source>Grade versions • Alt+1..4 to switch</source>
-        <translation>Versiuni de gradare • Alt+1..4 pentru comutare</translation>
     </message>
     <message>
         <source>Opened %1</source>
@@ -1422,36 +1349,8 @@
         <translation>Se scanează dosarul %1</translation>
     </message>
     <message>
-        <source>AI edit applied</source>
-        <translation>Editarea IA a fost aplicată</translation>
-    </message>
-    <message>
-        <source>ESSENTIAL ADJUSTMENTS</source>
-        <translation>AJUSTĂRI ESENȚIALE</translation>
-    </message>
-    <message>
-        <source>RESET</source>
-        <translation>RESETEAZĂ</translation>
-    </message>
-    <message>
-        <source>Exposure (Light)</source>
-        <translation>Expunere (lumină)</translation>
-    </message>
-    <message>
-        <source>Warmth (Temperature)</source>
-        <translation>Căldură (temperatură)</translation>
-    </message>
-    <message>
-        <source>Vibrance (Color Punch)</source>
-        <translation>Vivacitate (forța culorii)</translation>
-    </message>
-    <message>
         <source>Contrast</source>
         <translation>Contrast</translation>
-    </message>
-    <message>
-        <source>WHITE BALANCE</source>
-        <translation>BALANS DE ALB</translation>
     </message>
     <message>
         <source>Temp (Kelvin)</source>
@@ -1460,10 +1359,6 @@
     <message>
         <source>Tint (Green / Magenta)</source>
         <translation>Nuanță (verde / magenta)</translation>
-    </message>
-    <message>
-        <source>LIGHT &amp; DYNAMIC RANGE</source>
-        <translation>LUMINĂ ȘI GAMĂ DINAMICĂ</translation>
     </message>
     <message>
         <source>Exposure</source>
@@ -1486,10 +1381,6 @@
         <translation>Negre</translation>
     </message>
     <message>
-        <source>TONE CURVE (PARAMETRIC)</source>
-        <translation>CURBĂ DE TONURI (PARAMETRICĂ)</translation>
-    </message>
-    <message>
         <source>Curve Highlights</source>
         <translation>Curbă: lumini</translation>
     </message>
@@ -1504,10 +1395,6 @@
     <message>
         <source>Curve Shadows</source>
         <translation>Curbă: umbre</translation>
-    </message>
-    <message>
-        <source>PRESENCE &amp; TEXTURE</source>
-        <translation>PREZENȚĂ ȘI TEXTURĂ</translation>
     </message>
     <message>
         <source>Texture</source>
@@ -1528,14 +1415,6 @@
     <message>
         <source>Saturation</source>
         <translation>Saturație</translation>
-    </message>
-    <message>
-        <source>COLOR MIXER (8-BAND HSL)</source>
-        <translation>MIXER DE CULORI (HSL CU 8 BENZI)</translation>
-    </message>
-    <message>
-        <source>DETAIL &amp; OPTICS</source>
-        <translation>DETALIU ȘI OPTICĂ</translation>
     </message>
     <message>
         <source>Sharpening</source>
@@ -1566,12 +1445,200 @@
         <translation>Deschideți mai întâi o fotografie</translation>
     </message>
     <message>
+        <source>Version %1</source>
+        <translation>Versiunea %1</translation>
+    </message>
+    <message>
+        <source>Version %1 started</source>
+        <translation>Versiunea %1 a început</translation>
+    </message>
+    <message>
+        <source>Copied to version %1</source>
+        <translation>Copiat în versiunea %1</translation>
+    </message>
+    <message>
+        <source>Undo</source>
+        <translation>Anulează</translation>
+    </message>
+    <message>
+        <source>Redo</source>
+        <translation>Refă</translation>
+    </message>
+    <message>
+        <source>Settings copied</source>
+        <translation>Setări copiate</translation>
+    </message>
+    <message>
+        <source>Nothing copied yet</source>
+        <translation>Nu s-a copiat încă nimic</translation>
+    </message>
+    <message>
+        <source>Settings pasted</source>
+        <translation>Setări lipite</translation>
+    </message>
+    <message>
+        <source>Reset to defaults</source>
+        <translation>Valorile implicite au fost restabilite</translation>
+    </message>
+    <message>
+        <source>Platform crop reset</source>
+        <translation>Decuparea pentru platformă a fost resetată</translation>
+    </message>
+    <message>
+        <source>Auto applied</source>
+        <translation>Corecție automată aplicată</translation>
+    </message>
+    <message>
+        <source>Settings saved</source>
+        <translation>Setări salvate</translation>
+    </message>
+    <message>
+        <source>%1 of %2 photos exported</source>
+        <translation>%1 din %2 fotografii exportate</translation>
+    </message>
+    <message>
+        <source>Auto: analysing the photo…</source>
+        <translation>Automat: se analizează fotografia…</translation>
+    </message>
+    <message>
+        <source>Saved to %1</source>
+        <translation>Salvat în %1</translation>
+    </message>
+    <message>
+        <source>Export failed</source>
+        <translation>Exportul a eșuat</translation>
+    </message>
+    <message>
+        <source>The scan did not respond.</source>
+        <translation>Scanarea dosarului nu a răspuns.</translation>
+    </message>
+    <message>
+        <source>Rating: ★</source>
+        <translation>Evaluare: ★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★</source>
+        <translation>Evaluare: ★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★</source>
+        <translation>Evaluare: ★★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★★</source>
+        <translation>Evaluare: ★★★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★★★</source>
+        <translation>Evaluare: ★★★★★</translation>
+    </message>
+    <message>
+        <source>Flag cleared</source>
+        <translation>Marcaj eliminat</translation>
+    </message>
+    <message>
+        <source>Preparing for %1…</source>
+        <translation>Se pregătește pentru %1…</translation>
+    </message>
+    <message>
+        <source>Rating: %1</source>
+        <translation>Evaluare: %1</translation>
+    </message>
+    <message>
+        <source>Picked</source>
+        <translation>Aleasă</translation>
+    </message>
+    <message>
+        <source>Rejected</source>
+        <translation>Respinsă</translation>
+    </message>
+    <message>
+        <source>Scene</source>
+        <translation>Scenă</translation>
+    </message>
+    <message>
+        <source>Adjust</source>
+        <translation>Ajustează</translation>
+    </message>
+    <message>
+        <source>Masks</source>
+        <translation>Măști</translation>
+    </message>
+    <message>
+        <source>Looks</source>
+        <translation>Stiluri</translation>
+    </message>
+    <message>
+        <source>AI</source>
+        <translation>IA</translation>
+    </message>
+    <message>
+        <source>Profile</source>
+        <translation>Profil</translation>
+    </message>
+    <message>
         <source>Color Chrome Effect</source>
         <translation>Efect Color Chrome</translation>
     </message>
     <message>
         <source>Color Chrome FX Blue</source>
         <translation>Color Chrome FX Albastru</translation>
+    </message>
+    <message>
+        <source>White balance</source>
+        <translation>Balansul de alb</translation>
+    </message>
+    <message>
+        <source>Tone</source>
+        <translation>Ton</translation>
+    </message>
+    <message>
+        <source>Presence</source>
+        <translation>Prezență</translation>
+    </message>
+    <message>
+        <source>Tone curve</source>
+        <translation>Curbă de ton</translation>
+    </message>
+    <message>
+        <source>Colour mixer</source>
+        <translation>Mixer de culori</translation>
+    </message>
+    <message>
+        <source>Colour grading</source>
+        <translation>Corecție de culoare</translation>
+    </message>
+    <message>
+        <source>Detail and optics</source>
+        <translation>Detalii și optică</translation>
+    </message>
+    <message>
+        <source>Grain</source>
+        <translation>Granulație</translation>
+    </message>
+    <message>
+        <source>Colour management</source>
+        <translation>Gestionarea culorii</translation>
+    </message>
+    <message>
+        <source>Local adjustments</source>
+        <translation>Ajustări locale</translation>
+    </message>
+    <message>
+        <source>Presets</source>
+        <translation>Presetări</translation>
+    </message>
+    <message>
+        <source>LUT</source>
+        <translation>LUT</translation>
+    </message>
+    <message>
+        <source>Edit assistant</source>
+        <translation>Asistent de editare</translation>
+    </message>
+    <message>
+        <source>Assistant edit applied</source>
+        <translation>Editarea asistentului a fost aplicată</translation>
     </message>
     <message>
         <source>Copy</source>
@@ -1606,31 +1673,31 @@
         <translation>Se deschide %1</translation>
     </message>
     <message>
-        <source>Loading the studio catalog...</source>
-        <translation>Se încarcă catalogul studioului...</translation>
+        <source>Loading the catalog…</source>
+        <translation>Se încarcă catalogul…</translation>
     </message>
     <message>
-        <source>Refreshing the studio catalog...</source>
-        <translation>Se reîmprospătează catalogul studioului...</translation>
+        <source>Refreshing the catalog…</source>
+        <translation>Se reîmprospătează catalogul…</translation>
     </message>
     <message numerus="yes">
-        <source>Exporting %n photo(s) in parallel...</source>
+        <source>Exporting %n photos…</source>
         <translation>
-            <numerusform>Se exportă în paralel %n fotografie...</numerusform>
-            <numerusform>Se exportă în paralel %n fotografii...</numerusform>
-            <numerusform>Se exportă în paralel %n de fotografii...</numerusform>
+            <numerusform>Se exportă %n fotografie…</numerusform>
+            <numerusform>Se exportă %n fotografii…</numerusform>
+            <numerusform>Se exportă %n de fotografii…</numerusform>
         </translation>
     </message>
     <message>
-        <source>Developing at full resolution and encoding...</source>
-        <translation>Developare la rezoluție completă și codare...</translation>
+        <source>Developing at full resolution…</source>
+        <translation>Se developează la rezoluție completă…</translation>
     </message>
 </context>
 <context>
     <name>Navigator</name>
     <message>
-        <source>NAVIGATOR</source>
-        <translation>NAVIGATOR</translation>
+        <source>Navigator</source>
+        <translation>Navigator</translation>
     </message>
     <message>
         <source>FIT</source>
@@ -1638,65 +1705,92 @@
     </message>
 </context>
 <context>
+    <name>PanelSection</name>
+    <message>
+        <source>Reset %1</source>
+        <translation>Resetează %1</translation>
+    </message>
+</context>
+<context>
     <name>PresetSelector</name>
     <message>
-        <source>FILM LOOKS &amp; STYLES</source>
-        <translation>ASPECTE ȘI STILURI DE FILM</translation>
+        <source>Looks</source>
+        <translation>Stiluri</translation>
     </message>
     <message>
-        <source>RESET</source>
-        <translation>RESETEAZĂ</translation>
+        <source>Reset</source>
+        <translation>Resetează</translation>
     </message>
     <message>
-        <source>AI Auto Enhance</source>
-        <translation>Îmbunătățire automată cu IA</translation>
+        <source>Auto</source>
+        <translation>Automat</translation>
     </message>
     <message>
-        <source>RUN</source>
-        <translation>RULEAZĂ</translation>
+        <source>Run</source>
+        <translation>Rulează</translation>
     </message>
     <message>
-        <source>Documentary Muted</source>
-        <translation>Documentar estompat</translation>
+        <source>Muted</source>
+        <translation>Estompat</translation>
     </message>
     <message>
-        <source>Vivid Landscapes</source>
-        <translation>Peisaje vii</translation>
+        <source>Documentary, low saturation</source>
+        <translation>Documentar, saturație scăzută</translation>
     </message>
     <message>
-        <source>Warm Skin Tones</source>
-        <translation>Tonuri calde ale pielii</translation>
+        <source>Vivid</source>
+        <translation>Viu</translation>
     </message>
     <message>
-        <source>High Contrast B&amp;W</source>
-        <translation>A/N cu contrast ridicat</translation>
+        <source>Landscapes, rich colour</source>
+        <translation>Peisaje, culori bogate</translation>
     </message>
     <message>
-        <source>Film Grade</source>
-        <translation>Gradare de film</translation>
+        <source>Warm portrait</source>
+        <translation>Portret cald</translation>
+    </message>
+    <message>
+        <source>Soft contrast, warm skin</source>
+        <translation>Contrast moale, piele caldă</translation>
+    </message>
+    <message>
+        <source>Black and white</source>
+        <translation>Alb-negru</translation>
+    </message>
+    <message>
+        <source>High contrast</source>
+        <translation>Contrast ridicat</translation>
+    </message>
+    <message>
+        <source>Teal and orange</source>
+        <translation>Turcoaz și portocaliu</translation>
+    </message>
+    <message>
+        <source>Split toning</source>
+        <translation>Tonare divizată</translation>
     </message>
 </context>
 <context>
     <name>RgbMixerPanel</name>
     <message>
-        <source>DAVINCI RGB PRIMARY MIXER</source>
-        <translation>MIXER RGB PRIMAR DAVINCI</translation>
-    </message>
-    <message>
-        <source>RESET</source>
-        <translation>RESETEAZĂ</translation>
-    </message>
-    <message>
         <source>Monochrome Mixing</source>
         <translation>Amestec monocrom</translation>
     </message>
     <message>
-        <source>MONOCHROME LUMA MIX</source>
-        <translation>AMESTEC DE LUMINANȚĂ MONOCROM</translation>
+        <source>Channel mixer</source>
+        <translation>Mixer de canale</translation>
     </message>
     <message>
-        <source>RED OUTPUT CHANNEL</source>
-        <translation>CANAL DE IEȘIRE ROȘU</translation>
+        <source>Reset</source>
+        <translation>Resetează</translation>
+    </message>
+    <message>
+        <source>Monochrome mix</source>
+        <translation>Mixare monocromă</translation>
+    </message>
+    <message>
+        <source>Red output</source>
+        <translation>Ieșire roșie</translation>
     </message>
     <message>
         <source>Red in Red</source>
@@ -1711,8 +1805,12 @@
         <translation>Albastru în roșu</translation>
     </message>
     <message>
-        <source>GREEN OUTPUT CHANNEL</source>
-        <translation>CANAL DE IEȘIRE VERDE</translation>
+        <source>Green output</source>
+        <translation>Ieșire verde</translation>
+    </message>
+    <message>
+        <source>Blue output</source>
+        <translation>Ieșire albastră</translation>
     </message>
     <message>
         <source>Red in Green</source>
@@ -1725,10 +1823,6 @@
     <message>
         <source>Blue in Green</source>
         <translation>Albastru în verde</translation>
-    </message>
-    <message>
-        <source>BLUE OUTPUT CHANNEL</source>
-        <translation>CANAL DE IEȘIRE ALBASTRU</translation>
     </message>
     <message>
         <source>Red in Blue</source>
@@ -1772,8 +1866,8 @@
         <translation>[L] %1%</translation>
     </message>
     <message>
-        <source>NO SIGNAL / LOAD RAW</source>
-        <translation>FĂRĂ SEMNAL / ÎNCĂRCAȚI UN RAW</translation>
+        <source>No photo</source>
+        <translation>Nicio fotografie</translation>
     </message>
     <message>
         <source>RED</source>
@@ -1795,12 +1889,12 @@
 <context>
     <name>SkinTonePanel</name>
     <message>
-        <source>CAPTURE ONE SKIN TONE</source>
-        <translation>TON AL PIELII CAPTURE ONE</translation>
+        <source>Skin tone</source>
+        <translation>Tonul pielii</translation>
     </message>
     <message>
-        <source>RESET</source>
-        <translation>RESETEAZĂ</translation>
+        <source>Reset</source>
+        <translation>Resetează</translation>
     </message>
     <message>
         <source>Vectorscope 123° flesh line (target: %1°)</source>
@@ -1841,52 +1935,28 @@
 <context>
     <name>SocialOptimizer</name>
     <message>
-        <source>AI SOCIAL MEDIA OPTIMIZER</source>
-        <translation>OPTIMIZATOR IA PENTRU REȚELE SOCIALE</translation>
+        <source>Prepare for</source>
+        <translation>Pregătește pentru</translation>
     </message>
     <message>
-        <source>RESET</source>
-        <translation>RESETEAZĂ</translation>
+        <source>Reset</source>
+        <translation>Resetează</translation>
     </message>
     <message>
-        <source>Instagram Feed</source>
-        <translation>Flux Instagram</translation>
+        <source>Instagram post</source>
+        <translation>Postare Instagram</translation>
     </message>
     <message>
-        <source>Max Screen</source>
-        <translation>Ecran maxim</translation>
+        <source>Stories and Reels</source>
+        <translation>Povești și Reels</translation>
     </message>
     <message>
-        <source>Stories / Reels</source>
-        <translation>Povești / Reels</translation>
+        <source>Square</source>
+        <translation>Pătrat</translation>
     </message>
     <message>
-        <source>Full Mobile</source>
-        <translation>Ecran mobil complet</translation>
-    </message>
-    <message>
-        <source>Crisp Feed</source>
-        <translation>Flux clar</translation>
-    </message>
-    <message>
-        <source>Classic Square</source>
-        <translation>Pătrat clasic</translation>
-    </message>
-    <message>
-        <source>Grid Post</source>
-        <translation>Postare în grilă</translation>
-    </message>
-    <message>
-        <source>High Res</source>
-        <translation>Rezoluție înaltă</translation>
-    </message>
-    <message>
-        <source>YouTube Thumb</source>
+        <source>YouTube thumbnail</source>
         <translation>Miniatură YouTube</translation>
-    </message>
-    <message>
-        <source>High CTR</source>
-        <translation>CTR ridicat</translation>
     </message>
 </context>
 <context>
@@ -1921,8 +1991,8 @@
         <translation>Esențiale</translation>
     </message>
     <message>
-        <source>Pro Studio</source>
-        <translation>Pro Studio</translation>
+        <source>Pro</source>
+        <translation>Pro</translation>
     </message>
     <message>
         <source>Undo (Ctrl+Z)</source>
@@ -1960,16 +2030,16 @@
 <context>
     <name>Viewport</name>
     <message>
-        <source>RESET 0°</source>
-        <translation>RESETEAZĂ 0°</translation>
+        <source>Reset 0°</source>
+        <translation>Resetează la 0°</translation>
     </message>
     <message>
-        <source>FIT</source>
-        <translation>POTRIVEȘTE</translation>
+        <source>Fit</source>
+        <translation>Potrivește</translation>
     </message>
     <message>
-        <source>CROP &amp; COMPOSE</source>
-        <translation>DECUPARE ȘI COMPOZIȚIE</translation>
+        <source>Crop</source>
+        <translation>Decupează</translation>
     </message>
     <message>
         <source>Original</source>
@@ -1996,12 +2066,20 @@
         <translation>Grilă: dezactivată</translation>
     </message>
     <message>
-        <source>RESET</source>
-        <translation>RESETEAZĂ</translation>
+        <source>Reset</source>
+        <translation>Resetează</translation>
     </message>
     <message>
-        <source>DONE</source>
-        <translation>GATA</translation>
+        <source>Done</source>
+        <translation>Gata</translation>
+    </message>
+    <message>
+        <source>Shadow clipping</source>
+        <translation>Decupare în umbre</translation>
+    </message>
+    <message>
+        <source>Highlight clipping</source>
+        <translation>Decupare în lumini</translation>
     </message>
     <message>
         <source>ORIGINAL RAW (Before)</source>
@@ -2010,18 +2088,6 @@
     <message>
         <source>EDITED RECIPE (After)</source>
         <translation>REȚETĂ EDITATĂ (după)</translation>
-    </message>
-    <message>
-        <source>[S] SHADOW CLIPPING (BLUE)</source>
-        <translation>[U] UMBRE TĂIATE (ALBASTRU)</translation>
-    </message>
-    <message>
-        <source>[H] HIGHLIGHT CLIPPING (RED)</source>
-        <translation>[L] LUMINI TĂIATE (ROȘU)</translation>
-    </message>
-    <message>
-        <source>Pinch: Zoom | 2-Finger Twist: Rotate | 2-Finger Pan | Double-Tap: Reset</source>
-        <translation>Ciupire: zoom | Rotire cu 2 degete: rotație | Deplasare cu 2 degete | Atingere dublă: resetare</translation>
     </message>
     <message>
         <source>Open a RAW (Ctrl+O) or drop a photo / folder here</source>
@@ -2035,8 +2101,8 @@
 <context>
     <name>WatermarkConfig</name>
     <message>
-        <source>WATERMARK &amp; BRANDING</source>
-        <translation>FILIGRAN ȘI IDENTITATE</translation>
+        <source>Watermark</source>
+        <translation>Filigran</translation>
     </message>
     <message>
         <source>Text / EXIF Tag</source>
@@ -2047,28 +2113,28 @@
         <translation>Siglă PNG personalizată</translation>
     </message>
     <message>
-        <source>WATERMARK TEXT OR TEMPLATE</source>
-        <translation>TEXTUL SAU ȘABLONUL FILIGRANULUI</translation>
+        <source>Text or template</source>
+        <translation>Text sau șablon</translation>
     </message>
     <message>
-        <source>LOGO FILE PATH (.PNG)</source>
-        <translation>CALEA SIGLEI (.PNG)</translation>
+        <source>Logo file (PNG)</source>
+        <translation>Fișier logo (PNG)</translation>
     </message>
     <message>
-        <source>POSITION</source>
-        <translation>POZIȚIE</translation>
+        <source>Position</source>
+        <translation>Poziție</translation>
+    </message>
+    <message>
+        <source>Opacity</source>
+        <translation>Opacitate</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>Dimensiune</translation>
     </message>
     <message>
         <source>Drop Shadow</source>
         <translation>Umbră</translation>
-    </message>
-    <message>
-        <source>OPACITY</source>
-        <translation>OPACITATE</translation>
-    </message>
-    <message>
-        <source>SIZE MULTIPLIER</source>
-        <translation>MULTIPLICATOR DE DIMENSIUNE</translation>
     </message>
 </context>
 </TS>

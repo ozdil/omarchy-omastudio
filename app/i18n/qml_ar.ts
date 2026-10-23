@@ -175,28 +175,36 @@
         <translation>فشل</translation>
     </message>
     <message>
-        <source>AI EDIT ASSISTANT</source>
-        <translation>مساعد التحرير بالذكاء الاصطناعي</translation>
+        <source>Assistant</source>
+        <translation>المساعد</translation>
     </message>
     <message>
-        <source>DONE</source>
+        <source>Done</source>
         <translation>تم</translation>
     </message>
     <message>
-        <source>SETUP</source>
-        <translation>الإعداد</translation>
+        <source>Set up</source>
+        <translation>إعداد</translation>
+    </message>
+    <message>
+        <source>Working…</source>
+        <translation>جارٍ العمل…</translation>
+    </message>
+    <message>
+        <source>Edit</source>
+        <translation>تحرير</translation>
+    </message>
+    <message>
+        <source>Store key</source>
+        <translation>حفظ المفتاح</translation>
+    </message>
+    <message>
+        <source>Use %1</source>
+        <translation>استخدام %1</translation>
     </message>
     <message>
         <source>e.g. warmer, moody evening light, recover the sky</source>
         <translation>مثلًا: أدفأ، ضوء مسائي كئيب، استعادة السماء</translation>
-    </message>
-    <message>
-        <source>THINKING...</source>
-        <translation>جارٍ التفكير...</translation>
-    </message>
-    <message>
-        <source>EDIT WITH AI</source>
-        <translation>التحرير بالذكاء الاصطناعي</translation>
     </message>
     <message>
         <source>Running. Models: %1</source>
@@ -222,14 +230,6 @@
         <source>API key</source>
         <translation>مفتاح API</translation>
     </message>
-    <message>
-        <source>STORE KEY</source>
-        <translation>حفظ المفتاح</translation>
-    </message>
-    <message>
-        <source>USE %1</source>
-        <translation>استخدام %1</translation>
-    </message>
 </context>
 <context>
     <name>BoundedTextInput</name>
@@ -241,48 +241,16 @@
 <context>
     <name>ColorGradingWheels</name>
     <message>
-        <source>DAVINCI PRIMARIES WHEELS</source>
-        <translation>العجلات الأساسية DaVinci</translation>
-    </message>
-    <message>
-        <source>4-WHEEL</source>
-        <translation>4 عجلات</translation>
-    </message>
-    <message>
-        <source>TABBED</source>
-        <translation>تبويبات</translation>
-    </message>
-    <message>
-        <source>RESET</source>
-        <translation>إعادة الضبط</translation>
-    </message>
-    <message>
-        <source>LIFT</source>
-        <translation>LIFT</translation>
-    </message>
-    <message>
         <source>Shadows</source>
         <translation>الظلال</translation>
-    </message>
-    <message>
-        <source>GAMMA</source>
-        <translation>GAMMA</translation>
     </message>
     <message>
         <source>Mids</source>
         <translation>الدرجات المتوسطة</translation>
     </message>
     <message>
-        <source>GAIN</source>
-        <translation>GAIN</translation>
-    </message>
-    <message>
         <source>Highlights</source>
         <translation>الإضاءات</translation>
-    </message>
-    <message>
-        <source>OFFSET</source>
-        <translation>OFFSET</translation>
     </message>
     <message>
         <source>Global</source>
@@ -307,6 +275,22 @@
     <message>
         <source>Lift</source>
         <translation>Lift</translation>
+    </message>
+    <message>
+        <source>Colour grading</source>
+        <translation>تدريج الألوان</translation>
+    </message>
+    <message>
+        <source>4 wheels</source>
+        <translation>4 عجلات</translation>
+    </message>
+    <message>
+        <source>Tabs</source>
+        <translation>علامات تبويب</translation>
+    </message>
+    <message>
+        <source>Reset</source>
+        <translation>إعادة الضبط</translation>
     </message>
     <message>
         <source>Gamma</source>
@@ -368,8 +352,12 @@
         <translation>AP1 واسع</translation>
     </message>
     <message>
-        <source>COLOR MANAGEMENT &amp; ACES 1.3</source>
-        <translation>إدارة الألوان و ACES 1.3</translation>
+        <source>Colour management</source>
+        <translation>إدارة الألوان</translation>
+    </message>
+    <message>
+        <source>Gamut compression</source>
+        <translation>ضغط النطاق اللوني</translation>
     </message>
     <message>
         <source>%1 (%2)</source>
@@ -394,118 +382,166 @@
 <context>
     <name>ExifCard</name>
     <message>
-        <source>No camera loaded</source>
-        <translation>لم تُحمّل أي كاميرا</translation>
-    </message>
-    <message>
-        <source>Unknown lens</source>
-        <translation>عدسة غير معروفة</translation>
+        <source>No photo</source>
+        <translation>لا توجد صورة</translation>
     </message>
 </context>
 <context>
     <name>ExportDialog</name>
-    <message numerus="yes">
-        <source>Batch Export (%n Photos)</source>
-        <translation>
-            <numerusform>تصدير دفعة (لا صور)</numerusform>
-            <numerusform>تصدير دفعة (صورة واحدة)</numerusform>
-            <numerusform>تصدير دفعة (صورتان)</numerusform>
-            <numerusform>تصدير دفعة (%n صور)</numerusform>
-            <numerusform>تصدير دفعة (%n صورة)</numerusform>
-            <numerusform>تصدير دفعة (%n صورة)</numerusform>
-        </translation>
-    </message>
-    <message>
-        <source>Export Master Photo</source>
-        <translation>تصدير الصورة الرئيسية</translation>
-    </message>
-    <message>
-        <source>MODERN OPEN FORMAT</source>
-        <translation>صيغة مفتوحة حديثة</translation>
-    </message>
-    <message>
-        <source>Next-Gen 16-bit HDR</source>
-        <translation>HDR بعمق 16 بت من الجيل الجديد</translation>
-    </message>
-    <message>
-        <source>AV1 Web/Mobile</source>
-        <translation>AV1 للويب والجوال</translation>
-    </message>
-    <message>
-        <source>Ultra Compact</source>
-        <translation>مضغوط جدًا</translation>
-    </message>
-    <message>
-        <source>16-bit TIFF</source>
-        <translation>TIFF بعمق 16 بت</translation>
-    </message>
-    <message>
-        <source>Master Print Lossless</source>
-        <translation>طباعة رئيسية بلا فقد</translation>
-    </message>
-    <message>
-        <source>Graphic Lossless</source>
-        <translation>رسوميات بلا فقد</translation>
-    </message>
-    <message>
-        <source>Universal MozJPEG</source>
-        <translation>MozJPEG عام</translation>
-    </message>
-    <message>
-        <source>Export Compression Quality</source>
-        <translation>جودة الضغط عند التصدير</translation>
-    </message>
-    <message>
-        <source>RESOLUTION &amp; SCALING</source>
-        <translation>الدقة وتغيير الحجم</translation>
-    </message>
-    <message>
-        <source>100% Full</source>
-        <translation>100% كاملة</translation>
-    </message>
-    <message>
-        <source>Social (2048p)</source>
-        <translation>التواصل الاجتماعي (2048p)</translation>
-    </message>
-    <message>
-        <source>COLOR SPACE &amp; ICC PROFILE</source>
-        <translation>فضاء الألوان وملف ICC</translation>
-    </message>
-    <message>
-        <source>Universal Web / Social</source>
-        <translation>الويب / التواصل الاجتماعي</translation>
-    </message>
-    <message>
-        <source>Apple / Wide OLED</source>
-        <translation>Apple / شاشات OLED واسعة</translation>
-    </message>
-    <message>
-        <source>Ultra-Wide Gamut HDR</source>
-        <translation>HDR بنطاق ألوان فائق الاتساع</translation>
-    </message>
-    <message>
-        <source>Academy Color Standard</source>
-        <translation>معيار ألوان الأكاديمية</translation>
-    </message>
-    <message>
-        <source>Pro Photography / Print</source>
-        <translation>التصوير الاحترافي / الطباعة</translation>
-    </message>
-    <message>
-        <source>16-Bit Master Archival</source>
-        <translation>أرشيف رئيسي بعمق 16 بت</translation>
-    </message>
-    <message>
-        <source>Intent</source>
-        <translation>طريقة التحويل</translation>
-    </message>
     <message>
         <source>Perceptual</source>
         <translation>إدراكية</translation>
     </message>
     <message>
-        <source>Compresses the whole gamut; smooth, saturated colours keep their relations</source>
-        <translation>تضغط النطاق كله؛ تحافظ الألوان الناعمة والمشبعة على علاقاتها</translation>
+        <source>8-bit · universal</source>
+        <translation>8 بت · عام</translation>
+    </message>
+    <message>
+        <source>16-bit · lossless</source>
+        <translation>16 بت · بلا فقد</translation>
+    </message>
+    <message>
+        <source>16-bit · print, archive</source>
+        <translation>16 بت · طباعة، أرشفة</translation>
+    </message>
+    <message>
+        <source>8-bit · web</source>
+        <translation>8 بت · ويب</translation>
+    </message>
+    <message>
+        <source>12-bit · HDR-ready</source>
+        <translation>12 بت · جاهز لـ HDR</translation>
+    </message>
+    <message>
+        <source>10-bit · HEVC</source>
+        <translation>10 بت · HEVC</translation>
+    </message>
+    <message>
+        <source>16-bit · modern</source>
+        <translation>16 بت · حديث</translation>
+    </message>
+    <message>
+        <source>Float · scene-linear</source>
+        <translation>فاصلة عائمة · خطي للمشهد</translation>
+    </message>
+    <message numerus="yes">
+        <source>Export %n photos</source>
+        <translation>
+            <numerusform>تصدير %n صورة</numerusform>
+            <numerusform>تصدير صورة واحدة</numerusform>
+            <numerusform>تصدير صورتين</numerusform>
+            <numerusform>تصدير %n صور</numerusform>
+            <numerusform>تصدير %n صورة</numerusform>
+            <numerusform>تصدير %n صورة</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>Export</source>
+        <translation>تصدير</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>إغلاق</translation>
+    </message>
+    <message>
+        <source>Format</source>
+        <translation>صيغة الملف</translation>
+    </message>
+    <message>
+        <source>Quality</source>
+        <translation>الجودة</translation>
+    </message>
+    <message>
+        <source>100 is lossless.</source>
+        <translation>القيمة 100 تعني بلا فقد.</translation>
+    </message>
+    <message>
+        <source>Bit depth</source>
+        <translation>عمق البت</translation>
+    </message>
+    <message>
+        <source>Half float</source>
+        <translation>فاصلة عائمة بنصف الدقة</translation>
+    </message>
+    <message>
+        <source>Full float</source>
+        <translation>فاصلة عائمة بدقة كاملة</translation>
+    </message>
+    <message>
+        <source>%1-bit</source>
+        <translation>%1 بت</translation>
+    </message>
+    <message>
+        <source>Compression</source>
+        <translation>الضغط</translation>
+    </message>
+    <message>
+        <source>None</source>
+        <translation>بلا</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>الحجم</translation>
+    </message>
+    <message>
+        <source>Full</source>
+        <translation>كامل</translation>
+    </message>
+    <message>
+        <source>3840 px</source>
+        <translation>3840 بكسل</translation>
+    </message>
+    <message>
+        <source>Long edge at most 3840 px</source>
+        <translation>الضلع الطويل 3840 بكسل كحد أقصى</translation>
+    </message>
+    <message>
+        <source>2048 px</source>
+        <translation>2048 بكسل</translation>
+    </message>
+    <message>
+        <source>Long edge at most 2048 px</source>
+        <translation>الضلع الطويل 2048 بكسل كحد أقصى</translation>
+    </message>
+    <message>
+        <source>Colour profile</source>
+        <translation>ملف تعريف الألوان</translation>
+    </message>
+    <message>
+        <source>Web, screens</source>
+        <translation>الويب، الشاشات</translation>
+    </message>
+    <message>
+        <source>Wide-gamut screens</source>
+        <translation>شاشات واسعة النطاق اللوني</translation>
+    </message>
+    <message>
+        <source>Print</source>
+        <translation>الطباعة</translation>
+    </message>
+    <message>
+        <source>Editing, archive</source>
+        <translation>التحرير، الأرشفة</translation>
+    </message>
+    <message>
+        <source>HDR, video</source>
+        <translation>HDR، فيديو</translation>
+    </message>
+    <message>
+        <source>Linear, VFX</source>
+        <translation>خطي، مؤثرات بصرية</translation>
+    </message>
+    <message>
+        <source>OpenEXR is written scene-linear in the chosen primaries.</source>
+        <translation>يُكتب OpenEXR خطيًا للمشهد بالألوان الأساسية المختارة.</translation>
+    </message>
+    <message>
+        <source>Rendering intent</source>
+        <translation>هدف العرض</translation>
+    </message>
+    <message>
+        <source>Compresses the whole gamut; colour relations are kept</source>
+        <translation>يضغط النطاق اللوني كاملًا؛ وتبقى العلاقات بين الألوان كما هي</translation>
     </message>
     <message>
         <source>Relative</source>
@@ -532,49 +568,54 @@
         <translation>ألوان دقيقة تشمل النقطة البيضاء للمصدر؛ للتجارب الطباعية</translation>
     </message>
     <message>
-        <source>Preserve Camera EXIF</source>
-        <translation>الاحتفاظ ببيانات EXIF للكاميرا</translation>
+        <source>Metadata</source>
+        <translation>البيانات الوصفية</translation>
     </message>
     <message>
-        <source>Strip GPS (Privacy)</source>
-        <translation>إزالة GPS (الخصوصية)</translation>
+        <source>Keep camera metadata (EXIF)</source>
+        <translation>الاحتفاظ ببيانات الكاميرا الوصفية (EXIF)</translation>
     </message>
     <message>
-        <source>Apply Photography Watermark / EXIF Signature</source>
-        <translation>إضافة علامة مائية / توقيع EXIF</translation>
+        <source>Remove location (GPS)</source>
+        <translation>إزالة الموقع (GPS)</translation>
     </message>
     <message>
-        <source>Exporting Batch...</source>
-        <translation>جارٍ تصدير الدفعة...</translation>
+        <source>Prepare for</source>
+        <translation>التجهيز لـ</translation>
     </message>
     <message>
-        <source>Exporting Full Resolution...</source>
-        <translation>جارٍ التصدير بالدقة الكاملة...</translation>
-    </message>
-    <message numerus="yes">
-        <source>Start Parallel Batch Export (%n Photos)</source>
-        <translation>
-            <numerusform>بدء تصدير دفعة متوازٍ (لا صور)</numerusform>
-            <numerusform>بدء تصدير دفعة متوازٍ (صورة واحدة)</numerusform>
-            <numerusform>بدء تصدير دفعة متوازٍ (صورتان)</numerusform>
-            <numerusform>بدء تصدير دفعة متوازٍ (%n صور)</numerusform>
-            <numerusform>بدء تصدير دفعة متوازٍ (%n صورة)</numerusform>
-            <numerusform>بدء تصدير دفعة متوازٍ (%n صورة)</numerusform>
-        </translation>
+        <source>Sets the crop and output sharpening for a platform. Reset restores your own.</source>
+        <translation>يضبط القص وزيادة الحدة عند الإخراج لمنصة ما. تعيد «إعادة الضبط» إعداداتك الخاصة.</translation>
     </message>
     <message>
-        <source>Start Export (%1 / %2)</source>
-        <translation>بدء التصدير (%1 / %2)</translation>
+        <source>Watermark</source>
+        <translation>علامة مائية</translation>
+    </message>
+    <message>
+        <source>Folder</source>
+        <translation>المجلد</translation>
+    </message>
+    <message>
+        <source>Hide</source>
+        <translation>إخفاء</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>إلغاء</translation>
+    </message>
+    <message>
+        <source>Exporting…</source>
+        <translation>جارٍ التصدير…</translation>
     </message>
 </context>
 <context>
     <name>FilmGrainPanel</name>
     <message>
-        <source>SILVER-HALIDE FILM GRAIN</source>
-        <translation>حبيبات فيلم هاليد الفضة</translation>
+        <source>Grain</source>
+        <translation>الحبيبات</translation>
     </message>
     <message>
-        <source>RESET</source>
+        <source>Reset</source>
         <translation>إعادة الضبط</translation>
     </message>
     <message>
@@ -709,12 +750,16 @@
         <translation>تباين سينمائي بانورامي 35 مم</translation>
     </message>
     <message>
-        <source>FILM SIMULATION &amp; SENSOR PROFILES</source>
-        <translation>محاكاة الأفلام وملفات المستشعر</translation>
+        <source>Profile</source>
+        <translation>ملف التعريف</translation>
     </message>
     <message>
-        <source>RESET</source>
+        <source>Reset</source>
         <translation>إعادة الضبط</translation>
+    </message>
+    <message>
+        <source>Amount</source>
+        <translation>المقدار</translation>
     </message>
     <message>
         <source>All</source>
@@ -724,17 +769,9 @@
         <source>Acros B&amp;W</source>
         <translation>Acros أبيض وأسود</translation>
     </message>
-    <message>
-        <source>SIMULATION INTENSITY</source>
-        <translation>شدة المحاكاة</translation>
-    </message>
 </context>
 <context>
     <name>Filmstrip</name>
-    <message>
-        <source>Local Photos</source>
-        <translation>الصور المحلية</translation>
-    </message>
     <message>
         <source>Studio Catalog</source>
         <translation>كتالوج الاستوديو</translation>
@@ -742,6 +779,14 @@
     <message>
         <source>Up</source>
         <translation>أعلى</translation>
+    </message>
+    <message>
+        <source>Folders</source>
+        <translation>المجلدات</translation>
+    </message>
+    <message>
+        <source>Catalog</source>
+        <translation>الكتالوج</translation>
     </message>
     <message>
         <source>Scanning Catalog...</source>
@@ -768,21 +813,20 @@
         <translation>لا توجد صور في هذا المجلد.</translation>
     </message>
     <message>
-        <source>DIR</source>
-        <comment>folder badge</comment>
-        <translation>مجلد</translation>
+        <source>Folder</source>
+        <translation>المجلد</translation>
     </message>
     <message>
-        <source>FETCHING</source>
-        <translation>جارٍ الجلب</translation>
+        <source>Downloading</source>
+        <translation>جارٍ التنزيل</translation>
     </message>
     <message>
-        <source>RAW CLOUD</source>
-        <translation>RAW في السحابة</translation>
+        <source>Remote</source>
+        <translation>بعيد</translation>
     </message>
     <message>
-        <source>NO PREVIEW</source>
-        <translation>لا معاينة</translation>
+        <source>No preview</source>
+        <translation>لا توجد معاينة</translation>
     </message>
     <message>
         <source>Loading...</source>
@@ -848,40 +892,60 @@
         <translation>وصفات Fujifilm</translation>
     </message>
     <message>
-        <source>FUJIFILM RECIPES</source>
-        <translation>وصفات FUJIFILM</translation>
-    </message>
-    <message>
-        <source>IMPORT</source>
+        <source>Import</source>
         <translation>استيراد</translation>
     </message>
     <message>
-        <source>APPLY PHOTO&apos;S RECIPE</source>
+        <source>Apply photo&apos;s recipe</source>
         <translation>تطبيق وصفة الصورة</translation>
     </message>
     <message>
-        <source>SAVE</source>
+        <source>Save</source>
         <translation>حفظ</translation>
+    </message>
+    <message>
+        <source>Apply recipe</source>
+        <translation>تطبيق الوصفة</translation>
+    </message>
+    <message>
+        <source>Camera (USB)</source>
+        <translation>الكاميرا (USB)</translation>
+    </message>
+    <message>
+        <source>Reconnect</source>
+        <translation>إعادة الاتصال</translation>
+    </message>
+    <message>
+        <source>Connect</source>
+        <translation>اتصال</translation>
+    </message>
+    <message>
+        <source>Read C1–C7</source>
+        <translation>قراءة C1–C7</translation>
+    </message>
+    <message>
+        <source>Convert in camera</source>
+        <translation>التحويل في الكاميرا</translation>
+    </message>
+    <message>
+        <source>Write recipe to C%1</source>
+        <translation>كتابة الوصفة في C%1</translation>
+    </message>
+    <message>
+        <source>Pixel shift</source>
+        <translation>إزاحة البكسل</translation>
+    </message>
+    <message>
+        <source>Merge %1 frames to DNG</source>
+        <translation>دمج %1 إطارات في DNG</translation>
+    </message>
+    <message>
+        <source>Merge frames to DNG</source>
+        <translation>دمج الإطارات في DNG</translation>
     </message>
     <message>
         <source>No saved recipes. Import an X RAW Studio profile, recipe text or a Fujifilm photo.</source>
         <translation>لا توجد وصفات محفوظة. استورد ملف تعريف X RAW Studio أو نص وصفة أو صورة Fujifilm.</translation>
-    </message>
-    <message>
-        <source>APPLY SELECTED RECIPE</source>
-        <translation>تطبيق الوصفة المحددة</translation>
-    </message>
-    <message>
-        <source>CAMERA (USB)</source>
-        <translation>الكاميرا (USB)</translation>
-    </message>
-    <message>
-        <source>RECONNECT</source>
-        <translation>إعادة الاتصال</translation>
-    </message>
-    <message>
-        <source>CONNECT</source>
-        <translation>اتصال</translation>
     </message>
     <message>
         <source>%1  ·  in-camera RAW conversion</source>
@@ -896,24 +960,8 @@
         <translation>اضبط وضع USB في الكاميرا على %1 ثم وصّلها.</translation>
     </message>
     <message>
-        <source>READ C1-C7</source>
-        <translation>قراءة C1-C7</translation>
-    </message>
-    <message>
-        <source>CONVERT IN CAMERA</source>
-        <translation>التحويل داخل الكاميرا</translation>
-    </message>
-    <message>
         <source>Unnamed</source>
         <translation>بلا اسم</translation>
-    </message>
-    <message>
-        <source>WRITE SELECTED RECIPE TO C%1</source>
-        <translation>كتابة الوصفة المحددة في C%1</translation>
-    </message>
-    <message>
-        <source>PIXEL SHIFT MULTI-SHOT</source>
-        <translation>Pixel Shift متعدد اللقطات</translation>
     </message>
     <message numerus="yes">
         <source>%n RAF frames selected. 4 frames give full colour per pixel, 16 frames double the resolution.</source>
@@ -930,27 +978,12 @@
         <source>Select the RAF frames of one GFX Pixel Shift sequence in the filmstrip.</source>
         <translation>حدد في شريط الصور لقطات RAF لتسلسل Pixel Shift واحد من GFX.</translation>
     </message>
-    <message numerus="yes">
-        <source>MERGE %n FRAMES TO DNG</source>
-        <translation>
-            <numerusform>دمج اللقطات في DNG</numerusform>
-            <numerusform>دمج لقطة واحدة في DNG</numerusform>
-            <numerusform>دمج لقطتين في DNG</numerusform>
-            <numerusform>دمج %n لقطات في DNG</numerusform>
-            <numerusform>دمج %n لقطة في DNG</numerusform>
-            <numerusform>دمج %n لقطة في DNG</numerusform>
-        </translation>
-    </message>
-    <message>
-        <source>MERGE FRAMES TO DNG</source>
-        <translation>دمج اللقطات في DNG</translation>
-    </message>
 </context>
 <context>
     <name>GradeVersionsBar</name>
     <message>
-        <source>GRADE VERSION</source>
-        <translation>نسخة التدريج اللوني</translation>
+        <source>Version</source>
+        <translation>النسخة</translation>
     </message>
 </context>
 <context>
@@ -961,8 +994,8 @@
         <translation>[ظ] %1%</translation>
     </message>
     <message>
-        <source>RGB HISTOGRAM</source>
-        <translation>المدرج التكراري RGB</translation>
+        <source>Histogram</source>
+        <translation>المدرج التكراري</translation>
     </message>
     <message>
         <source>[H] %1%</source>
@@ -1009,11 +1042,11 @@
         <translation>القناة %1</translation>
     </message>
     <message>
-        <source>RESET CH</source>
-        <translation>ضبط القناة</translation>
+        <source>Reset colour</source>
+        <translation>إعادة ضبط اللون</translation>
     </message>
     <message>
-        <source>RESET ALL</source>
+        <source>Reset all</source>
         <translation>إعادة ضبط الكل</translation>
     </message>
     <message>
@@ -1122,32 +1155,32 @@
         <translation>قناع %1 جاهز (%2)</translation>
     </message>
     <message>
-        <source>DETECTING...</source>
-        <translation>جارٍ الاكتشاف...</translation>
+        <source>Detecting…</source>
+        <translation>جارٍ الاكتشاف…</translation>
     </message>
     <message>
-        <source>LOCAL ADJUSTMENT LAYERS</source>
-        <translation>طبقات التعديل الموضعي</translation>
+        <source>Masks</source>
+        <translation>الأقنعة</translation>
     </message>
     <message>
-        <source>+ GRADIENT</source>
-        <translation>+ تدرج</translation>
+        <source>+ Linear</source>
+        <translation>+ خطي</translation>
+    </message>
+    <message>
+        <source>+ Radial</source>
+        <translation>+ شعاعي</translation>
+    </message>
+    <message>
+        <source>+ Luminance</source>
+        <translation>+ السطوع</translation>
     </message>
     <message>
         <source>Linear Gradient %1</source>
         <translation>تدرج خطي %1</translation>
     </message>
     <message>
-        <source>+ RADIAL</source>
-        <translation>+ شعاعي</translation>
-    </message>
-    <message>
         <source>Radial Mask %1</source>
         <translation>قناع شعاعي %1</translation>
-    </message>
-    <message>
-        <source>+ LUMA</source>
-        <translation>+ سطوع</translation>
     </message>
     <message>
         <source>Luma Range %1</source>
@@ -1165,10 +1198,6 @@
         <source>I</source>
         <comment>invert mask toggle, first letter of Invert</comment>
         <translation>ع</translation>
-    </message>
-    <message>
-        <source>SELECTED LAYER CONTROLS (%1)</source>
-        <translation>عناصر التحكم في الطبقة المحددة (%1)</translation>
     </message>
     <message>
         <source>Layer Opacity</source>
@@ -1190,48 +1219,32 @@
 <context>
     <name>LutSelector</name>
     <message>
-        <source>DAVINCI 3D LUT ENGINE (.CUBE)</source>
-        <translation>محرك DaVinci 3D LUT (.CUBE)</translation>
+        <source>Load 3D LUT</source>
+        <translation>تحميل LUT ثلاثي الأبعاد</translation>
     </message>
     <message>
-        <source>RESET</source>
+        <source>3D LUT</source>
+        <translation>LUT ثلاثي الأبعاد</translation>
+    </message>
+    <message>
+        <source>Reset</source>
         <translation>إعادة الضبط</translation>
     </message>
     <message>
-        <source>Hollywood Print</source>
-        <translation>نسخة هوليوود</translation>
+        <source>Load .cube file…</source>
+        <translation>تحميل ملف ‎.cube…</translation>
     </message>
     <message>
-        <source>Cinema Blockbuster</source>
-        <translation>فيلم سينمائي ضخم</translation>
+        <source>Saved look: %1</source>
+        <translation>المظهر المحفوظ: %1</translation>
     </message>
     <message>
-        <source>35mm Soft Stock</source>
-        <translation>فيلم 35 مم ناعم</translation>
-    </message>
-    <message>
-        <source>High-Acutance B&amp;W</source>
-        <translation>أبيض وأسود عالي الحدة</translation>
-    </message>
-    <message>
-        <source>LUT Intensity (Mix)</source>
-        <translation>شدة LUT (المزج)</translation>
+        <source>Amount</source>
+        <translation>المقدار</translation>
     </message>
 </context>
 <context>
     <name>MainWindow</name>
-    <message>
-        <source>Switched to version %1</source>
-        <translation>تم التبديل إلى النسخة %1</translation>
-    </message>
-    <message>
-        <source>Version %1 initialized</source>
-        <translation>أُنشئت النسخة %1</translation>
-    </message>
-    <message>
-        <source>Copied current grade to version %1</source>
-        <translation>نُسخ التدريج الحالي إلى النسخة %1</translation>
-    </message>
     <message numerus="yes">
         <source>Rating: %n star(s)</source>
         <translation>
@@ -1264,36 +1277,8 @@
         <translation>لا شيء للتراجع عنه</translation>
     </message>
     <message>
-        <source>Undo (Ctrl+Z)</source>
-        <translation>تراجع (Ctrl+Z)</translation>
-    </message>
-    <message>
         <source>Nothing to redo</source>
         <translation>لا شيء للإعادة</translation>
-    </message>
-    <message>
-        <source>Redo (Ctrl+Shift+Z)</source>
-        <translation>إعادة (Ctrl+Shift+Z)</translation>
-    </message>
-    <message>
-        <source>Adjustments copied (Ctrl+Shift+C)</source>
-        <translation>نُسخت التعديلات (Ctrl+Shift+C)</translation>
-    </message>
-    <message>
-        <source>No adjustments in clipboard</source>
-        <translation>لا توجد تعديلات في الحافظة</translation>
-    </message>
-    <message>
-        <source>Adjustments pasted (Ctrl+Shift+V)</source>
-        <translation>أُلصقت التعديلات (Ctrl+Shift+V)</translation>
-    </message>
-    <message>
-        <source>Reset to defaults (Ctrl+R)</source>
-        <translation>استُعيدت القيم الافتراضية (Ctrl+R)</translation>
-    </message>
-    <message>
-        <source>Social framing and adjustments reset</source>
-        <translation>أُعيد ضبط إطار التواصل الاجتماعي والتعديلات</translation>
     </message>
     <message>
         <source>Failed to load RAW: %1</source>
@@ -1316,28 +1301,8 @@
         <translation>فشل عرض المعاينة</translation>
     </message>
     <message>
-        <source>Auto tone applied</source>
-        <translation>طُبقت الدرجة التلقائية</translation>
-    </message>
-    <message>
-        <source>AI decisions applied</source>
-        <translation>طُبقت قرارات الذكاء الاصطناعي</translation>
-    </message>
-    <message>
-        <source>Local heuristic applied</source>
-        <translation>طُبق الاستدلال المحلي</translation>
-    </message>
-    <message>
         <source>%1 applied (%2)</source>
         <translation>طُبق %1 (%2)</translation>
-    </message>
-    <message>
-        <source>Recipe sidecar saved</source>
-        <translation>حُفظ الملف المرافق للوصفة</translation>
-    </message>
-    <message>
-        <source>Batch finished: %1/%2 photos exported</source>
-        <translation>انتهت الدفعة: صُدّرت %1/%2 صورة</translation>
     </message>
     <message>
         <source>Batch export: %1 succeeded, %2 failed</source>
@@ -1360,14 +1325,6 @@
         <translation>كُتب %1</translation>
     </message>
     <message>
-        <source>Analyzing dynamic range and scene...</source>
-        <translation>جارٍ تحليل النطاق الديناميكي والمشهد...</translation>
-    </message>
-    <message>
-        <source>Asking the AI for edit decisions...</source>
-        <translation>جارٍ طلب قرارات التحرير من الذكاء الاصطناعي...</translation>
-    </message>
-    <message>
         <source>Open RAW Photo</source>
         <translation>فتح صورة RAW</translation>
     </message>
@@ -1376,20 +1333,8 @@
         <translation>صور RAW</translation>
     </message>
     <message>
-        <source>Saved to: %1</source>
-        <translation>حُفظ في: %1</translation>
-    </message>
-    <message>
-        <source>Export error: %1</source>
-        <translation>خطأ في التصدير: %1</translation>
-    </message>
-    <message>
         <source>Export finished without a result</source>
         <translation>انتهى التصدير دون نتيجة</translation>
-    </message>
-    <message>
-        <source>The folder scan gave no answer</source>
-        <translation>لم يستجب فحص المجلد</translation>
     </message>
     <message>
         <source>Crop mode: on (C)</source>
@@ -1400,36 +1345,12 @@
         <translation>وضع القص: إيقاف</translation>
     </message>
     <message>
-        <source>Open a photo first to export</source>
-        <translation>افتح صورة أولًا لتصديرها</translation>
-    </message>
-    <message>
-        <source>Panels hidden (Tab)</source>
-        <translation>أُخفيت اللوحات (Tab)</translation>
-    </message>
-    <message>
-        <source>Panels restored (Tab)</source>
-        <translation>استُعيدت اللوحات (Tab)</translation>
-    </message>
-    <message>
-        <source>Optimizing for %1...</source>
-        <translation>جارٍ التحسين لـ %1...</translation>
-    </message>
-    <message>
-        <source>AI SCENE INSIGHT</source>
-        <translation>تحليل المشهد بالذكاء الاصطناعي</translation>
-    </message>
-    <message>
         <source>Analyzing...</source>
         <translation>جارٍ التحليل...</translation>
     </message>
     <message>
         <source>Extracting dynamic range...</source>
         <translation>جارٍ استخراج النطاق الديناميكي...</translation>
-    </message>
-    <message>
-        <source>Grade versions • Alt+1..4 to switch</source>
-        <translation>نسخ التدريج • Alt+1..4 للتبديل</translation>
     </message>
     <message>
         <source>Opened %1</source>
@@ -1440,36 +1361,8 @@
         <translation>جارٍ فحص المجلد %1</translation>
     </message>
     <message>
-        <source>AI edit applied</source>
-        <translation>طُبق تحرير الذكاء الاصطناعي</translation>
-    </message>
-    <message>
-        <source>ESSENTIAL ADJUSTMENTS</source>
-        <translation>التعديلات الأساسية</translation>
-    </message>
-    <message>
-        <source>RESET</source>
-        <translation>إعادة الضبط</translation>
-    </message>
-    <message>
-        <source>Exposure (Light)</source>
-        <translation>التعريض (الضوء)</translation>
-    </message>
-    <message>
-        <source>Warmth (Temperature)</source>
-        <translation>الدفء (الحرارة اللونية)</translation>
-    </message>
-    <message>
-        <source>Vibrance (Color Punch)</source>
-        <translation>الحيوية (قوة اللون)</translation>
-    </message>
-    <message>
         <source>Contrast</source>
         <translation>التباين</translation>
-    </message>
-    <message>
-        <source>WHITE BALANCE</source>
-        <translation>توازن اللون الأبيض</translation>
     </message>
     <message>
         <source>Temp (Kelvin)</source>
@@ -1478,10 +1371,6 @@
     <message>
         <source>Tint (Green / Magenta)</source>
         <translation>الصبغة (أخضر / أرجواني)</translation>
-    </message>
-    <message>
-        <source>LIGHT &amp; DYNAMIC RANGE</source>
-        <translation>الضوء والنطاق الديناميكي</translation>
     </message>
     <message>
         <source>Exposure</source>
@@ -1504,10 +1393,6 @@
         <translation>السوداء</translation>
     </message>
     <message>
-        <source>TONE CURVE (PARAMETRIC)</source>
-        <translation>منحنى الدرجات (بارامتري)</translation>
-    </message>
-    <message>
         <source>Curve Highlights</source>
         <translation>المنحنى: الإضاءات</translation>
     </message>
@@ -1522,10 +1407,6 @@
     <message>
         <source>Curve Shadows</source>
         <translation>المنحنى: الظلال</translation>
-    </message>
-    <message>
-        <source>PRESENCE &amp; TEXTURE</source>
-        <translation>الحضور والملمس</translation>
     </message>
     <message>
         <source>Texture</source>
@@ -1546,14 +1427,6 @@
     <message>
         <source>Saturation</source>
         <translation>التشبع</translation>
-    </message>
-    <message>
-        <source>COLOR MIXER (8-BAND HSL)</source>
-        <translation>خلاط الألوان (HSL بثماني نطاقات)</translation>
-    </message>
-    <message>
-        <source>DETAIL &amp; OPTICS</source>
-        <translation>التفاصيل والبصريات</translation>
     </message>
     <message>
         <source>Sharpening</source>
@@ -1584,12 +1457,200 @@
         <translation>افتح صورة أولًا</translation>
     </message>
     <message>
+        <source>Version %1</source>
+        <translation>الإصدار %1</translation>
+    </message>
+    <message>
+        <source>Version %1 started</source>
+        <translation>بدأت النسخة %1</translation>
+    </message>
+    <message>
+        <source>Copied to version %1</source>
+        <translation>نُسخ إلى النسخة %1</translation>
+    </message>
+    <message>
+        <source>Undo</source>
+        <translation>تراجع</translation>
+    </message>
+    <message>
+        <source>Redo</source>
+        <translation>إعادة</translation>
+    </message>
+    <message>
+        <source>Settings copied</source>
+        <translation>نُسخت الإعدادات</translation>
+    </message>
+    <message>
+        <source>Nothing copied yet</source>
+        <translation>لم يُنسخ أي شيء بعد</translation>
+    </message>
+    <message>
+        <source>Settings pasted</source>
+        <translation>لُصقت الإعدادات</translation>
+    </message>
+    <message>
+        <source>Reset to defaults</source>
+        <translation>أُعيدت القيم الافتراضية</translation>
+    </message>
+    <message>
+        <source>Platform crop reset</source>
+        <translation>أُعيد ضبط قص المنصة</translation>
+    </message>
+    <message>
+        <source>Auto applied</source>
+        <translation>طُبّق الضبط التلقائي</translation>
+    </message>
+    <message>
+        <source>Settings saved</source>
+        <translation>حُفظت الإعدادات</translation>
+    </message>
+    <message>
+        <source>%1 of %2 photos exported</source>
+        <translation>صُدّرت %1 من %2 صورة</translation>
+    </message>
+    <message>
+        <source>Auto: analysing the photo…</source>
+        <translation>تلقائي: جارٍ تحليل الصورة…</translation>
+    </message>
+    <message>
+        <source>Saved to %1</source>
+        <translation>حُفظ في %1</translation>
+    </message>
+    <message>
+        <source>Export failed</source>
+        <translation>فشل التصدير</translation>
+    </message>
+    <message>
+        <source>The scan did not respond.</source>
+        <translation>لم يستجب فحص المجلد.</translation>
+    </message>
+    <message>
+        <source>Rating: ★</source>
+        <translation>التقييم: ★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★</source>
+        <translation>التقييم: ★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★</source>
+        <translation>التقييم: ★★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★★</source>
+        <translation>التقييم: ★★★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★★★</source>
+        <translation>التقييم: ★★★★★</translation>
+    </message>
+    <message>
+        <source>Flag cleared</source>
+        <translation>أُزيلت العلامة</translation>
+    </message>
+    <message>
+        <source>Preparing for %1…</source>
+        <translation>جارٍ التجهيز لـ %1…</translation>
+    </message>
+    <message>
+        <source>Rating: %1</source>
+        <translation>التقييم: %1</translation>
+    </message>
+    <message>
+        <source>Picked</source>
+        <translation>مختارة</translation>
+    </message>
+    <message>
+        <source>Rejected</source>
+        <translation>مرفوضة</translation>
+    </message>
+    <message>
+        <source>Scene</source>
+        <translation>المشهد</translation>
+    </message>
+    <message>
+        <source>Adjust</source>
+        <translation>ضبط</translation>
+    </message>
+    <message>
+        <source>Masks</source>
+        <translation>الأقنعة</translation>
+    </message>
+    <message>
+        <source>Looks</source>
+        <translation>الأنماط</translation>
+    </message>
+    <message>
+        <source>AI</source>
+        <translation>الذكاء الاصطناعي</translation>
+    </message>
+    <message>
+        <source>Profile</source>
+        <translation>ملف التعريف</translation>
+    </message>
+    <message>
         <source>Color Chrome Effect</source>
         <translation>تأثير Color Chrome</translation>
     </message>
     <message>
         <source>Color Chrome FX Blue</source>
         <translation>Color Chrome FX الأزرق</translation>
+    </message>
+    <message>
+        <source>White balance</source>
+        <translation>توازن البياض</translation>
+    </message>
+    <message>
+        <source>Tone</source>
+        <translation>الدرجات اللونية</translation>
+    </message>
+    <message>
+        <source>Presence</source>
+        <translation>الحضور</translation>
+    </message>
+    <message>
+        <source>Tone curve</source>
+        <translation>منحنى الدرجات</translation>
+    </message>
+    <message>
+        <source>Colour mixer</source>
+        <translation>خلاط الألوان</translation>
+    </message>
+    <message>
+        <source>Colour grading</source>
+        <translation>تدريج الألوان</translation>
+    </message>
+    <message>
+        <source>Detail and optics</source>
+        <translation>التفاصيل والبصريات</translation>
+    </message>
+    <message>
+        <source>Grain</source>
+        <translation>الحبيبات</translation>
+    </message>
+    <message>
+        <source>Colour management</source>
+        <translation>إدارة الألوان</translation>
+    </message>
+    <message>
+        <source>Local adjustments</source>
+        <translation>التعديلات الموضعية</translation>
+    </message>
+    <message>
+        <source>Presets</source>
+        <translation>الإعدادات المسبقة</translation>
+    </message>
+    <message>
+        <source>LUT</source>
+        <translation>LUT</translation>
+    </message>
+    <message>
+        <source>Edit assistant</source>
+        <translation>مساعد التحرير</translation>
+    </message>
+    <message>
+        <source>Assistant edit applied</source>
+        <translation>طُبّق تحرير المساعد</translation>
     </message>
     <message>
         <source>Copy</source>
@@ -1624,34 +1685,34 @@
         <translation>جارٍ فتح %1</translation>
     </message>
     <message>
-        <source>Loading the studio catalog...</source>
-        <translation>جارٍ تحميل كتالوج الاستوديو...</translation>
+        <source>Loading the catalog…</source>
+        <translation>جارٍ تحميل الكتالوج…</translation>
     </message>
     <message>
-        <source>Refreshing the studio catalog...</source>
-        <translation>جارٍ تحديث كتالوج الاستوديو...</translation>
+        <source>Refreshing the catalog…</source>
+        <translation>جارٍ تحديث الكتالوج…</translation>
     </message>
     <message numerus="yes">
-        <source>Exporting %n photo(s) in parallel...</source>
+        <source>Exporting %n photos…</source>
         <translation>
-            <numerusform>لا صور للتصدير...</numerusform>
-            <numerusform>جارٍ تصدير صورة واحدة بالتوازي...</numerusform>
-            <numerusform>جارٍ تصدير صورتين بالتوازي...</numerusform>
-            <numerusform>جارٍ تصدير %n صور بالتوازي...</numerusform>
-            <numerusform>جارٍ تصدير %n صورة بالتوازي...</numerusform>
-            <numerusform>جارٍ تصدير %n صورة بالتوازي...</numerusform>
+            <numerusform>جارٍ تصدير %n صورة…</numerusform>
+            <numerusform>جارٍ تصدير صورة واحدة…</numerusform>
+            <numerusform>جارٍ تصدير صورتين…</numerusform>
+            <numerusform>جارٍ تصدير %n صور…</numerusform>
+            <numerusform>جارٍ تصدير %n صورة…</numerusform>
+            <numerusform>جارٍ تصدير %n صورة…</numerusform>
         </translation>
     </message>
     <message>
-        <source>Developing at full resolution and encoding...</source>
-        <translation>جارٍ التحميض بالدقة الكاملة والترميز...</translation>
+        <source>Developing at full resolution…</source>
+        <translation>جارٍ التحميض بالدقة الكاملة…</translation>
     </message>
 </context>
 <context>
     <name>Navigator</name>
     <message>
-        <source>NAVIGATOR</source>
-        <translation>المتصفح المصغّر</translation>
+        <source>Navigator</source>
+        <translation>المتصفح</translation>
     </message>
     <message>
         <source>FIT</source>
@@ -1659,65 +1720,92 @@
     </message>
 </context>
 <context>
+    <name>PanelSection</name>
+    <message>
+        <source>Reset %1</source>
+        <translation>إعادة ضبط %1</translation>
+    </message>
+</context>
+<context>
     <name>PresetSelector</name>
     <message>
-        <source>FILM LOOKS &amp; STYLES</source>
-        <translation>مظاهر وأنماط الأفلام</translation>
+        <source>Looks</source>
+        <translation>الأنماط</translation>
     </message>
     <message>
-        <source>RESET</source>
+        <source>Reset</source>
         <translation>إعادة الضبط</translation>
     </message>
     <message>
-        <source>AI Auto Enhance</source>
-        <translation>تحسين تلقائي بالذكاء الاصطناعي</translation>
+        <source>Auto</source>
+        <translation>تلقائي</translation>
     </message>
     <message>
-        <source>RUN</source>
+        <source>Run</source>
         <translation>تشغيل</translation>
     </message>
     <message>
-        <source>Documentary Muted</source>
-        <translation>وثائقي خافت</translation>
+        <source>Muted</source>
+        <translation>هادئ</translation>
     </message>
     <message>
-        <source>Vivid Landscapes</source>
-        <translation>مناظر طبيعية حيوية</translation>
+        <source>Documentary, low saturation</source>
+        <translation>وثائقي، تشبع منخفض</translation>
     </message>
     <message>
-        <source>Warm Skin Tones</source>
-        <translation>درجات بشرة دافئة</translation>
+        <source>Vivid</source>
+        <translation>زاهٍ</translation>
     </message>
     <message>
-        <source>High Contrast B&amp;W</source>
-        <translation>أبيض وأسود عالي التباين</translation>
+        <source>Landscapes, rich colour</source>
+        <translation>مناظر طبيعية، ألوان غنية</translation>
     </message>
     <message>
-        <source>Film Grade</source>
-        <translation>تدريج سينمائي</translation>
+        <source>Warm portrait</source>
+        <translation>بورتريه دافئ</translation>
+    </message>
+    <message>
+        <source>Soft contrast, warm skin</source>
+        <translation>تباين ناعم، بشرة دافئة</translation>
+    </message>
+    <message>
+        <source>Black and white</source>
+        <translation>أبيض وأسود</translation>
+    </message>
+    <message>
+        <source>High contrast</source>
+        <translation>تباين عالٍ</translation>
+    </message>
+    <message>
+        <source>Teal and orange</source>
+        <translation>أزرق مخضر وبرتقالي</translation>
+    </message>
+    <message>
+        <source>Split toning</source>
+        <translation>تلوين منقسم</translation>
     </message>
 </context>
 <context>
     <name>RgbMixerPanel</name>
     <message>
-        <source>DAVINCI RGB PRIMARY MIXER</source>
-        <translation>خلاط RGB الأساسي DaVinci</translation>
-    </message>
-    <message>
-        <source>RESET</source>
-        <translation>إعادة الضبط</translation>
-    </message>
-    <message>
         <source>Monochrome Mixing</source>
         <translation>مزج أحادي اللون</translation>
     </message>
     <message>
-        <source>MONOCHROME LUMA MIX</source>
-        <translation>مزج السطوع أحادي اللون</translation>
+        <source>Channel mixer</source>
+        <translation>خلاط القنوات</translation>
     </message>
     <message>
-        <source>RED OUTPUT CHANNEL</source>
-        <translation>قناة الإخراج الحمراء</translation>
+        <source>Reset</source>
+        <translation>إعادة الضبط</translation>
+    </message>
+    <message>
+        <source>Monochrome mix</source>
+        <translation>مزج أحادي اللون</translation>
+    </message>
+    <message>
+        <source>Red output</source>
+        <translation>خرج الأحمر</translation>
     </message>
     <message>
         <source>Red in Red</source>
@@ -1732,8 +1820,12 @@
         <translation>الأزرق في الأحمر</translation>
     </message>
     <message>
-        <source>GREEN OUTPUT CHANNEL</source>
-        <translation>قناة الإخراج الخضراء</translation>
+        <source>Green output</source>
+        <translation>خرج الأخضر</translation>
+    </message>
+    <message>
+        <source>Blue output</source>
+        <translation>خرج الأزرق</translation>
     </message>
     <message>
         <source>Red in Green</source>
@@ -1746,10 +1838,6 @@
     <message>
         <source>Blue in Green</source>
         <translation>الأزرق في الأخضر</translation>
-    </message>
-    <message>
-        <source>BLUE OUTPUT CHANNEL</source>
-        <translation>قناة الإخراج الزرقاء</translation>
     </message>
     <message>
         <source>Red in Blue</source>
@@ -1793,8 +1881,8 @@
         <translation>[إ] %1%</translation>
     </message>
     <message>
-        <source>NO SIGNAL / LOAD RAW</source>
-        <translation>لا إشارة / حمّل RAW</translation>
+        <source>No photo</source>
+        <translation>لا توجد صورة</translation>
     </message>
     <message>
         <source>RED</source>
@@ -1816,11 +1904,11 @@
 <context>
     <name>SkinTonePanel</name>
     <message>
-        <source>CAPTURE ONE SKIN TONE</source>
-        <translation>درجة البشرة في Capture One</translation>
+        <source>Skin tone</source>
+        <translation>لون البشرة</translation>
     </message>
     <message>
-        <source>RESET</source>
+        <source>Reset</source>
         <translation>إعادة الضبط</translation>
     </message>
     <message>
@@ -1862,52 +1950,28 @@
 <context>
     <name>SocialOptimizer</name>
     <message>
-        <source>AI SOCIAL MEDIA OPTIMIZER</source>
-        <translation>محسّن التواصل الاجتماعي بالذكاء الاصطناعي</translation>
+        <source>Prepare for</source>
+        <translation>التجهيز لـ</translation>
     </message>
     <message>
-        <source>RESET</source>
+        <source>Reset</source>
         <translation>إعادة الضبط</translation>
     </message>
     <message>
-        <source>Instagram Feed</source>
-        <translation>موجز Instagram</translation>
+        <source>Instagram post</source>
+        <translation>منشور إنستغرام</translation>
     </message>
     <message>
-        <source>Max Screen</source>
-        <translation>أقصى شاشة</translation>
+        <source>Stories and Reels</source>
+        <translation>القصص وReels</translation>
     </message>
     <message>
-        <source>Stories / Reels</source>
-        <translation>القصص / Reels</translation>
+        <source>Square</source>
+        <translation>مربع</translation>
     </message>
     <message>
-        <source>Full Mobile</source>
-        <translation>شاشة الجوال الكاملة</translation>
-    </message>
-    <message>
-        <source>Crisp Feed</source>
-        <translation>موجز واضح</translation>
-    </message>
-    <message>
-        <source>Classic Square</source>
-        <translation>مربع كلاسيكي</translation>
-    </message>
-    <message>
-        <source>Grid Post</source>
-        <translation>منشور الشبكة</translation>
-    </message>
-    <message>
-        <source>High Res</source>
-        <translation>دقة عالية</translation>
-    </message>
-    <message>
-        <source>YouTube Thumb</source>
-        <translation>صورة مصغرة لـ YouTube</translation>
-    </message>
-    <message>
-        <source>High CTR</source>
-        <translation>نسبة نقر عالية</translation>
+        <source>YouTube thumbnail</source>
+        <translation>صورة مصغرة ليوتيوب</translation>
     </message>
 </context>
 <context>
@@ -1942,8 +2006,8 @@
         <translation>الأساسيات</translation>
     </message>
     <message>
-        <source>Pro Studio</source>
-        <translation>Pro Studio</translation>
+        <source>Pro</source>
+        <translation>Pro</translation>
     </message>
     <message>
         <source>Undo (Ctrl+Z)</source>
@@ -1981,16 +2045,16 @@
 <context>
     <name>Viewport</name>
     <message>
-        <source>RESET 0°</source>
+        <source>Reset 0°</source>
         <translation>إعادة الضبط إلى 0°</translation>
     </message>
     <message>
-        <source>FIT</source>
+        <source>Fit</source>
         <translation>ملاءمة</translation>
     </message>
     <message>
-        <source>CROP &amp; COMPOSE</source>
-        <translation>القص والتكوين</translation>
+        <source>Crop</source>
+        <translation>قص</translation>
     </message>
     <message>
         <source>Original</source>
@@ -2017,12 +2081,20 @@
         <translation>الشبكة: إيقاف</translation>
     </message>
     <message>
-        <source>RESET</source>
+        <source>Reset</source>
         <translation>إعادة الضبط</translation>
     </message>
     <message>
-        <source>DONE</source>
+        <source>Done</source>
         <translation>تم</translation>
+    </message>
+    <message>
+        <source>Shadow clipping</source>
+        <translation>قص الظلال</translation>
+    </message>
+    <message>
+        <source>Highlight clipping</source>
+        <translation>قص الإضاءات العالية</translation>
     </message>
     <message>
         <source>ORIGINAL RAW (Before)</source>
@@ -2031,18 +2103,6 @@
     <message>
         <source>EDITED RECIPE (After)</source>
         <translation>الوصفة المحررة (بعد)</translation>
-    </message>
-    <message>
-        <source>[S] SHADOW CLIPPING (BLUE)</source>
-        <translation>[ظ] قص الظلال (أزرق)</translation>
-    </message>
-    <message>
-        <source>[H] HIGHLIGHT CLIPPING (RED)</source>
-        <translation>[إ] قص الإضاءات (أحمر)</translation>
-    </message>
-    <message>
-        <source>Pinch: Zoom | 2-Finger Twist: Rotate | 2-Finger Pan | Double-Tap: Reset</source>
-        <translation>قرص: تكبير | لف بإصبعين: تدوير | سحب بإصبعين | نقر مزدوج: إعادة ضبط</translation>
     </message>
     <message>
         <source>Open a RAW (Ctrl+O) or drop a photo / folder here</source>
@@ -2056,8 +2116,8 @@
 <context>
     <name>WatermarkConfig</name>
     <message>
-        <source>WATERMARK &amp; BRANDING</source>
-        <translation>العلامة المائية والهوية</translation>
+        <source>Watermark</source>
+        <translation>علامة مائية</translation>
     </message>
     <message>
         <source>Text / EXIF Tag</source>
@@ -2068,28 +2128,28 @@
         <translation>شعار PNG مخصص</translation>
     </message>
     <message>
-        <source>WATERMARK TEXT OR TEMPLATE</source>
-        <translation>نص العلامة المائية أو قالبها</translation>
+        <source>Text or template</source>
+        <translation>نص أو قالب</translation>
     </message>
     <message>
-        <source>LOGO FILE PATH (.PNG)</source>
-        <translation>مسار ملف الشعار (.PNG)</translation>
+        <source>Logo file (PNG)</source>
+        <translation>ملف الشعار (PNG)</translation>
     </message>
     <message>
-        <source>POSITION</source>
+        <source>Position</source>
         <translation>الموضع</translation>
+    </message>
+    <message>
+        <source>Opacity</source>
+        <translation>العتامة</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>الحجم</translation>
     </message>
     <message>
         <source>Drop Shadow</source>
         <translation>ظل مُسقط</translation>
-    </message>
-    <message>
-        <source>OPACITY</source>
-        <translation>العتامة</translation>
-    </message>
-    <message>
-        <source>SIZE MULTIPLIER</source>
-        <translation>مضاعف الحجم</translation>
     </message>
 </context>
 </TS>

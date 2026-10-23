@@ -8,6 +8,8 @@ import OmaStudio.Host
 // adjustments from a request in plain words. Provider setup stores API keys in the Secret Service through the engine.
 ColumnLayout {
     id: root
+    // Inside a panel section, which shows the title
+    property bool embedded: false
     spacing: 8
     Layout.fillWidth: true
 
@@ -188,8 +190,9 @@ ColumnLayout {
         Layout.fillWidth: true
         spacing: 4
         Text {
+            visible: !root.embedded
             font.family: Theme.fontFamily
-            text: qsTr("AI EDIT ASSISTANT")
+            text: qsTr("Assistant")
             textFormat: Text.PlainText
             font.pixelSize: Theme.px(10)
             font.weight: Font.DemiBold
@@ -197,8 +200,9 @@ ColumnLayout {
             color: Theme.textDim
             Layout.fillWidth: true
         }
+        Item { Layout.fillWidth: true; visible: root.embedded }
         SmallButton {
-            label: root.showSetup ? qsTr("DONE") : qsTr("SETUP")
+            label: root.showSetup ? qsTr("Done") : qsTr("Set up")
             onClicked: {
                 root.showSetup = !root.showSetup;
                 if (root.showSetup) root.refresh();
@@ -235,7 +239,7 @@ ColumnLayout {
     SmallButton {
         Layout.fillWidth: true
         primary: true
-        label: root.busy ? qsTr("THINKING...") : qsTr("EDIT WITH AI")
+        label: root.busy ? qsTr("Working…") : qsTr("Edit")
         enabled: !root.busy && root.activePhotoPath !== ""
         onClicked: root.runEdit()
     }
@@ -360,7 +364,7 @@ ColumnLayout {
                 }
             }
             SmallButton {
-                label: qsTr("STORE KEY")
+                label: qsTr("Store key")
                 enabled: keyInput.text.length > 0 && !setupProc.running
                 onClicked: root.storeKey()
             }
@@ -369,7 +373,7 @@ ColumnLayout {
         SmallButton {
             visible: root.setupProvider !== ""
             Layout.fillWidth: true
-            label: qsTr("USE %1").arg(root.providerName(root.setupProvider).toUpperCase())
+            label: qsTr("Use %1").arg(root.providerName(root.setupProvider))
             enabled: !setupProc.running
             onClicked: root.useProvider()
         }

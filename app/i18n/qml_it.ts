@@ -175,28 +175,36 @@
         <translation>Errore</translation>
     </message>
     <message>
-        <source>AI EDIT ASSISTANT</source>
-        <translation>ASSISTENTE DI MODIFICA IA</translation>
+        <source>Assistant</source>
+        <translation>Assistente</translation>
     </message>
     <message>
-        <source>DONE</source>
-        <translation>FATTO</translation>
+        <source>Done</source>
+        <translation>Fatto</translation>
     </message>
     <message>
-        <source>SETUP</source>
-        <translation>CONFIGURA</translation>
+        <source>Set up</source>
+        <translation>Configura</translation>
+    </message>
+    <message>
+        <source>Working…</source>
+        <translation>Elaborazione…</translation>
+    </message>
+    <message>
+        <source>Edit</source>
+        <translation>Modifica</translation>
+    </message>
+    <message>
+        <source>Store key</source>
+        <translation>Salva chiave</translation>
+    </message>
+    <message>
+        <source>Use %1</source>
+        <translation>Usa %1</translation>
     </message>
     <message>
         <source>e.g. warmer, moody evening light, recover the sky</source>
         <translation>ad es. più caldo, luce serale cupa, recupera il cielo</translation>
-    </message>
-    <message>
-        <source>THINKING...</source>
-        <translation>ELABORAZIONE...</translation>
-    </message>
-    <message>
-        <source>EDIT WITH AI</source>
-        <translation>MODIFICA CON IA</translation>
     </message>
     <message>
         <source>Running. Models: %1</source>
@@ -222,14 +230,6 @@
         <source>API key</source>
         <translation>Chiave API</translation>
     </message>
-    <message>
-        <source>STORE KEY</source>
-        <translation>SALVA CHIAVE</translation>
-    </message>
-    <message>
-        <source>USE %1</source>
-        <translation>USA %1</translation>
-    </message>
 </context>
 <context>
     <name>BoundedTextInput</name>
@@ -241,48 +241,16 @@
 <context>
     <name>ColorGradingWheels</name>
     <message>
-        <source>DAVINCI PRIMARIES WHEELS</source>
-        <translation>RUOTE PRIMARIE DAVINCI</translation>
-    </message>
-    <message>
-        <source>4-WHEEL</source>
-        <translation>4 RUOTE</translation>
-    </message>
-    <message>
-        <source>TABBED</source>
-        <translation>SCHEDE</translation>
-    </message>
-    <message>
-        <source>RESET</source>
-        <translation>RIPRISTINA</translation>
-    </message>
-    <message>
-        <source>LIFT</source>
-        <translation>LIFT</translation>
-    </message>
-    <message>
         <source>Shadows</source>
         <translation>Ombre</translation>
-    </message>
-    <message>
-        <source>GAMMA</source>
-        <translation>GAMMA</translation>
     </message>
     <message>
         <source>Mids</source>
         <translation>Medi</translation>
     </message>
     <message>
-        <source>GAIN</source>
-        <translation>GAIN</translation>
-    </message>
-    <message>
         <source>Highlights</source>
         <translation>Luci</translation>
-    </message>
-    <message>
-        <source>OFFSET</source>
-        <translation>OFFSET</translation>
     </message>
     <message>
         <source>Global</source>
@@ -307,6 +275,22 @@
     <message>
         <source>Lift</source>
         <translation>Lift</translation>
+    </message>
+    <message>
+        <source>Colour grading</source>
+        <translation>Correzione colore</translation>
+    </message>
+    <message>
+        <source>4 wheels</source>
+        <translation>4 ruote</translation>
+    </message>
+    <message>
+        <source>Tabs</source>
+        <translation>Schede</translation>
+    </message>
+    <message>
+        <source>Reset</source>
+        <translation>Ripristina</translation>
     </message>
     <message>
         <source>Gamma</source>
@@ -368,8 +352,12 @@
         <translation>AP1 ampio</translation>
     </message>
     <message>
-        <source>COLOR MANAGEMENT &amp; ACES 1.3</source>
-        <translation>GESTIONE DEL COLORE E ACES 1.3</translation>
+        <source>Colour management</source>
+        <translation>Gestione del colore</translation>
+    </message>
+    <message>
+        <source>Gamut compression</source>
+        <translation>Compressione della gamma</translation>
     </message>
     <message>
         <source>%1 (%2)</source>
@@ -394,114 +382,162 @@
 <context>
     <name>ExifCard</name>
     <message>
-        <source>No camera loaded</source>
-        <translation>Nessuna fotocamera caricata</translation>
-    </message>
-    <message>
-        <source>Unknown lens</source>
-        <translation>Obiettivo sconosciuto</translation>
+        <source>No photo</source>
+        <translation>Nessuna foto</translation>
     </message>
 </context>
 <context>
     <name>ExportDialog</name>
-    <message numerus="yes">
-        <source>Batch Export (%n Photos)</source>
-        <translation>
-            <numerusform>Esportazione in blocco (%n foto)</numerusform>
-            <numerusform>Esportazione in blocco (%n foto)</numerusform>
-        </translation>
-    </message>
-    <message>
-        <source>Export Master Photo</source>
-        <translation>Esporta foto master</translation>
-    </message>
-    <message>
-        <source>MODERN OPEN FORMAT</source>
-        <translation>FORMATO APERTO MODERNO</translation>
-    </message>
-    <message>
-        <source>Next-Gen 16-bit HDR</source>
-        <translation>HDR a 16 bit di nuova generazione</translation>
-    </message>
-    <message>
-        <source>AV1 Web/Mobile</source>
-        <translation>AV1 web/mobile</translation>
-    </message>
-    <message>
-        <source>Ultra Compact</source>
-        <translation>Ultra compatto</translation>
-    </message>
-    <message>
-        <source>16-bit TIFF</source>
-        <translation>TIFF a 16 bit</translation>
-    </message>
-    <message>
-        <source>Master Print Lossless</source>
-        <translation>Stampa master senza perdita</translation>
-    </message>
-    <message>
-        <source>Graphic Lossless</source>
-        <translation>Grafica senza perdita</translation>
-    </message>
-    <message>
-        <source>Universal MozJPEG</source>
-        <translation>MozJPEG universale</translation>
-    </message>
-    <message>
-        <source>Export Compression Quality</source>
-        <translation>Qualità di compressione dell&apos;esportazione</translation>
-    </message>
-    <message>
-        <source>RESOLUTION &amp; SCALING</source>
-        <translation>RISOLUZIONE E SCALA</translation>
-    </message>
-    <message>
-        <source>100% Full</source>
-        <translation>100% piena</translation>
-    </message>
-    <message>
-        <source>Social (2048p)</source>
-        <translation>Social (2048p)</translation>
-    </message>
-    <message>
-        <source>COLOR SPACE &amp; ICC PROFILE</source>
-        <translation>SPAZIO COLORE E PROFILO ICC</translation>
-    </message>
-    <message>
-        <source>Universal Web / Social</source>
-        <translation>Web / social universale</translation>
-    </message>
-    <message>
-        <source>Apple / Wide OLED</source>
-        <translation>Apple / OLED ampio</translation>
-    </message>
-    <message>
-        <source>Ultra-Wide Gamut HDR</source>
-        <translation>HDR a gamut ultra ampio</translation>
-    </message>
-    <message>
-        <source>Academy Color Standard</source>
-        <translation>Standard colore dell&apos;Academy</translation>
-    </message>
-    <message>
-        <source>Pro Photography / Print</source>
-        <translation>Fotografia professionale / stampa</translation>
-    </message>
-    <message>
-        <source>16-Bit Master Archival</source>
-        <translation>Archivio master a 16 bit</translation>
-    </message>
-    <message>
-        <source>Intent</source>
-        <translation>Intento</translation>
-    </message>
     <message>
         <source>Perceptual</source>
         <translation>Percettivo</translation>
     </message>
     <message>
-        <source>Compresses the whole gamut; smooth, saturated colours keep their relations</source>
-        <translation>Comprime l&apos;intero gamut; i colori morbidi e saturi mantengono i loro rapporti</translation>
+        <source>8-bit · universal</source>
+        <translation>8 bit · universale</translation>
+    </message>
+    <message>
+        <source>16-bit · lossless</source>
+        <translation>16 bit · senza perdita</translation>
+    </message>
+    <message>
+        <source>16-bit · print, archive</source>
+        <translation>16 bit · stampa, archivio</translation>
+    </message>
+    <message>
+        <source>8-bit · web</source>
+        <translation>8 bit · web</translation>
+    </message>
+    <message>
+        <source>12-bit · HDR-ready</source>
+        <translation>12 bit · pronto per HDR</translation>
+    </message>
+    <message>
+        <source>10-bit · HEVC</source>
+        <translation>10 bit · HEVC</translation>
+    </message>
+    <message>
+        <source>16-bit · modern</source>
+        <translation>16 bit · moderno</translation>
+    </message>
+    <message>
+        <source>Float · scene-linear</source>
+        <translation>Virgola mobile · lineare di scena</translation>
+    </message>
+    <message numerus="yes">
+        <source>Export %n photos</source>
+        <translation>
+            <numerusform>Esporta %n foto</numerusform>
+            <numerusform>Esporta %n foto</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>Export</source>
+        <translation>Esporta</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>Chiudi</translation>
+    </message>
+    <message>
+        <source>Format</source>
+        <translation>Formato</translation>
+    </message>
+    <message>
+        <source>Quality</source>
+        <translation>Qualità</translation>
+    </message>
+    <message>
+        <source>100 is lossless.</source>
+        <translation>100 equivale a senza perdita.</translation>
+    </message>
+    <message>
+        <source>Bit depth</source>
+        <translation>Profondità di bit</translation>
+    </message>
+    <message>
+        <source>Half float</source>
+        <translation>Mezza precisione in virgola mobile</translation>
+    </message>
+    <message>
+        <source>Full float</source>
+        <translation>Precisione completa in virgola mobile</translation>
+    </message>
+    <message>
+        <source>%1-bit</source>
+        <translation>%1 bit</translation>
+    </message>
+    <message>
+        <source>Compression</source>
+        <translation>Compressione</translation>
+    </message>
+    <message>
+        <source>None</source>
+        <translation>Nessuna</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>Dimensioni</translation>
+    </message>
+    <message>
+        <source>Full</source>
+        <translation>Piena</translation>
+    </message>
+    <message>
+        <source>3840 px</source>
+        <translation>3840 px</translation>
+    </message>
+    <message>
+        <source>Long edge at most 3840 px</source>
+        <translation>Lato lungo di massimo 3840 px</translation>
+    </message>
+    <message>
+        <source>2048 px</source>
+        <translation>2048 px</translation>
+    </message>
+    <message>
+        <source>Long edge at most 2048 px</source>
+        <translation>Lato lungo di massimo 2048 px</translation>
+    </message>
+    <message>
+        <source>Colour profile</source>
+        <translation>Profilo colore</translation>
+    </message>
+    <message>
+        <source>Web, screens</source>
+        <translation>Web, schermi</translation>
+    </message>
+    <message>
+        <source>Wide-gamut screens</source>
+        <translation>Schermi ad ampia gamma</translation>
+    </message>
+    <message>
+        <source>Print</source>
+        <translation>Stampa</translation>
+    </message>
+    <message>
+        <source>Editing, archive</source>
+        <translation>Modifica, archivio</translation>
+    </message>
+    <message>
+        <source>HDR, video</source>
+        <translation>HDR, video</translation>
+    </message>
+    <message>
+        <source>Linear, VFX</source>
+        <translation>Lineare, effetti visivi</translation>
+    </message>
+    <message>
+        <source>OpenEXR is written scene-linear in the chosen primaries.</source>
+        <translation>OpenEXR viene scritto lineare di scena nei primari scelti.</translation>
+    </message>
+    <message>
+        <source>Rendering intent</source>
+        <translation>Intento di rendering</translation>
+    </message>
+    <message>
+        <source>Compresses the whole gamut; colour relations are kept</source>
+        <translation>Comprime l&apos;intera gamma; i rapporti tra i colori restano invariati</translation>
     </message>
     <message>
         <source>Relative</source>
@@ -528,46 +564,55 @@
         <translation>Colori esatti incluso il punto di bianco di origine; per le prove</translation>
     </message>
     <message>
-        <source>Preserve Camera EXIF</source>
-        <translation>Conserva EXIF della fotocamera</translation>
+        <source>Metadata</source>
+        <translation>Metadati</translation>
     </message>
     <message>
-        <source>Strip GPS (Privacy)</source>
-        <translation>Rimuovi GPS (privacy)</translation>
+        <source>Keep camera metadata (EXIF)</source>
+        <translation>Mantieni i metadati della fotocamera (EXIF)</translation>
     </message>
     <message>
-        <source>Apply Photography Watermark / EXIF Signature</source>
-        <translation>Applica filigrana / firma EXIF</translation>
+        <source>Remove location (GPS)</source>
+        <translation>Rimuovi la posizione (GPS)</translation>
     </message>
     <message>
-        <source>Exporting Batch...</source>
-        <translation>Esportazione in blocco...</translation>
+        <source>Prepare for</source>
+        <translation>Prepara per</translation>
     </message>
     <message>
-        <source>Exporting Full Resolution...</source>
-        <translation>Esportazione a piena risoluzione...</translation>
-    </message>
-    <message numerus="yes">
-        <source>Start Parallel Batch Export (%n Photos)</source>
-        <translation>
-            <numerusform>Avvia esportazione in blocco parallela (%n foto)</numerusform>
-            <numerusform>Avvia esportazione in blocco parallela (%n foto)</numerusform>
-        </translation>
+        <source>Sets the crop and output sharpening for a platform. Reset restores your own.</source>
+        <translation>Imposta il ritaglio e la nitidezza di uscita per una piattaforma. Ripristina riporta le tue impostazioni.</translation>
     </message>
     <message>
-        <source>Start Export (%1 / %2)</source>
-        <translation>Avvia esportazione (%1 / %2)</translation>
+        <source>Watermark</source>
+        <translation>Filigrana</translation>
+    </message>
+    <message>
+        <source>Folder</source>
+        <translation>Cartella</translation>
+    </message>
+    <message>
+        <source>Hide</source>
+        <translation>Nascondi</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Annulla</translation>
+    </message>
+    <message>
+        <source>Exporting…</source>
+        <translation>Esportazione…</translation>
     </message>
 </context>
 <context>
     <name>FilmGrainPanel</name>
     <message>
-        <source>SILVER-HALIDE FILM GRAIN</source>
-        <translation>GRANA DI PELLICOLA AGLI ALOGENURI D&apos;ARGENTO</translation>
+        <source>Grain</source>
+        <translation>Grana</translation>
     </message>
     <message>
-        <source>RESET</source>
-        <translation>RIPRISTINA</translation>
+        <source>Reset</source>
+        <translation>Ripristina</translation>
     </message>
     <message>
         <source>Grain Amount</source>
@@ -701,12 +746,16 @@
         <translation>Contrasto cinematografico panoramico 35 mm</translation>
     </message>
     <message>
-        <source>FILM SIMULATION &amp; SENSOR PROFILES</source>
-        <translation>SIMULAZIONE PELLICOLA E PROFILI SENSORE</translation>
+        <source>Profile</source>
+        <translation>Profilo</translation>
     </message>
     <message>
-        <source>RESET</source>
-        <translation>RIPRISTINA</translation>
+        <source>Reset</source>
+        <translation>Ripristina</translation>
+    </message>
+    <message>
+        <source>Amount</source>
+        <translation>Intensità</translation>
     </message>
     <message>
         <source>All</source>
@@ -716,17 +765,9 @@
         <source>Acros B&amp;W</source>
         <translation>Acros B/N</translation>
     </message>
-    <message>
-        <source>SIMULATION INTENSITY</source>
-        <translation>INTENSITÀ DELLA SIMULAZIONE</translation>
-    </message>
 </context>
 <context>
     <name>Filmstrip</name>
-    <message>
-        <source>Local Photos</source>
-        <translation>Foto locali</translation>
-    </message>
     <message>
         <source>Studio Catalog</source>
         <translation>Catalogo dello studio</translation>
@@ -734,6 +775,14 @@
     <message>
         <source>Up</source>
         <translation>Su</translation>
+    </message>
+    <message>
+        <source>Folders</source>
+        <translation>Cartelle</translation>
+    </message>
+    <message>
+        <source>Catalog</source>
+        <translation>Catalogo</translation>
     </message>
     <message>
         <source>Scanning Catalog...</source>
@@ -760,21 +809,20 @@
         <translation>Nessuna foto trovata in questa cartella.</translation>
     </message>
     <message>
-        <source>DIR</source>
-        <comment>folder badge</comment>
-        <translation>CART</translation>
+        <source>Folder</source>
+        <translation>Cartella</translation>
     </message>
     <message>
-        <source>FETCHING</source>
-        <translation>DOWNLOAD</translation>
+        <source>Downloading</source>
+        <translation>Download</translation>
     </message>
     <message>
-        <source>RAW CLOUD</source>
-        <translation>RAW NEL CLOUD</translation>
+        <source>Remote</source>
+        <translation>Remota</translation>
     </message>
     <message>
-        <source>NO PREVIEW</source>
-        <translation>NESSUNA ANTEPRIMA</translation>
+        <source>No preview</source>
+        <translation>Nessuna anteprima</translation>
     </message>
     <message>
         <source>Loading...</source>
@@ -836,40 +884,60 @@
         <translation>Ricette Fujifilm</translation>
     </message>
     <message>
-        <source>FUJIFILM RECIPES</source>
-        <translation>RICETTE FUJIFILM</translation>
+        <source>Import</source>
+        <translation>Importa</translation>
     </message>
     <message>
-        <source>IMPORT</source>
-        <translation>IMPORTA</translation>
+        <source>Apply photo&apos;s recipe</source>
+        <translation>Applica la ricetta della foto</translation>
     </message>
     <message>
-        <source>APPLY PHOTO&apos;S RECIPE</source>
-        <translation>APPLICA LA RICETTA DELLA FOTO</translation>
+        <source>Save</source>
+        <translation>Salva</translation>
     </message>
     <message>
-        <source>SAVE</source>
-        <translation>SALVA</translation>
+        <source>Apply recipe</source>
+        <translation>Applica ricetta</translation>
+    </message>
+    <message>
+        <source>Camera (USB)</source>
+        <translation>Fotocamera (USB)</translation>
+    </message>
+    <message>
+        <source>Reconnect</source>
+        <translation>Riconnetti</translation>
+    </message>
+    <message>
+        <source>Connect</source>
+        <translation>Connetti</translation>
+    </message>
+    <message>
+        <source>Read C1–C7</source>
+        <translation>Leggi C1–C7</translation>
+    </message>
+    <message>
+        <source>Convert in camera</source>
+        <translation>Converti nella fotocamera</translation>
+    </message>
+    <message>
+        <source>Write recipe to C%1</source>
+        <translation>Scrivi la ricetta in C%1</translation>
+    </message>
+    <message>
+        <source>Pixel shift</source>
+        <translation>Pixel Shift</translation>
+    </message>
+    <message>
+        <source>Merge %1 frames to DNG</source>
+        <translation>Unisci %1 fotogrammi in DNG</translation>
+    </message>
+    <message>
+        <source>Merge frames to DNG</source>
+        <translation>Unisci i fotogrammi in DNG</translation>
     </message>
     <message>
         <source>No saved recipes. Import an X RAW Studio profile, recipe text or a Fujifilm photo.</source>
         <translation>Nessuna ricetta salvata. Importa un profilo X RAW Studio, il testo di una ricetta o una foto Fujifilm.</translation>
-    </message>
-    <message>
-        <source>APPLY SELECTED RECIPE</source>
-        <translation>APPLICA LA RICETTA SELEZIONATA</translation>
-    </message>
-    <message>
-        <source>CAMERA (USB)</source>
-        <translation>FOTOCAMERA (USB)</translation>
-    </message>
-    <message>
-        <source>RECONNECT</source>
-        <translation>RICONNETTI</translation>
-    </message>
-    <message>
-        <source>CONNECT</source>
-        <translation>CONNETTI</translation>
     </message>
     <message>
         <source>%1  ·  in-camera RAW conversion</source>
@@ -884,24 +952,8 @@
         <translation>Imposta la modalità USB della fotocamera su %1 e collegala.</translation>
     </message>
     <message>
-        <source>READ C1-C7</source>
-        <translation>LEGGI C1-C7</translation>
-    </message>
-    <message>
-        <source>CONVERT IN CAMERA</source>
-        <translation>CONVERTI IN FOTOCAMERA</translation>
-    </message>
-    <message>
         <source>Unnamed</source>
         <translation>Senza nome</translation>
-    </message>
-    <message>
-        <source>WRITE SELECTED RECIPE TO C%1</source>
-        <translation>SCRIVI LA RICETTA SELEZIONATA IN C%1</translation>
-    </message>
-    <message>
-        <source>PIXEL SHIFT MULTI-SHOT</source>
-        <translation>PIXEL SHIFT MULTI-SHOT</translation>
     </message>
     <message numerus="yes">
         <source>%n RAF frames selected. 4 frames give full colour per pixel, 16 frames double the resolution.</source>
@@ -914,23 +966,12 @@
         <source>Select the RAF frames of one GFX Pixel Shift sequence in the filmstrip.</source>
         <translation>Seleziona nella pellicola i fotogrammi RAF di una sequenza Pixel Shift GFX.</translation>
     </message>
-    <message numerus="yes">
-        <source>MERGE %n FRAMES TO DNG</source>
-        <translation>
-            <numerusform>UNISCI %n FOTOGRAMMA IN DNG</numerusform>
-            <numerusform>UNISCI %n FOTOGRAMMI IN DNG</numerusform>
-        </translation>
-    </message>
-    <message>
-        <source>MERGE FRAMES TO DNG</source>
-        <translation>UNISCI FOTOGRAMMI IN DNG</translation>
-    </message>
 </context>
 <context>
     <name>GradeVersionsBar</name>
     <message>
-        <source>GRADE VERSION</source>
-        <translation>VERSIONE DI GRADING</translation>
+        <source>Version</source>
+        <translation>Versione</translation>
     </message>
 </context>
 <context>
@@ -941,8 +982,8 @@
         <translation>[O] %1%</translation>
     </message>
     <message>
-        <source>RGB HISTOGRAM</source>
-        <translation>ISTOGRAMMA RGB</translation>
+        <source>Histogram</source>
+        <translation>Istogramma</translation>
     </message>
     <message>
         <source>[H] %1%</source>
@@ -989,12 +1030,12 @@
         <translation>Canale %1</translation>
     </message>
     <message>
-        <source>RESET CH</source>
-        <translation>RIPR. CANALE</translation>
+        <source>Reset colour</source>
+        <translation>Ripristina colore</translation>
     </message>
     <message>
-        <source>RESET ALL</source>
-        <translation>RIPRISTINA TUTTO</translation>
+        <source>Reset all</source>
+        <translation>Ripristina tutto</translation>
     </message>
     <message>
         <source>Hue Shift</source>
@@ -1102,32 +1143,32 @@
         <translation>Maschera %1 pronta (%2)</translation>
     </message>
     <message>
-        <source>DETECTING...</source>
-        <translation>RILEVAMENTO...</translation>
+        <source>Detecting…</source>
+        <translation>Rilevamento…</translation>
     </message>
     <message>
-        <source>LOCAL ADJUSTMENT LAYERS</source>
-        <translation>LIVELLI DI REGOLAZIONE LOCALE</translation>
+        <source>Masks</source>
+        <translation>Maschere</translation>
     </message>
     <message>
-        <source>+ GRADIENT</source>
-        <translation>+ SFUMATURA</translation>
+        <source>+ Linear</source>
+        <translation>+ Lineare</translation>
+    </message>
+    <message>
+        <source>+ Radial</source>
+        <translation>+ Radiale</translation>
+    </message>
+    <message>
+        <source>+ Luminance</source>
+        <translation>+ Luminanza</translation>
     </message>
     <message>
         <source>Linear Gradient %1</source>
         <translation>Sfumatura lineare %1</translation>
     </message>
     <message>
-        <source>+ RADIAL</source>
-        <translation>+ RADIALE</translation>
-    </message>
-    <message>
         <source>Radial Mask %1</source>
         <translation>Maschera radiale %1</translation>
-    </message>
-    <message>
-        <source>+ LUMA</source>
-        <translation>+ LUMINANZA</translation>
     </message>
     <message>
         <source>Luma Range %1</source>
@@ -1145,10 +1186,6 @@
         <source>I</source>
         <comment>invert mask toggle, first letter of Invert</comment>
         <translation>I</translation>
-    </message>
-    <message>
-        <source>SELECTED LAYER CONTROLS (%1)</source>
-        <translation>CONTROLLI DEL LIVELLO SELEZIONATO (%1)</translation>
     </message>
     <message>
         <source>Layer Opacity</source>
@@ -1170,48 +1207,32 @@
 <context>
     <name>LutSelector</name>
     <message>
-        <source>DAVINCI 3D LUT ENGINE (.CUBE)</source>
-        <translation>MOTORE LUT 3D DAVINCI (.CUBE)</translation>
+        <source>Load 3D LUT</source>
+        <translation>Carica LUT 3D</translation>
     </message>
     <message>
-        <source>RESET</source>
-        <translation>RIPRISTINA</translation>
+        <source>3D LUT</source>
+        <translation>LUT 3D</translation>
     </message>
     <message>
-        <source>Hollywood Print</source>
-        <translation>Stampa Hollywood</translation>
+        <source>Reset</source>
+        <translation>Ripristina</translation>
     </message>
     <message>
-        <source>Cinema Blockbuster</source>
-        <translation>Blockbuster cinematografico</translation>
+        <source>Load .cube file…</source>
+        <translation>Carica file .cube…</translation>
     </message>
     <message>
-        <source>35mm Soft Stock</source>
-        <translation>Pellicola morbida 35 mm</translation>
+        <source>Saved look: %1</source>
+        <translation>Look salvato: %1</translation>
     </message>
     <message>
-        <source>High-Acutance B&amp;W</source>
-        <translation>B/N ad alta acutanza</translation>
-    </message>
-    <message>
-        <source>LUT Intensity (Mix)</source>
-        <translation>Intensità LUT (mix)</translation>
+        <source>Amount</source>
+        <translation>Intensità</translation>
     </message>
 </context>
 <context>
     <name>MainWindow</name>
-    <message>
-        <source>Switched to version %1</source>
-        <translation>Passato alla versione %1</translation>
-    </message>
-    <message>
-        <source>Version %1 initialized</source>
-        <translation>Versione %1 inizializzata</translation>
-    </message>
-    <message>
-        <source>Copied current grade to version %1</source>
-        <translation>Grading attuale copiato nella versione %1</translation>
-    </message>
     <message numerus="yes">
         <source>Rating: %n star(s)</source>
         <translation>
@@ -1240,36 +1261,8 @@
         <translation>Niente da annullare</translation>
     </message>
     <message>
-        <source>Undo (Ctrl+Z)</source>
-        <translation>Annulla (Ctrl+Z)</translation>
-    </message>
-    <message>
         <source>Nothing to redo</source>
         <translation>Niente da ripetere</translation>
-    </message>
-    <message>
-        <source>Redo (Ctrl+Shift+Z)</source>
-        <translation>Ripeti (Ctrl+Shift+Z)</translation>
-    </message>
-    <message>
-        <source>Adjustments copied (Ctrl+Shift+C)</source>
-        <translation>Regolazioni copiate (Ctrl+Shift+C)</translation>
-    </message>
-    <message>
-        <source>No adjustments in clipboard</source>
-        <translation>Nessuna regolazione negli appunti</translation>
-    </message>
-    <message>
-        <source>Adjustments pasted (Ctrl+Shift+V)</source>
-        <translation>Regolazioni incollate (Ctrl+Shift+V)</translation>
-    </message>
-    <message>
-        <source>Reset to defaults (Ctrl+R)</source>
-        <translation>Ripristinato ai valori predefiniti (Ctrl+R)</translation>
-    </message>
-    <message>
-        <source>Social framing and adjustments reset</source>
-        <translation>Inquadratura social e regolazioni ripristinate</translation>
     </message>
     <message>
         <source>Failed to load RAW: %1</source>
@@ -1292,28 +1285,8 @@
         <translation>Rendering dell&apos;anteprima non riuscito</translation>
     </message>
     <message>
-        <source>Auto tone applied</source>
-        <translation>Tono automatico applicato</translation>
-    </message>
-    <message>
-        <source>AI decisions applied</source>
-        <translation>Decisioni dell&apos;IA applicate</translation>
-    </message>
-    <message>
-        <source>Local heuristic applied</source>
-        <translation>Euristica locale applicata</translation>
-    </message>
-    <message>
         <source>%1 applied (%2)</source>
         <translation>%1 applicato (%2)</translation>
-    </message>
-    <message>
-        <source>Recipe sidecar saved</source>
-        <translation>File collaterale della ricetta salvato</translation>
-    </message>
-    <message>
-        <source>Batch finished: %1/%2 photos exported</source>
-        <translation>Blocco completato: %1/%2 foto esportate</translation>
     </message>
     <message>
         <source>Batch export: %1 succeeded, %2 failed</source>
@@ -1336,14 +1309,6 @@
         <translation>Scritto %1</translation>
     </message>
     <message>
-        <source>Analyzing dynamic range and scene...</source>
-        <translation>Analisi della gamma dinamica e della scena...</translation>
-    </message>
-    <message>
-        <source>Asking the AI for edit decisions...</source>
-        <translation>Richiesta all&apos;IA delle decisioni di modifica...</translation>
-    </message>
-    <message>
         <source>Open RAW Photo</source>
         <translation>Apri foto RAW</translation>
     </message>
@@ -1352,20 +1317,8 @@
         <translation>Foto RAW</translation>
     </message>
     <message>
-        <source>Saved to: %1</source>
-        <translation>Salvato in: %1</translation>
-    </message>
-    <message>
-        <source>Export error: %1</source>
-        <translation>Errore di esportazione: %1</translation>
-    </message>
-    <message>
         <source>Export finished without a result</source>
         <translation>Esportazione terminata senza risultato</translation>
-    </message>
-    <message>
-        <source>The folder scan gave no answer</source>
-        <translation>La scansione della cartella non ha risposto</translation>
     </message>
     <message>
         <source>Crop mode: on (C)</source>
@@ -1376,36 +1329,12 @@
         <translation>Modalità ritaglio: disattivata</translation>
     </message>
     <message>
-        <source>Open a photo first to export</source>
-        <translation>Apri prima una foto da esportare</translation>
-    </message>
-    <message>
-        <source>Panels hidden (Tab)</source>
-        <translation>Pannelli nascosti (Tab)</translation>
-    </message>
-    <message>
-        <source>Panels restored (Tab)</source>
-        <translation>Pannelli ripristinati (Tab)</translation>
-    </message>
-    <message>
-        <source>Optimizing for %1...</source>
-        <translation>Ottimizzazione per %1...</translation>
-    </message>
-    <message>
-        <source>AI SCENE INSIGHT</source>
-        <translation>ANALISI DELLA SCENA IA</translation>
-    </message>
-    <message>
         <source>Analyzing...</source>
         <translation>Analisi in corso...</translation>
     </message>
     <message>
         <source>Extracting dynamic range...</source>
         <translation>Estrazione della gamma dinamica...</translation>
-    </message>
-    <message>
-        <source>Grade versions • Alt+1..4 to switch</source>
-        <translation>Versioni di grading • Alt+1..4 per cambiare</translation>
     </message>
     <message>
         <source>Opened %1</source>
@@ -1416,36 +1345,8 @@
         <translation>Scansione della cartella %1</translation>
     </message>
     <message>
-        <source>AI edit applied</source>
-        <translation>Modifica IA applicata</translation>
-    </message>
-    <message>
-        <source>ESSENTIAL ADJUSTMENTS</source>
-        <translation>REGOLAZIONI ESSENZIALI</translation>
-    </message>
-    <message>
-        <source>RESET</source>
-        <translation>RIPRISTINA</translation>
-    </message>
-    <message>
-        <source>Exposure (Light)</source>
-        <translation>Esposizione (luce)</translation>
-    </message>
-    <message>
-        <source>Warmth (Temperature)</source>
-        <translation>Calore (temperatura)</translation>
-    </message>
-    <message>
-        <source>Vibrance (Color Punch)</source>
-        <translation>Vividezza (forza del colore)</translation>
-    </message>
-    <message>
         <source>Contrast</source>
         <translation>Contrasto</translation>
-    </message>
-    <message>
-        <source>WHITE BALANCE</source>
-        <translation>BILANCIAMENTO DEL BIANCO</translation>
     </message>
     <message>
         <source>Temp (Kelvin)</source>
@@ -1454,10 +1355,6 @@
     <message>
         <source>Tint (Green / Magenta)</source>
         <translation>Tinta (verde / magenta)</translation>
-    </message>
-    <message>
-        <source>LIGHT &amp; DYNAMIC RANGE</source>
-        <translation>LUCE E GAMMA DINAMICA</translation>
     </message>
     <message>
         <source>Exposure</source>
@@ -1480,10 +1377,6 @@
         <translation>Neri</translation>
     </message>
     <message>
-        <source>TONE CURVE (PARAMETRIC)</source>
-        <translation>CURVA TONALE (PARAMETRICA)</translation>
-    </message>
-    <message>
         <source>Curve Highlights</source>
         <translation>Curva: luci</translation>
     </message>
@@ -1498,10 +1391,6 @@
     <message>
         <source>Curve Shadows</source>
         <translation>Curva: ombre</translation>
-    </message>
-    <message>
-        <source>PRESENCE &amp; TEXTURE</source>
-        <translation>PRESENZA E TEXTURE</translation>
     </message>
     <message>
         <source>Texture</source>
@@ -1522,14 +1411,6 @@
     <message>
         <source>Saturation</source>
         <translation>Saturazione</translation>
-    </message>
-    <message>
-        <source>COLOR MIXER (8-BAND HSL)</source>
-        <translation>MIXER COLORE (HSL A 8 BANDE)</translation>
-    </message>
-    <message>
-        <source>DETAIL &amp; OPTICS</source>
-        <translation>DETTAGLIO E OTTICA</translation>
     </message>
     <message>
         <source>Sharpening</source>
@@ -1560,12 +1441,200 @@
         <translation>Apri prima una foto</translation>
     </message>
     <message>
+        <source>Version %1</source>
+        <translation>Versione %1</translation>
+    </message>
+    <message>
+        <source>Version %1 started</source>
+        <translation>Versione %1 avviata</translation>
+    </message>
+    <message>
+        <source>Copied to version %1</source>
+        <translation>Copiato nella versione %1</translation>
+    </message>
+    <message>
+        <source>Undo</source>
+        <translation>Annulla</translation>
+    </message>
+    <message>
+        <source>Redo</source>
+        <translation>Ripeti</translation>
+    </message>
+    <message>
+        <source>Settings copied</source>
+        <translation>Impostazioni copiate</translation>
+    </message>
+    <message>
+        <source>Nothing copied yet</source>
+        <translation>Non è stato ancora copiato nulla</translation>
+    </message>
+    <message>
+        <source>Settings pasted</source>
+        <translation>Impostazioni incollate</translation>
+    </message>
+    <message>
+        <source>Reset to defaults</source>
+        <translation>Valori predefiniti ripristinati</translation>
+    </message>
+    <message>
+        <source>Platform crop reset</source>
+        <translation>Ritaglio per piattaforma ripristinato</translation>
+    </message>
+    <message>
+        <source>Auto applied</source>
+        <translation>Regolazione automatica applicata</translation>
+    </message>
+    <message>
+        <source>Settings saved</source>
+        <translation>Impostazioni salvate</translation>
+    </message>
+    <message>
+        <source>%1 of %2 photos exported</source>
+        <translation>%1 di %2 foto esportate</translation>
+    </message>
+    <message>
+        <source>Auto: analysing the photo…</source>
+        <translation>Automatico: analisi della foto…</translation>
+    </message>
+    <message>
+        <source>Saved to %1</source>
+        <translation>Salvato in %1</translation>
+    </message>
+    <message>
+        <source>Export failed</source>
+        <translation>Esportazione non riuscita</translation>
+    </message>
+    <message>
+        <source>The scan did not respond.</source>
+        <translation>La scansione della cartella non ha risposto.</translation>
+    </message>
+    <message>
+        <source>Rating: ★</source>
+        <translation>Valutazione: ★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★</source>
+        <translation>Valutazione: ★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★</source>
+        <translation>Valutazione: ★★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★★</source>
+        <translation>Valutazione: ★★★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★★★</source>
+        <translation>Valutazione: ★★★★★</translation>
+    </message>
+    <message>
+        <source>Flag cleared</source>
+        <translation>Contrassegno rimosso</translation>
+    </message>
+    <message>
+        <source>Preparing for %1…</source>
+        <translation>Preparazione per %1…</translation>
+    </message>
+    <message>
+        <source>Rating: %1</source>
+        <translation>Valutazione: %1</translation>
+    </message>
+    <message>
+        <source>Picked</source>
+        <translation>Scelta</translation>
+    </message>
+    <message>
+        <source>Rejected</source>
+        <translation>Scartata</translation>
+    </message>
+    <message>
+        <source>Scene</source>
+        <translation>Scena</translation>
+    </message>
+    <message>
+        <source>Adjust</source>
+        <translation>Regola</translation>
+    </message>
+    <message>
+        <source>Masks</source>
+        <translation>Maschere</translation>
+    </message>
+    <message>
+        <source>Looks</source>
+        <translation>Stili</translation>
+    </message>
+    <message>
+        <source>AI</source>
+        <translation>IA</translation>
+    </message>
+    <message>
+        <source>Profile</source>
+        <translation>Profilo</translation>
+    </message>
+    <message>
         <source>Color Chrome Effect</source>
         <translation>Effetto Color Chrome</translation>
     </message>
     <message>
         <source>Color Chrome FX Blue</source>
         <translation>Color Chrome FX Blu</translation>
+    </message>
+    <message>
+        <source>White balance</source>
+        <translation>Bilanciamento del bianco</translation>
+    </message>
+    <message>
+        <source>Tone</source>
+        <translation>Tono</translation>
+    </message>
+    <message>
+        <source>Presence</source>
+        <translation>Presenza</translation>
+    </message>
+    <message>
+        <source>Tone curve</source>
+        <translation>Curva tonale</translation>
+    </message>
+    <message>
+        <source>Colour mixer</source>
+        <translation>Miscelatore colore</translation>
+    </message>
+    <message>
+        <source>Colour grading</source>
+        <translation>Correzione colore</translation>
+    </message>
+    <message>
+        <source>Detail and optics</source>
+        <translation>Dettaglio e ottica</translation>
+    </message>
+    <message>
+        <source>Grain</source>
+        <translation>Grana</translation>
+    </message>
+    <message>
+        <source>Colour management</source>
+        <translation>Gestione del colore</translation>
+    </message>
+    <message>
+        <source>Local adjustments</source>
+        <translation>Regolazioni locali</translation>
+    </message>
+    <message>
+        <source>Presets</source>
+        <translation>Predefiniti</translation>
+    </message>
+    <message>
+        <source>LUT</source>
+        <translation>LUT</translation>
+    </message>
+    <message>
+        <source>Edit assistant</source>
+        <translation>Assistente di modifica</translation>
+    </message>
+    <message>
+        <source>Assistant edit applied</source>
+        <translation>Modifica dell&apos;assistente applicata</translation>
     </message>
     <message>
         <source>Copy</source>
@@ -1600,30 +1669,30 @@
         <translation>Apertura di %1</translation>
     </message>
     <message>
-        <source>Loading the studio catalog...</source>
-        <translation>Caricamento del catalogo dello studio...</translation>
+        <source>Loading the catalog…</source>
+        <translation>Caricamento del catalogo…</translation>
     </message>
     <message>
-        <source>Refreshing the studio catalog...</source>
-        <translation>Aggiornamento del catalogo dello studio...</translation>
+        <source>Refreshing the catalog…</source>
+        <translation>Aggiornamento del catalogo…</translation>
     </message>
     <message numerus="yes">
-        <source>Exporting %n photo(s) in parallel...</source>
+        <source>Exporting %n photos…</source>
         <translation>
-            <numerusform>Esportazione di %n foto in parallelo...</numerusform>
-            <numerusform>Esportazione di %n foto in parallelo...</numerusform>
+            <numerusform>Esportazione di %n foto…</numerusform>
+            <numerusform>Esportazione di %n foto…</numerusform>
         </translation>
     </message>
     <message>
-        <source>Developing at full resolution and encoding...</source>
-        <translation>Sviluppo a piena risoluzione e codifica...</translation>
+        <source>Developing at full resolution…</source>
+        <translation>Sviluppo a piena risoluzione…</translation>
     </message>
 </context>
 <context>
     <name>Navigator</name>
     <message>
-        <source>NAVIGATOR</source>
-        <translation>NAVIGATORE</translation>
+        <source>Navigator</source>
+        <translation>Navigatore</translation>
     </message>
     <message>
         <source>FIT</source>
@@ -1631,65 +1700,92 @@
     </message>
 </context>
 <context>
+    <name>PanelSection</name>
+    <message>
+        <source>Reset %1</source>
+        <translation>Ripristina %1</translation>
+    </message>
+</context>
+<context>
     <name>PresetSelector</name>
     <message>
-        <source>FILM LOOKS &amp; STYLES</source>
-        <translation>LOOK E STILI PELLICOLA</translation>
+        <source>Looks</source>
+        <translation>Stili</translation>
     </message>
     <message>
-        <source>RESET</source>
-        <translation>RIPRISTINA</translation>
+        <source>Reset</source>
+        <translation>Ripristina</translation>
     </message>
     <message>
-        <source>AI Auto Enhance</source>
-        <translation>Miglioramento automatico IA</translation>
+        <source>Auto</source>
+        <translation>Automatico</translation>
     </message>
     <message>
-        <source>RUN</source>
-        <translation>ESEGUI</translation>
+        <source>Run</source>
+        <translation>Esegui</translation>
     </message>
     <message>
-        <source>Documentary Muted</source>
-        <translation>Documentario smorzato</translation>
+        <source>Muted</source>
+        <translation>Tenue</translation>
     </message>
     <message>
-        <source>Vivid Landscapes</source>
-        <translation>Paesaggi vividi</translation>
+        <source>Documentary, low saturation</source>
+        <translation>Documentario, bassa saturazione</translation>
     </message>
     <message>
-        <source>Warm Skin Tones</source>
-        <translation>Incarnati caldi</translation>
+        <source>Vivid</source>
+        <translation>Vivido</translation>
     </message>
     <message>
-        <source>High Contrast B&amp;W</source>
-        <translation>B/N ad alto contrasto</translation>
+        <source>Landscapes, rich colour</source>
+        <translation>Paesaggi, colori ricchi</translation>
     </message>
     <message>
-        <source>Film Grade</source>
-        <translation>Grading pellicola</translation>
+        <source>Warm portrait</source>
+        <translation>Ritratto caldo</translation>
+    </message>
+    <message>
+        <source>Soft contrast, warm skin</source>
+        <translation>Contrasto morbido, pelle calda</translation>
+    </message>
+    <message>
+        <source>Black and white</source>
+        <translation>Bianco e nero</translation>
+    </message>
+    <message>
+        <source>High contrast</source>
+        <translation>Contrasto elevato</translation>
+    </message>
+    <message>
+        <source>Teal and orange</source>
+        <translation>Verde acqua e arancione</translation>
+    </message>
+    <message>
+        <source>Split toning</source>
+        <translation>Viraggio diviso</translation>
     </message>
 </context>
 <context>
     <name>RgbMixerPanel</name>
     <message>
-        <source>DAVINCI RGB PRIMARY MIXER</source>
-        <translation>MIXER RGB PRIMARIO DAVINCI</translation>
-    </message>
-    <message>
-        <source>RESET</source>
-        <translation>RIPRISTINA</translation>
-    </message>
-    <message>
         <source>Monochrome Mixing</source>
         <translation>Miscelazione monocromatica</translation>
     </message>
     <message>
-        <source>MONOCHROME LUMA MIX</source>
-        <translation>MIX DI LUMINANZA MONOCROMATICO</translation>
+        <source>Channel mixer</source>
+        <translation>Miscelatore canali</translation>
     </message>
     <message>
-        <source>RED OUTPUT CHANNEL</source>
-        <translation>CANALE DI USCITA ROSSO</translation>
+        <source>Reset</source>
+        <translation>Ripristina</translation>
+    </message>
+    <message>
+        <source>Monochrome mix</source>
+        <translation>Miscela monocromatica</translation>
+    </message>
+    <message>
+        <source>Red output</source>
+        <translation>Uscita rossa</translation>
     </message>
     <message>
         <source>Red in Red</source>
@@ -1704,8 +1800,12 @@
         <translation>Blu nel rosso</translation>
     </message>
     <message>
-        <source>GREEN OUTPUT CHANNEL</source>
-        <translation>CANALE DI USCITA VERDE</translation>
+        <source>Green output</source>
+        <translation>Uscita verde</translation>
+    </message>
+    <message>
+        <source>Blue output</source>
+        <translation>Uscita blu</translation>
     </message>
     <message>
         <source>Red in Green</source>
@@ -1718,10 +1818,6 @@
     <message>
         <source>Blue in Green</source>
         <translation>Blu nel verde</translation>
-    </message>
-    <message>
-        <source>BLUE OUTPUT CHANNEL</source>
-        <translation>CANALE DI USCITA BLU</translation>
     </message>
     <message>
         <source>Red in Blue</source>
@@ -1765,8 +1861,8 @@
         <translation>[L] %1%</translation>
     </message>
     <message>
-        <source>NO SIGNAL / LOAD RAW</source>
-        <translation>NESSUN SEGNALE / CARICA UN RAW</translation>
+        <source>No photo</source>
+        <translation>Nessuna foto</translation>
     </message>
     <message>
         <source>RED</source>
@@ -1788,12 +1884,12 @@
 <context>
     <name>SkinTonePanel</name>
     <message>
-        <source>CAPTURE ONE SKIN TONE</source>
-        <translation>INCARNATO CAPTURE ONE</translation>
+        <source>Skin tone</source>
+        <translation>Tonalità della pelle</translation>
     </message>
     <message>
-        <source>RESET</source>
-        <translation>RIPRISTINA</translation>
+        <source>Reset</source>
+        <translation>Ripristina</translation>
     </message>
     <message>
         <source>Vectorscope 123° flesh line (target: %1°)</source>
@@ -1834,52 +1930,28 @@
 <context>
     <name>SocialOptimizer</name>
     <message>
-        <source>AI SOCIAL MEDIA OPTIMIZER</source>
-        <translation>OTTIMIZZATORE SOCIAL IA</translation>
+        <source>Prepare for</source>
+        <translation>Prepara per</translation>
     </message>
     <message>
-        <source>RESET</source>
-        <translation>RIPRISTINA</translation>
+        <source>Reset</source>
+        <translation>Ripristina</translation>
     </message>
     <message>
-        <source>Instagram Feed</source>
-        <translation>Feed di Instagram</translation>
+        <source>Instagram post</source>
+        <translation>Post di Instagram</translation>
     </message>
     <message>
-        <source>Max Screen</source>
-        <translation>Schermo massimo</translation>
+        <source>Stories and Reels</source>
+        <translation>Storie e Reels</translation>
     </message>
     <message>
-        <source>Stories / Reels</source>
-        <translation>Storie / Reel</translation>
+        <source>Square</source>
+        <translation>Quadrato</translation>
     </message>
     <message>
-        <source>Full Mobile</source>
-        <translation>Mobile completo</translation>
-    </message>
-    <message>
-        <source>Crisp Feed</source>
-        <translation>Feed nitido</translation>
-    </message>
-    <message>
-        <source>Classic Square</source>
-        <translation>Quadrato classico</translation>
-    </message>
-    <message>
-        <source>Grid Post</source>
-        <translation>Post in griglia</translation>
-    </message>
-    <message>
-        <source>High Res</source>
-        <translation>Alta risoluzione</translation>
-    </message>
-    <message>
-        <source>YouTube Thumb</source>
-        <translation>Miniatura YouTube</translation>
-    </message>
-    <message>
-        <source>High CTR</source>
-        <translation>CTR elevato</translation>
+        <source>YouTube thumbnail</source>
+        <translation>Miniatura di YouTube</translation>
     </message>
 </context>
 <context>
@@ -1914,8 +1986,8 @@
         <translation>Essenziale</translation>
     </message>
     <message>
-        <source>Pro Studio</source>
-        <translation>Pro Studio</translation>
+        <source>Pro</source>
+        <translation>Pro</translation>
     </message>
     <message>
         <source>Undo (Ctrl+Z)</source>
@@ -1953,16 +2025,16 @@
 <context>
     <name>Viewport</name>
     <message>
-        <source>RESET 0°</source>
-        <translation>RIPRISTINA 0°</translation>
+        <source>Reset 0°</source>
+        <translation>Ripristina a 0°</translation>
     </message>
     <message>
-        <source>FIT</source>
-        <translation>ADATTA</translation>
+        <source>Fit</source>
+        <translation>Adatta</translation>
     </message>
     <message>
-        <source>CROP &amp; COMPOSE</source>
-        <translation>RITAGLIO E COMPOSIZIONE</translation>
+        <source>Crop</source>
+        <translation>Ritaglia</translation>
     </message>
     <message>
         <source>Original</source>
@@ -1989,12 +2061,20 @@
         <translation>Griglia: disattivata</translation>
     </message>
     <message>
-        <source>RESET</source>
-        <translation>RIPRISTINA</translation>
+        <source>Reset</source>
+        <translation>Ripristina</translation>
     </message>
     <message>
-        <source>DONE</source>
-        <translation>FATTO</translation>
+        <source>Done</source>
+        <translation>Fatto</translation>
+    </message>
+    <message>
+        <source>Shadow clipping</source>
+        <translation>Clipping delle ombre</translation>
+    </message>
+    <message>
+        <source>Highlight clipping</source>
+        <translation>Clipping delle luci</translation>
     </message>
     <message>
         <source>ORIGINAL RAW (Before)</source>
@@ -2003,18 +2083,6 @@
     <message>
         <source>EDITED RECIPE (After)</source>
         <translation>RICETTA MODIFICATA (dopo)</translation>
-    </message>
-    <message>
-        <source>[S] SHADOW CLIPPING (BLUE)</source>
-        <translation>[O] TAGLIO DELLE OMBRE (BLU)</translation>
-    </message>
-    <message>
-        <source>[H] HIGHLIGHT CLIPPING (RED)</source>
-        <translation>[L] TAGLIO DELLE LUCI (ROSSO)</translation>
-    </message>
-    <message>
-        <source>Pinch: Zoom | 2-Finger Twist: Rotate | 2-Finger Pan | Double-Tap: Reset</source>
-        <translation>Pizzico: zoom | Torsione a 2 dita: ruota | Trascina con 2 dita | Doppio tocco: ripristina</translation>
     </message>
     <message>
         <source>Open a RAW (Ctrl+O) or drop a photo / folder here</source>
@@ -2028,8 +2096,8 @@
 <context>
     <name>WatermarkConfig</name>
     <message>
-        <source>WATERMARK &amp; BRANDING</source>
-        <translation>FILIGRANA E BRANDING</translation>
+        <source>Watermark</source>
+        <translation>Filigrana</translation>
     </message>
     <message>
         <source>Text / EXIF Tag</source>
@@ -2040,28 +2108,28 @@
         <translation>Logo PNG personalizzato</translation>
     </message>
     <message>
-        <source>WATERMARK TEXT OR TEMPLATE</source>
-        <translation>TESTO O MODELLO DELLA FILIGRANA</translation>
+        <source>Text or template</source>
+        <translation>Testo o modello</translation>
     </message>
     <message>
-        <source>LOGO FILE PATH (.PNG)</source>
-        <translation>PERCORSO DEL LOGO (.PNG)</translation>
+        <source>Logo file (PNG)</source>
+        <translation>File del logo (PNG)</translation>
     </message>
     <message>
-        <source>POSITION</source>
-        <translation>POSIZIONE</translation>
+        <source>Position</source>
+        <translation>Posizione</translation>
+    </message>
+    <message>
+        <source>Opacity</source>
+        <translation>Opacità</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>Dimensioni</translation>
     </message>
     <message>
         <source>Drop Shadow</source>
         <translation>Ombra esterna</translation>
-    </message>
-    <message>
-        <source>OPACITY</source>
-        <translation>OPACITÀ</translation>
-    </message>
-    <message>
-        <source>SIZE MULTIPLIER</source>
-        <translation>MOLTIPLICATORE DI DIMENSIONE</translation>
     </message>
 </context>
 </TS>

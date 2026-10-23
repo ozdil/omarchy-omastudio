@@ -175,28 +175,36 @@
         <translation>ناموفق</translation>
     </message>
     <message>
-        <source>AI EDIT ASSISTANT</source>
-        <translation>دستیار ویرایش هوش مصنوعی</translation>
+        <source>Assistant</source>
+        <translation>دستیار</translation>
     </message>
     <message>
-        <source>DONE</source>
+        <source>Done</source>
         <translation>انجام شد</translation>
     </message>
     <message>
-        <source>SETUP</source>
+        <source>Set up</source>
         <translation>راه‌اندازی</translation>
+    </message>
+    <message>
+        <source>Working…</source>
+        <translation>در حال کار…</translation>
+    </message>
+    <message>
+        <source>Edit</source>
+        <translation>ویرایش</translation>
+    </message>
+    <message>
+        <source>Store key</source>
+        <translation>ذخیرهٔ کلید</translation>
+    </message>
+    <message>
+        <source>Use %1</source>
+        <translation>استفاده از %1</translation>
     </message>
     <message>
         <source>e.g. warmer, moody evening light, recover the sky</source>
         <translation>مثلاً: گرم‌تر، نور غم‌انگیز عصر، بازیابی آسمان</translation>
-    </message>
-    <message>
-        <source>THINKING...</source>
-        <translation>در حال فکر کردن...</translation>
-    </message>
-    <message>
-        <source>EDIT WITH AI</source>
-        <translation>ویرایش با هوش مصنوعی</translation>
     </message>
     <message>
         <source>Running. Models: %1</source>
@@ -222,14 +230,6 @@
         <source>API key</source>
         <translation>کلید API</translation>
     </message>
-    <message>
-        <source>STORE KEY</source>
-        <translation>ذخیرهٔ کلید</translation>
-    </message>
-    <message>
-        <source>USE %1</source>
-        <translation>استفاده از %1</translation>
-    </message>
 </context>
 <context>
     <name>BoundedTextInput</name>
@@ -241,48 +241,16 @@
 <context>
     <name>ColorGradingWheels</name>
     <message>
-        <source>DAVINCI PRIMARIES WHEELS</source>
-        <translation>چرخ‌های اصلی DaVinci</translation>
-    </message>
-    <message>
-        <source>4-WHEEL</source>
-        <translation>۴ چرخ</translation>
-    </message>
-    <message>
-        <source>TABBED</source>
-        <translation>زبانه‌ها</translation>
-    </message>
-    <message>
-        <source>RESET</source>
-        <translation>بازنشانی</translation>
-    </message>
-    <message>
-        <source>LIFT</source>
-        <translation>LIFT</translation>
-    </message>
-    <message>
         <source>Shadows</source>
         <translation>سایه‌ها</translation>
-    </message>
-    <message>
-        <source>GAMMA</source>
-        <translation>GAMMA</translation>
     </message>
     <message>
         <source>Mids</source>
         <translation>میانه‌ها</translation>
     </message>
     <message>
-        <source>GAIN</source>
-        <translation>GAIN</translation>
-    </message>
-    <message>
         <source>Highlights</source>
         <translation>روشنی‌ها</translation>
-    </message>
-    <message>
-        <source>OFFSET</source>
-        <translation>OFFSET</translation>
     </message>
     <message>
         <source>Global</source>
@@ -307,6 +275,22 @@
     <message>
         <source>Lift</source>
         <translation>Lift</translation>
+    </message>
+    <message>
+        <source>Colour grading</source>
+        <translation>درجه‌بندی رنگ</translation>
+    </message>
+    <message>
+        <source>4 wheels</source>
+        <translation>۴ چرخ</translation>
+    </message>
+    <message>
+        <source>Tabs</source>
+        <translation>زبانه‌ها</translation>
+    </message>
+    <message>
+        <source>Reset</source>
+        <translation>بازنشانی</translation>
     </message>
     <message>
         <source>Gamma</source>
@@ -368,8 +352,12 @@
         <translation>AP1 وسیع</translation>
     </message>
     <message>
-        <source>COLOR MANAGEMENT &amp; ACES 1.3</source>
-        <translation>مدیریت رنگ و ACES 1.3</translation>
+        <source>Colour management</source>
+        <translation>مدیریت رنگ</translation>
+    </message>
+    <message>
+        <source>Gamut compression</source>
+        <translation>فشرده‌سازی گستره</translation>
     </message>
     <message>
         <source>%1 (%2)</source>
@@ -394,113 +382,161 @@
 <context>
     <name>ExifCard</name>
     <message>
-        <source>No camera loaded</source>
-        <translation>هیچ دوربینی بارگذاری نشده است</translation>
-    </message>
-    <message>
-        <source>Unknown lens</source>
-        <translation>لنز ناشناخته</translation>
+        <source>No photo</source>
+        <translation>بدون عکس</translation>
     </message>
 </context>
 <context>
     <name>ExportDialog</name>
-    <message numerus="yes">
-        <source>Batch Export (%n Photos)</source>
-        <translation>
-            <numerusform>خروجی دسته‌ای (%n عکس)</numerusform>
-        </translation>
-    </message>
-    <message>
-        <source>Export Master Photo</source>
-        <translation>خروجی عکس اصلی</translation>
-    </message>
-    <message>
-        <source>MODERN OPEN FORMAT</source>
-        <translation>قالب باز مدرن</translation>
-    </message>
-    <message>
-        <source>Next-Gen 16-bit HDR</source>
-        <translation>HDR شانزده‌بیتی نسل جدید</translation>
-    </message>
-    <message>
-        <source>AV1 Web/Mobile</source>
-        <translation>AV1 برای وب و موبایل</translation>
-    </message>
-    <message>
-        <source>Ultra Compact</source>
-        <translation>بسیار فشرده</translation>
-    </message>
-    <message>
-        <source>16-bit TIFF</source>
-        <translation>TIFF شانزده‌بیتی</translation>
-    </message>
-    <message>
-        <source>Master Print Lossless</source>
-        <translation>چاپ اصلی بدون اتلاف</translation>
-    </message>
-    <message>
-        <source>Graphic Lossless</source>
-        <translation>گرافیک بدون اتلاف</translation>
-    </message>
-    <message>
-        <source>Universal MozJPEG</source>
-        <translation>MozJPEG همگانی</translation>
-    </message>
-    <message>
-        <source>Export Compression Quality</source>
-        <translation>کیفیت فشرده‌سازی خروجی</translation>
-    </message>
-    <message>
-        <source>RESOLUTION &amp; SCALING</source>
-        <translation>وضوح و مقیاس</translation>
-    </message>
-    <message>
-        <source>100% Full</source>
-        <translation>100% کامل</translation>
-    </message>
-    <message>
-        <source>Social (2048p)</source>
-        <translation>شبکه‌های اجتماعی (2048p)</translation>
-    </message>
-    <message>
-        <source>COLOR SPACE &amp; ICC PROFILE</source>
-        <translation>فضای رنگ و نمایهٔ ICC</translation>
-    </message>
-    <message>
-        <source>Universal Web / Social</source>
-        <translation>وب / شبکه‌های اجتماعی</translation>
-    </message>
-    <message>
-        <source>Apple / Wide OLED</source>
-        <translation>Apple / OLED وسیع</translation>
-    </message>
-    <message>
-        <source>Ultra-Wide Gamut HDR</source>
-        <translation>HDR با گسترهٔ رنگ بسیار وسیع</translation>
-    </message>
-    <message>
-        <source>Academy Color Standard</source>
-        <translation>استاندارد رنگ آکادمی</translation>
-    </message>
-    <message>
-        <source>Pro Photography / Print</source>
-        <translation>عکاسی حرفه‌ای / چاپ</translation>
-    </message>
-    <message>
-        <source>16-Bit Master Archival</source>
-        <translation>بایگانی اصلی شانزده‌بیتی</translation>
-    </message>
-    <message>
-        <source>Intent</source>
-        <translation>روش تبدیل</translation>
-    </message>
     <message>
         <source>Perceptual</source>
         <translation>ادراکی</translation>
     </message>
     <message>
-        <source>Compresses the whole gamut; smooth, saturated colours keep their relations</source>
-        <translation>کل گستره را فشرده می‌کند؛ رنگ‌های نرم و اشباع روابط خود را حفظ می‌کنند</translation>
+        <source>8-bit · universal</source>
+        <translation>۸ بیت · همه‌کاره</translation>
+    </message>
+    <message>
+        <source>16-bit · lossless</source>
+        <translation>۱۶ بیت · بدون افت</translation>
+    </message>
+    <message>
+        <source>16-bit · print, archive</source>
+        <translation>۱۶ بیت · چاپ، بایگانی</translation>
+    </message>
+    <message>
+        <source>8-bit · web</source>
+        <translation>۸ بیت · وب</translation>
+    </message>
+    <message>
+        <source>12-bit · HDR-ready</source>
+        <translation>۱۲ بیت · آماده برای HDR</translation>
+    </message>
+    <message>
+        <source>10-bit · HEVC</source>
+        <translation>۱۰ بیت · HEVC</translation>
+    </message>
+    <message>
+        <source>16-bit · modern</source>
+        <translation>۱۶ بیت · مدرن</translation>
+    </message>
+    <message>
+        <source>Float · scene-linear</source>
+        <translation>ممیز شناور · خطی صحنه</translation>
+    </message>
+    <message numerus="yes">
+        <source>Export %n photos</source>
+        <translation>
+            <numerusform>خروجی گرفتن از %n عکس</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>Export</source>
+        <translation>خروجی</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>بستن</translation>
+    </message>
+    <message>
+        <source>Format</source>
+        <translation>قالب فایل</translation>
+    </message>
+    <message>
+        <source>Quality</source>
+        <translation>کیفیت</translation>
+    </message>
+    <message>
+        <source>100 is lossless.</source>
+        <translation>۱۰۰ یعنی بدون افت.</translation>
+    </message>
+    <message>
+        <source>Bit depth</source>
+        <translation>عمق بیت</translation>
+    </message>
+    <message>
+        <source>Half float</source>
+        <translation>ممیز شناور با نیم‌دقت</translation>
+    </message>
+    <message>
+        <source>Full float</source>
+        <translation>ممیز شناور با دقت کامل</translation>
+    </message>
+    <message>
+        <source>%1-bit</source>
+        <translation>%1 بیت</translation>
+    </message>
+    <message>
+        <source>Compression</source>
+        <translation>فشرده‌سازی</translation>
+    </message>
+    <message>
+        <source>None</source>
+        <translation>هیچ</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>اندازه</translation>
+    </message>
+    <message>
+        <source>Full</source>
+        <translation>کامل</translation>
+    </message>
+    <message>
+        <source>3840 px</source>
+        <translation>۳۸۴۰ پیکسل</translation>
+    </message>
+    <message>
+        <source>Long edge at most 3840 px</source>
+        <translation>ضلع بلند حداکثر ۳۸۴۰ پیکسل</translation>
+    </message>
+    <message>
+        <source>2048 px</source>
+        <translation>۲۰۴۸ پیکسل</translation>
+    </message>
+    <message>
+        <source>Long edge at most 2048 px</source>
+        <translation>ضلع بلند حداکثر ۲۰۴۸ پیکسل</translation>
+    </message>
+    <message>
+        <source>Colour profile</source>
+        <translation>نمایهٔ رنگ</translation>
+    </message>
+    <message>
+        <source>Web, screens</source>
+        <translation>وب، نمایشگرها</translation>
+    </message>
+    <message>
+        <source>Wide-gamut screens</source>
+        <translation>نمایشگرهای با گسترهٔ رنگی وسیع</translation>
+    </message>
+    <message>
+        <source>Print</source>
+        <translation>چاپ</translation>
+    </message>
+    <message>
+        <source>Editing, archive</source>
+        <translation>ویرایش، بایگانی</translation>
+    </message>
+    <message>
+        <source>HDR, video</source>
+        <translation>HDR، ویدئو</translation>
+    </message>
+    <message>
+        <source>Linear, VFX</source>
+        <translation>خطی، جلوه‌های بصری</translation>
+    </message>
+    <message>
+        <source>OpenEXR is written scene-linear in the chosen primaries.</source>
+        <translation>OpenEXR به‌صورت خطی صحنه با رنگ‌های اصلی انتخاب‌شده نوشته می‌شود.</translation>
+    </message>
+    <message>
+        <source>Rendering intent</source>
+        <translation>هدف رندر</translation>
+    </message>
+    <message>
+        <source>Compresses the whole gamut; colour relations are kept</source>
+        <translation>کل گستره را فشرده می‌کند؛ نسبت میان رنگ‌ها حفظ می‌شود</translation>
     </message>
     <message>
         <source>Relative</source>
@@ -527,44 +563,54 @@
         <translation>رنگ‌های دقیق همراه با نقطهٔ سفید منبع؛ برای نمونه‌چاپ</translation>
     </message>
     <message>
-        <source>Preserve Camera EXIF</source>
-        <translation>حفظ EXIF دوربین</translation>
+        <source>Metadata</source>
+        <translation>فراداده</translation>
     </message>
     <message>
-        <source>Strip GPS (Privacy)</source>
-        <translation>حذف GPS (حریم خصوصی)</translation>
+        <source>Keep camera metadata (EXIF)</source>
+        <translation>حفظ فرادادهٔ دوربین (EXIF)</translation>
     </message>
     <message>
-        <source>Apply Photography Watermark / EXIF Signature</source>
-        <translation>افزودن واترمارک / امضای EXIF</translation>
+        <source>Remove location (GPS)</source>
+        <translation>حذف موقعیت (GPS)</translation>
     </message>
     <message>
-        <source>Exporting Batch...</source>
-        <translation>در حال خروجی دسته...</translation>
+        <source>Prepare for</source>
+        <translation>آماده‌سازی برای</translation>
     </message>
     <message>
-        <source>Exporting Full Resolution...</source>
-        <translation>در حال خروجی با وضوح کامل...</translation>
-    </message>
-    <message numerus="yes">
-        <source>Start Parallel Batch Export (%n Photos)</source>
-        <translation>
-            <numerusform>شروع خروجی دسته‌ای موازی (%n عکس)</numerusform>
-        </translation>
+        <source>Sets the crop and output sharpening for a platform. Reset restores your own.</source>
+        <translation>برش و وضوح‌دهی خروجی را برای یک بستر تنظیم می‌کند. بازنشانی تنظیمات خودتان را برمی‌گرداند.</translation>
     </message>
     <message>
-        <source>Start Export (%1 / %2)</source>
-        <translation>شروع خروجی (%1 / %2)</translation>
+        <source>Watermark</source>
+        <translation>واترمارک</translation>
+    </message>
+    <message>
+        <source>Folder</source>
+        <translation>پوشه</translation>
+    </message>
+    <message>
+        <source>Hide</source>
+        <translation>پنهان کردن</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>لغو</translation>
+    </message>
+    <message>
+        <source>Exporting…</source>
+        <translation>در حال خروجی گرفتن…</translation>
     </message>
 </context>
 <context>
     <name>FilmGrainPanel</name>
     <message>
-        <source>SILVER-HALIDE FILM GRAIN</source>
-        <translation>دانهٔ فیلم هالید نقره</translation>
+        <source>Grain</source>
+        <translation>دانه</translation>
     </message>
     <message>
-        <source>RESET</source>
+        <source>Reset</source>
         <translation>بازنشانی</translation>
     </message>
     <message>
@@ -699,12 +745,16 @@
         <translation>کنتراست سینمایی پانورامیک ۳۵ میلی‌متری</translation>
     </message>
     <message>
-        <source>FILM SIMULATION &amp; SENSOR PROFILES</source>
-        <translation>شبیه‌سازی فیلم و نمایه‌های حسگر</translation>
+        <source>Profile</source>
+        <translation>نمایه</translation>
     </message>
     <message>
-        <source>RESET</source>
+        <source>Reset</source>
         <translation>بازنشانی</translation>
+    </message>
+    <message>
+        <source>Amount</source>
+        <translation>مقدار</translation>
     </message>
     <message>
         <source>All</source>
@@ -714,17 +764,9 @@
         <source>Acros B&amp;W</source>
         <translation>Acros سیاه‌وسفید</translation>
     </message>
-    <message>
-        <source>SIMULATION INTENSITY</source>
-        <translation>شدت شبیه‌سازی</translation>
-    </message>
 </context>
 <context>
     <name>Filmstrip</name>
-    <message>
-        <source>Local Photos</source>
-        <translation>عکس‌های محلی</translation>
-    </message>
     <message>
         <source>Studio Catalog</source>
         <translation>کاتالوگ استودیو</translation>
@@ -732,6 +774,14 @@
     <message>
         <source>Up</source>
         <translation>بالا</translation>
+    </message>
+    <message>
+        <source>Folders</source>
+        <translation>پوشه‌ها</translation>
+    </message>
+    <message>
+        <source>Catalog</source>
+        <translation>کاتالوگ</translation>
     </message>
     <message>
         <source>Scanning Catalog...</source>
@@ -758,20 +808,19 @@
         <translation>هیچ عکسی در این پوشه پیدا نشد.</translation>
     </message>
     <message>
-        <source>DIR</source>
-        <comment>folder badge</comment>
+        <source>Folder</source>
         <translation>پوشه</translation>
     </message>
     <message>
-        <source>FETCHING</source>
-        <translation>در حال دریافت</translation>
+        <source>Downloading</source>
+        <translation>در حال بارگیری</translation>
     </message>
     <message>
-        <source>RAW CLOUD</source>
-        <translation>RAW در فضای ابری</translation>
+        <source>Remote</source>
+        <translation>راه دور</translation>
     </message>
     <message>
-        <source>NO PREVIEW</source>
+        <source>No preview</source>
         <translation>بدون پیش‌نمایش</translation>
     </message>
     <message>
@@ -833,40 +882,60 @@
         <translation>دستورالعمل‌های Fujifilm</translation>
     </message>
     <message>
-        <source>FUJIFILM RECIPES</source>
-        <translation>دستورالعمل‌های FUJIFILM</translation>
-    </message>
-    <message>
-        <source>IMPORT</source>
+        <source>Import</source>
         <translation>وارد کردن</translation>
     </message>
     <message>
-        <source>APPLY PHOTO&apos;S RECIPE</source>
-        <translation>اعمال دستورالعمل عکس</translation>
+        <source>Apply photo&apos;s recipe</source>
+        <translation>اعمال دستور عکس</translation>
     </message>
     <message>
-        <source>SAVE</source>
+        <source>Save</source>
         <translation>ذخیره</translation>
+    </message>
+    <message>
+        <source>Apply recipe</source>
+        <translation>اعمال دستور</translation>
+    </message>
+    <message>
+        <source>Camera (USB)</source>
+        <translation>دوربین (USB)</translation>
+    </message>
+    <message>
+        <source>Reconnect</source>
+        <translation>اتصال دوباره</translation>
+    </message>
+    <message>
+        <source>Connect</source>
+        <translation>اتصال</translation>
+    </message>
+    <message>
+        <source>Read C1–C7</source>
+        <translation>خواندن C1–C7</translation>
+    </message>
+    <message>
+        <source>Convert in camera</source>
+        <translation>تبدیل در دوربین</translation>
+    </message>
+    <message>
+        <source>Write recipe to C%1</source>
+        <translation>نوشتن دستور در C%1</translation>
+    </message>
+    <message>
+        <source>Pixel shift</source>
+        <translation>جابه‌جایی پیکسل</translation>
+    </message>
+    <message>
+        <source>Merge %1 frames to DNG</source>
+        <translation>ادغام %1 قاب در DNG</translation>
+    </message>
+    <message>
+        <source>Merge frames to DNG</source>
+        <translation>ادغام قاب‌ها در DNG</translation>
     </message>
     <message>
         <source>No saved recipes. Import an X RAW Studio profile, recipe text or a Fujifilm photo.</source>
         <translation>دستورالعمل ذخیره‌شده‌ای وجود ندارد. یک نمایهٔ X RAW Studio، متن دستورالعمل یا عکس Fujifilm وارد کنید.</translation>
-    </message>
-    <message>
-        <source>APPLY SELECTED RECIPE</source>
-        <translation>اعمال دستورالعمل انتخاب‌شده</translation>
-    </message>
-    <message>
-        <source>CAMERA (USB)</source>
-        <translation>دوربین (USB)</translation>
-    </message>
-    <message>
-        <source>RECONNECT</source>
-        <translation>اتصال دوباره</translation>
-    </message>
-    <message>
-        <source>CONNECT</source>
-        <translation>اتصال</translation>
     </message>
     <message>
         <source>%1  ·  in-camera RAW conversion</source>
@@ -881,24 +950,8 @@
         <translation>حالت USB دوربین را روی %1 بگذارید و آن را وصل کنید.</translation>
     </message>
     <message>
-        <source>READ C1-C7</source>
-        <translation>خواندن C1-C7</translation>
-    </message>
-    <message>
-        <source>CONVERT IN CAMERA</source>
-        <translation>تبدیل در دوربین</translation>
-    </message>
-    <message>
         <source>Unnamed</source>
         <translation>بی‌نام</translation>
-    </message>
-    <message>
-        <source>WRITE SELECTED RECIPE TO C%1</source>
-        <translation>نوشتن دستورالعمل انتخاب‌شده در C%1</translation>
-    </message>
-    <message>
-        <source>PIXEL SHIFT MULTI-SHOT</source>
-        <translation>Pixel Shift چندعکسی</translation>
     </message>
     <message numerus="yes">
         <source>%n RAF frames selected. 4 frames give full colour per pixel, 16 frames double the resolution.</source>
@@ -910,22 +963,12 @@
         <source>Select the RAF frames of one GFX Pixel Shift sequence in the filmstrip.</source>
         <translation>فریم‌های RAF یک توالی GFX Pixel Shift را در نوار عکس انتخاب کنید.</translation>
     </message>
-    <message numerus="yes">
-        <source>MERGE %n FRAMES TO DNG</source>
-        <translation>
-            <numerusform>ادغام %n فریم در DNG</numerusform>
-        </translation>
-    </message>
-    <message>
-        <source>MERGE FRAMES TO DNG</source>
-        <translation>ادغام فریم‌ها در DNG</translation>
-    </message>
 </context>
 <context>
     <name>GradeVersionsBar</name>
     <message>
-        <source>GRADE VERSION</source>
-        <translation>نسخهٔ اصلاح رنگ</translation>
+        <source>Version</source>
+        <translation>نسخه</translation>
     </message>
 </context>
 <context>
@@ -936,8 +979,8 @@
         <translation>[س] %1%</translation>
     </message>
     <message>
-        <source>RGB HISTOGRAM</source>
-        <translation>هیستوگرام RGB</translation>
+        <source>Histogram</source>
+        <translation>هیستوگرام</translation>
     </message>
     <message>
         <source>[H] %1%</source>
@@ -984,11 +1027,11 @@
         <translation>کانال %1</translation>
     </message>
     <message>
-        <source>RESET CH</source>
-        <translation>بازنشانی کانال</translation>
+        <source>Reset colour</source>
+        <translation>بازنشانی رنگ</translation>
     </message>
     <message>
-        <source>RESET ALL</source>
+        <source>Reset all</source>
         <translation>بازنشانی همه</translation>
     </message>
     <message>
@@ -1097,32 +1140,32 @@
         <translation>ماسک %1 آماده است (%2)</translation>
     </message>
     <message>
-        <source>DETECTING...</source>
-        <translation>در حال شناسایی...</translation>
+        <source>Detecting…</source>
+        <translation>در حال تشخیص…</translation>
     </message>
     <message>
-        <source>LOCAL ADJUSTMENT LAYERS</source>
-        <translation>لایه‌های تنظیم موضعی</translation>
+        <source>Masks</source>
+        <translation>ماسک‌ها</translation>
     </message>
     <message>
-        <source>+ GRADIENT</source>
-        <translation>+ گرادیان</translation>
+        <source>+ Linear</source>
+        <translation>+ خطی</translation>
+    </message>
+    <message>
+        <source>+ Radial</source>
+        <translation>+ شعاعی</translation>
+    </message>
+    <message>
+        <source>+ Luminance</source>
+        <translation>+ روشنایی</translation>
     </message>
     <message>
         <source>Linear Gradient %1</source>
         <translation>گرادیان خطی %1</translation>
     </message>
     <message>
-        <source>+ RADIAL</source>
-        <translation>+ شعاعی</translation>
-    </message>
-    <message>
         <source>Radial Mask %1</source>
         <translation>ماسک شعاعی %1</translation>
-    </message>
-    <message>
-        <source>+ LUMA</source>
-        <translation>+ روشنایی</translation>
     </message>
     <message>
         <source>Luma Range %1</source>
@@ -1140,10 +1183,6 @@
         <source>I</source>
         <comment>invert mask toggle, first letter of Invert</comment>
         <translation>و</translation>
-    </message>
-    <message>
-        <source>SELECTED LAYER CONTROLS (%1)</source>
-        <translation>کنترل‌های لایهٔ انتخاب‌شده (%1)</translation>
     </message>
     <message>
         <source>Layer Opacity</source>
@@ -1165,48 +1204,32 @@
 <context>
     <name>LutSelector</name>
     <message>
-        <source>DAVINCI 3D LUT ENGINE (.CUBE)</source>
-        <translation>موتور DaVinci 3D LUT‏ (.CUBE)</translation>
+        <source>Load 3D LUT</source>
+        <translation>بارگذاری LUT سه‌بعدی</translation>
     </message>
     <message>
-        <source>RESET</source>
+        <source>3D LUT</source>
+        <translation>LUT سه‌بعدی</translation>
+    </message>
+    <message>
+        <source>Reset</source>
         <translation>بازنشانی</translation>
     </message>
     <message>
-        <source>Hollywood Print</source>
-        <translation>نسخهٔ هالیوودی</translation>
+        <source>Load .cube file…</source>
+        <translation>بارگذاری فایل ‎.cube…</translation>
     </message>
     <message>
-        <source>Cinema Blockbuster</source>
-        <translation>فیلم پرفروش سینمایی</translation>
+        <source>Saved look: %1</source>
+        <translation>ظاهر ذخیره‌شده: %1</translation>
     </message>
     <message>
-        <source>35mm Soft Stock</source>
-        <translation>فیلم نرم ۳۵ میلی‌متری</translation>
-    </message>
-    <message>
-        <source>High-Acutance B&amp;W</source>
-        <translation>سیاه‌وسفید بسیار تیز</translation>
-    </message>
-    <message>
-        <source>LUT Intensity (Mix)</source>
-        <translation>شدت LUT (آمیزش)</translation>
+        <source>Amount</source>
+        <translation>مقدار</translation>
     </message>
 </context>
 <context>
     <name>MainWindow</name>
-    <message>
-        <source>Switched to version %1</source>
-        <translation>به نسخهٔ %1 رفت</translation>
-    </message>
-    <message>
-        <source>Version %1 initialized</source>
-        <translation>نسخهٔ %1 ایجاد شد</translation>
-    </message>
-    <message>
-        <source>Copied current grade to version %1</source>
-        <translation>اصلاح رنگ فعلی در نسخهٔ %1 رونوشت شد</translation>
-    </message>
     <message numerus="yes">
         <source>Rating: %n star(s)</source>
         <translation>
@@ -1234,36 +1257,8 @@
         <translation>چیزی برای واگرد نیست</translation>
     </message>
     <message>
-        <source>Undo (Ctrl+Z)</source>
-        <translation>واگرد (Ctrl+Z)</translation>
-    </message>
-    <message>
         <source>Nothing to redo</source>
         <translation>چیزی برای ازنو نیست</translation>
-    </message>
-    <message>
-        <source>Redo (Ctrl+Shift+Z)</source>
-        <translation>ازنو (Ctrl+Shift+Z)</translation>
-    </message>
-    <message>
-        <source>Adjustments copied (Ctrl+Shift+C)</source>
-        <translation>تنظیمات رونوشت شد (Ctrl+Shift+C)</translation>
-    </message>
-    <message>
-        <source>No adjustments in clipboard</source>
-        <translation>تنظیمی در کلیپ‌بورد نیست</translation>
-    </message>
-    <message>
-        <source>Adjustments pasted (Ctrl+Shift+V)</source>
-        <translation>تنظیمات چسبانده شد (Ctrl+Shift+V)</translation>
-    </message>
-    <message>
-        <source>Reset to defaults (Ctrl+R)</source>
-        <translation>پیش‌فرض‌ها بازیابی شد (Ctrl+R)</translation>
-    </message>
-    <message>
-        <source>Social framing and adjustments reset</source>
-        <translation>قاب شبکه‌های اجتماعی و تنظیمات بازنشانی شد</translation>
     </message>
     <message>
         <source>Failed to load RAW: %1</source>
@@ -1286,28 +1281,8 @@
         <translation>نمایش پیش‌نمایش ناموفق بود</translation>
     </message>
     <message>
-        <source>Auto tone applied</source>
-        <translation>تُن خودکار اعمال شد</translation>
-    </message>
-    <message>
-        <source>AI decisions applied</source>
-        <translation>تصمیم‌های هوش مصنوعی اعمال شد</translation>
-    </message>
-    <message>
-        <source>Local heuristic applied</source>
-        <translation>روش ابتکاری محلی اعمال شد</translation>
-    </message>
-    <message>
         <source>%1 applied (%2)</source>
         <translation>%1 اعمال شد (%2)</translation>
-    </message>
-    <message>
-        <source>Recipe sidecar saved</source>
-        <translation>پروندهٔ همراه دستورالعمل ذخیره شد</translation>
-    </message>
-    <message>
-        <source>Batch finished: %1/%2 photos exported</source>
-        <translation>دسته تمام شد: %1/%2 عکس خروجی گرفته شد</translation>
     </message>
     <message>
         <source>Batch export: %1 succeeded, %2 failed</source>
@@ -1330,14 +1305,6 @@
         <translation>%1 نوشته شد</translation>
     </message>
     <message>
-        <source>Analyzing dynamic range and scene...</source>
-        <translation>در حال تحلیل محدودهٔ دینامیکی و صحنه...</translation>
-    </message>
-    <message>
-        <source>Asking the AI for edit decisions...</source>
-        <translation>در حال درخواست تصمیم‌های ویرایش از هوش مصنوعی...</translation>
-    </message>
-    <message>
         <source>Open RAW Photo</source>
         <translation>باز کردن عکس RAW</translation>
     </message>
@@ -1346,20 +1313,8 @@
         <translation>عکس‌های RAW</translation>
     </message>
     <message>
-        <source>Saved to: %1</source>
-        <translation>ذخیره شد در: %1</translation>
-    </message>
-    <message>
-        <source>Export error: %1</source>
-        <translation>خطای خروجی: %1</translation>
-    </message>
-    <message>
         <source>Export finished without a result</source>
         <translation>خروجی بدون نتیجه پایان یافت</translation>
-    </message>
-    <message>
-        <source>The folder scan gave no answer</source>
-        <translation>پویش پوشه پاسخی نداد</translation>
     </message>
     <message>
         <source>Crop mode: on (C)</source>
@@ -1370,36 +1325,12 @@
         <translation>حالت برش: خاموش</translation>
     </message>
     <message>
-        <source>Open a photo first to export</source>
-        <translation>برای خروجی، نخست یک عکس باز کنید</translation>
-    </message>
-    <message>
-        <source>Panels hidden (Tab)</source>
-        <translation>پنل‌ها پنهان شدند (Tab)</translation>
-    </message>
-    <message>
-        <source>Panels restored (Tab)</source>
-        <translation>پنل‌ها بازگردانده شدند (Tab)</translation>
-    </message>
-    <message>
-        <source>Optimizing for %1...</source>
-        <translation>در حال بهینه‌سازی برای %1...</translation>
-    </message>
-    <message>
-        <source>AI SCENE INSIGHT</source>
-        <translation>تحلیل صحنه با هوش مصنوعی</translation>
-    </message>
-    <message>
         <source>Analyzing...</source>
         <translation>در حال تحلیل...</translation>
     </message>
     <message>
         <source>Extracting dynamic range...</source>
         <translation>در حال استخراج محدودهٔ دینامیکی...</translation>
-    </message>
-    <message>
-        <source>Grade versions • Alt+1..4 to switch</source>
-        <translation>نسخه‌های اصلاح رنگ • Alt+1..4 برای جابه‌جایی</translation>
     </message>
     <message>
         <source>Opened %1</source>
@@ -1410,36 +1341,8 @@
         <translation>در حال پویش پوشهٔ %1</translation>
     </message>
     <message>
-        <source>AI edit applied</source>
-        <translation>ویرایش هوش مصنوعی اعمال شد</translation>
-    </message>
-    <message>
-        <source>ESSENTIAL ADJUSTMENTS</source>
-        <translation>تنظیمات پایه</translation>
-    </message>
-    <message>
-        <source>RESET</source>
-        <translation>بازنشانی</translation>
-    </message>
-    <message>
-        <source>Exposure (Light)</source>
-        <translation>نوردهی (نور)</translation>
-    </message>
-    <message>
-        <source>Warmth (Temperature)</source>
-        <translation>گرما (دمای رنگ)</translation>
-    </message>
-    <message>
-        <source>Vibrance (Color Punch)</source>
-        <translation>سرزندگی (قدرت رنگ)</translation>
-    </message>
-    <message>
         <source>Contrast</source>
         <translation>کنتراست</translation>
-    </message>
-    <message>
-        <source>WHITE BALANCE</source>
-        <translation>تراز سفیدی</translation>
     </message>
     <message>
         <source>Temp (Kelvin)</source>
@@ -1448,10 +1351,6 @@
     <message>
         <source>Tint (Green / Magenta)</source>
         <translation>ته‌رنگ (سبز / سرخابی)</translation>
-    </message>
-    <message>
-        <source>LIGHT &amp; DYNAMIC RANGE</source>
-        <translation>نور و محدودهٔ دینامیکی</translation>
     </message>
     <message>
         <source>Exposure</source>
@@ -1474,10 +1373,6 @@
         <translation>سیاه‌ها</translation>
     </message>
     <message>
-        <source>TONE CURVE (PARAMETRIC)</source>
-        <translation>منحنی تُن (پارامتری)</translation>
-    </message>
-    <message>
         <source>Curve Highlights</source>
         <translation>منحنی: روشنی‌ها</translation>
     </message>
@@ -1492,10 +1387,6 @@
     <message>
         <source>Curve Shadows</source>
         <translation>منحنی: سایه‌ها</translation>
-    </message>
-    <message>
-        <source>PRESENCE &amp; TEXTURE</source>
-        <translation>حضور و بافت</translation>
     </message>
     <message>
         <source>Texture</source>
@@ -1516,14 +1407,6 @@
     <message>
         <source>Saturation</source>
         <translation>اشباع</translation>
-    </message>
-    <message>
-        <source>COLOR MIXER (8-BAND HSL)</source>
-        <translation>میکسر رنگ (HSL هشت‌باندی)</translation>
-    </message>
-    <message>
-        <source>DETAIL &amp; OPTICS</source>
-        <translation>جزئیات و اپتیک</translation>
     </message>
     <message>
         <source>Sharpening</source>
@@ -1554,12 +1437,200 @@
         <translation>نخست یک عکس باز کنید</translation>
     </message>
     <message>
+        <source>Version %1</source>
+        <translation>نسخهٔ %1</translation>
+    </message>
+    <message>
+        <source>Version %1 started</source>
+        <translation>نسخهٔ %1 آغاز شد</translation>
+    </message>
+    <message>
+        <source>Copied to version %1</source>
+        <translation>در نسخهٔ %1 کپی شد</translation>
+    </message>
+    <message>
+        <source>Undo</source>
+        <translation>واگرد</translation>
+    </message>
+    <message>
+        <source>Redo</source>
+        <translation>ازنو</translation>
+    </message>
+    <message>
+        <source>Settings copied</source>
+        <translation>تنظیمات کپی شد</translation>
+    </message>
+    <message>
+        <source>Nothing copied yet</source>
+        <translation>هنوز چیزی کپی نشده است</translation>
+    </message>
+    <message>
+        <source>Settings pasted</source>
+        <translation>تنظیمات جای‌گذاری شد</translation>
+    </message>
+    <message>
+        <source>Reset to defaults</source>
+        <translation>مقادیر پیش‌فرض بازگردانده شد</translation>
+    </message>
+    <message>
+        <source>Platform crop reset</source>
+        <translation>برش بستر بازنشانی شد</translation>
+    </message>
+    <message>
+        <source>Auto applied</source>
+        <translation>تنظیم خودکار اعمال شد</translation>
+    </message>
+    <message>
+        <source>Settings saved</source>
+        <translation>تنظیمات ذخیره شد</translation>
+    </message>
+    <message>
+        <source>%1 of %2 photos exported</source>
+        <translation>%1 از %2 عکس خروجی گرفته شد</translation>
+    </message>
+    <message>
+        <source>Auto: analysing the photo…</source>
+        <translation>خودکار: در حال تحلیل عکس…</translation>
+    </message>
+    <message>
+        <source>Saved to %1</source>
+        <translation>ذخیره شد در %1</translation>
+    </message>
+    <message>
+        <source>Export failed</source>
+        <translation>خروجی گرفتن ناموفق بود</translation>
+    </message>
+    <message>
+        <source>The scan did not respond.</source>
+        <translation>پویش پوشه پاسخ نداد.</translation>
+    </message>
+    <message>
+        <source>Rating: ★</source>
+        <translation>امتیاز: ★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★</source>
+        <translation>امتیاز: ★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★</source>
+        <translation>امتیاز: ★★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★★</source>
+        <translation>امتیاز: ★★★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★★★</source>
+        <translation>امتیاز: ★★★★★</translation>
+    </message>
+    <message>
+        <source>Flag cleared</source>
+        <translation>نشان برداشته شد</translation>
+    </message>
+    <message>
+        <source>Preparing for %1…</source>
+        <translation>در حال آماده‌سازی برای %1…</translation>
+    </message>
+    <message>
+        <source>Rating: %1</source>
+        <translation>امتیاز: %1</translation>
+    </message>
+    <message>
+        <source>Picked</source>
+        <translation>انتخاب‌شده</translation>
+    </message>
+    <message>
+        <source>Rejected</source>
+        <translation>ردشده</translation>
+    </message>
+    <message>
+        <source>Scene</source>
+        <translation>صحنه</translation>
+    </message>
+    <message>
+        <source>Adjust</source>
+        <translation>تنظیم</translation>
+    </message>
+    <message>
+        <source>Masks</source>
+        <translation>ماسک‌ها</translation>
+    </message>
+    <message>
+        <source>Looks</source>
+        <translation>سبک‌ها</translation>
+    </message>
+    <message>
+        <source>AI</source>
+        <translation>هوش مصنوعی</translation>
+    </message>
+    <message>
+        <source>Profile</source>
+        <translation>نمایه</translation>
+    </message>
+    <message>
         <source>Color Chrome Effect</source>
         <translation>جلوهٔ Color Chrome</translation>
     </message>
     <message>
         <source>Color Chrome FX Blue</source>
         <translation>Color Chrome FX آبی</translation>
+    </message>
+    <message>
+        <source>White balance</source>
+        <translation>تراز سفیدی</translation>
+    </message>
+    <message>
+        <source>Tone</source>
+        <translation>تُن</translation>
+    </message>
+    <message>
+        <source>Presence</source>
+        <translation>حضور</translation>
+    </message>
+    <message>
+        <source>Tone curve</source>
+        <translation>منحنی تُن</translation>
+    </message>
+    <message>
+        <source>Colour mixer</source>
+        <translation>میکسر رنگ</translation>
+    </message>
+    <message>
+        <source>Colour grading</source>
+        <translation>درجه‌بندی رنگ</translation>
+    </message>
+    <message>
+        <source>Detail and optics</source>
+        <translation>جزئیات و اپتیک</translation>
+    </message>
+    <message>
+        <source>Grain</source>
+        <translation>دانه</translation>
+    </message>
+    <message>
+        <source>Colour management</source>
+        <translation>مدیریت رنگ</translation>
+    </message>
+    <message>
+        <source>Local adjustments</source>
+        <translation>تنظیمات موضعی</translation>
+    </message>
+    <message>
+        <source>Presets</source>
+        <translation>پیش‌تنظیم‌ها</translation>
+    </message>
+    <message>
+        <source>LUT</source>
+        <translation>LUT</translation>
+    </message>
+    <message>
+        <source>Edit assistant</source>
+        <translation>دستیار ویرایش</translation>
+    </message>
+    <message>
+        <source>Assistant edit applied</source>
+        <translation>ویرایش دستیار اعمال شد</translation>
     </message>
     <message>
         <source>Copy</source>
@@ -1594,28 +1665,28 @@
         <translation>در حال باز کردن %1</translation>
     </message>
     <message>
-        <source>Loading the studio catalog...</source>
-        <translation>در حال بارگذاری کاتالوگ استودیو...</translation>
+        <source>Loading the catalog…</source>
+        <translation>در حال بارگذاری کاتالوگ…</translation>
     </message>
     <message>
-        <source>Refreshing the studio catalog...</source>
-        <translation>در حال تازه‌سازی کاتالوگ استودیو...</translation>
+        <source>Refreshing the catalog…</source>
+        <translation>در حال تازه‌سازی کاتالوگ…</translation>
     </message>
     <message numerus="yes">
-        <source>Exporting %n photo(s) in parallel...</source>
+        <source>Exporting %n photos…</source>
         <translation>
-            <numerusform>در حال خروجی موازی %n عکس...</numerusform>
+            <numerusform>در حال خروجی گرفتن از %n عکس…</numerusform>
         </translation>
     </message>
     <message>
-        <source>Developing at full resolution and encoding...</source>
-        <translation>در حال ظهور با وضوح کامل و رمزگذاری...</translation>
+        <source>Developing at full resolution…</source>
+        <translation>در حال ظهور با وضوح کامل…</translation>
     </message>
 </context>
 <context>
     <name>Navigator</name>
     <message>
-        <source>NAVIGATOR</source>
+        <source>Navigator</source>
         <translation>ناوبر</translation>
     </message>
     <message>
@@ -1624,65 +1695,92 @@
     </message>
 </context>
 <context>
+    <name>PanelSection</name>
+    <message>
+        <source>Reset %1</source>
+        <translation>بازنشانی %1</translation>
+    </message>
+</context>
+<context>
     <name>PresetSelector</name>
     <message>
-        <source>FILM LOOKS &amp; STYLES</source>
-        <translation>ظاهر و سبک‌های فیلم</translation>
+        <source>Looks</source>
+        <translation>سبک‌ها</translation>
     </message>
     <message>
-        <source>RESET</source>
+        <source>Reset</source>
         <translation>بازنشانی</translation>
     </message>
     <message>
-        <source>AI Auto Enhance</source>
-        <translation>بهبود خودکار با هوش مصنوعی</translation>
+        <source>Auto</source>
+        <translation>خودکار</translation>
     </message>
     <message>
-        <source>RUN</source>
+        <source>Run</source>
         <translation>اجرا</translation>
     </message>
     <message>
-        <source>Documentary Muted</source>
-        <translation>مستند ملایم</translation>
+        <source>Muted</source>
+        <translation>ملایم</translation>
     </message>
     <message>
-        <source>Vivid Landscapes</source>
-        <translation>منظره‌های زنده</translation>
+        <source>Documentary, low saturation</source>
+        <translation>مستند، اشباع کم</translation>
     </message>
     <message>
-        <source>Warm Skin Tones</source>
-        <translation>تُن‌های گرم پوست</translation>
+        <source>Vivid</source>
+        <translation>پررنگ</translation>
     </message>
     <message>
-        <source>High Contrast B&amp;W</source>
-        <translation>سیاه‌وسفید پرکنتراست</translation>
+        <source>Landscapes, rich colour</source>
+        <translation>منظره‌ها، رنگ غنی</translation>
     </message>
     <message>
-        <source>Film Grade</source>
-        <translation>اصلاح رنگ سینمایی</translation>
+        <source>Warm portrait</source>
+        <translation>پرترهٔ گرم</translation>
+    </message>
+    <message>
+        <source>Soft contrast, warm skin</source>
+        <translation>کنتراست نرم، پوست گرم</translation>
+    </message>
+    <message>
+        <source>Black and white</source>
+        <translation>سیاه‌وسفید</translation>
+    </message>
+    <message>
+        <source>High contrast</source>
+        <translation>کنتراست بالا</translation>
+    </message>
+    <message>
+        <source>Teal and orange</source>
+        <translation>سبزآبی و نارنجی</translation>
+    </message>
+    <message>
+        <source>Split toning</source>
+        <translation>تونینگ دوگانه</translation>
     </message>
 </context>
 <context>
     <name>RgbMixerPanel</name>
     <message>
-        <source>DAVINCI RGB PRIMARY MIXER</source>
-        <translation>میکسر RGB اصلی DaVinci</translation>
-    </message>
-    <message>
-        <source>RESET</source>
-        <translation>بازنشانی</translation>
-    </message>
-    <message>
         <source>Monochrome Mixing</source>
         <translation>آمیزش تک‌رنگ</translation>
     </message>
     <message>
-        <source>MONOCHROME LUMA MIX</source>
-        <translation>آمیزش روشنایی تک‌رنگ</translation>
+        <source>Channel mixer</source>
+        <translation>میکسر کانال</translation>
     </message>
     <message>
-        <source>RED OUTPUT CHANNEL</source>
-        <translation>کانال خروجی قرمز</translation>
+        <source>Reset</source>
+        <translation>بازنشانی</translation>
+    </message>
+    <message>
+        <source>Monochrome mix</source>
+        <translation>ترکیب تک‌رنگ</translation>
+    </message>
+    <message>
+        <source>Red output</source>
+        <translation>خروجی قرمز</translation>
     </message>
     <message>
         <source>Red in Red</source>
@@ -1697,8 +1795,12 @@
         <translation>آبی در قرمز</translation>
     </message>
     <message>
-        <source>GREEN OUTPUT CHANNEL</source>
-        <translation>کانال خروجی سبز</translation>
+        <source>Green output</source>
+        <translation>خروجی سبز</translation>
+    </message>
+    <message>
+        <source>Blue output</source>
+        <translation>خروجی آبی</translation>
     </message>
     <message>
         <source>Red in Green</source>
@@ -1711,10 +1813,6 @@
     <message>
         <source>Blue in Green</source>
         <translation>آبی در سبز</translation>
-    </message>
-    <message>
-        <source>BLUE OUTPUT CHANNEL</source>
-        <translation>کانال خروجی آبی</translation>
     </message>
     <message>
         <source>Red in Blue</source>
@@ -1758,8 +1856,8 @@
         <translation>[ر] %1%</translation>
     </message>
     <message>
-        <source>NO SIGNAL / LOAD RAW</source>
-        <translation>بدون سیگنال / RAW بارگذاری کنید</translation>
+        <source>No photo</source>
+        <translation>بدون عکس</translation>
     </message>
     <message>
         <source>RED</source>
@@ -1781,11 +1879,11 @@
 <context>
     <name>SkinTonePanel</name>
     <message>
-        <source>CAPTURE ONE SKIN TONE</source>
-        <translation>تُن پوست Capture One</translation>
+        <source>Skin tone</source>
+        <translation>رنگ پوست</translation>
     </message>
     <message>
-        <source>RESET</source>
+        <source>Reset</source>
         <translation>بازنشانی</translation>
     </message>
     <message>
@@ -1827,52 +1925,28 @@
 <context>
     <name>SocialOptimizer</name>
     <message>
-        <source>AI SOCIAL MEDIA OPTIMIZER</source>
-        <translation>بهینه‌ساز شبکه‌های اجتماعی با هوش مصنوعی</translation>
+        <source>Prepare for</source>
+        <translation>آماده‌سازی برای</translation>
     </message>
     <message>
-        <source>RESET</source>
+        <source>Reset</source>
         <translation>بازنشانی</translation>
     </message>
     <message>
-        <source>Instagram Feed</source>
-        <translation>فید Instagram</translation>
+        <source>Instagram post</source>
+        <translation>پست اینستاگرام</translation>
     </message>
     <message>
-        <source>Max Screen</source>
-        <translation>بیشینهٔ صفحه</translation>
+        <source>Stories and Reels</source>
+        <translation>استوری و Reels</translation>
     </message>
     <message>
-        <source>Stories / Reels</source>
-        <translation>استوری / Reels</translation>
+        <source>Square</source>
+        <translation>مربع</translation>
     </message>
     <message>
-        <source>Full Mobile</source>
-        <translation>صفحهٔ کامل موبایل</translation>
-    </message>
-    <message>
-        <source>Crisp Feed</source>
-        <translation>فید واضح</translation>
-    </message>
-    <message>
-        <source>Classic Square</source>
-        <translation>مربع کلاسیک</translation>
-    </message>
-    <message>
-        <source>Grid Post</source>
-        <translation>پست شبکه‌ای</translation>
-    </message>
-    <message>
-        <source>High Res</source>
-        <translation>وضوح بالا</translation>
-    </message>
-    <message>
-        <source>YouTube Thumb</source>
-        <translation>تصویر بندانگشتی YouTube</translation>
-    </message>
-    <message>
-        <source>High CTR</source>
-        <translation>نرخ کلیک بالا</translation>
+        <source>YouTube thumbnail</source>
+        <translation>تصویر بندانگشتی یوتیوب</translation>
     </message>
 </context>
 <context>
@@ -1907,8 +1981,8 @@
         <translation>پایه</translation>
     </message>
     <message>
-        <source>Pro Studio</source>
-        <translation>Pro Studio</translation>
+        <source>Pro</source>
+        <translation>Pro</translation>
     </message>
     <message>
         <source>Undo (Ctrl+Z)</source>
@@ -1946,16 +2020,16 @@
 <context>
     <name>Viewport</name>
     <message>
-        <source>RESET 0°</source>
-        <translation>بازنشانی به ۰ درجه</translation>
+        <source>Reset 0°</source>
+        <translation>بازنشانی به ۰°</translation>
     </message>
     <message>
-        <source>FIT</source>
+        <source>Fit</source>
         <translation>جاگیری</translation>
     </message>
     <message>
-        <source>CROP &amp; COMPOSE</source>
-        <translation>برش و ترکیب‌بندی</translation>
+        <source>Crop</source>
+        <translation>برش</translation>
     </message>
     <message>
         <source>Original</source>
@@ -1982,12 +2056,20 @@
         <translation>شبکه: خاموش</translation>
     </message>
     <message>
-        <source>RESET</source>
+        <source>Reset</source>
         <translation>بازنشانی</translation>
     </message>
     <message>
-        <source>DONE</source>
+        <source>Done</source>
         <translation>انجام شد</translation>
+    </message>
+    <message>
+        <source>Shadow clipping</source>
+        <translation>بریدگی سایه‌ها</translation>
+    </message>
+    <message>
+        <source>Highlight clipping</source>
+        <translation>بریدگی روشن‌ها</translation>
     </message>
     <message>
         <source>ORIGINAL RAW (Before)</source>
@@ -1996,18 +2078,6 @@
     <message>
         <source>EDITED RECIPE (After)</source>
         <translation>دستورالعمل ویرایش‌شده (پس)</translation>
-    </message>
-    <message>
-        <source>[S] SHADOW CLIPPING (BLUE)</source>
-        <translation>[س] بریدگی سایه‌ها (آبی)</translation>
-    </message>
-    <message>
-        <source>[H] HIGHLIGHT CLIPPING (RED)</source>
-        <translation>[ر] بریدگی روشنی‌ها (قرمز)</translation>
-    </message>
-    <message>
-        <source>Pinch: Zoom | 2-Finger Twist: Rotate | 2-Finger Pan | Double-Tap: Reset</source>
-        <translation>نیشگون: بزرگ‌نمایی | چرخاندن با دو انگشت: چرخش | جابه‌جایی با دو انگشت | دوضرب: بازنشانی</translation>
     </message>
     <message>
         <source>Open a RAW (Ctrl+O) or drop a photo / folder here</source>
@@ -2021,8 +2091,8 @@
 <context>
     <name>WatermarkConfig</name>
     <message>
-        <source>WATERMARK &amp; BRANDING</source>
-        <translation>واترمارک و هویت بصری</translation>
+        <source>Watermark</source>
+        <translation>واترمارک</translation>
     </message>
     <message>
         <source>Text / EXIF Tag</source>
@@ -2033,28 +2103,28 @@
         <translation>لوگوی PNG سفارشی</translation>
     </message>
     <message>
-        <source>WATERMARK TEXT OR TEMPLATE</source>
-        <translation>متن یا قالب واترمارک</translation>
+        <source>Text or template</source>
+        <translation>متن یا الگو</translation>
     </message>
     <message>
-        <source>LOGO FILE PATH (.PNG)</source>
-        <translation>مسیر پروندهٔ لوگو (.PNG)</translation>
+        <source>Logo file (PNG)</source>
+        <translation>فایل لوگو (PNG)</translation>
     </message>
     <message>
-        <source>POSITION</source>
+        <source>Position</source>
         <translation>موقعیت</translation>
+    </message>
+    <message>
+        <source>Opacity</source>
+        <translation>کدری</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>اندازه</translation>
     </message>
     <message>
         <source>Drop Shadow</source>
         <translation>سایهٔ افتاده</translation>
-    </message>
-    <message>
-        <source>OPACITY</source>
-        <translation>کدری</translation>
-    </message>
-    <message>
-        <source>SIZE MULTIPLIER</source>
-        <translation>ضریب اندازه</translation>
     </message>
 </context>
 </TS>

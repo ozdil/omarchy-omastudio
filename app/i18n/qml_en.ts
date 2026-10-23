@@ -4,17 +4,10 @@
 <context>
     <name>ExportDialog</name>
     <message numerus="yes">
-        <source>Batch Export (%n Photos)</source>
+        <source>Export %n photos</source>
         <translation>
-            <numerusform>Batch Export (%n Photo)</numerusform>
-            <numerusform>Batch Export (%n Photos)</numerusform>
-        </translation>
-    </message>
-    <message numerus="yes">
-        <source>Start Parallel Batch Export (%n Photos)</source>
-        <translation>
-            <numerusform>Start Parallel Batch Export (%n Photo)</numerusform>
-            <numerusform>Start Parallel Batch Export (%n Photos)</numerusform>
+            <numerusform>Export %n photo</numerusform>
+            <numerusform>Export %n photos</numerusform>
         </translation>
     </message>
 </context>
@@ -34,13 +27,6 @@
             <numerusform>%n RAF frames selected. 4 frames give full colour per pixel, 16 frames double the resolution.</numerusform>
         </translation>
     </message>
-    <message numerus="yes">
-        <source>MERGE %n FRAMES TO DNG</source>
-        <translation>
-            <numerusform>MERGE %n FRAME TO DNG</numerusform>
-            <numerusform>MERGE %n FRAMES TO DNG</numerusform>
-        </translation>
-    </message>
 </context>
 <context>
     <name>MainWindow</name>
@@ -52,10 +38,10 @@
         </translation>
     </message>
     <message numerus="yes">
-        <source>Exporting %n photo(s) in parallel...</source>
+        <source>Exporting %n photos…</source>
         <translation>
-            <numerusform>Exporting %n photo in parallel...</numerusform>
-            <numerusform>Exporting %n photos in parallel...</numerusform>
+            <numerusform>Exporting %n photo…</numerusform>
+            <numerusform>Exporting %n photos…</numerusform>
         </translation>
     </message>
 </context>

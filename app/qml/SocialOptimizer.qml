@@ -4,6 +4,8 @@ import QtQuick.Controls
 
 ColumnLayout {
     id: root
+    // Inside a panel section, which shows the title
+    property bool embedded: false
     spacing: 8
     Layout.fillWidth: true
 
@@ -17,8 +19,9 @@ ColumnLayout {
         spacing: 4
 
         Text {
+            visible: !root.embedded
             font.family: Theme.fontFamily
-            text: qsTr("AI SOCIAL MEDIA OPTIMIZER")
+            text: qsTr("Prepare for")
             textFormat: Text.PlainText
             font.pixelSize: Theme.px(10)
             font.weight: Font.DemiBold
@@ -41,7 +44,7 @@ ColumnLayout {
                 id: label33
                 font.family: Theme.fontFamily
                 anchors.centerIn: parent
-                text: qsTr("RESET")
+                text: qsTr("Reset")
                 textFormat: Text.PlainText
                 font.pixelSize: Theme.px(8)
                 font.weight: Font.DemiBold
@@ -69,12 +72,12 @@ ColumnLayout {
         columnSpacing: 6
 
         property var platforms: [
-            { id: "ig", name: qsTr("Instagram Feed"), aspect: "4:5 / 1080x1350", tag: qsTr("Max Screen") },
-            { id: "story", name: qsTr("Stories / Reels"), aspect: "9:16 / 1080x1920", tag: qsTr("Full Mobile") },
-            { id: "x", name: "X / Twitter", aspect: "16:9 / 1200x675", tag: qsTr("Crisp Feed") },
-            { id: "ig_square", name: qsTr("Classic Square"), aspect: "1:1 / 1080x1080", tag: qsTr("Grid Post") },
-            { id: "fb", name: "Facebook HD", aspect: "1.91:1 / 2048px", tag: qsTr("High Res") },
-            { id: "yt", name: qsTr("YouTube Thumb"), aspect: "16:9 / 1280x720", tag: qsTr("High CTR") }
+            { id: "ig", name: qsTr("Instagram post"), aspect: "4:5 / 1080x1350" },
+            { id: "story", name: qsTr("Stories and Reels"), aspect: "9:16 / 1080x1920" },
+            { id: "x", name: "X / Twitter", aspect: "16:9 / 1200x675" },
+            { id: "ig_square", name: qsTr("Square"), aspect: "1:1 / 1080x1080" },
+            { id: "fb", name: "Facebook", aspect: "1.91:1 / 2048px" },
+            { id: "yt", name: qsTr("YouTube thumbnail"), aspect: "16:9 / 1280x720" }
         ]
 
         Repeater {
@@ -111,24 +114,6 @@ ColumnLayout {
                             color: root.activePlatform === modelData.id ? Theme.accent : Theme.textMain
                             Layout.fillWidth: true
                             elide: Text.ElideRight
-                        }
-                        Rectangle {
-                            implicitWidth: tagText.implicitWidth + 6
-                            implicitHeight: 14
-                            radius: Theme.r(3)
-                            color: root.activePlatform === modelData.id ? Qt.rgba(Theme.accent.r, Theme.accent.g, Theme.accent.b, 0.25) : Qt.rgba(Theme.textMain.r, Theme.textMain.g, Theme.textMain.b, 0.06)
-                            border.color: root.activePlatform === modelData.id ? Theme.accent : Theme.border
-                            border.width: 1
-                            Text {
-                                id: tagText
-                                anchors.centerIn: parent
-                                text: modelData.tag
-                                textFormat: Text.PlainText
-                                font.family: Theme.fontFamily
-                                font.pixelSize: Theme.px(8)
-                                font.weight: Font.DemiBold
-                                color: root.activePlatform === modelData.id ? Theme.accent : Theme.textDim
-                            }
                         }
                     }
 

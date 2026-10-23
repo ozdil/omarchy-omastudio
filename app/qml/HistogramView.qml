@@ -57,7 +57,7 @@ Rectangle {
 
         Text {
             font.family: Theme.fontFamily
-            text: qsTr("RGB HISTOGRAM")
+            text: qsTr("Histogram")
             textFormat: Text.PlainText
             font.pixelSize: Theme.px(10)
             font.weight: Font.DemiBold
