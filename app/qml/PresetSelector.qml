@@ -3,6 +3,8 @@ import QtQuick.Layouts
 
 ColumnLayout {
     id: root
+    // Inside a panel section, which shows the title
+    property bool embedded: false
     spacing: 8
     Layout.fillWidth: true
 
@@ -17,8 +19,9 @@ ColumnLayout {
         spacing: 4
 
         Text {
+            visible: !root.embedded
             font.family: Theme.fontFamily
-            text: "FILM LOOKS & STYLES"
+            text: qsTr("Looks")
             textFormat: Text.PlainText
             font.pixelSize: Theme.px(10)
             font.weight: Font.DemiBold
@@ -40,7 +43,7 @@ ColumnLayout {
             Text {
                 font.family: Theme.fontFamily
                 anchors.centerIn: parent
-                text: "RESET"
+                text: qsTr("Reset")
                 textFormat: Text.PlainText
                 font.pixelSize: Theme.px(8)
                 font.weight: Font.DemiBold
@@ -83,7 +86,7 @@ ColumnLayout {
             }
 
             Text {
-                text: "AI Auto Enhance"
+                text: qsTr("Auto")
                 textFormat: Text.PlainText
                 font.family: Theme.fontFamily
                 font.pixelSize: Theme.px(11)
@@ -93,7 +96,7 @@ ColumnLayout {
             }
 
             Text {
-                text: "RUN"
+                text: qsTr("Run")
                 textFormat: Text.PlainText
                 font.family: Theme.fontFamily
                 font.pixelSize: Theme.px(9)
@@ -121,11 +124,12 @@ ColumnLayout {
         columnSpacing: 5
 
         property var presets: [
-            { name: "Fuji Classic Chrome", sub: "Documentary Muted" },
-            { name: "Fuji Velvia 50", sub: "Vivid Landscapes" },
-            { name: "Kodak Portra 400", sub: "Warm Skin Tones" },
-            { name: "Leica Monochrom HC", sub: "High Contrast B&W" },
-            { name: "Cinematic Teal & Orange", sub: "Film Grade" }
+            // `name` is the engine preset id; `label` is what is shown
+            { name: "Fuji Classic Chrome", label: qsTr("Muted"), sub: qsTr("Documentary, low saturation") },
+            { name: "Fuji Velvia 50", label: qsTr("Vivid"), sub: qsTr("Landscapes, rich colour") },
+            { name: "Kodak Portra 400", label: qsTr("Warm portrait"), sub: qsTr("Soft contrast, warm skin") },
+            { name: "Leica Monochrom HC", label: qsTr("Black and white"), sub: qsTr("High contrast") },
+            { name: "Cinematic Teal & Orange", label: qsTr("Teal and orange"), sub: qsTr("Split toning") }
         ]
 
         Repeater {
@@ -151,7 +155,7 @@ ColumnLayout {
                     spacing: 0
 
                     Text {
-                        text: modelData.name
+                        text: modelData.label
                         textFormat: Text.PlainText
                         font.family: Theme.fontFamily
                         font.pixelSize: Theme.px(10)

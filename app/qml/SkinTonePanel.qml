@@ -4,6 +4,8 @@ import QtQuick.Controls
 
 Rectangle {
     id: root
+    // Inside a panel section, which shows the title
+    property bool embedded: false
     Layout.fillWidth: true
     implicitHeight: mainCol.implicitHeight + 20
     radius: Theme.radiusMd
@@ -33,7 +35,8 @@ Rectangle {
             spacing: 6
 
             Text {
-                text: "CAPTURE ONE SKIN TONE"
+                visible: !root.embedded
+                text: qsTr("Skin tone")
                 textFormat: Text.PlainText
                 font.family: Theme.fontFamily
                 font.pixelSize: Theme.px(10)
@@ -63,7 +66,7 @@ Rectangle {
                 Text {
                     id: resetSkinText
                     anchors.centerIn: parent
-                    text: "RESET"
+                    text: qsTr("Reset")
                     textFormat: Text.PlainText
                     font.family: Theme.monoFont
                     font.pixelSize: Theme.px(8)

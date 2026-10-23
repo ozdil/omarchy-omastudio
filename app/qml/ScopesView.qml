@@ -156,7 +156,7 @@ Rectangle {
                         ctx.font = "" + Theme.px(9) + "px '" + Theme.monoFont + "'";
                         ctx.textAlign = "center";
                         ctx.textBaseline = "middle";
-                        ctx.fillText("NO SIGNAL / LOAD RAW", width / 2, height / 2);
+                        ctx.fillText(qsTr("No photo"), width / 2, height / 2);
                         return;
                     }
 

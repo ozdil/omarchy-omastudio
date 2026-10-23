@@ -4,6 +4,8 @@ import QtQuick.Controls
 
 Rectangle {
     id: root
+    // Inside a panel section, which shows the title
+    property bool embedded: false
     Layout.fillWidth: true
     implicitHeight: mainCol.implicitHeight + 16
     radius: Theme.radiusMd
@@ -36,7 +38,8 @@ Rectangle {
             spacing: 6
 
             Text {
-                text: "COLOR MANAGEMENT & ACES 1.3"
+                visible: !root.embedded
+                text: qsTr("Colour management")
                 textFormat: Text.PlainText
                 font.family: Theme.fontFamily
                 font.pixelSize: Theme.px(10)
@@ -57,7 +60,7 @@ Rectangle {
                 Text {
                     id: acesBadgeText
                     anchors.centerIn: parent
-                    text: "ACES RGC"
+                    text: qsTr("Gamut compression")
                     textFormat: Text.PlainText
                     font.family: Theme.fontFamily
                     font.pixelSize: Theme.px(8)

@@ -204,49 +204,79 @@ fn xy(x: f64, y: f64) -> CIExyY {
     CIExyY { x, y, Y: 1.0 }
 }
 
+/// Red, green and blue primaries and the white point, as CIE xy.
+pub type Primaries = ([(f64, f64); 3], (f64, f64));
+
+/// Primaries and white point of a built-in space.
+pub fn primaries(space: OutputColorSpace) -> Primaries {
+    let d65 = (0.3127, 0.3290);
+    match space {
+        OutputColorSpace::Srgb => ([(0.640, 0.330), (0.300, 0.600), (0.150, 0.060)], d65),
+        OutputColorSpace::DisplayP3 => ([(0.680, 0.320), (0.265, 0.690), (0.150, 0.060)], d65),
+        OutputColorSpace::AdobeRgb => ([(0.640, 0.330), (0.210, 0.710), (0.150, 0.060)], d65),
+        OutputColorSpace::ProPhotoRgb => ([(0.7347, 0.2653), (0.1596, 0.8404), (0.0366, 0.0001)], (0.3457, 0.3585)),
+        OutputColorSpace::Rec2020 => ([(0.708, 0.292), (0.170, 0.797), (0.131, 0.046)], d65),
+    }
+}
+
+/// ACES AP1 primaries and the ACES white point (ACEScg).
+pub const ACES_AP1: Primaries =
+    ([(0.713, 0.293), (0.165, 0.830), (0.128, 0.044)], (0.32168, 0.33767));
+
+fn rgb_profile(description: &str, prim: Primaries, curve: &ToneCurve) -> Profile {
+    let (p, w) = prim;
+    let triple = CIExyYTRIPLE { Red: xy(p[0].0, p[0].1), Green: xy(p[1].0, p[1].1), Blue: xy(p[2].0, p[2].1) };
+    let mut profile = Profile::new_rgb(&xy(w.0, w.1), &triple, &[curve, curve, curve])
+        .expect("valid RGB primaries");
+    set_text_tags(&mut profile, description);
+    profile
+}
+
 /// Builds the ICC profile of a built-in space: its primaries, white point and the
 /// display curve the pipeline encodes that space with.
 pub fn builtin_profile(space: OutputColorSpace) -> Profile {
-    let d65 = xy(0.3127, 0.3290);
     let srgb_curve = [2.4, 1.0 / 1.055, 0.055 / 1.055, 1.0 / 12.92, 0.04045];
-    let (description, white, primaries, curve) = match space {
+    let (description, curve) = match space {
         OutputColorSpace::Srgb => {
             let mut profile = Profile::new_srgb();
             set_text_tags(&mut profile, "sRGB IEC61966-2.1 (OmaStudio)");
             return profile;
         }
-        OutputColorSpace::DisplayP3 => (
-            "Display P3 (OmaStudio)",
-            d65,
-            [xy(0.680, 0.320), xy(0.265, 0.690), xy(0.150, 0.060)],
-            ToneCurve::new_parametric(4, &srgb_curve),
-        ),
+        OutputColorSpace::DisplayP3 => ("Display P3 (OmaStudio)", ToneCurve::new_parametric(4, &srgb_curve)),
         OutputColorSpace::AdobeRgb => (
             "Adobe RGB (1998) compatible (OmaStudio)",
-            d65,
-            [xy(0.640, 0.330), xy(0.210, 0.710), xy(0.150, 0.060)],
             ToneCurve::new_parametric(1, &[2.199_218_75]),
         ),
         OutputColorSpace::ProPhotoRgb => (
             "ProPhoto RGB (ROMM) compatible (OmaStudio)",
-            xy(0.3457, 0.3585),
-            [xy(0.7347, 0.2653), xy(0.1596, 0.8404), xy(0.0366, 0.0001)],
             ToneCurve::new_parametric(1, &[1.8]),
         ),
         OutputColorSpace::Rec2020 => (
             "ITU-R BT.2020 (OmaStudio)",
-            d65,
-            [xy(0.708, 0.292), xy(0.170, 0.797), xy(0.131, 0.046)],
             ToneCurve::new_parametric(4, &[1.0 / 0.45, 1.0 / 1.099, 0.099 / 1.099, 1.0 / 4.5, 0.081]),
         ),
     };
     // Parametric curves with these constant parameters cannot fail to build
     let curve = curve.expect("valid parametric curve");
-    let triple = CIExyYTRIPLE { Red: primaries[0], Green: primaries[1], Blue: primaries[2] };
-    let mut profile = Profile::new_rgb(&white, &triple, &[&curve, &curve, &curve])
-        .expect("valid RGB primaries");
-    set_text_tags(&mut profile, description);
-    profile
+    rgb_profile(description, primaries(space), &curve)
+}
+
+/// The same primaries as [`builtin_profile`] with a linear (gamma 1.0) curve, for
+/// scene-referred float output such as OpenEXR.
+pub fn linear_profile(space: OutputColorSpace) -> Profile {
+    let name = match space {
+        OutputColorSpace::Srgb => "Linear Rec.709 (OmaStudio)",
+        OutputColorSpace::DisplayP3 => "Linear Display P3 (OmaStudio)",
+        OutputColorSpace::AdobeRgb => "Linear Adobe RGB (1998) compatible (OmaStudio)",
+        OutputColorSpace::ProPhotoRgb => "Linear ProPhoto RGB compatible (OmaStudio)",
+        OutputColorSpace::Rec2020 => "Linear Rec.2020 (OmaStudio)",
+    };
+    rgb_profile(name, primaries(space), &ToneCurve::new(1.0))
+}
+
+/// ACEScg: AP1 primaries, ACES white, linear.
+pub fn acescg_profile() -> Profile {
+    rgb_profile("ACEScg (OmaStudio)", ACES_AP1, &ToneCurve::new(1.0))
 }
 
 fn set_text_tags(profile: &mut Profile, description: &str) {
@@ -262,6 +292,8 @@ fn set_text_tags(profile: &mut Profile, description: &str) {
 pub enum ExportProfile {
     /// A space the decoder can render into directly.
     Builtin(OutputColorSpace),
+    /// ACEScg (linear AP1). Rendered in ProPhoto RGB and converted with lcms2.
+    AcesCg,
     /// An RGB profile from disk (printer, lab, custom display). Pixels are rendered in
     /// a built-in space first and converted with lcms2.
     Custom { name: String, profile: Profile, bytes: Vec<u8> },
@@ -273,6 +305,10 @@ impl ExportProfile {
     pub fn resolve(name: &str) -> Result<Self, String> {
         if let Some(space) = builtin_space(name) {
             return Ok(Self::Builtin(space));
+        }
+        let n = name.to_lowercase().replace([' ', '-', '_', '.', '(', ')'], "");
+        if n == "acescg" || n == "acescgap1" || n == "ap1" {
+            return Ok(Self::AcesCg);
         }
         let path = resolve_icc_path(name).ok_or_else(|| format!("ICC profile not found: {}", name))?;
         let bytes = crate::security::read_secure_file(&path, MAX_ICC_BYTES)
@@ -294,7 +330,23 @@ impl ExportProfile {
             Self::Builtin(space) => builtin_profile(*space)
                 .icc()
                 .map_err(|e| format!("Could not serialise ICC profile: {}", e)),
+            Self::AcesCg => acescg_profile()
+                .icc()
+                .map_err(|e| format!("Could not serialise ICC profile: {}", e)),
             Self::Custom { bytes, .. } => Ok(bytes.clone()),
+        }
+    }
+
+    /// The linear profile with this target's primaries, for float output (OpenEXR).
+    /// Primaries and white point go with it for the file's chromaticities.
+    pub fn linear(&self) -> Result<(Profile, Primaries), String> {
+        match self {
+            Self::Builtin(space) => Ok((linear_profile(*space), primaries(*space))),
+            Self::AcesCg => Ok((acescg_profile(), ACES_AP1)),
+            Self::Custom { name, .. } => Err(format!(
+                "OpenEXR is scene-linear and needs a built-in colour space; {} is a display or print profile",
+                name
+            )),
         }
     }
 }
@@ -348,4 +400,35 @@ pub fn convert_rgb16(
     let (rgb, _) = pixels.as_chunks_mut::<3>();
     rgb.par_chunks_mut(64 * 1024).for_each(|chunk| transform.transform_in_place(chunk));
     Ok(())
+}
+
+/// Converts interleaved 16-bit RGB from `source` to float RGB in `destination`
+/// (normally a linear profile from [`ExportProfile::linear`]).
+pub fn convert_rgb16_to_f32(
+    pixels: &[u16],
+    source: &Profile,
+    destination: &Profile,
+    intent: RenderingIntent,
+) -> Result<Vec<f32>, String> {
+    let flags = if intent == RenderingIntent::AbsoluteColorimetric {
+        Flags::NO_CACHE
+    } else {
+        Flags::NO_CACHE | Flags::BLACKPOINT_COMPENSATION
+    };
+    let transform: Transform<[u16; 3], [f32; 3], _, _> = Transform::new_flags_context(
+        GlobalContext::new(),
+        source,
+        PixelFormat::RGB_16,
+        destination,
+        PixelFormat::RGB_FLT,
+        intent.into(),
+        flags,
+    )
+    .map_err(|e| format!("Could not build colour transform: {}", e))?;
+    let (src, _) = pixels.as_chunks::<3>();
+    let mut out = vec![[0.0f32; 3]; src.len()];
+    out.par_chunks_mut(64 * 1024)
+        .zip(src.par_chunks(64 * 1024))
+        .for_each(|(dst, src)| transform.transform_pixels(src, dst));
+    Ok(out.into_iter().flatten().collect())
 }

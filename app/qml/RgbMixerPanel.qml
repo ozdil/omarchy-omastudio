@@ -4,6 +4,8 @@ import QtQuick.Controls
 
 Rectangle {
     id: root
+    // Inside a panel section, which shows the title
+    property bool embedded: false
     Layout.fillWidth: true
     implicitHeight: mainCol.implicitHeight + 20
     radius: Theme.radiusMd
@@ -40,7 +42,8 @@ Rectangle {
             spacing: 6
 
             Text {
-                text: "DAVINCI RGB PRIMARY MIXER"
+                visible: !root.embedded
+                text: qsTr("Channel mixer")
                 textFormat: Text.PlainText
                 font.family: Theme.fontFamily
                 font.pixelSize: Theme.px(10)
@@ -70,7 +73,7 @@ Rectangle {
                 Text {
                     id: resetMixerText
                     anchors.centerIn: parent
-                    text: "RESET"
+                    text: qsTr("Reset")
                     textFormat: Text.PlainText
                     font.family: Theme.monoFont
                     font.pixelSize: Theme.px(8)
@@ -134,7 +137,7 @@ Rectangle {
 
             // RED OUTPUT CHANNEL
             Text {
-                text: root.monochrome ? "MONOCHROME LUMA MIX" : "RED OUTPUT CHANNEL"
+                text: root.monochrome ? qsTr("Monochrome mix") : qsTr("Red output")
                 textFormat: Text.PlainText
                 font.family: Theme.fontFamily
                 font.pixelSize: Theme.px(9)
@@ -187,7 +190,7 @@ Rectangle {
                 Rectangle { Layout.fillWidth: true; height: 1; color: Theme.border }
 
                 Text {
-                    text: "GREEN OUTPUT CHANNEL"
+                    text: qsTr("Green output")
                     textFormat: Text.PlainText
                     font.family: Theme.fontFamily
                     font.pixelSize: Theme.px(9)
@@ -241,7 +244,7 @@ Rectangle {
                 Rectangle { Layout.fillWidth: true; height: 1; color: Theme.border }
 
                 Text {
-                    text: "BLUE OUTPUT CHANNEL"
+                    text: qsTr("Blue output")
                     textFormat: Text.PlainText
                     font.family: Theme.fontFamily
                     font.pixelSize: Theme.px(9)

@@ -130,7 +130,7 @@ ColumnLayout {
                 font.family: Theme.fontFamily
                 id: resetChText
                 anchors.centerIn: parent
-                text: "RESET CH"
+                text: qsTr("Reset colour")
                 textFormat: Text.PlainText
                 font.pixelSize: Theme.px(8)
                 font.weight: Font.Bold
@@ -159,7 +159,7 @@ ColumnLayout {
                 font.family: Theme.fontFamily
                 id: resetAllHslText
                 anchors.centerIn: parent
-                text: "RESET ALL"
+                text: qsTr("Reset all")
                 textFormat: Text.PlainText
                 font.pixelSize: Theme.px(8)
                 font.weight: Font.Bold

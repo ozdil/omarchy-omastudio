@@ -4,6 +4,8 @@ import QtQuick.Controls
 
 Rectangle {
     id: root
+    // Inside a panel section, which shows the title
+    property bool embedded: false
     Layout.fillWidth: true
     implicitHeight: mainCol.implicitHeight + 16
     radius: Theme.radiusMd
@@ -52,7 +54,8 @@ Rectangle {
             spacing: 6
 
             Text {
-                text: "WATERMARK & BRANDING"
+                visible: !root.embedded
+                text: qsTr("Watermark")
                 textFormat: Text.PlainText
                 font.family: Theme.fontFamily
                 font.pixelSize: Theme.px(10)
@@ -157,7 +160,7 @@ Rectangle {
                 visible: root.watermarkType === "text"
 
                 Text {
-                    text: "WATERMARK TEXT OR TEMPLATE"
+                    text: qsTr("Text or template")
                     textFormat: Text.PlainText
                     font.family: Theme.fontFamily
                     font.pixelSize: Theme.px(9)
@@ -253,7 +256,7 @@ Rectangle {
                 visible: root.watermarkType === "logo"
 
                 Text {
-                    text: "LOGO FILE PATH (.PNG)"
+                    text: qsTr("Logo file (PNG)")
                     textFormat: Text.PlainText
                     font.family: Theme.fontFamily
                     font.pixelSize: Theme.px(9)
@@ -302,7 +305,7 @@ Rectangle {
                 ColumnLayout {
                     spacing: 4
                     Text {
-                        text: "POSITION"
+                        text: qsTr("Position")
                         textFormat: Text.PlainText
                         font.family: Theme.fontFamily
                         font.pixelSize: Theme.px(9)
@@ -414,7 +417,7 @@ Rectangle {
                 RowLayout {
                     Layout.fillWidth: true
                     Text {
-                        text: "OPACITY"
+                        text: qsTr("Opacity")
                         textFormat: Text.PlainText
                         font.family: Theme.fontFamily
                         font.pixelSize: Theme.px(9)
@@ -479,7 +482,7 @@ Rectangle {
                 RowLayout {
                     Layout.fillWidth: true
                     Text {
-                        text: "SIZE MULTIPLIER"
+                        text: qsTr("Size")
                         textFormat: Text.PlainText
                         font.family: Theme.fontFamily
                         font.pixelSize: Theme.px(9)

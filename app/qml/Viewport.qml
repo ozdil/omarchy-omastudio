@@ -887,7 +887,7 @@ Rectangle {
                     font.family: Theme.fontFamily
                     id: resetTxt
                     anchors.centerIn: parent
-                    text: "RESET 0°"
+                    text: qsTr("Reset 0°")
                     textFormat: Text.PlainText
                     font.pixelSize: Theme.px(9)
                     font.weight: Font.Bold
@@ -981,7 +981,7 @@ Rectangle {
                 color: root.zoomFactor <= 1.05 ? Theme.accent : (fitMouse.containsMouse ? Theme.bgCardHover : "transparent")
                 Text {
                     anchors.centerIn: parent
-                    text: "FIT"
+                    text: qsTr("Fit")
                     textFormat: Text.PlainText
                     font.pixelSize: Theme.px(10)
                     font.family: Theme.monoFont
@@ -1130,7 +1130,7 @@ Rectangle {
 
             Text {
                 font.family: Theme.fontFamily
-                text: "CROP & COMPOSE"
+                text: qsTr("Crop")
                 textFormat: Text.PlainText
                 font.pixelSize: Theme.px(10)
                 font.weight: Font.Bold
@@ -1213,7 +1213,7 @@ Rectangle {
                 Text {
                     font.family: Theme.fontFamily
                     anchors.centerIn: parent
-                    text: "RESET"
+                    text: qsTr("Reset")
                     textFormat: Text.PlainText
                     font.pixelSize: Theme.px(9)
                     font.weight: Font.Bold
@@ -1236,7 +1236,7 @@ Rectangle {
                 Text {
                     font.family: Theme.fontFamily
                     anchors.centerIn: parent
-                    text: "DONE [OK]"
+                    text: qsTr("Done")
                     textFormat: Text.PlainText
                     font.pixelSize: Theme.px(9)
                     font.weight: Font.Bold
@@ -1317,7 +1317,7 @@ Rectangle {
             Text {
                 id: shadowClipTxt
                 anchors.centerIn: parent
-                text: "[S] SHADOW CLIPPING (BLUE)"
+                text: qsTr("Shadow clipping")
                 textFormat: Text.PlainText
                 font.pixelSize: Theme.px(9)
                 font.family: Theme.monoFont
@@ -1338,47 +1338,12 @@ Rectangle {
             Text {
                 id: highClipTxt
                 anchors.centerIn: parent
-                text: "[H] HIGHLIGHT CLIPPING (RED)"
+                text: qsTr("Highlight clipping")
                 textFormat: Text.PlainText
                 font.pixelSize: Theme.px(9)
                 font.family: Theme.monoFont
                 font.weight: Font.Bold
                 color: "#ffffff"
-            }
-        }
-    }
-
-    // Touchpad & Gesture Quick Help Pill
-    Rectangle {
-        anchors.bottom: parent.bottom
-        anchors.right: parent.right
-        anchors.margins: 12
-        implicitWidth: helpRow.implicitWidth + 14
-        implicitHeight: 22
-        radius: Theme.r(4)
-        color: Qt.rgba(0, 0, 0, 0.75)
-        border.color: Theme.border
-        border.width: 1
-        z: 20
-
-        RowLayout {
-            id: helpRow
-            anchors.centerIn: parent
-            spacing: 6
-
-            Text {
-                text: Theme.iconSliders
-                font.family: Theme.iconFont
-                font.pixelSize: Theme.px(10)
-                color: Theme.accent
-            }
-
-            Text {
-                text: "Pinch: Zoom | 2-Finger Twist: Rotate | 2-Finger Pan | Double-Tap: Reset"
-                textFormat: Text.PlainText
-                font.pixelSize: Theme.px(9)
-                font.family: Theme.monoFont
-                color: Theme.textMuted
             }
         }
     }
