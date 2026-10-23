@@ -146,3 +146,15 @@ ro:VECTOR
 ro:Original
 el:16-bit TIFF
 hi:AI
+id:AI
+id:Platform
+id:Sepia
+id:Batch (%1)
+id:P
+id:Aqua
+id:Magenta
+id:+ RADIAL
+id:+ LUMA
+id:NAVIGATOR
+id:HIST
+id:PARADE
