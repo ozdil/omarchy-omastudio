@@ -134,3 +134,4 @@ nb:PARADE
 nb:Original
 fi:Magenta
 fi:HIST
+hu:Platform
