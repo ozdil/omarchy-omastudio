@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+  <!-- Monochrome app icon in the HighContrast style of Omarchy's own launcher icons:
+       a white glyph with a black outline, readable on light and dark themes -->
+  <path fill="#000000" stroke="#000000" stroke-width="20" stroke-linejoin="round" fill-rule="evenodd" d="M62 61H194A32 32 0 0 1 226 93V173A32 32 0 0 1 194 205H62A32 32 0 0 1 30 173V93A32 32 0 0 1 62 61ZM62 77H194A16 16 0 0 1 210 93V173A16 16 0 0 1 194 189H62A16 16 0 0 1 46 173V93A16 16 0 0 1 62 77Z"/>
+  <path fill="#000000" stroke="#000000" stroke-width="20" stroke-linejoin="round" d="M76 73L91 45Q95 37 104 37H152Q161 37 165 45L180 73H162L151 53H105L94 73Z"/>
+  <path fill="#000000" stroke="#000000" stroke-width="20" stroke-linejoin="round" fill-rule="evenodd" d="M83 133A45 45 0 1 0 173 133A45 45 0 1 0 83 133ZM99 133A29 29 0 1 0 157 133A29 29 0 1 0 99 133Z"/>
+  <path fill="#000000" stroke="#000000" stroke-width="20" stroke-linejoin="round" d="M179 99A8 8 0 1 0 195 99A8 8 0 1 0 179 99Z"/>
+  <path fill="#ffffff" fill-rule="evenodd" d="M62 61H194A32 32 0 0 1 226 93V173A32 32 0 0 1 194 205H62A32 32 0 0 1 30 173V93A32 32 0 0 1 62 61ZM62 77H194A16 16 0 0 1 210 93V173A16 16 0 0 1 194 189H62A16 16 0 0 1 46 173V93A16 16 0 0 1 62 77Z"/>
+  <path fill="#ffffff" d="M76 73L91 45Q95 37 104 37H152Q161 37 165 45L180 73H162L151 53H105L94 73Z"/>
+  <path fill="#ffffff" fill-rule="evenodd" d="M83 133A45 45 0 1 0 173 133A45 45 0 1 0 83 133ZM99 133A29 29 0 1 0 157 133A29 29 0 1 0 99 133Z"/>
+  <path fill="#ffffff" d="M179 99A8 8 0 1 0 195 99A8 8 0 1 0 179 99Z"/>
+</svg>

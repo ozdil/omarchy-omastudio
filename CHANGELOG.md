@@ -3,7 +3,7 @@
 ## Unreleased
 
 ### Fixes
-- The app menu (Walker) shows OmaStudio with a one-colour symbolic icon that follows the theme like Omarchy's own apps, instead of the fixed teal one. The colour icon stays for the About window.
+- The Omarchy app menu shows OmaStudio with a black-and-white icon in the same HighContrast style as Omarchy's own apps (for example Omasnap), readable on light and dark themes, instead of the fixed teal one. The colour icon stays for the About window.
 - Photos shot with D-Range Priority (GFX 100 and newer bodies) now get the matching highlight protection when their camera recipe is read: Weak develops like DR200 and Strong like DR400. The picked level is also read when the camera only stores it in the "fixed" tag, so the recipe shows "Auto (weak)" instead of just "Auto".
 
 ### Languages
