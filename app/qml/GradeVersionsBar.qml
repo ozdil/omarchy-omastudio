@@ -22,9 +22,10 @@ Rectangle {
         spacing: 6
 
         Text {
-            text: "GRADE VERSION"
+            font.family: Theme.fontFamily
+            text: qsTr("Version")
             textFormat: Text.PlainText
-            font.pixelSize: 8
+            font.pixelSize: Theme.px(8)
             font.weight: Font.DemiBold
             font.letterSpacing: 1
             color: Theme.textDim
@@ -35,7 +36,7 @@ Rectangle {
             delegate: Rectangle {
                 implicitWidth: 22
                 implicitHeight: 20
-                radius: 4
+                radius: Theme.r(4)
                 property bool isCur: root.currentVersion === modelData
                 property bool hasData: root.activeVersions && root.activeVersions[modelData] === true
                 color: isCur ? Qt.rgba(Theme.accent.r, Theme.accent.g, Theme.accent.b, 0.25) : (mouseArea.containsMouse ? Theme.bgCardHover : Theme.bgCard)
@@ -46,7 +47,7 @@ Rectangle {
                     anchors.centerIn: parent
                     text: modelData
                     textFormat: Text.PlainText
-                    font.pixelSize: 9
+                    font.pixelSize: Theme.px(9)
                     font.weight: Font.Bold
                     font.family: Theme.monoFont
                     color: parent.isCur ? Theme.accent : (parent.hasData ? Theme.textMain : Theme.textDim)
@@ -57,7 +58,7 @@ Rectangle {
                     visible: parent.hasData && !parent.isCur
                     width: 3
                     height: 3
-                    radius: 1.5
+                    radius: Theme.r(1.5)
                     color: Theme.accentGreen
                     anchors.bottom: parent.bottom
                     anchors.bottomMargin: 2

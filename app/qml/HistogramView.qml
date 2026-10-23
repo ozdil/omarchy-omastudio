@@ -29,7 +29,7 @@ Rectangle {
         Rectangle {
             implicitWidth: shadowText.implicitWidth + 12
             implicitHeight: 18
-            radius: 4
+            radius: Theme.r(4)
             color: root.showClippingShadows ? Theme.shadowClip : Qt.rgba(0.2, 0.5, 1.0, 0.15)
             border.color: Theme.shadowClip
 
@@ -38,7 +38,7 @@ Rectangle {
                 anchors.centerIn: parent
                 text: "[S] " + (root.histData ? root.histData.shadow_clipping_percent.toFixed(1) + "%" : "0.0%")
                 textFormat: Text.PlainText
-                font.pixelSize: 10
+                font.pixelSize: Theme.px(10)
                 font.family: Theme.monoFont
                 color: root.showClippingShadows ? "#ffffff" : Theme.shadowClip
             }
@@ -56,9 +56,10 @@ Rectangle {
         Item { Layout.fillWidth: true }
 
         Text {
-            text: "RGB HISTOGRAM"
+            font.family: Theme.fontFamily
+            text: qsTr("Histogram")
             textFormat: Text.PlainText
-            font.pixelSize: 10
+            font.pixelSize: Theme.px(10)
             font.weight: Font.DemiBold
             font.letterSpacing: 1
             color: Theme.textDim
@@ -70,7 +71,7 @@ Rectangle {
         Rectangle {
             implicitWidth: highText.implicitWidth + 12
             implicitHeight: 18
-            radius: 4
+            radius: Theme.r(4)
             color: root.showClippingHighlights ? Theme.highlightClip : Qt.rgba(1.0, 0.3, 0.4, 0.15)
             border.color: Theme.highlightClip
 
@@ -79,7 +80,7 @@ Rectangle {
                 anchors.centerIn: parent
                 text: "[H] " + (root.histData ? root.histData.highlight_clipping_percent.toFixed(1) + "%" : "0.0%")
                 textFormat: Text.PlainText
-                font.pixelSize: 10
+                font.pixelSize: Theme.px(10)
                 font.family: Theme.monoFont
                 color: root.showClippingHighlights ? "#ffffff" : Theme.highlightClip
             }

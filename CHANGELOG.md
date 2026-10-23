@@ -2,6 +2,33 @@
 
 ## Unreleased
 
+### Omarchy integration
+- The interface follows Omarchy live, without a restart: every colour comes from the active theme (scopes, the area around the photo and text on accent buttons included); the font is Omarchy's (`omarchy-font-set`, read from fontconfig); text sizes scale from the Omarchy shell's base size; corners follow Hyprland's rounding, so they are square on a default Omarchy setup.
+- Clipping warnings stay red (highlights) and blue (shadows) in every theme.
+- OmaStudio has its own icon instead of the generic camera icon.
+- The top bar no longer repeats "STUDIO" next to the name.
+- New About window: application icon, version, capabilities, graphics and appearance details, a privacy note, third-party licences, project links, and **Copy system info** for bug reports. Esc closes it.
+
+### Editing screen
+- The right panel has tabs: **Adjust** (profile, white balance, tone, presence; in Pro also curves, HSL, colour grading, detail, grain and colour management), **Masks** (Pro), **Looks** (presets and 3D LUTs) and **AI** (the edit assistant). Each section folds open and closed from its header; Ctrl+click keeps only that section open. The tab, the open sections and which panels are shown are remembered between sessions (`~/.config/omastudio/ui-state.json`).
+- Tab hides and shows both side panels and the filmstrip together.
+- Plain names everywhere: section titles are short and in sentence case, and names of other products are gone from the interface. Messages no longer carry tags such as "[OK]".
+- Profiles are a compact list instead of large cards; the description is in the tooltip.
+- 3D LUTs: **Load .cube file…** opens your own LUT. The four built-in named looks are no longer offered; edits that use them still render.
+- Auto is a single action (the separate "Jev" auto was not reachable from the interface and has been folded in).
+- The gesture hint over the photo and the "DaVinci Color Engine" line are gone.
+
+### Export
+- New Export window. Left: format, quality, bit depth, TIFF compression, size, colour profile, rendering intent and metadata. Right: platform presets (crop and output sharpening for Instagram, Stories, X, Facebook, YouTube) and the watermark, which moved here from the side panel, plus the output folder. Enter exports, Esc closes.
+- Formats: JPEG, PNG (8/16-bit), TIFF (8/16-bit; none, LZW or ZIP compression), WebP (lossy with `cwebp`, lossless at 100), AVIF (8/10/12-bit; lossless at 100), HEIF (8/10/12-bit with `heif-enc`), JPEG XL (8/16-bit; lossless at 100) and OpenEXR (half or full float, scene-linear, with the colour space's chromaticities). Every format except EXR carries the ICC profile.
+- ACEScg is a working export profile (it needed an ICC file on disk before).
+- Exported JPEG and TIFF files use the `.jpg` and `.tif` extensions.
+- `omastudio ipc showExport` opens the Export window; `setRightTab <adjust|masks|looks|ai>` switches the panel tab.
+
+### AI
+- **Connect local AI** in the top bar uses the AI set up on this computer: Omarchy's default agent (`omarchy-default-agent`; Claude Code or Codex, with their own sign-in), else Ollama, else LM Studio. The edit assistant can use it like any other provider (`omastudio-engine ai local`, provider `omarchy`). With Claude Code or Codex the photo preview is sent to that service.
+- The "Basit (AI)" mode is now called "Essentials".
+
 ## v3.0.0 — 2026-10-22
 
 OmaStudio 3 is a new RAW engine and a standalone Qt 6 application: its own Bayer and X-Trans development on linear light, GPU demosaicing, colour management with Little CMS 2, full Fujifilm support (recipes, film simulations, lens corrections, Pixel Shift, cameras over USB), Hasselblad and other medium-format cameras, AI agents over MCP, and local AI masks.

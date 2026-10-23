@@ -4,6 +4,8 @@ import QtQuick.Controls
 
 Rectangle {
     id: root
+    // Inside a panel section, which shows the title
+    property bool embedded: false
     Layout.fillWidth: true
     implicitHeight: mainCol.implicitHeight + 20
     radius: Theme.radiusMd
@@ -33,10 +35,11 @@ Rectangle {
             spacing: 6
 
             Text {
-                text: "CAPTURE ONE SKIN TONE"
+                visible: !root.embedded
+                text: qsTr("Skin tone")
                 textFormat: Text.PlainText
                 font.family: Theme.fontFamily
-                font.pixelSize: 10
+                font.pixelSize: Theme.px(10)
                 font.weight: Font.DemiBold
                 font.letterSpacing: 1
                 color: Theme.textDim
@@ -55,7 +58,7 @@ Rectangle {
             Rectangle {
                 implicitWidth: resetSkinText.implicitWidth + 10
                 implicitHeight: 18
-                radius: 4
+                radius: Theme.r(4)
                 color: resetSkinMouse.containsMouse ? Theme.bgCardHover : "transparent"
                 border.color: Theme.border
                 border.width: 1
@@ -63,10 +66,10 @@ Rectangle {
                 Text {
                     id: resetSkinText
                     anchors.centerIn: parent
-                    text: "RESET"
+                    text: qsTr("Reset")
                     textFormat: Text.PlainText
                     font.family: Theme.monoFont
-                    font.pixelSize: 8
+                    font.pixelSize: Theme.px(8)
                     font.weight: Font.Bold
                     color: Theme.textDim
                 }
@@ -116,7 +119,7 @@ Rectangle {
                 text: "Vectorscope 123 Flesh Line (Target: " + root.skinTargetHue.toFixed(0) + " deg)"
                 textFormat: Text.PlainText
                 font.family: Theme.fontFamily
-                font.pixelSize: 11
+                font.pixelSize: Theme.px(11)
                 color: Theme.textDim
                 Layout.fillWidth: true
             }

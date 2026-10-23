@@ -42,7 +42,7 @@ Rectangle {
             Rectangle {
                 implicitWidth: localRow.implicitWidth + 16
                 implicitHeight: 22
-                radius: 4
+                radius: Theme.r(4)
                 color: !root.isCatalogMode ? Theme.accent : Theme.bgCard
 
                 RowLayout {
@@ -52,13 +52,14 @@ Rectangle {
                     Text {
                         text: Theme.iconFolder
                         font.family: Theme.iconFont
-                        font.pixelSize: 10
+                        font.pixelSize: Theme.px(10)
                         color: !root.isCatalogMode ? Theme.bgBase : Theme.textMuted
                     }
                     Text {
-                        text: "Local Photos"
+                        font.family: Theme.fontFamily
+                        text: qsTr("Folders")
                         textFormat: Text.PlainText
-                        font.pixelSize: 10
+                        font.pixelSize: Theme.px(10)
                         font.weight: Font.DemiBold
                         color: !root.isCatalogMode ? Theme.bgBase : Theme.textMuted
                     }
@@ -80,7 +81,7 @@ Rectangle {
             Rectangle {
                 implicitWidth: catalogRow.implicitWidth + 16
                 implicitHeight: 22
-                radius: 4
+                radius: Theme.r(4)
                 color: root.isCatalogMode ? Theme.accentCyan : Theme.bgCard
 
                 RowLayout {
@@ -90,13 +91,14 @@ Rectangle {
                     Text {
                         text: Theme.iconLayers || Theme.iconFolder
                         font.family: Theme.iconFont
-                        font.pixelSize: 10
+                        font.pixelSize: Theme.px(10)
                         color: root.isCatalogMode ? Theme.bgBase : Theme.textMuted
                     }
                     Text {
-                        text: "Studio Catalog"
+                        font.family: Theme.fontFamily
+                        text: qsTr("Catalog")
                         textFormat: Text.PlainText
-                        font.pixelSize: 10
+                        font.pixelSize: Theme.px(10)
                         font.weight: Font.DemiBold
                         color: root.isCatalogMode ? Theme.bgBase : Theme.textMuted
                     }
@@ -119,7 +121,7 @@ Rectangle {
                 visible: !root.isCatalogMode && root.currentFolder !== "/"
                 implicitWidth: parentBtnRow.implicitWidth + 12
                 implicitHeight: 22
-                radius: 4
+                radius: Theme.r(4)
                 color: Theme.bgCard
                 border.color: Theme.border
                 border.width: 1
@@ -131,13 +133,14 @@ Rectangle {
                     Text {
                         text: Theme.iconArrowUp
                         font.family: Theme.iconFont
-                        font.pixelSize: 10
+                        font.pixelSize: Theme.px(10)
                         color: Theme.textMain
                     }
                     Text {
+                        font.family: Theme.fontFamily
                         text: "Up"
                         textFormat: Text.PlainText
-                        font.pixelSize: 9
+                        font.pixelSize: Theme.px(9)
                         font.weight: Font.DemiBold
                         color: Theme.textMain
                     }
@@ -153,7 +156,7 @@ Rectangle {
             Text {
                 text: root.currentFolder
                 textFormat: Text.PlainText
-                font.pixelSize: 10
+                font.pixelSize: Theme.px(10)
                 font.family: Theme.monoFont
                 color: Theme.textDim
                 elide: Text.ElideMiddle
@@ -165,7 +168,7 @@ Rectangle {
                 visible: root.isListingFolder
                 implicitWidth: listRow.implicitWidth + 12
                 implicitHeight: 22
-                radius: 4
+                radius: Theme.r(4)
                 color: Qt.rgba(Theme.accentYellow.r, Theme.accentYellow.g, Theme.accentYellow.b, 0.2)
                 border.color: Theme.accentYellow
                 border.width: 1
@@ -177,7 +180,7 @@ Rectangle {
                     Text {
                         text: Theme.iconRefresh
                         font.family: Theme.iconFont
-                        font.pixelSize: 10
+                        font.pixelSize: Theme.px(10)
                         color: Theme.accentYellow
                         transformOrigin: Item.Center
                         RotationAnimator on rotation {
@@ -189,9 +192,10 @@ Rectangle {
                         }
                     }
                     Text {
+                        font.family: Theme.fontFamily
                         text: root.isCatalogMode ? "Scanning Catalog..." : "Scanning Folder..."
                         textFormat: Text.PlainText
-                        font.pixelSize: 9
+                        font.pixelSize: Theme.px(9)
                         font.weight: Font.Bold
                         color: Theme.accentYellow
                     }
@@ -203,7 +207,7 @@ Rectangle {
                 visible: root.isDownloadingRemote
                 implicitWidth: dlRow.implicitWidth + 12
                 implicitHeight: 22
-                radius: 4
+                radius: Theme.r(4)
                 color: Qt.rgba(Theme.accentCyan.r, Theme.accentCyan.g, Theme.accentCyan.b, 0.2)
                 border.color: Theme.accentCyan
                 border.width: 1
@@ -215,7 +219,7 @@ Rectangle {
                     Text {
                         text: Theme.iconRefresh
                         font.family: Theme.iconFont
-                        font.pixelSize: 10
+                        font.pixelSize: Theme.px(10)
                         color: Theme.accentCyan
                         transformOrigin: Item.Center
                         RotationAnimator on rotation {
@@ -227,9 +231,10 @@ Rectangle {
                         }
                     }
                     Text {
+                        font.family: Theme.fontFamily
                         text: "Downloading RAW..."
                         textFormat: Text.PlainText
-                        font.pixelSize: 9
+                        font.pixelSize: Theme.px(9)
                         font.weight: Font.Bold
                         color: Theme.accentCyan
                     }
@@ -241,7 +246,7 @@ Rectangle {
                 visible: root.selectedPaths.length > 1
                 implicitWidth: batchExportRow.implicitWidth + 14
                 implicitHeight: 22
-                radius: 4
+                radius: Theme.r(4)
                 color: Theme.accent
                 border.color: Theme.accent
 
@@ -252,13 +257,14 @@ Rectangle {
                     Text {
                         text: Theme.iconExport
                         font.family: Theme.iconFont
-                        font.pixelSize: 10
+                        font.pixelSize: Theme.px(10)
                         color: Theme.bgBase
                     }
                     Text {
+                        font.family: Theme.fontFamily
                         text: "Batch (" + root.selectedPaths.length + ")"
                         textFormat: Text.PlainText
-                        font.pixelSize: 9
+                        font.pixelSize: Theme.px(9)
                         font.weight: Font.Bold
                         color: Theme.bgBase
                     }
@@ -274,14 +280,14 @@ Rectangle {
             Rectangle {
                 width: 22
                 height: 22
-                radius: 4
+                radius: Theme.r(4)
                 color: Theme.bgCard
                 border.color: Theme.border
                 Text {
                     anchors.centerIn: parent
                     text: Theme.iconRefresh
                     font.family: Theme.iconFont
-                    font.pixelSize: 10
+                    font.pixelSize: Theme.px(10)
                     color: Theme.textMuted
                 }
                 MouseArea {
@@ -309,13 +315,13 @@ Rectangle {
                     Text {
                         text: root.isCatalogMode ? (Theme.iconLayers || Theme.iconFolder) : Theme.iconFolder
                         font.family: Theme.iconFont
-                        font.pixelSize: 14
+                        font.pixelSize: Theme.px(14)
                         color: Theme.textDim
                     }
                     Text {
                         text: root.isCatalogMode ? "No photos found in Studio Catalog." : "No photos found in this directory."
                         textFormat: Text.PlainText
-                        font.pixelSize: 10
+                        font.pixelSize: Theme.px(10)
                         font.family: Theme.monoFont
                         color: Theme.textDim
                     }
@@ -358,7 +364,7 @@ Rectangle {
                     Rectangle {
                         Layout.fillWidth: true
                         Layout.fillHeight: true
-                        radius: 4
+                        radius: Theme.r(4)
                         color: modelData.is_dir ? Theme.bgSurface : Theme.bgDark
                         clip: true
 
@@ -373,7 +379,7 @@ Rectangle {
                                 Text {
                                     text: Theme.iconFolder
                                     font.family: Theme.iconFont
-                                    font.pixelSize: 22
+                                    font.pixelSize: Theme.px(22)
                                     color: Theme.accentCyan
                                     Layout.alignment: Qt.AlignHCenter
                                 }
@@ -386,13 +392,14 @@ Rectangle {
                                 anchors.margins: 2
                                 width: 22
                                 height: 14
-                                radius: 3
+                                radius: Theme.r(3)
                                 color: Qt.rgba(0, 0, 0, 0.75)
                                 Text {
+                                    font.family: Theme.fontFamily
                                     anchors.centerIn: parent
-                                    text: "DIR"
+                                    text: qsTr("Folder")
                                     textFormat: Text.PlainText
-                                    font.pixelSize: 8
+                                    font.pixelSize: Theme.px(8)
                                     font.weight: Font.Bold
                                     color: Theme.accentCyan
                                 }
@@ -416,14 +423,14 @@ Rectangle {
                                     Text {
                                         text: root.isDownloadingRemote && root.activePhotoPath === modelData.path ? Theme.iconRefresh : Theme.iconImage
                                         font.family: Theme.iconFont
-                                        font.pixelSize: 18
+                                        font.pixelSize: Theme.px(18)
                                         color: root.activePhotoPath === modelData.path ? Theme.accent : Theme.textDim
                                         Layout.alignment: Qt.AlignHCenter
                                     }
                                     Text {
-                                        text: root.isDownloadingRemote && root.activePhotoPath === modelData.path ? "FETCHING" : (modelData.is_remote ? "RAW CLOUD" : "NO PREVIEW")
+                                        text: root.isDownloadingRemote && root.activePhotoPath === modelData.path ? qsTr("Downloading") : (modelData.is_remote ? qsTr("Remote") : qsTr("No preview"))
                                         textFormat: Text.PlainText
-                                        font.pixelSize: 7
+                                        font.pixelSize: Theme.px(7)
                                         font.weight: Font.Bold
                                         font.family: Theme.monoFont
                                         color: Theme.textDim
@@ -453,14 +460,14 @@ Rectangle {
                                     Text {
                                         text: Theme.iconRefresh
                                         font.family: Theme.iconFont
-                                        font.pixelSize: 14
+                                        font.pixelSize: Theme.px(14)
                                         color: Theme.accentCyan
                                         Layout.alignment: Qt.AlignHCenter
                                     }
                                     Text {
                                         text: "Loading..."
                                         textFormat: Text.PlainText
-                                        font.pixelSize: 8
+                                        font.pixelSize: Theme.px(8)
                                         font.family: Theme.monoFont
                                         color: Theme.accentCyan
                                         Layout.alignment: Qt.AlignHCenter
@@ -475,10 +482,11 @@ Rectangle {
                                 anchors.margins: 2
                                 width: fmtText.implicitWidth + 6
                                 height: 14
-                                radius: 3
+                                radius: Theme.r(3)
                                 color: Qt.rgba(0, 0, 0, 0.75)
 
                                 Text {
+                                    font.family: Theme.fontFamily
                                     id: fmtText
                                     anchors.centerIn: parent
                                     text: {
@@ -486,7 +494,7 @@ Rectangle {
                                         return parts.length > 1 ? parts[parts.length - 1].toUpperCase() : "RAW";
                                     }
                                     textFormat: Text.PlainText
-                                    font.pixelSize: 8
+                                    font.pixelSize: Theme.px(8)
                                     font.weight: Font.Bold
                                     color: Theme.accentYellow
                                 }
@@ -504,13 +512,14 @@ Rectangle {
                                     visible: root.activeFlag === "pick"
                                     implicitWidth: 14
                                     implicitHeight: 14
-                                    radius: 2
+                                    radius: Theme.r(2)
                                     color: Theme.accentGreen
                                     Text {
+                                        font.family: Theme.fontFamily
                                         anchors.centerIn: parent
                                         text: "P"
                                         textFormat: Text.PlainText
-                                        font.pixelSize: 8
+                                        font.pixelSize: Theme.px(8)
                                         font.weight: Font.Bold
                                         color: Theme.bgBase
                                     }
@@ -520,13 +529,14 @@ Rectangle {
                                     visible: root.activeFlag === "reject"
                                     implicitWidth: 14
                                     implicitHeight: 14
-                                    radius: 2
+                                    radius: Theme.r(2)
                                     color: Theme.highlightClip
                                     Text {
+                                        font.family: Theme.fontFamily
                                         anchors.centerIn: parent
                                         text: "X"
                                         textFormat: Text.PlainText
-                                        font.pixelSize: 8
+                                        font.pixelSize: Theme.px(8)
                                         font.weight: Font.Bold
                                         color: "#ffffff"
                                     }
@@ -536,14 +546,15 @@ Rectangle {
                                     visible: root.activeRating > 0
                                     implicitWidth: starsText.implicitWidth + 4
                                     implicitHeight: 14
-                                    radius: 2
+                                    radius: Theme.r(2)
                                     color: Qt.rgba(0, 0, 0, 0.75)
                                     Text {
+                                        font.family: Theme.fontFamily
                                         id: starsText
                                         anchors.centerIn: parent
                                         text: "*".repeat(root.activeRating)
                                         textFormat: Text.PlainText
-                                        font.pixelSize: 9
+                                        font.pixelSize: Theme.px(9)
                                         font.weight: Font.Bold
                                         color: Theme.accentYellow
                                     }
@@ -556,7 +567,7 @@ Rectangle {
                     Text {
                         text: modelData.name || ""
                         textFormat: Text.PlainText
-                        font.pixelSize: 9
+                        font.pixelSize: Theme.px(9)
                         font.family: Theme.monoFont
                         color: root.activePhotoPath === modelData.path ? Theme.accent : (modelData.is_dir ? Theme.accentCyan : Theme.textMuted)
                         elide: Text.ElideRight

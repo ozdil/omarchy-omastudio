@@ -14,8 +14,12 @@ use std::time::{Duration, SystemTime, UNIX_EPOCH};
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(default)]
 pub struct ExportOptions {
-    pub format: String, // "jxl", "avif", "webp", "tiff", "png", "jpeg"
-    pub quality: u32,   // 1 to 100
+    pub format: String, // "jxl", "avif", "heic", "webp", "tiff", "png", "jpeg", "exr"
+    pub quality: u32,   // 1 to 100 (100 = lossless where the format has it)
+    /// Bits per channel; 0 picks the format's best. See [`effective_bit_depth`].
+    pub bit_depth: u8,
+    /// TIFF compression: "none", "lzw" or "deflate".
+    pub tiff_compression: String,
     pub scale_percent: u32, // 25, 50, 75, 100
     pub max_dimension: Option<u32>, // e.g. 3840 for 4K, 2048 for social
     pub strip_gps: bool,
@@ -36,6 +40,8 @@ impl Default for ExportOptions {
         Self {
             format: "jxl".to_string(),
             quality: 90,
+            bit_depth: 0,
+            tiff_compression: "deflate".to_string(),
             scale_percent: 100,
             max_dimension: None,
             strip_gps: true,
@@ -65,7 +71,7 @@ pub fn export_photo<P: AsRef<Path>>(
     let target = options.icc_profile.as_deref().map(ExportProfile::resolve).transpose()?;
     let render_space = match &target {
         Some(ExportProfile::Builtin(space)) => *space,
-        Some(ExportProfile::Custom { .. }) => OutputColorSpace::ProPhotoRgb,
+        Some(ExportProfile::Custom { .. } | ExportProfile::AcesCg) => OutputColorSpace::ProPhotoRgb,
         None => OutputColorSpace::Srgb,
     };
     let decoded_space = if raw.set_output_space(render_space) { render_space } else { OutputColorSpace::Srgb };
@@ -86,21 +92,46 @@ pub fn export_photo<P: AsRef<Path>>(
     // A 100 MP frame is 600 MB at 16 bits; free the decode before encoding starts
     drop(processed);
 
-    let icc_bytes = match &target {
-        Some(target) => {
-            let source = icc::builtin_profile(decoded_space);
+    let fmt = options.format.to_lowercase();
+    let fmt = match fmt.as_str() {
+        "jpg" => "jpeg".to_string(),
+        "tif" => "tiff".to_string(),
+        "heif" => "heic".to_string(),
+        _ => fmt,
+    };
+    let depth = effective_bit_depth(&fmt, options.bit_depth);
+    let source_profile = icc::builtin_profile(decoded_space);
+
+    // OpenEXR is scene-linear float: its conversion runs at encode time, straight from
+    // the decoded space, so nothing is quantised to a display curve in between.
+    let exr_target = if fmt == "exr" {
+        let target = target.as_ref().map_or(Ok(ExportProfile::Builtin(OutputColorSpace::Srgb)), |t| match t {
+            ExportProfile::Builtin(space) => Ok(ExportProfile::Builtin(*space)),
+            ExportProfile::AcesCg => Ok(ExportProfile::AcesCg),
+            ExportProfile::Custom { .. } => t.linear().map(|_| ExportProfile::AcesCg),
+        })?;
+        Some(target.linear()?)
+    } else {
+        None
+    };
+
+    let icc_bytes = match (&target, &exr_target) {
+        (_, Some(_)) | (None, _) => None,
+        (Some(target), None) => {
             match target {
                 ExportProfile::Builtin(space) if *space == decoded_space => {}
                 ExportProfile::Builtin(space) => {
-                    icc::convert_rgb16(&mut final_buf, &source, &icc::builtin_profile(*space), options.rendering_intent)?
+                    icc::convert_rgb16(&mut final_buf, &source_profile, &icc::builtin_profile(*space), options.rendering_intent)?
+                }
+                ExportProfile::AcesCg => {
+                    icc::convert_rgb16(&mut final_buf, &source_profile, &icc::acescg_profile(), options.rendering_intent)?
                 }
                 ExportProfile::Custom { profile, .. } => {
-                    icc::convert_rgb16(&mut final_buf, &source, profile, options.rendering_intent)?
+                    icc::convert_rgb16(&mut final_buf, &source_profile, profile, options.rendering_intent)?
                 }
             }
             Some(target.icc_bytes()?)
         }
-        None => None,
     };
     let icc_bytes = icc_bytes.as_deref();
 
@@ -173,98 +204,57 @@ pub fn export_photo<P: AsRef<Path>>(
         .and_then(|s| s.to_str())
         .unwrap_or("photo");
 
-    let fmt = options.format.to_lowercase();
+    let ext = match fmt.as_str() {
+        "jpeg" => "jpg",
+        "tiff" => "tif",
+        other => other,
+    };
     let out_filename = match options.name_tag.as_deref().map(sanitize_name_tag) {
-        Some(tag) if !tag.is_empty() => format!("{}_{}_omastudio.{}", stem, tag, fmt),
-        _ => format!("{}_omastudio.{}", stem, fmt),
+        Some(tag) if !tag.is_empty() => format!("{}_{}_omastudio.{}", stem, tag, ext),
+        _ => format!("{}_omastudio.{}", stem, ext),
     };
     let final_dest = expanded_dir.join(&out_filename);
 
+    // Pixels at the chosen depth: 8-bit for 8, 16-bit for everything above (AVIF and
+    // HEIF encoders reduce 16-bit PNG input to 10/12 bits themselves).
+    let dyn_img = if depth <= 8 && fmt != "exr" {
+        DynamicImage::ImageRgb8(dyn_img.to_rgb8())
+    } else {
+        dyn_img
+    };
+    let quality = options.quality.clamp(1, 100);
+
     match fmt.as_str() {
         "jxl" => {
-            let pid = std::process::id();
-            let rand_suffix = SystemTime::now()
-                .duration_since(UNIX_EPOCH)
-                .unwrap_or_default()
-                .as_nanos();
-            let tmp_png = expanded_dir.join(format!(".tmp_{}_{}_{}.png", stem, pid, rand_suffix));
-            // cjxl and avifenc carry the PNG's iCCP profile into the JXL file
-            let png = encode_png(&dyn_img, icc_bytes)?;
-            crate::security::atomic_write_user(&tmp_png, &png)
-                .map_err(|e| format!("Failed to save temporary PNG for JXL: {}", e))?;
-
-            struct TmpPngGuard(PathBuf);
-            impl Drop for TmpPngGuard {
-                fn drop(&mut self) {
-                    let _ = fs::remove_file(&self.0);
-                }
-            }
-            let _guard = TmpPngGuard(tmp_png.clone());
-
+            let tmp = TempPng::write(&expanded_dir, stem, &dyn_img, icc_bytes)?;
+            // cjxl carries the PNG's iCCP profile and bit depth into the JXL file;
+            // distance 0 is mathematically lossless
+            let distance = if quality >= 100 { "0".to_string() } else { ((100 - quality) as f32 / 10.0).to_string() };
             let mut cmd = secure_command("cjxl");
-            let distance = ((100 - options.quality.clamp(1, 100)) as f32 / 10.0).to_string();
-            cmd.arg("-d")
-                .arg(&distance)
-                .arg("-e")
-                .arg("7")
-                .arg("--")
-                .arg(&tmp_png)
-                .arg(&final_dest);
-
-            let (code, _, stderr) = run_bounded_command(cmd, Duration::from_secs(60))
-                .map_err(|e| format!("Failed to execute cjxl: {}", e))?;
-
-            if code != 0 {
-                return Err(format!("cjxl failed: {}", String::from_utf8_lossy(&stderr)));
-            }
+            cmd.arg("-d").arg(&distance).arg("-e").arg("7").arg("--").arg(&tmp.0).arg(&final_dest);
+            run_encoder(cmd, "cjxl", 120)?;
         }
         "avif" => {
-            let pid = std::process::id();
-            let rand_suffix = SystemTime::now()
-                .duration_since(UNIX_EPOCH)
-                .unwrap_or_default()
-                .as_nanos();
-            let tmp_png = expanded_dir.join(format!(".tmp_{}_{}_{}.png", stem, pid, rand_suffix));
-            // cjxl and avifenc carry the PNG's iCCP profile into the AVIF file
-            let png = encode_png(&dyn_img, icc_bytes)?;
-            crate::security::atomic_write_user(&tmp_png, &png)
-                .map_err(|e| format!("Failed to save temporary PNG for AVIF: {}", e))?;
-
-            struct TmpPngGuard(PathBuf);
-            impl Drop for TmpPngGuard {
-                fn drop(&mut self) {
-                    let _ = fs::remove_file(&self.0);
-                }
-            }
-            let _guard = TmpPngGuard(tmp_png.clone());
-
+            let tmp = TempPng::write(&expanded_dir, stem, &dyn_img, icc_bytes)?;
             let mut cmd = secure_command("avifenc");
-            let speed = "4";
-            let quality = options.quality.clamp(1, 100);
-            let cq = 63 - (quality * 63 / 100);
-            cmd.arg("-s")
-                .arg(speed)
-                .arg("-a")
-                .arg(format!("end-usage=q:cq-level={}", cq))
-                .arg("--")
-                .arg(&tmp_png)
-                .arg(&final_dest);
-
-            // A missing avifenc must fall through to ffmpeg, not abort the export
-            let avif_ok = run_bounded_command(cmd, Duration::from_secs(60))
-                .map(|(code, _, _)| code == 0)
-                .unwrap_or(false);
-
-            if !avif_ok {
+            cmd.arg("-s").arg("4").arg("-d").arg(depth.to_string());
+            if quality >= 100 {
+                cmd.arg("--lossless");
+            } else {
+                cmd.arg("-q").arg(quality.to_string());
+            }
+            cmd.arg("--").arg(&tmp.0).arg(&final_dest);
+            // A missing avifenc falls through to ffmpeg, not abort the export
+            if run_encoder(cmd, "avifenc", 120).is_err() {
                 let mut f_cmd = secure_command("ffmpeg");
                 let crf = (35 - (quality * 20 / 100)).to_string();
                 f_cmd.arg("-y")
-                    .arg("-i").arg(&tmp_png)
+                    .arg("-i").arg(&tmp.0)
                     .arg("-c:v").arg("libsvtav1")
                     .arg("-crf").arg(&crf)
                     .arg("--")
                     .arg(&final_dest);
-                let ff_ok = run_bounded_command(f_cmd, Duration::from_secs(30))
+                let ff_ok = run_bounded_command(f_cmd, Duration::from_secs(60))
                     .map(|(code, _, _)| code == 0)
                     .unwrap_or(false);
                 if !ff_ok || !final_dest.exists() {
@@ -272,23 +262,43 @@ pub fn export_photo<P: AsRef<Path>>(
                 }
             }
         }
-        "webp" => {
-            let mut buf = Vec::new();
-            let mut encoder = image::codecs::webp::WebPEncoder::new_lossless(&mut buf);
-            set_icc(&mut encoder, icc_bytes)?;
-            DynamicImage::ImageRgb8(dyn_img.to_rgb8())
-                .write_with_encoder(encoder)
-                .map_err(|e| format!("Failed to encode WebP: {}", e))?;
-            crate::security::atomic_write_user(&final_dest, &buf)
-                .map_err(|e| format!("Failed to securely write WebP file: {}", e))?;
+        "heic" => {
+            let tmp = TempPng::write(&expanded_dir, stem, &dyn_img, icc_bytes)?;
+            // heif-enc (libheif) with x265; the PNG's ICC profile is carried over
+            let mut cmd = secure_command("heif-enc");
+            if quality >= 100 {
+                cmd.arg("--lossless");
+            } else {
+                cmd.arg("-q").arg(quality.to_string());
+            }
+            cmd.arg("-b").arg(depth.to_string()).arg("-o").arg(&final_dest).arg("--").arg(&tmp.0);
+            run_encoder(cmd, "heif-enc", 180)?;
         }
-        "tiff" | "tif" => {
-            let mut buf = std::io::Cursor::new(Vec::new());
-            let mut encoder = image::codecs::tiff::TiffEncoder::new(&mut buf);
-            set_icc(&mut encoder, icc_bytes)?;
-            dyn_img.write_with_encoder(encoder)
-                .map_err(|e| format!("Failed to encode 16-bit TIFF: {}", e))?;
-            crate::security::atomic_write_user(&final_dest, &buf.into_inner())
+        "webp" => {
+            // Lossy WebP comes from cwebp (libwebp), which keeps the ICC profile. Without
+            // it, or at quality 100, the built-in lossless encoder is used.
+            let lossy = if quality < 100 {
+                let tmp = TempPng::write(&expanded_dir, stem, &dyn_img, icc_bytes)?;
+                let mut cmd = secure_command("cwebp");
+                cmd.arg("-q").arg(quality.to_string()).arg("-m").arg("6").arg("-metadata").arg("icc")
+                    .arg("-o").arg(&final_dest).arg("--").arg(&tmp.0);
+                run_encoder(cmd, "cwebp", 120).is_ok()
+            } else {
+                false
+            };
+            if !lossy {
+                let mut buf = Vec::new();
+                let mut encoder = image::codecs::webp::WebPEncoder::new_lossless(&mut buf);
+                set_icc(&mut encoder, icc_bytes)?;
+                dyn_img.write_with_encoder(encoder)
+                    .map_err(|e| format!("Failed to encode WebP: {}", e))?;
+                crate::security::atomic_write_user(&final_dest, &buf)
+                    .map_err(|e| format!("Failed to securely write WebP file: {}", e))?;
+            }
+        }
+        "tiff" => {
+            let buf = encode_tiff(&dyn_img, depth, &options.tiff_compression, icc_bytes)?;
+            crate::security::atomic_write_user(&final_dest, &buf)
                 .map_err(|e| format!("Failed to securely write TIFF file: {}", e))?;
         }
         "png" => {
@@ -296,20 +306,24 @@ pub fn export_photo<P: AsRef<Path>>(
             crate::security::atomic_write_user(&final_dest, &buf)
                 .map_err(|e| format!("Failed to securely write PNG file: {}", e))?;
         }
-        "jpeg" | "jpg" => {
+        "jpeg" => {
             let mut buf = std::io::Cursor::new(Vec::new());
             {
-                let mut encoder = image::codecs::jpeg::JpegEncoder::new_with_quality(
-                    &mut buf,
-                    options.quality.clamp(1, 100) as u8,
-                );
+                let mut encoder = image::codecs::jpeg::JpegEncoder::new_with_quality(&mut buf, quality as u8);
                 set_icc(&mut encoder, icc_bytes)?;
-                let dyn_rgb8 = DynamicImage::ImageRgb8(dyn_img.to_rgb8());
-                dyn_rgb8.write_with_encoder(encoder)
+                dyn_img.write_with_encoder(encoder)
                     .map_err(|e| format!("Failed to encode JPEG: {}", e))?;
             }
             crate::security::atomic_write_user(&final_dest, &buf.into_inner())
                 .map_err(|e| format!("Failed to securely write JPEG file: {}", e))?;
+        }
+        "exr" => {
+            let (linear, chroma) = exr_target.as_ref().ok_or("OpenEXR target missing")?;
+            let rgb16 = dyn_img.to_rgb16();
+            let pixels = icc::convert_rgb16_to_f32(rgb16.as_raw(), &source_profile, linear, options.rendering_intent)?;
+            let buf = encode_exr(rgb16.width(), rgb16.height(), &pixels, depth, *chroma)?;
+            crate::security::atomic_write_user(&final_dest, &buf)
+                .map_err(|e| format!("Failed to securely write OpenEXR file: {}", e))?;
         }
         _ => return Err(format!("Unsupported export format: {}", fmt)),
     }
@@ -349,6 +363,132 @@ pub fn export_photo<P: AsRef<Path>>(
     }
 
     Ok(final_dest)
+}
+
+/// Bits per channel a format is written with. 0 (or an unsupported request) picks
+/// the format's best: 16 for PNG, TIFF and JPEG XL, 12 for AVIF, 10 for HEIF and
+/// half float (16) for OpenEXR. JPEG and WebP are always 8-bit.
+pub fn effective_bit_depth(format: &str, requested: u8) -> u8 {
+    let (allowed, best): (&[u8], u8) = match format {
+        "jpeg" | "jpg" | "webp" => (&[8], 8),
+        "png" | "tiff" | "tif" | "jxl" => (&[8, 16], 16),
+        "avif" => (&[8, 10, 12], 12),
+        "heic" | "heif" => (&[8, 10, 12], 10),
+        "exr" => (&[16, 32], 16),
+        _ => (&[8], 8),
+    };
+    if allowed.contains(&requested) { requested } else { best }
+}
+
+/// A PNG handed to an external encoder; removed when dropped.
+struct TempPng(PathBuf);
+
+impl TempPng {
+    fn write(dir: &Path, stem: &str, img: &DynamicImage, icc: Option<&[u8]>) -> Result<Self, String> {
+        let nanos = SystemTime::now().duration_since(UNIX_EPOCH).unwrap_or_default().as_nanos();
+        let path = dir.join(format!(".tmp_{}_{}_{}.png", stem, std::process::id(), nanos));
+        let png = encode_png(img, icc)?;
+        crate::security::atomic_write_user(&path, &png)
+            .map_err(|e| format!("Failed to save temporary PNG: {}", e))?;
+        Ok(Self(path))
+    }
+}
+
+impl Drop for TempPng {
+    fn drop(&mut self) {
+        let _ = fs::remove_file(&self.0);
+    }
+}
+
+/// Runs an external encoder; a missing tool or a non-zero exit is an error.
+fn run_encoder(cmd: std::process::Command, name: &str, timeout_secs: u64) -> Result<(), String> {
+    let (code, _, stderr) = run_bounded_command(cmd, Duration::from_secs(timeout_secs))
+        .map_err(|e| format!("Could not run {} (is it installed?): {}", name, e))?;
+    if code != 0 {
+        return Err(format!("{} failed: {}", name, String::from_utf8_lossy(&stderr).trim()));
+    }
+    Ok(())
+}
+
+/// Encodes an 8- or 16-bit TIFF with the given compression and the ICC profile.
+fn encode_tiff(img: &DynamicImage, depth: u8, compression: &str, icc: Option<&[u8]>) -> Result<Vec<u8>, String> {
+    use tiff::encoder::{colortype, Compression, DeflateLevel, Predictor, TiffEncoder};
+    use tiff::tags::Tag;
+    let err = |e: tiff::TiffError| format!("Failed to encode TIFF: {}", e);
+    let (compression, predictor) = match compression {
+        "none" => (Compression::Uncompressed, Predictor::None),
+        "lzw" => (Compression::Lzw, Predictor::Horizontal),
+        _ => (Compression::Deflate(DeflateLevel::Balanced), Predictor::Horizontal),
+    };
+    let mut buf = std::io::Cursor::new(Vec::new());
+    {
+        let mut encoder = TiffEncoder::new(&mut buf).map_err(err)?
+            .with_compression(compression)
+            .with_predictor(predictor);
+        let (w, h) = (img.width(), img.height());
+        if depth <= 8 {
+            let rgb = img.to_rgb8();
+            let mut image = encoder.new_image::<colortype::RGB8>(w, h).map_err(err)?;
+            if let Some(icc) = icc {
+                image.encoder().write_tag(Tag::IccProfile, icc).map_err(err)?;
+            }
+            image.write_data(rgb.as_raw()).map_err(err)?;
+        } else {
+            let rgb = img.to_rgb16();
+            let mut image = encoder.new_image::<colortype::RGB16>(w, h).map_err(err)?;
+            if let Some(icc) = icc {
+                image.encoder().write_tag(Tag::IccProfile, icc).map_err(err)?;
+            }
+            image.write_data(rgb.as_raw()).map_err(err)?;
+        }
+    }
+    Ok(buf.into_inner())
+}
+
+/// Encodes scene-linear float RGB as OpenEXR (half or full float, ZIP compressed)
+/// with the colour space's chromaticities.
+fn encode_exr(
+    width: u32,
+    height: u32,
+    pixels: &[f32],
+    depth: u8,
+    chroma: icc::Primaries,
+) -> Result<Vec<u8>, String> {
+    use exr::meta::attribute::Chromaticities;
+    use exr::prelude::*;
+    let (w, h) = (width as usize, height as usize);
+    let v2 = |p: (f64, f64)| Vec2(p.0 as f32, p.1 as f32);
+    let at = move |pos: Vec2<usize>| {
+        let i = (pos.y() * w + pos.x()) * 3;
+        (pixels[i], pixels[i + 1], pixels[i + 2])
+    };
+    let mut attributes = LayerAttributes::named("rgb");
+    attributes.software_name = Some(Text::from("OmaStudio"));
+    let encoding = Encoding::SMALL_LOSSLESS;
+    let mut buf = std::io::Cursor::new(Vec::new());
+    let chromaticities = Chromaticities {
+        red: v2(chroma.0[0]),
+        green: v2(chroma.0[1]),
+        blue: v2(chroma.0[2]),
+        white: v2(chroma.1),
+    };
+    let result = if depth >= 32 {
+        let layer = Layer::new((w, h), attributes, encoding, SpecificChannels::rgb(at));
+        let mut image = Image::from_layer(layer);
+        image.attributes.chromaticities = Some(chromaticities);
+        image.write().to_buffered(&mut buf)
+    } else {
+        let half = move |pos: Vec2<usize>| {
+            let (r, g, b) = at(pos);
+            (f16::from_f32(r), f16::from_f32(g), f16::from_f32(b))
+        };
+        let layer = Layer::new((w, h), attributes, encoding, SpecificChannels::rgb(half));
+        let mut image = Image::from_layer(layer);
+        image.attributes.chromaticities = Some(chromaticities);
+        image.write().to_buffered(&mut buf)
+    };
+    result.map_err(|e| format!("Failed to encode OpenEXR: {}", e))?;
+    Ok(buf.into_inner())
 }
 
 /// Hands the export's ICC profile to an image encoder.
@@ -412,4 +552,63 @@ pub fn batch_name_tags(paths: &[&str]) -> Vec<Option<String>> {
             Some(format!("{}{}", ext, n))
         })
         .collect()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn bit_depth_follows_format_limits() {
+        assert_eq!(effective_bit_depth("jpeg", 16), 8);
+        assert_eq!(effective_bit_depth("png", 0), 16);
+        assert_eq!(effective_bit_depth("tiff", 8), 8);
+        assert_eq!(effective_bit_depth("avif", 16), 12);
+        assert_eq!(effective_bit_depth("heic", 0), 10);
+        assert_eq!(effective_bit_depth("exr", 32), 32);
+        assert_eq!(effective_bit_depth("exr", 8), 16);
+    }
+
+    fn gradient() -> DynamicImage {
+        let img = ImageBuffer::from_fn(64, 32, |x, y| Rgb([(x * 1000) as u16, (y * 2000) as u16, 30000u16]));
+        DynamicImage::ImageRgb16(img)
+    }
+
+    #[test]
+    fn tiff_round_trips_16_bit_with_icc() {
+        let icc = icc::builtin_profile(OutputColorSpace::AdobeRgb).icc().unwrap();
+        for compression in ["none", "lzw", "deflate"] {
+            let buf = encode_tiff(&gradient(), 16, compression, Some(&icc)).unwrap();
+            let mut dec = tiff::decoder::Decoder::new(std::io::Cursor::new(&buf)).unwrap();
+            assert_eq!(dec.dimensions().unwrap(), (64, 32));
+            let icc_tag = dec.get_tag_u8_vec(tiff::tags::Tag::IccProfile).unwrap();
+            assert_eq!(icc_tag, icc);
+            match dec.read_image().unwrap() {
+                tiff::decoder::DecodingResult::U16(px) => assert_eq!(px[3 * 5], 5000),
+                _ => panic!("expected 16-bit samples"),
+            }
+        }
+        let buf8 = encode_tiff(&gradient(), 8, "lzw", None).unwrap();
+        let mut dec = tiff::decoder::Decoder::new(std::io::Cursor::new(&buf8)).unwrap();
+        assert!(matches!(dec.read_image().unwrap(), tiff::decoder::DecodingResult::U8(_)));
+    }
+
+    #[test]
+    fn exr_is_linear_with_chromaticities() {
+        let src = icc::builtin_profile(OutputColorSpace::Srgb);
+        let (linear, chroma) = ExportProfile::Builtin(OutputColorSpace::Srgb).linear().unwrap();
+        // sRGB 50 % grey is about 21.4 % linear
+        let px = icc::convert_rgb16_to_f32(&[32768, 32768, 32768], &src, &linear, RenderingIntent::RelativeColorimetric).unwrap();
+        assert!((px[0] - 0.214).abs() < 0.01, "{}", px[0]);
+        let buf = encode_exr(1, 1, &px, 32, chroma).unwrap();
+        let meta = exr::meta::MetaData::read_from_buffered(std::io::Cursor::new(&buf), false).unwrap();
+        let c = meta.headers[0].shared_attributes.chromaticities.unwrap();
+        assert!((c.red.0 - 0.64).abs() < 1e-4);
+    }
+
+    #[test]
+    fn acescg_resolves_without_a_file() {
+        assert!(matches!(ExportProfile::resolve("ACEScg").unwrap(), ExportProfile::AcesCg));
+        assert!(!ExportProfile::AcesCg.icc_bytes().unwrap().is_empty());
+    }
 }

@@ -37,6 +37,13 @@ pub mod qobject {
 
         #[qinvokable]
         fn ipc_reply(self: &Host, id: i32, text: &QString);
+
+        /// Interface state saved by `saveUiState` (panels, sections), "" when none.
+        #[qinvokable]
+        fn ui_state(self: &Host) -> QString;
+
+        #[qinvokable]
+        fn save_ui_state(self: &Host, json: &QString);
     }
 
     impl cxx_qt::Threading for Host {}
@@ -102,4 +109,39 @@ impl qobject::Host {
     pub fn ipc_reply(&self, id: i32, text: &QString) {
         ipc::reply(id, String::from(text));
     }
+
+    pub fn ui_state(&self) -> QString {
+        let text = std::fs::metadata(ui_state_path())
+            .ok()
+            .filter(|m| m.is_file() && m.len() <= UI_STATE_MAX)
+            .and_then(|_| std::fs::read_to_string(ui_state_path()).ok())
+            .unwrap_or_default();
+        QString::from(text.as_str())
+    }
+
+    pub fn save_ui_state(&self, json: &QString) {
+        let text = String::from(json);
+        if text.len() as u64 > UI_STATE_MAX || serde_json::from_str::<serde_json::Value>(&text).is_err() {
+            return;
+        }
+        let path = ui_state_path();
+        let tmp = path.with_extension("json.tmp");
+        let written = path.parent().map_or(Ok(()), std::fs::create_dir_all)
+            .and_then(|_| std::fs::write(&tmp, text))
+            .and_then(|_| std::fs::rename(&tmp, &path));
+        if let Err(e) = written {
+            eprintln!("omastudio: cannot save {}: {e}", path.display());
+        }
+    }
+}
+
+const UI_STATE_MAX: u64 = 64 * 1024;
+
+/// `$XDG_CONFIG_HOME/omastudio/ui-state.json`
+fn ui_state_path() -> PathBuf {
+    let config = std::env::var_os("XDG_CONFIG_HOME")
+        .filter(|p| !p.is_empty())
+        .map(PathBuf::from)
+        .unwrap_or_else(|| Path::new(&std::env::var("HOME").unwrap_or_default()).join(".config"));
+    config.join("omastudio/ui-state.json")
 }

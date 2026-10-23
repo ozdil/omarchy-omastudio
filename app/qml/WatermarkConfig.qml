@@ -4,6 +4,8 @@ import QtQuick.Controls
 
 Rectangle {
     id: root
+    // Inside a panel section, which shows the title
+    property bool embedded: false
     Layout.fillWidth: true
     implicitHeight: mainCol.implicitHeight + 16
     radius: Theme.radiusMd
@@ -52,10 +54,11 @@ Rectangle {
             spacing: 6
 
             Text {
-                text: "WATERMARK & BRANDING"
+                visible: !root.embedded
+                text: qsTr("Watermark")
                 textFormat: Text.PlainText
                 font.family: Theme.fontFamily
-                font.pixelSize: 10
+                font.pixelSize: Theme.px(10)
                 font.weight: Font.DemiBold
                 font.letterSpacing: 1
                 color: Theme.textDim
@@ -101,7 +104,7 @@ Rectangle {
                         text: "Text / EXIF Tag"
                         textFormat: Text.PlainText
                         font.family: Theme.fontFamily
-                        font.pixelSize: 9
+                        font.pixelSize: Theme.px(9)
                         font.weight: root.watermarkType === "text" ? Font.Bold : Font.Normal
                         color: root.watermarkType === "text" ? Theme.bgBase : Theme.textMain
                         elide: Text.ElideRight
@@ -133,7 +136,7 @@ Rectangle {
                         text: "Custom Logo PNG"
                         textFormat: Text.PlainText
                         font.family: Theme.fontFamily
-                        font.pixelSize: 9
+                        font.pixelSize: Theme.px(9)
                         font.weight: root.watermarkType === "logo" ? Font.Bold : Font.Normal
                         color: root.watermarkType === "logo" ? Theme.bgBase : Theme.textMain
                         elide: Text.ElideRight
@@ -157,10 +160,10 @@ Rectangle {
                 visible: root.watermarkType === "text"
 
                 Text {
-                    text: "WATERMARK TEXT OR TEMPLATE"
+                    text: qsTr("Text or template")
                     textFormat: Text.PlainText
                     font.family: Theme.fontFamily
-                    font.pixelSize: 9
+                    font.pixelSize: Theme.px(9)
                     color: Theme.textDim
                 }
 
@@ -183,7 +186,7 @@ Rectangle {
                         maxLength: 512
                         text: root.text
                         font.family: Theme.fontFamily
-                        font.pixelSize: 10
+                        font.pixelSize: Theme.px(10)
                         color: Theme.textMain
                         placeholderTextColor: Theme.textDim
                         onEditingFinished: {
@@ -216,7 +219,7 @@ Rectangle {
                             Layout.fillWidth: true
                             Layout.minimumWidth: 0
                             implicitHeight: 22
-                            radius: 3
+                            radius: Theme.r(3)
                             color: Theme.bgCard
                             border.color: Theme.border
 
@@ -227,7 +230,7 @@ Rectangle {
                                 text: modelData
                                 textFormat: Text.PlainText
                                 font.family: Theme.fontFamily
-                                font.pixelSize: 8
+                                font.pixelSize: Theme.px(8)
                                 color: Theme.textMuted
                                 elide: Text.ElideRight
                             }
@@ -253,10 +256,10 @@ Rectangle {
                 visible: root.watermarkType === "logo"
 
                 Text {
-                    text: "LOGO FILE PATH (.PNG)"
+                    text: qsTr("Logo file (PNG)")
                     textFormat: Text.PlainText
                     font.family: Theme.fontFamily
-                    font.pixelSize: 9
+                    font.pixelSize: Theme.px(9)
                     color: Theme.textDim
                 }
 
@@ -278,7 +281,7 @@ Rectangle {
                         maxLength: 4096
                         text: root.logoPath
                         font.family: Theme.fontFamily
-                        font.pixelSize: 10
+                        font.pixelSize: Theme.px(10)
                         color: Theme.textMain
                         placeholderTextColor: Theme.textDim
                         onEditingFinished: {
@@ -302,10 +305,10 @@ Rectangle {
                 ColumnLayout {
                     spacing: 4
                     Text {
-                        text: "POSITION"
+                        text: qsTr("Position")
                         textFormat: Text.PlainText
                         font.family: Theme.fontFamily
-                        font.pixelSize: 9
+                        font.pixelSize: Theme.px(9)
                         color: Theme.textDim
                     }
 
@@ -319,7 +322,7 @@ Rectangle {
                             Rectangle {
                                 width: 22
                                 height: 22
-                                radius: 3
+                                radius: Theme.r(3)
                                 color: root.positionIndex === index ? Theme.accent : Theme.bgCard
                                 border.color: root.positionIndex === index ? Theme.accent : Theme.border
                                 border.width: 1
@@ -328,7 +331,7 @@ Rectangle {
                                     anchors.centerIn: parent
                                     width: 4
                                     height: 4
-                                    radius: 2
+                                    radius: Theme.r(2)
                                     color: root.positionIndex === index ? Theme.bgBase : Theme.textDim
                                 }
 
@@ -358,7 +361,7 @@ Rectangle {
                             text: "Drop Shadow"
                             textFormat: Text.PlainText
                             font.family: Theme.fontFamily
-                            font.pixelSize: 9
+                            font.pixelSize: Theme.px(9)
                             color: Theme.textMain
                             Layout.fillWidth: true
                             Layout.minimumWidth: 0
@@ -414,10 +417,10 @@ Rectangle {
                 RowLayout {
                     Layout.fillWidth: true
                     Text {
-                        text: "OPACITY"
+                        text: qsTr("Opacity")
                         textFormat: Text.PlainText
                         font.family: Theme.fontFamily
-                        font.pixelSize: 9
+                        font.pixelSize: Theme.px(9)
                         color: Theme.textDim
                         Layout.fillWidth: true
                     }
@@ -425,7 +428,7 @@ Rectangle {
                         text: Math.round(root.watermarkOpacity * 100) + "%"
                         textFormat: Text.PlainText
                         font.family: Theme.fontFamily
-                        font.pixelSize: 9
+                        font.pixelSize: Theme.px(9)
                         font.weight: Font.Bold
                         color: Theme.accent
                     }
@@ -446,14 +449,14 @@ Rectangle {
                         implicitHeight: 3
                         width: opSlider.availableWidth
                         height: implicitHeight
-                        radius: 1.5
+                        radius: Theme.r(1.5)
                         color: Qt.rgba(Theme.textMain.r, Theme.textMain.g, Theme.textMain.b, 0.12)
 
                         Rectangle {
                             width: opSlider.visualPosition * parent.width
                             height: parent.height
                             color: Theme.accent
-                            radius: 1.5
+                            radius: Theme.r(1.5)
                         }
                     }
 
@@ -462,7 +465,7 @@ Rectangle {
                         y: opSlider.topPadding + opSlider.availableHeight / 2 - height / 2
                         implicitWidth: 12
                         implicitHeight: 12
-                        radius: 6
+                        radius: Theme.r(6)
                         color: opSlider.pressed ? Theme.accent : (opSlider.hovered ? Theme.accentHover : Theme.textMain)
                         border.color: Theme.bgDark
                         border.width: 1.5
@@ -479,10 +482,10 @@ Rectangle {
                 RowLayout {
                     Layout.fillWidth: true
                     Text {
-                        text: "SIZE MULTIPLIER"
+                        text: qsTr("Size")
                         textFormat: Text.PlainText
                         font.family: Theme.fontFamily
-                        font.pixelSize: 9
+                        font.pixelSize: Theme.px(9)
                         color: Theme.textDim
                         Layout.fillWidth: true
                     }
@@ -490,7 +493,7 @@ Rectangle {
                         text: root.size + "px"
                         textFormat: Text.PlainText
                         font.family: Theme.fontFamily
-                        font.pixelSize: 9
+                        font.pixelSize: Theme.px(9)
                         font.weight: Font.Bold
                         color: Theme.accent
                     }
@@ -511,14 +514,14 @@ Rectangle {
                         implicitHeight: 3
                         width: szSlider.availableWidth
                         height: implicitHeight
-                        radius: 1.5
+                        radius: Theme.r(1.5)
                         color: Qt.rgba(Theme.textMain.r, Theme.textMain.g, Theme.textMain.b, 0.12)
 
                         Rectangle {
                             width: szSlider.visualPosition * parent.width
                             height: parent.height
                             color: Theme.accent
-                            radius: 1.5
+                            radius: Theme.r(1.5)
                         }
                     }
 
@@ -527,7 +530,7 @@ Rectangle {
                         y: szSlider.topPadding + szSlider.availableHeight / 2 - height / 2
                         implicitWidth: 12
                         implicitHeight: 12
-                        radius: 6
+                        radius: Theme.r(6)
                         color: szSlider.pressed ? Theme.accent : (szSlider.hovered ? Theme.accentHover : Theme.textMain)
                         border.color: Theme.bgDark
                         border.width: 1.5

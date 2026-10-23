@@ -4,6 +4,8 @@ import QtQuick.Controls
 
 Rectangle {
     id: root
+    // Inside a panel section, which shows the title
+    property bool embedded: false
     Layout.fillWidth: true
     implicitHeight: mainCol.implicitHeight + 20
     radius: Theme.radiusMd
@@ -40,10 +42,11 @@ Rectangle {
             spacing: 6
 
             Text {
-                text: "DAVINCI RGB PRIMARY MIXER"
+                visible: !root.embedded
+                text: qsTr("Channel mixer")
                 textFormat: Text.PlainText
                 font.family: Theme.fontFamily
-                font.pixelSize: 10
+                font.pixelSize: Theme.px(10)
                 font.weight: Font.DemiBold
                 font.letterSpacing: 1
                 color: Theme.textDim
@@ -62,7 +65,7 @@ Rectangle {
             Rectangle {
                 implicitWidth: resetMixerText.implicitWidth + 10
                 implicitHeight: 18
-                radius: 4
+                radius: Theme.r(4)
                 color: resetMixerMouse.containsMouse ? Theme.bgCardHover : "transparent"
                 border.color: Theme.border
                 border.width: 1
@@ -70,10 +73,10 @@ Rectangle {
                 Text {
                     id: resetMixerText
                     anchors.centerIn: parent
-                    text: "RESET"
+                    text: qsTr("Reset")
                     textFormat: Text.PlainText
                     font.family: Theme.monoFont
-                    font.pixelSize: 8
+                    font.pixelSize: Theme.px(8)
                     font.weight: Font.Bold
                     color: Theme.textDim
                 }
@@ -110,7 +113,7 @@ Rectangle {
                 text: "Monochrome Mixing"
                 textFormat: Text.PlainText
                 font.family: Theme.fontFamily
-                font.pixelSize: 11
+                font.pixelSize: Theme.px(11)
                 color: root.monochrome ? Theme.accentCyan : Theme.textDim
                 Layout.fillWidth: true
             }
@@ -134,10 +137,10 @@ Rectangle {
 
             // RED OUTPUT CHANNEL
             Text {
-                text: root.monochrome ? "MONOCHROME LUMA MIX" : "RED OUTPUT CHANNEL"
+                text: root.monochrome ? qsTr("Monochrome mix") : qsTr("Red output")
                 textFormat: Text.PlainText
                 font.family: Theme.fontFamily
-                font.pixelSize: 9
+                font.pixelSize: Theme.px(9)
                 font.weight: Font.Bold
                 color: Theme.accentRed
             }
@@ -187,10 +190,10 @@ Rectangle {
                 Rectangle { Layout.fillWidth: true; height: 1; color: Theme.border }
 
                 Text {
-                    text: "GREEN OUTPUT CHANNEL"
+                    text: qsTr("Green output")
                     textFormat: Text.PlainText
                     font.family: Theme.fontFamily
-                    font.pixelSize: 9
+                    font.pixelSize: Theme.px(9)
                     font.weight: Font.Bold
                     color: Theme.accentGreen
                 }
@@ -241,10 +244,10 @@ Rectangle {
                 Rectangle { Layout.fillWidth: true; height: 1; color: Theme.border }
 
                 Text {
-                    text: "BLUE OUTPUT CHANNEL"
+                    text: qsTr("Blue output")
                     textFormat: Text.PlainText
                     font.family: Theme.fontFamily
-                    font.pixelSize: 9
+                    font.pixelSize: Theme.px(9)
                     font.weight: Font.Bold
                     color: Theme.accentBlue
                 }

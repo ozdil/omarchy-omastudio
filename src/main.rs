@@ -731,34 +731,33 @@ fn main() {
                 local_only_mode: true,
                 gpu: gpu::status(),
                 features: vec![
-                    "davinci_3way_color_wheels".into(),
-                    "ai_social_media_optimizer".into(),
-                    "lightroom_hsl_and_curves".into(),
-                    "interactive_crop_and_guides".into(),
-                    "icc_color_profile_management".into(),
-                    "exif_preservation_and_gps_strip".into(),
-                    "touchpad_mac_pinch_rotate_pan".into(),
-                    "control_socket_ipc".into(),
-                    "omarchy_system_theme_sync".into(),
-                    "presence_engine_texture_clarity_dehaze".into(),
-                    "detail_and_optics_engine".into(),
-                    "medium_format_16bit_raw_pipeline".into(),
-                    "perceptual_shadow_retinal_toe".into(),
-                    "typesafe_ai_jev_decision_engine".into(),
-                    "aces_1_3_color_management".into(),
-                    "aces_gamut_compression".into(),
-                    "fujifilm_film_simulations".into(),
-                    "hasselblad_hncs_and_xpan".into(),
-                    "watermark_and_branding_engine".into(),
-                    "dag_demand_driven_pipeline_engine".into(),
-                    "tiled_region_of_interest_execution".into(),
-                    "vulkan_slang_gpu_compute_architecture".into(),
-                    "linux_wayland_color_management_v1".into(),
-                    "capture_one_skin_tone_uniformity".into(),
-                    "davinci_rgb_primary_matrix_mixer".into(),
-                    "silver_halide_photochemical_film_grain".into(),
-                    "local_layered_mask_adjustments".into(),
-                    "studio_culling_and_fast_rating".into(),
+                    "colour_grading".into(),
+                    "channel_mixer".into(),
+                    "hsl".into(),
+                    "tone_curve".into(),
+                    "presence".into(),
+                    "detail".into(),
+                    "grain".into(),
+                    "skin_tone".into(),
+                    "masks".into(),
+                    "crop_and_straighten".into(),
+                    "film_simulations".into(),
+                    "hasselblad_profiles".into(),
+                    "aces_1_3".into(),
+                    "gamut_compression".into(),
+                    "icc_export".into(),
+                    "watermark".into(),
+                    "platform_presets".into(),
+                    "exif_and_gps_control".into(),
+                    "xmp_sidecars".into(),
+                    "rating_and_flags".into(),
+                    "local_ai_assistant".into(),
+                    "ai_masks".into(),
+                    "gpu_demosaic".into(),
+                    "tiled_pipeline".into(),
+                    "pixel_shift".into(),
+                    "omarchy_theme_and_font".into(),
+                    "control_socket".into(),
                 ],
             };
             print_json(&ResponseWrapper::ok(status));
@@ -791,10 +790,10 @@ fn main() {
             println!("  status                                Output engine and feature status as JSON");
             println!("  inspect <raw_file>                    Parse EXIF, dynamic range, AI scene classification, histogram");
             println!("  ai-auto <raw_file>                    Calculate optimal tone, white balance, and contrast via AI");
-            println!("  ai-jev <raw_file>                     Execute TypeSafe AI Jev System 1 typed decision engine");
+            println!("  ai-jev <raw_file>                     Auto, refined by a configured decision model when one is set up");
             println!("  ai-social <raw_file> [platform]       Calculate social media crop & OLED recipe (ig, story, x, ig_square, fb, yt)");
             println!("  render <raw_file> [options]           Process RAW image to preview PPM/PNG/JPG");
-            println!("  export <raw_file> [options]           High-res demosaic & export (jxl, avif, webp, tiff, png, jpg)");
+            println!("  export <raw_file> [options]           High-res demosaic & export (jpg, png, tif, webp, avif, heic, jxl, exr)");
             println!("  fuji-recipe <raf|jpg|fp1|txt>         Read a Fujifilm recipe from a photo, X RAW Studio profile or recipe text");
             println!("  fuji-recipe list                      List the recipes saved in ~/.local/share/omastudio/fuji-recipes");
             println!("  fuji-recipe save <file> [--label L]   Save a recipe into the library as .FP1");
@@ -1310,17 +1309,18 @@ fn ai_mask(photo: &str, kind: &str, model: Option<String>) -> Result<serde_json:
     }))
 }
 
-/// `ai providers | key <provider> [--delete] | use <provider> [model] [--endpoint URL] |
+/// `ai providers | local | key <provider> [--delete] | use <provider> [model] [--endpoint URL] |
 /// edit <photo> [--prompt P] [--recipe JSON] [--provider X] [--model M]`.
 fn run_ai(args: &[String]) {
     use ai::provider;
     let flag = |name: &str| args.iter().position(|a| a == name).and_then(|i| args.get(i + 1)).cloned();
     let lookup = |id: Option<&String>| -> Result<&'static provider::Provider, String> {
-        let id = id.ok_or("Missing provider: anthropic, openai, openrouter, gemini, ollama or lmstudio")?;
+        let id = id.ok_or("Missing provider: anthropic, openai, openrouter, gemini, omarchy, ollama or lmstudio")?;
         provider::find(id).ok_or_else(|| format!("Unknown provider {id}"))
     };
     let result: Result<serde_json::Value, String> = match args.first().map(String::as_str) {
         Some("providers") | None => Ok(serde_json::json!({ "providers": provider::status(), "choice": provider::load_choice() })),
+        Some("local") => provider::connect_local().and_then(|c| serde_json::to_value(&c).map_err(|e| e.to_string())),
         Some("key") => lookup(args.get(1)).and_then(|p| {
             if args.iter().any(|a| a == "--delete") {
                 return provider::delete_key(p).map(|_| serde_json::json!({ "provider": p.id, "stored": false }));

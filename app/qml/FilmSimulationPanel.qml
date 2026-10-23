@@ -4,6 +4,8 @@ import QtQuick.Controls
 
 Rectangle {
     id: root
+    // Inside a panel section, which shows the title
+    property bool embedded: false
     Layout.fillWidth: true
     implicitHeight: mainCol.implicitHeight + 16
     radius: Theme.radiusMd
@@ -59,10 +61,11 @@ Rectangle {
             spacing: 6
 
             Text {
-                text: "FILM SIMULATION & SENSOR PROFILES"
+                visible: !root.embedded
+                text: qsTr("Profile")
                 textFormat: Text.PlainText
                 font.family: Theme.fontFamily
-                font.pixelSize: 10
+                font.pixelSize: Theme.px(10)
                 font.weight: Font.DemiBold
                 font.letterSpacing: 1
                 color: Theme.textDim
@@ -72,7 +75,7 @@ Rectangle {
             Rectangle {
                 implicitWidth: resetSimText.implicitWidth + 10
                 implicitHeight: 18
-                radius: 4
+                radius: Theme.r(4)
                 color: resetSimMouse.containsMouse ? Theme.bgCardHover : "transparent"
                 border.color: Theme.border
                 border.width: 1
@@ -80,10 +83,10 @@ Rectangle {
                 Text {
                     id: resetSimText
                     anchors.centerIn: parent
-                    text: "RESET"
+                    text: qsTr("Reset")
                     textFormat: Text.PlainText
                     font.family: Theme.fontFamily
-                    font.pixelSize: 8
+                    font.pixelSize: Theme.px(8)
                     font.weight: Font.Bold
                     color: Theme.textDim
                 }
@@ -112,7 +115,7 @@ Rectangle {
                 Rectangle {
                     implicitWidth: brandText.implicitWidth + 12
                     implicitHeight: 20
-                    radius: 4
+                    radius: Theme.r(4)
                     color: root.selectedBrand === modelData ? Theme.accent : Theme.bgCard
                     border.color: root.selectedBrand === modelData ? Theme.accent : Theme.border
                     border.width: 1
@@ -123,7 +126,7 @@ Rectangle {
                         text: modelData
                         textFormat: Text.PlainText
                         font.family: Theme.fontFamily
-                        font.pixelSize: 9
+                        font.pixelSize: Theme.px(9)
                         font.weight: root.selectedBrand === modelData ? Font.Bold : Font.Normal
                         color: root.selectedBrand === modelData ? Theme.bgBase : Theme.textMain
                     }
@@ -137,82 +140,73 @@ Rectangle {
             }
         }
 
-        // Simulation Cards Grid
-        GridLayout {
+        // Profile list: one compact row each, scrolls past about eight rows
+        Flickable {
+            id: simList
             Layout.fillWidth: true
-            columns: 2
-            rowSpacing: 6
-            columnSpacing: 6
+            Layout.preferredHeight: Math.min(simColumn.implicitHeight, Theme.px(232))
+            contentHeight: simColumn.implicitHeight
+            clip: true
+            boundsBehavior: Flickable.StopAtBounds
+            ScrollBar.vertical: ScrollBar { policy: simList.contentHeight > simList.height ? ScrollBar.AsNeeded : ScrollBar.AlwaysOff }
 
-            Repeater {
-                model: root.filmSimulations.filter(function(item) {
-                    if (root.selectedBrand === "All") return true;
-                    return item.brand === root.selectedBrand;
-                })
+            Column {
+                id: simColumn
+                width: simList.width
+                spacing: 1
 
-                Rectangle {
-                    Layout.fillWidth: true
-                    implicitHeight: 46
-                    radius: Theme.radiusSm
-                    color: root.activeSimulation === modelData.id ? Theme.bgCardHover : Theme.bgCard
-                    border.color: root.activeSimulation === modelData.id ? Theme.accent : Theme.border
-                    border.width: root.activeSimulation === modelData.id ? 1.5 : 1
+                Repeater {
+                    model: root.filmSimulations.filter(function(item) {
+                        if (root.selectedBrand === "All") return true;
+                        return item.brand === root.selectedBrand;
+                    })
 
-                    RowLayout {
-                        anchors.fill: parent
-                        anchors.margins: 6
-                        spacing: 8
+                    Rectangle {
+                        required property var modelData
+                        readonly property bool isCur: root.activeSimulation === modelData.id
+                        width: simColumn.width
+                        height: Theme.px(28)
+                        radius: Theme.radiusSm
+                        color: isCur ? Qt.rgba(Theme.accent.r, Theme.accent.g, Theme.accent.b, 0.15) : (simMouse.containsMouse ? Theme.bgCardHover : "transparent")
 
-                        Rectangle {
-                            width: 10
-                            height: 10
-                            radius: 5
-                            color: modelData.color
-                            Layout.alignment: Qt.AlignVCenter
-                        }
-
-                        ColumnLayout {
-                            Layout.fillWidth: true
-                            spacing: 1
+                        RowLayout {
+                            anchors.fill: parent
+                            anchors.leftMargin: Theme.px(8)
+                            anchors.rightMargin: Theme.px(8)
+                            spacing: Theme.px(8)
 
                             Text {
                                 text: modelData.name
                                 textFormat: Text.PlainText
                                 font.family: Theme.fontFamily
-                                font.pixelSize: 10
-                                font.weight: root.activeSimulation === modelData.id ? Font.Bold : Font.Normal
-                                color: root.activeSimulation === modelData.id ? Theme.accent : Theme.textMain
+                                font.pixelSize: Theme.px(11)
+                                font.weight: parent.parent.isCur ? Font.DemiBold : Font.Normal
+                                color: parent.parent.isCur ? Theme.accent : Theme.textMain
                                 elide: Text.ElideRight
                                 Layout.fillWidth: true
                             }
-
                             Text {
-                                text: modelData.desc
+                                text: modelData.brand
                                 textFormat: Text.PlainText
                                 font.family: Theme.fontFamily
-                                font.pixelSize: 8
+                                font.pixelSize: Theme.px(9)
                                 color: Theme.textDim
-                                elide: Text.ElideRight
-                                Layout.fillWidth: true
                             }
                         }
 
-                        Text {
-                            text: Theme.iconCheck
-                            font.family: Theme.iconFont
-                            font.pixelSize: 10
-                            color: Theme.accent
-                            visible: root.activeSimulation === modelData.id
+                        MouseArea {
+                            id: simMouse
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: {
+                                root.activeSimulation = modelData.id;
+                                root.simulationChanged(root.activeSimulation, root.intensity);
+                            }
                         }
-                    }
-
-                    MouseArea {
-                        anchors.fill: parent
-                        cursorShape: Qt.PointingHandCursor
-                        onClicked: {
-                            root.activeSimulation = modelData.id;
-                            root.simulationChanged(root.activeSimulation, root.intensity);
-                        }
+                        ToolTip.visible: simMouse.containsMouse && modelData.desc !== ""
+                        ToolTip.delay: 600
+                        ToolTip.text: modelData.desc
                     }
                 }
             }
@@ -227,10 +221,10 @@ Rectangle {
             RowLayout {
                 Layout.fillWidth: true
                 Text {
-                    text: "SIMULATION INTENSITY"
+                    text: qsTr("Amount")
                     textFormat: Text.PlainText
                     font.family: Theme.fontFamily
-                    font.pixelSize: 9
+                    font.pixelSize: Theme.px(9)
                     color: Theme.textDim
                     Layout.fillWidth: true
                 }
@@ -238,7 +232,7 @@ Rectangle {
                     text: Math.round(root.intensity * 100) + "%"
                     textFormat: Text.PlainText
                     font.family: Theme.fontFamily
-                    font.pixelSize: 9
+                    font.pixelSize: Theme.px(9)
                     font.weight: Font.Bold
                     color: Theme.accent
                 }
@@ -259,14 +253,14 @@ Rectangle {
                     implicitHeight: 3
                     width: intensitySlider.availableWidth
                     height: implicitHeight
-                    radius: 1.5
+                    radius: Theme.r(1.5)
                     color: Qt.rgba(Theme.textMain.r, Theme.textMain.g, Theme.textMain.b, 0.12)
 
                     Rectangle {
                         width: intensitySlider.visualPosition * parent.width
                         height: parent.height
                         color: Theme.accent
-                        radius: 1.5
+                        radius: Theme.r(1.5)
                     }
                 }
 
@@ -275,7 +269,7 @@ Rectangle {
                     y: intensitySlider.topPadding + intensitySlider.availableHeight / 2 - height / 2
                     implicitWidth: 12
                     implicitHeight: 12
-                    radius: 6
+                    radius: Theme.r(6)
                     color: intensitySlider.pressed ? Theme.accent : (intensitySlider.hovered ? Theme.accentHover : Theme.textMain)
                     border.color: Theme.bgDark
                     border.width: 1.5

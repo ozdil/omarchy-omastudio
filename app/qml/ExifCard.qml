@@ -24,7 +24,7 @@ Rectangle {
             Rectangle {
                 width: 24
                 height: 24
-                radius: 6
+                radius: Theme.r(6)
                 color: Qt.rgba(Theme.accent.r, Theme.accent.g, Theme.accent.b, 0.15)
                 border.color: Theme.accent
                 border.width: 1
@@ -33,7 +33,7 @@ Rectangle {
                     anchors.centerIn: parent
                     text: Theme.iconCamera
                     font.family: Theme.iconFont
-                    font.pixelSize: 11
+                    font.pixelSize: Theme.px(11)
                     color: Theme.accent
                 }
             }
@@ -43,9 +43,10 @@ Rectangle {
                 Layout.fillWidth: true
 
                 Text {
-                    text: root.metadata ? (root.metadata.make + " " + root.metadata.model) : "No Camera Loaded"
+                    font.family: Theme.fontFamily
+                    text: root.metadata ? (root.metadata.make + " " + root.metadata.model) : qsTr("No photo")
                     textFormat: Text.PlainText
-                    font.pixelSize: 12
+                    font.pixelSize: Theme.px(12)
                     font.weight: Font.Bold
                     color: Theme.textMain
                     elide: Text.ElideRight
@@ -53,9 +54,10 @@ Rectangle {
                 }
 
                 Text {
-                    text: root.metadata ? root.metadata.lens : "Unknown Lens"
+                    font.family: Theme.fontFamily
+                    text: root.metadata ? root.metadata.lens : ""
                     textFormat: Text.PlainText
-                    font.pixelSize: 10
+                    font.pixelSize: Theme.px(10)
                     color: Theme.textMuted
                     elide: Text.ElideRight
                     Layout.fillWidth: true
@@ -81,7 +83,7 @@ Rectangle {
             Rectangle {
                 Layout.fillWidth: true
                 implicitHeight: 22
-                radius: 4
+                radius: Theme.r(4)
                 color: Theme.bgCard
                 border.color: Theme.border
 
@@ -89,7 +91,7 @@ Rectangle {
                     anchors.centerIn: parent
                     text: "ISO " + (root.metadata ? Math.round(root.metadata.iso) : "--")
                     textFormat: Text.PlainText
-                    font.pixelSize: 10
+                    font.pixelSize: Theme.px(10)
                     font.family: Theme.monoFont
                     font.weight: Font.DemiBold
                     color: Theme.accentYellow
@@ -100,7 +102,7 @@ Rectangle {
             Rectangle {
                 Layout.fillWidth: true
                 implicitHeight: 22
-                radius: 4
+                radius: Theme.r(4)
                 color: Theme.bgCard
                 border.color: Theme.border
 
@@ -108,7 +110,7 @@ Rectangle {
                     anchors.centerIn: parent
                     text: (root.metadata ? Math.round(root.metadata.focal_length) : "--") + "mm"
                     textFormat: Text.PlainText
-                    font.pixelSize: 10
+                    font.pixelSize: Theme.px(10)
                     font.family: Theme.monoFont
                     color: Theme.textMain
                 }
@@ -118,7 +120,7 @@ Rectangle {
             Rectangle {
                 Layout.fillWidth: true
                 implicitHeight: 22
-                radius: 4
+                radius: Theme.r(4)
                 color: Theme.bgCard
                 border.color: Theme.border
 
@@ -126,7 +128,7 @@ Rectangle {
                     anchors.centerIn: parent
                     text: "f/" + (root.metadata ? root.metadata.aperture.toFixed(1) : "--")
                     textFormat: Text.PlainText
-                    font.pixelSize: 10
+                    font.pixelSize: Theme.px(10)
                     font.family: Theme.monoFont
                     color: Theme.accentCyan
                 }
@@ -136,7 +138,7 @@ Rectangle {
             Rectangle {
                 Layout.fillWidth: true
                 implicitHeight: 22
-                radius: 4
+                radius: Theme.r(4)
                 color: Theme.bgCard
                 border.color: Theme.border
 
@@ -144,7 +146,7 @@ Rectangle {
                     anchors.centerIn: parent
                     text: root.metadata ? parent.parent.formatShutter(root.metadata.shutter) : "--"
                     textFormat: Text.PlainText
-                    font.pixelSize: 10
+                    font.pixelSize: Theme.px(10)
                     font.family: Theme.monoFont
                     color: Theme.accentGreen
                 }

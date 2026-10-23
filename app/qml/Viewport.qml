@@ -397,7 +397,7 @@ Rectangle {
             // 100% Solid Underlay directly under photo bounding box
             Rectangle {
                 anchors.fill: parent
-                color: "#0a0a0d"
+                color: Theme.bgDark
                 z: -10
             }
 
@@ -500,10 +500,11 @@ Rectangle {
                         border.width: 2
 
                         Text {
+                            font.family: Theme.fontFamily
                             anchors.centerIn: parent
                             text: "< | >"
                             textFormat: Text.PlainText
-                            font.pixelSize: 8
+                            font.pixelSize: Theme.px(8)
                             font.weight: Font.Bold
                             color: Theme.bgBase
                         }
@@ -849,7 +850,7 @@ Rectangle {
         anchors.topMargin: 14
         implicitHeight: 28
         implicitWidth: rotRow.implicitWidth + 20
-        radius: 14
+        radius: Theme.r(14)
         color: Theme.isDarkTheme ? Qt.rgba(Theme.bgDark.r, Theme.bgDark.g, Theme.bgDark.b, 0.92) : Qt.rgba(Theme.bgSurface.r, Theme.bgSurface.g, Theme.bgSurface.b, 0.96)
         border.color: Theme.borderLight
         border.width: 1
@@ -863,14 +864,14 @@ Rectangle {
             Text {
                 text: Theme.iconRotate
                 font.family: Theme.iconFont
-                font.pixelSize: 11
+                font.pixelSize: Theme.px(11)
                 color: Theme.accent
             }
 
             Text {
                 text: (root.rotationAngle > 0 ? "+" : "") + root.rotationAngle.toFixed(1) + "°"
                 textFormat: Text.PlainText
-                font.pixelSize: 11
+                font.pixelSize: Theme.px(11)
                 font.family: Theme.monoFont
                 font.weight: Font.Bold
                 color: Theme.textMain
@@ -879,15 +880,16 @@ Rectangle {
             Rectangle {
                 implicitWidth: resetTxt.implicitWidth + 10
                 implicitHeight: 18
-                radius: 9
+                radius: Theme.r(9)
                 color: resetMouse.containsMouse ? Theme.accentHover : Qt.rgba(Theme.accent.r, Theme.accent.g, Theme.accent.b, 0.2)
 
                 Text {
+                    font.family: Theme.fontFamily
                     id: resetTxt
                     anchors.centerIn: parent
-                    text: "RESET 0°"
+                    text: qsTr("Reset 0°")
                     textFormat: Text.PlainText
-                    font.pixelSize: 9
+                    font.pixelSize: Theme.px(9)
                     font.weight: Font.Bold
                     color: resetMouse.containsMouse ? Theme.bgBase : Theme.accent
                 }
@@ -910,7 +912,7 @@ Rectangle {
         anchors.bottomMargin: 14
         implicitHeight: 34
         implicitWidth: transformRow.implicitWidth + 20
-        radius: 17
+        radius: Theme.r(17)
         color: Theme.isDarkTheme ? Qt.rgba(Theme.bgDark.r, Theme.bgDark.g, Theme.bgDark.b, 0.94) : Qt.rgba(Theme.bgSurface.r, Theme.bgSurface.g, Theme.bgSurface.b, 0.98)
         border.color: Theme.borderLight
         border.width: 1
@@ -925,13 +927,13 @@ Rectangle {
             Rectangle {
                 implicitWidth: 28
                 implicitHeight: 24
-                radius: 4
+                radius: Theme.r(4)
                 color: ccwMouse.containsMouse ? Theme.bgCardHover : "transparent"
                 Text {
                     anchors.centerIn: parent
                     text: Theme.iconRotateLeft
                     font.family: Theme.iconFont
-                    font.pixelSize: 12
+                    font.pixelSize: Theme.px(12)
                     color: ccwMouse.containsMouse ? Theme.accent : Theme.textMain
                 }
                 MouseArea {
@@ -947,13 +949,13 @@ Rectangle {
             Rectangle {
                 implicitWidth: 28
                 implicitHeight: 24
-                radius: 4
+                radius: Theme.r(4)
                 color: cwMouse.containsMouse ? Theme.bgCardHover : "transparent"
                 Text {
                     anchors.centerIn: parent
                     text: Theme.iconRotateRight
                     font.family: Theme.iconFont
-                    font.pixelSize: 12
+                    font.pixelSize: Theme.px(12)
                     color: cwMouse.containsMouse ? Theme.accent : Theme.textMain
                 }
                 MouseArea {
@@ -975,16 +977,16 @@ Rectangle {
             Rectangle {
                 implicitWidth: 34
                 implicitHeight: 24
-                radius: 4
+                radius: Theme.r(4)
                 color: root.zoomFactor <= 1.05 ? Theme.accent : (fitMouse.containsMouse ? Theme.bgCardHover : "transparent")
                 Text {
                     anchors.centerIn: parent
-                    text: "FIT"
+                    text: qsTr("Fit")
                     textFormat: Text.PlainText
-                    font.pixelSize: 10
+                    font.pixelSize: Theme.px(10)
                     font.family: Theme.monoFont
                     font.weight: Font.Bold
-                    color: root.zoomFactor <= 1.05 ? (Theme.isDarkTheme ? "#080c10" : "#ffffff") : Theme.textMain
+                    color: root.zoomFactor <= 1.05 ? Theme.onAccent : Theme.textMain
                 }
                 MouseArea {
                     id: fitMouse
@@ -999,16 +1001,16 @@ Rectangle {
             Rectangle {
                 implicitWidth: 42
                 implicitHeight: 24
-                radius: 4
+                radius: Theme.r(4)
                 color: Math.abs(root.pixelScale - 1.0) < 0.02 ? Theme.accent : (pct100Mouse.containsMouse ? Theme.bgCardHover : "transparent")
                 Text {
                     anchors.centerIn: parent
                     text: "100%"
                     textFormat: Text.PlainText
-                    font.pixelSize: 10
+                    font.pixelSize: Theme.px(10)
                     font.family: Theme.monoFont
                     font.weight: Font.Bold
-                    color: Math.abs(root.pixelScale - 1.0) < 0.02 ? (Theme.isDarkTheme ? "#080c10" : "#ffffff") : Theme.textMain
+                    color: Math.abs(root.pixelScale - 1.0) < 0.02 ? Theme.onAccent : Theme.textMain
                 }
                 MouseArea {
                     id: pct100Mouse
@@ -1023,16 +1025,16 @@ Rectangle {
             Rectangle {
                 implicitWidth: 42
                 implicitHeight: 24
-                radius: 4
+                radius: Theme.r(4)
                 color: Math.abs(root.pixelScale - 2.0) < 0.04 ? Theme.accent : (pct200Mouse.containsMouse ? Theme.bgCardHover : "transparent")
                 Text {
                     anchors.centerIn: parent
                     text: "200%"
                     textFormat: Text.PlainText
-                    font.pixelSize: 10
+                    font.pixelSize: Theme.px(10)
                     font.family: Theme.monoFont
                     font.weight: Font.Bold
-                    color: Math.abs(root.pixelScale - 2.0) < 0.04 ? (Theme.isDarkTheme ? "#080c10" : "#ffffff") : Theme.textMain
+                    color: Math.abs(root.pixelScale - 2.0) < 0.04 ? Theme.onAccent : Theme.textMain
                 }
                 MouseArea {
                     id: pct200Mouse
@@ -1053,14 +1055,14 @@ Rectangle {
             Rectangle {
                 implicitWidth: 28
                 implicitHeight: 24
-                radius: 4
+                radius: Theme.r(4)
                 color: root.isSplitView ? Theme.accentCyan : (splitMouse.containsMouse ? Theme.bgCardHover : "transparent")
                 Text {
                     anchors.centerIn: parent
                     text: Theme.iconSplit
                     font.family: Theme.iconFont
-                    font.pixelSize: 12
-                    color: root.isSplitView ? (Theme.isDarkTheme ? "#080c10" : "#ffffff") : Theme.textMain
+                    font.pixelSize: Theme.px(12)
+                    color: root.isSplitView ? Theme.onAccent : Theme.textMain
                 }
                 MouseArea {
                     id: splitMouse
@@ -1078,14 +1080,14 @@ Rectangle {
             Rectangle {
                 implicitWidth: 28
                 implicitHeight: 24
-                radius: 4
+                radius: Theme.r(4)
                 color: root.isCropMode ? Theme.accentYellow : (cropBtnMouse.containsMouse ? Theme.bgCardHover : "transparent")
                 Text {
                     anchors.centerIn: parent
                     text: Theme.iconCrop
                     font.family: Theme.iconFont
-                    font.pixelSize: 12
-                    color: root.isCropMode ? (Theme.isDarkTheme ? "#080c10" : "#ffffff") : Theme.textMain
+                    font.pixelSize: Theme.px(12)
+                    color: root.isCropMode ? Theme.onAccent : Theme.textMain
                 }
                 MouseArea {
                     id: cropBtnMouse
@@ -1108,7 +1110,7 @@ Rectangle {
         anchors.topMargin: 14
         implicitHeight: 34
         implicitWidth: cropRow.implicitWidth + 20
-        radius: 17
+        radius: Theme.r(17)
         color: Theme.isDarkTheme ? Qt.rgba(Theme.bgDark.r, Theme.bgDark.g, Theme.bgDark.b, 0.94) : Qt.rgba(Theme.bgSurface.r, Theme.bgSurface.g, Theme.bgSurface.b, 0.98)
         border.color: Theme.accent
         border.width: 1
@@ -1122,14 +1124,15 @@ Rectangle {
             Text {
                 text: Theme.iconCrop
                 font.family: Theme.iconFont
-                font.pixelSize: 11
+                font.pixelSize: Theme.px(11)
                 color: Theme.accent
             }
 
             Text {
-                text: "CROP & COMPOSE"
+                font.family: Theme.fontFamily
+                text: qsTr("Crop")
                 textFormat: Text.PlainText
-                font.pixelSize: 10
+                font.pixelSize: Theme.px(10)
                 font.weight: Font.Bold
                 color: Theme.textMain
             }
@@ -1143,16 +1146,17 @@ Rectangle {
                 delegate: Rectangle {
                     implicitWidth: aspText.implicitWidth + 10
                     implicitHeight: 22
-                    radius: 4
+                    radius: Theme.r(4)
                     property bool isCur: root.cropAspect.indexOf(modelData) !== -1
                     color: isCur ? Theme.accent : (aspMouse.containsMouse ? Theme.bgCardHover : "transparent")
 
                     Text {
+                        font.family: Theme.fontFamily
                         id: aspText
                         anchors.centerIn: parent
                         text: modelData
                         textFormat: Text.PlainText
-                        font.pixelSize: 9
+                        font.pixelSize: Theme.px(9)
                         font.weight: Font.DemiBold
                         color: parent.isCur ? Theme.bgBase : Theme.textMain
                     }
@@ -1171,12 +1175,13 @@ Rectangle {
             Rectangle {
                 implicitWidth: guideText.implicitWidth + 12
                 implicitHeight: 22
-                radius: 4
+                radius: Theme.r(4)
                 color: root.guideMode > 0 ? Qt.rgba(Theme.accentCyan.r, Theme.accentCyan.g, Theme.accentCyan.b, 0.2) : "transparent"
                 border.color: root.guideMode > 0 ? Theme.accentCyan : Theme.border
                 border.width: 1
 
                 Text {
+                    font.family: Theme.fontFamily
                     id: guideText
                     anchors.centerIn: parent
                     text: {
@@ -1186,7 +1191,7 @@ Rectangle {
                         return "Grid: Off";
                     }
                     textFormat: Text.PlainText
-                    font.pixelSize: 9
+                    font.pixelSize: Theme.px(9)
                     font.weight: Font.DemiBold
                     color: root.guideMode > 0 ? Theme.accentCyan : Theme.textDim
                 }
@@ -1203,13 +1208,14 @@ Rectangle {
             Rectangle {
                 implicitWidth: 46
                 implicitHeight: 22
-                radius: 4
+                radius: Theme.r(4)
                 color: rstCropMouse.containsMouse ? Theme.bgCardHover : "transparent"
                 Text {
+                    font.family: Theme.fontFamily
                     anchors.centerIn: parent
-                    text: "RESET"
+                    text: qsTr("Reset")
                     textFormat: Text.PlainText
-                    font.pixelSize: 9
+                    font.pixelSize: Theme.px(9)
                     font.weight: Font.Bold
                     color: Theme.textMuted
                 }
@@ -1225,13 +1231,14 @@ Rectangle {
             Rectangle {
                 implicitWidth: 46
                 implicitHeight: 22
-                radius: 4
+                radius: Theme.r(4)
                 color: Theme.accent
                 Text {
+                    font.family: Theme.fontFamily
                     anchors.centerIn: parent
-                    text: "DONE [OK]"
+                    text: qsTr("Done")
                     textFormat: Text.PlainText
-                    font.pixelSize: 9
+                    font.pixelSize: Theme.px(9)
                     font.weight: Font.Bold
                     color: Theme.bgBase
                 }
@@ -1256,14 +1263,15 @@ Rectangle {
         Rectangle {
             implicitWidth: beforeText.implicitWidth + 16
             implicitHeight: 22
-            radius: 4
+            radius: Theme.r(4)
             color: Qt.rgba(0, 0, 0, 0.75)
             Text {
+                font.family: Theme.fontFamily
                 id: beforeText
                 anchors.centerIn: parent
                 text: "ORIGINAL RAW (Before)"
                 textFormat: Text.PlainText
-                font.pixelSize: 9
+                font.pixelSize: Theme.px(9)
                 font.weight: Font.Bold
                 color: "#ffffff"
             }
@@ -1274,14 +1282,15 @@ Rectangle {
         Rectangle {
             implicitWidth: afterText.implicitWidth + 16
             implicitHeight: 22
-            radius: 4
+            radius: Theme.r(4)
             color: Qt.rgba(0, 0, 0, 0.75)
             Text {
+                font.family: Theme.fontFamily
                 id: afterText
                 anchors.centerIn: parent
                 text: "EDITED RECIPE (After)"
                 textFormat: Text.PlainText
-                font.pixelSize: 9
+                font.pixelSize: Theme.px(9)
                 font.weight: Font.Bold
                 color: Theme.accent
             }
@@ -1300,7 +1309,7 @@ Rectangle {
             visible: root.showShadowMask
             implicitWidth: shadowClipTxt.implicitWidth + 12
             implicitHeight: 22
-            radius: 4
+            radius: Theme.r(4)
             color: Qt.rgba(Theme.shadowClip.r, Theme.shadowClip.g, Theme.shadowClip.b, 0.85)
             border.color: Theme.shadowClip
             border.width: 1
@@ -1308,9 +1317,9 @@ Rectangle {
             Text {
                 id: shadowClipTxt
                 anchors.centerIn: parent
-                text: "[S] SHADOW CLIPPING (BLUE)"
+                text: qsTr("Shadow clipping")
                 textFormat: Text.PlainText
-                font.pixelSize: 9
+                font.pixelSize: Theme.px(9)
                 font.family: Theme.monoFont
                 font.weight: Font.Bold
                 color: "#ffffff"
@@ -1321,7 +1330,7 @@ Rectangle {
             visible: root.showHighlightMask
             implicitWidth: highClipTxt.implicitWidth + 12
             implicitHeight: 22
-            radius: 4
+            radius: Theme.r(4)
             color: Qt.rgba(Theme.highlightClip.r, Theme.highlightClip.g, Theme.highlightClip.b, 0.85)
             border.color: Theme.highlightClip
             border.width: 1
@@ -1329,47 +1338,12 @@ Rectangle {
             Text {
                 id: highClipTxt
                 anchors.centerIn: parent
-                text: "[H] HIGHLIGHT CLIPPING (RED)"
+                text: qsTr("Highlight clipping")
                 textFormat: Text.PlainText
-                font.pixelSize: 9
+                font.pixelSize: Theme.px(9)
                 font.family: Theme.monoFont
                 font.weight: Font.Bold
                 color: "#ffffff"
-            }
-        }
-    }
-
-    // Touchpad & Gesture Quick Help Pill
-    Rectangle {
-        anchors.bottom: parent.bottom
-        anchors.right: parent.right
-        anchors.margins: 12
-        implicitWidth: helpRow.implicitWidth + 14
-        implicitHeight: 22
-        radius: 4
-        color: Qt.rgba(0, 0, 0, 0.75)
-        border.color: Theme.border
-        border.width: 1
-        z: 20
-
-        RowLayout {
-            id: helpRow
-            anchors.centerIn: parent
-            spacing: 6
-
-            Text {
-                text: Theme.iconSliders
-                font.family: Theme.iconFont
-                font.pixelSize: 10
-                color: Theme.accent
-            }
-
-            Text {
-                text: "Pinch: Zoom | 2-Finger Twist: Rotate | 2-Finger Pan | Double-Tap: Reset"
-                textFormat: Text.PlainText
-                font.pixelSize: 9
-                font.family: Theme.monoFont
-                color: Theme.textMuted
             }
         }
     }
@@ -1381,7 +1355,7 @@ Rectangle {
         anchors.margins: 12
         implicitWidth: zoomText.implicitWidth + 14
         implicitHeight: 22
-        radius: 4
+        radius: Theme.r(4)
         color: Qt.rgba(0, 0, 0, 0.75)
         border.color: Theme.border
         border.width: 1
@@ -1392,7 +1366,7 @@ Rectangle {
             anchors.centerIn: parent
             text: Math.round(root.pixelScale * 100) + "%"
             textFormat: Text.PlainText
-            font.pixelSize: 10
+            font.pixelSize: Theme.px(10)
             font.family: Theme.monoFont
             color: Theme.accent
         }
@@ -1413,7 +1387,7 @@ Rectangle {
             anchors.horizontalCenter: parent.horizontalCenter
             text: Theme.iconCamera
             font.family: Theme.iconFont
-            font.pixelSize: 34
+            font.pixelSize: Theme.px(34)
             color: Theme.textDim
         }
         Text {
@@ -1421,7 +1395,7 @@ Rectangle {
             text: "Open a RAW (Ctrl+O) or drop a photo / folder here"
             textFormat: Text.PlainText
             font.family: Theme.monoFont
-            font.pixelSize: 12
+            font.pixelSize: Theme.px(12)
             color: Theme.textDim
         }
     }
@@ -1472,7 +1446,7 @@ Rectangle {
         color: Qt.rgba(Theme.accent.r, Theme.accent.g, Theme.accent.b, 0.15)
         border.color: Theme.accent
         border.width: 3
-        radius: 8
+        radius: Theme.r(8)
         visible: dropArea.containsDrag
         z: 60
 
@@ -1493,7 +1467,7 @@ Rectangle {
                     anchors.centerIn: parent
                     text: Theme.iconFolder
                     font.family: Theme.iconFont
-                    font.pixelSize: 28
+                    font.pixelSize: Theme.px(28)
                     color: Theme.accent
                 }
             }
@@ -1501,7 +1475,7 @@ Rectangle {
             Text {
                 text: "Drop RAW Photo or Folder to Open"
                 textFormat: Text.PlainText
-                font.pixelSize: 14
+                font.pixelSize: Theme.px(14)
                 font.weight: Font.Bold
                 font.family: Theme.monoFont
                 color: Theme.textMain

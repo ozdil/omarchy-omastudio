@@ -3,6 +3,8 @@ import QtQuick.Layouts
 
 ColumnLayout {
     id: root
+    // Inside a panel section, which shows the title
+    property bool embedded: false
     spacing: 8
     Layout.fillWidth: true
 
@@ -17,9 +19,11 @@ ColumnLayout {
         spacing: 4
 
         Text {
-            text: "FILM LOOKS & STYLES"
+            visible: !root.embedded
+            font.family: Theme.fontFamily
+            text: qsTr("Looks")
             textFormat: Text.PlainText
-            font.pixelSize: 10
+            font.pixelSize: Theme.px(10)
             font.weight: Font.DemiBold
             font.letterSpacing: 1
             color: Theme.textDim
@@ -37,10 +41,11 @@ ColumnLayout {
             border.width: 1
 
             Text {
+                font.family: Theme.fontFamily
                 anchors.centerIn: parent
-                text: "RESET"
+                text: qsTr("Reset")
                 textFormat: Text.PlainText
-                font.pixelSize: 8
+                font.pixelSize: Theme.px(8)
                 font.weight: Font.DemiBold
                 color: root.activePreset !== "" ? Theme.accentMagenta : Theme.textDim
             }
@@ -76,25 +81,25 @@ ColumnLayout {
             Text {
                 text: Theme.iconAi
                 font.family: Theme.iconFont
-                font.pixelSize: 11
+                font.pixelSize: Theme.px(11)
                 color: Theme.accent
             }
 
             Text {
-                text: "AI Auto Enhance"
+                text: qsTr("Auto")
                 textFormat: Text.PlainText
                 font.family: Theme.fontFamily
-                font.pixelSize: 11
+                font.pixelSize: Theme.px(11)
                 font.weight: Font.DemiBold
                 color: Theme.textMain
                 Layout.fillWidth: true
             }
 
             Text {
-                text: "RUN"
+                text: qsTr("Run")
                 textFormat: Text.PlainText
                 font.family: Theme.fontFamily
-                font.pixelSize: 9
+                font.pixelSize: Theme.px(9)
                 font.weight: Font.Bold
                 color: Theme.accent
             }
@@ -119,11 +124,12 @@ ColumnLayout {
         columnSpacing: 5
 
         property var presets: [
-            { name: "Fuji Classic Chrome", sub: "Documentary Muted" },
-            { name: "Fuji Velvia 50", sub: "Vivid Landscapes" },
-            { name: "Kodak Portra 400", sub: "Warm Skin Tones" },
-            { name: "Leica Monochrom HC", sub: "High Contrast B&W" },
-            { name: "Cinematic Teal & Orange", sub: "Film Grade" }
+            // `name` is the engine preset id; `label` is what is shown
+            { name: "Fuji Classic Chrome", label: qsTr("Muted"), sub: qsTr("Documentary, low saturation") },
+            { name: "Fuji Velvia 50", label: qsTr("Vivid"), sub: qsTr("Landscapes, rich colour") },
+            { name: "Kodak Portra 400", label: qsTr("Warm portrait"), sub: qsTr("Soft contrast, warm skin") },
+            { name: "Leica Monochrom HC", label: qsTr("Black and white"), sub: qsTr("High contrast") },
+            { name: "Cinematic Teal & Orange", label: qsTr("Teal and orange"), sub: qsTr("Split toning") }
         ]
 
         Repeater {
@@ -149,10 +155,10 @@ ColumnLayout {
                     spacing: 0
 
                     Text {
-                        text: modelData.name
+                        text: modelData.label
                         textFormat: Text.PlainText
                         font.family: Theme.fontFamily
-                        font.pixelSize: 10
+                        font.pixelSize: Theme.px(10)
                         font.weight: root.activePreset === modelData.name ? Font.Bold : Font.DemiBold
                         color: root.activePreset === modelData.name ? Theme.accent : Theme.textMain
                         elide: Text.ElideRight
@@ -163,7 +169,7 @@ ColumnLayout {
                         text: modelData.sub
                         textFormat: Text.PlainText
                         font.family: Theme.fontFamily
-                        font.pixelSize: 8
+                        font.pixelSize: Theme.px(8)
                         color: Theme.textDim
                         elide: Text.ElideRight
                         Layout.fillWidth: true

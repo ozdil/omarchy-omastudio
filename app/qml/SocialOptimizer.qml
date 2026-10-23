@@ -4,6 +4,8 @@ import QtQuick.Controls
 
 ColumnLayout {
     id: root
+    // Inside a panel section, which shows the title
+    property bool embedded: false
     spacing: 8
     Layout.fillWidth: true
 
@@ -17,9 +19,11 @@ ColumnLayout {
         spacing: 4
 
         Text {
-            text: "AI SOCIAL MEDIA OPTIMIZER"
+            visible: !root.embedded
+            font.family: Theme.fontFamily
+            text: qsTr("Prepare for")
             textFormat: Text.PlainText
-            font.pixelSize: 10
+            font.pixelSize: Theme.px(10)
             font.weight: Font.DemiBold
             font.letterSpacing: 1
             color: Theme.accentCyan
@@ -37,10 +41,11 @@ ColumnLayout {
             border.width: 1
 
             Text {
+                font.family: Theme.fontFamily
                 anchors.centerIn: parent
-                text: "RESET"
+                text: qsTr("Reset")
                 textFormat: Text.PlainText
-                font.pixelSize: 8
+                font.pixelSize: Theme.px(8)
                 font.weight: Font.DemiBold
                 color: root.activePlatform !== "" ? Theme.accentCyan : Theme.textDim
             }
@@ -66,12 +71,12 @@ ColumnLayout {
         columnSpacing: 6
 
         property var platforms: [
-            { id: "ig", name: "Instagram Feed", aspect: "4:5 / 1080x1350", tag: "Max Screen" },
-            { id: "story", name: "Stories / Reels", aspect: "9:16 / 1080x1920", tag: "Full Mobile" },
-            { id: "x", name: "X / Twitter", aspect: "16:9 / 1200x675", tag: "Crisp Feed" },
-            { id: "ig_square", name: "Classic Square", aspect: "1:1 / 1080x1080", tag: "Grid Post" },
-            { id: "fb", name: "Facebook HD", aspect: "1.91:1 / 2048px", tag: "High Res" },
-            { id: "yt", name: "YouTube Thumb", aspect: "16:9 / 1280x720", tag: "High CTR" }
+            { id: "ig", name: "Instagram post", aspect: "4:5 / 1080x1350" },
+            { id: "story", name: "Stories and Reels", aspect: "9:16 / 1080x1920" },
+            { id: "x", name: "X / Twitter", aspect: "16:9 / 1200x675" },
+            { id: "ig_square", name: qsTr("Square"), aspect: "1:1 / 1080x1080" },
+            { id: "fb", name: "Facebook", aspect: "1.91:1 / 2048px" },
+            { id: "yt", name: qsTr("YouTube thumbnail"), aspect: "16:9 / 1280x720" }
         ]
 
         Repeater {
@@ -103,36 +108,18 @@ ColumnLayout {
                             text: modelData.name
                             textFormat: Text.PlainText
                             font.family: Theme.fontFamily
-                            font.pixelSize: 10
+                            font.pixelSize: Theme.px(10)
                             font.weight: root.activePlatform === modelData.id ? Font.Bold : Font.DemiBold
                             color: root.activePlatform === modelData.id ? Theme.accent : Theme.textMain
                             Layout.fillWidth: true
                             elide: Text.ElideRight
-                        }
-                        Rectangle {
-                            implicitWidth: tagText.implicitWidth + 6
-                            implicitHeight: 14
-                            radius: 3
-                            color: root.activePlatform === modelData.id ? Qt.rgba(Theme.accent.r, Theme.accent.g, Theme.accent.b, 0.25) : Qt.rgba(Theme.textMain.r, Theme.textMain.g, Theme.textMain.b, 0.06)
-                            border.color: root.activePlatform === modelData.id ? Theme.accent : Theme.border
-                            border.width: 1
-                            Text {
-                                id: tagText
-                                anchors.centerIn: parent
-                                text: modelData.tag
-                                textFormat: Text.PlainText
-                                font.family: Theme.fontFamily
-                                font.pixelSize: 8
-                                font.weight: Font.DemiBold
-                                color: root.activePlatform === modelData.id ? Theme.accent : Theme.textDim
-                            }
                         }
                     }
 
                     Text {
                         text: modelData.aspect
                         textFormat: Text.PlainText
-                        font.pixelSize: 8
+                        font.pixelSize: Theme.px(8)
                         font.family: Theme.monoFont
                         color: Theme.textDim
                         elide: Text.ElideRight

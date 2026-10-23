@@ -2,6 +2,7 @@ use crate::raw::RawMetadata;
 use crate::recipe::Recipe;
 use serde::{Deserialize, Serialize};
 
+pub mod agent;
 pub mod assistant;
 pub mod jev;
 pub mod provider;

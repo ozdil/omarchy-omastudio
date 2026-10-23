@@ -3,17 +3,24 @@ import QtQuick.Layouts
 import QtQuick.Controls
 import OmaStudio.Host
 
+// About OmaStudio: product, version, capabilities, project links and support.
 Rectangle {
     id: root
-    implicitWidth: 480
-    implicitHeight: 460
+    implicitWidth: Theme.px(560)
+    implicitHeight: content.implicitHeight + 2 * pad
     radius: Theme.radiusLg
     color: Theme.bgSurface
     border.color: Theme.borderLight
     border.width: 1
     clip: true
 
+    readonly property int pad: Theme.px(24)
+
     signal closeRequested()
+
+    focus: visible
+    onVisibleChanged: if (visible) { root.forceActiveFocus(); root.refreshSystem(); }
+    Keys.onEscapePressed: root.closeRequested()
 
     // Swallow clicks on the dialog body so they don't reach the overlay's close handler
     MouseArea {
@@ -21,452 +28,452 @@ Rectangle {
         z: -1
     }
 
-    property string pluginName: "OmaStudio"
-    property string pluginVersion: "v" + Host.version
-    property string pluginDescription: "The complete medium format RAW editor for Omarchy: own X-Trans and Bayer development, Fujifilm recipes and colour-managed export."
-    property string pluginAuthor: "Ozan Özdil (@ozdil)"
-    property string pluginLicense: "MIT Open Source License"
-    property bool isVerified: true
+    readonly property string version: Host.version
+    readonly property string repoUrl: "https://github.com/ozdil/omarchy-omastudio"
+    // The installed application icon (package, then local install)
+    readonly property var iconPaths: [
+        "/usr/share/icons/hicolor/scalable/apps/omastudio.svg",
+        Host.homeDir + "/.local/share/icons/hicolor/scalable/apps/omastudio.svg"
+    ]
+    property int iconIndex: 0
 
-    readonly property string manifestPath: Host.homeDir + "/.local/share/omastudio/manifest.json"
-    readonly property string manifestFallbackPath: "/usr/share/omastudio/manifest.json"
+    property string gpuInfo: ""
+    property string aiAccel: ""
+    property bool showThirdParty: false
 
-    function loadManifest(raw) {
-        if (!raw || typeof raw !== "string") return;
-        // Limit the manifest read to 64 KiB
-        if (raw.length > 65536) return;
+    readonly property string systemInfo: [
+        "OmaStudio " + root.version,
+        "Omarchy theme: " + Theme.themeName + ", font: " + Theme.systemFont + " " + Theme.fontBase + " px",
+        "GPU: " + (root.gpuInfo || "unknown"),
+        "AI acceleration: " + (root.aiAccel || "CPU"),
+        "Session: " + (Qt.platform.pluginName || "unknown")
+    ].join("\n")
+
+    function refreshSystem() {
+        if (Host.enginePath === "") return;
+        if (!gpuProc.running) gpuProc.running = true;
+        if (!npuProc.running) npuProc.running = true;
+    }
+
+    function parseData(output) {
         try {
-            var parsed = JSON.parse(raw);
-            if (parsed.name && typeof parsed.name === "string") root.pluginName = parsed.name.slice(0, 64);
-            if (parsed.description && typeof parsed.description === "string") root.pluginDescription = parsed.description.slice(0, 256);
-            if (parsed.author && typeof parsed.author === "string") root.pluginAuthor = parsed.author.slice(0, 64);
-            if (parsed.license && typeof parsed.license === "string") root.pluginLicense = parsed.license.slice(0, 32) + " Open Source License";
-            if (typeof parsed.verified === "boolean") root.isVerified = parsed.verified;
+            var r = JSON.parse(String(output || ""));
+            return r.success ? r.data : null;
         } catch (e) {
-            // Safe fallback to default values on malformed JSON
+            return null;
         }
     }
 
-    // The installed manifest (the package's copy when there is no local install)
-    WatchedFile {
-        id: manifestWatcher
-        path: root.manifestPath
-        watch: true
-        onLoaded: root.loadManifest(text)
-        onLoadFailed: manifestFallbackWatcher.path = root.manifestFallbackPath
+    Process {
+        id: gpuProc
+        command: [Host.enginePath, "gpu"]
+        onFinished: function(exitCode, output) {
+            var d = root.parseData(output);
+            root.gpuInfo = d && d.enabled ? d.name + " (" + d.backend + ")" : qsTr("CPU only");
+        }
     }
 
-    WatchedFile {
-        id: manifestFallbackWatcher
-        onLoaded: root.loadManifest(text)
+    Process {
+        id: npuProc
+        command: [Host.enginePath, "npu"]
+        onFinished: function(exitCode, output) {
+            var d = root.parseData(output);
+            root.aiAccel = d && d.available && d.providers.length > 0 ? "ONNX Runtime: " + d.providers.join(", ") : "CPU";
+        }
+    }
+
+    function copyVersionInfo() {
+        clipboardHelper.text = root.systemInfo;
+        clipboardHelper.selectAll();
+        clipboardHelper.copy();
+        copiedTimer.restart();
+    }
+
+    TextEdit {
+        id: clipboardHelper
+        visible: false
+    }
+
+    Timer {
+        id: copiedTimer
+        interval: 1600
+    }
+
+    // Small text button used for the project links
+    component LinkButton: Rectangle {
+        id: lb
+        property string label: ""
+        property string url: ""
+        implicitWidth: lbText.implicitWidth + Theme.px(20)
+        implicitHeight: Theme.px(28)
+        radius: Theme.radiusSm
+        color: lbMouse.containsMouse ? Theme.bgCardHover : Theme.bgCard
+        border.color: lbMouse.containsMouse ? Theme.accent : Theme.border
+        border.width: 1
+
+        Text {
+            id: lbText
+            anchors.centerIn: parent
+            text: lb.label
+            textFormat: Text.PlainText
+            font.family: Theme.fontFamily
+            font.pixelSize: Theme.px(10)
+            font.weight: Font.DemiBold
+            color: lbMouse.containsMouse ? Theme.accent : Theme.textMain
+        }
+
+        MouseArea {
+            id: lbMouse
+            anchors.fill: parent
+            hoverEnabled: true
+            cursorShape: Qt.PointingHandCursor
+            onClicked: Qt.openUrlExternally(lb.url)
+            Accessible.role: Accessible.Link
+            Accessible.name: lb.label
+        }
+    }
+
+    // Section heading in the Omarchy style: small, spaced capitals
+    component SectionLabel: Text {
+        textFormat: Text.PlainText
+        font.family: Theme.fontFamily
+        font.pixelSize: Theme.px(9)
+        font.weight: Font.Bold
+        font.letterSpacing: 1.2
+        font.capitalization: Font.AllUppercase
+        color: Theme.textDim
     }
 
     ColumnLayout {
-        anchors.fill: parent
-        anchors.margins: 22
-        spacing: 14
+        id: content
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.top: parent.top
+        anchors.margins: root.pad
+        spacing: Theme.px(18)
 
-        // Header: Icon + Title + Version + Close Button
+        // Identity: icon, name, tagline, version
         RowLayout {
             Layout.fillWidth: true
-            spacing: 12
+            spacing: Theme.px(16)
 
-            Rectangle {
-                width: 38
-                height: 38
-                radius: Theme.radiusMd
-                color: Qt.rgba(Theme.accent.r, Theme.accent.g, Theme.accent.b, 0.15)
-                border.color: Theme.accent
-                border.width: 1
+            Item {
+                Layout.alignment: Qt.AlignTop
+                implicitWidth: Theme.px(56)
+                implicitHeight: Theme.px(56)
 
-                Text {
-                    anchors.centerIn: parent
-                    text: Theme.iconCamera
-                    font.family: Theme.iconFont
-                    font.pixelSize: 18
-                    color: Theme.accent
+                Image {
+                    id: appIcon
+                    anchors.fill: parent
+                    source: root.iconIndex < root.iconPaths.length ? "file://" + root.iconPaths[root.iconIndex] : ""
+                    sourceSize.width: width * 2
+                    sourceSize.height: height * 2
+                    fillMode: Image.PreserveAspectFit
+                    smooth: true
+                    onStatusChanged: if (status === Image.Error) Qt.callLater(function() { root.iconIndex++; })
+                }
+
+                // Without an installed icon: the camera glyph in an accent frame
+                Rectangle {
+                    anchors.fill: parent
+                    visible: appIcon.status !== Image.Ready
+                    radius: Theme.radiusMd
+                    color: Qt.rgba(Theme.accent.r, Theme.accent.g, Theme.accent.b, 0.12)
+                    border.color: Theme.accent
+                    border.width: 1
+                    Text {
+                        anchors.centerIn: parent
+                        text: Theme.iconCamera
+                        font.family: Theme.iconFont
+                        font.pixelSize: Theme.px(24)
+                        color: Theme.accent
+                    }
                 }
             }
 
             ColumnLayout {
-                spacing: 2
                 Layout.fillWidth: true
-
-                RowLayout {
-                    spacing: 8
-                    Text {
-                        text: root.pluginName
-                        textFormat: Text.PlainText
-                        font.family: Theme.fontFamily
-                        font.pixelSize: 16
-                        font.weight: Font.Bold
-                        color: Theme.textMain
-                    }
-
-                    Rectangle {
-                        implicitWidth: verText.implicitWidth + 10
-                        implicitHeight: 18
-                        radius: 4
-                        color: Qt.rgba(Theme.accentGreen.r, Theme.accentGreen.g, Theme.accentGreen.b, 0.18)
-                        border.color: Theme.accentGreen
-                        border.width: 1
-
-                        Text {
-                            id: verText
-                            anchors.centerIn: parent
-                            text: root.pluginVersion
-                            textFormat: Text.PlainText
-                            font.family: Theme.monoFont
-                            font.pixelSize: 9
-                            font.weight: Font.Bold
-                            color: Theme.accentGreen
-                        }
-                    }
-
-                    Rectangle {
-                        visible: root.isVerified
-                        implicitWidth: verifText.implicitWidth + 8
-                        implicitHeight: 18
-                        radius: 4
-                        color: Qt.rgba(Theme.accentCyan.r, Theme.accentCyan.g, Theme.accentCyan.b, 0.15)
-                        border.color: Theme.accentCyan
-                        border.width: 1
-
-                        Text {
-                            id: verifText
-                            anchors.centerIn: parent
-                            text: "VERIFIED"
-                            textFormat: Text.PlainText
-                            font.family: Theme.monoFont
-                            font.pixelSize: 8
-                            font.weight: Font.Bold
-                            color: Theme.accentCyan
-                        }
-                    }
-                }
+                spacing: Theme.px(4)
 
                 Text {
-                    text: root.pluginDescription
+                    text: "OmaStudio"
                     textFormat: Text.PlainText
                     font.family: Theme.fontFamily
-                    font.pixelSize: 10
-                    color: Theme.textMuted
-                    Layout.maximumWidth: 360
-                    wrapMode: Text.WordWrap
-                }
-            }
-
-            Rectangle {
-                implicitWidth: 26
-                implicitHeight: 26
-                radius: 13
-                color: closeMouse.containsMouse ? Theme.bgCardHover : "transparent"
-                border.color: Theme.border
-                border.width: 1
-
-                Text {
-                    anchors.centerIn: parent
-                    text: "\u2715"
-                    textFormat: Text.PlainText
-                    font.family: Theme.monoFont
-                    font.pixelSize: 11
-                    color: closeMouse.containsMouse ? Theme.highlightClip : Theme.textDim
-                }
-
-                MouseArea {
-                    id: closeMouse
-                    anchors.fill: parent
-                    cursorShape: Qt.PointingHandCursor
-                    hoverEnabled: true
-                    onClicked: root.closeRequested()
-                }
-            }
-        }
-
-        Rectangle {
-            Layout.fillWidth: true
-            height: 1
-            color: Theme.border
-        }
-
-        // Architecture Features
-        ColumnLayout {
-            Layout.fillWidth: true
-            spacing: 8
-
-            RowLayout {
-                spacing: 8
-                Text {
-                    text: "\u2022"
-                    font.family: Theme.monoFont
-                    font.pixelSize: 12
-                    color: Theme.accent
-                }
-                Text {
-                    text: "Own X-Trans & Bayer demosaic on linear light, AgX filmic tone curve"
-                    textFormat: Text.PlainText
-                    font.family: Theme.fontFamily
-                    font.pixelSize: 10
-                    color: Theme.textMain
-                }
-            }
-
-            RowLayout {
-                spacing: 8
-                Text {
-                    text: "\u2022"
-                    font.family: Theme.monoFont
-                    font.pixelSize: 12
-                    color: Theme.accent
-                }
-                Text {
-                    text: "Little CMS colour management: sRGB, Display P3, Adobe RGB, ProPhoto, Rec. 2020"
-                    textFormat: Text.PlainText
-                    font.family: Theme.fontFamily
-                    font.pixelSize: 10
-                    color: Theme.textMain
-                }
-            }
-
-            RowLayout {
-                spacing: 8
-                Text {
-                    text: "\u2022"
-                    font.family: Theme.monoFont
-                    font.pixelSize: 12
-                    color: Theme.accent
-                }
-                Text {
-                    text: "Fujifilm recipes: in-camera settings, X RAW Studio profiles, Color Chrome"
-                    textFormat: Text.PlainText
-                    font.family: Theme.fontFamily
-                    font.pixelSize: 10
-                    color: Theme.textMain
-                }
-            }
-
-            RowLayout {
-                spacing: 8
-                Text {
-                    text: "\u2022"
-                    font.family: Theme.monoFont
-                    font.pixelSize: 12
-                    color: Theme.accent
-                }
-                Text {
-                    text: "Medium format: Fujifilm GFX and Hasselblad RAW files, 16-bit throughout"
-                    textFormat: Text.PlainText
-                    font.family: Theme.fontFamily
-                    font.pixelSize: 10
-                    color: Theme.textMain
-                }
-            }
-
-            RowLayout {
-                spacing: 8
-                Text {
-                    text: "\u2022"
-                    font.family: Theme.monoFont
-                    font.pixelSize: 12
-                    color: Theme.accent
-                }
-                Text {
-                    text: "Local catalog with ratings, flags and colour labels; USB camera access"
-                    textFormat: Text.PlainText
-                    font.family: Theme.fontFamily
-                    font.pixelSize: 10
-                    color: Theme.textMain
-                }
-            }
-        }
-
-        Rectangle {
-            Layout.fillWidth: true
-            height: 1
-            color: Theme.border
-        }
-
-        // Metadata: Developer & License
-        ColumnLayout {
-            Layout.fillWidth: true
-            spacing: 4
-
-            RowLayout {
-                Text {
-                    text: "Developer:"
-                    textFormat: Text.PlainText
-                    font.family: Theme.fontFamily
-                    font.pixelSize: 10
-                    font.weight: Font.DemiBold
-                    color: Theme.textDim
-                }
-                Text {
-                    text: root.pluginAuthor
-                    textFormat: Text.PlainText
-                    font.family: Theme.monoFont
-                    font.pixelSize: 10
+                    font.pixelSize: Theme.px(20)
                     font.weight: Font.Bold
                     color: Theme.textMain
                 }
-            }
-
-            RowLayout {
                 Text {
-                    text: "License:"
+                    Layout.fillWidth: true
+                    text: qsTr("The Complete Medium Format RAW Editor for Omarchy")
                     textFormat: Text.PlainText
+                    wrapMode: Text.WordWrap
                     font.family: Theme.fontFamily
-                    font.pixelSize: 10
-                    font.weight: Font.DemiBold
-                    color: Theme.textDim
-                }
-                Text {
-                    text: root.pluginLicense
-                    textFormat: Text.PlainText
-                    font.family: Theme.monoFont
-                    font.pixelSize: 10
+                    font.pixelSize: Theme.px(11)
                     color: Theme.textMuted
                 }
-            }
+                RowLayout {
+                    spacing: Theme.px(8)
+                    Layout.topMargin: Theme.px(2)
 
-            RowLayout {
-                Text {
-                    text: "Platform:"
-                    textFormat: Text.PlainText
-                    font.family: Theme.fontFamily
-                    font.pixelSize: 10
-                    font.weight: Font.DemiBold
-                    color: Theme.textDim
-                }
-                Text {
-                    text: "Omarchy Linux (Wayland / Hyprland)"
-                    textFormat: Text.PlainText
-                    font.family: Theme.monoFont
-                    font.pixelSize: 10
-                    color: Theme.textMuted
+                    Text {
+                        text: qsTr("Version %1").arg(root.version)
+                        textFormat: Text.PlainText
+                        font.family: Theme.monoFont
+                        font.pixelSize: Theme.px(10)
+                        color: Theme.textMain
+                    }
+
+                    Text {
+                        text: copiedTimer.running ? qsTr("Copied") : qsTr("Copy system info")
+                        textFormat: Text.PlainText
+                        font.family: Theme.fontFamily
+                        font.pixelSize: Theme.px(9)
+                        font.underline: copyMouse.containsMouse
+                        color: copiedTimer.running ? Theme.accentGreen : Theme.accent
+
+                        MouseArea {
+                            id: copyMouse
+                            anchors.fill: parent
+                            anchors.margins: -4
+                            hoverEnabled: true
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: root.copyVersionInfo()
+                            ToolTip.visible: containsMouse
+                            ToolTip.delay: 500
+                            ToolTip.text: qsTr("Copy version, GPU and Omarchy details for a bug report")
+                        }
+                    }
                 }
             }
         }
 
-        Item { Layout.fillHeight: true }
+        Text {
+            Layout.fillWidth: true
+            text: qsTr("OmaStudio develops RAW files with its own engine: X-Trans and Bayer demosaicing on linear light, GPU acceleration and colour-managed output, with full support for Fujifilm GFX, Hasselblad and other medium format cameras.")
+            textFormat: Text.PlainText
+            wrapMode: Text.WordWrap
+            lineHeight: 1.25
+            font.family: Theme.fontFamily
+            font.pixelSize: Theme.px(10)
+            color: Theme.textMuted
+        }
 
-        // Action Buttons: GitHub, Buy Me a Coffee & Close
+        // Capabilities
+        ColumnLayout {
+            Layout.fillWidth: true
+            spacing: Theme.px(10)
+
+            SectionLabel { text: qsTr("Capabilities") }
+
+            GridLayout {
+                Layout.fillWidth: true
+                columns: 2
+                columnSpacing: Theme.px(16)
+                rowSpacing: Theme.px(10)
+
+                Repeater {
+                    model: [
+                        { title: qsTr("RAW engine"), detail: qsTr("X-Trans and Bayer demosaicing, 16-bit linear pipeline, GPU via Vulkan") },
+                        { title: qsTr("Colour management"), detail: qsTr("Little CMS 2; sRGB, Display P3, Adobe RGB, ProPhoto, Rec. 2020") },
+                        { title: qsTr("Fujifilm"), detail: qsTr("Camera recipes, film simulations, lens corrections, Pixel Shift") },
+                        { title: qsTr("Medium format"), detail: qsTr("Fujifilm GFX, Hasselblad, Phase One, Leica S, Pentax 645") },
+                        { title: qsTr("AI"), detail: qsTr("Omarchy's default agent, Ollama, LM Studio or a cloud provider; local masks") },
+                        { title: qsTr("Library"), detail: qsTr("Local catalogue with ratings, flags and colour labels; camera over USB") }
+                    ]
+
+                    ColumnLayout {
+                        required property var modelData
+                        Layout.fillWidth: true
+                        Layout.preferredWidth: 1
+                        Layout.alignment: Qt.AlignTop
+                        spacing: Theme.px(2)
+
+                        Text {
+                            text: modelData.title
+                            textFormat: Text.PlainText
+                            font.family: Theme.fontFamily
+                            font.pixelSize: Theme.px(10)
+                            font.weight: Font.DemiBold
+                            color: Theme.textMain
+                        }
+                        Text {
+                            Layout.fillWidth: true
+                            text: modelData.detail
+                            textFormat: Text.PlainText
+                            wrapMode: Text.WordWrap
+                            font.family: Theme.fontFamily
+                            font.pixelSize: Theme.px(9)
+                            color: Theme.textMuted
+                        }
+                    }
+                }
+            }
+        }
+
+        Rectangle {
+            Layout.fillWidth: true
+            implicitHeight: 1
+            color: Theme.border
+        }
+
+        // Details
+        GridLayout {
+            Layout.fillWidth: true
+            columns: 2
+            columnSpacing: Theme.px(16)
+            rowSpacing: Theme.px(6)
+
+            Repeater {
+                model: [
+                    [qsTr("Developer"), "Ozan Özdil · @ozdil"],
+                    [qsTr("License"), qsTr("MIT License")],
+                    [qsTr("Platform"), qsTr("Omarchy Linux · Wayland · Hyprland")],
+                    [qsTr("Graphics"), root.gpuInfo || "…"],
+                    [qsTr("Appearance"), Theme.themeName + " · " + Theme.systemFont],
+                    [qsTr("Source"), "github.com/ozdil/omarchy-omastudio"]
+                ]
+
+                delegate: Item {
+                    required property var modelData
+                    required property int index
+                    Layout.columnSpan: 2
+                    Layout.fillWidth: true
+                    implicitHeight: detailRow.implicitHeight
+
+                    RowLayout {
+                        id: detailRow
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        spacing: Theme.px(16)
+                        Text {
+                            Layout.preferredWidth: Theme.px(80)
+                            text: modelData[0]
+                            textFormat: Text.PlainText
+                            font.family: Theme.fontFamily
+                            font.pixelSize: Theme.px(10)
+                            color: Theme.textDim
+                        }
+                        Text {
+                            Layout.fillWidth: true
+                            text: modelData[1]
+                            textFormat: Text.PlainText
+                            wrapMode: Text.Wrap
+                            font.family: Theme.monoFont
+                            font.pixelSize: Theme.px(10)
+                            color: Theme.textMain
+                        }
+                    }
+                }
+            }
+        }
+
+        Rectangle {
+            Layout.fillWidth: true
+            implicitHeight: 1
+            color: Theme.border
+        }
+
+        // Privacy
         RowLayout {
             Layout.fillWidth: true
-            spacing: 8
-
-            Rectangle {
+            spacing: Theme.px(8)
+            Text {
+                Layout.alignment: Qt.AlignTop
+                text: Theme.iconShield
+                font.family: Theme.iconFont
+                font.pixelSize: Theme.px(11)
+                color: Theme.accent
+            }
+            Text {
                 Layout.fillWidth: true
-                implicitHeight: 32
-                radius: Theme.radiusSm
-                color: ghMouse.containsMouse ? Theme.bgCardHover : Theme.bgCard
-                border.color: Theme.borderLight
-                border.width: 1
+                text: qsTr("Runs entirely on this computer. No telemetry. AI features contact only the provider you choose.")
+                textFormat: Text.PlainText
+                wrapMode: Text.WordWrap
+                font.family: Theme.fontFamily
+                font.pixelSize: Theme.px(9)
+                color: Theme.textMuted
+            }
+        }
 
-                Text {
-                    anchors.centerIn: parent
-                    text: "GitHub"
-                    textFormat: Text.PlainText
-                    font.family: Theme.monoFont
-                    font.pixelSize: 10
-                    font.weight: Font.Medium
-                    color: Theme.accent
-                }
+        // Third-party software
+        ColumnLayout {
+            Layout.fillWidth: true
+            spacing: Theme.px(6)
 
+            Text {
+                text: (root.showThirdParty ? "\u25BE " : "\u25B8 ") + qsTr("Third-party software")
+                textFormat: Text.PlainText
+                font.family: Theme.fontFamily
+                font.pixelSize: Theme.px(9)
+                font.weight: Font.DemiBold
+                color: tpMouse.containsMouse ? Theme.accent : Theme.textDim
                 MouseArea {
-                    id: ghMouse
+                    id: tpMouse
                     anchors.fill: parent
-                    cursorShape: Qt.PointingHandCursor
+                    anchors.margins: -4
                     hoverEnabled: true
-                    onClicked: Qt.openUrlExternally("https://github.com/ozdil/omarchy-omastudio")
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: root.showThirdParty = !root.showThirdParty
                 }
             }
 
-            Rectangle {
+            Text {
+                visible: root.showThirdParty
                 Layout.fillWidth: true
-                implicitHeight: 32
-                radius: Theme.radiusSm
-                color: sponsorMouse.containsMouse ? "#2d1627" : "#1f101b"
-                border.color: sponsorMouse.containsMouse ? "#ea4aaa" : "#592143"
-                border.width: 1
+                text: "Qt 6 (LGPLv3) · cxx-qt (MIT/Apache-2.0) · LibRaw (LGPL-2.1/CDDL-1.0) · Little CMS 2 (MIT) · "
+                    + "wgpu (MIT/Apache-2.0) · ONNX Runtime (MIT) · image-rs (MIT/Apache-2.0)\n"
+                    + qsTr("Fujifilm, GFX, X-Trans, Hasselblad and other camera names are trademarks of their owners and are used only to describe compatibility.")
+                textFormat: Text.PlainText
+                wrapMode: Text.WordWrap
+                lineHeight: 1.2
+                font.family: Theme.fontFamily
+                font.pixelSize: Theme.px(9)
+                color: Theme.textMuted
+            }
+        }
 
-                RowLayout {
-                    anchors.centerIn: parent
-                    spacing: 5
-                    Text {
-                        text: "\uf004"
-                        font.family: Theme.iconFont
-                        font.pixelSize: 11
-                        color: "#ea4aaa"
-                    }
-                    Text {
-                        text: "Sponsor"
-                        textFormat: Text.PlainText
-                        font.family: Theme.monoFont
-                        font.pixelSize: 10
-                        font.weight: Font.Bold
-                        color: "#ea4aaa"
-                    }
-                }
+        // Links and support
+        Flow {
+            Layout.fillWidth: true
+            spacing: Theme.px(8)
 
-                MouseArea {
-                    id: sponsorMouse
-                    anchors.fill: parent
-                    cursorShape: Qt.PointingHandCursor
-                    hoverEnabled: true
-                    onClicked: Qt.openUrlExternally("https://github.com/sponsors/ozdil")
-                }
+            LinkButton { label: qsTr("Project page"); url: root.repoUrl }
+            LinkButton { label: qsTr("Release notes"); url: root.repoUrl + "/releases/tag/v" + root.version }
+            LinkButton { label: qsTr("Report an issue"); url: root.repoUrl + "/issues/new" }
+            LinkButton { label: qsTr("Sponsor"); url: "https://github.com/sponsors/ozdil" }
+            LinkButton { label: qsTr("Buy Me a Coffee"); url: "https://buymeacoffee.com/ozdil" }
+        }
+
+        RowLayout {
+            Layout.fillWidth: true
+            spacing: Theme.px(12)
+
+            Text {
+                Layout.fillWidth: true
+                text: qsTr("© 2026 Ozan Özdil · MIT License")
+                textFormat: Text.PlainText
+                wrapMode: Text.WordWrap
+                font.family: Theme.fontFamily
+                font.pixelSize: Theme.px(9)
+                color: Theme.textDim
             }
 
             Rectangle {
-                Layout.fillWidth: true
-                implicitHeight: 32
-                radius: Theme.radiusSm
-                color: bmacMouse.containsMouse ? "#FFE433" : "#FFDD00"
-                border.color: "#E6C700"
-                border.width: 1
-
-                RowLayout {
-                    anchors.centerIn: parent
-                    spacing: 5
-                    Text {
-                        text: "\uf0f4"
-                        font.family: Theme.iconFont
-                        font.pixelSize: 11
-                        color: "#000000"
-                    }
-                    Text {
-                        text: "Buy Me a Coffee"
-                        textFormat: Text.PlainText
-                        font.family: Theme.monoFont
-                        font.pixelSize: 10
-                        font.weight: Font.Bold
-                        color: "#000000"
-                    }
-                }
-
-                MouseArea {
-                    id: bmacMouse
-                    anchors.fill: parent
-                    cursorShape: Qt.PointingHandCursor
-                    hoverEnabled: true
-                    onClicked: Qt.openUrlExternally("https://buymeacoffee.com/ozdil")
-                }
-            }
-
-            Rectangle {
-                implicitWidth: 70
-                implicitHeight: 32
+                implicitWidth: Math.max(Theme.px(80), okText.implicitWidth + Theme.px(24))
+                implicitHeight: Theme.px(30)
                 radius: Theme.radiusSm
                 color: okMouse.containsMouse ? Theme.accentHover : Theme.accent
 
                 Text {
+                    id: okText
                     anchors.centerIn: parent
-                    text: "OK"
+                    text: qsTr("Close")
                     textFormat: Text.PlainText
-                    font.family: Theme.monoFont
-                    font.pixelSize: 11
+                    font.family: Theme.fontFamily
+                    font.pixelSize: Theme.px(10)
                     font.weight: Font.Bold
-                    color: Theme.bgBase
+                    color: Theme.onAccent
                 }
 
                 MouseArea {
