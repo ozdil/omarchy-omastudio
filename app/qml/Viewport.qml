@@ -172,6 +172,16 @@ Rectangle {
     property bool watermarkDropShadow: true
     property var exifMetadata: null
 
+    // Mask editing on the photo (see MaskOverlay)
+    property string maskTool: ""
+    property var maskShape: null
+    property real maskBrushSize: 0.05
+    property real maskBrushFeather: 0.5
+    property bool maskBrushErase: false
+    signal maskShapeEdited(var shape)
+    signal maskStrokePainted(var points, real aspect)
+    signal maskColourPicked(real r, real g, real b)
+
     signal splitRatioChangedByUser(real ratio)
     signal rotationChangedByUser(real angle)
     signal cropChangedByUser(real cx, real cy, real cw, real ch, string aspect)
@@ -536,6 +546,22 @@ Rectangle {
                     }
                 }
 
+                // Mask painting, colour picking and gradient handles
+                MaskOverlay {
+                    id: maskOverlay
+                    anchors.fill: parent
+                    z: 20
+                    tool: root.isCropMode ? "" : root.maskTool
+                    shape: root.maskShape
+                    brushSize: root.maskBrushSize
+                    brushFeather: root.maskBrushFeather
+                    brushErase: root.maskBrushErase
+                    imageSource: String(mainImage.currentSource)
+                    onShapeEdited: function(shape) { root.maskShapeEdited(shape) }
+                    onStrokePainted: function(points) { root.maskStrokePainted(points, mainImage.height / Math.max(1, mainImage.width)) }
+                    onColourPicked: function(r, g, b) { root.maskColourPicked(r, g, b) }
+                }
+
                 // Interactive Crop Overlay & Composition Guides
                 Item {
                     id: cropOverlayContainer
@@ -842,6 +868,9 @@ Rectangle {
             smooth: false
             mipmap: false
             z: 1
+            // The mask overlay lives on the fitted image under this one, so the
+            // detail steps aside while a mask is being edited
+            opacity: root.maskTool === "" ? 1.0 : 0.0
             onStatusChanged: {
                 if (status === Image.Ready && root.detailRegion && root.detailWanted) visible = true;
             }

@@ -1246,12 +1246,64 @@
         <translation>Chuyển sắc tuyến tính %1</translation>
     </message>
     <message>
+        <source>Linear</source>
+        <translation>Tuyến tính</translation>
+    </message>
+    <message>
+        <source>Radial</source>
+        <translation>Tỏa tròn</translation>
+    </message>
+    <message>
+        <source>Luminance</source>
+        <translation>Độ chói</translation>
+    </message>
+    <message>
+        <source>Colour</source>
+        <translation>Màu</translation>
+    </message>
+    <message>
+        <source>Brush</source>
+        <translation>Cọ</translation>
+    </message>
+    <message>
+        <source>AI mask</source>
+        <translation>Mặt nạ AI</translation>
+    </message>
+    <message>
+        <source>Subtract</source>
+        <translation>Trừ</translation>
+    </message>
+    <message>
+        <source>Intersect</source>
+        <translation>Giao</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>Thêm</translation>
+    </message>
+    <message>
         <source>Radial Mask %1</source>
         <translation>Mặt nạ hướng tâm %1</translation>
     </message>
     <message>
         <source>Luma Range %1</source>
         <translation>Dải độ chói %1</translation>
+    </message>
+    <message>
+        <source>Colour Range %1</source>
+        <translation>Dải màu %1</translation>
+    </message>
+    <message>
+        <source>Brush %1</source>
+        <translation>Cọ %1</translation>
+    </message>
+    <message>
+        <source>+ Brush</source>
+        <translation>+ Cọ</translation>
+    </message>
+    <message>
+        <source>+ Colour</source>
+        <translation>+ Màu</translation>
     </message>
     <message>
         <source>+ AI SUBJECT</source>
@@ -1267,6 +1319,70 @@
         <translation>Đ</translation>
     </message>
     <message>
+        <source>Combine with:</source>
+        <translation>Kết hợp với:</translation>
+    </message>
+    <message>
+        <source>Drag the handles on the photo. The effect builds up from the hollow handle to the solid one.</source>
+        <translation>Kéo các tay cầm trên ảnh. Hiệu ứng tăng dần từ tay cầm rỗng đến tay cầm đặc.</translation>
+    </message>
+    <message>
+        <source>Drag the centre or the edge handles on the photo.</source>
+        <translation>Kéo tâm hoặc các tay cầm ở viền trên ảnh.</translation>
+    </message>
+    <message>
+        <source>Feather</source>
+        <translation>Làm mềm viền</translation>
+    </message>
+    <message>
+        <source>Darkest</source>
+        <translation>Tối nhất</translation>
+    </message>
+    <message>
+        <source>Brightest</source>
+        <translation>Sáng nhất</translation>
+    </message>
+    <message>
+        <source>Falloff</source>
+        <translation>Chuyển tiếp</translation>
+    </message>
+    <message>
+        <source>Click the photo…</source>
+        <translation>Nhấp vào ảnh…</translation>
+    </message>
+    <message>
+        <source>Pick colour</source>
+        <translation>Lấy màu</translation>
+    </message>
+    <message>
+        <source>Range</source>
+        <translation>Phạm vi</translation>
+    </message>
+    <message>
+        <source>Paint on the photo. The middle mouse button pans.</source>
+        <translation>Tô lên ảnh. Nút giữa chuột để di chuyển khung nhìn.</translation>
+    </message>
+    <message>
+        <source>Paint</source>
+        <translation>Tô</translation>
+    </message>
+    <message>
+        <source>Erase</source>
+        <translation>Tẩy</translation>
+    </message>
+    <message>
+        <source>Clear</source>
+        <translation>Xóa hết</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>Kích thước</translation>
+    </message>
+    <message>
+        <source>Flow</source>
+        <translation>Lưu lượng</translation>
+    </message>
+    <message>
         <source>Layer Opacity</source>
         <translation>Độ mờ đục của lớp</translation>
     </message>
@@ -1277,6 +1393,22 @@
     <message>
         <source>Target Contrast</source>
         <translation>Tương phản</translation>
+    </message>
+    <message>
+        <source>Highlights</source>
+        <translation>Vùng sáng</translation>
+    </message>
+    <message>
+        <source>Shadows</source>
+        <translation>Vùng tối</translation>
+    </message>
+    <message>
+        <source>Whites</source>
+        <translation>Vùng trắng</translation>
+    </message>
+    <message>
+        <source>Blacks</source>
+        <translation>Vùng đen</translation>
     </message>
     <message>
         <source>Target Saturation</source>

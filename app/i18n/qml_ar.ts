@@ -1261,12 +1261,64 @@
         <translation>تدرج خطي %1</translation>
     </message>
     <message>
+        <source>Linear</source>
+        <translation>خطي</translation>
+    </message>
+    <message>
+        <source>Radial</source>
+        <translation>شعاعي</translation>
+    </message>
+    <message>
+        <source>Luminance</source>
+        <translation>السطوع</translation>
+    </message>
+    <message>
+        <source>Colour</source>
+        <translation>لون</translation>
+    </message>
+    <message>
+        <source>Brush</source>
+        <translation>فرشاة</translation>
+    </message>
+    <message>
+        <source>AI mask</source>
+        <translation>قناع ذكاء اصطناعي</translation>
+    </message>
+    <message>
+        <source>Subtract</source>
+        <translation>طرح</translation>
+    </message>
+    <message>
+        <source>Intersect</source>
+        <translation>تقاطع</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>إضافة</translation>
+    </message>
+    <message>
         <source>Radial Mask %1</source>
         <translation>قناع شعاعي %1</translation>
     </message>
     <message>
         <source>Luma Range %1</source>
         <translation>نطاق السطوع %1</translation>
+    </message>
+    <message>
+        <source>Colour Range %1</source>
+        <translation>نطاق اللون %1</translation>
+    </message>
+    <message>
+        <source>Brush %1</source>
+        <translation>فرشاة %1</translation>
+    </message>
+    <message>
+        <source>+ Brush</source>
+        <translation>+ فرشاة</translation>
+    </message>
+    <message>
+        <source>+ Colour</source>
+        <translation>+ لون</translation>
     </message>
     <message>
         <source>+ AI SUBJECT</source>
@@ -1282,6 +1334,70 @@
         <translation>ع</translation>
     </message>
     <message>
+        <source>Combine with:</source>
+        <translation>الدمج مع:</translation>
+    </message>
+    <message>
+        <source>Drag the handles on the photo. The effect builds up from the hollow handle to the solid one.</source>
+        <translation>اسحب المقابض على الصورة. يزداد التأثير من المقبض المجوّف إلى المقبض المصمت.</translation>
+    </message>
+    <message>
+        <source>Drag the centre or the edge handles on the photo.</source>
+        <translation>اسحب المركز أو مقابض الحافة على الصورة.</translation>
+    </message>
+    <message>
+        <source>Feather</source>
+        <translation>تنعيم الحافة</translation>
+    </message>
+    <message>
+        <source>Darkest</source>
+        <translation>الأغمق</translation>
+    </message>
+    <message>
+        <source>Brightest</source>
+        <translation>الأفتح</translation>
+    </message>
+    <message>
+        <source>Falloff</source>
+        <translation>الانتقال</translation>
+    </message>
+    <message>
+        <source>Click the photo…</source>
+        <translation>انقر على الصورة…</translation>
+    </message>
+    <message>
+        <source>Pick colour</source>
+        <translation>التقاط اللون</translation>
+    </message>
+    <message>
+        <source>Range</source>
+        <translation>النطاق</translation>
+    </message>
+    <message>
+        <source>Paint on the photo. The middle mouse button pans.</source>
+        <translation>ارسم على الصورة. زر الفأرة الأوسط يحرّك العرض.</translation>
+    </message>
+    <message>
+        <source>Paint</source>
+        <translation>رسم</translation>
+    </message>
+    <message>
+        <source>Erase</source>
+        <translation>محو</translation>
+    </message>
+    <message>
+        <source>Clear</source>
+        <translation>مسح الكل</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>الحجم</translation>
+    </message>
+    <message>
+        <source>Flow</source>
+        <translation>التدفق</translation>
+    </message>
+    <message>
         <source>Layer Opacity</source>
         <translation>عتامة الطبقة</translation>
     </message>
@@ -1292,6 +1408,22 @@
     <message>
         <source>Target Contrast</source>
         <translation>التباين</translation>
+    </message>
+    <message>
+        <source>Highlights</source>
+        <translation>الإضاءات</translation>
+    </message>
+    <message>
+        <source>Shadows</source>
+        <translation>الظلال</translation>
+    </message>
+    <message>
+        <source>Whites</source>
+        <translation>البيضاء</translation>
+    </message>
+    <message>
+        <source>Blacks</source>
+        <translation>السوداء</translation>
     </message>
     <message>
         <source>Target Saturation</source>

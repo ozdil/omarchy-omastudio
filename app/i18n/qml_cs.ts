@@ -1252,12 +1252,64 @@
         <translation>Lineární přechod %1</translation>
     </message>
     <message>
+        <source>Linear</source>
+        <translation>Lineární</translation>
+    </message>
+    <message>
+        <source>Radial</source>
+        <translation>Radiální</translation>
+    </message>
+    <message>
+        <source>Luminance</source>
+        <translation>Jas</translation>
+    </message>
+    <message>
+        <source>Colour</source>
+        <translation>Barva</translation>
+    </message>
+    <message>
+        <source>Brush</source>
+        <translation>Štětec</translation>
+    </message>
+    <message>
+        <source>AI mask</source>
+        <translation>Maska AI</translation>
+    </message>
+    <message>
+        <source>Subtract</source>
+        <translation>Odečíst</translation>
+    </message>
+    <message>
+        <source>Intersect</source>
+        <translation>Průnik</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>Přidat</translation>
+    </message>
+    <message>
         <source>Radial Mask %1</source>
         <translation>Radiální maska %1</translation>
     </message>
     <message>
         <source>Luma Range %1</source>
         <translation>Rozsah jasu %1</translation>
+    </message>
+    <message>
+        <source>Colour Range %1</source>
+        <translation>Rozsah barev %1</translation>
+    </message>
+    <message>
+        <source>Brush %1</source>
+        <translation>Štětec %1</translation>
+    </message>
+    <message>
+        <source>+ Brush</source>
+        <translation>+ Štětec</translation>
+    </message>
+    <message>
+        <source>+ Colour</source>
+        <translation>+ Barva</translation>
     </message>
     <message>
         <source>+ AI SUBJECT</source>
@@ -1273,6 +1325,70 @@
         <translation>I</translation>
     </message>
     <message>
+        <source>Combine with:</source>
+        <translation>Kombinovat s:</translation>
+    </message>
+    <message>
+        <source>Drag the handles on the photo. The effect builds up from the hollow handle to the solid one.</source>
+        <translation>Přetáhněte úchyty na fotografii. Efekt sílí od dutého úchytu k plnému.</translation>
+    </message>
+    <message>
+        <source>Drag the centre or the edge handles on the photo.</source>
+        <translation>Přetáhněte střed nebo okrajové úchyty na fotografii.</translation>
+    </message>
+    <message>
+        <source>Feather</source>
+        <translation>Prolnutí</translation>
+    </message>
+    <message>
+        <source>Darkest</source>
+        <translation>Nejtmavší</translation>
+    </message>
+    <message>
+        <source>Brightest</source>
+        <translation>Nejsvětlejší</translation>
+    </message>
+    <message>
+        <source>Falloff</source>
+        <translation>Přechod</translation>
+    </message>
+    <message>
+        <source>Click the photo…</source>
+        <translation>Klikněte do fotografie…</translation>
+    </message>
+    <message>
+        <source>Pick colour</source>
+        <translation>Vybrat barvu</translation>
+    </message>
+    <message>
+        <source>Range</source>
+        <translation>Rozsah</translation>
+    </message>
+    <message>
+        <source>Paint on the photo. The middle mouse button pans.</source>
+        <translation>Malujte na fotografii. Prostřední tlačítko myši posouvá pohled.</translation>
+    </message>
+    <message>
+        <source>Paint</source>
+        <translation>Malovat</translation>
+    </message>
+    <message>
+        <source>Erase</source>
+        <translation>Gumovat</translation>
+    </message>
+    <message>
+        <source>Clear</source>
+        <translation>Vymazat</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>Velikost</translation>
+    </message>
+    <message>
+        <source>Flow</source>
+        <translation>Tok</translation>
+    </message>
+    <message>
         <source>Layer Opacity</source>
         <translation>Krytí vrstvy</translation>
     </message>
@@ -1283,6 +1399,22 @@
     <message>
         <source>Target Contrast</source>
         <translation>Kontrast</translation>
+    </message>
+    <message>
+        <source>Highlights</source>
+        <translation>Světla</translation>
+    </message>
+    <message>
+        <source>Shadows</source>
+        <translation>Stíny</translation>
+    </message>
+    <message>
+        <source>Whites</source>
+        <translation>Bílé</translation>
+    </message>
+    <message>
+        <source>Blacks</source>
+        <translation>Černé</translation>
     </message>
     <message>
         <source>Target Saturation</source>

@@ -1249,12 +1249,64 @@
         <translation>מעבר הדרגתי ליניארי %1</translation>
     </message>
     <message>
+        <source>Linear</source>
+        <translation>ליניארי</translation>
+    </message>
+    <message>
+        <source>Radial</source>
+        <translation>רדיאלי</translation>
+    </message>
+    <message>
+        <source>Luminance</source>
+        <translation>בהירות</translation>
+    </message>
+    <message>
+        <source>Colour</source>
+        <translation>צבע</translation>
+    </message>
+    <message>
+        <source>Brush</source>
+        <translation>מכחול</translation>
+    </message>
+    <message>
+        <source>AI mask</source>
+        <translation>מסכת AI</translation>
+    </message>
+    <message>
+        <source>Subtract</source>
+        <translation>חיסור</translation>
+    </message>
+    <message>
+        <source>Intersect</source>
+        <translation>חיתוך</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>הוספה</translation>
+    </message>
+    <message>
         <source>Radial Mask %1</source>
         <translation>מסכה רדיאלית %1</translation>
     </message>
     <message>
         <source>Luma Range %1</source>
         <translation>טווח בהירות %1</translation>
+    </message>
+    <message>
+        <source>Colour Range %1</source>
+        <translation>טווח צבע %1</translation>
+    </message>
+    <message>
+        <source>Brush %1</source>
+        <translation>מכחול %1</translation>
+    </message>
+    <message>
+        <source>+ Brush</source>
+        <translation>+ מכחול</translation>
+    </message>
+    <message>
+        <source>+ Colour</source>
+        <translation>+ צבע</translation>
     </message>
     <message>
         <source>+ AI SUBJECT</source>
@@ -1270,6 +1322,70 @@
         <translation>ה</translation>
     </message>
     <message>
+        <source>Combine with:</source>
+        <translation>שילוב עם:</translation>
+    </message>
+    <message>
+        <source>Drag the handles on the photo. The effect builds up from the hollow handle to the solid one.</source>
+        <translation>גררו את הידיות על התמונה. האפקט מתחזק מהידית החלולה אל הידית המלאה.</translation>
+    </message>
+    <message>
+        <source>Drag the centre or the edge handles on the photo.</source>
+        <translation>גררו את המרכז או את ידיות הקצה על התמונה.</translation>
+    </message>
+    <message>
+        <source>Feather</source>
+        <translation>ריכוך שוליים</translation>
+    </message>
+    <message>
+        <source>Darkest</source>
+        <translation>הכהה ביותר</translation>
+    </message>
+    <message>
+        <source>Brightest</source>
+        <translation>הבהיר ביותר</translation>
+    </message>
+    <message>
+        <source>Falloff</source>
+        <translation>מעבר</translation>
+    </message>
+    <message>
+        <source>Click the photo…</source>
+        <translation>לחצו על התמונה…</translation>
+    </message>
+    <message>
+        <source>Pick colour</source>
+        <translation>דגימת צבע</translation>
+    </message>
+    <message>
+        <source>Range</source>
+        <translation>טווח</translation>
+    </message>
+    <message>
+        <source>Paint on the photo. The middle mouse button pans.</source>
+        <translation>ציירו על התמונה. הכפתור האמצעי של העכבר מזיז את התצוגה.</translation>
+    </message>
+    <message>
+        <source>Paint</source>
+        <translation>ציור</translation>
+    </message>
+    <message>
+        <source>Erase</source>
+        <translation>מחיקה</translation>
+    </message>
+    <message>
+        <source>Clear</source>
+        <translation>ניקוי</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>גודל</translation>
+    </message>
+    <message>
+        <source>Flow</source>
+        <translation>זרימה</translation>
+    </message>
+    <message>
         <source>Layer Opacity</source>
         <translation>אטימות השכבה</translation>
     </message>
@@ -1280,6 +1396,22 @@
     <message>
         <source>Target Contrast</source>
         <translation>ניגודיות</translation>
+    </message>
+    <message>
+        <source>Highlights</source>
+        <translation>בהירים</translation>
+    </message>
+    <message>
+        <source>Shadows</source>
+        <translation>צללים</translation>
+    </message>
+    <message>
+        <source>Whites</source>
+        <translation>לבנים</translation>
+    </message>
+    <message>
+        <source>Blacks</source>
+        <translation>שחורים</translation>
     </message>
     <message>
         <source>Target Saturation</source>

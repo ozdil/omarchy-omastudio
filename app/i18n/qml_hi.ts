@@ -1249,12 +1249,64 @@
         <translation>रैखिक ग्रेडिएंट %1</translation>
     </message>
     <message>
+        <source>Linear</source>
+        <translation>रेखीय</translation>
+    </message>
+    <message>
+        <source>Radial</source>
+        <translation>रेडियल</translation>
+    </message>
+    <message>
+        <source>Luminance</source>
+        <translation>ल्यूमिनेंस</translation>
+    </message>
+    <message>
+        <source>Colour</source>
+        <translation>रंग</translation>
+    </message>
+    <message>
+        <source>Brush</source>
+        <translation>ब्रश</translation>
+    </message>
+    <message>
+        <source>AI mask</source>
+        <translation>AI मास्क</translation>
+    </message>
+    <message>
+        <source>Subtract</source>
+        <translation>घटाएँ</translation>
+    </message>
+    <message>
+        <source>Intersect</source>
+        <translation>प्रतिच्छेद</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>जोड़ें</translation>
+    </message>
+    <message>
         <source>Radial Mask %1</source>
         <translation>रेडियल मास्क %1</translation>
     </message>
     <message>
         <source>Luma Range %1</source>
         <translation>ल्यूमा रेंज %1</translation>
+    </message>
+    <message>
+        <source>Colour Range %1</source>
+        <translation>रंग सीमा %1</translation>
+    </message>
+    <message>
+        <source>Brush %1</source>
+        <translation>ब्रश %1</translation>
+    </message>
+    <message>
+        <source>+ Brush</source>
+        <translation>+ ब्रश</translation>
+    </message>
+    <message>
+        <source>+ Colour</source>
+        <translation>+ रंग</translation>
     </message>
     <message>
         <source>+ AI SUBJECT</source>
@@ -1270,6 +1322,70 @@
         <translation>उ</translation>
     </message>
     <message>
+        <source>Combine with:</source>
+        <translation>इसके साथ मिलाएँ:</translation>
+    </message>
+    <message>
+        <source>Drag the handles on the photo. The effect builds up from the hollow handle to the solid one.</source>
+        <translation>फ़ोटो पर हैंडल खींचें। प्रभाव खोखले हैंडल से भरे हैंडल की ओर बढ़ता है।</translation>
+    </message>
+    <message>
+        <source>Drag the centre or the edge handles on the photo.</source>
+        <translation>फ़ोटो पर केंद्र या किनारे के हैंडल खींचें।</translation>
+    </message>
+    <message>
+        <source>Feather</source>
+        <translation>किनारा नरमी</translation>
+    </message>
+    <message>
+        <source>Darkest</source>
+        <translation>सबसे गहरा</translation>
+    </message>
+    <message>
+        <source>Brightest</source>
+        <translation>सबसे हल्का</translation>
+    </message>
+    <message>
+        <source>Falloff</source>
+        <translation>संक्रमण</translation>
+    </message>
+    <message>
+        <source>Click the photo…</source>
+        <translation>फ़ोटो पर क्लिक करें…</translation>
+    </message>
+    <message>
+        <source>Pick colour</source>
+        <translation>रंग चुनें</translation>
+    </message>
+    <message>
+        <source>Range</source>
+        <translation>सीमा</translation>
+    </message>
+    <message>
+        <source>Paint on the photo. The middle mouse button pans.</source>
+        <translation>फ़ोटो पर पेंट करें। माउस का बीच वाला बटन दृश्य खिसकाता है।</translation>
+    </message>
+    <message>
+        <source>Paint</source>
+        <translation>पेंट</translation>
+    </message>
+    <message>
+        <source>Erase</source>
+        <translation>मिटाएँ</translation>
+    </message>
+    <message>
+        <source>Clear</source>
+        <translation>साफ़ करें</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>आकार</translation>
+    </message>
+    <message>
+        <source>Flow</source>
+        <translation>प्रवाह</translation>
+    </message>
+    <message>
         <source>Layer Opacity</source>
         <translation>लेयर अपारदर्शिता</translation>
     </message>
@@ -1280,6 +1396,22 @@
     <message>
         <source>Target Contrast</source>
         <translation>कंट्रास्ट</translation>
+    </message>
+    <message>
+        <source>Highlights</source>
+        <translation>हाइलाइट</translation>
+    </message>
+    <message>
+        <source>Shadows</source>
+        <translation>छाया</translation>
+    </message>
+    <message>
+        <source>Whites</source>
+        <translation>सफ़ेद</translation>
+    </message>
+    <message>
+        <source>Blacks</source>
+        <translation>काले</translation>
     </message>
     <message>
         <source>Target Saturation</source>

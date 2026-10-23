@@ -254,3 +254,16 @@ nl:Tint
 # "Send" is spelled the same in Danish and Norwegian
 da:Send
 nb:Send
+# Mask shapes spelled the same in these languages
+da:Radial
+da:Flow
+de:Linear
+de:Radial
+es:Radial
+fr:Radial
+id:Linear
+id:Radial
+nb:Radial
+pt_BR:Linear
+pt_BR:Radial
+ro:Radial

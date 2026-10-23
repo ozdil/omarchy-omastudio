@@ -1246,12 +1246,64 @@
         <translation>선형 그라디언트 %1</translation>
     </message>
     <message>
+        <source>Linear</source>
+        <translation>선형</translation>
+    </message>
+    <message>
+        <source>Radial</source>
+        <translation>방사형</translation>
+    </message>
+    <message>
+        <source>Luminance</source>
+        <translation>휘도</translation>
+    </message>
+    <message>
+        <source>Colour</source>
+        <translation>색상</translation>
+    </message>
+    <message>
+        <source>Brush</source>
+        <translation>브러시</translation>
+    </message>
+    <message>
+        <source>AI mask</source>
+        <translation>AI 마스크</translation>
+    </message>
+    <message>
+        <source>Subtract</source>
+        <translation>빼기</translation>
+    </message>
+    <message>
+        <source>Intersect</source>
+        <translation>교차</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>추가</translation>
+    </message>
+    <message>
         <source>Radial Mask %1</source>
         <translation>원형 마스크 %1</translation>
     </message>
     <message>
         <source>Luma Range %1</source>
         <translation>휘도 범위 %1</translation>
+    </message>
+    <message>
+        <source>Colour Range %1</source>
+        <translation>색상 범위 %1</translation>
+    </message>
+    <message>
+        <source>Brush %1</source>
+        <translation>브러시 %1</translation>
+    </message>
+    <message>
+        <source>+ Brush</source>
+        <translation>+ 브러시</translation>
+    </message>
+    <message>
+        <source>+ Colour</source>
+        <translation>+ 색상</translation>
     </message>
     <message>
         <source>+ AI SUBJECT</source>
@@ -1267,6 +1319,70 @@
         <translation>반</translation>
     </message>
     <message>
+        <source>Combine with:</source>
+        <translation>결합:</translation>
+    </message>
+    <message>
+        <source>Drag the handles on the photo. The effect builds up from the hollow handle to the solid one.</source>
+        <translation>사진 위의 핸들을 드래그하세요. 효과는 속이 빈 핸들에서 채워진 핸들 쪽으로 강해집니다.</translation>
+    </message>
+    <message>
+        <source>Drag the centre or the edge handles on the photo.</source>
+        <translation>사진 위의 중심이나 가장자리 핸들을 드래그하세요.</translation>
+    </message>
+    <message>
+        <source>Feather</source>
+        <translation>페더</translation>
+    </message>
+    <message>
+        <source>Darkest</source>
+        <translation>가장 어두움</translation>
+    </message>
+    <message>
+        <source>Brightest</source>
+        <translation>가장 밝음</translation>
+    </message>
+    <message>
+        <source>Falloff</source>
+        <translation>전환</translation>
+    </message>
+    <message>
+        <source>Click the photo…</source>
+        <translation>사진을 클릭하세요…</translation>
+    </message>
+    <message>
+        <source>Pick colour</source>
+        <translation>색상 선택</translation>
+    </message>
+    <message>
+        <source>Range</source>
+        <translation>범위</translation>
+    </message>
+    <message>
+        <source>Paint on the photo. The middle mouse button pans.</source>
+        <translation>사진 위에 칠하세요. 마우스 가운데 버튼으로 화면을 이동합니다.</translation>
+    </message>
+    <message>
+        <source>Paint</source>
+        <translation>칠하기</translation>
+    </message>
+    <message>
+        <source>Erase</source>
+        <translation>지우기</translation>
+    </message>
+    <message>
+        <source>Clear</source>
+        <translation>모두 지우기</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>크기</translation>
+    </message>
+    <message>
+        <source>Flow</source>
+        <translation>흐름</translation>
+    </message>
+    <message>
         <source>Layer Opacity</source>
         <translation>레이어 불투명도</translation>
     </message>
@@ -1277,6 +1393,22 @@
     <message>
         <source>Target Contrast</source>
         <translation>대비</translation>
+    </message>
+    <message>
+        <source>Highlights</source>
+        <translation>하이라이트</translation>
+    </message>
+    <message>
+        <source>Shadows</source>
+        <translation>섀도</translation>
+    </message>
+    <message>
+        <source>Whites</source>
+        <translation>흰색 계열</translation>
+    </message>
+    <message>
+        <source>Blacks</source>
+        <translation>검정 계열</translation>
     </message>
     <message>
         <source>Target Saturation</source>

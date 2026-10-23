@@ -1252,12 +1252,64 @@
         <translation>Линейный градиент %1</translation>
     </message>
     <message>
+        <source>Linear</source>
+        <translation>Линейная</translation>
+    </message>
+    <message>
+        <source>Radial</source>
+        <translation>Радиальная</translation>
+    </message>
+    <message>
+        <source>Luminance</source>
+        <translation>Яркость</translation>
+    </message>
+    <message>
+        <source>Colour</source>
+        <translation>Цвет</translation>
+    </message>
+    <message>
+        <source>Brush</source>
+        <translation>Кисть</translation>
+    </message>
+    <message>
+        <source>AI mask</source>
+        <translation>ИИ-маска</translation>
+    </message>
+    <message>
+        <source>Subtract</source>
+        <translation>Вычесть</translation>
+    </message>
+    <message>
+        <source>Intersect</source>
+        <translation>Пересечь</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>Добавить</translation>
+    </message>
+    <message>
         <source>Radial Mask %1</source>
         <translation>Радиальная маска %1</translation>
     </message>
     <message>
         <source>Luma Range %1</source>
         <translation>Диапазон яркости %1</translation>
+    </message>
+    <message>
+        <source>Colour Range %1</source>
+        <translation>Цветовой диапазон %1</translation>
+    </message>
+    <message>
+        <source>Brush %1</source>
+        <translation>Кисть %1</translation>
+    </message>
+    <message>
+        <source>+ Brush</source>
+        <translation>+ Кисть</translation>
+    </message>
+    <message>
+        <source>+ Colour</source>
+        <translation>+ Цвет</translation>
     </message>
     <message>
         <source>+ AI SUBJECT</source>
@@ -1273,6 +1325,70 @@
         <translation>И</translation>
     </message>
     <message>
+        <source>Combine with:</source>
+        <translation>Объединить с:</translation>
+    </message>
+    <message>
+        <source>Drag the handles on the photo. The effect builds up from the hollow handle to the solid one.</source>
+        <translation>Перетаскивайте маркеры на фото. Эффект нарастает от полого маркера к заполненному.</translation>
+    </message>
+    <message>
+        <source>Drag the centre or the edge handles on the photo.</source>
+        <translation>Перетаскивайте центр или маркеры края на фото.</translation>
+    </message>
+    <message>
+        <source>Feather</source>
+        <translation>Растушёвка</translation>
+    </message>
+    <message>
+        <source>Darkest</source>
+        <translation>Самые тёмные</translation>
+    </message>
+    <message>
+        <source>Brightest</source>
+        <translation>Самые светлые</translation>
+    </message>
+    <message>
+        <source>Falloff</source>
+        <translation>Переход</translation>
+    </message>
+    <message>
+        <source>Click the photo…</source>
+        <translation>Щёлкните по фото…</translation>
+    </message>
+    <message>
+        <source>Pick colour</source>
+        <translation>Взять цвет</translation>
+    </message>
+    <message>
+        <source>Range</source>
+        <translation>Диапазон</translation>
+    </message>
+    <message>
+        <source>Paint on the photo. The middle mouse button pans.</source>
+        <translation>Рисуйте на фото. Средняя кнопка мыши перемещает вид.</translation>
+    </message>
+    <message>
+        <source>Paint</source>
+        <translation>Рисовать</translation>
+    </message>
+    <message>
+        <source>Erase</source>
+        <translation>Стереть</translation>
+    </message>
+    <message>
+        <source>Clear</source>
+        <translation>Очистить</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>Размер</translation>
+    </message>
+    <message>
+        <source>Flow</source>
+        <translation>Поток</translation>
+    </message>
+    <message>
         <source>Layer Opacity</source>
         <translation>Непрозрачность слоя</translation>
     </message>
@@ -1283,6 +1399,22 @@
     <message>
         <source>Target Contrast</source>
         <translation>Контраст</translation>
+    </message>
+    <message>
+        <source>Highlights</source>
+        <translation>Света</translation>
+    </message>
+    <message>
+        <source>Shadows</source>
+        <translation>Тени</translation>
+    </message>
+    <message>
+        <source>Whites</source>
+        <translation>Белые</translation>
+    </message>
+    <message>
+        <source>Blacks</source>
+        <translation>Чёрные</translation>
     </message>
     <message>
         <source>Target Saturation</source>

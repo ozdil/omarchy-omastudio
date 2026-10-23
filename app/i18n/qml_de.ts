@@ -1249,12 +1249,64 @@
         <translation>Linearer Verlauf %1</translation>
     </message>
     <message>
+        <source>Linear</source>
+        <translation>Linear</translation>
+    </message>
+    <message>
+        <source>Radial</source>
+        <translation>Radial</translation>
+    </message>
+    <message>
+        <source>Luminance</source>
+        <translation>Luminanz</translation>
+    </message>
+    <message>
+        <source>Colour</source>
+        <translation>Farbe</translation>
+    </message>
+    <message>
+        <source>Brush</source>
+        <translation>Pinsel</translation>
+    </message>
+    <message>
+        <source>AI mask</source>
+        <translation>KI-Maske</translation>
+    </message>
+    <message>
+        <source>Subtract</source>
+        <translation>Abziehen</translation>
+    </message>
+    <message>
+        <source>Intersect</source>
+        <translation>Schnittmenge</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>Hinzufügen</translation>
+    </message>
+    <message>
         <source>Radial Mask %1</source>
         <translation>Radialmaske %1</translation>
     </message>
     <message>
         <source>Luma Range %1</source>
         <translation>Luminanzbereich %1</translation>
+    </message>
+    <message>
+        <source>Colour Range %1</source>
+        <translation>Farbbereich %1</translation>
+    </message>
+    <message>
+        <source>Brush %1</source>
+        <translation>Pinsel %1</translation>
+    </message>
+    <message>
+        <source>+ Brush</source>
+        <translation>+ Pinsel</translation>
+    </message>
+    <message>
+        <source>+ Colour</source>
+        <translation>+ Farbe</translation>
     </message>
     <message>
         <source>+ AI SUBJECT</source>
@@ -1270,6 +1322,70 @@
         <translation>U</translation>
     </message>
     <message>
+        <source>Combine with:</source>
+        <translation>Kombinieren mit:</translation>
+    </message>
+    <message>
+        <source>Drag the handles on the photo. The effect builds up from the hollow handle to the solid one.</source>
+        <translation>Ziehen Sie die Griffe auf dem Foto. Die Wirkung nimmt vom hohlen zum gefüllten Griff zu.</translation>
+    </message>
+    <message>
+        <source>Drag the centre or the edge handles on the photo.</source>
+        <translation>Ziehen Sie die Mitte oder die Randgriffe auf dem Foto.</translation>
+    </message>
+    <message>
+        <source>Feather</source>
+        <translation>Weiche Kante</translation>
+    </message>
+    <message>
+        <source>Darkest</source>
+        <translation>Dunkelste</translation>
+    </message>
+    <message>
+        <source>Brightest</source>
+        <translation>Hellste</translation>
+    </message>
+    <message>
+        <source>Falloff</source>
+        <translation>Übergang</translation>
+    </message>
+    <message>
+        <source>Click the photo…</source>
+        <translation>Ins Foto klicken…</translation>
+    </message>
+    <message>
+        <source>Pick colour</source>
+        <translation>Farbe aufnehmen</translation>
+    </message>
+    <message>
+        <source>Range</source>
+        <translation>Bereich</translation>
+    </message>
+    <message>
+        <source>Paint on the photo. The middle mouse button pans.</source>
+        <translation>Auf dem Foto malen. Die mittlere Maustaste verschiebt die Ansicht.</translation>
+    </message>
+    <message>
+        <source>Paint</source>
+        <translation>Malen</translation>
+    </message>
+    <message>
+        <source>Erase</source>
+        <translation>Radieren</translation>
+    </message>
+    <message>
+        <source>Clear</source>
+        <translation>Leeren</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>Größe</translation>
+    </message>
+    <message>
+        <source>Flow</source>
+        <translation>Fluss</translation>
+    </message>
+    <message>
         <source>Layer Opacity</source>
         <translation>Ebenendeckkraft</translation>
     </message>
@@ -1280,6 +1396,22 @@
     <message>
         <source>Target Contrast</source>
         <translation>Zielkontrast</translation>
+    </message>
+    <message>
+        <source>Highlights</source>
+        <translation>Lichter</translation>
+    </message>
+    <message>
+        <source>Shadows</source>
+        <translation>Tiefen</translation>
+    </message>
+    <message>
+        <source>Whites</source>
+        <translation>Weiß</translation>
+    </message>
+    <message>
+        <source>Blacks</source>
+        <translation>Schwarz</translation>
     </message>
     <message>
         <source>Target Saturation</source>

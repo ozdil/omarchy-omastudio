@@ -1246,12 +1246,64 @@
         <translation>Gradasi linear %1</translation>
     </message>
     <message>
+        <source>Linear</source>
+        <translation>Linear</translation>
+    </message>
+    <message>
+        <source>Radial</source>
+        <translation>Radial</translation>
+    </message>
+    <message>
+        <source>Luminance</source>
+        <translation>Luminans</translation>
+    </message>
+    <message>
+        <source>Colour</source>
+        <translation>Warna</translation>
+    </message>
+    <message>
+        <source>Brush</source>
+        <translation>Kuas</translation>
+    </message>
+    <message>
+        <source>AI mask</source>
+        <translation>Masker AI</translation>
+    </message>
+    <message>
+        <source>Subtract</source>
+        <translation>Kurangi</translation>
+    </message>
+    <message>
+        <source>Intersect</source>
+        <translation>Irisan</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>Tambah</translation>
+    </message>
+    <message>
         <source>Radial Mask %1</source>
         <translation>Masker radial %1</translation>
     </message>
     <message>
         <source>Luma Range %1</source>
         <translation>Rentang luma %1</translation>
+    </message>
+    <message>
+        <source>Colour Range %1</source>
+        <translation>Rentang warna %1</translation>
+    </message>
+    <message>
+        <source>Brush %1</source>
+        <translation>Kuas %1</translation>
+    </message>
+    <message>
+        <source>+ Brush</source>
+        <translation>+ Kuas</translation>
+    </message>
+    <message>
+        <source>+ Colour</source>
+        <translation>+ Warna</translation>
     </message>
     <message>
         <source>+ AI SUBJECT</source>
@@ -1267,6 +1319,70 @@
         <translation>B</translation>
     </message>
     <message>
+        <source>Combine with:</source>
+        <translation>Gabungkan dengan:</translation>
+    </message>
+    <message>
+        <source>Drag the handles on the photo. The effect builds up from the hollow handle to the solid one.</source>
+        <translation>Seret pegangan di foto. Efeknya bertambah dari pegangan berlubang ke pegangan penuh.</translation>
+    </message>
+    <message>
+        <source>Drag the centre or the edge handles on the photo.</source>
+        <translation>Seret bagian tengah atau pegangan tepi di foto.</translation>
+    </message>
+    <message>
+        <source>Feather</source>
+        <translation>Kelembutan tepi</translation>
+    </message>
+    <message>
+        <source>Darkest</source>
+        <translation>Tergelap</translation>
+    </message>
+    <message>
+        <source>Brightest</source>
+        <translation>Terterang</translation>
+    </message>
+    <message>
+        <source>Falloff</source>
+        <translation>Peralihan</translation>
+    </message>
+    <message>
+        <source>Click the photo…</source>
+        <translation>Klik foto…</translation>
+    </message>
+    <message>
+        <source>Pick colour</source>
+        <translation>Ambil warna</translation>
+    </message>
+    <message>
+        <source>Range</source>
+        <translation>Rentang</translation>
+    </message>
+    <message>
+        <source>Paint on the photo. The middle mouse button pans.</source>
+        <translation>Lukis di foto. Tombol tengah mouse menggeser tampilan.</translation>
+    </message>
+    <message>
+        <source>Paint</source>
+        <translation>Lukis</translation>
+    </message>
+    <message>
+        <source>Erase</source>
+        <translation>Hapus</translation>
+    </message>
+    <message>
+        <source>Clear</source>
+        <translation>Kosongkan</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>Ukuran</translation>
+    </message>
+    <message>
+        <source>Flow</source>
+        <translation>Aliran</translation>
+    </message>
+    <message>
         <source>Layer Opacity</source>
         <translation>Opasitas lapisan</translation>
     </message>
@@ -1277,6 +1393,22 @@
     <message>
         <source>Target Contrast</source>
         <translation>Kontras</translation>
+    </message>
+    <message>
+        <source>Highlights</source>
+        <translation>Sorotan</translation>
+    </message>
+    <message>
+        <source>Shadows</source>
+        <translation>Bayangan</translation>
+    </message>
+    <message>
+        <source>Whites</source>
+        <translation>Putih</translation>
+    </message>
+    <message>
+        <source>Blacks</source>
+        <translation>Hitam</translation>
     </message>
     <message>
         <source>Target Saturation</source>

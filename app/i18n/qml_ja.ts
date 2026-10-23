@@ -1246,12 +1246,64 @@
         <translation>線形グラデーション %1</translation>
     </message>
     <message>
+        <source>Linear</source>
+        <translation>線形</translation>
+    </message>
+    <message>
+        <source>Radial</source>
+        <translation>円形</translation>
+    </message>
+    <message>
+        <source>Luminance</source>
+        <translation>輝度</translation>
+    </message>
+    <message>
+        <source>Colour</source>
+        <translation>カラー</translation>
+    </message>
+    <message>
+        <source>Brush</source>
+        <translation>ブラシ</translation>
+    </message>
+    <message>
+        <source>AI mask</source>
+        <translation>AI マスク</translation>
+    </message>
+    <message>
+        <source>Subtract</source>
+        <translation>減算</translation>
+    </message>
+    <message>
+        <source>Intersect</source>
+        <translation>交差</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>追加</translation>
+    </message>
+    <message>
         <source>Radial Mask %1</source>
         <translation>円形マスク %1</translation>
     </message>
     <message>
         <source>Luma Range %1</source>
         <translation>輝度範囲 %1</translation>
+    </message>
+    <message>
+        <source>Colour Range %1</source>
+        <translation>カラー範囲 %1</translation>
+    </message>
+    <message>
+        <source>Brush %1</source>
+        <translation>ブラシ %1</translation>
+    </message>
+    <message>
+        <source>+ Brush</source>
+        <translation>+ ブラシ</translation>
+    </message>
+    <message>
+        <source>+ Colour</source>
+        <translation>+ カラー</translation>
     </message>
     <message>
         <source>+ AI SUBJECT</source>
@@ -1267,6 +1319,70 @@
         <translation>反</translation>
     </message>
     <message>
+        <source>Combine with:</source>
+        <translation>組み合わせ:</translation>
+    </message>
+    <message>
+        <source>Drag the handles on the photo. The effect builds up from the hollow handle to the solid one.</source>
+        <translation>写真上のハンドルをドラッグします。効果は中空のハンドルから塗りつぶしのハンドルに向かって強くなります。</translation>
+    </message>
+    <message>
+        <source>Drag the centre or the edge handles on the photo.</source>
+        <translation>写真上の中心または縁のハンドルをドラッグします。</translation>
+    </message>
+    <message>
+        <source>Feather</source>
+        <translation>ぼかし</translation>
+    </message>
+    <message>
+        <source>Darkest</source>
+        <translation>最も暗い</translation>
+    </message>
+    <message>
+        <source>Brightest</source>
+        <translation>最も明るい</translation>
+    </message>
+    <message>
+        <source>Falloff</source>
+        <translation>境界</translation>
+    </message>
+    <message>
+        <source>Click the photo…</source>
+        <translation>写真をクリック…</translation>
+    </message>
+    <message>
+        <source>Pick colour</source>
+        <translation>カラーを取得</translation>
+    </message>
+    <message>
+        <source>Range</source>
+        <translation>範囲</translation>
+    </message>
+    <message>
+        <source>Paint on the photo. The middle mouse button pans.</source>
+        <translation>写真上をペイントします。マウスの中ボタンで表示を移動します。</translation>
+    </message>
+    <message>
+        <source>Paint</source>
+        <translation>ペイント</translation>
+    </message>
+    <message>
+        <source>Erase</source>
+        <translation>消去</translation>
+    </message>
+    <message>
+        <source>Clear</source>
+        <translation>クリア</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>サイズ</translation>
+    </message>
+    <message>
+        <source>Flow</source>
+        <translation>流量</translation>
+    </message>
+    <message>
         <source>Layer Opacity</source>
         <translation>レイヤーの不透明度</translation>
     </message>
@@ -1277,6 +1393,22 @@
     <message>
         <source>Target Contrast</source>
         <translation>コントラスト</translation>
+    </message>
+    <message>
+        <source>Highlights</source>
+        <translation>ハイライト</translation>
+    </message>
+    <message>
+        <source>Shadows</source>
+        <translation>シャドウ</translation>
+    </message>
+    <message>
+        <source>Whites</source>
+        <translation>白レベル</translation>
+    </message>
+    <message>
+        <source>Blacks</source>
+        <translation>黒レベル</translation>
     </message>
     <message>
         <source>Target Saturation</source>

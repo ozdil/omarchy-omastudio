@@ -1246,12 +1246,64 @@
         <translation>ไล่ระดับเชิงเส้น %1</translation>
     </message>
     <message>
+        <source>Linear</source>
+        <translation>เชิงเส้น</translation>
+    </message>
+    <message>
+        <source>Radial</source>
+        <translation>รัศมี</translation>
+    </message>
+    <message>
+        <source>Luminance</source>
+        <translation>ความสว่าง</translation>
+    </message>
+    <message>
+        <source>Colour</source>
+        <translation>สี</translation>
+    </message>
+    <message>
+        <source>Brush</source>
+        <translation>แปรง</translation>
+    </message>
+    <message>
+        <source>AI mask</source>
+        <translation>มาสก์ AI</translation>
+    </message>
+    <message>
+        <source>Subtract</source>
+        <translation>ลบออก</translation>
+    </message>
+    <message>
+        <source>Intersect</source>
+        <translation>ส่วนร่วม</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>เพิ่ม</translation>
+    </message>
+    <message>
         <source>Radial Mask %1</source>
         <translation>มาสก์รัศมี %1</translation>
     </message>
     <message>
         <source>Luma Range %1</source>
         <translation>ช่วงความสว่าง %1</translation>
+    </message>
+    <message>
+        <source>Colour Range %1</source>
+        <translation>ช่วงสี %1</translation>
+    </message>
+    <message>
+        <source>Brush %1</source>
+        <translation>แปรง %1</translation>
+    </message>
+    <message>
+        <source>+ Brush</source>
+        <translation>+ แปรง</translation>
+    </message>
+    <message>
+        <source>+ Colour</source>
+        <translation>+ สี</translation>
     </message>
     <message>
         <source>+ AI SUBJECT</source>
@@ -1267,6 +1319,70 @@
         <translation>ก</translation>
     </message>
     <message>
+        <source>Combine with:</source>
+        <translation>รวมกับ:</translation>
+    </message>
+    <message>
+        <source>Drag the handles on the photo. The effect builds up from the hollow handle to the solid one.</source>
+        <translation>ลากจุดจับบนภาพ เอฟเฟกต์จะเพิ่มขึ้นจากจุดจับกลวงไปยังจุดจับทึบ</translation>
+    </message>
+    <message>
+        <source>Drag the centre or the edge handles on the photo.</source>
+        <translation>ลากจุดกึ่งกลางหรือจุดจับที่ขอบบนภาพ</translation>
+    </message>
+    <message>
+        <source>Feather</source>
+        <translation>ขอบนุ่ม</translation>
+    </message>
+    <message>
+        <source>Darkest</source>
+        <translation>มืดที่สุด</translation>
+    </message>
+    <message>
+        <source>Brightest</source>
+        <translation>สว่างที่สุด</translation>
+    </message>
+    <message>
+        <source>Falloff</source>
+        <translation>ช่วงเปลี่ยน</translation>
+    </message>
+    <message>
+        <source>Click the photo…</source>
+        <translation>คลิกบนภาพ…</translation>
+    </message>
+    <message>
+        <source>Pick colour</source>
+        <translation>เลือกสี</translation>
+    </message>
+    <message>
+        <source>Range</source>
+        <translation>ช่วง</translation>
+    </message>
+    <message>
+        <source>Paint on the photo. The middle mouse button pans.</source>
+        <translation>ระบายบนภาพ ปุ่มกลางของเมาส์ใช้เลื่อนมุมมอง</translation>
+    </message>
+    <message>
+        <source>Paint</source>
+        <translation>ระบาย</translation>
+    </message>
+    <message>
+        <source>Erase</source>
+        <translation>ลบ</translation>
+    </message>
+    <message>
+        <source>Clear</source>
+        <translation>ล้าง</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>ขนาด</translation>
+    </message>
+    <message>
+        <source>Flow</source>
+        <translation>การไหล</translation>
+    </message>
+    <message>
         <source>Layer Opacity</source>
         <translation>ความทึบของเลเยอร์</translation>
     </message>
@@ -1277,6 +1393,22 @@
     <message>
         <source>Target Contrast</source>
         <translation>คอนทราสต์</translation>
+    </message>
+    <message>
+        <source>Highlights</source>
+        <translation>ไฮไลต์</translation>
+    </message>
+    <message>
+        <source>Shadows</source>
+        <translation>เงา</translation>
+    </message>
+    <message>
+        <source>Whites</source>
+        <translation>ส่วนขาว</translation>
+    </message>
+    <message>
+        <source>Blacks</source>
+        <translation>ส่วนดำ</translation>
     </message>
     <message>
         <source>Target Saturation</source>

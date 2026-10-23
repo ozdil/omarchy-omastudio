@@ -1249,12 +1249,64 @@
         <translation>Γραμμική διαβάθμιση %1</translation>
     </message>
     <message>
+        <source>Linear</source>
+        <translation>Γραμμική</translation>
+    </message>
+    <message>
+        <source>Radial</source>
+        <translation>Ακτινική</translation>
+    </message>
+    <message>
+        <source>Luminance</source>
+        <translation>Φωτεινότητα</translation>
+    </message>
+    <message>
+        <source>Colour</source>
+        <translation>Χρώμα</translation>
+    </message>
+    <message>
+        <source>Brush</source>
+        <translation>Πινέλο</translation>
+    </message>
+    <message>
+        <source>AI mask</source>
+        <translation>Μάσκα ΤΝ</translation>
+    </message>
+    <message>
+        <source>Subtract</source>
+        <translation>Αφαίρεση</translation>
+    </message>
+    <message>
+        <source>Intersect</source>
+        <translation>Τομή</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>Προσθήκη</translation>
+    </message>
+    <message>
         <source>Radial Mask %1</source>
         <translation>Ακτινική μάσκα %1</translation>
     </message>
     <message>
         <source>Luma Range %1</source>
         <translation>Εύρος φωτεινότητας %1</translation>
+    </message>
+    <message>
+        <source>Colour Range %1</source>
+        <translation>Εύρος χρώματος %1</translation>
+    </message>
+    <message>
+        <source>Brush %1</source>
+        <translation>Πινέλο %1</translation>
+    </message>
+    <message>
+        <source>+ Brush</source>
+        <translation>+ Πινέλο</translation>
+    </message>
+    <message>
+        <source>+ Colour</source>
+        <translation>+ Χρώμα</translation>
     </message>
     <message>
         <source>+ AI SUBJECT</source>
@@ -1270,6 +1322,70 @@
         <translation>Α</translation>
     </message>
     <message>
+        <source>Combine with:</source>
+        <translation>Συνδυασμός με:</translation>
+    </message>
+    <message>
+        <source>Drag the handles on the photo. The effect builds up from the hollow handle to the solid one.</source>
+        <translation>Σύρετε τις λαβές στη φωτογραφία. Το εφέ αυξάνεται από την κούφια λαβή προς τη γεμάτη.</translation>
+    </message>
+    <message>
+        <source>Drag the centre or the edge handles on the photo.</source>
+        <translation>Σύρετε το κέντρο ή τις λαβές του άκρου στη φωτογραφία.</translation>
+    </message>
+    <message>
+        <source>Feather</source>
+        <translation>Απάλυνση</translation>
+    </message>
+    <message>
+        <source>Darkest</source>
+        <translation>Πιο σκοτεινά</translation>
+    </message>
+    <message>
+        <source>Brightest</source>
+        <translation>Πιο φωτεινά</translation>
+    </message>
+    <message>
+        <source>Falloff</source>
+        <translation>Μετάβαση</translation>
+    </message>
+    <message>
+        <source>Click the photo…</source>
+        <translation>Κάντε κλικ στη φωτογραφία…</translation>
+    </message>
+    <message>
+        <source>Pick colour</source>
+        <translation>Λήψη χρώματος</translation>
+    </message>
+    <message>
+        <source>Range</source>
+        <translation>Εύρος</translation>
+    </message>
+    <message>
+        <source>Paint on the photo. The middle mouse button pans.</source>
+        <translation>Ζωγραφίστε στη φωτογραφία. Το μεσαίο κουμπί του ποντικιού μετακινεί την προβολή.</translation>
+    </message>
+    <message>
+        <source>Paint</source>
+        <translation>Ζωγραφική</translation>
+    </message>
+    <message>
+        <source>Erase</source>
+        <translation>Σβήσιμο</translation>
+    </message>
+    <message>
+        <source>Clear</source>
+        <translation>Καθαρισμός</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>Μέγεθος</translation>
+    </message>
+    <message>
+        <source>Flow</source>
+        <translation>Ροή</translation>
+    </message>
+    <message>
         <source>Layer Opacity</source>
         <translation>Αδιαφάνεια επιπέδου</translation>
     </message>
@@ -1280,6 +1396,22 @@
     <message>
         <source>Target Contrast</source>
         <translation>Αντίθεση</translation>
+    </message>
+    <message>
+        <source>Highlights</source>
+        <translation>Φωτεινά</translation>
+    </message>
+    <message>
+        <source>Shadows</source>
+        <translation>Σκιές</translation>
+    </message>
+    <message>
+        <source>Whites</source>
+        <translation>Λευκά</translation>
+    </message>
+    <message>
+        <source>Blacks</source>
+        <translation>Μαύρα</translation>
     </message>
     <message>
         <source>Target Saturation</source>

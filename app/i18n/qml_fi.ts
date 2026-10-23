@@ -1249,12 +1249,64 @@
         <translation>Lineaarinen liukuma %1</translation>
     </message>
     <message>
+        <source>Linear</source>
+        <translation>Lineaarinen</translation>
+    </message>
+    <message>
+        <source>Radial</source>
+        <translation>Säteittäinen</translation>
+    </message>
+    <message>
+        <source>Luminance</source>
+        <translation>Luminanssi</translation>
+    </message>
+    <message>
+        <source>Colour</source>
+        <translation>Väri</translation>
+    </message>
+    <message>
+        <source>Brush</source>
+        <translation>Sivellin</translation>
+    </message>
+    <message>
+        <source>AI mask</source>
+        <translation>Tekoälymaski</translation>
+    </message>
+    <message>
+        <source>Subtract</source>
+        <translation>Vähennä</translation>
+    </message>
+    <message>
+        <source>Intersect</source>
+        <translation>Leikkaus</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>Lisää</translation>
+    </message>
+    <message>
         <source>Radial Mask %1</source>
         <translation>Säteittäinen maski %1</translation>
     </message>
     <message>
         <source>Luma Range %1</source>
         <translation>Luminanssialue %1</translation>
+    </message>
+    <message>
+        <source>Colour Range %1</source>
+        <translation>Värialue %1</translation>
+    </message>
+    <message>
+        <source>Brush %1</source>
+        <translation>Sivellin %1</translation>
+    </message>
+    <message>
+        <source>+ Brush</source>
+        <translation>+ Sivellin</translation>
+    </message>
+    <message>
+        <source>+ Colour</source>
+        <translation>+ Väri</translation>
     </message>
     <message>
         <source>+ AI SUBJECT</source>
@@ -1270,6 +1322,70 @@
         <translation>K</translation>
     </message>
     <message>
+        <source>Combine with:</source>
+        <translation>Yhdistä:</translation>
+    </message>
+    <message>
+        <source>Drag the handles on the photo. The effect builds up from the hollow handle to the solid one.</source>
+        <translation>Vedä kuvan kahvoja. Vaikutus kasvaa ontosta kahvasta täyteen kahvaan.</translation>
+    </message>
+    <message>
+        <source>Drag the centre or the edge handles on the photo.</source>
+        <translation>Vedä kuvan keskikohtaa tai reunakahvoja.</translation>
+    </message>
+    <message>
+        <source>Feather</source>
+        <translation>Pehmennys</translation>
+    </message>
+    <message>
+        <source>Darkest</source>
+        <translation>Tummin</translation>
+    </message>
+    <message>
+        <source>Brightest</source>
+        <translation>Vaalein</translation>
+    </message>
+    <message>
+        <source>Falloff</source>
+        <translation>Siirtymä</translation>
+    </message>
+    <message>
+        <source>Click the photo…</source>
+        <translation>Napsauta kuvaa…</translation>
+    </message>
+    <message>
+        <source>Pick colour</source>
+        <translation>Poimi väri</translation>
+    </message>
+    <message>
+        <source>Range</source>
+        <translation>Alue</translation>
+    </message>
+    <message>
+        <source>Paint on the photo. The middle mouse button pans.</source>
+        <translation>Maalaa kuvaan. Hiiren keskipainike siirtää näkymää.</translation>
+    </message>
+    <message>
+        <source>Paint</source>
+        <translation>Maalaa</translation>
+    </message>
+    <message>
+        <source>Erase</source>
+        <translation>Pyyhi</translation>
+    </message>
+    <message>
+        <source>Clear</source>
+        <translation>Tyhjennä</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>Koko</translation>
+    </message>
+    <message>
+        <source>Flow</source>
+        <translation>Virtaus</translation>
+    </message>
+    <message>
         <source>Layer Opacity</source>
         <translation>Tason peittävyys</translation>
     </message>
@@ -1280,6 +1396,22 @@
     <message>
         <source>Target Contrast</source>
         <translation>Kontrasti</translation>
+    </message>
+    <message>
+        <source>Highlights</source>
+        <translation>Kirkkaat sävyt</translation>
+    </message>
+    <message>
+        <source>Shadows</source>
+        <translation>Varjot</translation>
+    </message>
+    <message>
+        <source>Whites</source>
+        <translation>Valkoiset</translation>
+    </message>
+    <message>
+        <source>Blacks</source>
+        <translation>Mustat</translation>
     </message>
     <message>
         <source>Target Saturation</source>
