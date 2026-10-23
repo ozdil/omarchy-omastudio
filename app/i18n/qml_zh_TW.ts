@@ -230,6 +230,14 @@
         <source>API key</source>
         <translation>API 金鑰</translation>
     </message>
+    <message>
+        <source>Omarchy&apos;s default AI is now %1</source>
+        <translation>Omarchy 預設 AI 現在是 %1</translation>
+    </message>
+    <message>
+        <source>Omarchy&apos;s default AI %1 cannot edit photos; choose claude or codex</source>
+        <translation>Omarchy 預設 AI（%1）無法編輯照片；請選擇 claude 或 codex</translation>
+    </message>
 </context>
 <context>
     <name>AiChatPanel</name>

@@ -2055,7 +2055,8 @@ Rectangle {
             onToggleMode: root.setProMode(!root.isProMode)
             aiConnected: aiAssist.localConnected
             aiBusy: aiAssist.connecting
-            aiModel: aiAssist.choice.model || ""
+            // Behind Omarchy's default agent the live agent, not the one saved at connect time
+            aiModel: aiAssist.choice.provider === "omarchy" ? aiAssist.omarchyAgent : (aiAssist.choice.model || "")
             aiProvider: aiAssist.choice.provider || ""
             aiProviderName: aiAssist.providerName(aiAssist.choice.provider || "")
             onConnectLocalAi: aiAssist.connectLocal()

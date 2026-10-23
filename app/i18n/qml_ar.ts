@@ -230,6 +230,14 @@
         <source>API key</source>
         <translation>مفتاح API</translation>
     </message>
+    <message>
+        <source>Omarchy&apos;s default AI is now %1</source>
+        <translation>الذكاء الاصطناعي الافتراضي في Omarchy الآن هو %1</translation>
+    </message>
+    <message>
+        <source>Omarchy&apos;s default AI %1 cannot edit photos; choose claude or codex</source>
+        <translation>لا يستطيع الذكاء الاصطناعي الافتراضي في Omarchy (%1) تعديل الصور؛ اختر claude أو codex</translation>
+    </message>
 </context>
 <context>
     <name>AiChatPanel</name>
