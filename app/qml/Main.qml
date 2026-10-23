@@ -90,6 +90,18 @@ Window {
                 if (mainWin.activePhotoPath === "") return "Error: no photo open";
                 mainWin.showExportModal = true;
                 return "OK";
+            case "showCloud":
+                mainWin.refreshCloud();
+                mainWin.showCloudModal = true;
+                win.present();
+                return "OK";
+            case "cloudAccounts":
+                return mainWin.cloudAccounts;
+            case "openCloud":
+                // openCloud <account> [folder]: browse a connected account in the filmstrip
+                if (str(a[0]).length === 0) return "Error: empty account";
+                mainWin.openCloudFolder(str(a[0]), str(a[1]));
+                return "OK";
             case "setRightTab":
                 if (["adjust", "masks", "looks", "ai"].indexOf(str(a[0])) < 0) return "Error: unknown tab";
                 mainWin.rightTab = str(a[0]);

@@ -688,6 +688,18 @@
         <source>Exporting…</source>
         <translation>Mengekspor…</translation>
     </message>
+    <message>
+        <source>After export, the files are also copied into the %1 folder of the account (on GitHub: the private %1 repository).</source>
+        <translation>Setelah ekspor, berkas juga disalin ke folder %1 di akun (di GitHub: repositori pribadi %1).</translation>
+    </message>
+    <message>
+        <source>This computer only</source>
+        <translation>Hanya komputer ini</translation>
+    </message>
+    <message>
+        <source>Upload to</source>
+        <translation>Unggah ke</translation>
+    </message>
 </context>
 <context>
     <name>FilmGrainPanel</name>
@@ -913,6 +925,18 @@
         <source>P</source>
         <comment>pick flag, first letter of Pick</comment>
         <translation>P</translation>
+    </message>
+    <message>
+        <source>Connect</source>
+        <translation>Sambungkan</translation>
+    </message>
+    <message>
+        <source>Connect Google Drive, OneDrive, Dropbox, GitHub and other accounts</source>
+        <translation>Sambungkan Google Drive, OneDrive, Dropbox, GitHub, dan akun lain</translation>
+    </message>
+    <message>
+        <source>No folders or photos here.</source>
+        <translation>Tidak ada folder atau foto di sini.</translation>
     </message>
 </context>
 <context>
@@ -2015,6 +2039,46 @@
         <source>Platform crop reset</source>
         <translation>Pemangkasan platform diatur ulang</translation>
     </message>
+    <message>
+        <source>%1 connected</source>
+        <translation>%1 tersambung</translation>
+    </message>
+    <message>
+        <source>Account disconnected</source>
+        <translation>Akun diputuskan</translation>
+    </message>
+    <message>
+        <source>Download failed</source>
+        <translation>Unduhan gagal</translation>
+    </message>
+    <message numerus="yes">
+        <source>Downloading %n photo(s)…</source>
+        <translation>
+            <numerusform>Mengunduh %n foto…</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>Sign-in did not finish.</source>
+        <translation>Proses masuk tidak selesai.</translation>
+    </message>
+    <message>
+        <source>The folder could not be listed.</source>
+        <translation>Isi folder tidak dapat ditampilkan.</translation>
+    </message>
+    <message>
+        <source>Upload failed: %1</source>
+        <translation>Unggahan gagal: %1</translation>
+    </message>
+    <message numerus="yes">
+        <source>Uploaded %n file(s) to %1</source>
+        <translation>
+            <numerusform>%n berkas diunggah ke %1</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>no answer from the engine</source>
+        <translation>tidak ada jawaban dari mesin</translation>
+    </message>
 </context>
 <context>
     <name>Navigator</name>
@@ -2637,6 +2701,93 @@
     <message>
         <source>Drop Shadow</source>
         <translation>Bayangan jatuh</translation>
+    </message>
+</context>
+<context>
+    <name>CloudDialog</name>
+    <message>
+        <source>Add an account</source>
+        <translation>Tambah akun</translation>
+    </message>
+    <message>
+        <source>Browse</source>
+        <translation>Jelajahi</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Batal</translation>
+    </message>
+    <message>
+        <source>Client ID</source>
+        <translation>ID klien</translation>
+    </message>
+    <message>
+        <source>Client secret</source>
+        <translation>Rahasia klien</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>Tutup</translation>
+    </message>
+    <message>
+        <source>Cloud accounts</source>
+        <translation>Akun cloud</translation>
+    </message>
+    <message>
+        <source>Confirm</source>
+        <translation>Konfirmasi</translation>
+    </message>
+    <message>
+        <source>Connected</source>
+        <translation>Tersambung</translation>
+    </message>
+    <message>
+        <source>Disconnect</source>
+        <translation>Putuskan</translation>
+    </message>
+    <message>
+        <source>Disconnecting removes the account's keys and downloaded copies from this computer. Files in the account stay as they are.</source>
+        <translation>Memutuskan akun menghapus kunci akun dan salinan unduhan dari komputer ini. Berkas di akun tetap seperti semula.</translation>
+    </message>
+    <message>
+        <source>Enter this code on the GitHub page that opened in your browser:</source>
+        <translation>Masukkan kode ini di halaman GitHub yang terbuka di peramban:</translation>
+    </message>
+    <message>
+        <source>Finish signing in in your browser. This window updates when you are done.</source>
+        <translation>Selesaikan proses masuk di peramban. Jendela ini diperbarui setelah selesai.</translation>
+    </message>
+    <message>
+        <source>Install it with: sudo pacman -S %1</source>
+        <translation>Pasang dengan: sudo pacman -S %1</translation>
+    </message>
+    <message>
+        <source>Needs %1</source>
+        <translation>Memerlukan %1</translation>
+    </message>
+    <message>
+        <source>No account connected yet.</source>
+        <translation>Belum ada akun yang tersambung.</translation>
+    </message>
+    <message>
+        <source>Open the page again</source>
+        <translation>Buka halaman lagi</translation>
+    </message>
+    <message>
+        <source>Own Google client ID (optional)</source>
+        <translation>ID klien Google sendiri (opsional)</translation>
+    </message>
+    <message>
+        <source>Signing in to %1</source>
+        <translation>Masuk ke %1</translation>
+    </message>
+    <message>
+        <source>The shared client rclone uses for Google Drive is being retired. With a client ID of your own from the Google Cloud Console, Google Drive keeps working. It is used the next time you connect Google Drive.</source>
+        <translation>Klien bersama yang dipakai rclone untuk Google Drive akan dihentikan. Dengan ID klien sendiri dari Google Cloud Console, Google Drive tetap berfungsi. ID ini dipakai saat Anda menyambungkan Google Drive berikutnya.</translation>
+    </message>
+    <message>
+        <source>You sign in on the service's own page in your browser. OmaStudio keeps the access keys in the system keyring and creates a folder named %1 in each account for uploads.</source>
+        <translation>Anda masuk di halaman layanan itu sendiri, di peramban. OmaStudio menyimpan kunci akses di gantungan kunci sistem dan membuat folder bernama %1 di setiap akun untuk unggahan.</translation>
     </message>
 </context>
 </TS>

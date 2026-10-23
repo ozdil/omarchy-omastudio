@@ -99,6 +99,7 @@ Optional:
 * `perl-image-exiftool` keeps EXIF metadata in exported files.
 * `ffmpeg` is used for AVIF export if the built-in encoder fails.
 * `onnxruntime` runs the local AI masks; a build with your hardware's execution provider (OpenVINO, QNN, Vitis AI, CUDA, MIGraphX) uses the NPU or GPU.
+* `rclone` and `libsecret` (with a keyring such as `gnome-keyring`) connect Google Drive, OneDrive, Dropbox, Box, pCloud and Yandex Disk; `github-cli` connects GitHub.
 
 ---
 
@@ -137,6 +138,8 @@ omastudio
 | `~/.local/share/omastudio/masks/` | Masks made by the AI models |
 | `~/.config/omastudio/` | Settings |
 | `~/.config/omastudio/language` | Interface language picked in the application (absent: system language) |
+| `~/.config/omastudio/cloud/` | Connected cloud accounts; `rclone.conf` is encrypted with a key kept in the keyring |
+| `~/.cache/omastudio/cloud/` | Photos downloaded from cloud accounts |
 | `~/.cache/omastudio/` | Thumbnails and previews |
 | `<photo>.omastudio` | Adjustments for a photo (sidecar) |
 
@@ -165,6 +168,27 @@ omastudio-engine help
 ```
 
 All commands print JSON, so Omarchy agents and scripts can use them directly.
+
+---
+
+## Cloud accounts
+
+**Connect** in the filmstrip bar adds Google Drive, OneDrive, Dropbox, Box, pCloud, Yandex Disk or GitHub. You sign in on the service's own page in the browser; OmaStudio never sees the password. Each connected account gets a tab next to Folders and Catalog: browse its folders, click a photo to download it (once, into `~/.cache/omastudio/cloud`) and open it. In Export, **Upload to** also copies the exported files into the account.
+
+* Storage services go through `rclone`. OmaStudio keeps its own rclone config, encrypted with a random key stored in the keyring (Secret Service, `secret-tool`), so access tokens are never on disk in plain text. Your own `~/.config/rclone/rclone.conf` is not touched.
+* GitHub goes through the GitHub CLI (`gh auth login`, device code in the browser); `gh` keeps the token in the keyring. An existing `gh` sign-in is reused, and disconnecting in OmaStudio does not log `gh` out. Files are limited to 100 MB, GitHub's own limit.
+* On connecting, a folder named `OmaStudio` is created in the account (on GitHub: a private repository `OmaStudio`). Uploads go there.
+* rclone's shared Google client is being retired; for Google Drive, a client ID of your own from the Google Cloud Console can be entered under **Own Google client ID**.
+* Disconnecting removes the account's keys and its downloaded copies from this computer; the files in the account stay.
+
+```bash
+omastudio-engine cloud status                      # services, missing tools, connected accounts
+omastudio-engine cloud connect dropbox             # sign in in the browser
+omastudio-engine cloud list dropbox-1 Photos/2024
+omastudio-engine cloud fetch dropbox-1 Photos/2024/DSCF0001.RAF
+omastudio-engine cloud upload dropbox-1 photo_omastudio.jpg
+omastudio-engine cloud disconnect dropbox-1
+```
 
 ---
 

@@ -689,6 +689,18 @@
         <source>Exporting…</source>
         <translation>Bezig met exporteren…</translation>
     </message>
+    <message>
+        <source>After export, the files are also copied into the %1 folder of the account (on GitHub: the private %1 repository).</source>
+        <translation>Na het exporteren worden de bestanden ook gekopieerd naar de map %1 van het account (op GitHub: de privé-repository %1).</translation>
+    </message>
+    <message>
+        <source>This computer only</source>
+        <translation>Alleen deze computer</translation>
+    </message>
+    <message>
+        <source>Upload to</source>
+        <translation>Uploaden naar</translation>
+    </message>
 </context>
 <context>
     <name>FilmGrainPanel</name>
@@ -914,6 +926,18 @@
         <source>P</source>
         <comment>pick flag, first letter of Pick</comment>
         <translation>G</translation>
+    </message>
+    <message>
+        <source>Connect</source>
+        <translation>Verbinden</translation>
+    </message>
+    <message>
+        <source>Connect Google Drive, OneDrive, Dropbox, GitHub and other accounts</source>
+        <translation>Google Drive, OneDrive, Dropbox, GitHub en andere accounts verbinden</translation>
+    </message>
+    <message>
+        <source>No folders or photos here.</source>
+        <translation>Geen mappen of foto's hier.</translation>
     </message>
 </context>
 <context>
@@ -2020,6 +2044,48 @@
         <source>Platform crop reset</source>
         <translation>Platformuitsnede hersteld</translation>
     </message>
+    <message>
+        <source>%1 connected</source>
+        <translation>%1 verbonden</translation>
+    </message>
+    <message>
+        <source>Account disconnected</source>
+        <translation>Account ontkoppeld</translation>
+    </message>
+    <message>
+        <source>Download failed</source>
+        <translation>Downloaden mislukt</translation>
+    </message>
+    <message numerus="yes">
+        <source>Downloading %n photo(s)…</source>
+        <translation>
+            <numerusform>%n foto downloaden…</numerusform>
+            <numerusform>%n foto's downloaden…</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>Sign-in did not finish.</source>
+        <translation>Het inloggen is niet voltooid.</translation>
+    </message>
+    <message>
+        <source>The folder could not be listed.</source>
+        <translation>De map kon niet worden weergegeven.</translation>
+    </message>
+    <message>
+        <source>Upload failed: %1</source>
+        <translation>Uploaden mislukt: %1</translation>
+    </message>
+    <message numerus="yes">
+        <source>Uploaded %n file(s) to %1</source>
+        <translation>
+            <numerusform>%n bestand geüpload naar %1</numerusform>
+            <numerusform>%n bestanden geüpload naar %1</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>no answer from the engine</source>
+        <translation>geen antwoord van de engine</translation>
+    </message>
 </context>
 <context>
     <name>Navigator</name>
@@ -2643,6 +2709,93 @@
     <message>
         <source>Drop Shadow</source>
         <translation>Slagschaduw</translation>
+    </message>
+</context>
+<context>
+    <name>CloudDialog</name>
+    <message>
+        <source>Add an account</source>
+        <translation>Account toevoegen</translation>
+    </message>
+    <message>
+        <source>Browse</source>
+        <translation>Bladeren</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Annuleren</translation>
+    </message>
+    <message>
+        <source>Client ID</source>
+        <translation>Client-ID</translation>
+    </message>
+    <message>
+        <source>Client secret</source>
+        <translation>Clientgeheim</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>Sluiten</translation>
+    </message>
+    <message>
+        <source>Cloud accounts</source>
+        <translation>Cloudaccounts</translation>
+    </message>
+    <message>
+        <source>Confirm</source>
+        <translation>Bevestigen</translation>
+    </message>
+    <message>
+        <source>Connected</source>
+        <translation>Verbonden</translation>
+    </message>
+    <message>
+        <source>Disconnect</source>
+        <translation>Ontkoppelen</translation>
+    </message>
+    <message>
+        <source>Disconnecting removes the account's keys and downloaded copies from this computer. Files in the account stay as they are.</source>
+        <translation>Ontkoppelen verwijdert de sleutels van het account en gedownloade kopieën van deze computer. Bestanden in het account blijven zoals ze zijn.</translation>
+    </message>
+    <message>
+        <source>Enter this code on the GitHub page that opened in your browser:</source>
+        <translation>Voer deze code in op de GitHub-pagina die in je browser is geopend:</translation>
+    </message>
+    <message>
+        <source>Finish signing in in your browser. This window updates when you are done.</source>
+        <translation>Rond het inloggen af in je browser. Dit venster wordt daarna bijgewerkt.</translation>
+    </message>
+    <message>
+        <source>Install it with: sudo pacman -S %1</source>
+        <translation>Installeer met: sudo pacman -S %1</translation>
+    </message>
+    <message>
+        <source>Needs %1</source>
+        <translation>Vereist %1</translation>
+    </message>
+    <message>
+        <source>No account connected yet.</source>
+        <translation>Nog geen account verbonden.</translation>
+    </message>
+    <message>
+        <source>Open the page again</source>
+        <translation>Pagina opnieuw openen</translation>
+    </message>
+    <message>
+        <source>Own Google client ID (optional)</source>
+        <translation>Eigen Google-client-ID (optioneel)</translation>
+    </message>
+    <message>
+        <source>Signing in to %1</source>
+        <translation>Inloggen bij %1</translation>
+    </message>
+    <message>
+        <source>The shared client rclone uses for Google Drive is being retired. With a client ID of your own from the Google Cloud Console, Google Drive keeps working. It is used the next time you connect Google Drive.</source>
+        <translation>De gedeelde client die rclone voor Google Drive gebruikt, wordt uitgefaseerd. Met een eigen client-ID uit de Google Cloud Console blijft Google Drive werken. Deze wordt gebruikt wanneer je Google Drive opnieuw verbindt.</translation>
+    </message>
+    <message>
+        <source>You sign in on the service's own page in your browser. OmaStudio keeps the access keys in the system keyring and creates a folder named %1 in each account for uploads.</source>
+        <translation>Je logt in op de eigen pagina van de dienst, in je browser. OmaStudio bewaart de toegangssleutels in de sleutelbos van het systeem en maakt in elk account een map %1 voor uploads.</translation>
     </message>
 </context>
 </TS>

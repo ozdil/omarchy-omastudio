@@ -689,6 +689,18 @@
         <source>Exporting…</source>
         <translation>Exportando…</translation>
     </message>
+    <message>
+        <source>After export, the files are also copied into the %1 folder of the account (on GitHub: the private %1 repository).</source>
+        <translation>Após exportar, os arquivos também são copiados para a pasta %1 da conta (no GitHub: o repositório privado %1).</translation>
+    </message>
+    <message>
+        <source>This computer only</source>
+        <translation>Somente este computador</translation>
+    </message>
+    <message>
+        <source>Upload to</source>
+        <translation>Enviar para</translation>
+    </message>
 </context>
 <context>
     <name>FilmGrainPanel</name>
@@ -914,6 +926,18 @@
         <source>P</source>
         <comment>pick flag, first letter of Pick</comment>
         <translation>E</translation>
+    </message>
+    <message>
+        <source>Connect</source>
+        <translation>Conectar</translation>
+    </message>
+    <message>
+        <source>Connect Google Drive, OneDrive, Dropbox, GitHub and other accounts</source>
+        <translation>Conectar Google Drive, OneDrive, Dropbox, GitHub e outras contas</translation>
+    </message>
+    <message>
+        <source>No folders or photos here.</source>
+        <translation>Nenhuma pasta ou foto aqui.</translation>
     </message>
 </context>
 <context>
@@ -2020,6 +2044,48 @@
         <source>Platform crop reset</source>
         <translation>Corte de plataforma redefinido</translation>
     </message>
+    <message>
+        <source>%1 connected</source>
+        <translation>%1 conectado</translation>
+    </message>
+    <message>
+        <source>Account disconnected</source>
+        <translation>Conta desconectada</translation>
+    </message>
+    <message>
+        <source>Download failed</source>
+        <translation>Falha no download</translation>
+    </message>
+    <message numerus="yes">
+        <source>Downloading %n photo(s)…</source>
+        <translation>
+            <numerusform>Baixando %n foto…</numerusform>
+            <numerusform>Baixando %n fotos…</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>Sign-in did not finish.</source>
+        <translation>O login não foi concluído.</translation>
+    </message>
+    <message>
+        <source>The folder could not be listed.</source>
+        <translation>Não foi possível listar a pasta.</translation>
+    </message>
+    <message>
+        <source>Upload failed: %1</source>
+        <translation>Falha no envio: %1</translation>
+    </message>
+    <message numerus="yes">
+        <source>Uploaded %n file(s) to %1</source>
+        <translation>
+            <numerusform>%n arquivo enviado para %1</numerusform>
+            <numerusform>%n arquivos enviados para %1</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>no answer from the engine</source>
+        <translation>sem resposta do mecanismo</translation>
+    </message>
 </context>
 <context>
     <name>Navigator</name>
@@ -2643,6 +2709,93 @@
     <message>
         <source>Drop Shadow</source>
         <translation>Sombra projetada</translation>
+    </message>
+</context>
+<context>
+    <name>CloudDialog</name>
+    <message>
+        <source>Add an account</source>
+        <translation>Adicionar conta</translation>
+    </message>
+    <message>
+        <source>Browse</source>
+        <translation>Navegar</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Cancelar</translation>
+    </message>
+    <message>
+        <source>Client ID</source>
+        <translation>ID do cliente</translation>
+    </message>
+    <message>
+        <source>Client secret</source>
+        <translation>Segredo do cliente</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>Fechar</translation>
+    </message>
+    <message>
+        <source>Cloud accounts</source>
+        <translation>Contas na nuvem</translation>
+    </message>
+    <message>
+        <source>Confirm</source>
+        <translation>Confirmar</translation>
+    </message>
+    <message>
+        <source>Connected</source>
+        <translation>Conectadas</translation>
+    </message>
+    <message>
+        <source>Disconnect</source>
+        <translation>Desconectar</translation>
+    </message>
+    <message>
+        <source>Disconnecting removes the account's keys and downloaded copies from this computer. Files in the account stay as they are.</source>
+        <translation>Desconectar remove deste computador as chaves da conta e as cópias baixadas. Os arquivos na conta continuam como estão.</translation>
+    </message>
+    <message>
+        <source>Enter this code on the GitHub page that opened in your browser:</source>
+        <translation>Digite este código na página do GitHub que abriu no navegador:</translation>
+    </message>
+    <message>
+        <source>Finish signing in in your browser. This window updates when you are done.</source>
+        <translation>Conclua o login no navegador. Esta janela é atualizada quando você terminar.</translation>
+    </message>
+    <message>
+        <source>Install it with: sudo pacman -S %1</source>
+        <translation>Instale com: sudo pacman -S %1</translation>
+    </message>
+    <message>
+        <source>Needs %1</source>
+        <translation>Requer %1</translation>
+    </message>
+    <message>
+        <source>No account connected yet.</source>
+        <translation>Nenhuma conta conectada ainda.</translation>
+    </message>
+    <message>
+        <source>Open the page again</source>
+        <translation>Abrir a página de novo</translation>
+    </message>
+    <message>
+        <source>Own Google client ID (optional)</source>
+        <translation>ID de cliente Google próprio (opcional)</translation>
+    </message>
+    <message>
+        <source>Signing in to %1</source>
+        <translation>Entrando em %1</translation>
+    </message>
+    <message>
+        <source>The shared client rclone uses for Google Drive is being retired. With a client ID of your own from the Google Cloud Console, Google Drive keeps working. It is used the next time you connect Google Drive.</source>
+        <translation>O cliente compartilhado que o rclone usa para o Google Drive está sendo desativado. Com um ID de cliente próprio do Google Cloud Console, o Google Drive continua funcionando. Ele é usado na próxima vez que você conectar o Google Drive.</translation>
+    </message>
+    <message>
+        <source>You sign in on the service's own page in your browser. OmaStudio keeps the access keys in the system keyring and creates a folder named %1 in each account for uploads.</source>
+        <translation>Você entra na própria página do serviço, no navegador. O OmaStudio guarda as chaves de acesso no chaveiro do sistema e cria em cada conta uma pasta chamada %1 para envios.</translation>
     </message>
 </context>
 </TS>

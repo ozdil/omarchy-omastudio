@@ -688,6 +688,18 @@
         <source>Exporting…</source>
         <translation>กำลังส่งออก…</translation>
     </message>
+    <message>
+        <source>After export, the files are also copied into the %1 folder of the account (on GitHub: the private %1 repository).</source>
+        <translation>หลังส่งออก ไฟล์จะถูกคัดลอกไปยังโฟลเดอร์ %1 ของบัญชีด้วย (บน GitHub: คลังส่วนตัว %1)</translation>
+    </message>
+    <message>
+        <source>This computer only</source>
+        <translation>เฉพาะคอมพิวเตอร์นี้</translation>
+    </message>
+    <message>
+        <source>Upload to</source>
+        <translation>อัปโหลดไปที่</translation>
+    </message>
 </context>
 <context>
     <name>FilmGrainPanel</name>
@@ -913,6 +925,18 @@
         <source>P</source>
         <comment>pick flag, first letter of Pick</comment>
         <translation>ล</translation>
+    </message>
+    <message>
+        <source>Connect</source>
+        <translation>เชื่อมต่อ</translation>
+    </message>
+    <message>
+        <source>Connect Google Drive, OneDrive, Dropbox, GitHub and other accounts</source>
+        <translation>เชื่อมต่อ Google Drive, OneDrive, Dropbox, GitHub และบัญชีอื่น ๆ</translation>
+    </message>
+    <message>
+        <source>No folders or photos here.</source>
+        <translation>ไม่มีโฟลเดอร์หรือรูปภาพที่นี่</translation>
     </message>
 </context>
 <context>
@@ -2015,6 +2039,46 @@
         <source>Platform crop reset</source>
         <translation>รีเซ็ตการครอปสำหรับแพลตฟอร์มแล้ว</translation>
     </message>
+    <message>
+        <source>%1 connected</source>
+        <translation>เชื่อมต่อ %1 แล้ว</translation>
+    </message>
+    <message>
+        <source>Account disconnected</source>
+        <translation>ยกเลิกการเชื่อมต่อบัญชีแล้ว</translation>
+    </message>
+    <message>
+        <source>Download failed</source>
+        <translation>ดาวน์โหลดไม่สำเร็จ</translation>
+    </message>
+    <message numerus="yes">
+        <source>Downloading %n photo(s)…</source>
+        <translation>
+            <numerusform>กำลังดาวน์โหลด %n รูป…</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>Sign-in did not finish.</source>
+        <translation>การลงชื่อเข้าใช้ไม่เสร็จสมบูรณ์</translation>
+    </message>
+    <message>
+        <source>The folder could not be listed.</source>
+        <translation>แสดงรายการในโฟลเดอร์ไม่ได้</translation>
+    </message>
+    <message>
+        <source>Upload failed: %1</source>
+        <translation>อัปโหลดไม่สำเร็จ: %1</translation>
+    </message>
+    <message numerus="yes">
+        <source>Uploaded %n file(s) to %1</source>
+        <translation>
+            <numerusform>อัปโหลด %n ไฟล์ไปที่ %1 แล้ว</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>no answer from the engine</source>
+        <translation>ไม่มีการตอบกลับจากเอนจิน</translation>
+    </message>
 </context>
 <context>
     <name>Navigator</name>
@@ -2637,6 +2701,93 @@
     <message>
         <source>Drop Shadow</source>
         <translation>เงาตกกระทบ</translation>
+    </message>
+</context>
+<context>
+    <name>CloudDialog</name>
+    <message>
+        <source>Add an account</source>
+        <translation>เพิ่มบัญชี</translation>
+    </message>
+    <message>
+        <source>Browse</source>
+        <translation>เรียกดู</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>ยกเลิก</translation>
+    </message>
+    <message>
+        <source>Client ID</source>
+        <translation>รหัสไคลเอนต์</translation>
+    </message>
+    <message>
+        <source>Client secret</source>
+        <translation>ข้อมูลลับของไคลเอนต์</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>ปิด</translation>
+    </message>
+    <message>
+        <source>Cloud accounts</source>
+        <translation>บัญชีคลาวด์</translation>
+    </message>
+    <message>
+        <source>Confirm</source>
+        <translation>ยืนยัน</translation>
+    </message>
+    <message>
+        <source>Connected</source>
+        <translation>เชื่อมต่อแล้ว</translation>
+    </message>
+    <message>
+        <source>Disconnect</source>
+        <translation>ยกเลิกการเชื่อมต่อ</translation>
+    </message>
+    <message>
+        <source>Disconnecting removes the account's keys and downloaded copies from this computer. Files in the account stay as they are.</source>
+        <translation>การยกเลิกการเชื่อมต่อจะลบคีย์ของบัญชีและสำเนาที่ดาวน์โหลดไว้ออกจากคอมพิวเตอร์นี้ ไฟล์ในบัญชียังคงอยู่เหมือนเดิม</translation>
+    </message>
+    <message>
+        <source>Enter this code on the GitHub page that opened in your browser:</source>
+        <translation>ป้อนรหัสนี้ในหน้า GitHub ที่เปิดในเบราว์เซอร์:</translation>
+    </message>
+    <message>
+        <source>Finish signing in in your browser. This window updates when you are done.</source>
+        <translation>ลงชื่อเข้าใช้ให้เสร็จในเบราว์เซอร์ หน้าต่างนี้จะอัปเดตเมื่อเสร็จ</translation>
+    </message>
+    <message>
+        <source>Install it with: sudo pacman -S %1</source>
+        <translation>ติดตั้งด้วย: sudo pacman -S %1</translation>
+    </message>
+    <message>
+        <source>Needs %1</source>
+        <translation>ต้องใช้ %1</translation>
+    </message>
+    <message>
+        <source>No account connected yet.</source>
+        <translation>ยังไม่มีบัญชีที่เชื่อมต่อ</translation>
+    </message>
+    <message>
+        <source>Open the page again</source>
+        <translation>เปิดหน้าอีกครั้ง</translation>
+    </message>
+    <message>
+        <source>Own Google client ID (optional)</source>
+        <translation>รหัสไคลเอนต์ Google ของคุณเอง (ไม่บังคับ)</translation>
+    </message>
+    <message>
+        <source>Signing in to %1</source>
+        <translation>กำลังลงชื่อเข้าใช้ %1</translation>
+    </message>
+    <message>
+        <source>The shared client rclone uses for Google Drive is being retired. With a client ID of your own from the Google Cloud Console, Google Drive keeps working. It is used the next time you connect Google Drive.</source>
+        <translation>ไคลเอนต์ที่ใช้ร่วมกันซึ่ง rclone ใช้กับ Google Drive กำลังจะเลิกใช้ เมื่อใช้รหัสไคลเอนต์ของคุณเองจาก Google Cloud Console แล้ว Google Drive จะยังทำงานต่อได้ ระบบจะใช้รหัสนี้ในครั้งถัดไปที่คุณเชื่อมต่อ Google Drive</translation>
+    </message>
+    <message>
+        <source>You sign in on the service's own page in your browser. OmaStudio keeps the access keys in the system keyring and creates a folder named %1 in each account for uploads.</source>
+        <translation>คุณลงชื่อเข้าใช้ในหน้าของบริการเองผ่านเบราว์เซอร์ OmaStudio เก็บคีย์การเข้าถึงไว้ในพวงกุญแจของระบบ และสร้างโฟลเดอร์ชื่อ %1 ในแต่ละบัญชีสำหรับการอัปโหลด</translation>
     </message>
 </context>
 </TS>

@@ -1,6 +1,7 @@
 #![allow(clippy::excessive_precision, clippy::too_many_arguments)]
 
 pub mod ai;
+pub mod cloud;
 pub mod dag;
 pub mod export;
 pub mod fuji;
@@ -830,6 +831,7 @@ fn main() {
         "mcp" => mcp::run(),
         "ai" => run_ai(&args[2..]),
         "xmp" => run_xmp(&args[2..]),
+        "cloud" => run_cloud(&args[2..]),
         "npu" => print_json(&ResponseWrapper::ok(ml::status())),
         "ai-mask" => {
             let flag = |name: &str| args.iter().position(|a| a == name).and_then(|i| args.get(i + 1)).cloned();
@@ -873,6 +875,12 @@ fn main() {
             println!("  ai edit <photo> [--prompt P] [--recipe JSON]  Let the chosen model edit the photo");
             println!("  xmp export <photo> [--out F] [--force] Write the edit, rating and label as an XMP sidecar");
             println!("  xmp import <photo> [--from F] [--save] Read an XMP sidecar from Lightroom, Capture One, darktable");
+            println!("  cloud status                          Cloud services, the tools they need and connected accounts");
+            println!("  cloud connect <service>               Sign in in the browser (google-drive, onedrive, dropbox, github, ...)");
+            println!("  cloud list <account> [path]           Folders and photos in a connected account");
+            println!("  cloud fetch <account> <path>          Download a photo into the cache and print its local path");
+            println!("  cloud upload <account> <file> [dir]   Upload a file (default: the account's OmaStudio folder)");
+            println!("  cloud disconnect <account>            Forget an account and its keys");
             println!("  npu                                   ONNX Runtime and the NPU/GPU/CPU it can use for local models");
             println!("  ai-mask <photo> [--kind subject|sky]  Segment the photo with a local model into a mask layer image");
             println!("  mcp                                   Model Context Protocol server on stdin/stdout for AI agents");
@@ -1299,6 +1307,108 @@ fn run_fuji_camera(args: &[String]) {
 
 /// `xmp export <photo> [--recipe JSON] [--out F] [--force]` and
 /// `xmp import <photo> [--from F] [--save]`: XMP sidecars for other editors.
+/// `cloud status|connect|list|fetch|upload|disconnect`, see `src/cloud`. `connect`
+/// prints its sign-in steps as JSON lines (`{"event": ...}`) before the result.
+fn run_cloud(args: &[String]) {
+    let flag = |name: &str| args.iter().position(|a| a == name).and_then(|i| args.get(i + 1)).cloned();
+    let positional: Vec<&String> = {
+        let mut out = Vec::new();
+        let mut skip = false;
+        for a in args.iter().skip(1) {
+            if skip {
+                skip = false;
+            } else if a.starts_with("--") {
+                skip = true;
+            } else {
+                out.push(a);
+            }
+        }
+        out
+    };
+    let arg = |i: usize, usage: &str| positional.get(i).map(|s| s.as_str()).ok_or_else(|| format!("Usage: cloud {usage}"));
+    let result: Result<serde_json::Value, String> = (|| match args.first().map(String::as_str) {
+        Some("status") | None => serde_json::to_value(cloud::status()).map_err(|e| e.to_string()),
+        Some("connect") => {
+            let service = arg(0, "connect <service>")?;
+            let client = cloud::OAuthClient {
+                client_id: flag("--client-id").unwrap_or_default(),
+                client_secret: flag("--client-secret").unwrap_or_default(),
+            };
+            let account = cloud::connect(service, &client, &mut |event| {
+                if let Ok(line) = serde_json::to_string(&event) {
+                    println!("{line}");
+                    let _ = io::stdout().flush();
+                }
+            })?;
+            serde_json::to_value(account).map_err(|e| e.to_string())
+        }
+        Some("disconnect") => {
+            cloud::disconnect(arg(0, "disconnect <account>")?)?;
+            Ok(serde_json::json!({ "disconnected": true }))
+        }
+        Some("list") => {
+            let account = arg(0, "list <account> [path]")?;
+            let path = positional.get(1).map(|s| s.as_str()).unwrap_or("");
+            let items: Vec<serde_json::Value> = cloud::list(account, path)?
+                .into_iter()
+                .filter(|e| {
+                    e.is_dir
+                        || Path::new(&e.name)
+                            .extension()
+                            .and_then(|x| x.to_str())
+                            .is_some_and(|x| omastudio_engine::raw::is_supported_extension(&x.to_lowercase()))
+                })
+                .map(|e| {
+                    // A photo's `path` is where it is (or will be) cached, so the
+                    // interface matches it against the open photo; `remote_path` is
+                    // where it is in the account. A photo opened before has its
+                    // thumbnail from the cached copy.
+                    let local = if e.is_dir { None } else { cloud::cached_path(account, &e.path).ok() };
+                    let thumbnail = local
+                        .as_ref()
+                        .filter(|p| p.is_file())
+                        .map(|p| thumbnail_path_for(p))
+                        .filter(|t| t.is_file())
+                        .map(|t| t.to_string_lossy().to_string())
+                        .unwrap_or_default();
+                    serde_json::json!({
+                        "name": e.name,
+                        "path": local.map(|p| p.to_string_lossy().to_string()).unwrap_or_else(|| e.path.clone()),
+                        "remote_path": e.path, "is_dir": e.is_dir, "is_remote": !e.is_dir,
+                        "size": e.size, "thumbnail": thumbnail,
+                    })
+                })
+                .collect();
+            Ok(serde_json::json!({ "account": account, "path": cloud::clean_path(path)?, "items": items }))
+        }
+        Some("fetch") => {
+            let local = cloud::fetch(arg(0, "fetch <account> <path>")?, arg(1, "fetch <account> <path>")?)?;
+            let thumb = thumbnail_path_for(&local);
+            if !thumb.exists()
+                && let Ok(raw) = RawImage::open(&local)
+            {
+                let _ = raw.extract_thumbnail(&thumb);
+            }
+            let thumbnail = if thumb.is_file() { thumb.to_string_lossy().to_string() } else { String::new() };
+            Ok(serde_json::json!({ "local_path": local, "thumbnail": thumbnail }))
+        }
+        Some("upload") => {
+            let account = arg(0, "upload <account> <file> [dir]")?;
+            let file = arg(1, "upload <account> <file> [dir]")?;
+            let remote = cloud::upload(account, Path::new(file), positional.get(2).map(|s| s.as_str()))?;
+            Ok(serde_json::json!({ "remote_path": remote }))
+        }
+        Some(other) => Err(format!("Unknown cloud command: {other}")),
+    })();
+    match result {
+        Ok(v) => print_json(&ResponseWrapper::ok(v)),
+        Err(e) => {
+            print_json::<()>(&ResponseWrapper::err(e));
+            std::process::exit(1);
+        }
+    }
+}
+
 fn run_xmp(args: &[String]) {
     let flag = |name: &str| args.iter().position(|a| a == name).and_then(|i| args.get(i + 1)).cloned();
     let has = |name: &str| args.iter().any(|a| a == name);

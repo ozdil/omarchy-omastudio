@@ -689,6 +689,18 @@
         <source>Exporting…</source>
         <translation>निर्यात हो रहा है…</translation>
     </message>
+    <message>
+        <source>After export, the files are also copied into the %1 folder of the account (on GitHub: the private %1 repository).</source>
+        <translation>एक्सपोर्ट के बाद फ़ाइलें खाते के %1 फ़ोल्डर में भी कॉपी होती हैं (GitHub पर: निजी %1 रिपॉज़िटरी)।</translation>
+    </message>
+    <message>
+        <source>This computer only</source>
+        <translation>केवल यह कंप्यूटर</translation>
+    </message>
+    <message>
+        <source>Upload to</source>
+        <translation>यहाँ अपलोड करें</translation>
+    </message>
 </context>
 <context>
     <name>FilmGrainPanel</name>
@@ -914,6 +926,18 @@
         <source>P</source>
         <comment>pick flag, first letter of Pick</comment>
         <translation>च</translation>
+    </message>
+    <message>
+        <source>Connect</source>
+        <translation>कनेक्ट करें</translation>
+    </message>
+    <message>
+        <source>Connect Google Drive, OneDrive, Dropbox, GitHub and other accounts</source>
+        <translation>Google Drive, OneDrive, Dropbox, GitHub और अन्य खाते जोड़ें</translation>
+    </message>
+    <message>
+        <source>No folders or photos here.</source>
+        <translation>यहाँ कोई फ़ोल्डर या फ़ोटो नहीं है।</translation>
     </message>
 </context>
 <context>
@@ -2020,6 +2044,48 @@
         <source>Platform crop reset</source>
         <translation>प्लेटफ़ॉर्म क्रॉप रीसेट किया गया</translation>
     </message>
+    <message>
+        <source>%1 connected</source>
+        <translation>%1 जुड़ गया</translation>
+    </message>
+    <message>
+        <source>Account disconnected</source>
+        <translation>खाता डिस्कनेक्ट हुआ</translation>
+    </message>
+    <message>
+        <source>Download failed</source>
+        <translation>डाउनलोड विफल</translation>
+    </message>
+    <message numerus="yes">
+        <source>Downloading %n photo(s)…</source>
+        <translation>
+            <numerusform>%n फ़ोटो डाउनलोड हो रही है…</numerusform>
+            <numerusform>%n फ़ोटो डाउनलोड हो रही हैं…</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>Sign-in did not finish.</source>
+        <translation>साइन-इन पूरा नहीं हुआ।</translation>
+    </message>
+    <message>
+        <source>The folder could not be listed.</source>
+        <translation>फ़ोल्डर की सूची नहीं मिल सकी।</translation>
+    </message>
+    <message>
+        <source>Upload failed: %1</source>
+        <translation>अपलोड विफल: %1</translation>
+    </message>
+    <message numerus="yes">
+        <source>Uploaded %n file(s) to %1</source>
+        <translation>
+            <numerusform>%n फ़ाइल %1 में अपलोड हुई</numerusform>
+            <numerusform>%n फ़ाइलें %1 में अपलोड हुईं</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>no answer from the engine</source>
+        <translation>इंजन से कोई उत्तर नहीं</translation>
+    </message>
 </context>
 <context>
     <name>Navigator</name>
@@ -2643,6 +2709,93 @@
     <message>
         <source>Drop Shadow</source>
         <translation>ड्रॉप शैडो</translation>
+    </message>
+</context>
+<context>
+    <name>CloudDialog</name>
+    <message>
+        <source>Add an account</source>
+        <translation>खाता जोड़ें</translation>
+    </message>
+    <message>
+        <source>Browse</source>
+        <translation>ब्राउज़ करें</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>रद्द करें</translation>
+    </message>
+    <message>
+        <source>Client ID</source>
+        <translation>क्लाइंट आईडी</translation>
+    </message>
+    <message>
+        <source>Client secret</source>
+        <translation>क्लाइंट सीक्रेट</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>बंद करें</translation>
+    </message>
+    <message>
+        <source>Cloud accounts</source>
+        <translation>क्लाउड खाते</translation>
+    </message>
+    <message>
+        <source>Confirm</source>
+        <translation>पुष्टि करें</translation>
+    </message>
+    <message>
+        <source>Connected</source>
+        <translation>जुड़े हुए</translation>
+    </message>
+    <message>
+        <source>Disconnect</source>
+        <translation>डिस्कनेक्ट करें</translation>
+    </message>
+    <message>
+        <source>Disconnecting removes the account's keys and downloaded copies from this computer. Files in the account stay as they are.</source>
+        <translation>डिस्कनेक्ट करने से इस कंप्यूटर से खाते की कुंजियाँ और डाउनलोड की गई प्रतियाँ हट जाती हैं। खाते की फ़ाइलें जैसी हैं वैसी रहती हैं।</translation>
+    </message>
+    <message>
+        <source>Enter this code on the GitHub page that opened in your browser:</source>
+        <translation>ब्राउज़र में खुले GitHub पेज पर यह कोड डालें:</translation>
+    </message>
+    <message>
+        <source>Finish signing in in your browser. This window updates when you are done.</source>
+        <translation>ब्राउज़र में साइन-इन पूरा करें। पूरा होने पर यह विंडो अपडेट हो जाएगी।</translation>
+    </message>
+    <message>
+        <source>Install it with: sudo pacman -S %1</source>
+        <translation>इंस्टॉल करें: sudo pacman -S %1</translation>
+    </message>
+    <message>
+        <source>Needs %1</source>
+        <translation>%1 आवश्यक</translation>
+    </message>
+    <message>
+        <source>No account connected yet.</source>
+        <translation>अभी तक कोई खाता नहीं जुड़ा है।</translation>
+    </message>
+    <message>
+        <source>Open the page again</source>
+        <translation>पेज फिर से खोलें</translation>
+    </message>
+    <message>
+        <source>Own Google client ID (optional)</source>
+        <translation>अपनी Google क्लाइंट आईडी (वैकल्पिक)</translation>
+    </message>
+    <message>
+        <source>Signing in to %1</source>
+        <translation>%1 में साइन इन हो रहा है</translation>
+    </message>
+    <message>
+        <source>The shared client rclone uses for Google Drive is being retired. With a client ID of your own from the Google Cloud Console, Google Drive keeps working. It is used the next time you connect Google Drive.</source>
+        <translation>rclone जिस साझा क्लाइंट से Google Drive चलाता है, वह बंद किया जा रहा है। Google Cloud Console से ली गई अपनी क्लाइंट आईडी से Google Drive चलता रहेगा। इसका उपयोग अगली बार Google Drive जोड़ने पर होगा।</translation>
+    </message>
+    <message>
+        <source>You sign in on the service's own page in your browser. OmaStudio keeps the access keys in the system keyring and creates a folder named %1 in each account for uploads.</source>
+        <translation>आप ब्राउज़र में सेवा के अपने पेज पर साइन इन करते हैं। OmaStudio एक्सेस कुंजियाँ सिस्टम कीरिंग में रखता है और अपलोड के लिए हर खाते में %1 नाम का फ़ोल्डर बनाता है।</translation>
     </message>
 </context>
 </TS>

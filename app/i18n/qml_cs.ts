@@ -690,6 +690,18 @@
         <source>Exporting…</source>
         <translation>Exportuje se…</translation>
     </message>
+    <message>
+        <source>After export, the files are also copied into the %1 folder of the account (on GitHub: the private %1 repository).</source>
+        <translation>Po exportu se soubory zkopírují také do složky %1 v účtu (na GitHubu: do soukromého repozitáře %1).</translation>
+    </message>
+    <message>
+        <source>This computer only</source>
+        <translation>Jen tento počítač</translation>
+    </message>
+    <message>
+        <source>Upload to</source>
+        <translation>Nahrát do</translation>
+    </message>
 </context>
 <context>
     <name>FilmGrainPanel</name>
@@ -915,6 +927,18 @@
         <source>P</source>
         <comment>pick flag, first letter of Pick</comment>
         <translation>V</translation>
+    </message>
+    <message>
+        <source>Connect</source>
+        <translation>Připojit</translation>
+    </message>
+    <message>
+        <source>Connect Google Drive, OneDrive, Dropbox, GitHub and other accounts</source>
+        <translation>Připojit Google Drive, OneDrive, Dropbox, GitHub a další účty</translation>
+    </message>
+    <message>
+        <source>No folders or photos here.</source>
+        <translation>Žádné složky ani fotky.</translation>
     </message>
 </context>
 <context>
@@ -2025,6 +2049,50 @@
         <source>Platform crop reset</source>
         <translation>Ořez pro platformu obnoven</translation>
     </message>
+    <message>
+        <source>%1 connected</source>
+        <translation>%1 připojeno</translation>
+    </message>
+    <message>
+        <source>Account disconnected</source>
+        <translation>Účet odpojen</translation>
+    </message>
+    <message>
+        <source>Download failed</source>
+        <translation>Stahování selhalo</translation>
+    </message>
+    <message numerus="yes">
+        <source>Downloading %n photo(s)…</source>
+        <translation>
+            <numerusform>Stahuje se %n fotka…</numerusform>
+            <numerusform>Stahují se %n fotky…</numerusform>
+            <numerusform>Stahuje se %n fotek…</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>Sign-in did not finish.</source>
+        <translation>Přihlášení nebylo dokončeno.</translation>
+    </message>
+    <message>
+        <source>The folder could not be listed.</source>
+        <translation>Složku se nepodařilo vypsat.</translation>
+    </message>
+    <message>
+        <source>Upload failed: %1</source>
+        <translation>Nahrávání selhalo: %1</translation>
+    </message>
+    <message numerus="yes">
+        <source>Uploaded %n file(s) to %1</source>
+        <translation>
+            <numerusform>Nahrán %n soubor do %1</numerusform>
+            <numerusform>Nahrány %n soubory do %1</numerusform>
+            <numerusform>Nahráno %n souborů do %1</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>no answer from the engine</source>
+        <translation>žádná odpověď od jádra</translation>
+    </message>
 </context>
 <context>
     <name>Navigator</name>
@@ -2649,6 +2717,93 @@
     <message>
         <source>Drop Shadow</source>
         <translation>Vržený stín</translation>
+    </message>
+</context>
+<context>
+    <name>CloudDialog</name>
+    <message>
+        <source>Add an account</source>
+        <translation>Přidat účet</translation>
+    </message>
+    <message>
+        <source>Browse</source>
+        <translation>Procházet</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Zrušit</translation>
+    </message>
+    <message>
+        <source>Client ID</source>
+        <translation>ID klienta</translation>
+    </message>
+    <message>
+        <source>Client secret</source>
+        <translation>Tajný klíč klienta</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>Zavřít</translation>
+    </message>
+    <message>
+        <source>Cloud accounts</source>
+        <translation>Cloudové účty</translation>
+    </message>
+    <message>
+        <source>Confirm</source>
+        <translation>Potvrdit</translation>
+    </message>
+    <message>
+        <source>Connected</source>
+        <translation>Připojené</translation>
+    </message>
+    <message>
+        <source>Disconnect</source>
+        <translation>Odpojit</translation>
+    </message>
+    <message>
+        <source>Disconnecting removes the account's keys and downloaded copies from this computer. Files in the account stay as they are.</source>
+        <translation>Odpojení odstraní z tohoto počítače klíče účtu a stažené kopie. Soubory v účtu zůstanou beze změny.</translation>
+    </message>
+    <message>
+        <source>Enter this code on the GitHub page that opened in your browser:</source>
+        <translation>Zadejte tento kód na stránce GitHubu, která se otevřela v prohlížeči:</translation>
+    </message>
+    <message>
+        <source>Finish signing in in your browser. This window updates when you are done.</source>
+        <translation>Dokončete přihlášení v prohlížeči. Okno se potom aktualizuje.</translation>
+    </message>
+    <message>
+        <source>Install it with: sudo pacman -S %1</source>
+        <translation>Instalace: sudo pacman -S %1</translation>
+    </message>
+    <message>
+        <source>Needs %1</source>
+        <translation>Vyžaduje %1</translation>
+    </message>
+    <message>
+        <source>No account connected yet.</source>
+        <translation>Zatím není připojen žádný účet.</translation>
+    </message>
+    <message>
+        <source>Open the page again</source>
+        <translation>Znovu otevřít stránku</translation>
+    </message>
+    <message>
+        <source>Own Google client ID (optional)</source>
+        <translation>Vlastní ID klienta Google (volitelné)</translation>
+    </message>
+    <message>
+        <source>Signing in to %1</source>
+        <translation>Přihlašování k %1</translation>
+    </message>
+    <message>
+        <source>The shared client rclone uses for Google Drive is being retired. With a client ID of your own from the Google Cloud Console, Google Drive keeps working. It is used the next time you connect Google Drive.</source>
+        <translation>Sdílený klient, kterého rclone používá pro Google Drive, se ruší. S vlastním ID klienta z Google Cloud Console bude Google Drive fungovat dál. Použije se při příštím připojení Google Drive.</translation>
+    </message>
+    <message>
+        <source>You sign in on the service's own page in your browser. OmaStudio keeps the access keys in the system keyring and creates a folder named %1 in each account for uploads.</source>
+        <translation>Přihlašujete se na stránce služby v prohlížeči. OmaStudio uchovává přístupové klíče v systémové klíčence a v každém účtu vytvoří pro nahrávání složku %1.</translation>
     </message>
 </context>
 </TS>

@@ -688,6 +688,18 @@
         <source>Exporting…</source>
         <translation>내보내는 중…</translation>
     </message>
+    <message>
+        <source>After export, the files are also copied into the %1 folder of the account (on GitHub: the private %1 repository).</source>
+        <translation>내보낸 후 파일은 계정의 %1 폴더에도 복사됩니다(GitHub에서는 비공개 저장소 %1).</translation>
+    </message>
+    <message>
+        <source>This computer only</source>
+        <translation>이 컴퓨터만</translation>
+    </message>
+    <message>
+        <source>Upload to</source>
+        <translation>업로드 위치</translation>
+    </message>
 </context>
 <context>
     <name>FilmGrainPanel</name>
@@ -913,6 +925,18 @@
         <source>P</source>
         <comment>pick flag, first letter of Pick</comment>
         <translation>선</translation>
+    </message>
+    <message>
+        <source>Connect</source>
+        <translation>연결</translation>
+    </message>
+    <message>
+        <source>Connect Google Drive, OneDrive, Dropbox, GitHub and other accounts</source>
+        <translation>Google Drive, OneDrive, Dropbox, GitHub 및 기타 계정 연결</translation>
+    </message>
+    <message>
+        <source>No folders or photos here.</source>
+        <translation>여기에는 폴더나 사진이 없습니다.</translation>
     </message>
 </context>
 <context>
@@ -2015,6 +2039,46 @@
         <source>Platform crop reset</source>
         <translation>플랫폼 자르기 재설정됨</translation>
     </message>
+    <message>
+        <source>%1 connected</source>
+        <translation>%1 연결됨</translation>
+    </message>
+    <message>
+        <source>Account disconnected</source>
+        <translation>계정 연결이 해제되었습니다</translation>
+    </message>
+    <message>
+        <source>Download failed</source>
+        <translation>다운로드 실패</translation>
+    </message>
+    <message numerus="yes">
+        <source>Downloading %n photo(s)…</source>
+        <translation>
+            <numerusform>사진 %n장 다운로드 중…</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>Sign-in did not finish.</source>
+        <translation>로그인이 완료되지 않았습니다.</translation>
+    </message>
+    <message>
+        <source>The folder could not be listed.</source>
+        <translation>폴더 목록을 가져올 수 없습니다.</translation>
+    </message>
+    <message>
+        <source>Upload failed: %1</source>
+        <translation>업로드 실패: %1</translation>
+    </message>
+    <message numerus="yes">
+        <source>Uploaded %n file(s) to %1</source>
+        <translation>
+            <numerusform>파일 %n개를 %1에 업로드했습니다</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>no answer from the engine</source>
+        <translation>엔진 응답 없음</translation>
+    </message>
 </context>
 <context>
     <name>Navigator</name>
@@ -2637,6 +2701,93 @@
     <message>
         <source>Drop Shadow</source>
         <translation>그림자</translation>
+    </message>
+</context>
+<context>
+    <name>CloudDialog</name>
+    <message>
+        <source>Add an account</source>
+        <translation>계정 추가</translation>
+    </message>
+    <message>
+        <source>Browse</source>
+        <translation>찾아보기</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>취소</translation>
+    </message>
+    <message>
+        <source>Client ID</source>
+        <translation>클라이언트 ID</translation>
+    </message>
+    <message>
+        <source>Client secret</source>
+        <translation>클라이언트 보안 비밀</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>닫기</translation>
+    </message>
+    <message>
+        <source>Cloud accounts</source>
+        <translation>클라우드 계정</translation>
+    </message>
+    <message>
+        <source>Confirm</source>
+        <translation>확인</translation>
+    </message>
+    <message>
+        <source>Connected</source>
+        <translation>연결됨</translation>
+    </message>
+    <message>
+        <source>Disconnect</source>
+        <translation>연결 해제</translation>
+    </message>
+    <message>
+        <source>Disconnecting removes the account's keys and downloaded copies from this computer. Files in the account stay as they are.</source>
+        <translation>연결을 해제하면 이 컴퓨터에서 계정 키와 다운로드한 사본이 삭제됩니다. 계정의 파일은 그대로 유지됩니다.</translation>
+    </message>
+    <message>
+        <source>Enter this code on the GitHub page that opened in your browser:</source>
+        <translation>브라우저에 열린 GitHub 페이지에 이 코드를 입력하세요:</translation>
+    </message>
+    <message>
+        <source>Finish signing in in your browser. This window updates when you are done.</source>
+        <translation>브라우저에서 로그인을 완료하세요. 완료되면 이 창이 업데이트됩니다.</translation>
+    </message>
+    <message>
+        <source>Install it with: sudo pacman -S %1</source>
+        <translation>설치: sudo pacman -S %1</translation>
+    </message>
+    <message>
+        <source>Needs %1</source>
+        <translation>%1 필요</translation>
+    </message>
+    <message>
+        <source>No account connected yet.</source>
+        <translation>아직 연결된 계정이 없습니다.</translation>
+    </message>
+    <message>
+        <source>Open the page again</source>
+        <translation>페이지 다시 열기</translation>
+    </message>
+    <message>
+        <source>Own Google client ID (optional)</source>
+        <translation>자체 Google 클라이언트 ID(선택 사항)</translation>
+    </message>
+    <message>
+        <source>Signing in to %1</source>
+        <translation>%1에 로그인하는 중</translation>
+    </message>
+    <message>
+        <source>The shared client rclone uses for Google Drive is being retired. With a client ID of your own from the Google Cloud Console, Google Drive keeps working. It is used the next time you connect Google Drive.</source>
+        <translation>rclone이 Google Drive에 사용하는 공유 클라이언트가 폐지됩니다. Google Cloud Console에서 발급한 자체 클라이언트 ID가 있으면 Google Drive를 계속 사용할 수 있습니다. 다음에 Google Drive를 연결할 때 사용됩니다.</translation>
+    </message>
+    <message>
+        <source>You sign in on the service's own page in your browser. OmaStudio keeps the access keys in the system keyring and creates a folder named %1 in each account for uploads.</source>
+        <translation>로그인은 브라우저에서 서비스 자체 페이지를 통해 이루어집니다. OmaStudio는 액세스 키를 시스템 키링에 보관하고 업로드용으로 각 계정에 %1 폴더를 만듭니다.</translation>
     </message>
 </context>
 </TS>

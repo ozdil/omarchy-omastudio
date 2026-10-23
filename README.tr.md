@@ -88,6 +88,7 @@ OmaStudio, LibRaw 0.22'nin desteklediği tüm RAW biçimlerini açar. Bayer ve X
 * `perl-image-exiftool`: dışa aktarılan dosyalarda EXIF bilgilerini korur.
 * `ffmpeg`: yerleşik kodlayıcı başarısız olursa AVIF dışa aktarımı için kullanılır.
 * `onnxruntime`: yerel yapay zekâ maskelerini çalıştırır. Donanımınızın yürütme sağlayıcısını (OpenVINO, QNN, Vitis AI, CUDA, MIGraphX) içeren bir derleme NPU'yu veya GPU'yu kullanır.
+* `rclone` ve `libsecret` (`gnome-keyring` gibi bir anahtarlıkla): Google Drive, OneDrive, Dropbox, Box, pCloud ve Yandex Disk bağlantısı; `github-cli`: GitHub bağlantısı.
 
 ---
 
@@ -125,6 +126,8 @@ omastudio
 | `~/.local/share/omastudio/models/` | Yerel yapay zekâ modelleri (`subject.onnx`, `sky.onnx`) |
 | `~/.local/share/omastudio/masks/` | Yapay zekâ modellerinin ürettiği maskeler |
 | `~/.config/omastudio/` | Ayarlar |
+| `~/.config/omastudio/cloud/` | Bağlı bulut hesapları; `rclone.conf`, anahtarı anahtarlıkta duran bir parola ile şifrelenir |
+| `~/.cache/omastudio/cloud/` | Bulut hesaplarından indirilen fotoğraflar |
 | `~/.cache/omastudio/` | Küçük resimler ve önizlemeler |
 | `<fotoğraf>.omastudio` | Fotoğrafın ayarları (yan dosya) |
 
@@ -153,6 +156,27 @@ omastudio-engine help
 ```
 
 Tüm komutlar JSON çıktı verir. Bu sayede Omarchy ajanları ve betikler onları doğrudan kullanabilir.
+
+---
+
+## Bulut hesapları
+
+Film şeridi çubuğundaki **Bağlan**, Google Drive, OneDrive, Dropbox, Box, pCloud, Yandex Disk veya GitHub hesabı ekler. Giriş, tarayıcıda hizmetin kendi sayfasında yapılır; OmaStudio parolayı görmez. Her bağlı hesap Klasörler ve Katalog'un yanında bir sekme olur: klasörlerinde gezinin, bir fotoğrafa tıklayınca bir kez indirilir (`~/.cache/omastudio/cloud` içine) ve açılır. Dışa aktarmada **Yükleme hedefi**, dosyaları hesaba da kopyalar.
+
+* Depolama hizmetleri `rclone` üzerinden çalışır. OmaStudio kendi rclone yapılandırmasını tutar ve anahtarlıkta (Secret Service, `secret-tool`) saklanan rastgele bir anahtarla şifreler; erişim belirteçleri diskte hiçbir zaman açık metin olarak durmaz. Kendi `~/.config/rclone/rclone.conf` dosyanıza dokunulmaz.
+* GitHub, GitHub CLI üzerinden çalışır (`gh auth login`, tarayıcıda cihaz kodu); `gh` belirteci anahtarlıkta saklar. Var olan bir `gh` girişi kullanılır, OmaStudio'da bağlantıyı kesmek `gh` oturumunu kapatmaz. Dosyalar en çok 100 MB olabilir (GitHub'ın sınırı).
+* Bağlanınca hesapta `OmaStudio` adlı bir klasör oluşturulur (GitHub'da: `OmaStudio` adlı özel bir depo). Yüklemeler oraya gider.
+* rclone'un ortak Google istemcisi kullanımdan kalkıyor; Google Drive için Google Cloud Console'dan alınan kendi istemci kimliğiniz **Kendi Google istemci kimliğiniz** altına girilebilir.
+* Bağlantıyı kesmek, hesabın anahtarlarını ve indirilen kopyaları bu bilgisayardan siler; hesaptaki dosyalar kalır.
+
+```bash
+omastudio-engine cloud status                      # hizmetler, eksik araçlar, bağlı hesaplar
+omastudio-engine cloud connect dropbox             # tarayıcıda giriş
+omastudio-engine cloud list dropbox-1 Photos/2024
+omastudio-engine cloud fetch dropbox-1 Photos/2024/DSCF0001.RAF
+omastudio-engine cloud upload dropbox-1 photo_omastudio.jpg
+omastudio-engine cloud disconnect dropbox-1
+```
 
 ---
 

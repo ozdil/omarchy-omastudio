@@ -688,6 +688,18 @@
         <source>Exporting…</source>
         <translation>正在匯出…</translation>
     </message>
+    <message>
+        <source>After export, the files are also copied into the %1 folder of the account (on GitHub: the private %1 repository).</source>
+        <translation>匯出後,檔案也會複製到帳戶的 %1 資料夾(在 GitHub 上為私人儲存庫 %1)。</translation>
+    </message>
+    <message>
+        <source>This computer only</source>
+        <translation>僅此電腦</translation>
+    </message>
+    <message>
+        <source>Upload to</source>
+        <translation>上傳至</translation>
+    </message>
 </context>
 <context>
     <name>FilmGrainPanel</name>
@@ -913,6 +925,18 @@
         <source>P</source>
         <comment>pick flag, first letter of Pick</comment>
         <translation>選</translation>
+    </message>
+    <message>
+        <source>Connect</source>
+        <translation>連線</translation>
+    </message>
+    <message>
+        <source>Connect Google Drive, OneDrive, Dropbox, GitHub and other accounts</source>
+        <translation>連線 Google Drive、OneDrive、Dropbox、GitHub 等帳戶</translation>
+    </message>
+    <message>
+        <source>No folders or photos here.</source>
+        <translation>這裡沒有資料夾或照片。</translation>
     </message>
 </context>
 <context>
@@ -2015,6 +2039,46 @@
         <source>Platform crop reset</source>
         <translation>已重置平臺裁剪</translation>
     </message>
+    <message>
+        <source>%1 connected</source>
+        <translation>已連線 %1</translation>
+    </message>
+    <message>
+        <source>Account disconnected</source>
+        <translation>帳戶已中斷連線</translation>
+    </message>
+    <message>
+        <source>Download failed</source>
+        <translation>下載失敗</translation>
+    </message>
+    <message numerus="yes">
+        <source>Downloading %n photo(s)…</source>
+        <translation>
+            <numerusform>正在下載 %n 張相片…</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>Sign-in did not finish.</source>
+        <translation>登入未完成。</translation>
+    </message>
+    <message>
+        <source>The folder could not be listed.</source>
+        <translation>無法列出資料夾內容。</translation>
+    </message>
+    <message>
+        <source>Upload failed: %1</source>
+        <translation>上傳失敗:%1</translation>
+    </message>
+    <message numerus="yes">
+        <source>Uploaded %n file(s) to %1</source>
+        <translation>
+            <numerusform>已將 %n 個檔案上傳至 %1</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>no answer from the engine</source>
+        <translation>引擎沒有回應</translation>
+    </message>
 </context>
 <context>
     <name>Navigator</name>
@@ -2637,6 +2701,93 @@
     <message>
         <source>Drop Shadow</source>
         <translation>投影</translation>
+    </message>
+</context>
+<context>
+    <name>CloudDialog</name>
+    <message>
+        <source>Add an account</source>
+        <translation>新增帳戶</translation>
+    </message>
+    <message>
+        <source>Browse</source>
+        <translation>瀏覽</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>取消</translation>
+    </message>
+    <message>
+        <source>Client ID</source>
+        <translation>用戶端 ID</translation>
+    </message>
+    <message>
+        <source>Client secret</source>
+        <translation>用戶端密鑰</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>關閉</translation>
+    </message>
+    <message>
+        <source>Cloud accounts</source>
+        <translation>雲端帳戶</translation>
+    </message>
+    <message>
+        <source>Confirm</source>
+        <translation>確認</translation>
+    </message>
+    <message>
+        <source>Connected</source>
+        <translation>已連線</translation>
+    </message>
+    <message>
+        <source>Disconnect</source>
+        <translation>中斷連線</translation>
+    </message>
+    <message>
+        <source>Disconnecting removes the account's keys and downloaded copies from this computer. Files in the account stay as they are.</source>
+        <translation>中斷連線會從這台電腦移除該帳戶的金鑰和已下載的副本。帳戶中的檔案保持不變。</translation>
+    </message>
+    <message>
+        <source>Enter this code on the GitHub page that opened in your browser:</source>
+        <translation>請在瀏覽器開啟的 GitHub 頁面輸入此代碼:</translation>
+    </message>
+    <message>
+        <source>Finish signing in in your browser. This window updates when you are done.</source>
+        <translation>請在瀏覽器中完成登入。完成後此視窗會更新。</translation>
+    </message>
+    <message>
+        <source>Install it with: sudo pacman -S %1</source>
+        <translation>安裝指令:sudo pacman -S %1</translation>
+    </message>
+    <message>
+        <source>Needs %1</source>
+        <translation>需要 %1</translation>
+    </message>
+    <message>
+        <source>No account connected yet.</source>
+        <translation>尚未連線任何帳戶。</translation>
+    </message>
+    <message>
+        <source>Open the page again</source>
+        <translation>再次開啟頁面</translation>
+    </message>
+    <message>
+        <source>Own Google client ID (optional)</source>
+        <translation>自有 Google 用戶端 ID(選用)</translation>
+    </message>
+    <message>
+        <source>Signing in to %1</source>
+        <translation>正在登入 %1</translation>
+    </message>
+    <message>
+        <source>The shared client rclone uses for Google Drive is being retired. With a client ID of your own from the Google Cloud Console, Google Drive keeps working. It is used the next time you connect Google Drive.</source>
+        <translation>rclone 用於 Google Drive 的共用用戶端即將停用。使用您在 Google Cloud Console 建立的用戶端 ID,Google Drive 可以繼續使用。下次連線 Google Drive 時會使用它。</translation>
+    </message>
+    <message>
+        <source>You sign in on the service's own page in your browser. OmaStudio keeps the access keys in the system keyring and creates a folder named %1 in each account for uploads.</source>
+        <translation>您在瀏覽器中透過服務本身的頁面登入。OmaStudio 會將存取金鑰保存在系統金鑰圈中,並在每個帳戶建立名為 %1 的資料夾供上傳使用。</translation>
     </message>
 </context>
 </TS>

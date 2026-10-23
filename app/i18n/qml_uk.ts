@@ -690,6 +690,18 @@
         <source>Exporting…</source>
         <translation>Експорт…</translation>
     </message>
+    <message>
+        <source>After export, the files are also copied into the %1 folder of the account (on GitHub: the private %1 repository).</source>
+        <translation>Після експорту файли також копіюються в теку %1 облікового запису (на GitHub — у приватний репозиторій %1).</translation>
+    </message>
+    <message>
+        <source>This computer only</source>
+        <translation>Лише цей комп'ютер</translation>
+    </message>
+    <message>
+        <source>Upload to</source>
+        <translation>Вивантажити до</translation>
+    </message>
 </context>
 <context>
     <name>FilmGrainPanel</name>
@@ -915,6 +927,18 @@
         <source>P</source>
         <comment>pick flag, first letter of Pick</comment>
         <translation>В</translation>
+    </message>
+    <message>
+        <source>Connect</source>
+        <translation>Підключити</translation>
+    </message>
+    <message>
+        <source>Connect Google Drive, OneDrive, Dropbox, GitHub and other accounts</source>
+        <translation>Підключити Google Drive, OneDrive, Dropbox, GitHub та інші облікові записи</translation>
+    </message>
+    <message>
+        <source>No folders or photos here.</source>
+        <translation>Тут немає тек і фотографій.</translation>
     </message>
 </context>
 <context>
@@ -2025,6 +2049,50 @@
         <source>Platform crop reset</source>
         <translation>Кадрування для платформи скинуто</translation>
     </message>
+    <message>
+        <source>%1 connected</source>
+        <translation>%1: підключено</translation>
+    </message>
+    <message>
+        <source>Account disconnected</source>
+        <translation>Обліковий запис відключено</translation>
+    </message>
+    <message>
+        <source>Download failed</source>
+        <translation>Не вдалося завантажити</translation>
+    </message>
+    <message numerus="yes">
+        <source>Downloading %n photo(s)…</source>
+        <translation>
+            <numerusform>Завантажується %n фотографія…</numerusform>
+            <numerusform>Завантажуються %n фотографії…</numerusform>
+            <numerusform>Завантажуються %n фотографій…</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>Sign-in did not finish.</source>
+        <translation>Вхід не завершено.</translation>
+    </message>
+    <message>
+        <source>The folder could not be listed.</source>
+        <translation>Не вдалося отримати вміст теки.</translation>
+    </message>
+    <message>
+        <source>Upload failed: %1</source>
+        <translation>Не вдалося вивантажити: %1</translation>
+    </message>
+    <message numerus="yes">
+        <source>Uploaded %n file(s) to %1</source>
+        <translation>
+            <numerusform>%n файл вивантажено до %1</numerusform>
+            <numerusform>%n файли вивантажено до %1</numerusform>
+            <numerusform>%n файлів вивантажено до %1</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>no answer from the engine</source>
+        <translation>рушій не відповів</translation>
+    </message>
 </context>
 <context>
     <name>Navigator</name>
@@ -2649,6 +2717,93 @@
     <message>
         <source>Drop Shadow</source>
         <translation>Тінь</translation>
+    </message>
+</context>
+<context>
+    <name>CloudDialog</name>
+    <message>
+        <source>Add an account</source>
+        <translation>Додати обліковий запис</translation>
+    </message>
+    <message>
+        <source>Browse</source>
+        <translation>Огляд</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Скасувати</translation>
+    </message>
+    <message>
+        <source>Client ID</source>
+        <translation>ID клієнта</translation>
+    </message>
+    <message>
+        <source>Client secret</source>
+        <translation>Секрет клієнта</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>Закрити</translation>
+    </message>
+    <message>
+        <source>Cloud accounts</source>
+        <translation>Хмарні облікові записи</translation>
+    </message>
+    <message>
+        <source>Confirm</source>
+        <translation>Підтвердити</translation>
+    </message>
+    <message>
+        <source>Connected</source>
+        <translation>Підключені</translation>
+    </message>
+    <message>
+        <source>Disconnect</source>
+        <translation>Відключити</translation>
+    </message>
+    <message>
+        <source>Disconnecting removes the account's keys and downloaded copies from this computer. Files in the account stay as they are.</source>
+        <translation>Під час відключення з цього комп'ютера видаляються ключі облікового запису та завантажені копії. Файли в обліковому записі залишаються без змін.</translation>
+    </message>
+    <message>
+        <source>Enter this code on the GitHub page that opened in your browser:</source>
+        <translation>Введіть цей код на сторінці GitHub, що відкрилася в браузері:</translation>
+    </message>
+    <message>
+        <source>Finish signing in in your browser. This window updates when you are done.</source>
+        <translation>Завершіть вхід у браузері. Вікно оновиться, коли ви закінчите.</translation>
+    </message>
+    <message>
+        <source>Install it with: sudo pacman -S %1</source>
+        <translation>Встановлення: sudo pacman -S %1</translation>
+    </message>
+    <message>
+        <source>Needs %1</source>
+        <translation>Потрібно %1</translation>
+    </message>
+    <message>
+        <source>No account connected yet.</source>
+        <translation>Ще немає підключених облікових записів.</translation>
+    </message>
+    <message>
+        <source>Open the page again</source>
+        <translation>Відкрити сторінку знову</translation>
+    </message>
+    <message>
+        <source>Own Google client ID (optional)</source>
+        <translation>Власний ID клієнта Google (необов'язково)</translation>
+    </message>
+    <message>
+        <source>Signing in to %1</source>
+        <translation>Вхід у %1</translation>
+    </message>
+    <message>
+        <source>The shared client rclone uses for Google Drive is being retired. With a client ID of your own from the Google Cloud Console, Google Drive keeps working. It is used the next time you connect Google Drive.</source>
+        <translation>Спільний клієнт, який rclone використовує для Google Drive, виводиться з ужитку. З власним ID клієнта з Google Cloud Console Google Drive працюватиме й далі. Його буде використано під час наступного підключення Google Drive.</translation>
+    </message>
+    <message>
+        <source>You sign in on the service's own page in your browser. OmaStudio keeps the access keys in the system keyring and creates a folder named %1 in each account for uploads.</source>
+        <translation>Вхід виконується на сторінці самого сервісу в браузері. OmaStudio зберігає ключі доступу в системній в'язці ключів і створює в кожному обліковому записі теку %1 для завантажень.</translation>
     </message>
 </context>
 </TS>

@@ -31,6 +31,22 @@ Rectangle {
     property real splitRatio: 0.5
     property bool showExportModal: false
     property bool showAboutModal: false
+    property bool showCloudModal: false
+    // Cloud accounts (`omastudio-engine cloud status`), the one open in the filmstrip
+    // and the folder inside it
+    property var cloudAccounts: []
+    property var cloudProviders: []
+    property string cloudUploadFolder: "OmaStudio"
+    property string cloudAccount: ""
+    property string cloudPath: ""
+    // Photos waiting to be downloaded ([{ remote, local }]) and what runs once they are
+    property var cloudFetchQueue: []
+    property var cloudAfterFetch: null
+    property string cloudFetching: ""
+    // Exported files waiting to be uploaded, and the account they go to
+    property var cloudUploadQueue: []
+    property string cloudUploadAccount: ""
+    property int cloudUploaded: 0
     property bool showLeftPanel: true
 
     property bool showRightPanel: true
@@ -1139,6 +1155,10 @@ Rectangle {
                 if (data) {
                     exportDialog.exportStatusIsError = data.failed > 0;
                     exportDialog.exportStatusText = qsTr("%1 of %2 photos exported").arg(data.succeeded).arg(data.total);
+                    var exported = [];
+                    for (var ei = 0; ei < (data.results || []).length; ei++)
+                        if (data.results[ei].exported_path) exported.push(data.results[ei].exported_path);
+                    root.uploadExported(exported);
                     root.showToast(qsTr("Batch export: %1 succeeded, %2 failed").arg(data.succeeded).arg(data.failed),
                                    data.failed > 0 ? Theme.highlightClip : Theme.accentGreen);
                 }
@@ -1325,6 +1345,7 @@ Rectangle {
                 var resp = JSON.parse(output);
                 if (resp.success && resp.data) {
                     exportDialog.exportStatusText = "[OK] " + qsTr("Saved to %1").arg(resp.data.exported_path);
+                    root.uploadExported([resp.data.exported_path]);
                 } else {
                     exportDialog.exportStatusText = "[ERR] " + (resp.error || qsTr("Export failed"));
                 }
@@ -1688,6 +1709,231 @@ Rectangle {
             cmd: "load",
             path: path
         });
+    }
+
+    // ---- Cloud accounts (src/cloud in the engine) ----
+
+    function refreshCloud() {
+        if (!cloudStatusProc.running) {
+            cloudStatusProc.command = [root.resolveEnginePath(), "cloud", "status"];
+            cloudStatusProc.running = true;
+        }
+    }
+
+    function openCloudFolder(account, path) {
+        root.cloudAccount = account;
+        root.cloudPath = path;
+        root.isListingFolder = true;
+        root.photoList = [];
+        cloudListProc.running = false;
+        cloudListProc.command = [root.resolveEnginePath(), "cloud", "list", account, path];
+        cloudListProc.running = true;
+    }
+
+    function leaveCloud() {
+        root.cloudAccount = "";
+        root.cloudPath = "";
+        cloudListProc.running = false;
+    }
+
+    // Downloads the given photos ([{ remote, local }]) one after another, then runs `then`
+    function fetchCloudPhotos(items, then) {
+        var pending = [];
+        for (var i = 0; i < items.length; i++) pending.push(items[i]);
+        cloudFetchProc.running = false;
+        root.cloudFetchQueue = pending;
+        root.cloudAfterFetch = then;
+        root.fetchNextCloudPhoto();
+    }
+
+    function fetchNextCloudPhoto() {
+        if (root.cloudFetchQueue.length === 0) {
+            root.cloudFetching = "";
+            var then = root.cloudAfterFetch;
+            root.cloudAfterFetch = null;
+            if (then) then();
+            return;
+        }
+        var next = root.cloudFetchQueue[0];
+        root.cloudFetching = next.local;
+        cloudFetchProc.command = [root.resolveEnginePath(), "cloud", "fetch", next.account, next.remote];
+        cloudFetchProc.running = true;
+    }
+
+    function cloudItem(localPath) {
+        for (var i = 0; i < root.photoList.length; i++) {
+            var it = root.photoList[i];
+            if (it.path === localPath && it.is_remote) return { account: root.cloudAccount, remote: it.remote_path, local: it.path };
+        }
+        return null;
+    }
+
+    function uploadExported(paths) {
+        if (root.cloudUploadAccount === "" || paths.length === 0) return;
+        root.cloudUploadQueue = root.cloudUploadQueue.concat(paths);
+        if (!cloudUploadProc.running) root.uploadNext();
+    }
+
+    function uploadNext() {
+        if (root.cloudUploadQueue.length === 0) {
+            if (root.cloudUploaded > 0)
+                root.showToast(qsTr("Uploaded %n file(s) to %1", "", root.cloudUploaded).arg(root.cloudUploadFolder), Theme.accentGreen);
+            root.cloudUploaded = 0;
+            return;
+        }
+        var file = root.cloudUploadQueue[0];
+        root.cloudUploadQueue = root.cloudUploadQueue.slice(1);
+        cloudUploadProc.command = [root.resolveEnginePath(), "cloud", "upload", root.cloudUploadAccount, file];
+        cloudUploadProc.running = true;
+    }
+
+    function engineError(output, fallback) {
+        try {
+            var resp = JSON.parse(String(output).trim().split("\n").pop());
+            if (resp.error) return String(resp.error).split("\n")[0].substring(0, 200);
+        } catch (e) {}
+        return fallback;
+    }
+
+    Process {
+        id: cloudStatusProc
+        onFinished: function(exitCode, output) {
+            try {
+                var resp = JSON.parse(output);
+                if (resp.success && resp.data) {
+                    root.cloudProviders = resp.data.providers || [];
+                    root.cloudAccounts = resp.data.accounts || [];
+                    root.cloudUploadFolder = resp.data.upload_folder || "OmaStudio";
+                    // An account removed elsewhere is not left open in the filmstrip
+                    var known = false;
+                    for (var i = 0; i < root.cloudAccounts.length; i++)
+                        if (root.cloudAccounts[i].id === root.cloudAccount) known = true;
+                    if (root.cloudAccount !== "" && !known) {
+                        root.leaveCloud();
+                        filmstrip.currentFolder = "~/Pictures";
+                        root.scanLocalFolder("~/Pictures");
+                    }
+                }
+            } catch (e) {
+                console.warn("cloud status:", e);
+            }
+        }
+    }
+
+    Process {
+        id: cloudListProc
+        onFinished: function(exitCode, output) {
+            root.isListingFolder = false;
+            try {
+                var resp = JSON.parse(output);
+                if (resp.success && resp.data && resp.data.account === root.cloudAccount) {
+                    root.photoList = resp.data.items || [];
+                } else if (!resp.success) {
+                    root.showToast(root.engineError(output, qsTr("The folder could not be listed.")), Theme.accentMagenta);
+                }
+            } catch (e) {
+                if (exitCode !== -1) root.showToast(qsTr("The folder could not be listed."), Theme.accentMagenta);
+            }
+        }
+    }
+
+    Process {
+        id: cloudFetchProc
+        onFinished: function(exitCode, output) {
+            var done = root.cloudFetchQueue.length > 0 ? root.cloudFetchQueue[0] : null;
+            var ok = false;
+            var thumbnail = "";
+            try {
+                var resp = JSON.parse(output);
+                ok = resp.success === true;
+                if (ok && resp.data) thumbnail = resp.data.thumbnail || "";
+                if (!ok) root.showToast(root.engineError(output, qsTr("Download failed")), Theme.accentMagenta);
+            } catch (e) {
+                // Cancelled (another photo was picked) or no answer
+                if (exitCode !== -1) root.showToast(qsTr("Download failed"), Theme.accentMagenta);
+            }
+            if (exitCode === -1) return;
+            if (!ok) {
+                root.cloudFetchQueue = [];
+                root.cloudAfterFetch = null;
+                root.cloudFetching = "";
+                return;
+            }
+            // The downloaded copy has a thumbnail now
+            if (done && thumbnail !== "" && root.cloudAccount !== "") {
+                var list = root.photoList.slice();
+                for (var i = 0; i < list.length; i++) {
+                    if (list[i].path === done.local && !list[i].thumbnail)
+                        list[i] = Object.assign({}, list[i], { "thumbnail": thumbnail });
+                }
+                root.photoList = list;
+            }
+            root.cloudFetchQueue = root.cloudFetchQueue.slice(1);
+            root.fetchNextCloudPhoto();
+        }
+    }
+
+    Process {
+        id: cloudUploadProc
+        onFinished: function(exitCode, output) {
+            try {
+                var resp = JSON.parse(output);
+                if (resp.success) root.cloudUploaded++;
+                else root.showToast(qsTr("Upload failed: %1").arg(root.engineError(output, qsTr("no answer from the engine"))), Theme.accentMagenta);
+            } catch (e) {
+                root.showToast(qsTr("Upload failed: %1").arg(qsTr("no answer from the engine")), Theme.accentMagenta);
+            }
+            root.uploadNext();
+        }
+    }
+
+    // Sign-in: the engine prints the steps as JSON lines, then the result
+    Process {
+        id: cloudConnectProc
+        splitLines: true
+        property string provider: ""
+        property bool succeeded: false
+        onLineRead: function(line) {
+            try {
+                var msg = JSON.parse(line);
+                if (msg.event === "browser") {
+                    cloudDialog.signInUrl = msg.url;
+                } else if (msg.event === "device_code") {
+                    cloudDialog.deviceCode = msg.code;
+                    cloudDialog.signInUrl = msg.url;
+                } else if (msg.success === true && msg.data) {
+                    cloudConnectProc.succeeded = true;
+                    root.showToast(qsTr("%1 connected").arg(msg.data.label), Theme.accentGreen);
+                    root.refreshCloud();
+                    root.showCloudModal = false;
+                    filmstrip.isCatalogMode = false;
+                    root.openCloudFolder(msg.data.id, "");
+                } else if (msg.success === false) {
+                    cloudDialog.errorText = String(msg.error || "").substring(0, 300);
+                }
+            } catch (e) {
+                console.warn("cloud connect:", line);
+            }
+        }
+        onFinished: function(exitCode, output) {
+            cloudDialog.connectingLabel = "";
+            cloudDialog.signInUrl = "";
+            cloudDialog.deviceCode = "";
+            if (exitCode !== 0 && !cloudConnectProc.succeeded && cloudDialog.errorText === "" && exitCode !== -1)
+                cloudDialog.errorText = qsTr("Sign-in did not finish.");
+        }
+    }
+
+    Process {
+        id: cloudDisconnectProc
+        onFinished: function(exitCode, output) {
+            try {
+                var resp = JSON.parse(output);
+                if (resp.success) root.showToast(qsTr("Account disconnected"), Theme.accentCyan);
+                else cloudDialog.errorText = root.engineError(output, "");
+            } catch (e) {}
+            root.refreshCloud();
+        }
     }
 
     function scanLocalFolder(dir) {
@@ -3127,15 +3373,43 @@ Rectangle {
             activeRating: root.photoRating
             activeFlag: root.photoFlag
             isListingFolder: root.isListingFolder
+            cloudAccounts: root.cloudAccounts
+            cloudAccount: root.cloudAccount
+            cloudPath: root.cloudPath
+            isDownloadingRemote: root.cloudFetching !== ""
+            downloadingPath: root.cloudFetching
             onSelectPhoto: function(path, isRemote) {
-                root.loadPhoto(path);
+                var item = isRemote ? root.cloudItem(path) : null;
+                if (item) {
+                    root.fetchCloudPhotos([item], function() { root.loadPhoto(item.local); });
+                } else {
+                    root.loadPhoto(path);
+                }
             }
             onNavigateFolder: function(remotePath) {
+                if (root.cloudAccount !== "") {
+                    root.openCloudFolder(root.cloudAccount, remotePath);
+                    return;
+                }
                 root.showToast(qsTr("Opening %1").arg(remotePath), Theme.accent);
                 filmstrip.currentFolder = remotePath;
                 root.scanLocalFolder(remotePath);
             }
+            onConnectRequested: {
+                cloudDialog.errorText = "";
+                root.refreshCloud();
+                root.showCloudModal = true;
+            }
+            onOpenCloudAccount: function(account) {
+                root.openCloudFolder(account, "");
+            }
             onParentFolderRequested: {
+                if (root.cloudAccount !== "") {
+                    var segs = root.cloudPath.split("/").filter(function(p) { return p.length > 0; });
+                    segs.pop();
+                    root.openCloudFolder(root.cloudAccount, segs.join("/"));
+                    return;
+                }
                 var cur = filmstrip.currentFolder || "~/Pictures";
                 if (cur.indexOf("/") !== -1) {
                     var parts = cur.split("/").filter(function(p) { return p.length > 0; });
@@ -3149,6 +3423,7 @@ Rectangle {
                 }
             }
             onSwitchSource: function(isCatalog) {
+                root.leaveCloud();
                 if (isCatalog) {
                     root.showToast(qsTr("Loading the catalog…"), Theme.accentCyan);
                     root.loadStudioCatalog("");
@@ -3158,7 +3433,9 @@ Rectangle {
                 }
             }
             onRefreshRequested: {
-                if (filmstrip.isCatalogMode) {
+                if (root.cloudAccount !== "" && !filmstrip.isCatalogMode) {
+                    root.openCloudFolder(root.cloudAccount, root.cloudPath);
+                } else if (filmstrip.isCatalogMode) {
                     root.showToast(qsTr("Refreshing the catalog…"), Theme.accentCyan);
                     root.loadStudioCatalog("");
                 } else {
@@ -3166,13 +3443,28 @@ Rectangle {
                 }
             }
             onBatchExportRequested: {
-                exportDialog.isBatchMode = true;
-                exportDialog.batchCount = filmstrip.selectedPaths.length;
-                exportDialog.exportStatusText = "";
-                exportDialog.exportStatusIsError = false;
-                root.showExportModal = true;
+                // Photos in a cloud account are downloaded before they can be exported
+                var missing = [];
+                for (var i = 0; i < filmstrip.selectedPaths.length; i++) {
+                    var item = root.cloudItem(filmstrip.selectedPaths[i]);
+                    if (item) missing.push(item);
+                }
+                if (missing.length > 0) {
+                    root.showToast(qsTr("Downloading %n photo(s)…", "", missing.length), Theme.accentCyan);
+                    root.fetchCloudPhotos(missing, root.openBatchExport);
+                    return;
+                }
+                root.openBatchExport();
             }
         }
+    }
+
+    function openBatchExport() {
+        exportDialog.isBatchMode = true;
+        exportDialog.batchCount = filmstrip.selectedPaths.length;
+        exportDialog.exportStatusText = "";
+        exportDialog.exportStatusIsError = false;
+        root.showExportModal = true;
     }
 
     // Toast Notification Banner (Auto-dismissing)
@@ -3227,6 +3519,10 @@ Rectangle {
             host: root
             watermarkEnabled: root.watermarkEnabled
             watermarkOptions: root.buildWatermarkOptions()
+            cloudAccounts: root.cloudAccounts
+            uploadFolder: root.cloudUploadFolder
+            uploadAccount: root.cloudUploadAccount
+            onUploadAccountPicked: function(account) { root.cloudUploadAccount = account }
             onCloseRequested: root.showExportModal = false
             onDoExport: function(opts) {
                 exportDialog.isExporting = true;
@@ -3264,6 +3560,67 @@ Rectangle {
         }
     }
 
+    // CLOUD ACCOUNTS MODAL OVERLAY
+    Rectangle {
+        visible: root.showCloudModal
+        anchors.fill: parent
+        color: Qt.rgba(0, 0, 0, 0.65)
+        z: 100
+
+        MouseArea {
+            anchors.fill: parent
+            onClicked: root.showCloudModal = false
+        }
+
+        CloudDialog {
+            id: cloudDialog
+            anchors.centerIn: parent
+            visible: root.showCloudModal
+            providers: root.cloudProviders
+            accounts: root.cloudAccounts
+            uploadFolder: root.cloudUploadFolder
+            onCloseRequested: root.showCloudModal = false
+            onConnectRequested: function(provider, clientId, clientSecret) {
+                if (cloudConnectProc.running) return;
+                var label = provider;
+                for (var i = 0; i < root.cloudProviders.length; i++)
+                    if (root.cloudProviders[i].id === provider) label = root.cloudProviders[i].label;
+                cloudDialog.errorText = "";
+                cloudDialog.signInUrl = "";
+                cloudDialog.deviceCode = "";
+                cloudDialog.connectingLabel = label;
+                var cmd = [root.resolveEnginePath(), "cloud", "connect", provider];
+                if (clientId !== "") cmd = cmd.concat(["--client-id", clientId, "--client-secret", clientSecret]);
+                cloudConnectProc.provider = provider;
+                cloudConnectProc.succeeded = false;
+                cloudConnectProc.command = cmd;
+                cloudConnectProc.running = true;
+            }
+            onCancelRequested: {
+                // The engine's helpers die with it, which also closes the sign-in server
+                cloudConnectProc.running = false;
+                cloudDialog.connectingLabel = "";
+                cloudDialog.signInUrl = "";
+                cloudDialog.deviceCode = "";
+            }
+            onBrowseRequested: function(account) {
+                root.showCloudModal = false;
+                filmstrip.isCatalogMode = false;
+                root.openCloudFolder(account, "");
+            }
+            onDisconnectRequested: function(account) {
+                if (root.cloudAccount === account) {
+                    root.leaveCloud();
+                    filmstrip.currentFolder = "~/Pictures";
+                    root.scanLocalFolder("~/Pictures");
+                }
+                if (root.cloudUploadAccount === account) root.cloudUploadAccount = "";
+                cloudDisconnectProc.command = [root.resolveEnginePath(), "cloud", "disconnect", account];
+                cloudDisconnectProc.running = true;
+            }
+        }
+    }
+
     // ABOUT / INFO MODAL OVERLAY
     Rectangle {
         visible: root.showAboutModal
@@ -3288,6 +3645,7 @@ Rectangle {
         loadUiState();
         root.sendDaemonCommand({ cmd: "icc_profiles" });
         scanLocalFolder("~/Pictures");
+        refreshCloud();
         // Photo passed on the command line (`omastudio photo.NEF`, desktop "Open with")
         var openPath = Host.openPath;
         if (openPath && root.activePhotoPath === "") root.activePhotoPath = String(openPath);
@@ -3304,6 +3662,8 @@ Rectangle {
         }
         if (exportProc.running) exportProc.running = false;
         if (listProc.running) listProc.running = false;
+        if (cloudConnectProc.running) cloudConnectProc.running = false;
+        if (cloudFetchProc.running) cloudFetchProc.running = false;
         if (openFileProc.running) openFileProc.running = false;
     }
 

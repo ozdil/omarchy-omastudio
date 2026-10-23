@@ -689,6 +689,18 @@
         <source>Exporting…</source>
         <translation>מייצא…</translation>
     </message>
+    <message>
+        <source>After export, the files are also copied into the %1 folder of the account (on GitHub: the private %1 repository).</source>
+        <translation>לאחר הייצוא הקבצים מועתקים גם לתיקייה %1 בחשבון (ב־GitHub: המאגר הפרטי %1).</translation>
+    </message>
+    <message>
+        <source>This computer only</source>
+        <translation>מחשב זה בלבד</translation>
+    </message>
+    <message>
+        <source>Upload to</source>
+        <translation>העלאה אל</translation>
+    </message>
 </context>
 <context>
     <name>FilmGrainPanel</name>
@@ -914,6 +926,18 @@
         <source>P</source>
         <comment>pick flag, first letter of Pick</comment>
         <translation>נ</translation>
+    </message>
+    <message>
+        <source>Connect</source>
+        <translation>חיבור</translation>
+    </message>
+    <message>
+        <source>Connect Google Drive, OneDrive, Dropbox, GitHub and other accounts</source>
+        <translation>חיבור Google Drive‏, OneDrive‏, Dropbox‏, GitHub וחשבונות נוספים</translation>
+    </message>
+    <message>
+        <source>No folders or photos here.</source>
+        <translation>אין כאן תיקיות או תמונות.</translation>
     </message>
 </context>
 <context>
@@ -2020,6 +2044,48 @@
         <source>Platform crop reset</source>
         <translation>חיתוך הפלטפורמה אופס</translation>
     </message>
+    <message>
+        <source>%1 connected</source>
+        <translation>%1 חובר</translation>
+    </message>
+    <message>
+        <source>Account disconnected</source>
+        <translation>החשבון נותק</translation>
+    </message>
+    <message>
+        <source>Download failed</source>
+        <translation>ההורדה נכשלה</translation>
+    </message>
+    <message numerus="yes">
+        <source>Downloading %n photo(s)…</source>
+        <translation>
+            <numerusform>מוריד תמונה %n…</numerusform>
+            <numerusform>מוריד %n תמונות…</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>Sign-in did not finish.</source>
+        <translation>ההתחברות לא הושלמה.</translation>
+    </message>
+    <message>
+        <source>The folder could not be listed.</source>
+        <translation>לא ניתן להציג את תוכן התיקייה.</translation>
+    </message>
+    <message>
+        <source>Upload failed: %1</source>
+        <translation>ההעלאה נכשלה: %1</translation>
+    </message>
+    <message numerus="yes">
+        <source>Uploaded %n file(s) to %1</source>
+        <translation>
+            <numerusform>קובץ %n הועלה אל %1</numerusform>
+            <numerusform>%n קבצים הועלו אל %1</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>no answer from the engine</source>
+        <translation>אין תשובה מהמנוע</translation>
+    </message>
 </context>
 <context>
     <name>Navigator</name>
@@ -2643,6 +2709,93 @@
     <message>
         <source>Drop Shadow</source>
         <translation>הטלת צל</translation>
+    </message>
+</context>
+<context>
+    <name>CloudDialog</name>
+    <message>
+        <source>Add an account</source>
+        <translation>הוספת חשבון</translation>
+    </message>
+    <message>
+        <source>Browse</source>
+        <translation>עיון</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>ביטול</translation>
+    </message>
+    <message>
+        <source>Client ID</source>
+        <translation>מזהה לקוח</translation>
+    </message>
+    <message>
+        <source>Client secret</source>
+        <translation>סוד לקוח</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>סגירה</translation>
+    </message>
+    <message>
+        <source>Cloud accounts</source>
+        <translation>חשבונות ענן</translation>
+    </message>
+    <message>
+        <source>Confirm</source>
+        <translation>אישור</translation>
+    </message>
+    <message>
+        <source>Connected</source>
+        <translation>מחוברים</translation>
+    </message>
+    <message>
+        <source>Disconnect</source>
+        <translation>ניתוק</translation>
+    </message>
+    <message>
+        <source>Disconnecting removes the account's keys and downloaded copies from this computer. Files in the account stay as they are.</source>
+        <translation>הניתוק מסיר ממחשב זה את מפתחות החשבון ואת העותקים שהורדו. הקבצים בחשבון נשארים כפי שהם.</translation>
+    </message>
+    <message>
+        <source>Enter this code on the GitHub page that opened in your browser:</source>
+        <translation>הזינו את הקוד הזה בדף GitHub שנפתח בדפדפן:</translation>
+    </message>
+    <message>
+        <source>Finish signing in in your browser. This window updates when you are done.</source>
+        <translation>סיימו את ההתחברות בדפדפן. החלון יתעדכן בסיום.</translation>
+    </message>
+    <message>
+        <source>Install it with: sudo pacman -S %1</source>
+        <translation>התקנה: sudo pacman -S %1</translation>
+    </message>
+    <message>
+        <source>Needs %1</source>
+        <translation>נדרש %1</translation>
+    </message>
+    <message>
+        <source>No account connected yet.</source>
+        <translation>עדיין לא חובר חשבון.</translation>
+    </message>
+    <message>
+        <source>Open the page again</source>
+        <translation>פתיחת הדף שוב</translation>
+    </message>
+    <message>
+        <source>Own Google client ID (optional)</source>
+        <translation>מזהה לקוח Google משלכם (רשות)</translation>
+    </message>
+    <message>
+        <source>Signing in to %1</source>
+        <translation>מתחבר אל %1</translation>
+    </message>
+    <message>
+        <source>The shared client rclone uses for Google Drive is being retired. With a client ID of your own from the Google Cloud Console, Google Drive keeps working. It is used the next time you connect Google Drive.</source>
+        <translation>הלקוח המשותף ש־rclone משתמש בו עבור Google Drive יוצא משימוש. עם מזהה לקוח משלכם מ־Google Cloud Console, ‏Google Drive ממשיך לעבוד. הוא ישמש בפעם הבאה שתחברו את Google Drive.</translation>
+    </message>
+    <message>
+        <source>You sign in on the service's own page in your browser. OmaStudio keeps the access keys in the system keyring and creates a folder named %1 in each account for uploads.</source>
+        <translation>ההתחברות נעשית בדף של השירות עצמו, בדפדפן. OmaStudio שומר את מפתחות הגישה במחזיק המפתחות של המערכת ויוצר בכל חשבון תיקייה בשם %1 להעלאות.</translation>
     </message>
 </context>
 </TS>

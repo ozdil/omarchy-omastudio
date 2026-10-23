@@ -689,6 +689,18 @@
         <source>Exporting…</source>
         <translation>Viedään…</translation>
     </message>
+    <message>
+        <source>After export, the files are also copied into the %1 folder of the account (on GitHub: the private %1 repository).</source>
+        <translation>Viennin jälkeen tiedostot kopioidaan myös tilin kansioon %1 (GitHubissa: yksityiseen %1-tietovarastoon).</translation>
+    </message>
+    <message>
+        <source>This computer only</source>
+        <translation>Vain tämä tietokone</translation>
+    </message>
+    <message>
+        <source>Upload to</source>
+        <translation>Lähetä kohteeseen</translation>
+    </message>
 </context>
 <context>
     <name>FilmGrainPanel</name>
@@ -914,6 +926,18 @@
         <source>P</source>
         <comment>pick flag, first letter of Pick</comment>
         <translation>V</translation>
+    </message>
+    <message>
+        <source>Connect</source>
+        <translation>Yhdistä</translation>
+    </message>
+    <message>
+        <source>Connect Google Drive, OneDrive, Dropbox, GitHub and other accounts</source>
+        <translation>Yhdistä Google Drive, OneDrive, Dropbox, GitHub ja muita tilejä</translation>
+    </message>
+    <message>
+        <source>No folders or photos here.</source>
+        <translation>Täällä ei ole kansioita eikä kuvia.</translation>
     </message>
 </context>
 <context>
@@ -2020,6 +2044,48 @@
         <source>Platform crop reset</source>
         <translation>Alustan rajaus palautettu</translation>
     </message>
+    <message>
+        <source>%1 connected</source>
+        <translation>%1 yhdistetty</translation>
+    </message>
+    <message>
+        <source>Account disconnected</source>
+        <translation>Tilin yhteys katkaistu</translation>
+    </message>
+    <message>
+        <source>Download failed</source>
+        <translation>Lataus epäonnistui</translation>
+    </message>
+    <message numerus="yes">
+        <source>Downloading %n photo(s)…</source>
+        <translation>
+            <numerusform>Ladataan %n kuva…</numerusform>
+            <numerusform>Ladataan %n kuvaa…</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>Sign-in did not finish.</source>
+        <translation>Kirjautuminen ei päättynyt.</translation>
+    </message>
+    <message>
+        <source>The folder could not be listed.</source>
+        <translation>Kansion sisältöä ei voitu näyttää.</translation>
+    </message>
+    <message>
+        <source>Upload failed: %1</source>
+        <translation>Lähetys epäonnistui: %1</translation>
+    </message>
+    <message numerus="yes">
+        <source>Uploaded %n file(s) to %1</source>
+        <translation>
+            <numerusform>%n tiedosto lähetetty kohteeseen %1</numerusform>
+            <numerusform>%n tiedostoa lähetetty kohteeseen %1</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>no answer from the engine</source>
+        <translation>moottori ei vastannut</translation>
+    </message>
 </context>
 <context>
     <name>Navigator</name>
@@ -2643,6 +2709,93 @@
     <message>
         <source>Drop Shadow</source>
         <translation>Varjostus</translation>
+    </message>
+</context>
+<context>
+    <name>CloudDialog</name>
+    <message>
+        <source>Add an account</source>
+        <translation>Lisää tili</translation>
+    </message>
+    <message>
+        <source>Browse</source>
+        <translation>Selaa</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Peruuta</translation>
+    </message>
+    <message>
+        <source>Client ID</source>
+        <translation>Asiakastunnus</translation>
+    </message>
+    <message>
+        <source>Client secret</source>
+        <translation>Asiakassalaisuus</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>Sulje</translation>
+    </message>
+    <message>
+        <source>Cloud accounts</source>
+        <translation>Pilvitilit</translation>
+    </message>
+    <message>
+        <source>Confirm</source>
+        <translation>Vahvista</translation>
+    </message>
+    <message>
+        <source>Connected</source>
+        <translation>Yhdistetyt</translation>
+    </message>
+    <message>
+        <source>Disconnect</source>
+        <translation>Katkaise yhteys</translation>
+    </message>
+    <message>
+        <source>Disconnecting removes the account's keys and downloaded copies from this computer. Files in the account stay as they are.</source>
+        <translation>Yhteyden katkaiseminen poistaa tilin avaimet ja ladatut kopiot tältä tietokoneelta. Tilin tiedostot pysyvät ennallaan.</translation>
+    </message>
+    <message>
+        <source>Enter this code on the GitHub page that opened in your browser:</source>
+        <translation>Syötä tämä koodi selaimessa avautuneelle GitHub-sivulle:</translation>
+    </message>
+    <message>
+        <source>Finish signing in in your browser. This window updates when you are done.</source>
+        <translation>Viimeistele kirjautuminen selaimessa. Ikkuna päivittyy, kun olet valmis.</translation>
+    </message>
+    <message>
+        <source>Install it with: sudo pacman -S %1</source>
+        <translation>Asenna komennolla: sudo pacman -S %1</translation>
+    </message>
+    <message>
+        <source>Needs %1</source>
+        <translation>Vaatii: %1</translation>
+    </message>
+    <message>
+        <source>No account connected yet.</source>
+        <translation>Yhtään tiliä ei ole vielä yhdistetty.</translation>
+    </message>
+    <message>
+        <source>Open the page again</source>
+        <translation>Avaa sivu uudelleen</translation>
+    </message>
+    <message>
+        <source>Own Google client ID (optional)</source>
+        <translation>Oma Google-asiakastunnus (valinnainen)</translation>
+    </message>
+    <message>
+        <source>Signing in to %1</source>
+        <translation>Kirjaudutaan: %1</translation>
+    </message>
+    <message>
+        <source>The shared client rclone uses for Google Drive is being retired. With a client ID of your own from the Google Cloud Console, Google Drive keeps working. It is used the next time you connect Google Drive.</source>
+        <translation>Jaettu asiakas, jota rclone käyttää Google Driveen, poistuu käytöstä. Omalla Google Cloud Consolesta saadulla asiakastunnuksella Google Drive toimii edelleen. Sitä käytetään, kun yhdistät Google Driven seuraavan kerran.</translation>
+    </message>
+    <message>
+        <source>You sign in on the service's own page in your browser. OmaStudio keeps the access keys in the system keyring and creates a folder named %1 in each account for uploads.</source>
+        <translation>Kirjaudut palvelun omalla sivulla selaimessa. OmaStudio säilyttää käyttöavaimet järjestelmän avainnipussa ja luo jokaiseen tiliin latauksia varten kansion nimeltä %1.</translation>
     </message>
 </context>
 </TS>

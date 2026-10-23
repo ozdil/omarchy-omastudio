@@ -17,6 +17,18 @@ Rectangle {
     property bool isCatalogMode: false
     property string currentFolder: "~/Pictures"
     property bool isDownloadingRemote: false
+    // The photo being downloaded from a cloud account (its cache path)
+    property string downloadingPath: ""
+    // Connected cloud accounts [{ id, label, user }]; the open one ("" when browsing
+    // local folders or the catalogue) and the folder inside it
+    property var cloudAccounts: []
+    property string cloudAccount: ""
+    property string cloudPath: ""
+    readonly property string cloudLabel: {
+        for (var i = 0; i < cloudAccounts.length; i++)
+            if (cloudAccounts[i].id === cloudAccount) return cloudAccounts[i].label;
+        return "";
+    }
     property bool isListingFolder: false
     property int activeRating: 0
     property string activeFlag: "none"
@@ -27,6 +39,8 @@ Rectangle {
     signal refreshRequested()
     signal switchSource(bool isCatalog)
     signal batchExportRequested()
+    signal connectRequested()
+    signal openCloudAccount(string account)
 
     ColumnLayout {
         anchors.fill: parent
@@ -40,10 +54,12 @@ Rectangle {
 
             // Local Tab
             Rectangle {
+                id: localTab
                 implicitWidth: localRow.implicitWidth + 16
                 implicitHeight: 22
                 radius: Theme.r(4)
-                color: !root.isCatalogMode ? Theme.accent : Theme.bgCard
+                readonly property bool active: !root.isCatalogMode && root.cloudAccount === ""
+                color: active ? Theme.accent : Theme.bgCard
 
                 RowLayout {
                     id: localRow
@@ -53,7 +69,7 @@ Rectangle {
                         text: Theme.iconFolder
                         font.family: Theme.iconFont
                         font.pixelSize: Theme.px(10)
-                        color: !root.isCatalogMode ? Theme.bgBase : Theme.textMuted
+                        color: localTab.active ? Theme.bgBase : Theme.textMuted
                     }
                     Text {
                         font.family: Theme.fontFamily
@@ -61,7 +77,7 @@ Rectangle {
                         textFormat: Text.PlainText
                         font.pixelSize: Theme.px(10)
                         font.weight: Font.DemiBold
-                        color: !root.isCatalogMode ? Theme.bgBase : Theme.textMuted
+                        color: localTab.active ? Theme.bgBase : Theme.textMuted
                     }
                 }
 
@@ -69,7 +85,7 @@ Rectangle {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
                     onClicked: {
-                        if (root.isCatalogMode) {
+                        if (root.isCatalogMode || root.cloudAccount !== "") {
                             root.isCatalogMode = false
                             root.switchSource(false)
                         }
@@ -116,9 +132,98 @@ Rectangle {
                 }
             }
 
+            // Connected cloud accounts, one tab each
+            Repeater {
+                model: root.cloudAccounts
+                delegate: Rectangle {
+                    id: cloudTab
+                    required property var modelData
+                    readonly property bool active: !root.isCatalogMode && root.cloudAccount === modelData.id
+                    implicitWidth: cloudTabRow.implicitWidth + 16
+                    implicitHeight: 22
+                    radius: Theme.r(4)
+                    color: active ? Theme.accentCyan : Theme.bgCard
+
+                    RowLayout {
+                        id: cloudTabRow
+                        anchors.centerIn: parent
+                        spacing: 6
+                        Text {
+                            text: Theme.iconCloud
+                            font.family: Theme.iconFont
+                            font.pixelSize: Theme.px(10)
+                            color: cloudTab.active ? Theme.bgBase : Theme.textMuted
+                        }
+                        Text {
+                            font.family: Theme.fontFamily
+                            text: cloudTab.modelData.label
+                            textFormat: Text.PlainText
+                            font.pixelSize: Theme.px(10)
+                            font.weight: Font.DemiBold
+                            color: cloudTab.active ? Theme.bgBase : Theme.textMuted
+                        }
+                    }
+
+                    MouseArea {
+                        id: cloudTabMouse
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: {
+                            root.isCatalogMode = false
+                            root.openCloudAccount(cloudTab.modelData.id)
+                        }
+                    }
+                    ToolTip.visible: cloudTabMouse.containsMouse && cloudTab.modelData.user !== ""
+                    ToolTip.delay: 400
+                    ToolTip.text: cloudTab.modelData.user || ""
+                }
+            }
+
+            // Connect a cloud account
+            Rectangle {
+                implicitWidth: connectRow.implicitWidth + 12
+                implicitHeight: 22
+                radius: Theme.r(4)
+                color: connectMouse.containsMouse ? Theme.bgCardHover : Theme.bgCard
+                border.color: Theme.border
+                border.width: 1
+
+                RowLayout {
+                    id: connectRow
+                    anchors.centerIn: parent
+                    spacing: 4
+                    Text {
+                        text: Theme.iconCloud
+                        font.family: Theme.iconFont
+                        font.pixelSize: Theme.px(10)
+                        color: Theme.accentCyan
+                    }
+                    Text {
+                        font.family: Theme.fontFamily
+                        text: qsTr("Connect")
+                        textFormat: Text.PlainText
+                        font.pixelSize: Theme.px(9)
+                        font.weight: Font.DemiBold
+                        color: Theme.textMain
+                    }
+                }
+
+                MouseArea {
+                    id: connectMouse
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: root.connectRequested()
+                }
+                ToolTip.visible: connectMouse.containsMouse
+                ToolTip.delay: 400
+                ToolTip.text: qsTr("Connect Google Drive, OneDrive, Dropbox, GitHub and other accounts")
+            }
+
             // Up / Parent button
             Rectangle {
-                visible: !root.isCatalogMode && root.currentFolder !== "/"
+                visible: !root.isCatalogMode && (root.cloudAccount !== "" ? root.cloudPath !== "" : root.currentFolder !== "/")
                 implicitWidth: parentBtnRow.implicitWidth + 12
                 implicitHeight: 22
                 radius: Theme.r(4)
@@ -154,7 +259,9 @@ Rectangle {
             }
 
             Text {
-                text: root.isCatalogMode ? qsTr("Studio Catalog") : root.currentFolder
+                text: root.isCatalogMode ? qsTr("Studio Catalog")
+                    : root.cloudAccount !== "" ? root.cloudLabel + ":/" + root.cloudPath
+                    : root.currentFolder
                 textFormat: Text.PlainText
                 font.pixelSize: Theme.px(10)
                 font.family: Theme.monoFont
@@ -319,7 +426,9 @@ Rectangle {
                         color: Theme.textDim
                     }
                     Text {
-                        text: root.isCatalogMode ? qsTr("No photos found in Studio Catalog.") : qsTr("No photos found in this directory.")
+                        text: root.isCatalogMode ? qsTr("No photos found in Studio Catalog.")
+                            : root.cloudAccount !== "" ? qsTr("No folders or photos here.")
+                            : qsTr("No photos found in this directory.")
                         textFormat: Text.PlainText
                         font.pixelSize: Theme.px(10)
                         font.family: Theme.monoFont
@@ -402,14 +511,14 @@ Rectangle {
                                     anchors.centerIn: parent
                                     spacing: 4
                                     Text {
-                                        text: root.isDownloadingRemote && root.activePhotoPath === modelData.path ? Theme.iconRefresh : Theme.iconImage
+                                        text: root.isDownloadingRemote && root.downloadingPath === modelData.path ? Theme.iconRefresh : Theme.iconImage
                                         font.family: Theme.iconFont
                                         font.pixelSize: Theme.px(18)
                                         color: root.activePhotoPath === modelData.path ? Theme.accent : Theme.textDim
                                         Layout.alignment: Qt.AlignHCenter
                                     }
                                     Text {
-                                        text: root.isDownloadingRemote && root.activePhotoPath === modelData.path ? qsTr("Downloading") : (modelData.is_remote ? qsTr("Remote") : qsTr("No preview"))
+                                        text: root.isDownloadingRemote && root.downloadingPath === modelData.path ? qsTr("Downloading") : (modelData.is_remote ? qsTr("Remote") : qsTr("No preview"))
                                         textFormat: Text.PlainText
                                         font.pixelSize: Theme.px(7)
                                         font.weight: Font.Bold
@@ -433,7 +542,7 @@ Rectangle {
                             Rectangle {
                                 anchors.fill: parent
                                 color: Qt.rgba(0, 0, 0, 0.65)
-                                visible: root.isDownloadingRemote && root.activePhotoPath === modelData.path
+                                visible: root.isDownloadingRemote && root.downloadingPath === modelData.path
 
                                 ColumnLayout {
                                     anchors.centerIn: parent
@@ -564,6 +673,9 @@ Rectangle {
                     onClicked: function(mouse) {
                         if (modelData.is_dir) {
                             root.navigateFolder(modelData.path);
+                        } else if (modelData.is_remote && (mouse.modifiers & (Qt.ControlModifier | Qt.ShiftModifier)) === 0) {
+                            root.selectedPaths = [modelData.path];
+                            root.selectPhoto(modelData.path, true);
                         } else {
                             if (mouse.modifiers & Qt.ControlModifier) {
                                 // The open photo is drawn as selected even when selectedPaths is empty

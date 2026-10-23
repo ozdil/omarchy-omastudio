@@ -688,6 +688,18 @@
         <source>Exporting…</source>
         <translation>書き出し中…</translation>
     </message>
+    <message>
+        <source>After export, the files are also copied into the %1 folder of the account (on GitHub: the private %1 repository).</source>
+        <translation>書き出し後、ファイルはアカウントの %1 フォルダーにもコピーされます(GitHub ではプライベートリポジトリ %1)。</translation>
+    </message>
+    <message>
+        <source>This computer only</source>
+        <translation>このコンピューターのみ</translation>
+    </message>
+    <message>
+        <source>Upload to</source>
+        <translation>アップロード先</translation>
+    </message>
 </context>
 <context>
     <name>FilmGrainPanel</name>
@@ -913,6 +925,18 @@
         <source>P</source>
         <comment>pick flag, first letter of Pick</comment>
         <translation>採</translation>
+    </message>
+    <message>
+        <source>Connect</source>
+        <translation>接続</translation>
+    </message>
+    <message>
+        <source>Connect Google Drive, OneDrive, Dropbox, GitHub and other accounts</source>
+        <translation>Google Drive、OneDrive、Dropbox、GitHub などのアカウントを接続</translation>
+    </message>
+    <message>
+        <source>No folders or photos here.</source>
+        <translation>フォルダーや写真はありません。</translation>
     </message>
 </context>
 <context>
@@ -2015,6 +2039,46 @@
         <source>Platform crop reset</source>
         <translation>プラットフォームの切り抜きをリセットしました</translation>
     </message>
+    <message>
+        <source>%1 connected</source>
+        <translation>%1 を接続しました</translation>
+    </message>
+    <message>
+        <source>Account disconnected</source>
+        <translation>アカウントの接続を解除しました</translation>
+    </message>
+    <message>
+        <source>Download failed</source>
+        <translation>ダウンロードに失敗しました</translation>
+    </message>
+    <message numerus="yes">
+        <source>Downloading %n photo(s)…</source>
+        <translation>
+            <numerusform>%n 枚の写真をダウンロード中…</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>Sign-in did not finish.</source>
+        <translation>サインインが完了しませんでした。</translation>
+    </message>
+    <message>
+        <source>The folder could not be listed.</source>
+        <translation>フォルダーの一覧を取得できませんでした。</translation>
+    </message>
+    <message>
+        <source>Upload failed: %1</source>
+        <translation>アップロードに失敗しました: %1</translation>
+    </message>
+    <message numerus="yes">
+        <source>Uploaded %n file(s) to %1</source>
+        <translation>
+            <numerusform>%n 個のファイルを %1 にアップロードしました</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>no answer from the engine</source>
+        <translation>エンジンから応答がありません</translation>
+    </message>
 </context>
 <context>
     <name>Navigator</name>
@@ -2637,6 +2701,93 @@
     <message>
         <source>Drop Shadow</source>
         <translation>ドロップシャドウ</translation>
+    </message>
+</context>
+<context>
+    <name>CloudDialog</name>
+    <message>
+        <source>Add an account</source>
+        <translation>アカウントを追加</translation>
+    </message>
+    <message>
+        <source>Browse</source>
+        <translation>参照</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>キャンセル</translation>
+    </message>
+    <message>
+        <source>Client ID</source>
+        <translation>クライアント ID</translation>
+    </message>
+    <message>
+        <source>Client secret</source>
+        <translation>クライアントシークレット</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>閉じる</translation>
+    </message>
+    <message>
+        <source>Cloud accounts</source>
+        <translation>クラウドアカウント</translation>
+    </message>
+    <message>
+        <source>Confirm</source>
+        <translation>確認</translation>
+    </message>
+    <message>
+        <source>Connected</source>
+        <translation>接続済み</translation>
+    </message>
+    <message>
+        <source>Disconnect</source>
+        <translation>接続を解除</translation>
+    </message>
+    <message>
+        <source>Disconnecting removes the account's keys and downloaded copies from this computer. Files in the account stay as they are.</source>
+        <translation>接続を解除すると、アカウントのキーとダウンロードしたコピーがこのコンピューターから削除されます。アカウント内のファイルはそのまま残ります。</translation>
+    </message>
+    <message>
+        <source>Enter this code on the GitHub page that opened in your browser:</source>
+        <translation>ブラウザーで開いた GitHub のページにこのコードを入力してください:</translation>
+    </message>
+    <message>
+        <source>Finish signing in in your browser. This window updates when you are done.</source>
+        <translation>ブラウザーでサインインを完了してください。完了するとこのウィンドウが更新されます。</translation>
+    </message>
+    <message>
+        <source>Install it with: sudo pacman -S %1</source>
+        <translation>インストール: sudo pacman -S %1</translation>
+    </message>
+    <message>
+        <source>Needs %1</source>
+        <translation>%1 が必要</translation>
+    </message>
+    <message>
+        <source>No account connected yet.</source>
+        <translation>接続済みのアカウントはまだありません。</translation>
+    </message>
+    <message>
+        <source>Open the page again</source>
+        <translation>ページをもう一度開く</translation>
+    </message>
+    <message>
+        <source>Own Google client ID (optional)</source>
+        <translation>独自の Google クライアント ID(任意)</translation>
+    </message>
+    <message>
+        <source>Signing in to %1</source>
+        <translation>%1 にサインイン中</translation>
+    </message>
+    <message>
+        <source>The shared client rclone uses for Google Drive is being retired. With a client ID of your own from the Google Cloud Console, Google Drive keeps working. It is used the next time you connect Google Drive.</source>
+        <translation>rclone が Google Drive に使う共有クライアントは廃止されます。Google Cloud Console で取得した独自のクライアント ID があれば Google Drive は引き続き使えます。次に Google Drive を接続するときに使われます。</translation>
+    </message>
+    <message>
+        <source>You sign in on the service's own page in your browser. OmaStudio keeps the access keys in the system keyring and creates a folder named %1 in each account for uploads.</source>
+        <translation>サインインはブラウザーでサービス自身のページから行います。OmaStudio はアクセスキーをシステムのキーリングに保存し、アップロード用に各アカウントに %1 というフォルダーを作成します。</translation>
     </message>
 </context>
 </TS>

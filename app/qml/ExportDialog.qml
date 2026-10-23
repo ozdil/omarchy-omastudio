@@ -58,6 +58,12 @@ Rectangle {
     property bool watermarkEnabled: false
     property var watermarkOptions: null
     property alias socialOptimizer: socialOpt
+    // Connected cloud accounts; exported files are copied into `uploadFolder` of
+    // `uploadAccount` ("" keeps them on this computer only)
+    property var cloudAccounts: []
+    property string uploadFolder: "OmaStudio"
+    property string uploadAccount: ""
+    signal uploadAccountPicked(string account)
 
     signal closeRequested()
     signal doExport(var options)
@@ -585,6 +591,52 @@ Rectangle {
                         text: qsTr("Saved as %1").arg(root.exampleName)
                         Layout.fillWidth: true
                         elide: Text.ElideMiddle
+                    }
+
+                    Caption {
+                        visible: root.cloudAccounts.length > 0
+                        text: qsTr("Upload to")
+                    }
+                    Flow {
+                        visible: root.cloudAccounts.length > 0
+                        Layout.fillWidth: true
+                        spacing: Theme.px(4)
+                        Repeater {
+                            model: [{ "id": "", "label": qsTr("This computer only") }].concat(root.cloudAccounts)
+                            delegate: Rectangle {
+                                required property var modelData
+                                readonly property bool isCur: root.uploadAccount === modelData.id
+                                implicitWidth: upText.implicitWidth + Theme.px(16)
+                                implicitHeight: Theme.px(26)
+                                radius: Theme.radiusSm
+                                color: isCur ? Qt.rgba(Theme.accent.r, Theme.accent.g, Theme.accent.b, 0.18) : (upMouse.containsMouse ? Theme.bgCardHover : Theme.bgCard)
+                                border.color: isCur ? Theme.accent : Theme.border
+                                Text {
+                                    id: upText
+                                    anchors.centerIn: parent
+                                    text: modelData.label
+                                    textFormat: Text.PlainText
+                                    font.family: Theme.fontFamily
+                                    font.pixelSize: Theme.px(10)
+                                    font.weight: parent.isCur ? Font.DemiBold : Font.Normal
+                                    color: parent.isCur ? Theme.accent : Theme.textMain
+                                }
+                                MouseArea {
+                                    id: upMouse
+                                    anchors.fill: parent
+                                    hoverEnabled: true
+                                    cursorShape: Qt.PointingHandCursor
+                                    onClicked: root.uploadAccountPicked(modelData.id)
+                                }
+                                ToolTip.visible: upMouse.containsMouse && (modelData.user || "") !== ""
+                                ToolTip.delay: 400
+                                ToolTip.text: modelData.user || ""
+                            }
+                        }
+                    }
+                    Hint {
+                        visible: root.cloudAccounts.length > 0 && root.uploadAccount !== ""
+                        text: qsTr("After export, the files are also copied into the %1 folder of the account (on GitHub: the private %1 repository).").arg(root.uploadFolder)
                     }
                     Item { Layout.fillHeight: true }
                 }
