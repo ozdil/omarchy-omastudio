@@ -69,3 +69,22 @@ es:Original
 it:Magenta
 it:Standard
 it:Texture
+pt_BR:Global
+pt_BR:[S] %1%
+pt_BR:Magenta
+pt_BR:+ RADIAL
+pt_BR:Original
+nl:AI
+nl:Platform
+nl:16-bit TIFF
+nl:Sepia
+nl:Batch (%1)
+nl:CAMERA (USB)
+nl:[S] %1%
+nl:[H] %1%
+nl:Aqua
+nl:Magenta
+nl:Contrast
+nl:NAVIGATOR
+nl:PARADE
+nl:VECTOR
