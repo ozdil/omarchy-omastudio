@@ -352,6 +352,33 @@
     </message>
 </context>
 <context>
+    <name>CurveEditor</name>
+    <message>
+        <source>RGB</source>
+        <translation>RGB</translation>
+    </message>
+    <message>
+        <source>Red</source>
+        <translation>אדום</translation>
+    </message>
+    <message>
+        <source>Green</source>
+        <translation>ירוק</translation>
+    </message>
+    <message>
+        <source>Blue</source>
+        <translation>כחול</translation>
+    </message>
+    <message>
+        <source>Click to add a point, drag to move it, double-click to remove it.</source>
+        <translation>לחצו כדי להוסיף נקודה, גררו כדי להזיז אותה, לחיצה כפולה מסירה אותה.</translation>
+    </message>
+    <message>
+        <source>Reset channel</source>
+        <translation>איפוס ערוץ</translation>
+    </message>
+</context>
+<context>
     <name>ExifCard</name>
     <message>
         <source>No photo</source>

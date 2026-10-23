@@ -131,10 +131,53 @@ pub fn write(recipe: &Recipe, culling: &Culling) -> String {
     for (k, v) in &crs {
         out.push_str(&format!("   crs:{k}=\"{}\"\n", escape(v)));
     }
-    out.push_str(&format!("   omastudio:Recipe=\"{}\"/>\n", escape(&recipe_json)));
+    out.push_str(&format!("   omastudio:Recipe=\"{}\">\n", escape(&recipe_json)));
+    for (name, points) in curve_fields(recipe) {
+        if points.is_empty() {
+            continue;
+        }
+        out.push_str(&format!("   <crs:{name}>\n    <rdf:Seq>\n"));
+        for p in points {
+            let (x, y) = ((p[0] * 255.0).round() as i32, (p[1] * 255.0).round() as i32);
+            out.push_str(&format!("     <rdf:li>{x}, {y}</rdf:li>\n"));
+        }
+        out.push_str(&format!("    </rdf:Seq>\n   </crs:{name}>\n"));
+    }
+    out.push_str("  </rdf:Description>\n");
     out.push_str(" </rdf:RDF>\n</x:xmpmeta>\n");
     out.push_str("<?xpacket end=\"w\"?>\n");
     out
+}
+
+/// Point curves in Camera Raw's names (points on 0..255).
+fn curve_fields(r: &Recipe) -> [(&'static str, &Vec<[f32; 2]>); 4] {
+    [
+        ("ToneCurvePV2012", &r.curve_points),
+        ("ToneCurvePV2012Red", &r.curve_points_red),
+        ("ToneCurvePV2012Green", &r.curve_points_green),
+        ("ToneCurvePV2012Blue", &r.curve_points_blue),
+    ]
+}
+
+/// The points of an `rdf:Seq` curve element such as `crs:ToneCurvePV2012`, scaled to 0..1.
+fn curve(xmp: &str, qname: &str) -> Vec<[f32; 2]> {
+    let open = format!("<{qname}>");
+    let Some(start) = xmp.find(&open).map(|i| i + open.len()) else {
+        return Vec::new();
+    };
+    let Some(len) = xmp[start..].find(&format!("</{qname}>")) else {
+        return Vec::new();
+    };
+    xmp[start..start + len]
+        .split("<rdf:li>")
+        .skip(1)
+        .filter_map(|li| {
+            let item = li.split("</rdf:li>").next()?;
+            let (x, y) = item.split_once(',')?;
+            let (x, y) = (x.trim().parse::<f32>().ok()?, y.trim().parse::<f32>().ok()?);
+            (x.is_finite() && y.is_finite()).then(|| [(x / 255.0).clamp(0.0, 1.0), (y / 255.0).clamp(0.0, 1.0)])
+        })
+        .collect()
 }
 
 /// The value of `prefix:name`, written as an attribute or as an element.
@@ -192,6 +235,10 @@ pub fn parse(xmp: &str) -> (Recipe, Culling) {
             r.hsl_lum[i] = v.clamp(-100.0, 100.0);
         }
     }
+    r.curve_points = curve(xmp, "crs:ToneCurvePV2012");
+    r.curve_points_red = curve(xmp, "crs:ToneCurvePV2012Red");
+    r.curve_points_green = curve(xmp, "crs:ToneCurvePV2012Green");
+    r.curve_points_blue = curve(xmp, "crs:ToneCurvePV2012Blue");
     if property(xmp, "crs:HasCrop").is_some_and(|v| v.eq_ignore_ascii_case("true")) {
         let side = |n: &str| number(xmp, &format!("crs:Crop{n}")).map(|v| v.clamp(0.0, 1.0));
         if let (Some(t), Some(l), Some(b), Some(rt)) = (side("Top"), side("Left"), side("Bottom"), side("Right"))
@@ -271,6 +318,25 @@ mod tests {
         assert_eq!(r.rotation, 1.5);
         assert_eq!(c.rating, -1);
         assert_eq!(r.flag, "reject");
+    }
+
+    #[test]
+    fn point_curves_use_camera_raw_names() {
+        let r = Recipe {
+            curve_points: vec![[0.0, 0.0], [0.25, 0.2], [1.0, 1.0]],
+            curve_points_blue: vec![[0.0, 0.1], [1.0, 1.0]],
+            ..Recipe::default()
+        };
+        let xmp = write(&r, &Culling::default());
+        assert!(xmp.contains("<crs:ToneCurvePV2012>") && xmp.contains("<rdf:li>64, 51</rdf:li>"));
+        assert!(!xmp.contains("ToneCurvePV2012Red"));
+        // Without our own recipe the Camera Raw curves are read
+        let foreign = xmp.replace("omastudio:Recipe=", "omastudio:Other=");
+        let (back, _) = parse(&foreign);
+        assert_eq!(back.curve_points.len(), 3);
+        assert!((back.curve_points[1][0] - 64.0 / 255.0).abs() < 1e-6);
+        assert!((back.curve_points_blue[0][1] - 26.0 / 255.0).abs() < 1e-6);
+        assert!(back.curve_points_red.is_empty());
     }
 
     #[test]

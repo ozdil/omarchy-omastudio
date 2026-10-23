@@ -63,6 +63,11 @@ Rectangle {
     property real curveLights: 0.0
     property real curveDarks: 0.0
     property real curveShadows: 0.0
+    // Point curves: [[x, y], ...] on 0..1; empty = straight line
+    property var curvePoints: []
+    property var curvePointsRed: []
+    property var curvePointsGreen: []
+    property var curvePointsBlue: []
 
     property var hslH: [0, 0, 0, 0, 0, 0, 0, 0]
     property var hslS: [0, 0, 0, 0, 0, 0, 0, 0]
@@ -380,6 +385,10 @@ Rectangle {
         root.curveLights = 0.0;
         root.curveDarks = 0.0;
         root.curveShadows = 0.0;
+        root.curvePoints = [];
+        root.curvePointsRed = [];
+        root.curvePointsGreen = [];
+        root.curvePointsBlue = [];
         root.hslH = [0, 0, 0, 0, 0, 0, 0, 0];
         root.hslS = [0, 0, 0, 0, 0, 0, 0, 0];
         root.hslL = [0, 0, 0, 0, 0, 0, 0, 0];
@@ -490,6 +499,10 @@ Rectangle {
             "curve_lights": root.curveLights,
             "curve_darks": root.curveDarks,
             "curve_shadows": root.curveShadows,
+            "curve_points": root.curvePoints,
+            "curve_points_red": root.curvePointsRed,
+            "curve_points_green": root.curvePointsGreen,
+            "curve_points_blue": root.curvePointsBlue,
             "hsl_hue": root.hslH,
             "hsl_sat": root.hslS,
             "hsl_lum": root.hslL,
@@ -621,6 +634,10 @@ Rectangle {
         root.curveLights = root.num(r.curve_lights, 0.0);
         root.curveDarks = root.num(r.curve_darks, 0.0);
         root.curveShadows = root.num(r.curve_shadows, 0.0);
+        root.curvePoints = r.curve_points || [];
+        root.curvePointsRed = r.curve_points_red || [];
+        root.curvePointsGreen = r.curve_points_green || [];
+        root.curvePointsBlue = r.curve_points_blue || [];
         root.hslH = r.hsl_hue || [0,0,0,0,0,0,0,0];
         root.hslS = r.hsl_sat || [0,0,0,0,0,0,0,0];
         root.hslL = r.hsl_lum || [0,0,0,0,0,0,0,0];
@@ -2155,6 +2172,7 @@ Rectangle {
                                 }
                             }
                             PanelSection {
+                                id: curveSection
                                 key: "curve"
                                 title: qsTr("Tone curve")
                                 host: root
@@ -2165,7 +2183,27 @@ Rectangle {
                                     root.curveLights = 0.0;
                                     root.curveDarks = 0.0;
                                     root.curveShadows = 0.0;
+                                    root.curvePoints = [];
+                                    root.curvePointsRed = [];
+                                    root.curvePointsGreen = [];
+                                    root.curvePointsBlue = [];
                                     root.requestRender();
+                                }
+
+                                CurveEditor {
+                                    Layout.fillWidth: true
+                                    pointsRgb: root.curvePoints
+                                    pointsRed: root.curvePointsRed
+                                    pointsGreen: root.curvePointsGreen
+                                    pointsBlue: root.curvePointsBlue
+                                    histData: root.activeHistogram
+                                    onPointsEdited: function(ch, pts) {
+                                        if (ch === "red") root.curvePointsRed = pts;
+                                        else if (ch === "green") root.curvePointsGreen = pts;
+                                        else if (ch === "blue") root.curvePointsBlue = pts;
+                                        else root.curvePoints = pts;
+                                        root.requestRender();
+                                    }
                                 }
 
                                 SliderGroup {

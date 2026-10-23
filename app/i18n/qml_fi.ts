@@ -352,6 +352,33 @@
     </message>
 </context>
 <context>
+    <name>CurveEditor</name>
+    <message>
+        <source>RGB</source>
+        <translation>RGB</translation>
+    </message>
+    <message>
+        <source>Red</source>
+        <translation>Punainen</translation>
+    </message>
+    <message>
+        <source>Green</source>
+        <translation>Vihreä</translation>
+    </message>
+    <message>
+        <source>Blue</source>
+        <translation>Sininen</translation>
+    </message>
+    <message>
+        <source>Click to add a point, drag to move it, double-click to remove it.</source>
+        <translation>Lisää piste napsauttamalla, siirrä vetämällä ja poista kaksoisnapsauttamalla.</translation>
+    </message>
+    <message>
+        <source>Reset channel</source>
+        <translation>Palauta kanava</translation>
+    </message>
+</context>
+<context>
     <name>ExifCard</name>
     <message>
         <source>No photo</source>

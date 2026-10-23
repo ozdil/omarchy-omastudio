@@ -352,6 +352,33 @@
     </message>
 </context>
 <context>
+    <name>CurveEditor</name>
+    <message>
+        <source>RGB</source>
+        <translation>RGB</translation>
+    </message>
+    <message>
+        <source>Red</source>
+        <translation>أحمر</translation>
+    </message>
+    <message>
+        <source>Green</source>
+        <translation>أخضر</translation>
+    </message>
+    <message>
+        <source>Blue</source>
+        <translation>أزرق</translation>
+    </message>
+    <message>
+        <source>Click to add a point, drag to move it, double-click to remove it.</source>
+        <translation>انقر لإضافة نقطة، واسحبها لتحريكها، وانقر نقرًا مزدوجًا لإزالتها.</translation>
+    </message>
+    <message>
+        <source>Reset channel</source>
+        <translation>إعادة تعيين القناة</translation>
+    </message>
+</context>
+<context>
     <name>ExifCard</name>
     <message>
         <source>No photo</source>

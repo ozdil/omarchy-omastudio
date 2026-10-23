@@ -36,6 +36,11 @@ pub struct Recipe {
     pub curve_lights: f32,
     pub curve_darks: f32,
     pub curve_shadows: f32,
+    // Point curves: [x, y] control points on display values 0..1; empty = straight
+    pub curve_points: Vec<[f32; 2]>,
+    pub curve_points_red: Vec<[f32; 2]>,
+    pub curve_points_green: Vec<[f32; 2]>,
+    pub curve_points_blue: Vec<[f32; 2]>,
 
     // HSL 8 Channels: [Red, Orange, Yellow, Green, Aqua, Blue, Purple, Magenta]
     pub hsl_hue: [f32; 8],
@@ -261,6 +266,10 @@ impl Default for Recipe {
             curve_lights: 0.0,
             curve_darks: 0.0,
             curve_shadows: 0.0,
+            curve_points: Vec::new(),
+            curve_points_red: Vec::new(),
+            curve_points_green: Vec::new(),
+            curve_points_blue: Vec::new(),
             hsl_hue: [0.0; 8],
             hsl_sat: [0.0; 8],
             hsl_lum: [0.0; 8],
