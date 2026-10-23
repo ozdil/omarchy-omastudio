@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+### Fixes
+- Photos shot with D-Range Priority (GFX 100 and newer bodies) now get the matching highlight protection when their camera recipe is read: Weak develops like DR200 and Strong like DR400. The picked level is also read when the camera only stores it in the "fixed" tag, so the recipe shows "Auto (weak)" instead of just "Auto".
+
 ### Languages
 - The interface is translated into 30 languages, each one complete: Arabic, Chinese (Simplified and Traditional), Czech, Danish, Dutch, English, Finnish, French, German, Greek, Hebrew, Hindi, Hungarian, Indonesian, Italian, Japanese, Korean, Norwegian Bokmål, Persian, Polish, Portuguese (Brazil), Romanian, Russian, Spanish, Swedish, Thai, Turkish, Ukrainian and Vietnamese.
 - OmaStudio follows the system language; the language menu in the top bar picks another one and applies it without a restart (stored in `~/.config/omastudio/language`).
