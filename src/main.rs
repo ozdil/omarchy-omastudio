@@ -83,8 +83,16 @@ impl<T: Serialize> ResponseWrapper<T> {
 
 fn print_json<T: Serialize>(resp: &ResponseWrapper<T>) {
     if let Ok(json) = serde_json::to_string(resp) {
-        println!("{}", json);
-        let _ = io::stdout().flush();
+        print_line(&json);
+    }
+}
+
+/// Writes one output line. The app may close while a long command (a cloud
+/// sign-in) still runs; with nobody reading, exit quietly instead of panicking.
+fn print_line(line: &str) {
+    let mut out = io::stdout().lock();
+    if writeln!(out, "{line}").and_then(|_| out.flush()).is_err() {
+        std::process::exit(0);
     }
 }
 
@@ -1336,8 +1344,7 @@ fn run_cloud(args: &[String]) {
             };
             let account = cloud::connect(service, &client, &mut |event| {
                 if let Ok(line) = serde_json::to_string(&event) {
-                    println!("{line}");
-                    let _ = io::stdout().flush();
+                    print_line(&line);
                 }
             })?;
             serde_json::to_value(account).map_err(|e| e.to_string())
