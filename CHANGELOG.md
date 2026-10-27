@@ -4,6 +4,7 @@
 
 ### Fixes
 - Right-to-left languages (Arabic, Hebrew, Persian): the edit panel no longer runs past its left edge. The profile filter buttons and the AI mask buttons wrap instead of widening the panel, the right panel's tabs share the width by label length and shrink a label that still doesn't fit, buttons elide a translation longer than they are, and Latin titles (Fujifilm, film names) sit on the right like the rest of the text.
+- Notices (such as the one shown when switching to Pro) appear over the photo below the version strip, centred on it, instead of covering the A–D version buttons.
 - `omastudio ipc screenshot` answers once the PNG is written. When the window is not being drawn (its Hyprland workspace is hidden) it answers with an error after three seconds instead of OK without a file. The MCP `window_screenshot` tool reports that error.
 
 ### Build
