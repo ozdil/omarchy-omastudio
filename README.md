@@ -227,7 +227,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md). CI builds and tests every change in an `
 
 ## Support
 
-OmaStudio is independent open source software. You can support its development at [Buy Me a Coffee](https://buymeacoffee.com/ozdil).
+OmaStudio is independent open source software. You can support its development through [GitHub Sponsors](https://github.com/sponsors/ozdil) or [Buy Me a Coffee](https://buymeacoffee.com/ozdil).
 
 ## Trademarks
 
