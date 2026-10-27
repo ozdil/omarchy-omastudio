@@ -10,7 +10,7 @@ use std::io::{self, BufRead, BufReader, Read, Write};
 use std::os::unix::net::UnixStream;
 use std::path::{Path, PathBuf};
 use std::process::{Command, Stdio};
-use std::time::{Duration, Instant};
+use std::time::Duration;
 
 use serde_json::{json, Value};
 
@@ -425,21 +425,10 @@ fn window(method: &str, args: Vec<Value>) -> Result<String, String> {
 fn window_screenshot() -> Result<Vec<Value>, String> {
     let out = security::get_secure_preview_dir().join(format!("omastudio_mcp_window_{}.png", std::process::id()));
     let _ = std::fs::remove_file(&out);
+    // The window answers once the file is written, or with an error when it can't
+    // draw (a hidden workspace)
     window("screenshot", vec![out.to_string_lossy().into_owned().into()])?;
-    // The window saves the image just after answering
-    let start = Instant::now();
-    let mut last_size = 0;
-    let image = loop {
-        let size = std::fs::metadata(&out).map(|m| m.len()).unwrap_or(0);
-        if size > 0 && size == last_size {
-            break image_content(&out);
-        }
-        if start.elapsed() > Duration::from_secs(5) {
-            break Err("The window did not save a screenshot".to_string());
-        }
-        last_size = size;
-        std::thread::sleep(Duration::from_millis(150));
-    };
+    let image = image_content(&out).map_err(|_| "The window did not save a screenshot".to_string());
     let _ = std::fs::remove_file(&out);
     Ok(vec![image?])
 }
