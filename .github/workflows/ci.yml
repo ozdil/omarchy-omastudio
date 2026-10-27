@@ -17,7 +17,7 @@ jobs:
     steps:
       - name: Install build dependencies
         run: pacman -Syu --noconfirm --needed base-devel clang git lcms2 libraw mold pkgconf qt6-base qt6-declarative qt6-tools python rustup
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Install pinned Rust toolchain
         run: rustup toolchain install
       - name: Build
@@ -33,7 +33,7 @@ jobs:
     steps:
       - name: Install build dependencies
         run: pacman -Syu --noconfirm --needed base-devel clang git lcms2 libraw mold pkgconf qt6-base qt6-declarative qt6-tools python rustup
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Install pinned Rust toolchain
         run: rustup toolchain install
       - name: Clippy
