@@ -229,7 +229,7 @@ Ayrıntılar [SECURITY.md](SECURITY.md) dosyasındadır.
 
 ## Destek
 
-OmaStudio bağımsız bir açık kaynak yazılımdır. Geliştirilmesine [Buy Me a Coffee](https://buymeacoffee.com/ozdil) üzerinden destek olabilirsiniz.
+OmaStudio bağımsız bir açık kaynak yazılımdır. Geliştirilmesine [GitHub Sponsors](https://github.com/sponsors/ozdil) ya da [Buy Me a Coffee](https://buymeacoffee.com/ozdil) üzerinden destek olabilirsiniz.
 
 ## Ticari markalar
 
