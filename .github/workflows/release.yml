@@ -18,7 +18,7 @@ jobs:
     steps:
       - name: Install build dependencies
         run: pacman -Syu --noconfirm --needed base-devel clang git lcms2 libraw mold pkgconf qt6-base qt6-declarative qt6-tools rustup
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Install pinned Rust toolchain
         run: rustup toolchain install
       - name: Build and package
@@ -40,7 +40,7 @@ jobs:
           cp -r docs "dist/$package/"
           tar -C dist -czf "dist/$package.tar.gz" "$package"
           "dist/$package/bin/omastudio-engine" --version
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: dist-x86_64
           path: dist/*.tar.gz
@@ -54,19 +54,19 @@ jobs:
       id-token: write
       attestations: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       # Release notes: this version's section of CHANGELOG.md
       - run: awk -v h="## ${GITHUB_REF_NAME} " 'index($0, h) == 1 {on = 1; next} on && /^## / {exit} on' CHANGELOG.md > notes.md
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           pattern: dist-*
           path: dist
           merge-multiple: true
       - run: cd dist && sha256sum ./*.tar.gz > checksums.txt
-      - uses: actions/attest-build-provenance@v2
+      - uses: actions/attest-build-provenance@v4
         with:
           subject-path: dist/*.tar.gz
-      - uses: softprops/action-gh-release@v2
+      - uses: softprops/action-gh-release@v3
         with:
           body_path: notes.md
           files: |

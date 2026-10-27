@@ -37,22 +37,65 @@ Window {
         function onIpcCall(id, method, args) {
             var result;
             try {
-                result = ipc.dispatch(method, JSON.parse(args));
+                result = ipc.dispatch(id, method, JSON.parse(args));
             } catch (e) {
                 result = "Error: " + e;
             }
+            // A deferred call answers through Host.ipcReply itself
+            if (result === ipc.later) return;
             Host.ipcReply(id, typeof result === "string" ? result : JSON.stringify(result));
+        }
+    }
+
+    // The screenshot call. Grabbing needs a drawn frame; Hyprland stops drawing a
+    // window whose workspace isn't shown, so the grab would never finish. The timer
+    // answers with an error then instead of reporting a file that was never written.
+    Timer {
+        id: shot
+        property int callId: -1
+        property string out: ""
+        interval: 3000
+
+        function take(id, path) {
+            if (callId >= 0) return "Error: a screenshot is already being taken";
+            if (!win.visible) return "Error: window not visible";
+            callId = id;
+            out = path;
+            if (!win.contentItem.grabToImage(function(r) { shot.finish(id, r); })) {
+                callId = -1;
+                return "Error: window not visible";
+            }
+            restart();
+            return ipc.later;
+        }
+
+        function finish(id, r) {
+            // A grab that arrives after the timeout was already answered
+            if (id !== callId) return;
+            stop();
+            callId = -1;
+            Host.ipcReply(id, r.saveToFile(out) ? "OK" : "Error: could not write " + out);
+        }
+
+        onTriggered: {
+            var id = callId;
+            callId = -1;
+            Host.ipcReply(id, "Error: the window is not being drawn (its workspace is hidden); "
+                + "switch to its workspace or run `omastudio ipc show`, then try again");
         }
     }
 
     QtObject {
         id: ipc
 
+        // Returned by a call that answers later, once its work is done
+        readonly property string later: "\u0001later"
+
         function str(v) {
             return (v === undefined || v === null) ? "" : String(v);
         }
 
-        function dispatch(method, a) {
+        function dispatch(id, method, a) {
             switch (method) {
             case "show":
                 win.present();
@@ -154,11 +197,9 @@ Window {
                 mainWin.switchGradeVersion(str(a[0]));
                 return "OK";
             case "screenshot":
-                // Saves the window as PNG (written shortly after the answer)
+                // Saves the window as PNG and answers once the file is written
                 if (str(a[0]).length === 0) return "Error: empty output path";
-                var out = str(a[0]);
-                if (!win.contentItem.grabToImage(function(r) { r.saveToFile(out); })) return "Error: window not visible";
-                return "OK";
+                return shot.take(id, str(a[0]));
             case "applyCameraRecipe":
                 return mainWin.applyCameraRecipe(str(a[0]));
             case "fujiRecipes":

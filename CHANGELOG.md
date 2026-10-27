@@ -1,5 +1,14 @@
 # Changelog
 
+## Unreleased
+
+### Fixes
+- Right-to-left languages (Arabic, Hebrew, Persian): the edit panel no longer runs past its left edge. The profile filter buttons and the AI mask buttons wrap instead of widening the panel, the right panel's tabs share the width by label length and shrink a label that still doesn't fit, buttons elide a translation longer than they are, and Latin titles (Fujifilm, film names) sit on the right like the rest of the text.
+- `omastudio ipc screenshot` answers once the PNG is written. When the window is not being drawn (its Hyprland workspace is hidden) it answers with an error after three seconds instead of OK without a file. The MCP `window_screenshot` tool reports that error.
+
+### Build
+- GitHub Actions moved to their Node 24 releases: checkout v7, upload-artifact v7, download-artifact v8, attest-build-provenance v4, action-gh-release v3 and CodeQL v4.
+
 ## v3.1.0 — 2026-10-27
 
 ### Documentation

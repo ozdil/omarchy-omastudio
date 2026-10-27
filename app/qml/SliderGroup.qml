@@ -40,6 +40,8 @@ ColumnLayout {
 
         Text {
             text: root.title
+            // Explicit so right-to-left layouts mirror it, also for Latin titles
+            horizontalAlignment: Text.AlignLeft
             textFormat: Text.PlainText
             font.family: Theme.fontFamily
             color: root.effectiveValue !== root.defaultValue ? Theme.textMain : Theme.textMuted
