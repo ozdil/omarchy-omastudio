@@ -2287,12 +2287,14 @@ Rectangle {
 
             // CENTER CANVAS (With DaVinci Grade Versions & Mac-like Touchpad Pinch-to-Zoom & Kinetic Pan)
             ColumnLayout {
+                id: centerColumn
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 spacing: 0
 
                 // DaVinci Resolve Secondary Toolstrip: Grade Versions & Look tools
                 Rectangle {
+                    id: gradeStrip
                     Layout.fillWidth: true
                     implicitHeight: 32
                     color: Theme.bgDark
@@ -3536,12 +3538,20 @@ Rectangle {
     }
 
     // Toast Notification Banner (Auto-dismissing)
+    // Over the photo, below the version strip, so it never hides A-D
     Rectangle {
         visible: root.toastMessage !== ""
-        anchors.top: parent.top
-        anchors.topMargin: 52
-        anchors.horizontalCenter: parent.horizontalCenter
-        implicitWidth: Math.min(root.width - 64, toastContent.implicitWidth + 28)
+        // mapToItem isn't a binding dependency: the geometry it reads is listed so the
+        // position follows layout changes and panel toggles
+        x: {
+            [centerColumn.x, centerColumn.parent.x, centerColumn.width, width];
+            return centerColumn.mapToItem(root, (centerColumn.width - width) / 2, 0).x;
+        }
+        y: {
+            [centerColumn.y, centerColumn.parent.y, gradeStrip.y, gradeStrip.height];
+            return gradeStrip.mapToItem(root, 0, gradeStrip.height + 8).y;
+        }
+        implicitWidth: Math.min(centerColumn.width - 32, toastContent.implicitWidth + 28)
         implicitHeight: 32
         radius: Theme.r(16)
         color: Theme.bgDark
@@ -3564,7 +3574,7 @@ Rectangle {
                 color: root.toastColor
                 elide: Text.ElideRight
                 maximumLineCount: 1
-                Layout.maximumWidth: root.width - 96
+                Layout.maximumWidth: centerColumn.width - 64
             }
         }
     }
