@@ -2,108 +2,86 @@
 
 **OmaStudio: The Complete Medium Format RAW Editor for Omarchy**
 
-OmaStudio is a non-destructive RAW editor built for Omarchy Linux. It develops RAW files with its own engine, written in Rust, and runs natively on Wayland and Hyprland. Fujifilm X and GFX, and Hasselblad medium format cameras get first-class support.
+OmaStudio is a non-destructive RAW editor for Omarchy Linux. It develops RAW files with its own engine, written in Rust, and runs natively on Wayland and Hyprland. Fujifilm GFX and X, Hasselblad, Phase One, Leaf, Mamiya and Pentax 645 files get dedicated support.
 
-[English](README.md) • [Türkçe](README.tr.md)
+[English](README.md) • [Türkçe](README.tr.md) • [User guide and technologies in 30 languages](docs/README.md)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Platform: Omarchy](https://img.shields.io/badge/Platform-Omarchy%20%7C%20Arch%20Linux-1793d1.svg)](https://omarchy.org)
 [![Engine: Rust 2024](https://img.shields.io/badge/Engine-Rust%202024-dea584.svg)](Cargo.toml)
 [![UI: Qt 6](https://img.shields.io/badge/UI-Qt%206%20%7C%20Wayland-41cd52.svg)](app/)
 
-![OmaStudio Preview](preview.png)
+![OmaStudio with a Fujifilm GFX 50R photo](docs/images/main-essentials.webp)
 
 ---
 
-## Overview
+## Documentation
+
+| | |
+| :--- | :--- |
+| [User guide](docs/guide/en.md) | Installation, the window, every panel and tool, export, cloud accounts, AI, shortcuts, command line |
+| [Technologies](docs/technology/en.md) | What OmaStudio is built on, why each part was chosen, licences, architecture diagram |
+| [All languages](docs/README.md) | The guide and the technologies page in all 30 interface languages |
+| [Changelog](CHANGELOG.md) · [Security](SECURITY.md) · [Contributing](CONTRIBUTING.md) | |
+
+---
+
+## Features
 
 | Area | What OmaStudio provides |
 | :--- | :--- |
-| **RAW development** | The engine's own demosaicing for X-Trans and Bayer sensors on linear light, with camera colour matrices and black levels taken from the file. Demosaicing runs on the GPU through Vulkan (NVIDIA, AMD, Intel, Qualcomm Adreno) with an identical CPU fallback. LibRaw only unpacks the sensor data. |
-| **Medium format** | Fujifilm GFX and Hasselblad RAW files with a 16-bit pipeline from sensor to export. |
-| **Fujifilm** | Photos open with the recipe they were shot with: film simulation, tone, colour, grain, Color Chrome, white balance shift and dynamic range. X RAW Studio profiles (.FP1/.FP2/.FP3) and recipes shared as text can be imported and exported. The Fujifilm panel keeps a recipe library, reads and writes a connected camera's custom settings C1-C7, converts RAFs in camera and merges GFX Pixel Shift sequences. |
-| **Colour management** | Little CMS 2 with built-in sRGB, Display P3, Adobe RGB, ProPhoto RGB and Rec. 2020 profiles, plus custom ICC profiles with a choice of rendering intent. ICC profiles are embedded in every export. |
-| **Editing** | Exposure, tone, presence, HSL, tone curve, three-way colour wheels, 3D LUTs, RGB mixer, skin tone uniformity, film grain, local masks, crop and lens corrections. |
-| **Library** | Local catalog with star ratings, pick/reject flags and colour labels; adjustments are stored in sidecar files and the original RAW is never modified. |
-| **Cameras over USB** | A PTP/USB layer in pure Rust for tethering and Fujifilm in-camera RAW conversion. |
-| **Export** | JPEG, PNG, TIFF (8/16-bit), WebP, JPEG XL and AVIF, with watermarking. |
+| **RAW development** | Own demosaicing for X-Trans and Bayer sensors on linear light, with the camera's colour matrix and black levels from the file. Demosaicing runs on the GPU through Vulkan (NVIDIA, AMD, Intel, Qualcomm Adreno) or OpenGL ES, with a matching CPU path. LibRaw 0.22 unpacks the sensor data. |
+| **Medium format** | 16-bit pipeline from sensor to export. Hasselblad 3FR/FFF default crop, Phase One and Leaf IIQ/MOS sensor calibration, Mamiya MEF and Pentax 645 PEF, flat-field (LCC) correction and 4-shot multi-shot merge. |
+| **Fujifilm** | Photos open with the recipe they were shot with (film simulation, tone, colour, grain, Color Chrome, white balance shift, dynamic range including D-Range Priority) and at the brightness of the camera's JPEG. Camera lens corrections for XF, XC and GF lenses. Recipe library with X RAW Studio profiles (.FP1/.FP2/.FP3) and text recipes. Custom settings C1–C7 read and written over USB, in-camera RAW conversion, GFX Pixel Shift merged to DNG. |
+| **Editing** | White balance, tone, presence, point and RGB tone curves, colour mixer, three-way colour grading, channel mixer, 3D LUTs, detail and optics, perspective, film grain, crop and straighten. |
+| **Local work** | Linear, radial, luminance, colour and brush masks, AI subject and sky masks, add/subtract/intersect parts; heal and clone spots. |
+| **Colour management** | Little CMS 2 with sRGB, Display P3, Adobe RGB, ProPhoto RGB, Rec. 2020, ACEScg and your own ICC profiles; gamut compression, ACES tone curve, soft proofing with gamut warning. |
+| **Viewing** | Zoom to 100% at any display scale, loupe, focus peaking, compare, before/after, histogram, waveform, RGB parade and vectorscope with clipping warnings. |
+| **History** | Named history steps, snapshots, versions A–D per photo, copy/paste of edits, XMP sidecars for Lightroom, Capture One, darktable and digiKam. |
+| **Library** | Folders and a catalog with star ratings, pick/reject flags and colour labels. Edits live in a sidecar next to the photo; the original is never modified. |
+| **Export** | JPEG, PNG, TIFF, WebP, AVIF, HEIF, JPEG XL and OpenEXR with an embedded ICC profile, resizing, output sharpening for social media, watermarks, batch export and upload to a cloud account. |
+| **Cloud** | Google Drive, OneDrive, Dropbox, Box, pCloud and Yandex Disk through rclone, GitHub through the GitHub CLI; secrets stay in the keyring. |
+| **AI** | Edit assistant and AI chat through Omarchy's default agent (Claude Code or Codex), Ollama, LM Studio or a cloud provider. AI masks run on the computer with ONNX Runtime on an NPU, GPU or CPU. |
+| **Automation** | JSON command line, a control socket for the open window and a Model Context Protocol server for AI agents. |
+| **Omarchy** | Follows the active Omarchy theme, font and Hyprland rounding live, and the system language (30 languages, right to left for Arabic, Hebrew and Persian). |
+
+---
+
+## Screenshots
+
+| Pro mode and tone curve | Colour grading | Masks |
+| :---: | :---: | :---: |
+| ![](docs/images/pro-curve.webp) | ![](docs/images/pro-grading.webp) | ![](docs/images/masks.webp) |
+| **Heal and clone** | **Soft proof** | **Export** |
+| ![](docs/images/heal-clone.webp) | ![](docs/images/soft-proof.webp) | ![](docs/images/export.webp) |
+| **Focus peaking** | **Compare** | **Hasselblad CFV-50c** |
+| ![](docs/images/focus-peaking.webp) | ![](docs/images/compare.webp) | ![](docs/images/hasselblad.webp) |
+| **Catppuccin Latte** | **Gruvbox** | **Rosé Pine** |
+| ![](docs/images/theme-catppuccin-latte.webp) | ![](docs/images/theme-gruvbox.webp) | ![](docs/images/theme-rose-pine.webp) |
+
+The screenshots use Fujifilm GFX 50R and Hasselblad CFV-50c sample files from [raw.pixls.us](https://raw.pixls.us) (CC0).
 
 ---
 
 ## Architecture
 
-OmaStudio is a native Qt 6 application, `omastudio-app` (Rust with cxx-qt, QML interface compiled into the binary). It runs as a Wayland client with Qt's fractional scaling, so the interface is drawn at the monitor's real pixel density under Hyprland. All image processing happens in a separate Rust engine process, `omastudio-engine`, which the window drives through a JSON-lines daemon over stdin/stdout. The same engine also offers a command line interface for scripts and Omarchy agents. A small Quickshell widget (`Panel.qml`) puts an OmaStudio button in the Omarchy bar.
-
-The running window listens on a control socket (`$XDG_RUNTIME_DIR/omastudio/ipc.sock`, current user only). `omastudio ipc <method> [args]` calls it, for example `omastudio ipc openPhoto ~/Pictures/DSCF0001.RAF` or `omastudio ipc getStatus`; launching `omastudio photo.RAF` while a window is open hands the photo to that window.
-
-```mermaid
-graph TD
-    subgraph UI ["omastudio-app (Qt 6 / QML, Wayland)"]
-        Viewport["Viewport, crop and overlays"]
-        Panels["Adjustment panels, colour wheels, scopes"]
-        Library["Filmstrip and catalog"]
-    end
-
-    subgraph Engine ["omastudio-engine (Rust)"]
-        Decode["LibRaw unpack"]
-        Develop["Own demosaic, white balance, camera matrix (linear light)"]
-        Pipeline["Tone, colour and detail modules (rayon)"]
-        ICC["Little CMS 2 colour management"]
-        Fuji["Fujifilm recipes, X RAW Studio profiles"]
-        PTP["PTP/USB (nusb)"]
-        Export["Encoders with embedded ICC"]
-    end
-
-    UI <-->|JSON lines| Pipeline
-    Decode --> Develop --> Pipeline --> ICC --> Export
-    Fuji --> Pipeline
-    PTP --> Fuji
-```
-
-### Processing order
+The window, `omastudio-app` (Qt 6 / QML with a Rust host through cxx-qt), and the engine, `omastudio-engine` (Rust), are separate processes that talk JSON lines over stdin/stdout. The window never decodes a photo itself, so a crash or hang in decoding cannot take the interface with it, and the same engine serves the command line, scripts and AI agents. See [Technologies](docs/technology/en.md) for the full diagram and the reasons behind each choice.
 
 ```mermaid
 flowchart LR
-    A["RAW sensor data"] --> B["Black level and white balance (linear)"]
-    B --> C["Demosaic (X-Trans / Bayer)"]
+    A["RAW sensor data (LibRaw)"] --> B["Black level and white balance (linear)"]
+    B --> C["Demosaic X-Trans / Bayer (GPU or CPU)"]
     C --> D["Camera matrix to working space"]
-    D --> E["Exposure (linear)"]
-    E --> F["Tone, colour, film simulation"]
-    F --> G["Detail, grain, lens"]
-    G --> H["ICC conversion and export"]
+    D --> E["Exposure, tone, colour, film simulation"]
+    E --> F["Detail, masks, retouch, grain, lens"]
+    F --> G["Little CMS 2 and encoders"]
 ```
-
----
-
-## Supported cameras
-
-OmaStudio opens every RAW format LibRaw 0.22 supports. The engine develops Bayer and X-Trans sensors with its own pipeline. Foveon, linear DNG, Fujifilm SuperCCD and four-colour sensors fall back to LibRaw automatically.
-
-| Manufacturer | Additional support |
-| :--- | :--- |
-| Fujifilm X and GFX | In-camera recipe, film simulations, Color Chrome, X RAW Studio profiles, camera lens corrections, GFX Pixel Shift, PTP/USB |
-| Hasselblad | 3FR/FFF files, HNCS-style rendering (in development) |
-| Other manufacturers | Full development pipeline through the generic path |
-
----
-
-## Requirements
-
-* Omarchy (Arch Linux) with Wayland and Hyprland
-* `libraw` 0.22 or newer, `lcms2`, `qt6-base`, `qt6-declarative` and `qt6-wayland` 6.12 or newer
-* `quickshell` only for the button in the Omarchy bar
-* `zenity` for file dialogs
-* To build: Rust 1.99.1 or newer (pinned in `rust-toolchain.toml`), `clang`, `pkgconf`, `qt6-tools` (`lrelease` compiles the translations)
-
-Optional:
-* `perl-image-exiftool` keeps EXIF metadata in exported files.
-* `ffmpeg` is used for AVIF export if the built-in encoder fails.
-* `onnxruntime` runs the local AI masks; a build with your hardware's execution provider (OpenVINO, QNN, Vitis AI, CUDA, MIGraphX) uses the NPU or GPU.
-* `rclone` and `libsecret` (with a keyring such as `gnome-keyring`) connect Google Drive, OneDrive, Dropbox, Box, pCloud and Yandex Disk; `github-cli` connects GitHub.
 
 ---
 
 ## Installation
+
+Requirements: Omarchy (Arch Linux) with Wayland and Hyprland; `libraw` 0.22 or newer, `lcms2`, `qt6-base`, `qt6-declarative`, `qt6-wayland` and `qt6-svg` 6.12 or newer, and `zenity`. Optional packages are listed in the [user guide](docs/guide/en.md#1-installation).
 
 ### Package
 
@@ -111,9 +89,15 @@ Optional:
 makepkg -si
 ```
 
-The package installs the application, the engine, the ICC profiles and a udev rule (`70-omastudio-cameras.rules`) that gives the logged-in user USB access to Fujifilm cameras in PTP mode.
+This installs the application, the engine, the ICC profiles, the desktop entry and a udev rule (`70-omastudio-cameras.rules`) that gives the logged-in user USB access to Fujifilm cameras in PTP mode.
 
-### Local build
+### Release archive
+
+Download `omastudio-<version>-x86_64-linux.tar.gz` from the [releases page](https://github.com/ozdil/omarchy-omastudio/releases), check it against `checksums.txt`, then copy `bin/*` to `~/.local/bin` and `share/omastudio` to `~/.local/share/omastudio`.
+
+### Build from source
+
+Building needs Rust 1.99.1 or newer (pinned in `rust-toolchain.toml`), `clang`, `pkgconf` and `qt6-tools`.
 
 ```bash
 cargo build --release --locked --workspace
@@ -127,117 +111,7 @@ install -m644 assets/icc/*.icc ~/.local/share/omastudio/icc/
 omastudio
 ```
 
-### Files
-
-| Path | Contents |
-| :--- | :--- |
-| `~/.local/share/omastudio/catalog.json` | Catalog: ratings, flags, colour labels |
-| `~/.local/share/omastudio/fuji-recipes/` | Saved Fujifilm recipes (.FP1) |
-| `~/.local/share/omastudio/icc/` | Custom ICC profiles |
-| `~/.local/share/omastudio/models/` | Local AI models (`subject.onnx`, `sky.onnx`) |
-| `~/.local/share/omastudio/masks/` | Masks made by the AI models |
-| `~/.config/omastudio/` | Settings |
-| `~/.config/omastudio/language` | Interface language picked in the application (absent: system language) |
-| `~/.config/omastudio/cloud/` | Connected cloud accounts; `rclone.conf` is encrypted with a key kept in the keyring |
-| `~/.cache/omastudio/cloud/` | Photos downloaded from cloud accounts |
-| `~/.cache/omastudio/` | Thumbnails and previews |
-| `<photo>.omastudio` | Adjustments for a photo (sidecar) |
-
----
-
-## Command line
-
-```bash
-omastudio-engine inspect <raw>                     # metadata, histogram, scene analysis
-omastudio-engine export <raw> --recipe '<json>' --options '<json>'
-omastudio-engine fuji-recipe <raf|jpg|fp1|txt>     # read a Fujifilm recipe
-omastudio-engine fuji-recipe list                  # saved recipes
-omastudio-engine fuji-recipe save <file> --label "Name"
-omastudio-engine fuji-recipe export <file> out.FP1 --device X-T30
-omastudio-engine fuji-pixel-shift DSCF*.RAF --out merged.dng   # GFX Pixel Shift to DNG
-omastudio-engine fuji-camera info | presets      # camera on USB, custom settings C1-C7
-omastudio-engine fuji-camera write-preset C3 recipe.FP1
-omastudio-engine fuji-camera convert DSCF0001.RAF --recipe recipe.FP1
-omastudio-engine xmp export <raw>                  # Lightroom / Capture One / darktable sidecar
-omastudio-engine xmp import <raw> [--save]
-omastudio-engine gpu                               # GPU in use (OMASTUDIO_GPU=off for CPU only)
-omastudio-engine npu                               # ONNX Runtime, NPU/GPU providers and local models
-omastudio-engine ai-mask <raw> --kind subject|sky  # mask from a local model
-omastudio-engine icc list
-omastudio-engine help
-```
-
-All commands print JSON, so Omarchy agents and scripts can use them directly.
-
----
-
-## Cloud accounts
-
-**Connect** in the filmstrip bar adds Google Drive, OneDrive, Dropbox, Box, pCloud, Yandex Disk or GitHub. You sign in on the service's own page in the browser; OmaStudio never sees the password. Each connected account gets a tab next to Folders and Catalog: browse its folders, click a photo to download it (once, into `~/.cache/omastudio/cloud`) and open it. In Export, **Upload to** also copies the exported files into the account.
-
-* Storage services go through `rclone`. OmaStudio keeps its own rclone config, encrypted with a random key stored in the keyring (Secret Service, `secret-tool`), so access tokens are never on disk in plain text. Your own `~/.config/rclone/rclone.conf` is not touched.
-* GitHub goes through the GitHub CLI (`gh auth login`, device code in the browser); `gh` keeps the token in the keyring. An existing `gh` sign-in is reused, and disconnecting in OmaStudio does not log `gh` out. Files are limited to 100 MB, GitHub's own limit.
-* On connecting, a folder named `OmaStudio` is created in the account (on GitHub: a private repository `OmaStudio`). Uploads go there.
-* rclone's shared Google client is being retired; for Google Drive, a client ID of your own from the Google Cloud Console can be entered under **Own Google client ID**.
-* Disconnecting removes the account's keys and its downloaded copies from this computer; the files in the account stay.
-
-```bash
-omastudio-engine cloud status                      # services, missing tools, connected accounts
-omastudio-engine cloud connect dropbox             # sign in in the browser
-omastudio-engine cloud list dropbox-1 Photos/2024
-omastudio-engine cloud fetch dropbox-1 Photos/2024/DSCF0001.RAF
-omastudio-engine cloud upload dropbox-1 photo_omastudio.jpg
-omastudio-engine cloud disconnect dropbox-1
-```
-
----
-
-## AI agents
-
-`omastudio mcp` is a Model Context Protocol server (stdio), so any MCP client on Omarchy can inspect, render, cull and export photos, read and apply Fujifilm recipes, use a camera on USB, and control the open window (open a photo, apply a recipe, adjust, zoom, take a screenshot). Rendered previews and window screenshots are returned as images.
-
-```bash
-claude mcp add omastudio -- omastudio mcp    # Claude Code
-omastudio skill                              # installs the agent skill into ~/.claude/skills
-```
-
-Other clients (opencode, Codex, Gemini CLI, ...) take the same command, `omastudio mcp`, in their MCP server settings. The skill (`skill/omastudio/SKILL.md`, installed to `/usr/share/omastudio/skill`) describes the tools, the command line and the recipe format for agents that read skills.
-
-### Edit assistant
-
-The AI edit assistant in the editor turns a request in plain words into adjustments, using Claude, OpenAI, OpenRouter, Gemini, or a local Ollama or LM Studio model. Keys go to the desktop keyring:
-
-```bash
-omastudio ai key anthropic          # paste the key, then Enter (stored with secret-tool)
-omastudio ai use ollama llava       # or: anthropic, openai <model>, openrouter <model>, gemini <model>, lmstudio
-omastudio ai edit DSCF0001.RAF --prompt "warmer, recover the sky"
-```
-
-### Local AI masks
-
-"+ AI SUBJECT" and "+ AI SKY" in the layers panel add a local adjustment layer masked by a segmentation model that runs on this machine; the photo never leaves it. OmaStudio uses ONNX Runtime (`onnxruntime`) when it is installed and picks the fastest execution provider it offers: NPU (OpenVINO on Intel Core Ultra, QNN on Snapdragon X, Vitis AI on AMD Ryzen AI), then GPU (CUDA, MIGraphX, OpenVINO, WebGPU), then CPU. No model is bundled or downloaded. Put an ONNX segmentation model (for example a salient-object model such as U²-Net, IS-Net or BiRefNet, exported to ONNX) in `~/.local/share/omastudio/models` as `subject.onnx` or `sky.onnx`. The model takes `[1, 3, H, W]` RGB and returns a mask; a `subject.json` next to it can set `mean`, `std` and `size` if the model does not use ImageNet normalisation at 1024 px.
-
-```bash
-omastudio npu                                  # runtime, accelerators, installed models
-OMASTUDIO_NPU=openvino-npu omastudio ai-mask DSCF0001.RAF --kind subject
-```
-
-
----
-
-## Languages
-
-The interface is available in 30 languages: Arabic, Chinese (Simplified and Traditional), Czech, Danish, Dutch, English, Finnish, French, German, Greek, Hebrew, Hindi, Hungarian, Indonesian, Italian, Japanese, Korean, Norwegian Bokmål, Persian, Polish, Portuguese (Brazil), Romanian, Russian, Spanish, Swedish, Thai, Turkish, Ukrainian and Vietnamese. Arabic, Hebrew and Persian are laid out right to left.
-
-OmaStudio follows the system language (`LANGUAGE`, `LC_ALL`, `LC_MESSAGES`, `LANG`) and falls back to English. Another language can be picked from the language menu in the top bar; the change applies at once.
-
-Translations live in `app/i18n/qml_<code>.ts`:
-
-* `tools/i18n/update.sh` refreshes them from the QML (`tools/i18n/update.sh xx` starts a new language).
-* `tools/i18n/check.py` fails when a string is missing, left in English, written in the wrong script or has mismatched placeholders. CI runs it on every change.
-* `tools/i18n/preview.py OUT_DIR [code ...]` writes a screenshot of the interface per language (needs PySide6) to spot text that does not fit.
-
-Engine messages (errors from RAW decoding, export and AI providers) are still in English.
+Start OmaStudio from the Omarchy app menu or run `omastudio [photo]`. If a window is already open, the photo opens in it.
 
 ---
 
@@ -245,16 +119,93 @@ Engine messages (errors from RAW decoding, export and AI providers) are still in
 
 | Key | Action |
 | :--- | :--- |
-| `Ctrl + O` | Open a photo |
-| `Ctrl + S` | Save adjustments |
-| `Alt + 1..4` | Switch between grade versions A–D |
-| `1`–`5`, `0` | Set or clear the star rating |
+| `Ctrl+O` | Open a photo |
+| `Ctrl+S` | Save the edit now |
+| `Ctrl+Z` / `Ctrl+Shift+Z` or `Ctrl+Y` | Undo / redo |
+| `Ctrl+Shift+C` / `Ctrl+Shift+V` | Copy / paste the edit |
+| `Ctrl+R` | Reset the edit |
+| `Ctrl+←` / `Ctrl+→` | Previous / next photo |
+| `Ctrl+0` / `Ctrl+1` | Fit / 100% |
+| `1`–`5`, `0` | Star rating, clear rating |
 | `P`, `X`, `U` | Pick, reject, clear flag |
-| `C` | Crop and composition guides |
-| `Y` | Before/after split view |
-| `Ctrl + Shift + C` / `V` | Copy / paste adjustments |
-| `Ctrl + R` | Reset adjustments |
-| Double click | Toggle fit and 1:1 view |
+| `C` | Crop |
+| `Y` | Before and after |
+| `S` | Soft proof |
+| `L` | Loupe |
+| `Shift+F` | Focus peaking |
+| `Shift+C` | Compare |
+| `Alt+1` … `Alt+4` | Versions A–D |
+| `E` | Export window |
+| `Tab` | Hide or show the panels |
+| `Esc` | Close the open window |
+
+Mouse: wheel zooms at the pointer, `Shift`+wheel pans sideways, `Alt`+wheel rotates, double-click toggles fit and 200%, `Ctrl`+click on a section header keeps only that section open.
+
+---
+
+## Command line, control socket and MCP
+
+Every engine command prints one JSON object.
+
+```bash
+omastudio inspect DSCF0001.RAF                     # camera, lens, exposure, histogram, scene
+omastudio export DSCF0001.RAF --recipe '{"exposure":0.5}' --options '{"format":"jpeg"}'
+omastudio fuji-recipe DSCF0001.RAF                 # the camera's recipe
+omastudio fuji-camera info | presets               # camera on USB, custom settings C1–C7
+omastudio fuji-pixel-shift DSCF*.RAF --out merged.dng
+omastudio medium-format lcc-create white.IIQ       # flat-field correction
+omastudio xmp export DSCF0001.RAF                  # Lightroom / Capture One / darktable sidecar
+omastudio cameras GFX                              # cameras the RAW decoder supports
+omastudio gpu                                      # GPU in use (OMASTUDIO_GPU=off for CPU only)
+omastudio npu                                      # ONNX Runtime, accelerators, local models
+omastudio cloud status
+omastudio --cli help                               # every command
+```
+
+**Control socket.** The open window listens on `$XDG_RUNTIME_DIR/omastudio/ipc.sock` and only answers the same user. `omastudio ipc <method> [arguments]` calls it:
+
+| Method | Does |
+| :--- | :--- |
+| `openPhoto <file>`, `openFolder <dir>` | Open a photo or a folder |
+| `applyRecipe <json>`, `applyPreset <name>` | Apply an edit or a look |
+| `setExposure <ev>`, `setWarmth <value>` | Change single adjustments |
+| `setMode essentials\|pro` | Switch the tool set |
+| `setRightTab <tab>`, `showSection <section>` | Show a tab or open one panel section |
+| `setView peaking\|compare\|softProof\|split [on\|off]` | Toggle viewing aids |
+| `setZoom fit\|<scale>` | Fit, or zoom to a pixel scale (1 = 100%) |
+| `showExport`, `showCloud`, `showAbout` | Open a window |
+| `getStatus`, `screenshot <file.png>` | Read the state, capture the window |
+
+**MCP.** `omastudio mcp` is a Model Context Protocol server (stdio): agents can inspect, render, cull and export photos, read and apply Fujifilm recipes, use a camera on USB and control the open window.
+
+```bash
+claude mcp add omastudio -- omastudio mcp    # Claude Code
+omastudio skill                              # installs the agent skill into ~/.claude/skills
+```
+
+Other MCP clients (opencode, Codex, Gemini CLI and others) take the same command.
+
+---
+
+## Files
+
+| Path | Contents |
+| :--- | :--- |
+| `<photo>.omastudio` | The edit of a photo (sidecar) |
+| `~/.local/share/omastudio/catalog.json` | Catalog: ratings, flags, colour labels |
+| `~/.local/share/omastudio/fuji-recipes/` | Saved Fujifilm recipes |
+| `~/.local/share/omastudio/icc/` | Your own ICC profiles |
+| `~/.local/share/omastudio/models/` | Local AI models (`subject.onnx`, `sky.onnx`) |
+| `~/.config/omastudio/` | Settings, interface state, language, cloud accounts |
+| `~/.cache/omastudio/` | Thumbnails, previews, downloaded cloud photos |
+
+---
+
+## Languages
+
+The interface is available in 30 languages: Arabic, Chinese (Simplified and Traditional), Czech, Danish, Dutch, English, Finnish, French, German, Greek, Hebrew, Hindi, Hungarian, Indonesian, Italian, Japanese, Korean, Norwegian Bokmål, Persian, Polish, Portuguese (Brazil), Romanian, Russian, Spanish, Swedish, Thai, Turkish, Ukrainian and Vietnamese. It follows the system language; the language menu in the top bar switches at once.
+
+Translations live in `app/i18n/qml_<code>.ts`. `tools/i18n/update.sh` refreshes them from the QML, and `tools/i18n/check.py`, run in CI, fails when a string is missing, left in English, in the wrong script or has mismatched placeholders. Engine messages are still in English.
 
 ---
 
@@ -263,24 +214,24 @@ Engine messages (errors from RAW decoding, export and AI providers) are still in
 * RAW files are opened read-only and never modified.
 * Catalog, settings and sidecars are written atomically with mode `0600`; symbolic links are rejected.
 * Every file the engine reads has a size limit, and every external program it runs has a time limit and its own process group.
-* API keys are never passed on the command line.
-* The interface renders all dynamic text as plain text and never evaluates code.
+* API keys and cloud tokens stay in the keyring and are never passed on a command line.
+* The interface renders all dynamic text as plain text.
 
-Details are in [SECURITY.md](SECURITY.md) and [CONTRIBUTING.md](CONTRIBUTING.md).
-
----
-
-## Roadmap
-
-Planned next:
-* The full editing pipeline on the GPU (demosaicing already runs there)
-* Local AI features accelerated by NPUs
+Details are in [SECURITY.md](SECURITY.md).
 
 ---
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md). CI builds and tests every change in an `archlinux` container, runs `clippy -D warnings` and the translation check.
 
 ## Support
 
 OmaStudio is independent open source software. You can support its development at [Buy Me a Coffee](https://buymeacoffee.com/ozdil).
+
+## Trademarks
+
+Fujifilm, GFX, X-Trans, Hasselblad, Phase One, Leica, Pentax, Mamiya and other camera names are trademarks of their owners and are used only to describe compatibility.
 
 ## License
 

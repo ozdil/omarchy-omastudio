@@ -1117,7 +1117,7 @@ dependencies = [
 
 [[package]]
 name = "omastudio-app"
-version = "3.0.0"
+version = "3.1.0"
 dependencies = [
  "cxx",
  "cxx-qt",
@@ -1131,7 +1131,7 @@ dependencies = [
 
 [[package]]
 name = "omastudio-engine"
-version = "3.0.0"
+version = "3.1.0"
 dependencies = [
  "cc",
  "exr",
