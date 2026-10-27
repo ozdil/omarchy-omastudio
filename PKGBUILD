@@ -1,6 +1,6 @@
 # Maintainer: Ozan Özdil
 pkgname=omastudio
-pkgver=3.0.0
+pkgver=3.1.0
 pkgrel=1
 pkgdesc="The Complete Medium Format RAW Editor for Omarchy"
 arch=('x86_64')

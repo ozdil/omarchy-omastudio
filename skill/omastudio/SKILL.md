@@ -34,7 +34,9 @@ OmaStudio is the RAW photo editor of the user's Omarchy desktop. It has an engin
    `getStatus`, `openPhoto <path>`, `applyRecipe '<json>'`, `setExposure <ev>`,
    `setWarmth <kelvin>`, `applyPreset <name>`, `fujiRecipes`, `applyFujiRecipe <label>`,
    `applyCameraRecipe [photo]`, `aiEdit <request>`, `aiMask subject|sky`, `importXmp`, `writeXmp`,
-   `setZoom <scale|fit>`, `screenshot <file.png>`.
+   `setZoom <scale|fit>`, `screenshot <file.png>`, `openFolder <dir>`, `setMode essentials|pro`,
+   `setRightTab <tab>`, `showSection <section>`, `setView peaking|compare|softProof|split [on|off]`,
+   `showExport`, `showCloud`, `showAbout`.
    `applyPreset` takes a name from the Looks panel: Muted, Vivid, Warm portrait, Black and white,
    Teal and orange.
 

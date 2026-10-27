@@ -1,6 +1,15 @@
 # Changelog
 
-## Unreleased
+## v3.1.0 — 2026-10-27
+
+### Documentation
+- A user guide covering installation, the window, every panel and tool, viewing aids, history, Fujifilm, medium format, export, cloud accounts, AI, keyboard and mouse, the command line, files and troubleshooting, with screenshots of the application.
+- A technologies page: what OmaStudio is built on, the role of each part, why it was chosen, its licence, and an architecture diagram.
+- Both are available in all 30 interface languages, indexed in `docs/README.md`. The README (English and Turkish) links to them and lists every shortcut and control-socket method.
+
+### Control socket
+- New methods: `openFolder <dir>`, `setMode essentials|pro`, `showSection <section>` (opens one section of the right panel and scrolls to it), `setView peaking|compare|softProof|split [on|off]` and `showAbout`.
+- Ctrl+click on the Transform and Heal and clone headers keeps only that section open, as with the other sections.
 
 ### Cloud accounts
 - **Connect** in the filmstrip bar adds Google Drive, OneDrive, Dropbox, Box, pCloud, Yandex Disk and GitHub accounts. Signing in happens on the service's own page in the browser.

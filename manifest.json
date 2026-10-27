@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "ozdil.omastudio",
   "name": "OmaStudio",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "author": "Ozan Özdil (ozdil)",
   "license": "MIT",
   "description": "The complete medium format RAW editor for Omarchy: own X-Trans and Bayer development, Fujifilm recipes and colour-managed export.",
