@@ -107,8 +107,10 @@ Rectangle {
             }
         }
 
-        // Category Filter Pills
-        RowLayout {
+        // Category filter pills. A Flow wraps them: in a row, long labels (Arabic,
+        // Hebrew, Persian) made the panel wider than its column, and a right-to-left
+        // layout then pushed the whole panel past the left edge
+        Flow {
             Layout.fillWidth: true
             spacing: 6
 
@@ -179,6 +181,9 @@ Rectangle {
 
                             Text {
                                 text: modelData.name
+                                // Set explicitly so right-to-left layouts mirror it; left
+                                // implicit, Latin film names stayed on the left
+                                horizontalAlignment: Text.AlignLeft
                                 textFormat: Text.PlainText
                                 font.family: Theme.fontFamily
                                 font.pixelSize: Theme.px(11)

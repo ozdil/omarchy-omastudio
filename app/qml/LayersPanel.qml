@@ -219,6 +219,8 @@ Rectangle {
         Text {
             id: sbText
             anchors.centerIn: parent
+            width: Math.min(implicitWidth, sb.width - 8)
+            elide: Text.ElideRight
             text: sb.label
             textFormat: Text.PlainText
             font.family: Theme.monoFont
@@ -238,7 +240,6 @@ Rectangle {
     component AiButton: SmallButton {
         id: ab
         property string kind: ""
-        Layout.fillWidth: true
         enabled: root.activePhotoPath !== "" && !aiProc.running
         labelColor: Theme.accentGreen
         label: aiProc.running && root.aiKind === ab.kind ? qsTr("Detecting…") : ab.text
@@ -340,8 +341,8 @@ Rectangle {
             SmallButton { label: qsTr("+ Colour"); labelColor: Theme.accentGreen; onClicked: root.addLayer("color_range") }
         }
 
-        // Masks from local AI models
-        RowLayout {
+        // Masks from local AI models; wraps when the labels are long
+        Flow {
             Layout.fillWidth: true
             spacing: 6
             AiButton { text: "+ " + qsTr("AI Subject"); kind: "subject" }

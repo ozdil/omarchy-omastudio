@@ -146,6 +146,9 @@ Rectangle {
         Text {
             id: btnText
             anchors.centerIn: parent
+            // A stretched button narrower than a long translation elides it
+            width: Math.min(implicitWidth, btn.width - 8)
+            elide: Text.ElideRight
             text: btn.busy ? "..." : btn.label
             textFormat: Text.PlainText
             font.family: Theme.fontFamily

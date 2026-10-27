@@ -51,6 +51,10 @@ ColumnLayout {
         signal clicked()
         implicitWidth: sbText.implicitWidth + 12
         implicitHeight: 20
+        // Shrinks (the label elides) when a row's translations don't fit the panel,
+        // instead of widening the panel past its edge
+        Layout.fillWidth: true
+        Layout.maximumWidth: implicitWidth
         radius: Theme.r(4)
         opacity: enabled ? 1.0 : 0.4
         color: active || sbMouse.containsMouse ? Theme.bgCardHover : Theme.bgCard
@@ -59,6 +63,8 @@ ColumnLayout {
         Text {
             id: sbText
             anchors.centerIn: parent
+            width: Math.min(implicitWidth, sb.width - 8)
+            elide: Text.ElideRight
             text: sb.label
             textFormat: Text.PlainText
             font.family: Theme.monoFont

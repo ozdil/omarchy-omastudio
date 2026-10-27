@@ -2476,11 +2476,21 @@ Rectangle {
                         delegate: Item {
                             required property var modelData
                             readonly property bool active: root.rightTab === modelData.id
+                            // Tabs share the width by the length of their labels, so a
+                            // long translation (Arabic, Hebrew) gets the room it needs
+                            Layout.preferredWidth: tabLabel.implicitWidth + 12
                             Layout.fillWidth: true
                             Layout.fillHeight: true
 
+                            // Shrinks, then elides, rather than running past the tab
                             Text {
+                                id: tabLabel
                                 anchors.centerIn: parent
+                                width: parent.width - 6
+                                horizontalAlignment: Text.AlignHCenter
+                                fontSizeMode: Text.HorizontalFit
+                                minimumPixelSize: Math.round(8 * Theme.fontScale)
+                                elide: Text.ElideRight
                                 text: modelData.label
                                 textFormat: Text.PlainText
                                 font.family: Theme.fontFamily
@@ -2598,13 +2608,15 @@ Rectangle {
                             }
 
                             Rectangle {
-                                implicitWidth: 70
+                                // Wide enough for the longest translation of Reset
+                                implicitWidth: Math.max(70, resetBtnText.implicitWidth + 16)
                                 implicitHeight: 28
                                 radius: Theme.radiusSm
                                 color: resetBtnMouse.containsMouse ? Theme.bgCardHover : Theme.bgCard
                                 border.color: Theme.border
 
                                 Text {
+                                    id: resetBtnText
                                     anchors.centerIn: parent
                                     text: qsTr("Reset")
                                     textFormat: Text.PlainText

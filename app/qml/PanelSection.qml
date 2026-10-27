@@ -68,6 +68,9 @@ ColumnLayout {
             Text {
                 Layout.fillWidth: true
                 text: sec.title
+                // Explicit so right-to-left layouts mirror it; left implicit, a Latin
+                // title (Fujifilm) stayed on the left in Arabic, Hebrew and Persian
+                horizontalAlignment: Text.AlignLeft
                 textFormat: Text.PlainText
                 elide: Text.ElideRight
                 font.family: Theme.fontFamily
