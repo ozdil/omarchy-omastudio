@@ -248,6 +248,15 @@ mod tests {
         [0.05 + 0.7 * stripe * (1.0 - disc) + 0.2 * ramp, 0.1 + 0.5 * disc + 0.1 * stripe, 0.08 + 0.6 * (1.0 - stripe) * ramp + 0.3 * disc]
     }
 
+    #[test]
+    fn shader_uses_the_cpu_homogeneity_margin() {
+        use crate::raw::demosaic::{HOMO_SLACK_C, HOMO_SLACK_L, HOMO_SLACK_REL};
+        let src = include_str!("demosaic.wgsl");
+        for (name, v) in [("HOMO_SLACK_REL", HOMO_SLACK_REL), ("HOMO_SLACK_L", HOMO_SLACK_L), ("HOMO_SLACK_C", HOMO_SLACK_C)] {
+            assert!(src.contains(&format!("const {name}: f32 = {v:e};")), "{name} differs between the CPU and the shader");
+        }
+    }
+
     /// Runs only where a GPU (or, with OMASTUDIO_GPU=software, lavapipe) is available.
     #[test]
     fn gpu_matches_cpu() {

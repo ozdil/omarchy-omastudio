@@ -39,6 +39,9 @@ const EPS: f32 = 1e-4;
 const STRIDE: u32 = 159u;
 const WIN: u32 = 24u;
 const BIG: f32 = 3.402823e38;
+const HOMO_SLACK_REL: f32 = 1e-4;
+const HOMO_SLACK_L: f32 = 1e-6;
+const HOMO_SLACK_C: f32 = 1e-10;
 
 fn dir(d: i32) -> vec2<i32> {
     // (dy, dx)
@@ -232,6 +235,10 @@ fn homo_pass(@builtin(global_invocation_id) id: vec3<u32>) {
         el = min(el, dl);
         ec = min(ec, dc);
     }
+    // Same margin as raw::demosaic (HOMO_SLACK_*): GPU division and sqrt are a few
+    // ulps off, so exact ties must not decide the direction
+    el = el * (1.0 + HOMO_SLACK_REL) + HOMO_SLACK_L;
+    ec = ec * (1.0 + HOMO_SLACK_REL) + HOMO_SLACK_C;
     var packed = 0u;
     for (var d = 0u; d < 4u; d++) {
         let c = ycc(i, d);

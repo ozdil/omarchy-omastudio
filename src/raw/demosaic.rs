@@ -416,7 +416,8 @@ fn develop_tile<T: Copy>(
             for lx in 1..tw - 1 {
                 let i = row + lx;
                 let c = plane[i];
-                let (el, ec) = (eps_l[lx], eps_c[lx]);
+                // A margin above the tolerance (see HOMO_SLACK_* ): exact ties stay ties
+                let (el, ec) = (eps_l[lx] * (1.0 + HOMO_SLACK_REL) + HOMO_SLACK_L, eps_c[lx] * (1.0 + HOMO_SLACK_REL) + HOMO_SLACK_C);
                 let mut count = 0u8;
                 for off in ring {
                     let q = plane[(i as isize + off) as usize];
@@ -494,6 +495,16 @@ fn develop_tile<T: Copy>(
         }
     }
 }
+
+/// Margin added to the homogeneity tolerances. Flat or synthetic areas have many exact
+/// ties between a neighbour's distance and the tolerance; GPUs compute division and
+/// square roots to a few ulps instead of exactly, which broke those ties the other way
+/// and picked other directions on whole patches (about 1% of pixels on NVIDIA and
+/// Intel). Far below the noise of any photo, so it only decides those ties, the same
+/// way on the CPU and the GPU (demosaic.wgsl uses the same constants).
+pub(crate) const HOMO_SLACK_REL: f32 = 1e-4;
+pub(crate) const HOMO_SLACK_L: f32 = 1e-6;
+pub(crate) const HOMO_SLACK_C: f32 = 1e-10;
 
 #[inline(always)]
 fn chroma_dist(a: [f32; 3], b: [f32; 3]) -> f32 {
