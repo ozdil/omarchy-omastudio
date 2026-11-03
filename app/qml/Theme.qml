@@ -104,6 +104,33 @@ QtObject {
         return 0.2126 * k.r + 0.7152 * k.g + 0.0722 * k.b;
     }
 
+    // WCAG 2 relative luminance and contrast ratio
+    function relLum(c) {
+        var k = Qt.lighter(c, 1.0);
+        function ch(v) { return v <= 0.04045 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); }
+        return 0.2126 * ch(k.r) + 0.7152 * ch(k.g) + 0.0722 * ch(k.b);
+    }
+    function contrast(a, b) {
+        var la = relLum(a), lb = relLum(b);
+        return (Math.max(la, lb) + 0.05) / (Math.min(la, lb) + 0.05);
+    }
+    // `fg` moved towards `toward` (the main text colour) until it reaches `ratio` on `bg`;
+    // an alpha colour is flattened onto `bg` first
+    function readable(fg, bg, toward, ratio) {
+        var f = Qt.lighter(fg, 1.0), g = Qt.lighter(bg, 1.0), w = Qt.lighter(toward, 1.0);
+        var c = Qt.rgba(f.r * f.a + g.r * (1 - f.a), f.g * f.a + g.g * (1 - f.a), f.b * f.a + g.b * (1 - f.a), 1);
+        for (var i = 0; i < 20 && contrast(c, g) < ratio; i++) {
+            c = Qt.rgba(c.r + (w.r - c.r) * 0.15, c.g + (w.g - c.g) * 0.15, c.b + (w.b - c.b) * 0.15, 1);
+        }
+        return c;
+    }
+    // Secondary text stays legible in every theme: muted text meets WCAG AA (4.5:1) and
+    // dim text (hints, placeholders, inactive icons) 3:1, on the panel cards where they sit
+    function ensureContrast() {
+        root.textMuted = readable(root.textMuted, root.bgCard, root.textMain, 4.5);
+        root.textDim = readable(root.textDim, root.bgCard, root.textMain, 3.0);
+    }
+
     function loadColors(raw) {
         if (!raw || raw.trim().length === 0 || raw === lastLoadedRaw) return;
         lastLoadedRaw = raw;
@@ -164,6 +191,7 @@ QtObject {
         root.accentOrange = dict["orange"] || dict["color9"] || dict["color1"] || "#ff9e64";
         root.accentCyan = dict["bright_cyan"] || dict["cyan"] || dict["color6"] || dict["color14"] || "#7dcfff";
         root.accentYellow = dict["bright_yellow"] || dict["yellow"] || dict["color3"] || dict["color11"] || "#e0af68";
+        root.ensureContrast();
     }
 
     function reloadTheme() {
@@ -232,6 +260,7 @@ QtObject {
     }
 
     Component.onCompleted: {
+        root.ensureContrast();
         root.fontProc.running = true;
         root.roundingProc.running = true;
     }

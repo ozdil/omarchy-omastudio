@@ -1087,6 +1087,10 @@
         <source>Version</source>
         <translation>Versio</translation>
     </message>
+    <message>
+        <source>Version %1</source>
+        <translation>Versio %1</translation>
+    </message>
 </context>
 <context>
     <name>HistogramView</name>
@@ -2539,6 +2543,18 @@
     <message>
         <source>Pro adds tone curve, colour mixer, colour grading, detail, grain, colour management and masks</source>
         <translation>Pro lisää sävykäyrän, värimikserin, värimäärittelyn, yksityiskohdat, rakeisuuden, värinhallinnan ja maskit</translation>
+    </message>
+    <message>
+        <source>Before and after</source>
+        <translation>Ennen ja jälkeen</translation>
+    </message>
+    <message>
+        <source>About OmaStudio</source>
+        <translation>Tietoja OmaStudiosta</translation>
+    </message>
+    <message>
+        <source>Open photo</source>
+        <translation>Avaa kuva</translation>
     </message>
 </context>
 <context>

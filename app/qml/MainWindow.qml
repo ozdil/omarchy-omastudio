@@ -247,6 +247,15 @@ Rectangle {
     // collapse into a single follow-up render with the latest values
     property bool renderInFlight: false
     property bool renderPending: false
+    // Adjust commands sent and not yet answered. The daemon answers in order, so a
+    // render is finished only when the answer to the last one arrives: a late answer
+    // to an earlier one no longer starts another render.
+    property int adjustOutstanding: 0
+    // How long the watchdog has waited on a running engine (first decode of a 100 MP file)
+    property int renderWaitedMs: 0
+    // The engine stopped (crash, out of memory) with a photo open: its replacement loads
+    // the photo again before anything else, keeping the edits made in the window
+    property bool engineReloading: false
     property var daemonQueue: []
 
     function resolveEnginePath() {
@@ -1077,6 +1086,7 @@ Rectangle {
             if (!resp.success) {
                 console.warn("Daemon returned error for action " + resp.action + ": " + resp.error);
                 if (resp.action === "load") {
+                    root.engineReloading = false;
                     root.showToast(qsTr("Failed to load RAW: %1").arg(resp.error || qsTr("Unknown error")), Theme.highlightClip);
                 } else if (resp.action === "ai_auto" || resp.action === "ai_social") {
                     root.showToast(resp.error || qsTr("AI action failed"), Theme.highlightClip);
@@ -1086,7 +1096,7 @@ Rectangle {
                     exportDialog.exportStatusIsError = true;
                     exportDialog.exportStatusText = resp.error || qsTr("Batch export failed");
                 } else if (resp.action === "adjust") {
-                    root.renderFinished();
+                    root.adjustAnswered();
                     root.showToast((resp.error || qsTr("Preview render failed")), Theme.highlightClip);
                 } else if (resp.action === "detail") {
                     viewport.detailFailed();
@@ -1097,7 +1107,11 @@ Rectangle {
             var act = resp.action;
             var data = resp.data;
 
-            if (act === "load") {
+            if (act === "load" && root.engineReloading) {
+                // Reloaded after an engine restart: the window's recipe stays as it is
+                root.engineReloading = false;
+                renderDebounce.restart();
+            } else if (act === "load") {
                 if (data) {
                     root.activeMetadata = data.metadata;
                     root.activeScene = data.scene;
@@ -1109,7 +1123,7 @@ Rectangle {
                     else root.requestReference();
                 }
             } else if (act === "adjust") {
-                root.renderFinished();
+                root.adjustAnswered();
                 if (data) {
                     root.activeHistogram = data.histogram;
                     viewport.imageSource = data.image;
@@ -1263,6 +1277,8 @@ Rectangle {
                     return;
                 }
                 root.renderInFlight = true;
+                root.adjustOutstanding += 1;
+                root.renderWaitedMs = 0;
                 renderWatchdog.restart();
                 var splitVal = root.isSplitView ? root.splitRatio : 0.0;
                 root.sendDaemonCommand({
@@ -1278,12 +1294,27 @@ Rectangle {
         }
     }
 
-    // Recovers if a render reply never arrives (engine restarted mid-render)
+    // Recovers if a render reply never arrives (engine restarted mid-render). A running
+    // engine that is only slow gets up to a minute before another render is sent, so
+    // slow renders don't pile up in its queue.
     Timer {
         id: renderWatchdog
         interval: 5000
         repeat: false
-        onTriggered: root.renderFinished()
+        onTriggered: {
+            root.renderWaitedMs += interval;
+            if (daemonProc.running && root.adjustOutstanding > 0 && root.renderWaitedMs < 60000) {
+                renderWatchdog.restart();
+                return;
+            }
+            root.adjustOutstanding = 0;
+            root.renderFinished();
+        }
+    }
+
+    function adjustAnswered() {
+        root.adjustOutstanding = Math.max(0, root.adjustOutstanding - 1);
+        if (root.adjustOutstanding === 0) root.renderFinished();
     }
 
     function renderFinished() {
@@ -1317,7 +1348,14 @@ Rectangle {
 
         onFinished: function(exitCode, output) {
             root.daemonReady = false;
-            root.renderInFlight = false;
+            // Answers to commands sent to the old engine never come
+            root.adjustOutstanding = 0;
+            if (root.activePhotoPath !== "" && !root.engineReloading) {
+                root.engineReloading = true;
+                // Queued, not sent: the next command starts the engine, this goes first
+                root.daemonQueue.unshift({ cmd: "load", path: root.activePhotoPath });
+            }
+            root.renderFinished();
         }
     }
 
@@ -1488,6 +1526,7 @@ Rectangle {
             if (root.showAboutModal) root.showAboutModal = false;
             else if (root.showExportModal) root.showExportModal = false;
             else if (viewport.isCropMode) viewport.isCropMode = false;
+            else if (root.activeFocusItem && root.activeFocusItem !== root.contentItem) root.contentItem.forceActiveFocus();
         }
     }
 
@@ -1577,6 +1616,23 @@ Rectangle {
             }
         }
     }
+    // Keyboard access to the controls: Tab hides the panels (as in other photo editors),
+    // so F6 / Shift+F6 move the focus from control to control; Space or Enter presses
+    // the focused one and Escape gives the focus back to the photo
+    Shortcut {
+        sequence: "F6"
+        onActivated: root.moveControlFocus(true)
+    }
+    Shortcut {
+        sequence: "Shift+F6"
+        onActivated: root.moveControlFocus(false)
+    }
+    function moveControlFocus(forward) {
+        var from = root.activeFocusItem || root.contentItem;
+        var next = from.nextItemInFocusChain(forward);
+        if (next) next.forceActiveFocus(forward ? Qt.TabFocusReason : Qt.BacktabFocusReason);
+    }
+
     Shortcut {
         sequence: "Tab"
         onActivated: {

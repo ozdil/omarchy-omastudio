@@ -52,6 +52,12 @@ ColumnLayout {
             Accessible.role: Accessible.Button
             Accessible.name: sec.title
         }
+        KeyFocus {
+            name: sec.title
+            checkable: true
+            checked: sec.expanded
+            onActivated: if (sec.host) sec.host.toggleSection(sec.key)
+        }
 
         RowLayout {
             anchors.fill: parent
@@ -125,6 +131,10 @@ ColumnLayout {
                     ToolTip.text: qsTr("Reset %1").arg(sec.title)
                     Accessible.role: Accessible.Button
                     Accessible.name: qsTr("Reset %1").arg(sec.title)
+                }
+                KeyFocus {
+                    name: qsTr("Reset %1").arg(sec.title)
+                    onActivated: sec.reset()
                 }
             }
         }

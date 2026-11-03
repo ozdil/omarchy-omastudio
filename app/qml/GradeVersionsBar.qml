@@ -79,6 +79,12 @@ Rectangle {
                         }
                     }
                 }
+                KeyFocus {
+                    name: qsTr("Version %1").arg(modelData)
+                    checkable: true
+                    checked: root.currentVersion === modelData
+                    onActivated: root.switchVersion(modelData)
+                }
             }
         }
     }
