@@ -10,11 +10,18 @@ fi
 # Re-exec through fixed trusted shell under sanitized environment (/usr/bin/env -i)
 if [ "${OMASTUDIO_SECURE_ENV:-0}" != "1" ]; then
     # Desktop-session variables (D-Bus, cursor theme, HiDPI scaling) are forwarded only
-    # when set; dropping them gave the UI the wrong cursor and scale factor.
+    # when set; dropping them gave the UI the wrong cursor and scale factor. So are the
+    # GPU selection variables (hybrid laptops, NVIDIA PRIME offload, Vulkan ICDs,
+    # OMASTUDIO_GPU=off|software) and the API keys the AI assistant falls back to when
+    # none is in the keyring.
     SESSION_ENV=()
     for var in XDG_CURRENT_DESKTOP XDG_SESSION_TYPE DBUS_SESSION_BUS_ADDRESS HYPRLAND_INSTANCE_SIGNATURE \
                XCURSOR_THEME XCURSOR_SIZE QT_QPA_PLATFORM QT_QPA_PLATFORMTHEME QT_SCALE_FACTOR QT_SCREEN_SCALE_FACTORS \
-               QT_AUTO_SCREEN_SCALE_FACTOR XDG_ACTIVATION_TOKEN DESKTOP_STARTUP_ID; do
+               QT_AUTO_SCREEN_SCALE_FACTOR XDG_ACTIVATION_TOKEN DESKTOP_STARTUP_ID TZ \
+               __NV_PRIME_RENDER_OFFLOAD __NV_PRIME_RENDER_OFFLOAD_PROVIDER __GLX_VENDOR_LIBRARY_NAME \
+               __VK_LAYER_NV_optimus DRI_PRIME MESA_VK_DEVICE_SELECT VK_ICD_FILENAMES VK_DRIVER_FILES \
+               LIBVA_DRIVER_NAME NVD_BACKEND OMASTUDIO_GPU \
+               ANTHROPIC_API_KEY OPENAI_API_KEY OPENROUTER_API_KEY GEMINI_API_KEY; do
         if [ -n "${!var:-}" ]; then
             SESSION_ENV+=("${var}=${!var}")
         fi

@@ -61,6 +61,26 @@ pub fn available() -> Option<(String, PathBuf)> {
     Some((agent, find_program(program)?))
 }
 
+/// Claude Code sees only its Read tool, may read only the photo, and loads none of
+/// the user's settings, permission rules, hooks or MCP servers: an instruction hidden
+/// in the photo cannot make it read other files or run anything.
+const CLAUDE_ARGS: &[&str] = &[
+    "-p",
+    "--output-format",
+    "json",
+    "--tools",
+    "Read",
+    "--allowedTools",
+    "Read(./photo.jpg)",
+    "--permission-mode",
+    "dontAsk",
+    "--setting-sources",
+    "",
+    "--strict-mcp-config",
+    "--max-turns",
+    "4",
+];
+
 /// Shows the agent the photo and returns the JSON object it answers with.
 pub fn ask_json(system: &str, jpeg: &[u8], text: &str, schema: &Value) -> Result<Value, String> {
     let Some((agent, program)) = available() else {
@@ -99,16 +119,7 @@ fn run(
     cmd.current_dir(dir);
     match agent {
         "claude" => {
-            cmd.args([
-                "-p",
-                "--output-format",
-                "json",
-                "--allowedTools",
-                "Read",
-                "--max-turns",
-                "4",
-                "--",
-            ])
+            cmd.args(CLAUDE_ARGS).arg("--")
             .arg(&prompt);
         }
         _ => {
@@ -158,4 +169,24 @@ fn run(
     };
     super::provider::parse_json_object(&answer)
         .ok_or_else(|| format!("{agent}'s answer was not valid JSON"))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::CLAUDE_ARGS;
+
+    fn value_of(flag: &str) -> Option<&'static str> {
+        CLAUDE_ARGS.iter().position(|a| *a == flag).and_then(|i| CLAUDE_ARGS.get(i + 1).copied())
+    }
+
+    #[test]
+    fn claude_is_confined_to_the_photo() {
+        assert_eq!(value_of("--tools"), Some("Read"));
+        assert_eq!(value_of("--allowedTools"), Some("Read(./photo.jpg)"));
+        assert_eq!(value_of("--permission-mode"), Some("dontAsk"));
+        // No user, project or local settings: their allow rules, hooks and MCP servers
+        assert_eq!(value_of("--setting-sources"), Some(""));
+        assert!(CLAUDE_ARGS.contains(&"--strict-mcp-config"));
+        assert!(!CLAUDE_ARGS.iter().any(|a| a.contains("bypassPermissions")));
+    }
 }
