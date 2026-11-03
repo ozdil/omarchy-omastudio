@@ -2,6 +2,7 @@
 
 // The engine modules come from the library crate, compiled once and shared with the
 // tests; only the MCP server is specific to this binary.
+mod bench;
 mod mcp;
 use omastudio_engine::{
     ai, cloud, dag, export, fuji, gpu, hash, icc, medium_format, ml, pipeline, ptp, raw, recipe, security, xmp,
@@ -870,6 +871,14 @@ fn main() {
         "gpu" => {
             print_json(&ResponseWrapper::ok(gpu::status()));
         }
+        "bench" => {
+            let runs = args.iter().position(|a| a == "--runs").and_then(|i| args.get(i + 1)).and_then(|v| v.parse().ok()).unwrap_or(5);
+            let photo = args.get(2).filter(|a| !a.starts_with("--")).map(String::as_str);
+            match bench::run(photo, runs) {
+                Ok(v) => print_json(&ResponseWrapper::ok(v)),
+                Err(e) => print_json::<()>(&ResponseWrapper::err(e)),
+            }
+        }
         "mcp" => mcp::run(),
         "ai" => run_ai(&args[2..]),
         "xmp" => run_xmp(&args[2..]),
@@ -927,6 +936,7 @@ fn main() {
             println!("  ai-mask <photo> [--kind subject|sky]  Segment the photo with a local model into a mask layer image");
             println!("  mcp                                   Model Context Protocol server on stdin/stdout for AI agents");
             println!("  gpu                                   GPU used for demosaicing (OMASTUDIO_GPU=off uses the CPU)");
+            println!("  bench [photo] [--runs N]              Time the preview pipeline stage by stage");
             println!("  icc list                              List all detected system and bundled ICC color profiles");
             println!("  scan [dir]                            Scan local folder for supported RAW photos");
             println!("  catalog                               Retrieve persistent photo catalog database");
