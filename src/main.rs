@@ -1002,6 +1002,9 @@ fn main() {
         "daemon" => {
             // The daemon serves the editor's viewport; exports go through export_photo
             pipeline::set_interactive(true);
+            // Compile the GPU shaders while the window opens, so the first export
+            // doesn't wait ~2 s for them
+            std::thread::spawn(gpu::point_ops::warm_up);
             run_daemon();
         }
         cmd => {

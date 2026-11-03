@@ -357,6 +357,27 @@ pub fn worthwhile(gpu: &Gpu) -> bool {
     }
 }
 
+/// Opens the GPU and compiles the stage's shader ahead of the first use.
+pub fn warm_up() {
+    if let Some(gpu) = super::get().filter(|g| worthwhile(g)) {
+        let _ = pipeline(gpu);
+    }
+}
+
+fn pipeline(gpu: &Gpu) -> Result<&Pipeline, String> {
+    gpu.point_ops
+        .get_or_init(|| {
+            let scope = gpu.device.push_error_scope(wgpu::ErrorFilter::Validation);
+            let p = Pipeline::new(&gpu.device);
+            match pollster::block_on(scope.pop()) {
+                Some(e) => Err(format!("shader: {e}")),
+                None => Ok(p),
+            }
+        })
+        .as_ref()
+        .map_err(|e| e.clone())
+}
+
 /// Runs the stage on rows `y0..y1` of `input` (`w` pixels of `ch` 16-bit channels per
 /// row) and returns interleaved RGB f32 for those rows, or None when there is no
 /// usable GPU or the job failed.
@@ -393,15 +414,7 @@ fn run_on(
     if !(3..=4).contains(&ch) || y1 <= y0 || input.len() < y1 * w * ch {
         return Err("unsupported buffer".to_string());
     }
-    let pipeline = gpu.point_ops.get_or_init(|| {
-        let scope = gpu.device.push_error_scope(wgpu::ErrorFilter::Validation);
-        let p = Pipeline::new(&gpu.device);
-        match pollster::block_on(scope.pop()) {
-            Some(e) => Err(format!("shader: {e}")),
-            None => Ok(p),
-        }
-    });
-    let pipeline = pipeline.as_ref().map_err(|e| e.clone())?;
+    let pipeline = pipeline(gpu)?;
     let (mut params, tables) = pack(recipe, inputs);
     let _job = gpu.jobs.lock().map_err(|_| "GPU lock poisoned")?;
 
