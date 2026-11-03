@@ -13,13 +13,16 @@ use std::os::unix::io::AsRawFd;
 use std::os::unix::net::{UnixListener, UnixStream};
 use std::path::PathBuf;
 use std::sync::mpsc::{self, Sender};
-use std::sync::{Mutex, OnceLock};
+use std::sync::atomic::{AtomicBool, AtomicI32, AtomicUsize, Ordering};
+use std::sync::{Arc, Mutex, OnceLock};
 use std::time::Duration;
 
 use serde::{Deserialize, Serialize};
 
 const MAX_REQUEST: u64 = 256 << 10;
 const REPLY_TIMEOUT: Duration = Duration::from_secs(10);
+/// Connections answered at the same time
+const MAX_CONNECTIONS: usize = 16;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Request {
@@ -61,10 +64,11 @@ pub fn reply(id: i32, text: String) {
     }
 }
 
-/// Binds the socket and serves it on a background thread. `dispatch` runs on that
-/// thread and must hand the request to the Qt thread; it returns false once the
-/// window is gone.
-pub fn serve(dispatch: impl Fn(i32, Request) -> bool + Send + 'static) -> std::io::Result<()> {
+/// Binds the socket and serves it on a background thread. `dispatch` runs on a
+/// connection's thread and must hand the request to the Qt thread; it returns false
+/// once the window is gone. Each connection gets its own thread, so a call that waits
+/// for the window (a screenshot of a hidden workspace) doesn't hold up the others.
+pub fn serve(dispatch: impl Fn(i32, Request) -> bool + Send + Sync + 'static) -> std::io::Result<()> {
     let path = socket_path();
     let dir = path.parent().expect("socket directory");
     std::fs::DirBuilder::new().recursive(true).mode(0o700).create(dir)?;
@@ -77,41 +81,68 @@ pub fn serve(dispatch: impl Fn(i32, Request) -> bool + Send + 'static) -> std::i
     let listener = UnixListener::bind(&path)?;
     std::fs::set_permissions(&path, std::fs::Permissions::from_mode(0o600))?;
 
+    let dispatch = Arc::new(dispatch);
+    let window_gone = Arc::new(AtomicBool::new(false));
+    let next_id = Arc::new(AtomicI32::new(0));
+    let active = Arc::new(AtomicUsize::new(0));
     std::thread::spawn(move || {
-        let mut next_id = 0i32;
         for stream in listener.incoming() {
+            if window_gone.load(Ordering::Relaxed) {
+                break;
+            }
             let Ok(stream) = stream else { continue };
             if !same_user(&stream) {
                 continue;
             }
-            let _ = stream.set_read_timeout(Some(Duration::from_secs(2)));
-            let mut line = String::new();
-            if BufReader::new((&stream).take(MAX_REQUEST)).read_line(&mut line).is_err() {
+            // Bounded: a client opening connections in a loop can't start unlimited threads
+            if active.load(Ordering::Relaxed) >= MAX_CONNECTIONS {
+                let mut stream = stream;
+                let _ = stream.write_all(b"Error: too many requests\n");
                 continue;
             }
-            let answer = match serde_json::from_str::<Request>(&line) {
-                Ok(request) => {
-                    next_id = next_id.wrapping_add(1);
-                    let (tx, rx) = mpsc::channel();
-                    if let Ok(mut p) = pending().lock() {
-                        p.insert(next_id, tx);
-                    }
-                    if !dispatch(next_id, request) {
-                        break;
-                    }
-                    let answer = rx.recv_timeout(REPLY_TIMEOUT).unwrap_or_else(|_| "Error: no answer from the window".to_string());
-                    if let Ok(mut p) = pending().lock() {
-                        p.remove(&next_id);
-                    }
-                    answer
-                }
-                Err(e) => format!("Error: malformed request: {e}"),
-            };
-            let mut stream = stream;
-            let _ = stream.write_all(format!("{}\n", answer.replace('\n', " ")).as_bytes());
+            active.fetch_add(1, Ordering::Relaxed);
+            let (dispatch, window_gone, next_id, active) =
+                (Arc::clone(&dispatch), Arc::clone(&window_gone), Arc::clone(&next_id), Arc::clone(&active));
+            std::thread::spawn(move || {
+                handle(stream, &*dispatch, &window_gone, &next_id);
+                active.fetch_sub(1, Ordering::Relaxed);
+            });
         }
     });
     Ok(())
+}
+
+/// Reads one request, hands it to the window and writes its answer.
+fn handle(stream: UnixStream, dispatch: &dyn Fn(i32, Request) -> bool, window_gone: &AtomicBool, next_id: &AtomicI32) {
+    let _ = stream.set_read_timeout(Some(Duration::from_secs(2)));
+    let mut line = String::new();
+    if BufReader::new((&stream).take(MAX_REQUEST)).read_line(&mut line).is_err() {
+        return;
+    }
+    let answer = match serde_json::from_str::<Request>(&line) {
+        Ok(request) => {
+            let id = next_id.fetch_add(1, Ordering::Relaxed).wrapping_add(1);
+            let (tx, rx) = mpsc::channel();
+            if let Ok(mut p) = pending().lock() {
+                p.insert(id, tx);
+            }
+            if !dispatch(id, request) {
+                window_gone.store(true, Ordering::Relaxed);
+                if let Ok(mut p) = pending().lock() {
+                    p.remove(&id);
+                }
+                return;
+            }
+            let answer = rx.recv_timeout(REPLY_TIMEOUT).unwrap_or_else(|_| "Error: no answer from the window".to_string());
+            if let Ok(mut p) = pending().lock() {
+                p.remove(&id);
+            }
+            answer
+        }
+        Err(e) => format!("Error: malformed request: {e}"),
+    };
+    let mut stream = stream;
+    let _ = stream.write_all(format!("{}\n", answer.replace('\n', " ")).as_bytes());
 }
 
 /// True when the peer runs as the same user as this process.
@@ -143,10 +174,22 @@ mod tests {
         assert!(call(&Request { method: "show".into(), args: vec![] }).is_none());
 
         serve(|id, request| {
-            std::thread::spawn(move || reply(id, format!("{} {}", request.method, request.args.len())));
+            std::thread::spawn(move || {
+                if request.method == "slow" {
+                    std::thread::sleep(Duration::from_secs(3));
+                }
+                reply(id, format!("{} {}", request.method, request.args.len()))
+            });
             true
         })
         .unwrap();
+        // A call the window is slow to answer doesn't hold up the next one
+        let slow = std::thread::spawn(|| call(&Request { method: "slow".into(), args: vec![] }));
+        std::thread::sleep(Duration::from_millis(200));
+        let started = std::time::Instant::now();
+        assert_eq!(call(&Request { method: "fast".into(), args: vec![] }).as_deref(), Some("fast 0"));
+        assert!(started.elapsed() < Duration::from_secs(2), "the fast call waited for the slow one");
+        assert_eq!(slow.join().unwrap().as_deref(), Some("slow 0"));
         let mode = std::fs::metadata(socket_path()).unwrap().permissions().mode() & 0o777;
         assert_eq!(mode, 0o600);
         let answer = call(&Request { method: "openPhoto".into(), args: vec!["/a.RAF".into(), 2.into()] });
