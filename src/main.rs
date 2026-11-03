@@ -1,22 +1,11 @@
 #![allow(clippy::excessive_precision, clippy::too_many_arguments)]
 
-pub mod ai;
-pub mod cloud;
-pub mod dag;
-pub mod export;
-pub mod fuji;
-pub mod gpu;
-pub mod icc;
-pub mod medium_format;
-pub mod ml;
+// The engine modules come from the library crate, compiled once and shared with the
+// tests; only the MCP server is specific to this binary.
 mod mcp;
-pub mod pipeline;
-pub mod ptp;
-pub mod raw;
-pub mod recipe;
-pub mod hash;
-pub mod security;
-pub mod xmp;
+use omastudio_engine::{
+    ai, cloud, dag, export, fuji, gpu, hash, icc, medium_format, ml, pipeline, ptp, raw, recipe, security, xmp,
+};
 
 use ai::{
     ai_auto_enhance, ai_classify_scene, ai_classify_scene_with_jev, ai_optimize_for_social,
@@ -508,8 +497,13 @@ fn main() {
             while idx < args.len() {
                 match args[idx].as_str() {
                     "--recipe" if idx + 1 < args.len() => {
-                        if let Ok(r) = serde_json::from_str::<Recipe>(&args[idx + 1]) {
-                            recipe = r;
+                        // As with export: a broken recipe must not render without its edits
+                        match serde_json::from_str::<Recipe>(&args[idx + 1]) {
+                            Ok(r) => recipe = r,
+                            Err(e) => {
+                                print_json::<()>(&ResponseWrapper::err(format!("Invalid recipe: {e}")));
+                                return;
+                            }
                         }
                         idx += 2;
                     }
