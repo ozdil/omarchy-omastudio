@@ -65,15 +65,17 @@ fn stages() -> Vec<(&'static str, Recipe)> {
 }
 
 fn synthetic(w: usize, h: usize) -> Vec<u16> {
-    // Smooth gradients plus hashed noise, so blurs and LUTs see realistic variety
+    // Smooth gradients plus hashed noise, so blurs and LUTs see realistic variety.
+    // Values stay below ~40% linear like most of a real exposure; the brightest
+    // highlights take the exact (unbaked) path in interactive previews.
     let mut buf = vec![0u16; w * h * 3];
     for y in 0..h {
         for x in 0..w {
             let n = ((x as u32).wrapping_mul(73_856_093) ^ (y as u32).wrapping_mul(19_349_663)) % 2048;
             let i = (y * w + x) * 3;
-            buf[i] = ((x * 60_000 / w) as u32 + n) as u16;
-            buf[i + 1] = ((y * 60_000 / h) as u32 + n) as u16;
-            buf[i + 2] = (((x + y) * 30_000 / (w + h)) as u32 + n) as u16;
+            buf[i] = ((x * 24_000 / w) as u32 + n) as u16;
+            buf[i + 1] = ((y * 24_000 / h) as u32 + n) as u16;
+            buf[i + 2] = (((x + y) * 20_000 / (w + h)) as u32 + n) as u16;
         }
     }
     buf

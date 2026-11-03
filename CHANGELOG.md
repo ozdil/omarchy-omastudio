@@ -13,6 +13,12 @@
 - The control socket answers each connection on its own thread, so a slow call (a screenshot of a hidden workspace) no longer holds up the others.
 - `omastudio ipc screenshot` answers once the PNG is written. When the window is not being drawn (its Hyprland workspace is hidden) it answers with an error after three seconds instead of OK without a file. The MCP `window_screenshot` tool reports that error.
 
+### Performance
+- The histogram and video scopes under the photo are counted on every core: about 70 ms instead of 370 ms for a 3840 px preview on four cores, with the same counts. Every edit redraws them, so the preview of a plain edit comes back about 40% sooner.
+
+### Tools
+- `omastudio-engine bench [photo] [--runs N]` times the preview pipeline as one module group after another is turned on, and `OMASTUDIO_PROFILE=1` prints the time of each pass of every render on stderr. They show where GPU work pays off.
+
 ### Security
 - The AI assistant, when it uses Omarchy's default agent Claude Code, may read only the photo it is shown: Claude Code runs with its Read tool alone, limited to that file, and without the user's settings, permission rules, hooks or MCP servers. Before, it was allowed to read any file, so an instruction hidden in a photo could have made it read another one.
 

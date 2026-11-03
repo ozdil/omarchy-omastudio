@@ -348,6 +348,37 @@ impl<'a> PointOps<'a> {
     }
 }
 
+/// Per-pass timings on stderr when OMASTUDIO_PROFILE is set, for finding what the
+/// GPU should take over.
+struct Profile {
+    on: bool,
+    last: std::time::Instant,
+    begin: std::time::Instant,
+    marks: Vec<(&'static str, f64)>,
+}
+
+impl Profile {
+    fn start() -> Self {
+        let now = std::time::Instant::now();
+        Self { on: std::env::var_os("OMASTUDIO_PROFILE").is_some(), last: now, begin: now, marks: Vec::new() }
+    }
+
+    fn mark(&mut self, name: &'static str) {
+        if self.on {
+            let now = std::time::Instant::now();
+            self.marks.push((name, (now - self.last).as_secs_f64() * 1e3));
+            self.last = now;
+        }
+    }
+
+    fn finish(&self, w: usize, h: usize) {
+        if self.on {
+            let parts: Vec<String> = self.marks.iter().filter(|m| m.1 >= 0.05).map(|(n, t)| format!("{n} {t:.1}")).collect();
+            eprintln!("profile {w}x{h} total {:.1} ms: {}", self.begin.elapsed().as_secs_f64() * 1e3, parts.join(", "));
+        }
+    }
+}
+
 /// Processes a 16-bit linear RGB buffer (0..65535) and outputs an 8-bit RGB buffer for high-speed viewport rendering.
 /// The output uses the BT.709 curve; use [`process_buffer_16_to_8_ex`] for another colour space.
 pub fn process_buffer_16_to_8(
@@ -376,7 +407,9 @@ pub fn process_buffer_16_to_8_ex(
     let w = width as usize;
     let h = height as usize;
     let num_pixels = w * h;
+    let mut prof = Profile::start();
     let retouched = retouch::apply(input, w, h, ch, &recipe.retouch);
+    prof.mark("retouch");
     let input = &*retouched;
 
     let (wb_r, wb_g, wb_b) = white_balance::kelvin_to_rgb_multipliers(
@@ -433,6 +466,7 @@ pub fn process_buffer_16_to_8_ex(
             }
         });
 
+    prof.mark("pass1_point");
     // PASS 1.5: Local Layered Mask Adjustments (Linear, Radial, Luma Range)
     if !recipe.layers.is_empty() {
         let inv_w = 1.0 / (w as f32).max(1.0);
@@ -460,6 +494,7 @@ pub fn process_buffer_16_to_8_ex(
             });
     }
 
+    prof.mark("layers");
     let scale = frame_scale(w, h);
 
     // PASS 2: Presence Engine (Texture, Clarity, Dehaze, DaVinci Midtone Detail)
@@ -474,6 +509,7 @@ pub fn process_buffer_16_to_8_ex(
         scale,
     );
 
+    prof.mark("presence");
     // PASS 3: Detail & Optics Engine (Sharpness, Luma Denoise, Chroma Denoise, Defringe)
     detail::apply_detail_scaled(
         &mut f32_buf,
@@ -486,6 +522,7 @@ pub fn process_buffer_16_to_8_ex(
     );
     detail::apply_defringe_buffer(&mut f32_buf, w, h, recipe.defringe, scale);
 
+    prof.mark("detail");
     // PASS 4: Photochemical Silver-Halide Film Grain
     if recipe.grain_amount > 0.001 {
         film_grain::apply_film_grain_window(
@@ -500,11 +537,13 @@ pub fn process_buffer_16_to_8_ex(
         );
     }
 
+    prof.mark("grain");
     // PASS 5: Geometry: lens distortion and perspective (if enabled)
     if let Some(geometry) = detail::Geometry::new(w, h, recipe) {
         f32_buf = detail::apply_geometry(&f32_buf, w, h, 3, &geometry);
     }
 
+    prof.mark("geometry");
     // PASS 6: Defringe, Vignette & Final Quantization to 8-bit viewport output
     let mut output = vec![0u8; num_pixels * ch];
     output
@@ -542,8 +581,10 @@ pub fn process_buffer_16_to_8_ex(
             }
         });
 
+    prof.mark("quantize");
     let hist = compute_histogram_with_dimensions(&output, w, h, ch);
 
+    prof.mark("histogram");
     // Visual clipping overlay: Red for highlights (>= 254), Blue for shadows (<= 1)
     if highlight_mask || shadow_mask {
         output
@@ -564,6 +605,8 @@ pub fn process_buffer_16_to_8_ex(
             });
     }
 
+    prof.mark("overlay");
+    prof.finish(w, h);
     (output, hist)
 }
 
