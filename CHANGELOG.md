@@ -25,6 +25,7 @@
 
 ### Build
 - GitHub Actions moved to their Node 24 releases: checkout v7, upload-artifact v7, download-artifact v8, attest-build-provenance v4, action-gh-release v3 and CodeQL v4.
+- Every GitHub Action in the workflows is pinned to a full commit SHA, with its release as a comment (`actions/checkout@3d3c42e… # v7.0.1`), so a moved tag cannot change what CI and the release build run.
 - The engine binary is built on the engine library instead of compiling every module a second time; its unit tests run once.
 
 ## v3.1.0 — 2026-10-27
