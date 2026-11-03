@@ -573,7 +573,7 @@ mod tests {
                     let (r, g, b) = ops.apply(enc(0), enc(1), enc(2));
                     for (c, v) in [r, g, b].into_iter().enumerate() {
                         let d = (v - got[i * 3 + c]).abs();
-                        if !(d <= 2e-3) {
+                        if d.is_nan() || d > 2e-3 {
                             off += 1;
                         }
                         if d.is_finite() {
