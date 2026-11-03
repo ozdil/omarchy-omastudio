@@ -331,6 +331,21 @@ impl<'a> PointOps<'a> {
         if self.aces { aces::apply_gamut_compression_encoded(r, g, b) } else { (r, g, b) }
     }
 
+    /// What the GPU version of these operations needs; `gain` is white balance times
+    /// the exposure factor.
+    pub fn gpu_inputs(&self, gain: [f32; 3], transfer: Transfer) -> crate::gpu::point_ops::PointInputs<'_> {
+        crate::gpu::point_ops::PointInputs {
+            gain,
+            transfer,
+            curves: &self.curves,
+            look_lut: self.look_lut.as_ref(),
+            film_sim: self.film_sim,
+            film_lut: self.film_lut.as_deref(),
+            color_chrome: self.color_chrome,
+            gamut_compress: self.aces,
+        }
+    }
+
     /// The operations sampled on a BAKE_GRID³ lattice over 0..BAKE_MAX.
     pub fn bake(&self) -> lut::Lut3D {
         let n = BAKE_GRID;
@@ -418,17 +433,20 @@ pub fn process_buffer_16_to_8_ex(
     );
     let exp_factor = 2.0f32.powf(recipe.exposure + recipe.baseline_exposure);
 
-    // Intermediate float buffer for multi-stage 16-bit precision processing
-    let mut f32_buf = vec![0.0f32; num_pixels * 3];
-
     // PASS 1: Point Operations (White Balance, Exposure, Tone, Color Wheels, HSL Mixer, 3D LUT, Film Sim, ACES)
     let ops = PointOps::new(recipe);
+    // On a GPU every pixel is evaluated exactly, faster than the CPU's baked LUT
+    let gain = [wb_r * exp_factor, wb_g * exp_factor, wb_b * exp_factor];
+    let gpu = crate::gpu::point_ops::run(input, w, ch, 0, h, recipe, &ops.gpu_inputs(gain, transfer));
+    let on_gpu = gpu.is_some();
+    // Intermediate float buffer for multi-stage 16-bit precision processing
+    let mut f32_buf = gpu.unwrap_or_else(|| vec![0.0f32; num_pixels * 3]);
     // Interactive previews bake the creative point operations into a 3D LUT once per
     // render instead of evaluating them for every pixel
-    let baked = (interactive() && num_pixels >= BAKE_MIN_PIXELS).then(|| ops.bake());
+    let baked = (!on_gpu && interactive() && num_pixels >= BAKE_MIN_PIXELS).then(|| ops.bake());
     // White balance, exposure and the display curve depend only on the 16-bit input
     // value, so each channel is a 65536-entry table instead of a power per pixel
-    let curves = (num_pixels >= ENCODE_TABLE_MIN_PIXELS).then(|| {
+    let curves = (!on_gpu && num_pixels >= ENCODE_TABLE_MIN_PIXELS).then(|| {
         [wb_r, wb_g, wb_b].map(|m| {
             let k = m * exp_factor / 65535.0;
             (0..=u16::MAX).map(|v| transfer.encode(v as f32 * k)).collect::<Vec<f32>>()
@@ -437,6 +455,7 @@ pub fn process_buffer_16_to_8_ex(
     f32_buf
         .par_chunks_mut(w * 3)
         .enumerate()
+        .filter(|_| !on_gpu)
         .for_each(|(y_idx, row_f32)| {
             let in_row = &input[y_idx * w * ch..(y_idx + 1) * w * ch];
 
@@ -791,6 +810,20 @@ impl PointStage {
         }
     }
 
+    fn gpu_inputs(&self) -> crate::gpu::point_ops::PointInputs<'_> {
+        let (r, g, b) = self.wb;
+        crate::gpu::point_ops::PointInputs {
+            gain: [r * self.exp_factor, g * self.exp_factor, b * self.exp_factor],
+            transfer: self.transfer,
+            curves: &self.curves,
+            look_lut: self.lut.as_ref(),
+            film_sim: self.film_sim,
+            film_lut: self.film_lut.as_deref(),
+            color_chrome: self.color_chrome,
+            gamut_compress: self.gamut_compress,
+        }
+    }
+
     /// White balance, exposure, tone, mixer, skin, wheels, HSL, LUT, film simulation,
     /// Color Chrome and gamut compression for one linear 16-bit pixel.
     #[inline(always)]
@@ -948,9 +981,11 @@ fn process_band(
     stage: &PointStage,
 ) -> Vec<f32> {
     let rows = y1 - y0;
-    let mut buf = vec![0.0f32; rows * w * 3];
+    let gpu = crate::gpu::point_ops::run(input, w, ch, y0, y1, recipe, &stage.gpu_inputs());
+    let on_gpu = gpu.is_some();
+    let mut buf = gpu.unwrap_or_else(|| vec![0.0f32; rows * w * 3]);
 
-    buf.par_chunks_mut(w * 3).enumerate().for_each(|(i, row)| {
+    buf.par_chunks_mut(w * 3).enumerate().filter(|_| !on_gpu).for_each(|(i, row)| {
         let y = y0 + i;
         let in_row = &input[y * w * ch..(y + 1) * w * ch];
         for x in 0..w {

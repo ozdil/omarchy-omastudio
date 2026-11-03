@@ -14,6 +14,7 @@
 - `omastudio ipc screenshot` answers once the PNG is written. When the window is not being drawn (its Hyprland workspace is hidden) it answers with an error after three seconds instead of OK without a file. The MCP `window_screenshot` tool reports that error.
 
 ### Performance
+- Tone, point curves, RGB mixer, skin tone, colour wheels, HSL, look LUT, film simulations, Color Chrome and gamut compression run on the GPU (NVIDIA, AMD, Intel, Adreno through Vulkan) for previews and exports, with every pixel evaluated exactly. The editor's preview no longer has to approximate them with a baked 3D LUT, and exports no longer spend most of their time on this stage. Without a usable GPU, or with `OMASTUDIO_GPU=off`, the CPU does it as before. The shader mirrors the CPU code; a test compares both on every module and film simulation (largest difference 5e-6).
 - The histogram and video scopes under the photo are counted on every core: about 70 ms instead of 370 ms for a 3840 px preview on four cores, with the same counts. Every edit redraws them, so the preview of a plain edit comes back about 40% sooner.
 
 ### Tools

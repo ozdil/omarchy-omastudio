@@ -5,7 +5,7 @@
 use crate::recipe::Recipe;
 
 /// Samples per curve table; lookups interpolate linearly between them.
-const TABLE_SIZE: usize = 1024;
+pub const TABLE_SIZE: usize = 1024;
 
 /// One curve evaluated into a table.
 #[derive(Clone, Debug)]
@@ -66,6 +66,11 @@ impl Curves {
             green: CurveTable::new(&recipe.curve_points_green),
             blue: CurveTable::new(&recipe.curve_points_blue),
         }
+    }
+
+    /// The master, red, green and blue tables (TABLE_SIZE values each), for the GPU.
+    pub fn tables(&self) -> [Option<&[f32]>; 4] {
+        [&self.master, &self.red, &self.green, &self.blue].map(|c| c.as_ref().map(|t| t.table.as_slice()))
     }
 
     pub fn is_identity(&self) -> bool {
