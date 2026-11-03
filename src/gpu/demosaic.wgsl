@@ -39,9 +39,9 @@ const EPS: f32 = 1e-4;
 const STRIDE: u32 = 159u;
 const WIN: u32 = 24u;
 const BIG: f32 = 3.402823e38;
-const HOMO_SLACK_REL: f32 = 1e-4;
-const HOMO_SLACK_L: f32 = 1e-6;
-const HOMO_SLACK_C: f32 = 1e-10;
+const HOMO_SLACK_REL: f32 = 1e-3;
+const HOMO_SLACK_L: f32 = 1e-5;
+const HOMO_SLACK_C: f32 = 1e-8;
 
 fn dir(d: i32) -> vec2<i32> {
     // (dy, dx)

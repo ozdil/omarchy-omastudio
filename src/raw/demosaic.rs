@@ -502,9 +502,9 @@ fn develop_tile<T: Copy>(
 /// and picked other directions on whole patches (about 1% of pixels on NVIDIA and
 /// Intel). Far below the noise of any photo, so it only decides those ties, the same
 /// way on the CPU and the GPU (demosaic.wgsl uses the same constants).
-pub(crate) const HOMO_SLACK_REL: f32 = 1e-4;
-pub(crate) const HOMO_SLACK_L: f32 = 1e-6;
-pub(crate) const HOMO_SLACK_C: f32 = 1e-10;
+pub(crate) const HOMO_SLACK_REL: f32 = 1e-3;
+pub(crate) const HOMO_SLACK_L: f32 = 1e-5;
+pub(crate) const HOMO_SLACK_C: f32 = 1e-8;
 
 #[inline(always)]
 fn chroma_dist(a: [f32; 3], b: [f32; 3]) -> f32 {
