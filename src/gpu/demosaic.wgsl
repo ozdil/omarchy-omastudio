@@ -218,29 +218,35 @@ fn homo_pass(@builtin(global_invocation_id) id: vec3<u32>) {
         homo[i] = 0u;
         return;
     }
+    // Every luma and chroma distance is computed once and the same value is used both
+    // for the tolerance and for the count. The direction neighbours sit exactly on the
+    // tolerance of the smoothest direction; computing a distance twice let a driver
+    // contract the two copies differently (NVIDIA does), which flipped `<=` on those ties
+    // and picked another direction on about one Bayer pixel in a hundred.
+    var dl9: array<array<f32, 9>, 4>;
+    var dc9: array<array<f32, 9>, 4>;
+    for (var d = 0u; d < 4u; d++) {
+        let c = ycc(i, d);
+        for (var k = 0; k < 9; k++) {
+            let q = ycc(ext_index(y + k / 3 - 1, x + k % 3 - 1), d);
+            dl9[d][k] = abs(c.x - q.x);
+            dc9[d][k] = chroma_dist(c, q);
+        }
+    }
     var el = BIG;
     var ec = BIG;
     for (var d = 0u; d < 4u; d++) {
         let dv = dir(i32(d));
-        let a = ext_index(y + dv.x, x + dv.y);
-        let bb = ext_index(y - dv.x, x - dv.y);
-        let c = ycc(i, d);
-        let pa = ycc(a, d);
-        let pb = ycc(bb, d);
-        let dl = max(abs(c.x - pa.x), abs(c.x - pb.x));
-        let dc = max(chroma_dist(c, pa), chroma_dist(c, pb));
-        el = min(el, dl);
-        ec = min(ec, dc);
+        let ka = (dv.x + 1) * 3 + (dv.y + 1);
+        let kb = 8 - ka;
+        el = min(el, max(dl9[d][ka], dl9[d][kb]));
+        ec = min(ec, max(dc9[d][ka], dc9[d][kb]));
     }
     var packed = 0u;
     for (var d = 0u; d < 4u; d++) {
-        let c = ycc(i, d);
         var count = 0u;
-        for (var dy = -1; dy <= 1; dy++) {
-            for (var dx = -1; dx <= 1; dx++) {
-                let q = ycc(ext_index(y + dy, x + dx), d);
-                if (abs(c.x - q.x) <= el && chroma_dist(c, q) <= ec) { count += 1u; }
-            }
+        for (var k = 0; k < 9; k++) {
+            if (dl9[d][k] <= el && dc9[d][k] <= ec) { count += 1u; }
         }
         packed |= count << (8u * d);
     }
