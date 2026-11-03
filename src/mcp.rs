@@ -30,6 +30,26 @@ has open and fail when it is not running. A recipe is OmaStudio's adjustment obj
 from window_status, auto_enhance or read_fuji_recipe (field `omastudio`), change fields and \
 pass it back. Paths must be absolute.";
 
+/// Reads and drops input up to and including the next newline.
+fn skip_line(input: &mut impl BufRead) -> io::Result<()> {
+    loop {
+        let buf = input.fill_buf()?;
+        if buf.is_empty() {
+            return Ok(());
+        }
+        match buf.iter().position(|&b| b == b'\n') {
+            Some(i) => {
+                input.consume(i + 1);
+                return Ok(());
+            }
+            None => {
+                let n = buf.len();
+                input.consume(n);
+            }
+        }
+    }
+}
+
 pub fn run() {
     let stdin = io::stdin();
     let mut input = stdin.lock();
@@ -39,6 +59,17 @@ pub fn run() {
         match (&mut input).take(MAX_LINE).read_until(b'\n', &mut line) {
             Ok(0) | Err(_) => break,
             Ok(_) => {}
+        }
+        // An over-long line: drop the rest of it instead of reading it as more messages
+        if line.last() != Some(&b'\n') && line.len() as u64 == MAX_LINE {
+            if skip_line(&mut input).is_err() {
+                break;
+            }
+            let response = error(Value::Null, -32600, "Request too large");
+            let mut out = io::stdout().lock();
+            let _ = writeln!(out, "{response}");
+            let _ = out.flush();
+            continue;
         }
         let text = String::from_utf8_lossy(&line);
         let text = text.trim();
@@ -436,6 +467,17 @@ fn window_screenshot() -> Result<Vec<Value>, String> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn skip_line_drops_the_rest_of_an_over_long_line() {
+        let data = vec![b'x'; 100_000].into_iter().chain(b"\n{\"next\":1}\n".iter().copied()).collect::<Vec<u8>>();
+        // A small buffer, so the newline is several fill_buf calls away
+        let mut input = BufReader::with_capacity(4096, &data[..]);
+        skip_line(&mut input).unwrap();
+        let mut rest = String::new();
+        input.read_line(&mut rest).unwrap();
+        assert_eq!(rest, "{\"next\":1}\n");
+    }
 
     #[test]
     fn base64_matches_rfc4648() {

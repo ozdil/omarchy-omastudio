@@ -319,6 +319,7 @@ A filmszalag **Csatlakozás** gombja Google Drive, OneDrive, Dropbox, Box, pClou
 | Alt+1 … Alt+4 | A–D változatok |
 | E | Exportálás ablak |
 | Tab | A panelek elrejtése vagy megjelenítése |
+| F6 / Shift+F6 | Váltás a vezérlők között (Szóköz vagy Enter megnyomja, Escape vissza a fotóhoz) |
 | Esc | A nyitott ablak bezárása |
 
 | Egér | Művelet |

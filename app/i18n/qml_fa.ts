@@ -1084,6 +1084,10 @@
         <source>Version</source>
         <translation>نسخه</translation>
     </message>
+    <message>
+        <source>Version %1</source>
+        <translation>نسخهٔ %1</translation>
+    </message>
 </context>
 <context>
     <name>HistogramView</name>
@@ -2531,6 +2535,18 @@
     <message>
         <source>Pro adds tone curve, colour mixer, colour grading, detail, grain, colour management and masks</source>
         <translation>Pro منحنی تُن، میکسر رنگ، درجه‌بندی رنگ، جزئیات، دانه، مدیریت رنگ و ماسک‌ها را اضافه می‌کند</translation>
+    </message>
+    <message>
+        <source>Before and after</source>
+        <translation>قبل و بعد</translation>
+    </message>
+    <message>
+        <source>About OmaStudio</source>
+        <translation>درباره OmaStudio</translation>
+    </message>
+    <message>
+        <source>Open photo</source>
+        <translation>باز کردن عکس</translation>
     </message>
 </context>
 <context>

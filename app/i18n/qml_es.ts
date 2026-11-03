@@ -1087,6 +1087,10 @@
         <source>Version</source>
         <translation>Versión</translation>
     </message>
+    <message>
+        <source>Version %1</source>
+        <translation>Versión %1</translation>
+    </message>
 </context>
 <context>
     <name>HistogramView</name>
@@ -2539,6 +2543,18 @@
     <message>
         <source>Pro adds tone curve, colour mixer, colour grading, detail, grain, colour management and masks</source>
         <translation>Pro añade curva de tonos, mezclador de color, gradación de color, detalle, grano, gestión del color y máscaras</translation>
+    </message>
+    <message>
+        <source>Before and after</source>
+        <translation>Antes y después</translation>
+    </message>
+    <message>
+        <source>About OmaStudio</source>
+        <translation>Acerca de OmaStudio</translation>
+    </message>
+    <message>
+        <source>Open photo</source>
+        <translation>Abrir foto</translation>
     </message>
 </context>
 <context>

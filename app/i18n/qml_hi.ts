@@ -1087,6 +1087,10 @@
         <source>Version</source>
         <translation>संस्करण</translation>
     </message>
+    <message>
+        <source>Version %1</source>
+        <translation>संस्करण %1</translation>
+    </message>
 </context>
 <context>
     <name>HistogramView</name>
@@ -2539,6 +2543,18 @@
     <message>
         <source>Pro adds tone curve, colour mixer, colour grading, detail, grain, colour management and masks</source>
         <translation>Pro टोन कर्व, कलर मिक्सर, कलर ग्रेडिंग, डिटेल, ग्रेन, कलर मैनेजमेंट और मास्क जोड़ता है</translation>
+    </message>
+    <message>
+        <source>Before and after</source>
+        <translation>पहले और बाद में</translation>
+    </message>
+    <message>
+        <source>About OmaStudio</source>
+        <translation>OmaStudio के बारे में</translation>
+    </message>
+    <message>
+        <source>Open photo</source>
+        <translation>फ़ोटो खोलें</translation>
     </message>
 </context>
 <context>

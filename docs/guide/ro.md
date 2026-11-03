@@ -319,6 +319,7 @@ Toate formatele, cu excepția OpenEXR, conțin profilul ICC al spațiului lor de
 | Alt+1 … Alt+4 | Versiunile A–D |
 | E | Fereastra de export |
 | Tab | Ascunde sau afișează panourile |
+| F6 / Shift+F6 | Trecere între comenzi (Spațiu sau Enter apasă, Escape revine la fotografie) |
 | Esc | Închide fereastra deschisă |
 
 | Mouse | Acțiune |

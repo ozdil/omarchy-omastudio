@@ -319,6 +319,7 @@ Mọi định dạng trừ OpenEXR đều mang hồ sơ ICC của không gian m�
 | Alt+1 … Alt+4 | Phiên bản A–D |
 | E | Cửa sổ Xuất |
 | Tab | Ẩn hoặc hiện các bảng |
+| F6 / Shift+F6 | Di chuyển giữa các điều khiển (Space hoặc Enter để nhấn, Escape quay lại ảnh) |
 | Esc | Đóng cửa sổ đang mở |
 
 | Chuột | Thao tác |

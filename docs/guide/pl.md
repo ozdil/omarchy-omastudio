@@ -319,6 +319,7 @@ Każdy format oprócz OpenEXR zawiera profil ICC swojej przestrzeni kolorów. Pa
 | Alt+1 … Alt+4 | Wersje A–D |
 | E | Okno eksportu |
 | Tab | Ukryj lub pokaż panele |
+| F6 / Shift+F6 | Przechodzenie między kontrolkami (Spacja lub Enter naciska, Escape wraca do zdjęcia) |
 | Esc | Zamknij otwarte okno |
 
 | Mysz | Działanie |

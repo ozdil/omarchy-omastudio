@@ -319,6 +319,7 @@ Filminauhan **Yhdistä** lisää Google Driven, OneDriven, Dropboxin, Boxin, pCl
 | Alt+1 … Alt+4 | Versiot A–D |
 | E | Vientiikkuna |
 | Tab | Piilota tai näytä paneelit |
+| F6 / Shift+F6 | Siirry säätimestä toiseen (välilyönti tai Enter painaa, Escape palaa kuvaan) |
 | Esc | Sulje avoin ikkuna |
 
 | Hiiri | Toiminto |

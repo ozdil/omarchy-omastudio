@@ -1084,6 +1084,10 @@
         <source>Version</source>
         <translation>Versi</translation>
     </message>
+    <message>
+        <source>Version %1</source>
+        <translation>Versi %1</translation>
+    </message>
 </context>
 <context>
     <name>HistogramView</name>
@@ -2531,6 +2535,18 @@
     <message>
         <source>Pro adds tone curve, colour mixer, colour grading, detail, grain, colour management and masks</source>
         <translation>Pro menambahkan kurva nada, mixer warna, color grading, detail, butiran, manajemen warna, dan masker</translation>
+    </message>
+    <message>
+        <source>Before and after</source>
+        <translation>Sebelum dan sesudah</translation>
+    </message>
+    <message>
+        <source>About OmaStudio</source>
+        <translation>Tentang OmaStudio</translation>
+    </message>
+    <message>
+        <source>Open photo</source>
+        <translation>Buka foto</translation>
     </message>
 </context>
 <context>

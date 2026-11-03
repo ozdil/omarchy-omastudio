@@ -1084,6 +1084,10 @@
         <source>Version</source>
         <translation>Változat</translation>
     </message>
+    <message>
+        <source>Version %1</source>
+        <translation>%1. verzió</translation>
+    </message>
 </context>
 <context>
     <name>HistogramView</name>
@@ -2531,6 +2535,18 @@
     <message>
         <source>Pro adds tone curve, colour mixer, colour grading, detail, grain, colour management and masks</source>
         <translation>A Pro hozzáadja a tónusgörbét, a színkeverőt, a színkorrekciót, a részleteket, a szemcsét, a színkezelést és a maszkokat</translation>
+    </message>
+    <message>
+        <source>Before and after</source>
+        <translation>Előtte és utána</translation>
+    </message>
+    <message>
+        <source>About OmaStudio</source>
+        <translation>Az OmaStudio névjegye</translation>
+    </message>
+    <message>
+        <source>Open photo</source>
+        <translation>Fotó megnyitása</translation>
     </message>
 </context>
 <context>

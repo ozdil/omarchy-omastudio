@@ -319,6 +319,7 @@ OmaStudio 可以打开 LibRaw 0.22 支持的所有 RAW 格式（Fujifilm、Hasse
 | Alt+1 … Alt+4 | 版本 A–D |
 | E | 导出窗口 |
 | Tab | 隐藏或显示面板 |
+| F6 / Shift+F6 | 在控件之间移动（空格或 Enter 按下，Escape 返回照片） |
 | Esc | 关闭打开的窗口 |
 
 | 鼠标 | 操作 |

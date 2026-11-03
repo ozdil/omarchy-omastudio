@@ -319,6 +319,7 @@ Alle formater undtagen OpenEXR indeholder ICC-profilen for deres farverum. En ba
 | Alt+1 … Alt+4 | Versioner A–D |
 | E | Eksportvindue |
 | Tab | Skjul eller vis panelerne |
+| F6 / Shift+F6 | Gå mellem knapperne (Mellemrum eller Enter trykker, Escape går tilbage til billedet) |
 | Esc | Luk det åbne vindue |
 
 | Mus | Handling |

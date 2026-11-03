@@ -155,6 +155,12 @@ Rectangle {
                     Accessible.name: qsTr("Pick")
                     onClicked: root.flagChanged(root.photoFlag === "pick" ? "none" : "pick")
                 }
+                KeyFocus {
+                    name: qsTr("Pick")
+                    checkable: true
+                    checked: root.photoFlag === "pick"
+                    onActivated: root.flagChanged(root.photoFlag === "pick" ? "none" : "pick")
+                }
             }
 
             // Reject Flag (X)
@@ -181,6 +187,12 @@ Rectangle {
                     Accessible.role: Accessible.Button
                     Accessible.name: qsTr("Reject")
                     onClicked: root.flagChanged(root.photoFlag === "reject" ? "none" : "reject")
+                }
+                KeyFocus {
+                    name: qsTr("Reject")
+                    checkable: true
+                    checked: root.photoFlag === "reject"
+                    onActivated: root.flagChanged(root.photoFlag === "reject" ? "none" : "reject")
                 }
             }
 
@@ -209,6 +221,15 @@ Rectangle {
                             ToolTip.delay: 500
                             ToolTip.text: qsTr("%n star(s)", "", index + 1)
                             onClicked: {
+                                var newR = (root.photoRating === (index + 1)) ? 0 : (index + 1);
+                                root.ratingChanged(newR);
+                            }
+                        }
+                        KeyFocus {
+                            name: qsTr("%n star(s)", "", index + 1)
+                            checkable: true
+                            checked: root.photoRating === index + 1
+                            onActivated: {
                                 var newR = (root.photoRating === (index + 1)) ? 0 : (index + 1);
                                 root.ratingChanged(newR);
                             }
@@ -285,6 +306,10 @@ Rectangle {
                 Accessible.role: Accessible.Button
                 Accessible.name: root.aiConnected ? qsTr("AI chat") : qsTr("Connect local AI")
             }
+            KeyFocus {
+                name: root.aiConnected ? qsTr("AI chat") : qsTr("Connect local AI")
+                onActivated: root.aiConnected ? root.toggleAiChat() : root.connectLocalAi()
+            }
         }
 
         // Mode Switcher: Essentials vs Pro Studio
@@ -335,6 +360,12 @@ Rectangle {
                         Accessible.role: Accessible.Button
                         Accessible.name: qsTr("Essentials")
                     }
+                    KeyFocus {
+                        name: qsTr("Essentials")
+                        checkable: true
+                        checked: !root.isProMode
+                        onActivated: if (root.isProMode) root.toggleMode()
+                    }
                 }
 
                 Rectangle {
@@ -373,6 +404,12 @@ Rectangle {
                         Accessible.role: Accessible.Button
                         Accessible.name: qsTr("Pro")
                     }
+                    KeyFocus {
+                        name: qsTr("Pro")
+                        checkable: true
+                        checked: root.isProMode
+                        onActivated: if (!root.isProMode) root.toggleMode()
+                    }
                 }
             }
         }
@@ -410,6 +447,10 @@ Rectangle {
                     Accessible.name: qsTr("Undo")
                     onClicked: root.undoClicked()
                 }
+                KeyFocus {
+                    name: qsTr("Undo")
+                    onActivated: root.undoClicked()
+                }
             }
 
             Rectangle {
@@ -438,6 +479,10 @@ Rectangle {
                     Accessible.role: Accessible.Button
                     Accessible.name: qsTr("Redo")
                     onClicked: root.redoClicked()
+                }
+                KeyFocus {
+                    name: qsTr("Redo")
+                    onActivated: root.redoClicked()
                 }
             }
         }
@@ -477,6 +522,12 @@ Rectangle {
                 cursorShape: Qt.PointingHandCursor
                 onClicked: root.toggleSplit()
             }
+            KeyFocus {
+                name: qsTr("Before and after")
+                checkable: true
+                checked: root.isSplitView
+                onActivated: root.toggleSplit()
+            }
         }
 
         // Crop Mode Toggle Button (C)
@@ -514,6 +565,12 @@ Rectangle {
                 cursorShape: Qt.PointingHandCursor
                 onClicked: root.toggleCrop()
             }
+            KeyFocus {
+                name: qsTr("Crop")
+                checkable: true
+                checked: root.isCropMode
+                onActivated: root.toggleCrop()
+            }
         }
 
         Item { Layout.fillWidth: true }
@@ -544,6 +601,10 @@ Rectangle {
                 hoverEnabled: true
                 cursorShape: Qt.PointingHandCursor
                 onClicked: root.infoClicked()
+            }
+            KeyFocus {
+                name: qsTr("About OmaStudio")
+                onActivated: root.infoClicked()
             }
         }
 
@@ -581,6 +642,10 @@ Rectangle {
                 cursorShape: Qt.PointingHandCursor
                 onClicked: root.openFileClicked()
             }
+            KeyFocus {
+                name: qsTr("Open photo")
+                onActivated: root.openFileClicked()
+            }
         }
 
         // Export Button (Bright CTA)
@@ -614,6 +679,10 @@ Rectangle {
                 anchors.fill: parent
                 cursorShape: Qt.PointingHandCursor
                 onClicked: root.exportClicked()
+            }
+            KeyFocus {
+                name: qsTr("Export")
+                onActivated: root.exportClicked()
             }
         }
     }

@@ -139,6 +139,7 @@ OmaStudio'yu Omarchy uygulama menüsünden başlatın ya da `omastudio [fotoğra
 | `Alt+1` … `Alt+4` | A–D sürümleri |
 | `E` | Dışa aktarma penceresi |
 | `Tab` | Panelleri gizle ya da göster |
+| `F6` / `Shift+F6` | Denetimler arasında gez (Boşluk veya Enter basar, Escape fotoğrafa döner) |
 | `Esc` | Açık pencereyi kapat |
 
 Fare: tekerlek imlecin olduğu yerde yakınlaştırır, `Shift`+tekerlek yana kaydırır, `Alt`+tekerlek döndürür, çift tıklama sığdır ile %200 arasında geçiş yapar, bir bölüm başlığına `Ctrl`+tıklama yalnızca o bölümü açık bırakır.

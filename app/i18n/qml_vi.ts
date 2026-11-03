@@ -1084,6 +1084,10 @@
         <source>Version</source>
         <translation>Phiên bản</translation>
     </message>
+    <message>
+        <source>Version %1</source>
+        <translation>Phiên bản %1</translation>
+    </message>
 </context>
 <context>
     <name>HistogramView</name>
@@ -2531,6 +2535,18 @@
     <message>
         <source>Pro adds tone curve, colour mixer, colour grading, detail, grain, colour management and masks</source>
         <translation>Pro thêm đường cong tông, bộ trộn màu, chỉnh màu, chi tiết, hạt, quản lý màu và mặt nạ</translation>
+    </message>
+    <message>
+        <source>Before and after</source>
+        <translation>Trước và sau</translation>
+    </message>
+    <message>
+        <source>About OmaStudio</source>
+        <translation>Giới thiệu OmaStudio</translation>
+    </message>
+    <message>
+        <source>Open photo</source>
+        <translation>Mở ảnh</translation>
     </message>
 </context>
 <context>
