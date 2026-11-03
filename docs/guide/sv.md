@@ -319,6 +319,7 @@ Alla format utom OpenEXR bär ICC-profilen för sin färgrymd. En batch exporter
 | Alt+1 … Alt+4 | Versionerna A–D |
 | E | Exportfönstret |
 | Tab | Dölj eller visa panelerna |
+| F6 / Shift+F6 | Gå mellan kontrollerna (Blanksteg eller Enter trycker, Escape går tillbaka till bilden) |
 | Esc | Stäng det öppna fönstret |
 
 | Mus | Åtgärd |

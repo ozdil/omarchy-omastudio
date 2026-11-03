@@ -319,6 +319,7 @@ Tous les formats sauf OpenEXR contiennent le profil ICC de leur espace colorimé
 | Alt+1 … Alt+4 | Versions A–D |
 | E | Fenêtre d'exportation |
 | Tab | Masquer ou afficher les panneaux |
+| F6 / Shift+F6 | Passer d’une commande à l’autre (Espace ou Entrée l’active, Échap revient à la photo) |
 | Échap | Fermer la fenêtre ouverte |
 
 | Souris | Action |

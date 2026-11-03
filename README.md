@@ -137,6 +137,7 @@ Start OmaStudio from the Omarchy app menu or run `omastudio [photo]`. If a windo
 | `Alt+1` … `Alt+4` | Versions A–D |
 | `E` | Export window |
 | `Tab` | Hide or show the panels |
+| `F6` / `Shift+F6` | Move between controls (Space or Enter presses, Escape returns to the photo) |
 | `Esc` | Close the open window |
 
 Mouse: wheel zooms at the pointer, `Shift`+wheel pans sideways, `Alt`+wheel rotates, double-click toggles fit and 200%, `Ctrl`+click on a section header keeps only that section open.

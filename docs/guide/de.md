@@ -319,6 +319,7 @@ Jedes Format außer OpenEXR enthält das ICC-Profil seines Farbraums. Ein Stapel
 | Alt+1 … Alt+4 | Versionen A–D |
 | E | Exportfenster |
 | Tab | Bereiche aus- oder einblenden |
+| F6 / Shift+F6 | Zwischen Bedienelementen wechseln (Leertaste oder Enter drückt, Escape zurück zum Foto) |
 | Esc | Offenes Fenster schließen |
 
 | Maus | Aktion |

@@ -319,6 +319,7 @@ Elke indeling behalve OpenEXR bevat het ICC-profiel van haar kleurruimte. Een ba
 | Alt+1 … Alt+4 | Versies A–D |
 | E | Exportvenster |
 | Tab | Panelen verbergen of tonen |
+| F6 / Shift+F6 | Tussen bedieningselementen wisselen (Spatie of Enter drukt, Escape terug naar de foto) |
 | Esc | Het geopende venster sluiten |
 
 | Muis | Actie |

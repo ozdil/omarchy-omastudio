@@ -319,6 +319,7 @@ Každý formát kromě OpenEXR obsahuje profil ICC svého barevného prostoru. D
 | Alt+1 … Alt+4 | Verze A–D |
 | E | Okno exportu |
 | Tab | Skrýt nebo zobrazit panely |
+| F6 / Shift+F6 | Přejít mezi ovládacími prvky (Mezerník nebo Enter stiskne, Escape vrátí na fotku) |
 | Esc | Zavřít otevřené okno |
 
 | Myš | Akce |

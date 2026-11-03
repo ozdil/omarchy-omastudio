@@ -319,6 +319,7 @@ Tutti i formati tranne OpenEXR contengono il profilo ICC del loro spazio colore.
 | Alt+1 … Alt+4 | Versioni A–D |
 | E | Finestra di esportazione |
 | Tab | Nascondi o mostra i pannelli |
+| F6 / Shift+F6 | Spostarsi tra i controlli (Spazio o Invio lo preme, Esc torna alla foto) |
 | Esc | Chiudi la finestra aperta |
 
 | Mouse | Azione |

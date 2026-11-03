@@ -5,10 +5,26 @@
 ### Fixes
 - Right-to-left languages (Arabic, Hebrew, Persian): the edit panel no longer runs past its left edge. The profile filter buttons and the AI mask buttons wrap instead of widening the panel, the right panel's tabs share the width by label length and shrink a label that still doesn't fit, buttons elide a translation longer than they are, and Latin titles (Fujifilm, film names) sit on the right like the rest of the text.
 - Notices (such as the one shown when switching to Pro) appear over the photo below the version strip, centred on it, instead of covering the A–D version buttons.
+- Editing a large file no longer queues renders: when the engine is slow (the first decode of a 100 MP file), the window waits for the answer to its last render instead of sending another every five seconds.
+- If the engine stops (a crash, out of memory) while a photo is open, the next edit starts a new engine that loads the photo again, keeping the edits made in the window. Before, every edit failed until the photo was opened again.
+- `omastudio-engine render --recipe` refuses a broken recipe instead of rendering without the edits, as `export` does.
+- The MCP server drops a request line longer than 4 MB and answers with an error, instead of reading its rest as further messages.
+- The control socket answers each connection on its own thread, so a slow call (a screenshot of a hidden workspace) no longer holds up the others.
 - `omastudio ipc screenshot` answers once the PNG is written. When the window is not being drawn (its Hyprland workspace is hidden) it answers with an error after three seconds instead of OK without a file. The MCP `window_screenshot` tool reports that error.
+
+### Security
+- The AI assistant, when it uses Omarchy's default agent Claude Code, may read only the photo it is shown: Claude Code runs with its Read tool alone, limited to that file, and without the user's settings, permission rules, hooks or MCP servers. Before, it was allowed to read any file, so an instruction hidden in a photo could have made it read another one.
+
+### Accessibility
+- The top bar, the A–D version strip and the panel section headers can be used from the keyboard: **F6** and **Shift+F6** move between them (Tab still hides the panels), a ring shows the focused control, Space or Enter presses it and Escape gives the focus back to the photo. Screen readers get their names and on/off states.
+- Secondary text is legible in every theme: muted text has at least 4.5:1 contrast and dim text (hints, placeholders, inactive icons) at least 3:1 against the panels. The default dim colour was 2.4:1.
+
+### Hardware
+- The launcher passes on the GPU selection variables (`__NV_PRIME_RENDER_OFFLOAD`, `__GLX_VENDOR_LIBRARY_NAME`, `DRI_PRIME`, `MESA_VK_DEVICE_SELECT`, `VK_ICD_FILENAMES`, `VK_DRIVER_FILES`, `LIBVA_DRIVER_NAME`, `NVD_BACKEND`), `OMASTUDIO_GPU`, `TZ` and the AI providers' `*_API_KEY` variables when they are set. Its clean environment dropped them, so `OMASTUDIO_GPU=off omastudio` had no effect and hybrid-graphics settings didn't reach the engine.
 
 ### Build
 - GitHub Actions moved to their Node 24 releases: checkout v7, upload-artifact v7, download-artifact v8, attest-build-provenance v4, action-gh-release v3 and CodeQL v4.
+- The engine binary is built on the engine library instead of compiling every module a second time; its unit tests run once.
 
 ## v3.1.0 — 2026-10-27
 

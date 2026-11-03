@@ -319,6 +319,7 @@ Setiap format kecuali OpenEXR membawa profil ICC dari ruang warnanya. Batch meng
 | Alt+1 … Alt+4 | Versi A–D |
 | E | Jendela Ekspor |
 | Tab | Sembunyikan atau tampilkan panel |
+| F6 / Shift+F6 | Pindah antar kontrol (Spasi atau Enter menekan, Escape kembali ke foto) |
 | Esc | Tutup jendela yang terbuka |
 
 | Tetikus | Tindakan |

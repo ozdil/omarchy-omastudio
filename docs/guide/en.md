@@ -319,6 +319,7 @@ Every format except OpenEXR carries the ICC profile of its colour space. A batch
 | Alt+1 … Alt+4 | Versions A–D |
 | E | Export window |
 | Tab | Hide or show the panels |
+| F6 / Shift+F6 | Move between controls (Space or Enter presses, Escape returns to the photo) |
 | Esc | Close the open window |
 
 | Mouse | Action |

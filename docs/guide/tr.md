@@ -319,6 +319,7 @@ Film şeridindeki **Bağlan** Google Drive, OneDrive, Dropbox, Box, pCloud, Yand
 | Alt+1 … Alt+4 | A–D sürümleri |
 | E | Dışa aktar penceresi |
 | Tab | Panelleri gizle veya göster |
+| F6 / Shift+F6 | Denetimler arasında gez (Boşluk veya Enter basar, Escape fotoğrafa döner) |
 | Esc | Açık pencereyi kapat |
 
 | Fare | İşlem |
