@@ -5,6 +5,7 @@
 ### Fixes
 - Right-to-left languages (Arabic, Hebrew, Persian): the edit panel no longer runs past its left edge. The profile filter buttons and the AI mask buttons wrap instead of widening the panel, the right panel's tabs share the width by label length and shrink a label that still doesn't fit, buttons elide a translation longer than they are, and Latin titles (Fujifilm, film names) sit on the right like the rest of the text.
 - Notices (such as the one shown when switching to Pro) appear over the photo below the version strip, centred on it, instead of covering the A–D version buttons.
+- GPU demosaic: on NVIDIA and Intel GPUs about one Bayer pixel in a hundred took another interpolation direction than on the CPU, leaving wrong colours in patches along hard edges (GFX, Hasselblad and other Bayer files). The direction choice no longer depends on exact ties that GPU rounding breaks; CPU and GPU now agree (RTX 4060: 26 instead of 1262 differing values in the test scene, Intel Arc: 18).
 - Editing a large file no longer queues renders: when the engine is slow (the first decode of a 100 MP file), the window waits for the answer to its last render instead of sending another every five seconds.
 - If the engine stops (a crash, out of memory) while a photo is open, the next edit starts a new engine that loads the photo again, keeping the edits made in the window. Before, every edit failed until the photo was opened again.
 - `omastudio-engine render --recipe` refuses a broken recipe instead of rendering without the edits, as `export` does.
