@@ -250,8 +250,12 @@ impl Exif {
     /// A JPEG APP1 segment (marker, length, "Exif\0\0", TIFF), or None when it would
     /// exceed the 64 KB a segment can hold.
     pub fn app1(&self) -> Option<Vec<u8>> {
+        // EXIF requires these in a JPEG's IFD0; 72 dpi as exiftool's copies had, and
+        // centred chroma samples as the encoder writes them
+        let ppi = Entry { tag: 282, ty: 5, count: 1, data: [72u32.to_le_bytes(), 1u32.to_le_bytes()].concat() };
+        let required = vec![Entry { tag: 283, ..ppi.clone() }, ppi, Entry::short(296, 2), Entry::short(0x0213, 1)];
         let mut tiff = b"II\x2a\x00\x08\x00\x00\x00".to_vec();
-        tiff.extend(self.layout(Vec::new(), 8).ok()?);
+        tiff.extend(self.layout(required, 8).ok()?);
         let len = 2 + 6 + tiff.len();
         if len > u16::MAX as usize {
             return None;
@@ -426,6 +430,12 @@ pub(crate) mod tests {
         let exif = parse(&camera_tiff()).unwrap().adjusted(&a);
         let out = insert_app1(jpeg.into_inner(), &exif.app1().unwrap());
         assert!(image::load_from_memory(&out).is_ok());
+        let seg = exif.app1().unwrap();
+        let r = Reader { data: &seg[10..], le: true };
+        let tags: Vec<u16> = r.ifd(8).iter().map(|e| e.tag).collect();
+        for t in [271, 274, 282, 283, 296, 0x0213, EXIF_IFD] {
+            assert!(tags.contains(&t), "IFD0 lacks {t:#x}: {tags:?}");
+        }
         let back = parse(app1_tiff(&out).unwrap()).unwrap();
         assert!(back.exif.iter().any(|e| e.tag == 0x8827));
     }
