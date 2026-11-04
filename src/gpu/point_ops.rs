@@ -399,12 +399,46 @@ fn run_on(
     inputs: &PointInputs,
     max_rows: usize,
 ) -> Result<Vec<f32>, String> {
+    let _job = gpu.jobs.lock().map_err(|_| "GPU lock poisoned")?;
+    run_bands(gpu, input, w, ch, y0, y1, recipe, inputs, max_rows, None)
+}
+
+/// Runs the stage on rows `y0..y1` into `dst` on the device (RGB f32, row `y0` at
+/// offset 0) without reading it back, for a following GPU stage. The caller holds
+/// the GPU's job lock and submits its own work after this.
+#[allow(clippy::too_many_arguments)]
+pub(super) fn run_into(
+    gpu: &Gpu,
+    input: &[u16],
+    w: usize,
+    ch: usize,
+    y0: usize,
+    y1: usize,
+    recipe: &Recipe,
+    inputs: &PointInputs,
+    dst: &wgpu::Buffer,
+) -> Result<(), String> {
+    run_bands(gpu, input, w, ch, y0, y1, recipe, inputs, MAX_BAND_ROWS, Some(dst)).map(|_| ())
+}
+
+#[allow(clippy::too_many_arguments)]
+fn run_bands(
+    gpu: &Gpu,
+    input: &[u16],
+    w: usize,
+    ch: usize,
+    y0: usize,
+    y1: usize,
+    recipe: &Recipe,
+    inputs: &PointInputs,
+    max_rows: usize,
+    sink: Option<&wgpu::Buffer>,
+) -> Result<Vec<f32>, String> {
     if !(3..=4).contains(&ch) || y1 <= y0 || input.len() < y1 * w * ch {
         return Err("unsupported buffer".to_string());
     }
     let pipeline = pipeline(gpu)?;
     let (mut params, tables) = pack(recipe, inputs);
-    let _job = gpu.jobs.lock().map_err(|_| "GPU lock poisoned")?;
 
     // Band height from the largest buffer: RGB f32 out per pixel
     let limit = gpu.limits.max_storage_buffer_binding_size.min(gpu.limits.max_buffer_size).min(MAX_BUFFER);
@@ -430,7 +464,7 @@ fn run_on(
     let bufs = cache.as_ref().expect("buffers");
     gpu.queue.write_buffer(&bufs.tables, 0, as_bytes(&tables));
 
-    let mut result = vec![0.0f32; (y1 - y0) * w * 3];
+    let mut result = if sink.is_some() { Vec::new() } else { vec![0.0f32; (y1 - y0) * w * 3] };
     let mut pending: Option<InFlight> = None;
     let collect = |p: InFlight, result: &mut Vec<f32>| -> Result<(), String> {
         let (k, by0, by1, idx, rx) = p;
@@ -474,6 +508,11 @@ fn run_on(
             pass.dispatch_workgroups((w as u32).div_ceil(WG), ((by1 - by0) as u32).div_ceil(WG), 1);
         }
         let out_len = ((by1 - by0) * w * 12) as u64;
+        if let Some(dst) = sink {
+            enc.copy_buffer_to_buffer(&bufs.out, 0, dst, ((by0 - y0) * w * 12) as u64, out_len);
+            gpu.queue.submit([enc.finish()]);
+            continue;
+        }
         enc.copy_buffer_to_buffer(&bufs.out, 0, &bufs.staging[k], 0, out_len);
         let idx = gpu.queue.submit([enc.finish()]);
 

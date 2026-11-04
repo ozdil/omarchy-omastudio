@@ -414,12 +414,27 @@ pub fn process_buffer_16_to_8_ex(
 
     // PASS 1: Point Operations (White Balance, Exposure, Tone, Color Wheels, HSL Mixer, 3D LUT, Film Sim, ACES)
     let ops = PointOps::new(recipe);
-    // Exact renders run on a discrete GPU when there is one. Interactive previews keep
-    // the CPU's baked LUT: copying the frame to the GPU and back costs more than it
-    // (RTX 4060 laptop: 67 ms against 31 ms for a 3840 px frame) until the passes after
-    // this one also run there.
+    // On its own, the GPU point stage only pays off for exact renders: interactive
+    // previews keep the CPU's baked LUT, because copying the frame to the GPU and back
+    // costs about what the bake saves (RTX 4060 laptop: 27 against 31 ms for a 3840 px
+    // frame).
     let gain = [wb_r * exp_factor, wb_g * exp_factor, wb_b * exp_factor];
-    let gpu = if interactive() { None } else { crate::gpu::point_ops::run(input, w, ch, 0, h, recipe, &ops.gpu_inputs(gain, transfer)) };
+    let scale = frame_scale(w, h);
+    // Without local masks the point stage's result can stay on the GPU for presence and
+    // detail, which makes the GPU worth it for interactive previews too
+    let chained = if recipe.layers.is_empty() {
+        crate::gpu::local::run_chained(input, w, ch, 0, h, recipe, &ops.gpu_inputs(gain, transfer), scale)
+    } else {
+        None
+    };
+    let local_done = chained.is_some();
+    let gpu = if local_done {
+        chained
+    } else if interactive() {
+        None
+    } else {
+        crate::gpu::point_ops::run(input, w, ch, 0, h, recipe, &ops.gpu_inputs(gain, transfer))
+    };
     let on_gpu = gpu.is_some();
     // Intermediate float buffer for multi-stage 16-bit precision processing
     let mut f32_buf = gpu.unwrap_or_else(|| vec![0.0f32; num_pixels * 3]);
@@ -496,11 +511,12 @@ pub fn process_buffer_16_to_8_ex(
     }
 
     prof.mark("layers");
-    let scale = frame_scale(w, h);
 
     // PASSES 2 and 3: presence (texture, clarity, dehaze, midtone detail), detail
     // (sharpness, luma and chroma noise reduction) and defringe
-    neighbourhood_passes(&mut f32_buf, w, h, recipe, scale);
+    if !local_done {
+        neighbourhood_passes(&mut f32_buf, w, h, recipe, scale);
+    }
 
     prof.mark("presence_detail");
     // PASS 4: Photochemical Silver-Halide Film Grain
@@ -953,7 +969,14 @@ fn process_band(
     stage: &PointStage,
 ) -> Vec<f32> {
     let rows = y1 - y0;
-    let gpu = crate::gpu::point_ops::run(input, w, ch, y0, y1, recipe, &stage.gpu_inputs());
+    let scale = frame_scale(window.frame_w, window.frame_h);
+    let chained = if recipe.layers.is_empty() {
+        crate::gpu::local::run_chained(input, w, ch, y0, y1, recipe, &stage.gpu_inputs(), scale)
+    } else {
+        None
+    };
+    let local_done = chained.is_some();
+    let gpu = if local_done { chained } else { crate::gpu::point_ops::run(input, w, ch, y0, y1, recipe, &stage.gpu_inputs()) };
     let on_gpu = gpu.is_some();
     let mut buf = gpu.unwrap_or_else(|| vec![0.0f32; rows * w * 3]);
 
@@ -986,8 +1009,9 @@ fn process_band(
         });
     }
 
-    let scale = frame_scale(window.frame_w, window.frame_h);
-    neighbourhood_passes(&mut buf, w, rows, recipe, scale);
+    if !local_done {
+        neighbourhood_passes(&mut buf, w, rows, recipe, scale);
+    }
     if recipe.grain_amount > 0.001 {
         film_grain::apply_film_grain_window(
             &mut buf,
