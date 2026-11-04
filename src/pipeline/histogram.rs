@@ -159,6 +159,34 @@ pub fn compute_histogram_with_dimensions(
             acc
         })
         .reduce(ScopeCounts::new, ScopeCounts::merge);
+    histogram_from_counts(acc, total_pixels)
+}
+
+/// Words of the GPU's histogram and scope counts: red, green, blue and luma (256
+/// each), shadow and highlight clips, vectorscope (48 x 48), waveform (64 x 32) and
+/// the red, green and blue parade (32 x 32 each), in that order.
+pub const SCOPE_WORDS: usize = 8450;
+
+/// [`HistogramData`] from counts laid out as [`SCOPE_WORDS`] says, for `total_pixels`.
+pub fn histogram_from_scope_words(words: &[u32], total_pixels: usize) -> HistogramData {
+    let take = |at: usize, len: usize| words[at..at + len].to_vec();
+    let acc = ScopeCounts {
+        red: take(0, 256),
+        green: take(256, 256),
+        blue: take(512, 256),
+        luma: take(768, 256),
+        shadow_clips: words[1024],
+        highlight_clips: words[1025],
+        vec: take(1026, 48 * 48),
+        wf: take(3330, 64 * 32),
+        par_r: take(5378, 32 * 32),
+        par_g: take(6402, 32 * 32),
+        par_b: take(7426, 32 * 32),
+    };
+    histogram_from_counts(acc, total_pixels)
+}
+
+fn histogram_from_counts(acc: ScopeCounts, total_pixels: usize) -> HistogramData {
     let ScopeCounts { red, green, blue, luma, shadow_clips, highlight_clips, wf: wf_counts, par_r: par_r_counts, par_g: par_g_counts, par_b: par_b_counts, vec: vec_counts } = acc;
 
     // Determine max peak excluding absolute 0 and 255 spikes

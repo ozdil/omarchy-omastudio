@@ -420,6 +420,18 @@ pub fn process_buffer_16_to_8_ex(
     // frame).
     let gain = [wb_r * exp_factor, wb_g * exp_factor, wb_b * exp_factor];
     let scale = frame_scale(w, h);
+    // Without local masks or geometry the whole preview runs on the GPU and only the
+    // 8-bit frame and the scope counts come back
+    if recipe.layers.is_empty()
+        && detail::Geometry::new(w, h, recipe).is_none()
+        && let Some((mut output, hist)) = crate::gpu::local::run_display(input, w, h, ch, recipe, &ops.gpu_inputs(gain, transfer), scale)
+    {
+        prof.mark("gpu_display");
+        clipping_overlay(&mut output, ch, highlight_mask, shadow_mask);
+        prof.mark("overlay");
+        prof.finish(w, h);
+        return (output, hist);
+    }
     // Without local masks the point stage's result can stay on the GPU for presence and
     // detail, which makes the GPU worth it for interactive previews too
     let chained = if recipe.layers.is_empty() {
@@ -581,25 +593,7 @@ pub fn process_buffer_16_to_8_ex(
     let hist = compute_histogram_with_dimensions(&output, w, h, ch);
 
     prof.mark("histogram");
-    // Visual clipping overlay: Red for highlights (>= 254), Blue for shadows (<= 1)
-    if highlight_mask || shadow_mask {
-        output
-            .par_chunks_mut(ch)
-            .for_each(|px| {
-                let r = px[0];
-                let g = px[1];
-                let b = px[2];
-                if highlight_mask && (r >= 254 || g >= 254 || b >= 254) {
-                    px[0] = 255;
-                    px[1] = 0;
-                    px[2] = 0;
-                } else if shadow_mask && (r <= 1 && g <= 1 && b <= 1) {
-                    px[0] = 0;
-                    px[1] = 80;
-                    px[2] = 255;
-                }
-            });
-    }
+    clipping_overlay(&mut output, ch, highlight_mask, shadow_mask);
 
     prof.mark("overlay");
     prof.finish(w, h);
@@ -632,6 +626,29 @@ const BAND_HALO: usize = 24;
 /// the editor's preview. Larger frames scale them up, so an export at full resolution
 /// looks like the preview instead of having 3x finer clarity and grain.
 pub const REFERENCE_EDGE: f32 = 3840.0;
+
+/// Visual clipping overlay: red for highlights (any channel >= 254), blue for shadows
+/// (every channel <= 1).
+fn clipping_overlay(output: &mut [u8], ch: usize, highlight_mask: bool, shadow_mask: bool) {
+    if highlight_mask || shadow_mask {
+        output
+            .par_chunks_mut(ch)
+            .for_each(|px| {
+                let r = px[0];
+                let g = px[1];
+                let b = px[2];
+                if highlight_mask && (r >= 254 || g >= 254 || b >= 254) {
+                    px[0] = 255;
+                    px[1] = 0;
+                    px[2] = 0;
+                } else if shadow_mask && (r <= 1 && g <= 1 && b <= 1) {
+                    px[0] = 0;
+                    px[1] = 80;
+                    px[2] = 255;
+                }
+            });
+    }
+}
 
 /// Presence, detail and defringe on a `w` x `h` RGB buffer: on the GPU when one pays
 /// off (see [`crate::gpu::local`]), otherwise on the CPU, with the same result.
