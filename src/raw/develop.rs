@@ -110,6 +110,7 @@ impl CfaFrame {
                 (v.clamp(0.0, 1.0) * 65535.0).round() as u16
             })
         };
+        let mut prof = crate::pipeline::Profile::start();
         let mosaic = Mosaic { width: self.width, height: self.height, data: &self.data, pattern: self.pattern };
         let (out, w, h) = if half_size {
             let (rgb, w, h) = demosaic::bin(&mosaic);
@@ -120,9 +121,13 @@ impl CfaFrame {
             let out = crate::gpu::demosaic::demosaic(&mosaic, m).unwrap_or_else(|| demosaic::demosaic_map(&mosaic, to_u16));
             (out, self.width, self.height)
         };
+        prof.mark("demosaic");
         let flip = self.flip;
         drop(self);
+        prof.mark("free_mosaic");
         let (out, w, h) = rotate(out, w, h, flip);
+        prof.mark("rotate");
+        prof.finish_as("cfa_develop");
         (out, w as u32, h as u32)
     }
 }

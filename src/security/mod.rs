@@ -644,15 +644,25 @@ pub fn atomic_write_secure(target: &Path, data: &[u8]) -> io::Result<()> {
 /// [`SecureDir::open_user_dir`]. Engine-private state keeps using
 /// [`atomic_write_secure`].
 pub fn atomic_write_user(target: &Path, data: &[u8]) -> io::Result<()> {
+    atomic_write_user_parts(target, &[data])
+}
+
+/// [`atomic_write_user`] for a file made of several buffers written in order, so a
+/// large export need not be copied into one buffer first.
+pub fn atomic_write_user_parts(target: &Path, parts: &[&[u8]]) -> io::Result<()> {
     let parent = match target.parent() {
         Some(p) if !p.as_os_str().is_empty() => p,
         _ => Path::new("."),
     };
     let dir = SecureDir::open_user_dir(parent)?;
-    atomic_write_in(&dir, target, data)
+    atomic_write_parts_in(&dir, target, parts)
 }
 
 fn atomic_write_in(secure_dir: &SecureDir, target: &Path, data: &[u8]) -> io::Result<()> {
+    atomic_write_parts_in(secure_dir, target, &[data])
+}
+
+fn atomic_write_parts_in(secure_dir: &SecureDir, target: &Path, parts: &[&[u8]]) -> io::Result<()> {
     use std::ffi::CString;
 
     let filename = target
@@ -670,7 +680,9 @@ fn atomic_write_in(secure_dir: &SecureDir, target: &Path, data: &[u8]) -> io::Re
         active: true,
     };
 
-    stage_file.write_all(data)?;
+    for part in parts {
+        stage_file.write_all(part)?;
+    }
     stage_file.sync_all()?;
 
     secure_dir.rename_file(&c_stage_name, &c_dest_name)?;
