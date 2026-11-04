@@ -344,7 +344,7 @@ impl<'a> PointOps<'a> {
 
 /// Per-pass timings on stderr when OMASTUDIO_PROFILE is set, for finding what the
 /// GPU should take over.
-struct Profile {
+pub(crate) struct Profile {
     on: bool,
     last: std::time::Instant,
     begin: std::time::Instant,
@@ -352,12 +352,12 @@ struct Profile {
 }
 
 impl Profile {
-    fn start() -> Self {
+    pub(crate) fn start() -> Self {
         let now = std::time::Instant::now();
         Self { on: std::env::var_os("OMASTUDIO_PROFILE").is_some(), last: now, begin: now, marks: Vec::new() }
     }
 
-    fn mark(&mut self, name: &'static str) {
+    pub(crate) fn mark(&mut self, name: &'static str) {
         if self.on {
             let now = std::time::Instant::now();
             self.marks.push((name, (now - self.last).as_secs_f64() * 1e3));
@@ -366,9 +366,14 @@ impl Profile {
     }
 
     fn finish(&self, w: usize, h: usize) {
+        self.finish_as(&format!("{w}x{h}"));
+    }
+
+    /// Prints the marks under `label` (a stage name, a size).
+    pub(crate) fn finish_as(&self, label: &str) {
         if self.on {
             let parts: Vec<String> = self.marks.iter().filter(|m| m.1 >= 0.05).map(|(n, t)| format!("{n} {t:.1}")).collect();
-            eprintln!("profile {w}x{h} total {:.1} ms: {}", self.begin.elapsed().as_secs_f64() * 1e3, parts.join(", "));
+            eprintln!("profile {label} total {:.1} ms: {}", self.begin.elapsed().as_secs_f64() * 1e3, parts.join(", "));
         }
     }
 }

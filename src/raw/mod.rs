@@ -530,11 +530,16 @@ impl RawImage {
         quality: i32,
         bps: i32,
     ) -> Result<ProcessedBuffer, String> {
+        let mut prof = crate::pipeline::Profile::start();
         let buf = self.process_uncorrected(engine, half_size, quality, bps)?;
-        match self.lens_correction() {
-            Some(corr) if buf.channels == 3 => Ok(buf.with_lens_correction(corr)),
-            _ => Ok(buf),
-        }
+        prof.mark("decode");
+        let buf = match self.lens_correction() {
+            Some(corr) if buf.channels == 3 => buf.with_lens_correction(corr),
+            _ => buf,
+        };
+        prof.mark("file_lens");
+        prof.finish_as("raw_process");
+        Ok(buf)
     }
 
     /// Exposure the camera adds for its own rendering of this photo, in EV (see
@@ -718,9 +723,11 @@ impl RawImage {
     }
 
     fn develop_own(&self, half_size: bool) -> Option<ProcessedBuffer> {
+        let mut prof = crate::pipeline::Profile::start();
         let Some(frame) = self.cfa_frame() else {
             return self.develop_linear(half_size);
         };
+        prof.mark("unpack");
         // Binning an X-Trans sensor gives a 1/3-size preview; LibRaw's half-size decode
         // is larger and renders the same colours, so previews keep using it
         if half_size && matches!(frame.pattern, demosaic::CfaPattern::XTrans(_)) {
@@ -730,9 +737,12 @@ impl RawImage {
         let flip = frame.flip;
         self.developed_flip.set(flip);
         let (mut data, width, height) = frame.develop(space, half_size);
+        prof.mark("develop");
         if let Ok(meta) = self.get_metadata() {
             crate::medium_format::lens::correct_developed(&self.path, &meta.lens, meta.focal_length, meta.aperture, &mut data, width as usize, height as usize, flip);
         }
+        prof.mark("mf_lens");
+        prof.finish_as("develop_own");
         let data_size = data.len() * 2;
         Some(ProcessedBuffer {
             storage: BufferStorage::OwnedU16(data),

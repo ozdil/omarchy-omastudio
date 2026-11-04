@@ -1135,6 +1135,7 @@ version = "3.1.0"
 dependencies = [
  "cc",
  "exr",
+ "flate2",
  "image",
  "lcms2",
  "libc",

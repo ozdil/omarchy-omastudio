@@ -1,4 +1,5 @@
 pub mod watermark;
+pub mod tiff_writer;
 
 use crate::icc::{self, ExportProfile, RenderingIntent};
 use crate::pipeline::render_16;
@@ -62,9 +63,10 @@ pub fn export_photo<P: AsRef<Path>>(
     recipe: &Recipe,
     options: &ExportOptions,
 ) -> Result<PathBuf, String> {
+    let mut prof = crate::pipeline::Profile::start();
     let raw = RawImage::open(&raw_path)
         .map_err(|e| format!("Could not open RAW for export: {}", e))?;
-    let recipe = &Recipe { baseline_exposure: raw.baseline_exposure(), ..recipe.clone() };
+    prof.mark("open");
 
     // Render straight into the requested space when the decoder can (built-in spaces
     // from a RAW), otherwise into a built-in space lcms2 converts from: ProPhoto for
@@ -80,6 +82,11 @@ pub fn export_photo<P: AsRef<Path>>(
     // Demosaic at high quality with full 16-bit depth (48-bit RGB)
     let processed = raw.process_full_16(3)
         .map_err(|e| format!("Failed to demosaic full resolution 16-bit: {}", e))?;
+    prof.mark("decode");
+    // Measured on this development, not a second half-size one: a photo already
+    // measured (by its preview in the app) keeps that value
+    let recipe = &Recipe { baseline_exposure: raw.baseline_exposure_from(&processed), ..recipe.clone() };
+    prof.mark("baseline");
 
     let mut final_buf = render_16(
         processed.as_slice_u16(),
@@ -90,8 +97,10 @@ pub fn export_photo<P: AsRef<Path>>(
         processed.transfer,
     );
     let (width, height) = (processed.width, processed.height);
+    prof.mark("render");
     // A 100 MP frame is 600 MB at 16 bits; free the decode before encoding starts
     drop(processed);
+    prof.mark("free_decode");
 
     let fmt = options.format.to_lowercase();
     let fmt = match fmt.as_str() {
@@ -135,6 +144,7 @@ pub fn export_photo<P: AsRef<Path>>(
         }
     };
     let icc_bytes = icc_bytes.as_deref();
+    prof.mark("icc");
 
     // Convert to 16-bit ImageBuffer
     let img: ImageBuffer<Rgb<u16>, Vec<u16>> = ImageBuffer::from_raw(width, height, final_buf)
@@ -142,6 +152,7 @@ pub fn export_photo<P: AsRef<Path>>(
     let mut dyn_img = DynamicImage::ImageRgb16(img);
 
     dyn_img = apply_geometry(dyn_img, recipe);
+    prof.mark("geometry");
 
     // Apply scaling / resizing
     let cur_w = dyn_img.width();
@@ -156,6 +167,7 @@ pub fn export_photo<P: AsRef<Path>>(
         dyn_img = dyn_img.resize_exact(new_w, new_h, image::imageops::FilterType::Lanczos3);
     }
 
+    prof.mark("resize");
     // Apply Watermark if enabled
     if let Some(ref wm) = options.watermark {
         let meta_opt = raw.get_metadata().ok();
@@ -198,7 +210,9 @@ pub fn export_photo<P: AsRef<Path>>(
     } else {
         dyn_img
     };
+    let dyn_img_size = (dyn_img.width(), dyn_img.height());
     let quality = options.quality.clamp(1, 100);
+    prof.mark("watermark+depth");
 
     match fmt.as_str() {
         "jxl" => {
@@ -276,9 +290,33 @@ pub fn export_photo<P: AsRef<Path>>(
             }
         }
         "tiff" => {
-            let buf = encode_tiff(&dyn_img, depth, &options.tiff_compression, icc_bytes)?;
-            crate::security::atomic_write_user(&final_dest, &buf)
-                .map_err(|e| format!("Failed to securely write TIFF file: {}", e))?;
+            let write_err = |e: std::io::Error| format!("Failed to securely write TIFF file: {}", e);
+            match tiff_codec(&options.tiff_compression) {
+                Some(codec) => {
+                    let rgb16;
+                    let rgb8;
+                    let samples = match (&dyn_img, depth <= 8) {
+                        (DynamicImage::ImageRgb8(img), true) => tiff_writer::Samples::U8(img.as_raw()),
+                        (DynamicImage::ImageRgb16(img), false) => tiff_writer::Samples::U16(img.as_raw()),
+                        (img, true) => {
+                            rgb8 = img.to_rgb8();
+                            tiff_writer::Samples::U8(rgb8.as_raw())
+                        }
+                        (img, false) => {
+                            rgb16 = img.to_rgb16();
+                            tiff_writer::Samples::U16(rgb16.as_raw())
+                        }
+                    };
+                    let parts = tiff_writer::build(dyn_img.width(), dyn_img.height(), samples, codec, icc_bytes)?;
+                    prof.mark("encode");
+                    crate::security::atomic_write_user_parts(&final_dest, &parts.slices()).map_err(write_err)?;
+                }
+                None => {
+                    let buf = encode_tiff(&dyn_img, depth, &options.tiff_compression, icc_bytes)?;
+                    prof.mark("encode");
+                    crate::security::atomic_write_user(&final_dest, &buf).map_err(write_err)?;
+                }
+            }
         }
         "png" => {
             let buf = encode_png(&dyn_img, icc_bytes)?;
@@ -307,6 +345,7 @@ pub fn export_photo<P: AsRef<Path>>(
         _ => return Err(format!("Unsupported export format: {}", fmt)),
     }
 
+    prof.mark("write");
     // Copy camera EXIF and GPS settings; the ICC profile is already in the file
     if options.preserve_exif || options.artist_copyright.is_some() {
         // Enforce 512 MiB RLIMIT_AS ceiling on ExifTool helper to defend against
@@ -345,6 +384,7 @@ pub fn export_photo<P: AsRef<Path>>(
 
         // Run exiftool with bounded timeout (safe failover if format doesn't support tags)
         let _ = run_bounded_command(exif_cmd, Duration::from_secs(20));
+        prof.mark("exiftool");
     }
 
     // Exports are ordinary files to share: rw-r--r-- whichever encoder wrote them
@@ -352,6 +392,7 @@ pub fn export_photo<P: AsRef<Path>>(
         use std::os::unix::fs::PermissionsExt;
         let _ = fs::set_permissions(&final_dest, fs::Permissions::from_mode(0o644));
     }
+    prof.finish_as(&format!("export {fmt} {}x{}", dyn_img_size.0, dyn_img_size.1));
 
     Ok(final_dest)
 }
@@ -474,6 +515,17 @@ fn run_encoder(cmd: std::process::Command, name: &str, timeout_secs: u64) -> Res
 }
 
 /// Encodes an 8- or 16-bit TIFF with the given compression and the ICC profile.
+/// The parallel writer's codec for a TIFF compression name, or None for LZW, which
+/// the `tiff` crate writes.
+fn tiff_codec(compression: &str) -> Option<tiff_writer::Codec> {
+    match compression {
+        "none" => Some(tiff_writer::Codec::None),
+        "lzw" => None,
+        _ => Some(tiff_writer::Codec::Deflate),
+    }
+}
+
+/// TIFF through the `tiff` crate, used for LZW.
 fn encode_tiff(img: &DynamicImage, depth: u8, compression: &str, icc: Option<&[u8]>) -> Result<Vec<u8>, String> {
     use tiff::encoder::{colortype, Compression, DeflateLevel, Predictor, TiffEncoder};
     use tiff::tags::Tag;

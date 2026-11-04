@@ -110,6 +110,7 @@ impl CfaFrame {
                 (v.clamp(0.0, 1.0) * 65535.0).round() as u16
             })
         };
+        let mut prof = crate::pipeline::Profile::start();
         let mosaic = Mosaic { width: self.width, height: self.height, data: &self.data, pattern: self.pattern };
         let (out, w, h) = if half_size {
             let (rgb, w, h) = demosaic::bin(&mosaic);
@@ -120,9 +121,13 @@ impl CfaFrame {
             let out = crate::gpu::demosaic::demosaic(&mosaic, m).unwrap_or_else(|| demosaic::demosaic_map(&mosaic, to_u16));
             (out, self.width, self.height)
         };
+        prof.mark("demosaic");
         let flip = self.flip;
         drop(self);
+        prof.mark("free_mosaic");
         let (out, w, h) = rotate(out, w, h, flip);
+        prof.mark("rotate");
+        prof.finish_as("cfa_develop");
         (out, w as u32, h as u32)
     }
 }
@@ -323,24 +328,24 @@ pub fn srgb_to(space: OutputColorSpace) -> Mat3 {
 
 /// Applies LibRaw's `flip` to interleaved RGB.
 fn rotate(src: Vec<u16>, w: usize, h: usize, flip: i32) -> (Vec<u16>, usize, usize) {
-    let map: fn(usize, usize, usize, usize) -> (usize, usize) = match flip {
-        3 => |x, y, w, h| (w - 1 - x, h - 1 - y),
+    // Source pixel of output (ox, oy), so the output rows fill in parallel
+    let source: fn(usize, usize, usize, usize) -> (usize, usize) = match flip {
+        3 => |ox, oy, w, h| (w - 1 - ox, h - 1 - oy),
         // 90 CCW: source (x, y) lands at (y, w - 1 - x) in an h x w image
-        5 => |x, y, w, _| (y, w - 1 - x),
-        // 90 CW
-        6 => |x, y, _, h| (h - 1 - y, x),
+        5 => |ox, oy, w, _| (w - 1 - oy, ox),
+        // 90 CW: source (x, y) lands at (h - 1 - y, x)
+        6 => |ox, oy, _, h| (oy, h - 1 - ox),
         _ => return (src, w, h),
     };
     let (ow, oh) = if flip == 3 { (w, h) } else { (h, w) };
     let mut out = vec![0u16; src.len()];
-    for y in 0..h {
-        for x in 0..w {
-            let (ox, oy) = map(x, y, w, h);
-            let (si, di) = ((y * w + x) * 3, (oy * ow + ox) * 3);
-            out[di..di + 3].copy_from_slice(&src[si..si + 3]);
+    out.par_chunks_mut(ow * 3).enumerate().for_each(|(oy, row)| {
+        for (ox, px) in row.as_chunks_mut::<3>().0.iter_mut().enumerate() {
+            let (x, y) = source(ox, oy, w, h);
+            let si = (y * w + x) * 3;
+            px.copy_from_slice(&src[si..si + 3]);
         }
-    }
-    let _ = oh;
+    });
     (out, ow, oh)
 }
 
@@ -434,5 +439,25 @@ mod tests {
         assert_eq!(ccw, vec![0, 2, 0, 1, 0, 0]);
         let (r180, _, _) = rotate(src, 2, 1, 3);
         assert_eq!(r180, vec![0, 2, 0, 1, 0, 0]);
+    }
+
+    #[test]
+    fn rotations_match_the_forward_mapping() {
+        let (w, h) = (7, 5);
+        let src: Vec<u16> = (0..(w * h * 3) as u16).collect();
+        for flip in [3, 5, 6] {
+            let (out, ow, _) = rotate(src.clone(), w, h, flip);
+            for y in 0..h {
+                for x in 0..w {
+                    let (ox, oy) = match flip {
+                        3 => (w - 1 - x, h - 1 - y),
+                        5 => (y, w - 1 - x),
+                        _ => (h - 1 - y, x),
+                    };
+                    let (si, di) = ((y * w + x) * 3, (oy * ow + ox) * 3);
+                    assert_eq!(out[di..di + 3], src[si..si + 3], "flip {flip} at {x},{y}");
+                }
+            }
+        }
     }
 }
