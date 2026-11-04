@@ -221,9 +221,9 @@ pub fn masks_dir() -> PathBuf {
 }
 
 pub struct MaskBitmap {
-    width: usize,
-    height: usize,
-    data: Vec<u8>,
+    pub(crate) width: usize,
+    pub(crate) height: usize,
+    pub(crate) data: Vec<u8>,
 }
 
 impl MaskBitmap {
@@ -333,6 +333,24 @@ impl Default for AdjustmentLayer {
             tint_b: 0.0,
         }
     }
+}
+
+/// The image behind a bitmap or brush shape, as `shape_weight` samples it; None for
+/// the other shapes and for a bitmap that can't be loaded or an empty brush.
+pub(crate) fn shape_bitmap(shape: &MaskShape) -> Option<Arc<MaskBitmap>> {
+    match shape {
+        MaskShape::Bitmap { path } => bitmap(path),
+        MaskShape::Brush { strokes, aspect, cache } if !strokes.is_empty() => {
+            Some(cache.0.get_or_init(|| Arc::new(rasterize_brush(strokes, *aspect))).clone())
+        }
+        _ => None,
+    }
+}
+
+/// [`oklab`] for the GPU layers stage, which takes a colour range's target colour
+/// ready converted.
+pub(crate) fn oklab_of(r: f32, g: f32, b: f32) -> [f32; 3] {
+    oklab(r, g, b)
 }
 
 /// Evaluates mask weight (0.0 to 1.0) for a given pixel at normalized coordinates (u, v) and RGB luminance

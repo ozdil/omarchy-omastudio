@@ -61,6 +61,22 @@ fn stages() -> Vec<(&'static str, Recipe)> {
     r.grain_amount = 25.0;
     r.vignette = -20.0;
     out.push(("grain_vignette", r.clone()));
+
+    r.lens_distortion = 20.0;
+    r.perspective_vertical = 15.0;
+    out.push(("geometry", r.clone()));
+
+    use omastudio_engine::pipeline::layers::{AdjustmentLayer, MaskShape};
+    r.layers = vec![
+        AdjustmentLayer { exposure: -0.7, highlights: -30.0, ..AdjustmentLayer::default() },
+        AdjustmentLayer {
+            exposure: 0.4,
+            saturation: 15.0,
+            shape: MaskShape::RadialGradient { center_x: 0.5, center_y: 0.55, radius_x: 0.3, radius_y: 0.3, feather: 0.5 },
+            ..AdjustmentLayer::default()
+        },
+    ];
+    out.push(("masks", r.clone()));
     out
 }
 
