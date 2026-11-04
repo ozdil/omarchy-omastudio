@@ -11,6 +11,7 @@ pub mod demosaic;
 pub mod layers;
 pub mod local;
 pub mod point_ops;
+pub mod remap;
 
 use std::sync::{Arc, Mutex, OnceLock};
 
@@ -26,6 +27,7 @@ pub struct Gpu {
     demosaic: OnceLock<Result<demosaic::Pipelines, String>>,
     point_ops: OnceLock<Result<point_ops::Pipeline, String>>,
     local: OnceLock<Result<local::Pipeline, String>>,
+    remap: OnceLock<Result<remap::Pipeline, String>>,
 }
 
 /// What `omastudio-engine gpu` reports.
@@ -129,7 +131,7 @@ fn init() -> Result<Gpu, String> {
     // Errors are caught by error scopes around each job; anything else is logged
     // instead of wgpu's default panic
     device.on_uncaptured_error(Arc::new(|e| eprintln!("omastudio: GPU error: {e}")));
-    Ok(Gpu { device, queue, info: adapter.get_info(), limits, jobs: Mutex::new(()), demosaic: OnceLock::new(), point_ops: OnceLock::new(), local: OnceLock::new() })
+    Ok(Gpu { device, queue, info: adapter.get_info(), limits, jobs: Mutex::new(()), demosaic: OnceLock::new(), point_ops: OnceLock::new(), local: OnceLock::new(), remap: OnceLock::new() })
 }
 
 /// Whether the processing stages (point operations, presence and detail) pay off on

@@ -261,117 +261,19 @@ pub fn compute_histogram_16_with_dimensions(
     _height: usize,
     channels: usize,
 ) -> HistogramData {
-    let mut red = vec![0u32; 256];
-    let mut green = vec![0u32; 256];
-    let mut blue = vec![0u32; 256];
-    let mut luma = vec![0u32; 256];
-
-    let mut shadow_clips = 0u32;
-    let mut highlight_clips = 0u32;
-    let total_pixels = rgb_buffer.len() / channels;
+    let total_pixels = rgb_buffer.len() / channels.max(1);
     let w_safe = width.max(1);
-
-    let mut wf_counts = vec![0u32; 64 * 32];
-    let mut par_r_counts = vec![0u32; 32 * 32];
-    let mut par_g_counts = vec![0u32; 32 * 32];
-    let mut par_b_counts = vec![0u32; 32 * 32];
-    let mut vec_counts = vec![0u32; 48 * 48];
-
-    for (px_idx, chunk) in rgb_buffer.chunks_exact(channels).enumerate() {
-        let r = (chunk[0] >> 8) as u8;
-        let g = (chunk[1] >> 8) as u8;
-        let b = (chunk[2] >> 8) as u8;
-        let y = ((0.2126 * r as f32 + 0.7152 * g as f32 + 0.0722 * b as f32) as u32).min(255) as u8;
-
-        red[r as usize] += 1;
-        green[g as usize] += 1;
-        blue[b as usize] += 1;
-        luma[y as usize] += 1;
-
-        // Same rule as the clipping overlay: any channel at the top, every channel at the bottom
-        if r >= 254 || g >= 254 || b >= 254 {
-            highlight_clips += 1;
-        } else if r <= 1 && g <= 1 && b <= 1 {
-            shadow_clips += 1;
-        }
-
-        let x = px_idx % w_safe;
-
-        let wx = (x * 64) / w_safe;
-        let wy = 31usize.saturating_sub((y as usize * 31) / 255);
-        wf_counts[wy * 64 + wx.min(63)] += 1;
-
-        let px = (x * 32) / w_safe;
-        let ry = 31usize.saturating_sub((r as usize * 31) / 255);
-        let gy = 31usize.saturating_sub((g as usize * 31) / 255);
-        let by = 31usize.saturating_sub((b as usize * 31) / 255);
-        par_r_counts[ry * 32 + px.min(31)] += 1;
-        par_g_counts[gy * 32 + px.min(31)] += 1;
-        par_b_counts[by * 32 + px.min(31)] += 1;
-
-        let rf = r as f32 / 255.0;
-        let gf = g as f32 / 255.0;
-        let bf = b as f32 / 255.0;
-        let cb = -0.1146 * rf - 0.3854 * gf + 0.5000 * bf;
-        let cr = 0.5000 * rf - 0.4542 * gf - 0.0458 * bf;
-        let u = ((cb + 0.5) * 47.0).clamp(0.0, 47.0) as usize;
-        let v = (47.0 - (cr + 0.5) * 47.0).clamp(0.0, 47.0) as usize;
-        vec_counts[v * 48 + u] += 1;
-    }
-
-    let mut max_count = 1;
-    for i in 1..255 {
-        max_count = max_count
-            .max(red[i])
-            .max(green[i])
-            .max(blue[i])
-            .max(luma[i]);
-    }
-
-    let shadow_percent = if total_pixels > 0 {
-        (shadow_clips as f32 / total_pixels as f32) * 100.0
-    } else {
-        0.0
-    };
-
-    let highlight_percent = if total_pixels > 0 {
-        (highlight_clips as f32 / total_pixels as f32) * 100.0
-    } else {
-        0.0
-    };
-
-    let normalize_counts = |counts: &[u32]| -> Vec<u8> {
-        let max_val = *counts.iter().max().unwrap_or(&1).max(&1) as f32;
-        counts
-            .iter()
-            .map(|&c| {
-                if c == 0 {
-                    0u8
-                } else {
-                    ((c as f32 / max_val).sqrt() * 255.0).clamp(1.0, 255.0) as u8
-                }
-            })
-            .collect()
-    };
-
-    let waveform_luma = normalize_counts(&wf_counts);
-    let parade_r = normalize_counts(&par_r_counts);
-    let parade_g = normalize_counts(&par_g_counts);
-    let parade_b = normalize_counts(&par_b_counts);
-    let vectorscope = normalize_counts(&vec_counts);
-
-    HistogramData {
-        red,
-        green,
-        blue,
-        luma,
-        max_count,
-        shadow_clipping_percent: shadow_percent,
-        highlight_clipping_percent: highlight_percent,
-        waveform_luma,
-        parade_r,
-        parade_g,
-        parade_b,
-        vectorscope,
-    }
+    let wf_col: Vec<usize> = (0..w_safe).map(|x| ((x * 64) / w_safe).min(63)).collect();
+    let par_col: Vec<usize> = (0..w_safe).map(|x| ((x * 32) / w_safe).min(31)).collect();
+    // The 8-bit scopes of the 16-bit values, rows counted in parallel
+    let acc = rgb_buffer
+        .par_chunks(w_safe * channels)
+        .fold(ScopeCounts::new, |mut acc, row| {
+            for (x, chunk) in row.chunks_exact(channels).enumerate() {
+                acc.add((chunk[0] >> 8) as u8, (chunk[1] >> 8) as u8, (chunk[2] >> 8) as u8, wf_col[x], par_col[x]);
+            }
+            acc
+        })
+        .reduce(ScopeCounts::new, ScopeCounts::merge);
+    histogram_from_counts(acc, total_pixels)
 }
