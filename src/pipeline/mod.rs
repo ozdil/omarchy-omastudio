@@ -696,8 +696,10 @@ fn process_16_to_16_banded(
     let w = width as usize;
     let h = height as usize;
     let num_pixels = w * h;
+    let mut prof = Profile::start();
     let retouched = retouch::apply(input, w, h, ch, &recipe.retouch);
     let input = &*retouched;
+    prof.mark("retouch");
 
     let stage = PointStage::new(recipe, transfer);
     let lens = detail::Geometry::new(w, h, recipe);
@@ -740,6 +742,7 @@ fn process_16_to_16_banded(
             });
     }
 
+    prof.mark("bands");
     if let Some(lens) = lens {
         output.par_chunks_mut(w * ch).enumerate().for_each(|(y, row)| {
             for x in 0..w {
@@ -766,7 +769,10 @@ fn process_16_to_16_banded(
         });
     }
 
+    prof.mark("geometry");
     let hist = compute_histogram_16_with_dimensions(&output, w, h, ch);
+    prof.mark("histogram");
+    prof.finish(w, h);
     (output, hist)
 }
 
