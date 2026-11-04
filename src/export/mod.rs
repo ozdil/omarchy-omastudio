@@ -66,9 +66,7 @@ pub fn export_photo<P: AsRef<Path>>(
     let mut prof = crate::pipeline::Profile::start();
     let raw = RawImage::open(&raw_path)
         .map_err(|e| format!("Could not open RAW for export: {}", e))?;
-    let recipe_baseline = raw.baseline_exposure();
-    prof.mark("open+baseline");
-    let recipe = &Recipe { baseline_exposure: recipe_baseline, ..recipe.clone() };
+    prof.mark("open");
 
     // Render straight into the requested space when the decoder can (built-in spaces
     // from a RAW), otherwise into a built-in space lcms2 converts from: ProPhoto for
@@ -85,6 +83,10 @@ pub fn export_photo<P: AsRef<Path>>(
     let processed = raw.process_full_16(3)
         .map_err(|e| format!("Failed to demosaic full resolution 16-bit: {}", e))?;
     prof.mark("decode");
+    // Measured on this development, not a second half-size one: a photo already
+    // measured (by its preview in the app) keeps that value
+    let recipe = &Recipe { baseline_exposure: raw.baseline_exposure_from(&processed), ..recipe.clone() };
+    prof.mark("baseline");
 
     let mut final_buf = render_16(
         processed.as_slice_u16(),
