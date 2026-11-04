@@ -268,6 +268,75 @@ fn run_on(gpu: &Gpu, buf: &mut [f32], w: usize, h: usize, recipe: &Recipe, scale
     if steps.is_empty() {
         return Ok(());
     }
+    let _job = gpu.jobs.lock().map_err(|_| "GPU lock poisoned")?;
+    execute(gpu, w, h, &steps, &mut buf[..w * h * 3], None::<fn(&wgpu::Buffer) -> Result<(), String>>)
+}
+
+/// Point stage and this stage in one go for rows `y0..y1` of `input` (`w` pixels of
+/// `ch` 16-bit channels per row): the point stage's result stays on the GPU and only
+/// the final RGB f32 comes back. None when there is no usable GPU, nothing for this
+/// stage to do (the caller then runs the point stage alone) or the job failed.
+#[allow(clippy::too_many_arguments)]
+pub fn run_chained(
+    input: &[u16],
+    w: usize,
+    ch: usize,
+    y0: usize,
+    y1: usize,
+    recipe: &Recipe,
+    inputs: &super::point_ops::PointInputs,
+    scale: f32,
+) -> Option<Vec<f32>> {
+    if (y1 - y0) * w < super::point_ops::MIN_PIXELS {
+        return None;
+    }
+    let gpu = super::get().filter(|g| super::stages_worthwhile(g))?;
+    match chained_on(gpu, input, w, ch, y0, y1, recipe, inputs, scale) {
+        Ok(v) => v,
+        Err(e) => {
+            eprintln!("omastudio: GPU point + presence/detail stages failed, using the CPU: {e}");
+            None
+        }
+    }
+}
+
+#[allow(clippy::too_many_arguments)]
+fn chained_on(
+    gpu: &Gpu,
+    input: &[u16],
+    w: usize,
+    ch: usize,
+    y0: usize,
+    y1: usize,
+    recipe: &Recipe,
+    inputs: &super::point_ops::PointInputs,
+    scale: f32,
+) -> Result<Option<Vec<f32>>, String> {
+    let h = y1.saturating_sub(y0);
+    if w == 0 || h == 0 || !(3..=4).contains(&ch) || input.len() < y1 * w * ch {
+        return Err("unsupported buffer".to_string());
+    }
+    let steps = plan(w, h, recipe, scale);
+    if steps.is_empty() {
+        return Ok(None);
+    }
+    let _job = gpu.jobs.lock().map_err(|_| "GPU lock poisoned")?;
+    let mut out = vec![0.0f32; w * h * 3];
+    execute(gpu, w, h, &steps, &mut out, Some(|rgb: &wgpu::Buffer| super::point_ops::run_into(gpu, input, w, ch, y0, y1, recipe, inputs, rgb)))?;
+    Ok(Some(out))
+}
+
+/// Fills the device RGB buffer with `fill` (or uploads `data` when there is none),
+/// runs `steps` on it and reads the result back into `data`. The caller holds the
+/// GPU's job lock.
+fn execute(
+    gpu: &Gpu,
+    w: usize,
+    h: usize,
+    steps: &[Step],
+    data: &mut [f32],
+    fill: Option<impl FnOnce(&wgpu::Buffer) -> Result<(), String>>,
+) -> Result<(), String> {
     let limit = gpu.limits.max_storage_buffer_binding_size.min(gpu.limits.max_buffer_size).min(MAX_BUFFER);
     let (rgb_size, plane_size) = ((w * h * 12) as u64, (w * h * 4) as u64);
     if rgb_size > limit || plane_size * PLANES > limit || plane_size * PLANES > u32::MAX as u64 {
@@ -278,7 +347,6 @@ fn run_on(gpu: &Gpu, buf: &mut [f32], w: usize, h: usize, recipe: &Recipe, scale
         return Err(format!("{w}x{h} needs more workgroups than the GPU allows"));
     }
     let pipeline = pipeline(gpu)?;
-    let _job = gpu.jobs.lock().map_err(|_| "GPU lock poisoned")?;
 
     let stride = PARAMS_SIZE.next_multiple_of(gpu.limits.min_uniform_buffer_offset_alignment as u64);
     let mut params = vec![0u8; (stride * steps.len() as u64) as usize];
@@ -299,29 +367,37 @@ fn run_on(gpu: &Gpu, buf: &mut [f32], w: usize, h: usize, recipe: &Recipe, scale
         *cache = Some(Buffers::new(device, &pipeline.layout, params_size.max(p).max(stride * 64), rgb_size.max(r), plane_size.max(l)));
     }
     let bufs = cache.as_ref().expect("buffers");
-    gpu.queue.write_buffer(&bufs.params, 0, &params);
-    gpu.queue.write_buffer(&bufs.rgb, 0, as_bytes(&buf[..w * h * 3]));
-
-    let mut enc = device.create_command_encoder(&wgpu::CommandEncoderDescriptor { label: Some("local") });
-    {
-        let mut pass = enc.begin_compute_pass(&wgpu::ComputePassDescriptor { label: Some("local"), timestamp_writes: None });
-        for (i, s) in steps.iter().enumerate() {
-            pass.set_pipeline(&pipeline.pipelines[s.entry]);
-            pass.set_bind_group(0, &bufs.bind, &[(i as u64 * stride) as u32]);
-            pass.dispatch_workgroups(s.groups.0, s.groups.1, 1);
+    let filled = match fill {
+        Some(f) => f(&bufs.rgb),
+        None => {
+            gpu.queue.write_buffer(&bufs.rgb, 0, as_bytes(&data[..w * h * 3]));
+            Ok(())
         }
+    };
+    gpu.queue.write_buffer(&bufs.params, 0, &params);
+
+    let mut idx = None;
+    if filled.is_ok() {
+        let mut enc = device.create_command_encoder(&wgpu::CommandEncoderDescriptor { label: Some("local") });
+        {
+            let mut pass = enc.begin_compute_pass(&wgpu::ComputePassDescriptor { label: Some("local"), timestamp_writes: None });
+            for (i, s) in steps.iter().enumerate() {
+                pass.set_pipeline(&pipeline.pipelines[s.entry]);
+                pass.set_bind_group(0, &bufs.bind, &[(i as u64 * stride) as u32]);
+                pass.dispatch_workgroups(s.groups.0, s.groups.1, 1);
+            }
+        }
+        enc.copy_buffer_to_buffer(&bufs.rgb, 0, &bufs.staging, 0, rgb_size);
+        idx = Some(gpu.queue.submit([enc.finish()]));
     }
-    enc.copy_buffer_to_buffer(&bufs.rgb, 0, &bufs.staging, 0, rgb_size);
-    let idx = gpu.queue.submit([enc.finish()]);
-    let (tx, rx) = mpsc::channel();
-    bufs.staging.map_async(wgpu::MapMode::Read, 0..rgb_size, move |r| {
-        let _ = tx.send(r);
-    });
-    let read = (|| -> Result<(), String> {
+    let read = idx.map(|idx| {
+        let (tx, rx) = mpsc::channel();
+        bufs.staging.map_async(wgpu::MapMode::Read, 0..rgb_size, move |r| {
+            let _ = tx.send(r);
+        });
         device.poll(wgpu::PollType::Wait { submission_index: Some(idx), timeout: None }).map_err(|e| e.to_string())?;
-        rx.recv().map_err(|e| e.to_string())?.map_err(|e| e.to_string())?;
-        Ok(())
-    })();
+        rx.recv().map_err(|e| e.to_string())?.map_err(|e| e.to_string())
+    });
     let oom_err = pollster::block_on(oom.pop());
     let val_err = pollster::block_on(scope.pop());
     if let Some(e) = oom_err {
@@ -332,10 +408,11 @@ fn run_on(gpu: &Gpu, buf: &mut [f32], w: usize, h: usize, recipe: &Recipe, scale
         *cache = None;
         return Err(e.to_string());
     }
-    read?;
+    filled?;
+    read.expect("submitted")?;
     {
         let view = bufs.staging.get_mapped_range(0..rgb_size).map_err(|e| e.to_string())?;
-        super::point_ops::as_bytes_mut(&mut buf[..w * h * 3]).copy_from_slice(&view);
+        super::point_ops::as_bytes_mut(&mut data[..w * h * 3]).copy_from_slice(&view);
     }
     bufs.staging.unmap();
     Ok(())
@@ -437,6 +514,71 @@ mod tests {
             assert!(off * 1000 < w * h * 3, "{name}: {off} values differ (worst {worst})");
             assert!(worst < 0.02, "{name}: worst difference {worst}");
         }
+    }
+
+    /// The chained point + presence/detail run against the CPU doing both.
+    #[test]
+    fn chained_matches_cpu() {
+        use crate::pipeline::transfer::Transfer;
+        use crate::pipeline::{PointOps, white_balance};
+        let Some(gpu) = super::super::get() else {
+            eprintln!("no GPU, skipped");
+            return;
+        };
+        let (w, h, ch) = (157usize, 83usize, 3usize);
+        let input: Vec<u16> = (0..w * h * ch)
+            .map(|i| {
+                let (px, c) = (i / ch, i % ch);
+                let (x, y) = (px % w, px / w);
+                let n = ((x as u32).wrapping_mul(2_654_435_761) ^ (y as u32).wrapping_mul(40_503) ^ c as u32) % 3000;
+                ((x * 30_000 / w + y * 20_000 / h) as u32 + n + c as u32 * 1500) as u16
+            })
+            .collect();
+        let recipe = Recipe {
+            exposure: 0.3,
+            contrast: 20.0,
+            shadows: 25.0,
+            clarity: 25.0,
+            texture: 20.0,
+            sharpness: 40.0,
+            denoise_col: 30.0,
+            defringe: 30.0,
+            film_simulation: "fuji_classic_chrome".into(),
+            ..Recipe::default()
+        };
+        let transfer = Transfer::bt709();
+        let ops = PointOps::new(&recipe);
+        let (wr, wg, wb) = white_balance::kelvin_to_rgb_multipliers(recipe.wb_temperature, recipe.wb_tint);
+        let e = 2.0f32.powf(recipe.exposure + recipe.baseline_exposure);
+        let k = [wr * e, wg * e, wb * e];
+        // Rows 5..h of the input, as an export band would ask for
+        let (y0, y1) = (5, h);
+        let rows = y1 - y0;
+        let mut cpu = vec![0.0f32; rows * w * 3];
+        for i in 0..rows * w {
+            let px = &input[(y0 * w + i) * ch..(y0 * w + i) * ch + 3];
+            let enc = |c: usize| transfer.encode(px[c] as f32 / 65535.0 * k[c]);
+            let (r, g, b) = ops.apply(enc(0), enc(1), enc(2));
+            cpu[i * 3..i * 3 + 3].copy_from_slice(&[r, g, b]);
+        }
+        presence::apply_presence_scaled(&mut cpu, w, rows, recipe.clarity, recipe.texture, recipe.dehaze, recipe.midtone_detail, 1.0);
+        detail::apply_detail_scaled(&mut cpu, w, rows, recipe.sharpness, recipe.denoise_lum, recipe.denoise_col, 1.0);
+        detail::apply_defringe_buffer(&mut cpu, w, rows, recipe.defringe, 1.0);
+
+        let got = chained_on(gpu, &input, w, ch, y0, y1, &recipe, &ops.gpu_inputs(k, transfer), 1.0)
+            .expect("GPU chained stages")
+            .expect("work to do");
+        let (mut off, mut worst) = (0usize, 0.0f32);
+        for (a, b) in cpu.iter().zip(&got) {
+            let d = (a - b).abs();
+            if d.is_nan() || d > 2e-3 {
+                off += 1;
+            }
+            worst = if d.is_finite() { worst.max(d) } else { f32::INFINITY };
+        }
+        eprintln!("chained: {off} values differ by more than 2e-3 (worst {worst})");
+        assert!(off * 1000 < rows * w * 3, "{off} values differ (worst {worst})");
+        assert!(worst < 0.05, "worst difference {worst}");
     }
 
     #[test]
