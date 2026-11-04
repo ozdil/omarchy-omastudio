@@ -1,0 +1,44 @@
+name: Bug report
+description: Something in OmaStudio doesn't work as it should
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you did, what you expected and what happened instead.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open a GFX 100 RAF
+        2. Turn on Clarity
+        3. ...
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: OmaStudio version
+      description: "`omastudio-engine --version`, or About → Copy version details."
+    validations:
+      required: true
+  - type: input
+    id: camera
+    attributes:
+      label: Camera and file type
+      placeholder: Fujifilm GFX 50R, RAF (lossless compressed)
+  - type: textarea
+    id: system
+    attributes:
+      label: System
+      description: Omarchy version, Hyprland version, GPU and driver. About → Copy version details gives most of this.
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs or screenshots
+      description: Terminal output of `omastudio` or `OMASTUDIO_PROFILE=1 omastudio-engine ...`, screenshots. Don't attach private photos you don't want to share publicly.
+      render: shell

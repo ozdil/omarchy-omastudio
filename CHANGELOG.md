@@ -1,19 +1,26 @@
 # Changelog
 
-## Unreleased
+All notable changes to OmaStudio are documented in this file.
 
-### Fixes
-- Right-to-left languages (Arabic, Hebrew, Persian): the edit panel no longer runs past its left edge. The profile filter buttons and the AI mask buttons wrap instead of widening the panel, the right panel's tabs share the width by label length and shrink a label that still doesn't fit, buttons elide a translation longer than they are, and Latin titles (Fujifilm, film names) sit on the right like the rest of the text.
-- Notices (such as the one shown when switching to Pro) appear over the photo below the version strip, centred on it, instead of covering the A–D version buttons.
-- GPU demosaic: on NVIDIA and Intel GPUs about one Bayer pixel in a hundred took another interpolation direction than on the CPU, leaving wrong colours in patches along hard edges (GFX, Hasselblad and other Bayer files). The direction choice no longer depends on exact ties that GPU rounding breaks; CPU and GPU now agree (RTX 4060: 26 instead of 1262 differing values in the test scene, Intel Arc: 18).
-- Editing a large file no longer queues renders: when the engine is slow (the first decode of a 100 MP file), the window waits for the answer to its last render instead of sending another every five seconds.
-- If the engine stops (a crash, out of memory) while a photo is open, the next edit starts a new engine that loads the photo again, keeping the edits made in the window. Before, every edit failed until the photo was opened again.
-- `omastudio-engine render --recipe` refuses a broken recipe instead of rendering without the edits, as `export` does.
-- The MCP server drops a request line longer than 4 MB and answers with an error, instead of reading its rest as further messages.
-- The control socket answers each connection on its own thread, so a slow call (a screenshot of a hidden workspace) no longer holds up the others.
-- `omastudio ipc screenshot` answers once the PNG is written. When the window is not being drawn (its Hyprland workspace is hidden) it answers with an error after three seconds instead of OK without a file. The MCP `window_screenshot` tool reports that error.
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
+and OmaStudio follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html):
+a MAJOR release can change saved recipes, the control socket or the command line
+in ways that need action when upgrading, a MINOR release adds features that keep
+working with what came before, and a PATCH release only fixes bugs.
+New entries go under **Unreleased**, grouped as Added, Changed, Deprecated,
+Removed, Fixed and Security. Releases up to 3.1.0 group their entries by area.
 
-### Performance
+## [Unreleased]
+
+## [3.2.0] - 2026-11-04
+
+Previews, exports and full-quality renders run on a discrete GPU, 16-bit TIFF exports are about three times faster, and the AI assistant is confined to the photo it is shown.
+
+### Added
+- `omastudio-engine bench [photo] [--runs N]` times the preview pipeline as one module group after another is turned on, and `OMASTUDIO_PROFILE=1` prints the time of each pass of every render on stderr. They show where GPU work pays off.
+- The top bar, the A–D version strip and the panel section headers can be used from the keyboard: **F6** and **Shift+F6** move between them (Tab still hides the panels), a ring shows the focused control, Space or Enter presses it and Escape gives the focus back to the photo. Screen readers get their names and on/off states.
+
+### Changed
 - TIFF and JPEG exports of Fujifilm RAF files carry the camera's EXIF, GPS and MakerNote without exiftool: the engine writes them with the image instead of exiftool rewriting the finished file afterwards (about 0.5 s per medium format TIFF). Other sources and formats still use exiftool.
 - TIFF exports compress on every core: a 16-bit deflate TIFF (the default) of a GFX 50R photo exports in 3.1 instead of 9.9 s, a GFX 100 one in 5.8 instead of 19.9 s (22 threads), with the same pixels and 250–450 MB less memory. Uncompressed TIFFs are written straight from the image instead of a copy. LZW still compresses on one core.
 - An export decodes the RAW once: the baseline exposure is measured on the full development instead of a second half-size one (unless the app already measured it), and the decode's rotation runs on every core. `OMASTUDIO_PROFILE=1` times every export step, from opening the file to exiftool.
@@ -24,26 +31,29 @@
 - Texture, clarity, dehaze, midtone detail, sharpening, luminance and colour noise reduction and defringe run on a discrete GPU too, for previews and exports, with the same result as the CPU (largest difference about 1e-6, compared by a test on every module and on scaled neighbourhoods). `OMASTUDIO_GPU_STAGES` controls this stage as well.
 - Exports and full-quality renders run tone, point curves, RGB mixer, skin tone, colour wheels, HSL, look LUT, film simulations, Color Chrome and gamut compression on a discrete GPU (NVIDIA, AMD through Vulkan): about 6x faster for that stage on an RTX 4060 laptop (27 instead of 167 ms for a 3840 × 2560 frame, 35 instead of 206 ms for a GFX 50R photo), with the same result as the CPU (largest difference 5e-6, compared by a test on every module and film simulation). Integrated GPUs stay on the CPU, which is faster there; `OMASTUDIO_GPU_STAGES=on` uses any GPU, `=off` none. The engine compiles the shader while the first photo loads, so the first export doesn't wait for it.
 - The histogram and video scopes under the photo are counted on every core: about 70 ms instead of 370 ms for a 3840 px preview on four cores, with the same counts. Every edit redraws them, so the preview of a plain edit comes back about 40% sooner.
+- Secondary text is legible in every theme: muted text has at least 4.5:1 contrast and dim text (hints, placeholders, inactive icons) at least 3:1 against the panels. The default dim colour was 2.4:1.
+- GitHub Actions moved to their Node 24 releases: checkout v7, upload-artifact v7, download-artifact v8, attest-build-provenance v4, action-gh-release v3 and CodeQL v4.
+- Every GitHub Action in the workflows is pinned to a full commit SHA, with its release as a comment (`actions/checkout@3d3c42e… # v7.0.1`), so a moved tag cannot change what CI and the release build run.
+- The engine binary is built on the engine library instead of compiling every module a second time; its unit tests run once.
+- The changelog follows Keep a Changelog and the version numbers Semantic Versioning. CI checks that `Cargo.toml`, `app/Cargo.toml`, `Cargo.lock`, `PKGBUILD` and `manifest.json` state the same version (`tools/release/check-version.py`), and the release workflow refuses a tag that doesn't match it or has no CHANGELOG section.
+- `CONTRIBUTING.md` now describes building, testing, branch and commit naming, pull requests and the release steps; the security rules it held moved to `docs/development/security-standards.md`. Bug reports and feature requests use issue forms, and security reports go to private vulnerability reporting.
 
-### Tools
-- `omastudio-engine bench [photo] [--runs N]` times the preview pipeline as one module group after another is turned on, and `OMASTUDIO_PROFILE=1` prints the time of each pass of every render on stderr. They show where GPU work pays off.
+### Fixed
+- Right-to-left languages (Arabic, Hebrew, Persian): the edit panel no longer runs past its left edge. The profile filter buttons and the AI mask buttons wrap instead of widening the panel, the right panel's tabs share the width by label length and shrink a label that still doesn't fit, buttons elide a translation longer than they are, and Latin titles (Fujifilm, film names) sit on the right like the rest of the text.
+- Notices (such as the one shown when switching to Pro) appear over the photo below the version strip, centred on it, instead of covering the A–D version buttons.
+- GPU demosaic: on NVIDIA and Intel GPUs about one Bayer pixel in a hundred took another interpolation direction than on the CPU, leaving wrong colours in patches along hard edges (GFX, Hasselblad and other Bayer files). The direction choice no longer depends on exact ties that GPU rounding breaks; CPU and GPU now agree (RTX 4060: 26 instead of 1262 differing values in the test scene, Intel Arc: 18).
+- Editing a large file no longer queues renders: when the engine is slow (the first decode of a 100 MP file), the window waits for the answer to its last render instead of sending another every five seconds.
+- If the engine stops (a crash, out of memory) while a photo is open, the next edit starts a new engine that loads the photo again, keeping the edits made in the window. Before, every edit failed until the photo was opened again.
+- `omastudio-engine render --recipe` refuses a broken recipe instead of rendering without the edits, as `export` does.
+- The MCP server drops a request line longer than 4 MB and answers with an error, instead of reading its rest as further messages.
+- The control socket answers each connection on its own thread, so a slow call (a screenshot of a hidden workspace) no longer holds up the others.
+- `omastudio ipc screenshot` answers once the PNG is written. When the window is not being drawn (its Hyprland workspace is hidden) it answers with an error after three seconds instead of OK without a file. The MCP `window_screenshot` tool reports that error.
+- The launcher passes on the GPU selection variables (`__NV_PRIME_RENDER_OFFLOAD`, `__GLX_VENDOR_LIBRARY_NAME`, `DRI_PRIME`, `MESA_VK_DEVICE_SELECT`, `VK_ICD_FILENAMES`, `VK_DRIVER_FILES`, `LIBVA_DRIVER_NAME`, `NVD_BACKEND`), `OMASTUDIO_GPU`, `TZ` and the AI providers' `*_API_KEY` variables when they are set. Its clean environment dropped them, so `OMASTUDIO_GPU=off omastudio` had no effect and hybrid-graphics settings didn't reach the engine.
 
 ### Security
 - The AI assistant, when it uses Omarchy's default agent Claude Code, may read only the photo it is shown: Claude Code runs with its Read tool alone, limited to that file, and without the user's settings, permission rules, hooks or MCP servers. Before, it was allowed to read any file, so an instruction hidden in a photo could have made it read another one.
 
-### Accessibility
-- The top bar, the A–D version strip and the panel section headers can be used from the keyboard: **F6** and **Shift+F6** move between them (Tab still hides the panels), a ring shows the focused control, Space or Enter presses it and Escape gives the focus back to the photo. Screen readers get their names and on/off states.
-- Secondary text is legible in every theme: muted text has at least 4.5:1 contrast and dim text (hints, placeholders, inactive icons) at least 3:1 against the panels. The default dim colour was 2.4:1.
-
-### Hardware
-- The launcher passes on the GPU selection variables (`__NV_PRIME_RENDER_OFFLOAD`, `__GLX_VENDOR_LIBRARY_NAME`, `DRI_PRIME`, `MESA_VK_DEVICE_SELECT`, `VK_ICD_FILENAMES`, `VK_DRIVER_FILES`, `LIBVA_DRIVER_NAME`, `NVD_BACKEND`), `OMASTUDIO_GPU`, `TZ` and the AI providers' `*_API_KEY` variables when they are set. Its clean environment dropped them, so `OMASTUDIO_GPU=off omastudio` had no effect and hybrid-graphics settings didn't reach the engine.
-
-### Build
-- GitHub Actions moved to their Node 24 releases: checkout v7, upload-artifact v7, download-artifact v8, attest-build-provenance v4, action-gh-release v3 and CodeQL v4.
-- Every GitHub Action in the workflows is pinned to a full commit SHA, with its release as a comment (`actions/checkout@3d3c42e… # v7.0.1`), so a moved tag cannot change what CI and the release build run.
-- The engine binary is built on the engine library instead of compiling every module a second time; its unit tests run once.
-
-## v3.1.0 — 2026-10-27
+## [3.1.0] - 2026-10-27
 
 ### Documentation
 - A user guide covering installation, the window, every panel and tool, viewing aids, history, Fujifilm, medium format, export, cloud accounts, AI, keyboard and mouse, the command line, files and troubleshooting, with screenshots of the application.
@@ -178,7 +188,7 @@
 - **Connect local AI** in the top bar uses the AI set up on this computer: Omarchy's default agent (`omarchy-default-agent`; Claude Code or Codex, with their own sign-in), else Ollama, else LM Studio. The edit assistant can use it like any other provider (`omastudio-engine ai local`, provider `omarchy`). With Claude Code or Codex the photo preview is sent to that service.
 - The "Basit (AI)" mode is now called "Essentials".
 
-## v3.0.0 — 2026-10-22
+## [3.0.0] - 2026-10-22
 
 OmaStudio 3 is a new RAW engine and a standalone Qt 6 application: its own Bayer and X-Trans development on linear light, GPU demosaicing, colour management with Little CMS 2, full Fujifilm support (recipes, film simulations, lens corrections, Pixel Shift, cameras over USB), Hasselblad and other medium-format cameras, AI agents over MCP, and local AI masks.
 
@@ -261,7 +271,7 @@ OmaStudio 3 is a new RAW engine and a standalone Qt 6 application: its own Bayer
 ### Removed
 - OmaSend code that had been copied into this repository: the `rendezvous`, `oma-id-qr` and `force-scan` engine commands, the matching daemon commands (`rendezvous_derive`, `rendezvous_verify`, `pin_verify`), the OmaSend web pages (`assets/web/omasend`, `docs/index.html`) and the `qrcode` dependency. OmaSend lives in [omarchy-omasend](https://github.com/ozdil/omarchy-omasend) and [omasend-web](https://github.com/ozdil/omasend-web). The OmaStudio UI never used these commands.
 
-## v2.4.0 — 2026-10-16
+## [2.4.0] - 2026-10-16
 
 A large stability and correctness release covering the engine, the UI, colour handling, export and CI.
 
@@ -302,3 +312,9 @@ A large stability and correctness release covering the engine, the UI, colour ha
 
 ### CI
 - Build, test and `clippy -D warnings` run on every pull request on a pinned toolchain; the workflow token is read-only.
+
+[Unreleased]: https://github.com/ozdil/omarchy-omastudio/compare/v3.2.0...HEAD
+[3.2.0]: https://github.com/ozdil/omarchy-omastudio/compare/v3.1.0...v3.2.0
+[3.1.0]: https://github.com/ozdil/omarchy-omastudio/compare/v3.0.0...v3.1.0
+[3.0.0]: https://github.com/ozdil/omarchy-omastudio/compare/v2.4.0...v3.0.0
+[2.4.0]: https://github.com/ozdil/omarchy-omastudio/compare/v2.2.0...v2.4.0

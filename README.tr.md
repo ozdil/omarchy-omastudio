@@ -8,6 +8,8 @@ OmaStudio, Omarchy Linux için orijinal dosyaya dokunmayan bir RAW düzenleyicis
 
 [English](README.md) • [Türkçe](README.tr.md) • [30 dilde kullanım kılavuzu ve teknolojiler](docs/README.md)
 
+[![CI](https://github.com/ozdil/omarchy-omastudio/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/ozdil/omarchy-omastudio/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/ozdil/omarchy-omastudio?sort=semver)](https://github.com/ozdil/omarchy-omastudio/releases/latest)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Platform: Omarchy](https://img.shields.io/badge/Platform-Omarchy%20%7C%20Arch%20Linux-1793d1.svg)](https://omarchy.org)
 [![Engine: Rust 2024](https://img.shields.io/badge/Engine-Rust%202024-dea584.svg)](Cargo.toml)
