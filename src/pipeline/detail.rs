@@ -344,6 +344,21 @@ impl Geometry {
         Some(Self { lens, inverse, cx: width as f32 / 2.0, cy: height as f32 / 2.0 })
     }
 
+    /// The terms of the GPU geometry kernel (local.wgsl): the inverse homography
+    /// (row-major), the centre, then the lens terms, and which of the two are on.
+    pub fn gpu_terms(&self) -> ([f32; 16], bool, bool) {
+        let m = self.inverse.unwrap_or([1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0]);
+        let (k1, inv_max_r2, fill) = self.lens.map_or((0.0, 0.0, 1.0), |l| (l.k1, l.inv_max_r2, l.fill));
+        let mut t = [0.0f32; 16];
+        t[..9].copy_from_slice(&m);
+        t[10] = self.cx;
+        t[11] = self.cy;
+        t[12] = k1;
+        t[13] = inv_max_r2;
+        t[14] = fill;
+        (t, self.inverse.is_some(), self.lens.is_some())
+    }
+
     /// Where the output pixel (x, y) samples the photo. Points the perspective sends
     /// behind the virtual camera come back far outside the photo.
     #[inline(always)]

@@ -19,7 +19,7 @@ const MAX_BUFFER: u64 = 1 << 30;
 /// Pixels each blur thread slides over; must match CHUNK in the shader.
 const CHUNK: u32 = 32;
 /// Size of one step's parameters in the uniform buffer.
-const PARAMS_SIZE: u64 = 64;
+const PARAMS_SIZE: u64 = 128;
 /// Histogram workgroups; must match HIST_GROUPS in the shader.
 const HIST_GROUPS: u32 = 256;
 
@@ -36,11 +36,20 @@ const ENTRIES: &[&str] = &[
     "gradient",
     "defringe_apply",
     "finish",
+    "layers",
+    "geometry",
     "pack3",
     "hist_main",
     "hist_wf",
     "hist_par",
 ];
+
+/// A step's parameter words, zero after `head`.
+fn words(head: &[u32]) -> [u32; 32] {
+    let mut p = [0u32; 32];
+    p[..head.len()].copy_from_slice(head);
+    p
+}
 
 fn entry(name: &str) -> usize {
     ENTRIES.iter().position(|e| *e == name).unwrap_or_else(|| panic!("unknown entry point {name}"))
@@ -49,7 +58,7 @@ fn entry(name: &str) -> usize {
 /// One dispatch: its kernel, parameters and workgroup counts.
 struct Step {
     entry: usize,
-    params: [u32; 16],
+    params: [u32; 32],
     groups: (u32, u32),
 }
 
@@ -61,7 +70,7 @@ fn plan(w: usize, h: usize, recipe: &Recipe, scale: f32) -> Vec<Step> {
     let mut steps = Vec::new();
     let step = |name: &str, src: u32, dst: u32, r: u32, mode: u32, flags: u32, f: [f32; 4], groups: (u32, u32)| Step {
         entry: entry(name),
-        params: [wu, hu, src, dst, r, mode, flags, 0, f[0].to_bits(), f[1].to_bits(), f[2].to_bits(), f[3].to_bits(), 0, 0, 0, 0],
+        params: words(&[wu, hu, src, dst, r, mode, flags, 0, f[0].to_bits(), f[1].to_bits(), f[2].to_bits(), f[3].to_bits()]),
         groups,
     };
     let pixels = |name: &str, mode: u32, flags: u32, f: [f32; 4]| step(name, 0, 0, 0, mode, flags, f, px);
@@ -125,11 +134,27 @@ fn plan(w: usize, h: usize, recipe: &Recipe, scale: f32) -> Vec<Step> {
     steps
 }
 
-/// The display tail after `plan`'s steps: grain, vignette and 8-bit quantization into
-/// px8, packing to 3 bytes per pixel when `ch` is 3, and the histogram and scopes. It
-/// mirrors process_buffer_16_to_8_ex's passes 4 and 6 for a frame without geometry.
+/// The adjustment layers of `recipe` packed for the shader and the step that applies
+/// them to a `w` x `h` band whose first pixel is (`frame.0`, `frame.1`) of a
+/// `frame.2` x `frame.3` frame; None when there are no layers.
+fn layer_step(w: usize, h: usize, frame: (usize, usize, usize, usize), recipe: &Recipe) -> Result<Option<(Vec<f32>, Step)>, String> {
+    if recipe.layers.is_empty() {
+        return Ok(None);
+    }
+    let lay = super::layers::pack(&recipe.layers).ok_or("masks too large for the GPU")?;
+    let (inv_w, inv_h) = (1.0 / (frame.2 as f32).max(1.0), 1.0 / (frame.3 as f32).max(1.0));
+    let (wu, hu) = (w as u32, h as u32);
+    let params = words(&[wu, hu, 0, 0, frame.0 as u32, frame.1 as u32, 0, 0, inv_w.to_bits(), inv_h.to_bits()]);
+    Ok(Some((lay, Step { entry: entry("layers"), params, groups: (wu.div_ceil(16), hu.div_ceil(16)) })))
+}
+
+/// The display tail after `plan`'s steps: grain, lens distortion and perspective,
+/// vignette and 8-bit quantization into px8, packing to 3 bytes per pixel when `ch`
+/// is 3, and the histogram and scopes. It mirrors process_buffer_16_to_8_ex's passes
+/// 4 to 6.
 fn display_steps(w: usize, h: usize, ch: usize, recipe: &Recipe, scale: f32) -> Vec<Step> {
     let (wu, hu) = (w as u32, h as u32);
+    let px = (wu.div_ceil(16), hu.div_ceil(16));
     let mut steps = Vec::new();
     let grain = recipe.grain_amount > 0.001;
     let vignette = recipe.vignette.abs() >= 0.01;
@@ -140,25 +165,37 @@ fn display_steps(w: usize, h: usize, ch: usize, recipe: &Recipe, scale: f32) -> 
         recipe.grain_roughness / 100.0,
         recipe.vignette,
     ];
-    let mut params = [wu, hu, 0, 0, 0, 0, grain as u32 | (vignette as u32) << 1, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-    for (k, v) in f.iter().enumerate() {
-        params[8 + k] = v.to_bits();
+    let finish = |mode: u32, flags: u32| {
+        let mut params = words(&[wu, hu, 0, 0, 0, mode, flags]);
+        for (k, v) in f.iter().enumerate() {
+            params[8 + k] = v.to_bits();
+        }
+        Step { entry: entry("finish"), params, groups: px }
+    };
+    match crate::pipeline::detail::Geometry::new(w, h, recipe) {
+        Some(geometry) => {
+            // Grain in place, the resampled frame into the planes, then the vignette
+            if grain {
+                steps.push(finish(1, 1));
+            }
+            let (terms, perspective, lens) = geometry.gpu_terms();
+            let mut params = words(&[wu, hu, 0, 0, 0, 0, perspective as u32 | (lens as u32) << 1]);
+            for (k, v) in terms.iter().enumerate() {
+                params[16 + k] = v.to_bits();
+            }
+            steps.push(Step { entry: entry("geometry"), params, groups: px });
+            steps.push(finish(2, (vignette as u32) << 1));
+        }
+        None => steps.push(finish(0, grain as u32 | (vignette as u32) << 1)),
     }
-    steps.push(Step { entry: entry("finish"), params, groups: (wu.div_ceil(16), hu.div_ceil(16)) });
     if ch == 3 {
         let groups = ((w * h * 3).div_ceil(4) as u32).div_ceil(256);
         let gx = groups.min(32768);
-        let mut params = [0u32; 16];
-        params[0] = wu;
-        params[1] = hu;
-        params[2] = gx * 256;
+        let params = words(&[wu, hu, gx * 256]);
         steps.push(Step { entry: entry("pack3"), params, groups: (gx, groups.div_ceil(gx)) });
     }
     for name in ["hist_main", "hist_wf", "hist_par"] {
-        let mut params = [0u32; 16];
-        params[0] = wu;
-        params[1] = hu;
-        steps.push(Step { entry: entry(name), params, groups: (HIST_GROUPS, 1) });
+        steps.push(Step { entry: entry(name), params: words(&[wu, hu]), groups: (HIST_GROUPS, 1) });
     }
     steps
 }
@@ -181,12 +218,14 @@ struct Buffers {
     out8: wgpu::Buffer,
     hist: wgpu::Buffer,
     staging_hist: wgpu::Buffer,
+    layers_size: u64,
+    layers: wgpu::Buffer,
     bind: wgpu::BindGroup,
     _planes: wgpu::Buffer,
 }
 
 impl Buffers {
-    fn new(device: &wgpu::Device, layout: &wgpu::BindGroupLayout, params_size: u64, rgb_size: u64, plane_size: u64) -> Self {
+    fn new(device: &wgpu::Device, layout: &wgpu::BindGroupLayout, params_size: u64, rgb_size: u64, plane_size: u64, layers_size: u64) -> Self {
         let buffer = |label: &str, size: u64, usage: wgpu::BufferUsages| {
             device.create_buffer(&wgpu::BufferDescriptor { label: Some(label), size: size.max(4).next_multiple_of(4), usage, mapped_at_creation: false })
         };
@@ -201,6 +240,7 @@ impl Buffers {
         let hist_size = ((crate::pipeline::histogram::SCOPE_WORDS + 768) * 4) as u64;
         let hist = buffer("local hist", hist_size, wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_SRC | wgpu::BufferUsages::COPY_DST);
         let staging_hist = buffer("local staging hist", hist_size, wgpu::BufferUsages::MAP_READ | wgpu::BufferUsages::COPY_DST);
+        let layers = buffer("local layers", layers_size, wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST);
         let bind = device.create_bind_group(&wgpu::BindGroupDescriptor {
             label: Some("local"),
             layout,
@@ -214,13 +254,14 @@ impl Buffers {
                 wgpu::BindGroupEntry { binding: 3, resource: px8.as_entire_binding() },
                 wgpu::BindGroupEntry { binding: 4, resource: out8.as_entire_binding() },
                 wgpu::BindGroupEntry { binding: 5, resource: hist.as_entire_binding() },
+                wgpu::BindGroupEntry { binding: 6, resource: layers.as_entire_binding() },
             ],
         });
-        Self { rgb_size, plane_size, params_size, params, rgb, staging, px8, out8, hist, staging_hist, bind, _planes: planes }
+        Self { rgb_size, plane_size, params_size, params, rgb, staging, px8, out8, hist, staging_hist, layers_size, layers, bind, _planes: planes }
     }
 
-    fn fits(&self, params: u64, rgb: u64, plane: u64) -> bool {
-        self.params_size >= params && self.rgb_size >= rgb && self.plane_size >= plane
+    fn fits(&self, params: u64, rgb: u64, plane: u64, layers: u64) -> bool {
+        self.params_size >= params && self.rgb_size >= rgb && self.plane_size >= plane && self.layers_size >= layers
     }
 }
 
@@ -258,6 +299,16 @@ impl Pipeline {
                 storage(3),
                 storage(4),
                 storage(5),
+                wgpu::BindGroupLayoutEntry {
+                    binding: 6,
+                    visibility: wgpu::ShaderStages::COMPUTE,
+                    ty: wgpu::BindingType::Buffer {
+                        ty: wgpu::BufferBindingType::Storage { read_only: true },
+                        has_dynamic_offset: false,
+                        min_binding_size: None,
+                    },
+                    count: None,
+                },
             ],
         });
         let pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
@@ -331,13 +382,15 @@ fn run_on(gpu: &Gpu, buf: &mut [f32], w: usize, h: usize, recipe: &Recipe, scale
         return Ok(());
     }
     let _job = gpu.jobs.lock().map_err(|_| "GPU lock poisoned")?;
-    execute(gpu, w, h, &steps, Out::F32(&mut buf[..w * h * 3]), None::<fn(&wgpu::Buffer) -> Result<(), String>>)
+    execute(gpu, w, h, &steps, &[], Out::F32(&mut buf[..w * h * 3]), None::<fn(&wgpu::Buffer) -> Result<(), String>>)
 }
 
-/// Point stage and this stage in one go for rows `y0..y1` of `input` (`w` pixels of
-/// `ch` 16-bit channels per row): the point stage's result stays on the GPU and only
-/// the final RGB f32 comes back. None when there is no usable GPU, nothing for this
-/// stage to do (the caller then runs the point stage alone) or the job failed.
+/// Point stage, adjustment layers and this stage in one go for rows `y0..y1` of
+/// `input` (`w` pixels of `ch` 16-bit channels per row): the point stage's result
+/// stays on the GPU and only the final RGB f32 comes back. `frame` places the band for
+/// the masks: the frame position of its first pixel and the frame's size. None when
+/// there is no usable GPU, nothing for these stages to do (the caller then runs the
+/// point stage alone) or the job failed.
 #[allow(clippy::too_many_arguments)]
 pub fn run_chained(
     input: &[u16],
@@ -348,12 +401,13 @@ pub fn run_chained(
     recipe: &Recipe,
     inputs: &super::point_ops::PointInputs,
     scale: f32,
+    frame: (usize, usize, usize, usize),
 ) -> Option<Vec<f32>> {
     if (y1 - y0) * w < super::point_ops::MIN_PIXELS {
         return None;
     }
     let gpu = super::get().filter(|g| super::stages_worthwhile(g))?;
-    match chained_on(gpu, input, w, ch, y0, y1, recipe, inputs, scale) {
+    match chained_on(gpu, input, w, ch, y0, y1, recipe, inputs, scale, frame) {
         Ok(v) => v,
         Err(e) => {
             eprintln!("omastudio: GPU point + presence/detail stages failed, using the CPU: {e}");
@@ -373,23 +427,28 @@ fn chained_on(
     recipe: &Recipe,
     inputs: &super::point_ops::PointInputs,
     scale: f32,
+    frame: (usize, usize, usize, usize),
 ) -> Result<Option<Vec<f32>>, String> {
     let h = y1.saturating_sub(y0);
     if w == 0 || h == 0 || !(3..=4).contains(&ch) || input.len() < y1 * w * ch {
         return Err("unsupported buffer".to_string());
     }
-    let steps = plan(w, h, recipe, scale);
+    let (lay, mut steps) = match layer_step(w, h, frame, recipe)? {
+        Some((lay, step)) => (lay, vec![step]),
+        None => (Vec::new(), Vec::new()),
+    };
+    steps.extend(plan(w, h, recipe, scale));
     if steps.is_empty() {
         return Ok(None);
     }
     let _job = gpu.jobs.lock().map_err(|_| "GPU lock poisoned")?;
     let mut out = vec![0.0f32; w * h * 3];
-    execute(gpu, w, h, &steps, Out::F32(&mut out), Some(|rgb: &wgpu::Buffer| super::point_ops::run_into(gpu, input, w, ch, y0, y1, recipe, inputs, rgb)))?;
+    execute(gpu, w, h, &steps, &lay, Out::F32(&mut out), Some(|rgb: &wgpu::Buffer| super::point_ops::run_into(gpu, input, w, ch, y0, y1, recipe, inputs, rgb)))?;
     Ok(Some(out))
 }
 
-/// The whole 8-bit preview on the GPU for a `w` x `h` frame without local masks or
-/// geometry: the point stage, presence, detail, defringe, grain, vignette and 8-bit
+/// The whole 8-bit preview on the GPU for a `w` x `h` frame: the point stage,
+/// adjustment layers, presence, detail, defringe, grain, geometry, vignette and 8-bit
 /// quantization, with the histogram and scopes counted there too. Only the 8-bit
 /// pixels (`ch` per pixel; alpha comes from the input) and the counts come back. None
 /// when there is no usable GPU or the job failed.
@@ -430,7 +489,11 @@ fn display_on(
     if w == 0 || h == 0 || !(3..=4).contains(&ch) || input.len() < w * h * ch {
         return Err("unsupported buffer".to_string());
     }
-    let mut steps = plan(w, h, recipe, scale);
+    let (lay, mut steps) = match layer_step(w, h, (0, 0, w, h), recipe)? {
+        Some((lay, step)) => (lay, vec![step]),
+        None => (Vec::new(), Vec::new()),
+    };
+    steps.extend(plan(w, h, recipe, scale));
     steps.extend(display_steps(w, h, ch, recipe, scale));
     let _job = gpu.jobs.lock().map_err(|_| "GPU lock poisoned")?;
     let (mut pixels, mut words) = (Vec::new(), Vec::new());
@@ -439,6 +502,7 @@ fn display_on(
         w,
         h,
         &steps,
+        &lay,
         Out::Display { ch, pixels: &mut pixels, words: &mut words },
         Some(|rgb: &wgpu::Buffer| super::point_ops::run_into(gpu, input, w, ch, 0, h, recipe, inputs, rgb)),
     )?;
@@ -468,6 +532,7 @@ fn execute(
     w: usize,
     h: usize,
     steps: &[Step],
+    lay: &[f32],
     mut out: Out<'_>,
     fill: Option<impl FnOnce(&wgpu::Buffer) -> Result<(), String>>,
 ) -> Result<(), String> {
@@ -494,11 +559,15 @@ fn execute(
     let oom = device.push_error_scope(wgpu::ErrorFilter::OutOfMemory);
     let mut cache = pipeline.buffers.lock().map_err(|_| "GPU buffer lock poisoned")?;
     let params_size = params.len() as u64;
-    if !cache.as_ref().is_some_and(|b| b.fits(params_size, rgb_size, plane_size)) {
+    let layers_size = (lay.len() * 4) as u64;
+    if layers_size > limit {
+        return Err("the masks exceed the GPU's buffer limits".to_string());
+    }
+    if !cache.as_ref().is_some_and(|b| b.fits(params_size, rgb_size, plane_size, layers_size)) {
         // Grow to the largest request seen, so alternating sizes don't reallocate
-        let (p, r, l) = cache.as_ref().map_or((0, 0, 0), |b| (b.params_size, b.rgb_size, b.plane_size));
+        let (p, r, l, m) = cache.as_ref().map_or((0, 0, 0, 0), |b| (b.params_size, b.rgb_size, b.plane_size, b.layers_size));
         *cache = None;
-        *cache = Some(Buffers::new(device, &pipeline.layout, params_size.max(p).max(stride * 64), rgb_size.max(r), plane_size.max(l)));
+        *cache = Some(Buffers::new(device, &pipeline.layout, params_size.max(p).max(stride * 64), rgb_size.max(r), plane_size.max(l), layers_size.max(m).max(256)));
     }
     let bufs = cache.as_ref().expect("buffers");
     let filled = match fill {
@@ -518,6 +587,9 @@ fn execute(
         Out::Display { .. } => (&bufs.px8, (w * h * 4) as u64, (crate::pipeline::histogram::SCOPE_WORDS * 4) as u64),
     };
     gpu.queue.write_buffer(&bufs.params, 0, &params);
+    if !lay.is_empty() {
+        gpu.queue.write_buffer(&bufs.layers, 0, as_bytes(lay));
+    }
     if hist_len > 0 {
         let terms: Vec<f32> = [0.2126f32, 0.7152, 0.0722].iter().flat_map(|k| (0..256).map(move |v| k * v as f32)).collect();
         gpu.queue.write_buffer(&bufs.hist, hist_len, as_bytes(&terms));
@@ -719,6 +791,7 @@ mod tests {
             denoise_col: 30.0,
             defringe: 30.0,
             film_simulation: "fuji_classic_chrome".into(),
+            layers: test_layers(),
             ..Recipe::default()
         };
         let transfer = Transfer::bt709();
@@ -734,13 +807,16 @@ mod tests {
             let px = &input[(y0 * w + i) * ch..(y0 * w + i) * ch + 3];
             let enc = |c: usize| transfer.encode(px[c] as f32 / 65535.0 * k[c]);
             let (r, g, b) = ops.apply(enc(0), enc(1), enc(2));
+            // The band's rows sit at y0.. of the frame
+            let (u, v) = (((i % w) as f32 + 0.5) / w as f32, ((y0 + i / w) as f32 + 0.5) / h as f32);
+            let (r, g, b) = crate::pipeline::layers::apply_layers_pixel(r, g, b, &recipe.layers, u, v);
             cpu[i * 3..i * 3 + 3].copy_from_slice(&[r, g, b]);
         }
         presence::apply_presence_scaled(&mut cpu, w, rows, recipe.clarity, recipe.texture, recipe.dehaze, recipe.midtone_detail, 1.0);
         detail::apply_detail_scaled(&mut cpu, w, rows, recipe.sharpness, recipe.denoise_lum, recipe.denoise_col, 1.0);
         detail::apply_defringe_buffer(&mut cpu, w, rows, recipe.defringe, 1.0);
 
-        let got = chained_on(gpu, &input, w, ch, y0, y1, &recipe, &ops.gpu_inputs(k, transfer), 1.0)
+        let got = chained_on(gpu, &input, w, ch, y0, y1, &recipe, &ops.gpu_inputs(k, transfer), 1.0, (0, y0, w, h))
             .expect("GPU chained stages")
             .expect("work to do");
         let (mut off, mut worst) = (0usize, 0.0f32);
@@ -789,7 +865,10 @@ mod tests {
                     ((x * 40_000 / w + y * 20_000 / h) as u32 + n + c as u32 * 1500) as u16
                 })
                 .collect();
-            for (name, recipe) in [("default", Recipe::default()), ("grain_vignette", grain.clone())] {
+            let geometry = Recipe { lens_distortion: 30.0, perspective_vertical: 25.0, perspective_horizontal: -10.0, ..grain.clone() };
+            let barrel = Recipe { lens_distortion: -40.0, perspective_scale: 90.0, ..Recipe::default() };
+            let masks = Recipe { layers: test_layers(), ..grain.clone() };
+            for (name, recipe) in [("default", Recipe::default()), ("grain_vignette", grain.clone()), ("geometry", geometry), ("barrel", barrel), ("masks", masks)] {
                 let transfer = Transfer::bt709();
                 let (cpu, cpu_hist) = crate::pipeline::process_buffer_16_to_8_ex(&input, w as u32, h as u32, ch as u32, &recipe, transfer, false, false);
                 let ops = PointOps::new(&recipe);
@@ -829,6 +908,55 @@ mod tests {
                 assert!(moved * 20 <= cpu_hist.vectorscope.iter().filter(|&&c| c > 0).count().max(20), "{name} ch={ch}: {moved} vectorscope cells differ");
             }
         }
+    }
+
+    /// One layer of each kind of mask, with components and every adjustment.
+    fn test_layers() -> Vec<crate::pipeline::layers::AdjustmentLayer> {
+        use crate::pipeline::layers::{AdjustmentLayer, BrushStroke, MaskComponent, MaskMode, MaskShape};
+        vec![
+            AdjustmentLayer {
+                exposure: -0.8,
+                highlights: -40.0,
+                saturation: 20.0,
+                shape: MaskShape::LinearGradient { start_x: 0.5, start_y: 0.0, end_x: 0.5, end_y: 0.6 },
+                components: vec![MaskComponent {
+                    mode: MaskMode::Subtract,
+                    invert: false,
+                    shape: MaskShape::LumaRange { min_luma: 0.0, max_luma: 0.3, falloff: 0.1 },
+                }],
+                ..AdjustmentLayer::default()
+            },
+            AdjustmentLayer {
+                invert: true,
+                opacity: 0.7,
+                exposure: 0.5,
+                shadows: 30.0,
+                blacks: -20.0,
+                contrast: 25.0,
+                shape: MaskShape::RadialGradient { center_x: 0.4, center_y: 0.5, radius_x: 0.3, radius_y: 0.25, feather: 0.6 },
+                ..AdjustmentLayer::default()
+            },
+            AdjustmentLayer {
+                whites: 35.0,
+                tint_r: 0.2,
+                tint_b: -0.1,
+                shape: MaskShape::Brush {
+                    strokes: vec![
+                        BrushStroke { points: vec![[0.1, 0.2], [0.6, 0.7]], size: 0.08, ..BrushStroke::default() },
+                        BrushStroke { points: vec![[0.3, 0.3]], size: 0.05, erase: true, ..BrushStroke::default() },
+                    ],
+                    aspect: 0.56,
+                    cache: Default::default(),
+                },
+                components: vec![MaskComponent {
+                    mode: MaskMode::Intersect,
+                    invert: true,
+                    shape: MaskShape::ColorRange { r: 0.5, g: 0.4, b: 0.3, range: 0.2, feather: 0.5 },
+                }],
+                ..AdjustmentLayer::default()
+            },
+            AdjustmentLayer { enabled: false, exposure: 3.0, ..AdjustmentLayer::default() },
+        ]
     }
 
     #[test]

@@ -25,6 +25,8 @@ struct Params {
     f5: f32,
     f6: f32,
     f7: f32,
+    // The geometry kernel's inverse homography and lens terms (Geometry::gpu_terms)
+    g: array<vec4<f32>, 4>,
 };
 
 @group(0) @binding(0) var<uniform> p: Params;
@@ -35,6 +37,8 @@ struct Params {
 @group(0) @binding(3) var<storage, read_write> px8: array<u32>;
 @group(0) @binding(4) var<storage, read_write> out8: array<u32>;
 @group(0) @binding(5) var<storage, read_write> hist: array<atomic<u32>>;
+// The adjustment layers, packed by gpu::layers::pack
+@group(0) @binding(6) var<storage, read> lay: array<f32>;
 
 const CHUNK: u32 = 32u;
 
@@ -335,16 +339,23 @@ fn hash_noise(x: u32, y: u32, seed: u32) -> f32 {
 
 // Grain (flags bit 0: f0 amount, f1 step, f2 fine step, f3 roughness weight), vignette
 // (bit 1: f4 amount) and the 8-bit quantization of pixel (x, y), as
-// process_buffer_16_to_8_ex does on the CPU
+// process_buffer_16_to_8_ex does on the CPU. With geometry it runs twice: mode 1 adds
+// the grain in place, mode 2 takes the resampled frame from the planes.
 @compute @workgroup_size(16, 16, 1)
 fn finish(@builtin(global_invocation_id) id: vec3<u32>) {
     let i = pixel(id);
     if (i >= p.w * p.h) {
         return;
     }
+    // Mode 2 reads the geometry kernel's result from the planes
     var r = rgb[i * 3u];
     var g = rgb[i * 3u + 1u];
     var b = rgb[i * 3u + 2u];
+    if (p.mode == 2u) {
+        r = pl[i * 3u];
+        g = pl[i * 3u + 1u];
+        b = pl[i * 3u + 2u];
+    }
     let x = id.x;
     let y = id.y;
     if ((p.flags & 1u) != 0u) {
@@ -365,6 +376,13 @@ fn finish(@builtin(global_invocation_id) id: vec3<u32>) {
         g = max(g + delta, 0.0);
         b = max(b + delta, 0.0);
     }
+    // Mode 1 stops after the grain: the geometry resamples the grained frame
+    if (p.mode == 1u) {
+        rgb[i * 3u] = r;
+        rgb[i * 3u + 1u] = g;
+        rgb[i * 3u + 2u] = b;
+        return;
+    }
     if ((p.flags & 2u) != 0u) {
         let cx = f32(p.w) / 2.0;
         let cy = f32(p.h) / 2.0;
@@ -383,6 +401,257 @@ fn finish(@builtin(global_invocation_id) id: vec3<u32>) {
     let g8 = u32(clamp(g, 0.0, 1.0) * 255.0);
     let b8 = u32(clamp(b, 0.0, 1.0) * 255.0);
     px8[i] = r8 | (g8 << 8u) | (b8 << 16u);
+}
+
+// --- Adjustment layers (pipeline::layers::apply_layers_pixel) -----------------------
+
+fn lsmooth(t: f32) -> f32 {
+    let c = clamp(t, 0.0, 1.0);
+    return c * c * (3.0 - 2.0 * c);
+}
+
+fn l_encode(lin: f32) -> f32 {
+    if (!(lin > 0.0)) { return 0.0; }
+    if (lin < lay[7]) { return lin * lay[5]; }
+    return pow(lin, lay[4]) * (1.0 + lay[8]) - lay[8];
+}
+
+fn l_decode(enc: f32) -> f32 {
+    if (!(enc > 0.0)) { return 0.0; }
+    if (enc < lay[6]) { return enc / lay[5]; }
+    return pow((enc + lay[8]) / (1.0 + lay[8]), 1.0 / lay[4]);
+}
+
+fn l_cbrt(v: f32) -> f32 {
+    return sign(v) * pow(abs(v), 1.0 / 3.0);
+}
+
+fn l_oklab(c: vec3<f32>) -> vec3<f32> {
+    let r = pow(max(c.x, 0.0), 2.2);
+    let g = pow(max(c.y, 0.0), 2.2);
+    let b = pow(max(c.z, 0.0), 2.2);
+    let l = l_cbrt(0.41222146 * r + 0.53633255 * g + 0.051445995 * b);
+    let m = l_cbrt(0.2119035 * r + 0.6806995 * g + 0.10739696 * b);
+    let s = l_cbrt(0.08830246 * r + 0.28171885 * g + 0.6299787 * b);
+    return vec3<f32>(
+        0.21045426 * l + 0.7936178 * m - 0.004072047 * s,
+        1.9779985 * l - 2.4285922 * m + 0.4505937 * s,
+        0.025904037 * l + 0.78277177 * m - 0.80867577 * s,
+    );
+}
+
+fn l_image(at: u32, u: f32, v: f32) -> f32 {
+    let base = u32(lay[at + 9u]);
+    let iw = u32(lay[at + 10u]);
+    let ih = u32(lay[at + 11u]);
+    let x = max(clamp(u, 0.0, 1.0) * f32(iw - 1u), 0.0);
+    let y = max(clamp(v, 0.0, 1.0) * f32(ih - 1u), 0.0);
+    let x0 = u32(x);
+    let y0 = u32(y);
+    let x1 = min(x0 + 1u, iw - 1u);
+    let y1 = min(y0 + 1u, ih - 1u);
+    let fx = x - f32(x0);
+    let fy = y - f32(y0);
+    let a = lay[base + y0 * iw + x0];
+    let b = lay[base + y0 * iw + x1];
+    let c = lay[base + y1 * iw + x0];
+    let d = lay[base + y1 * iw + x1];
+    let top = a + (b - a) * fx;
+    let bottom = c + (d - c) * fx;
+    return (top + (bottom - top) * fy) / 255.0;
+}
+
+// The weight of the shape at word `at` (layers::shape_weight)
+fn l_shape(at: u32, u: f32, v: f32, c: vec3<f32>) -> f32 {
+    let kind = u32(lay[at]);
+    let p0 = lay[at + 3u];
+    let p1 = lay[at + 4u];
+    let p2 = lay[at + 5u];
+    let p3 = lay[at + 6u];
+    let p4 = lay[at + 7u];
+    if (kind == 0u) {
+        let dx = p2 - p0;
+        let dy = p3 - p1;
+        let len_sq = dx * dx + dy * dy;
+        if (len_sq <= 1e-6) { return 1.0; }
+        let proj = ((u - p0) * dx + (v - p1) * dy) / len_sq;
+        return lsmooth(proj);
+    }
+    if (kind == 1u) {
+        let f = clamp(p4, 0.01, 1.0);
+        let nx = (u - p0) / max(p2, 1e-4);
+        let ny = (v - p1) / max(p3, 1e-4);
+        let dist = sqrt(nx * nx + ny * ny);
+        if (dist >= 1.0) { return 0.0; }
+        if (dist <= 1.0 - f) { return 1.0; }
+        return lsmooth((1.0 - dist) / f);
+    }
+    if (kind == 2u) {
+        let luma = 0.2126 * c.x + 0.7152 * c.y + 0.0722 * c.z;
+        let f = clamp(p2, 0.001, 0.5);
+        let min_in = max(p0 - f, 0.0);
+        let max_in = min(p1 + f, 1.0);
+        if (luma < min_in || luma > max_in) { return 0.0; }
+        if (luma >= p0 && luma <= p1) { return 1.0; }
+        if (luma < p0) { return lsmooth((luma - min_in) / f); }
+        return lsmooth((max_in - luma) / f);
+    }
+    if (kind == 3u) {
+        return l_image(at, u, v);
+    }
+    if (kind == 5u) {
+        let q = l_oklab(c);
+        let dl = q.x - p0;
+        let da = q.y - p1;
+        let db = q.z - p2;
+        let d = sqrt(0.5 * dl * dl + da * da + db * db);
+        let inner = clamp(p3, 0.0, 1.0) * 0.3;
+        let soft = clamp(p4, 0.0, 1.0) * 0.3;
+        if (d <= inner) { return 1.0; }
+        if (soft <= 1e-6) { return 0.0; }
+        return lsmooth(1.0 - (d - inner) / soft);
+    }
+    return 0.0;
+}
+
+// Applies the layers to rgb in place. p.f0 and p.f1 are 1 / frame width and height,
+// p.r and p.mode the band's offset in the frame.
+@compute @workgroup_size(16, 16, 1)
+fn layers(@builtin(global_invocation_id) id: vec3<u32>) {
+    let i = pixel(id);
+    if (i >= p.w * p.h) {
+        return;
+    }
+    let u = (f32(p.r + id.x) + 0.5) * p.f0;
+    let v = (f32(p.mode + id.y) + 0.5) * p.f1;
+    var c = vec3<f32>(rgb[i * 3u], rgb[i * 3u + 1u], rgb[i * 3u + 2u]);
+    let count = u32(lay[0]);
+    var at = 16u;
+    for (var n = 0u; n < count; n++) {
+        let shapes = u32(lay[at]);
+        let invert = lay[at + 1u] > 0.5;
+        let opacity = lay[at + 2u];
+        let exposure = lay[at + 3u];
+        let contrast = lay[at + 4u];
+        let highlights = lay[at + 5u];
+        let shadows = lay[at + 6u];
+        let whites = lay[at + 7u];
+        let blacks = lay[at + 8u];
+        let saturation = lay[at + 9u];
+        let tint = vec3<f32>(lay[at + 10u], lay[at + 11u], lay[at + 12u]);
+        var s = at + 16u;
+        var w = l_shape(s, u, v, c);
+        for (var k = 1u; k < shapes; k++) {
+            s += 16u;
+            var cw = l_shape(s, u, v, c);
+            if (lay[s + 2u] > 0.5) { cw = 1.0 - cw; }
+            let mode = u32(lay[s + 1u]);
+            if (mode == 0u) {
+                w = max(w, cw);
+            } else if (mode == 1u) {
+                w = w * (1.0 - cw);
+            } else {
+                w = w * cw;
+            }
+        }
+        at = s + 16u;
+        if (invert) { w = 1.0 - w; }
+        w = clamp(w * opacity, 0.0, 1.0);
+        if (w <= 1e-4) {
+            continue;
+        }
+        var l = c;
+        if (abs(exposure) > 1e-4) {
+            let mul = exp2(exposure * w);
+            l = vec3<f32>(l_encode(l_decode(c.x) * mul), l_encode(l_decode(c.y) * mul), l_encode(l_decode(c.z) * mul));
+        }
+        if (highlights != 0.0 || shadows != 0.0 || whites != 0.0 || blacks != 0.0) {
+            let y = max(0.2126 * l.x + 0.7152 * l.y + 0.0722 * l.z, 0.0);
+            var shift = 0.0;
+            let hz = min(max(y - 0.35, 0.0) / 0.65, 1.0);
+            shift += highlights / 100.0 * hz * hz * (3.0 - 2.0 * hz) * 0.35;
+            let fall0 = 1.0 - min(y / 0.60, 1.0);
+            shift += shadows / 100.0 * (fall0 * fall0) * (y / (y + 0.03)) * 0.35;
+            let wz = min(max(y - 0.60, 0.0) / 0.40, 1.0);
+            shift += whites / 100.0 * (wz * wz) * 0.25;
+            let bz = min(max(0.30 - y, 0.0) / 0.30, 1.0);
+            shift += blacks / 100.0 * (bz * bz) * 0.20;
+            l += vec3<f32>(shift * w);
+        }
+        if (abs(contrast) > 1e-3) {
+            let k = 1.0 + (contrast / 100.0) * w;
+            l = vec3<f32>(0.41) + (l - vec3<f32>(0.41)) * k;
+        }
+        if (abs(saturation) > 1e-3) {
+            let k = 1.0 + (saturation / 100.0) * w;
+            let y = 0.2126 * l.x + 0.7152 * l.y + 0.0722 * l.z;
+            l = vec3<f32>(y) + (l - vec3<f32>(y)) * k;
+        }
+        if (abs(tint.x) > 1e-4 || abs(tint.y) > 1e-4 || abs(tint.z) > 1e-4) {
+            l += tint * w * 0.2;
+        }
+        c = max(l, vec3<f32>(0.0));
+    }
+    rgb[i * 3u] = c.x;
+    rgb[i * 3u + 1u] = c.y;
+    rgb[i * 3u + 2u] = c.z;
+}
+
+// Lens distortion and perspective (detail::apply_geometry): each output pixel samples
+// rgb bilinearly where Geometry::source puts it, black outside the frame; the result
+// goes to the planes as interleaved RGB. flags bit 0: perspective, bit 1: lens.
+@compute @workgroup_size(16, 16, 1)
+fn geometry(@builtin(global_invocation_id) id: vec3<u32>) {
+    let i = pixel(id);
+    if (i >= p.w * p.h) {
+        return;
+    }
+    let cx = p.g[2].z;
+    let cy = p.g[2].w;
+    var x = f32(id.x);
+    var y = f32(id.y);
+    var inside = true;
+    if ((p.flags & 1u) != 0u) {
+        let dx = x - cx;
+        let dy = y - cy;
+        let m0 = p.g[0];
+        let m1 = p.g[1];
+        let m2 = p.g[2];
+        let w = (m1.z * dx + m1.w * dy) + m2.x;
+        if (w <= 1e-6) {
+            inside = false;
+        } else {
+            x = ((m0.x * dx + m0.y * dy) + m0.z) / w + cx;
+            y = ((m0.w * dx + m1.x * dy) + m1.y) / w + cy;
+        }
+    }
+    if (inside && (p.flags & 2u) != 0u) {
+        let dx = x - cx;
+        let dy = y - cy;
+        let lens = p.g[3];
+        let factor = (1.0 + lens.x * (dx * dx + dy * dy) * lens.y) * lens.z;
+        x = cx + dx * factor;
+        y = cy + dy * factor;
+    }
+    var res = vec3<f32>(0.0, 0.0, 0.0);
+    if (inside && x >= 0.0 && x < f32(p.w - 1u) && y >= 0.0 && y < f32(p.h - 1u)) {
+        let x0 = u32(floor(x));
+        let y0 = u32(floor(y));
+        let x1 = min(x0 + 1u, p.w - 1u);
+        let y1 = min(y0 + 1u, p.h - 1u);
+        let fx = x - f32(x0);
+        let fy = y - f32(y0);
+        let a = y0 * p.w;
+        let c = y1 * p.w;
+        for (var k = 0u; k < 3u; k++) {
+            let top = rgb[(a + x0) * 3u + k] * (1.0 - fx) + rgb[(a + x1) * 3u + k] * fx;
+            let bottom = rgb[(c + x0) * 3u + k] * (1.0 - fx) + rgb[(c + x1) * 3u + k] * fx;
+            res[k] = top * (1.0 - fy) + bottom * fy;
+        }
+    }
+    pl[i * 3u] = res.x;
+    pl[i * 3u + 1u] = res.y;
+    pl[i * 3u + 2u] = res.z;
 }
 
 // px8 packed to 3 bytes per pixel, one output word per thread; p.src threads per row

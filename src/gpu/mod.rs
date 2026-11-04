@@ -8,6 +8,7 @@
 //! them, which the tests use on machines without a GPU.
 
 pub mod demosaic;
+pub mod layers;
 pub mod local;
 pub mod point_ops;
 

@@ -420,25 +420,18 @@ pub fn process_buffer_16_to_8_ex(
     // frame).
     let gain = [wb_r * exp_factor, wb_g * exp_factor, wb_b * exp_factor];
     let scale = frame_scale(w, h);
-    // Without local masks or geometry the whole preview runs on the GPU and only the
+    // The whole preview runs on the GPU when there is one worth using, and only the
     // 8-bit frame and the scope counts come back
-    if recipe.layers.is_empty()
-        && detail::Geometry::new(w, h, recipe).is_none()
-        && let Some((mut output, hist)) = crate::gpu::local::run_display(input, w, h, ch, recipe, &ops.gpu_inputs(gain, transfer), scale)
-    {
+    if let Some((mut output, hist)) = crate::gpu::local::run_display(input, w, h, ch, recipe, &ops.gpu_inputs(gain, transfer), scale) {
         prof.mark("gpu_display");
         clipping_overlay(&mut output, ch, highlight_mask, shadow_mask);
         prof.mark("overlay");
         prof.finish(w, h);
         return (output, hist);
     }
-    // Without local masks the point stage's result can stay on the GPU for presence and
+    // The point stage's result can stay on the GPU for the masks, presence and
     // detail, which makes the GPU worth it for interactive previews too
-    let chained = if recipe.layers.is_empty() {
-        crate::gpu::local::run_chained(input, w, ch, 0, h, recipe, &ops.gpu_inputs(gain, transfer), scale)
-    } else {
-        None
-    };
+    let chained = crate::gpu::local::run_chained(input, w, ch, 0, h, recipe, &ops.gpu_inputs(gain, transfer), scale, (0, 0, w, h));
     let local_done = chained.is_some();
     let gpu = if local_done {
         chained
@@ -496,7 +489,7 @@ pub fn process_buffer_16_to_8_ex(
 
     prof.mark("pass1_point");
     // PASS 1.5: Local Layered Mask Adjustments (Linear, Radial, Luma Range)
-    if !recipe.layers.is_empty() {
+    if !local_done && !recipe.layers.is_empty() {
         let inv_w = 1.0 / (w as f32).max(1.0);
         let inv_h = 1.0 / (h as f32).max(1.0);
         f32_buf
@@ -987,11 +980,8 @@ fn process_band(
 ) -> Vec<f32> {
     let rows = y1 - y0;
     let scale = frame_scale(window.frame_w, window.frame_h);
-    let chained = if recipe.layers.is_empty() {
-        crate::gpu::local::run_chained(input, w, ch, y0, y1, recipe, &stage.gpu_inputs(), scale)
-    } else {
-        None
-    };
+    let frame = (window.x0, window.y0 + y0, window.frame_w, window.frame_h);
+    let chained = crate::gpu::local::run_chained(input, w, ch, y0, y1, recipe, &stage.gpu_inputs(), scale, frame);
     let local_done = chained.is_some();
     let gpu = if local_done { chained } else { crate::gpu::point_ops::run(input, w, ch, y0, y1, recipe, &stage.gpu_inputs()) };
     let on_gpu = gpu.is_some();
@@ -1009,7 +999,7 @@ fn process_band(
     });
 
     // Local layered mask adjustments, positioned in whole-frame coordinates
-    if !recipe.layers.is_empty() {
+    if !local_done && !recipe.layers.is_empty() {
         let inv_w = 1.0 / (window.frame_w as f32).max(1.0);
         let inv_h = 1.0 / (window.frame_h as f32).max(1.0);
         buf.par_chunks_mut(w * 3).enumerate().for_each(|(i, row)| {
