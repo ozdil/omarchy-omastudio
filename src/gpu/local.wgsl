@@ -21,11 +21,20 @@ struct Params {
     f1: f32,
     f2: f32,
     f3: f32,
+    f4: f32,
+    f5: f32,
+    f6: f32,
+    f7: f32,
 };
 
 @group(0) @binding(0) var<uniform> p: Params;
 @group(0) @binding(1) var<storage, read_write> rgb: array<f32>;
 @group(0) @binding(2) var<storage, read_write> pl: array<f32>;
+// The display tail: final 8-bit pixels (R | G << 8 | B << 16), the same packed to
+// 3 bytes per pixel, and the histogram and scope counts (layout in histogram.rs)
+@group(0) @binding(3) var<storage, read_write> px8: array<u32>;
+@group(0) @binding(4) var<storage, read_write> out8: array<u32>;
+@group(0) @binding(5) var<storage, read_write> hist: array<atomic<u32>>;
 
 const CHUNK: u32 = 32u;
 
@@ -311,5 +320,193 @@ fn defringe_apply(@builtin(global_invocation_id) id: vec3<u32>) {
         rgb[i * 3u] = r * (1.0 - fringe) + luma * fringe;
         rgb[i * 3u + 1u] = g * (1.0 - fringe) + luma * fringe;
         rgb[i * 3u + 2u] = b * (1.0 - fringe) + luma * fringe;
+    }
+}
+
+// ---- Display tail: grain, vignette, 8-bit output, histogram and scopes ----
+
+// film_grain::hash_noise
+fn hash_noise(x: u32, y: u32, seed: u32) -> f32 {
+    var n = (x * 374761393u) ^ (y * 668265263u) ^ (seed * 314159265u);
+    n = (n ^ (n >> 13u)) * 1274126177u;
+    let f = f32(n & 0x007FFFFFu) / 8388607.0;
+    return f * 2.0 - 1.0;
+}
+
+// Grain (flags bit 0: f0 amount, f1 step, f2 fine step, f3 roughness weight), vignette
+// (bit 1: f4 amount) and the 8-bit quantization of pixel (x, y), as
+// process_buffer_16_to_8_ex does on the CPU
+@compute @workgroup_size(16, 16, 1)
+fn finish(@builtin(global_invocation_id) id: vec3<u32>) {
+    let i = pixel(id);
+    if (i >= p.w * p.h) {
+        return;
+    }
+    var r = rgb[i * 3u];
+    var g = rgb[i * 3u + 1u];
+    var b = rgb[i * 3u + 2u];
+    let x = id.x;
+    let y = id.y;
+    if ((p.flags & 1u) != 0u) {
+        let sample_y = u32(f32(y) / p.f1);
+        let fine_y = u32(f32(y) / p.f2);
+        let sample_x = u32(f32(x) / p.f1);
+        let luma = clamp(luma_of(r, g, b), 0.0, 1.0);
+        let base = 4.0 * luma * (1.0 - luma);
+        var response = 0.0;
+        if (base > 0.0) {
+            response = pow(base, 1.15);
+        }
+        let n1 = hash_noise(sample_x, sample_y, 42u);
+        let n2 = hash_noise(u32(f32(x) / p.f2), fine_y, 1337u);
+        let combined = n1 * (1.0 - p.f3 * 0.4) + n2 * (p.f3 * 0.4);
+        let delta = combined * p.f0 * response;
+        r = max(r + delta, 0.0);
+        g = max(g + delta, 0.0);
+        b = max(b + delta, 0.0);
+    }
+    if ((p.flags & 2u) != 0u) {
+        let cx = f32(p.w) / 2.0;
+        let cy = f32(p.h) / 2.0;
+        let max_dist = sqrt(cx * cx + cy * cy);
+        let dx = f32(x) - cx;
+        let dy = f32(y) - cy;
+        let dist = sqrt(dx * dx + dy * dy) / max_dist;
+        let falloff = clamp((dist - 0.4) / 0.6, 0.0, 1.0);
+        let smoothed = falloff * falloff * (3.0 - 2.0 * falloff);
+        let factor = max(1.0 + (p.f4 / 100.0) * smoothed, 0.0);
+        r = r * factor;
+        g = g * factor;
+        b = b * factor;
+    }
+    let r8 = u32(clamp(r, 0.0, 1.0) * 255.0);
+    let g8 = u32(clamp(g, 0.0, 1.0) * 255.0);
+    let b8 = u32(clamp(b, 0.0, 1.0) * 255.0);
+    px8[i] = r8 | (g8 << 8u) | (b8 << 16u);
+}
+
+// px8 packed to 3 bytes per pixel, one output word per thread; p.src threads per row
+@compute @workgroup_size(256, 1, 1)
+fn pack3(@builtin(global_invocation_id) id: vec3<u32>) {
+    let k = id.x + id.y * p.src;
+    let bytes = p.w * p.h * 3u;
+    if (k * 4u >= bytes) {
+        return;
+    }
+    var word = 0u;
+    for (var j = 0u; j < 4u; j++) {
+        let byte = k * 4u + j;
+        if (byte < bytes) {
+            let v = (px8[byte / 3u] >> (8u * (byte % 3u))) & 255u;
+            word = word | (v << (8u * j));
+        }
+    }
+    out8[k] = word;
+}
+
+// Histogram workgroups; each walks the frame with this stride. Must match HIST_GROUPS
+const HIST_GROUPS: u32 = 256u;
+
+fn luma8(v: u32) -> u32 {
+    let r = f32(v & 255u);
+    let g = f32((v >> 8u) & 255u);
+    let b = f32((v >> 16u) & 255u);
+    return min(u32(0.2126 * r + 0.7152 * g + 0.0722 * b), 255u);
+}
+
+// Red, green, blue, luma, shadow and highlight clips and the vectorscope: words
+// 0..3330 of the layout
+var<workgroup> h_main: array<atomic<u32>, 3330>;
+
+@compute @workgroup_size(256, 1, 1)
+fn hist_main(@builtin(local_invocation_index) li: u32, @builtin(workgroup_id) wg: vec3<u32>) {
+    for (var k = li; k < 3330u; k += 256u) {
+        atomicStore(&h_main[k], 0u);
+    }
+    workgroupBarrier();
+    let n = p.w * p.h;
+    for (var i = wg.x * 256u + li; i < n; i += 256u * HIST_GROUPS) {
+        let v = px8[i];
+        let r = v & 255u;
+        let g = (v >> 8u) & 255u;
+        let b = (v >> 16u) & 255u;
+        atomicAdd(&h_main[r], 1u);
+        atomicAdd(&h_main[256u + g], 1u);
+        atomicAdd(&h_main[512u + b], 1u);
+        atomicAdd(&h_main[768u + luma8(v)], 1u);
+        if (r >= 254u || g >= 254u || b >= 254u) {
+            atomicAdd(&h_main[1025u], 1u);
+        } else if (r <= 1u && g <= 1u && b <= 1u) {
+            atomicAdd(&h_main[1024u], 1u);
+        }
+        let rf = f32(r) / 255.0;
+        let gf = f32(g) / 255.0;
+        let bf = f32(b) / 255.0;
+        let cb = -0.1146 * rf - 0.3854 * gf + 0.5000 * bf;
+        let cr = 0.5000 * rf - 0.4542 * gf - 0.0458 * bf;
+        let u = u32(clamp((cb + 0.5) * 47.0, 0.0, 47.0));
+        let vv = u32(clamp(47.0 - (cr + 0.5) * 47.0, 0.0, 47.0));
+        atomicAdd(&h_main[1026u + vv * 48u + u], 1u);
+    }
+    workgroupBarrier();
+    for (var k = li; k < 3330u; k += 256u) {
+        let c = atomicLoad(&h_main[k]);
+        if (c > 0u) {
+            atomicAdd(&hist[k], c);
+        }
+    }
+}
+
+// Luma waveform, 64 columns x 32 rows: words 3330..5378
+var<workgroup> h_wf: array<atomic<u32>, 2048>;
+
+@compute @workgroup_size(256, 1, 1)
+fn hist_wf(@builtin(local_invocation_index) li: u32, @builtin(workgroup_id) wg: vec3<u32>) {
+    for (var k = li; k < 2048u; k += 256u) {
+        atomicStore(&h_wf[k], 0u);
+    }
+    workgroupBarrier();
+    let n = p.w * p.h;
+    for (var i = wg.x * 256u + li; i < n; i += 256u * HIST_GROUPS) {
+        let x = i % p.w;
+        let wx = min((x * 64u) / p.w, 63u);
+        let wy = 31u - (luma8(px8[i]) * 31u) / 255u;
+        atomicAdd(&h_wf[wy * 64u + wx], 1u);
+    }
+    workgroupBarrier();
+    for (var k = li; k < 2048u; k += 256u) {
+        let c = atomicLoad(&h_wf[k]);
+        if (c > 0u) {
+            atomicAdd(&hist[3330u + k], c);
+        }
+    }
+}
+
+// RGB parade, 3 x 32 columns x 32 rows: words 5378..8450
+var<workgroup> h_par: array<atomic<u32>, 3072>;
+
+@compute @workgroup_size(256, 1, 1)
+fn hist_par(@builtin(local_invocation_index) li: u32, @builtin(workgroup_id) wg: vec3<u32>) {
+    for (var k = li; k < 3072u; k += 256u) {
+        atomicStore(&h_par[k], 0u);
+    }
+    workgroupBarrier();
+    let n = p.w * p.h;
+    for (var i = wg.x * 256u + li; i < n; i += 256u * HIST_GROUPS) {
+        let v = px8[i];
+        let x = i % p.w;
+        let col = min((x * 32u) / p.w, 31u);
+        for (var c = 0u; c < 3u; c++) {
+            let level = (v >> (8u * c)) & 255u;
+            let row = 31u - (level * 31u) / 255u;
+            atomicAdd(&h_par[c * 1024u + row * 32u + col], 1u);
+        }
+    }
+    workgroupBarrier();
+    for (var k = li; k < 3072u; k += 256u) {
+        let c = atomicLoad(&h_par[k]);
+        if (c > 0u) {
+            atomicAdd(&hist[5378u + k], c);
+        }
     }
 }
