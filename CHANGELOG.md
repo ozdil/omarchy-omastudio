@@ -14,6 +14,7 @@
 - `omastudio ipc screenshot` answers once the PNG is written. When the window is not being drawn (its Hyprland workspace is hidden) it answers with an error after three seconds instead of OK without a file. The MCP `window_screenshot` tool reports that error.
 
 ### Performance
+- TIFF and JPEG exports of Fujifilm RAF files carry the camera's EXIF, GPS and MakerNote without exiftool: the engine writes them with the image instead of exiftool rewriting the finished file afterwards (about 0.5 s per medium format TIFF). Other sources and formats still use exiftool.
 - TIFF exports compress on every core: a 16-bit deflate TIFF (the default) of a GFX 50R photo exports in 3.1 instead of 9.9 s, a GFX 100 one in 5.8 instead of 19.9 s (22 threads), with the same pixels and 250–450 MB less memory. Uncompressed TIFFs are written straight from the image instead of a copy. LZW still compresses on one core.
 - An export decodes the RAW once: the baseline exposure is measured on the full development instead of a second half-size one (unless the app already measured it), and the decode's rotation runs on every core. `OMASTUDIO_PROFILE=1` times every export step, from opening the file to exiftool.
 - Full-resolution exports are faster: the histogram, which an export never shows, is no longer counted (0.7 s on a GFX 50R photo, 1.4 s on a GFX 100 one), the 16-bit histogram the API still returns is counted on all cores. `OMASTUDIO_PROFILE=1` also times the export's passes.
