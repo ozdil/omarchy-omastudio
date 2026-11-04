@@ -1,136 +1,64 @@
-# Omarchy Linux Application, Engine & Plugin Security Architecture Standards
+# Contributing to OmaStudio
 
-Bu belge, Omarchy Linux ekosistemi için geliştirilen tüm yerel uygulamalarda, arka plan motorlarında (Rust/C++), eklentilerde (Quickshell/QML) ve Git entegrasyonlarında istisnasız ve kalıcı olarak uygulanmak zorunda olan resmi mimari güvenlik standartlarını ve geliştirici kılavuzunu tanımlar.
+Thank you for helping. OmaStudio targets Omarchy (Arch Linux, Wayland, Hyprland) only; changes for other platforms are out of scope.
 
----
+## Building and testing
 
-## 1. Alt Süreç (Subprocess) Yönetimi ve Mutlak Zaman Sınırı (Monotonic Deadlines)
+You need the packages CI installs (see `.github/workflows/ci.yml`): `base-devel clang lcms2 libraw mold pkgconf qt6-base qt6-declarative qt6-tools python rustup`. The Rust toolchain is pinned in `rust-toolchain.toml`; `rustup` installs it on first use.
 
-1. **İzole Süreç Grupları (`cmd.process_group(0)`)**:
-   - Başlatılan her alt süreç kendi bağımsız süreç grubunda (`cmd.process_group(0)`) çalıştırılmalıdır. Bu, alt sürecin kendisi veya çağırdığı yardımcıların ana süreçten bağımsız bir grup ID'sine (PGID = PID) sahip olmasını sağlar.
-2. **Non-Blocking I/O (`O_NONBLOCK`) ve Bounded Polling**:
-   - Alt süreçlerin standart çıktı (`stdout`) ve hata (`stderr`) boruları (`raw_fd`), `fcntl` ile anında `O_NONBLOCK` moduna alınmalıdır (`F_SETFL, flags | O_NONBLOCK`).
-   - Borulardan okuma yapılırken asla blocking `Read::read()` çağrılmamalıdır. Bunun yerine POSIX `poll()` kullanılarak zaman dilimlerine bölünmüş (`min(50ms, remaining)`) okuma döngüsü kurulmalıdır.
-   - Doğrudan alt süreç (`direct child`) sonlanmış olsa dahi `stdout` borusu hemen kapanmayabilir (arka planda boruyu açık tutan torun süreçler kalabilir). Bu nedenle tahliye (drain) döngüsü boyunca mutlak `Instant::now() >= deadline` denetimi aralıksız sürdürülmelidir.
-3. **Koşulsuz Süreç Grubu Temizliği (`reap_process_group`)**:
-   - Doğrudan alt sürecin çıkmış (`child.try_wait() == Ok(Some(_))`) olup olmadığına bakılmaksızın; zaman aşımı, bellek taşması (overrun), I/O hatası veya motorun sonlanması anında tüm süreç grubuna (`-pid`):
-     - Önce `SIGTERM` (15) gönderilmelidir.
-     - 5-10 ms bekleme süresi tanınmalıdır.
-     - Ardından kaçınılmaz `SIGKILL` (9) gönderilerek `SIGTERM`'i yok sayan süreçler dahi imha edilmelidir.
-     - Doğrudan süreç `child.wait()` ile zombi bırakılmadan toplanmalıdır.
-   - Fonksiyon veya döngü beklenmedik şekilde terk edilirse (panic, erken return, teardown) süreçlerin yetim kalmaması için RAII `ProcessGroupGuard` kullanılmalıdır.
-4. **Sınırlandırılmış Bellek (Bounded Buffer Caps)**:
-   - Tüm boru okumaları için kesin boyut sınırları (örn. 64 KiB) konmalı; limit aşıldığı anda (`overrun`) süreç grubu öldürülüp işlem iptal edilmelidir.
-5. **Temiz Ortam Değişkenleri (`env_clear`)**:
-   - Alt süreçler temizlenmiş ortamda (`cmd.env_clear()`) ve yalnızca whitelist edilmiş değişkenlerle (`PATH=/usr/bin:/bin`, `LC_ALL=C`, `GIT_TERMINAL_PROMPT=0`) çalıştırılmalıdır.
+```bash
+cargo build --locked --workspace --all-targets
+cargo test --locked --workspace
+cargo clippy --locked --workspace --all-targets -- -D warnings
+python3 tools/i18n/check.py          # every qsTr() string is translated
+python3 tools/release/check-version.py
+```
 
----
+CI runs the same commands on every pull request; a pull request is merged only when they pass.
 
-## 2. Quickshell & QML Güvenlik Standartları (Desktop Shell UI)
+## Code rules
 
-1. **Düz Metin Güvencesi (`textFormat: Text.PlainText`)**:
-   - Kullanıcıdan, sistemden, alt süreçlerden veya ağdan gelen dinamik verileri gösteren tüm QML `Text`, `TextEdit` ve etiket bileşenlerinde `textFormat: Text.PlainText` zorunludur. Zengin metin (HTML/CSS) ve betik enjeksiyonu kesinlikle engellenmelidir.
-2. **Dinamik Kod Yürütmenin Yasaklanması (No Dynamic Eval)**:
-   - `eval()`, `Qt.createQmlObject()` veya dinamik `Loader.source` yapıları kullanıcı/ağ girdileriyle asla beslenemez.
-3. **Güvenli IPC Yönetimi (`Quickshell.Io.IpcHandler`)**:
-   - `IpcHandler` fonksiyon parametreleri katı tiplerle (`string`, `int`, `bool`, `real`, `color`) açıkça tanımlanmalıdır.
-   - IPC üzerinden gelen parametreler daima güvenilmeyen (untrusted) girdi olarak kabul edilmeli, aralık ve desen denetiminden geçirilmelidir.
-   - Sistem kabuk komutları doğrudan IPC girdileriyle çalıştırılamaz.
-4. **Arayüz Watchdog Zamanlayıcıları**:
-   - QML tarafında arka plan motorları için bağımsız gözetim zamanlayıcıları (`Timer`) bulunmalı, kilitlenen veya zamanında yanıt vermeyen motorlar arayüz tarafından öldürülebilmelidir.
-5. **Bileşen Yok Edilme Temizliği (`Component.onDestruction`)**:
-   - Panel veya pencere kapandığında çalışan tüm alt süreçler ve zamanlayıcılar öldürülmeli ve toplanmalıdır.
-6. **Vektör ve Varlık Güvenliği (SVG / Image Security)**:
-   - Dış kaynaklı veya güvenilmeyen SVG dosyaları doğrudan ayrıştırılmamalı, güvenli yerel varlıklar (`preview.png`, sistem ikon temaları) tercih edilmelidir (CVE-2025-14576 vb. zafiyet önlemi).
+- Security rules for subprocesses, files, IPC and QML are in [docs/development/security-standards.md](docs/development/security-standards.md). Report vulnerabilities as described in [SECURITY.md](SECURITY.md), not in a public issue.
+- User-facing text goes through `qsTr()`; add the translations (`tools/i18n/update.sh`) in the same change.
+- Every `unsafe` block carries a `// SAFETY:` comment.
+- User-facing text is plain and factual: describe what the application does, without marketing claims.
 
----
+## Branches
 
-## 3. Rust Güvenlik ve Geliştirici Standartları (Rust Secure Code WG)
+- `master` is always releasable. Nobody pushes to it directly; every change goes through a pull request.
+- Name a branch after its change, with a type prefix: `feat/gpu-preview`, `fix/rtl-panel-clipping`, `docs/user-guide`, `ci/pin-actions`, `release/3.2.0`. Use one branch per pull request and delete it after the merge.
 
-1. **Bellek Güvenliği ve `unsafe` Disiplini**:
-   - `unsafe` blokları kesin olarak en aza indirilmelidir. Kullanılan her `unsafe` bloğu, varsayılan güvenlik koşullarını (invariants) açıklayan açık bir `// SAFETY:` yorumu içermek zorundadır.
-2. **Hata Yönetimi ve Paniklerin Engellenmesi**:
-   - Üretim kodunda çıplak `.unwrap()` ve `.expect()` kullanımından kaçınılmalı, hatalar `Result` ve `?` operatörü ile açıkça ele alınmalıdır.
-   - Tamsayı işlemlerinde taşmalara karşı güvenli veya doymuş aritmetik (`saturating_add`, `saturating_sub`, `checked_*`) kullanılmalıdır.
-3. **Sertleştirme ve Bağımlılık Denetimi**:
-   - Derleme uyarıları sıfırlanmalıdır (`cargo clippy --all-targets --all-features -- -D warnings`).
-   - Bağımlılıklar `cargo-audit` ve RustSec Advisory Database ile bilinen güvenlik açıklarına karşı taranmalıdır.
-4. **Çalışma Anında Değişebilir Kod Yürütmenin Yasaklanması (Zero Mutable Runtime Execution)**:
-   - `npx -y <paket>`, `pip install` on-the-fly, `curl | sh`, dinamik `npm exec` gibi çalışma anında dış kaynaktan değişebilir kod indiren mekanizmalar kesinlikle YASAKTIR.
-   - Gerekli tüm harici yardımcı araçlar (`cloudflared`, `localtunnel`, `qrencode`, vb.) sistemin güvenli `PATH` yollarında (`/usr/bin`, `/usr/local/bin`, `~/.local/bin`) önceden kurulu olmak zorundadır.
-   - `README.md` içinde bu bağımlılıkların değişmez sürüm sabitlemeleri (`@2.0.2` vb.) ve resmi kurulum kaynakları eksiksiz belgelenmelidir.
+## Commits
 
----
+- Subject line in the imperative mood, at most about 72 characters, no trailing full stop: `Export: write the camera EXIF without exiftool`. A component prefix (`Export:`, `GPU:`, `CI:`, `CHANGELOG:`) is welcome.
+- A blank line, then a body that says why the change is needed and anything a reviewer can't see in the diff (measurements, trade-offs).
+- Keep unrelated changes in separate commits. Don't commit build output.
 
-## 4. Güvenli Dosya ve Anahtar Yönetimi (Mode 0600 & 0700)
+## Pull requests
 
-1. **Umask'a Asla Güvenilmez**:
-   - PIN kodları, oturum anahtarları, token'lar ve kimlik bilgileri `fs::write` ile doğrudan yazılamaz.
-2. **Atomik ve Sadece Sahibine Özel İzinler (`0600`)**:
-   - Hassas dosyalar aynı dizinde geçici bir dosya (`.tmp_...`) üzerinden umask'tan bağımsız olarak `OpenOptions::new().mode(0o600)` ve `set_permissions(0o600)` ile oluşturulmalı, veriler yazılıp diske senkronize edildikten (`sync_all`) sonra atomik `fs::rename()` ile taşınmalıdır.
-   - Durum dizinleri (`~/.local/state/...`) ve indirme klasörleri `0700` (`drwx------`) ile kısıtlanmalıdır.
-3. **Symlink ve Dosya Türü Doğrulaması**:
-   - Hassas dosyalar okunmadan veya üzerine yazılmadan önce `symlink_metadata` denetlenmelidir:
-     - Symlink'ler derhal reddedilmeli (`!meta.file_type().is_symlink()`), asla symlink takip edilmemelidir.
-     - Normal dosya olmayan yapılar (FIFO, soket, aygıt, dizin) reddedilmelidir (`meta.file_type().is_file()`).
-     - Dosya sahibinin mevcut çalışan kullanıcının UID'si olduğu (`meta.uid() == getuid()`) ve izinlerin kesinlikle `0600` olduğu (`meta.mode() & 0o777 == 0o600`) doğrulanmalıdır.
+- The title reads like a commit subject; the description follows `.github/pull_request_template.md`.
+- Add a line to `CHANGELOG.md` under **[Unreleased]**, in the section that fits: Added, Changed, Deprecated, Removed, Fixed or Security. Write it for users: what changed for them, not how the code changed.
+- Pull requests are merged with a merge commit after CI passes and the maintainer approves.
 
----
+## Versions and releases
 
-## 5. Git Güvenliği ve Komut Satırı Geliştirici Kılavuzu
+OmaStudio follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html):
 
-1. **Argüman Enjeksiyonu Koruması (Argument Injection Prevention)**:
-   - Git komutları asla bir kabuk dizesi (shell string) üzerinden çalıştırılamaz. Argümanlar ayrık dilimler (`&["status", "--porcelain=v1"]`) halinde verilmelidir.
-   - Kullanıcı veya dizin girdilerinden gelen parametreler tire (`-`) ile başlıyorsa argüman olarak yorumlanması engellenmelidir.
-   - Konumsal argümanları ve dosya yollarını bayraklardan ayırmak için daima `--` sınırlayıcısı (delimiter) kullanılmalıdır.
-2. **Güvenli Dizin ve Ortam İzolasyonu**:
-   - Git komutları daima `-C <path>` ile hedeflenen kanonik dizinde çalıştırılmalıdır.
-   - `GIT_TERMINAL_PROMPT=0` atanarak etkileşimli kullanıcı istemleri kilitlenmeye yol açmadan engellenmelidir.
-   - Güvenilmeyen depolarda özyinelemeli alt modül klonlaması (`git clone --recurse-submodules`) yapılmamalıdır.
-3. **Git Takibinde Derlenmiş İkili Dosya Yasağı (Zero Prebuilt Binaries)**:
-   - Derlenmiş motor ikilileri (`gitradar-engine`, `omasend-engine`, `sentinel-engine`, vb.) asla Git takibine eklenmemeli, `.gitignore` içine yazılmalıdır.
-   - Uygulamalar `cargo build --release --locked` veya `PKGBUILD` üzerinden kaynaktan derlenmelidir.
-   - Durum ve kontrol betikleri (`*-status`, `*-dashboard`), ikili dosya henüz derlenmemişse otomatik kaynaktan derleme geri dönüşüne (fallback) sahip olmalıdır.
+| Part | When it goes up |
+| :--- | :--- |
+| MAJOR (`4.0.0`) | Upgrading needs action: saved recipes render differently, a control-socket method or command-line option is removed or changes meaning, a required dependency changes |
+| MINOR (`3.2.0`) | New features or behaviour that keep working with what came before |
+| PATCH (`3.1.1`) | Bug fixes only |
 
----
+The version is stated in `Cargo.toml`, `app/Cargo.toml` (with `Cargo.lock`), `PKGBUILD` and `manifest.json`. The binaries and the About dialog read it from Cargo at build time. `tools/release/check-version.py` checks that all of them agree.
 
-## 6. Zorunlu Birim ve Regresyon Testleri
+To release version X.Y.Z:
 
-- Geliştirilen her güvenlik mekanizması `cargo test` altında otomatik birim testlerle doğrulanmalıdır:
-  - Süreç zaman aşımında `SIGTERM`'i yok sayan ve `stdout`'u açık tutan torun süreçlerin dahi mutlak deadline içinde yok edildiğinin testi.
-  - Hassas dosyaların `0600` izninin, symlink reddinin ve atomik yazımının testi.
-  - Hatalı veya güvenilmeyen girdilerde panik yaşanmadan temiz `None` veya `Err` dönüldüğünün testi.
+1. On a `release/X.Y.Z` branch, set the version in the files above (`cargo update --workspace` refreshes `Cargo.lock`) and reset `pkgrel` in `PKGBUILD` to 1.
+2. In `CHANGELOG.md`, rename **[Unreleased]** to `## [X.Y.Z] - YYYY-MM-DD`, add a new empty **[Unreleased]** above it and update the comparison links at the bottom.
+3. Open a pull request titled `Release X.Y.Z`; merge it when CI passes.
+4. Tag the merge commit on `master` with an annotated tag and push it:
+   `git tag -a vX.Y.Z -m "OmaStudio X.Y.Z" && git push origin vX.Y.Z`
+5. The release workflow checks that the tag matches the version, builds the archive, attests it and publishes the GitHub release titled `vX.Y.Z` with that version's CHANGELOG section as notes.
 
----
-
-## 7. Geliştirici Desteği ve Fonlama Standartları (Funding & Sponsorship Architecture)
-
-1. **Zorunlu GitHub Fonlama Yapılandırması (`.github/FUNDING.yml`)**:
-   - Omarchy Linux ekosistemindeki tüm depolarda `.github/FUNDING.yml` dosyası istisnasız bulunmalıdır:
-     ```yaml
-     buy_me_a_coffee: ozdil
-     custom: ['https://buymeacoffee.com/ozdil']
-     ```
-2. **README Rozet ve Destek Bölümü**:
-   - Proje `README.md` başlığının hemen altına resmi Buy Me a Coffee rozeti eklenmelidir:
-     ```markdown
-     [![Buy Me A Coffee](https://img.shields.io/badge/Buy_Me_A_Coffee-Support_Development-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/ozdil)
-     ```
-   - Lisans bölümünden önce resmi `Support & Sponsorship` başlığı ve buton görseli (`https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png`) yer almalıdır.
-3. **Masaüstü ve Web Arayüzü Buton Standartları**:
-   - QML / Quickshell panellerinde veya web arayüzlerinde geliştiriciye destek butonu yer almalı; `#FFDD00` altın sarısı vurgu rengiyle `Qt.openUrlExternally("https://buymeacoffee.com/ozdil")` tetiklenmelidir.
-
----
-
-## 8. Renk Yönetimi, 3D LUT ve Video Skobu Standartları
-
-1. **3D LUT Dosya Ayrıştırma Güvenliği (`.cube`)**:
-   - Harici `.cube` 3D LUT dosyaları okunurken bellek tüketimi ve DoS saldırılarını engellemek için mutlak boyut sınırı (1 MiB tavan sınır, `take(MAX_LUT_FILE_SIZE + 1)`) uygulanmalıdır.
-   - Dosya açılmadan önce `symlink_metadata` ile sembolik bağlar (`symlink`) istisnasız reddedilmelidir.
-   - Ayrıştırıcı tablolarda boyut sınırları (`LUT_3D_SIZE` en fazla 65) denetlenmeli; ayrıştırma hatalarında panik oluşmadan güvenli hata (`Result<Lut3D, String>`) döndürülmelidir.
-2. **Gerçek Zamanlı Video Skobu Performans ve IPC İzolasyonu**:
-   - Luma Waveform (64x32), RGB Parade (32x32) ve Vectorscope (48x48) skop matrisleri, CPU döngüsünü minimize etmek için tek geçişli (single-pass) hesaplanmalıdır.
-   - JSON IPC üzerinden aktarılan skop verileri önceden ayrılmış sabit boyutlu tamponlarla sınırlanmalı, arayüz 60 FPS akıcılığını korumalıdır.
-3. **DaVinci Renk Bilimi Matematiksel Sınırları**:
-   - Contrast Pivot işlemi [0.05, 0.95] sınırları içinde sıkıştırılmalı (clamp), logaritmik veya S-eğrisi dönüşümlerinde sıfıra bölme veya NaN oluşumu engellenmelidir.
-   - DaVinci Color Boost ve Midtone Detail algoritmalarında renk patlamasını ve aşırı keskinleştirme halelerini (ringing) önlemek için korumalı lüminans/kroma ağırlıkları kullanılmalıdır.
+Tags are never moved or deleted once pushed; a mistake gets a new PATCH release.

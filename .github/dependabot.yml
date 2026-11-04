@@ -1,0 +1,12 @@
+# Keeps the SHA-pinned GitHub Actions current; each update is a pull request that CI checks.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    commit-message:
+      prefix: "CI:"
+    groups:
+      actions:
+        patterns: ["*"]

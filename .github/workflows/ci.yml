@@ -26,6 +26,8 @@ jobs:
         run: cargo test --locked --workspace
       - name: Check translations
         run: python3 tools/i18n/check.py
+      - name: Check version consistency
+        run: python3 tools/release/check-version.py
 
   clippy:
     runs-on: ubuntu-latest
