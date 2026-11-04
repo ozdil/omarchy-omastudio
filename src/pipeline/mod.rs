@@ -752,8 +752,9 @@ fn process_16_to_16_banded(
 
     prof.mark("bands");
     if let Some(lens) = lens {
-        // The remap, vignette and quantization on the GPU when there is one worth it
-        let rgb = crate::gpu::remap::run(&pre, w, h, &lens, recipe.vignette).unwrap_or_else(|| remap_16_cpu(&pre, w, h, &lens, recipe));
+        // Stays on the CPU: on an RTX 4060 laptop the upload and readback of the frame
+        // cost more than the CPU's remap (250 against 197 ms for a GFX 50R photo)
+        let rgb = remap_16_cpu(&pre, w, h, &lens, recipe);
         drop(pre);
         if ch == 3 {
             output = rgb;
@@ -775,7 +776,7 @@ fn process_16_to_16_banded(
 /// The export's lens remap on the CPU: `pre` (u16 RGB scaled by
 /// [`PRE_DISTORTION_SCALE`]) resampled through `lens`, with vignette and 16-bit
 /// quantization, as RGB.
-pub(crate) fn remap_16_cpu(pre: &[u16], w: usize, h: usize, lens: &detail::Geometry, recipe: &Recipe) -> Vec<u16> {
+fn remap_16_cpu(pre: &[u16], w: usize, h: usize, lens: &detail::Geometry, recipe: &Recipe) -> Vec<u16> {
     let mut output = vec![0u16; w * h * 3];
     output.par_chunks_mut(w * 3).enumerate().for_each(|(y, row)| {
         for x in 0..w {
