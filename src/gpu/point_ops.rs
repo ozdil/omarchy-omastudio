@@ -345,21 +345,9 @@ impl Pipeline {
     }
 }
 
-/// Whether the GPU stage pays off on this device. Copying a frame to the GPU and back
-/// costs more than the CPU needs on integrated GPUs, which share the CPU's memory
-/// bandwidth (measured on Intel Arc: ~8x slower than the CPU), so only discrete
-/// GPUs are used unless OMASTUDIO_GPU_POINT=on asks for any GPU.
-pub fn worthwhile(gpu: &Gpu) -> bool {
-    match std::env::var("OMASTUDIO_GPU_POINT").as_deref() {
-        Ok("on") => true,
-        Ok("off") => false,
-        _ => gpu.info.device_type == wgpu::DeviceType::DiscreteGpu,
-    }
-}
-
 /// Opens the GPU and compiles the stage's shader ahead of the first use.
 pub fn warm_up() {
-    if let Some(gpu) = super::get().filter(|g| worthwhile(g)) {
+    if let Some(gpu) = super::get().filter(|g| super::stages_worthwhile(g)) {
         let _ = pipeline(gpu);
     }
 }
@@ -386,7 +374,7 @@ pub fn run(input: &[u16], w: usize, ch: usize, y0: usize, y1: usize, recipe: &Re
     if (y1 - y0) * w < MIN_PIXELS {
         return None;
     }
-    let gpu = super::get().filter(|g| worthwhile(g))?;
+    let gpu = super::get().filter(|g| super::stages_worthwhile(g))?;
     match run_on(gpu, input, w, ch, y0, y1, recipe, inputs, MAX_BAND_ROWS) {
         Ok(v) => Some(v),
         Err(e) => {
@@ -517,7 +505,7 @@ fn run_on(
 type InFlight = (usize, usize, usize, wgpu::SubmissionIndex, mpsc::Receiver<Result<(), wgpu::BufferAsyncError>>);
 
 /// The bytes of a slice of f32, for copying readback data straight into it.
-fn as_bytes_mut(v: &mut [f32]) -> &mut [u8] {
+pub(super) fn as_bytes_mut(v: &mut [f32]) -> &mut [u8] {
     // SAFETY: every byte pattern is a valid f32, and the GPU wrote little-endian f32
     unsafe { std::slice::from_raw_parts_mut(v.as_mut_ptr() as *mut u8, std::mem::size_of_val(v)) }
 }

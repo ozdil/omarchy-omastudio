@@ -8,6 +8,7 @@
 //! them, which the tests use on machines without a GPU.
 
 pub mod demosaic;
+pub mod local;
 pub mod point_ops;
 
 use std::sync::{Arc, Mutex, OnceLock};
@@ -23,6 +24,7 @@ pub struct Gpu {
     jobs: Mutex<()>,
     demosaic: OnceLock<Result<demosaic::Pipelines, String>>,
     point_ops: OnceLock<Result<point_ops::Pipeline, String>>,
+    local: OnceLock<Result<local::Pipeline, String>>,
 }
 
 /// What `omastudio-engine gpu` reports.
@@ -126,7 +128,20 @@ fn init() -> Result<Gpu, String> {
     // Errors are caught by error scopes around each job; anything else is logged
     // instead of wgpu's default panic
     device.on_uncaptured_error(Arc::new(|e| eprintln!("omastudio: GPU error: {e}")));
-    Ok(Gpu { device, queue, info: adapter.get_info(), limits, jobs: Mutex::new(()), demosaic: OnceLock::new(), point_ops: OnceLock::new() })
+    Ok(Gpu { device, queue, info: adapter.get_info(), limits, jobs: Mutex::new(()), demosaic: OnceLock::new(), point_ops: OnceLock::new(), local: OnceLock::new() })
+}
+
+/// Whether the processing stages (point operations, presence and detail) pay off on
+/// this device. Copying a frame to the GPU and back costs more than the CPU needs on
+/// integrated GPUs, which share the CPU's memory bandwidth (measured on Intel Arc:
+/// ~8x slower than the CPU for the point stage), so only discrete GPUs are used unless
+/// OMASTUDIO_GPU_STAGES=on asks for any GPU (off keeps them on the CPU).
+pub fn stages_worthwhile(gpu: &Gpu) -> bool {
+    match std::env::var("OMASTUDIO_GPU_STAGES").as_deref() {
+        Ok("on") => true,
+        Ok("off") => false,
+        _ => gpu.info.device_type == wgpu::DeviceType::DiscreteGpu,
+    }
 }
 
 /// Views a slice of plain numbers as bytes (Linux targets are little-endian, which
