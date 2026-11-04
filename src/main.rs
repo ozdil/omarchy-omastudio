@@ -1846,6 +1846,12 @@ fn run_daemon() {
                 }
             }
             "load" => {
+                // Compile the GPU shaders while the first photo is decoded, so the
+                // first export doesn't wait ~2 s for them
+                static WARM_UP: std::sync::Once = std::sync::Once::new();
+                WARM_UP.call_once(|| {
+                    std::thread::spawn(gpu::point_ops::warm_up);
+                });
                 let p = match cmd_obj.path {
                     Some(ref path) => path,
                     None => {

@@ -73,6 +73,11 @@ impl Transfer {
         Self::from_libraw(1.0 / 2.4, 12.92)
     }
 
+    /// Power, slope, toe end (encoded), toe end (linear) and offset, for the GPU.
+    pub fn parts(&self) -> [f32; 5] {
+        [self.power, self.slope, self.toe_encoded, self.toe_linear, self.offset]
+    }
+
     /// Linear light → display-encoded value. Values above 1.0 continue the power
     /// segment so highlight headroom survives until the tone stage clamps it.
     #[inline(always)]

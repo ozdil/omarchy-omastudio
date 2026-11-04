@@ -8,6 +8,7 @@
 //! them, which the tests use on machines without a GPU.
 
 pub mod demosaic;
+pub mod point_ops;
 
 use std::sync::{Arc, Mutex, OnceLock};
 
@@ -21,6 +22,7 @@ pub struct Gpu {
     /// One job at a time: jobs size their buffers to the device's limits.
     jobs: Mutex<()>,
     demosaic: OnceLock<Result<demosaic::Pipelines, String>>,
+    point_ops: OnceLock<Result<point_ops::Pipeline, String>>,
 }
 
 /// What `omastudio-engine gpu` reports.
@@ -124,7 +126,7 @@ fn init() -> Result<Gpu, String> {
     // Errors are caught by error scopes around each job; anything else is logged
     // instead of wgpu's default panic
     device.on_uncaptured_error(Arc::new(|e| eprintln!("omastudio: GPU error: {e}")));
-    Ok(Gpu { device, queue, info: adapter.get_info(), limits, jobs: Mutex::new(()), demosaic: OnceLock::new() })
+    Ok(Gpu { device, queue, info: adapter.get_info(), limits, jobs: Mutex::new(()), demosaic: OnceLock::new(), point_ops: OnceLock::new() })
 }
 
 /// Views a slice of plain numbers as bytes (Linux targets are little-endian, which
