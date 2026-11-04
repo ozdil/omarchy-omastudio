@@ -407,11 +407,16 @@ fn pack3(@builtin(global_invocation_id) id: vec3<u32>) {
 // Histogram workgroups; each walks the frame with this stride. Must match HIST_GROUPS
 const HIST_GROUPS: u32 = 256u;
 
+// The CPU's 0.2126 * r, 0.7152 * g and 0.0722 * b for every level, after the counts:
+// with only additions left, the GPU can't fuse a multiply into them, so the luma
+// level (truncated) comes out exactly as on the CPU
+const LUMA_TERMS: u32 = 8450u;
+
 fn luma8(v: u32) -> u32 {
-    let r = f32(v & 255u);
-    let g = f32((v >> 8u) & 255u);
-    let b = f32((v >> 16u) & 255u);
-    return min(u32(0.2126 * r + 0.7152 * g + 0.0722 * b), 255u);
+    let r = bitcast<f32>(atomicLoad(&hist[LUMA_TERMS + (v & 255u)]));
+    let g = bitcast<f32>(atomicLoad(&hist[LUMA_TERMS + 256u + ((v >> 8u) & 255u)]));
+    let b = bitcast<f32>(atomicLoad(&hist[LUMA_TERMS + 512u + ((v >> 16u) & 255u)]));
+    return min(u32((r + g) + b), 255u);
 }
 
 // Red, green, blue, luma, shadow and highlight clips and the vectorscope: words
