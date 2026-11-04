@@ -164,29 +164,8 @@ pub fn process_buffer(
 
     let scale = frame_scale(w, h);
 
-    // PASS 2: Presence Engine (Texture, Clarity, Dehaze, DaVinci Midtone Detail)
-    presence::apply_presence_scaled(
-        &mut f32_buf,
-        w,
-        h,
-        recipe.clarity,
-        recipe.texture,
-        recipe.dehaze,
-        recipe.midtone_detail,
-        scale,
-    );
-
-    // PASS 3: Detail & Optics Engine (Sharpness, Luma Denoise, Chroma Denoise, Defringe)
-    detail::apply_detail_scaled(
-        &mut f32_buf,
-        w,
-        h,
-        recipe.sharpness,
-        recipe.denoise_lum,
-        recipe.denoise_col,
-        scale,
-    );
-    detail::apply_defringe_buffer(&mut f32_buf, w, h, recipe.defringe, scale);
+    // PASSES 2 and 3: presence, detail and defringe
+    neighbourhood_passes(&mut f32_buf, w, h, recipe, scale);
 
     // PASS 4: Photochemical Silver-Halide Film Grain
     if recipe.grain_amount > 0.001 {
@@ -519,32 +498,11 @@ pub fn process_buffer_16_to_8_ex(
     prof.mark("layers");
     let scale = frame_scale(w, h);
 
-    // PASS 2: Presence Engine (Texture, Clarity, Dehaze, DaVinci Midtone Detail)
-    presence::apply_presence_scaled(
-        &mut f32_buf,
-        w,
-        h,
-        recipe.clarity,
-        recipe.texture,
-        recipe.dehaze,
-        recipe.midtone_detail,
-        scale,
-    );
+    // PASSES 2 and 3: presence (texture, clarity, dehaze, midtone detail), detail
+    // (sharpness, luma and chroma noise reduction) and defringe
+    neighbourhood_passes(&mut f32_buf, w, h, recipe, scale);
 
-    prof.mark("presence");
-    // PASS 3: Detail & Optics Engine (Sharpness, Luma Denoise, Chroma Denoise, Defringe)
-    detail::apply_detail_scaled(
-        &mut f32_buf,
-        w,
-        h,
-        recipe.sharpness,
-        recipe.denoise_lum,
-        recipe.denoise_col,
-        scale,
-    );
-    detail::apply_defringe_buffer(&mut f32_buf, w, h, recipe.defringe, scale);
-
-    prof.mark("detail");
+    prof.mark("presence_detail");
     // PASS 4: Photochemical Silver-Halide Film Grain
     if recipe.grain_amount > 0.001 {
         film_grain::apply_film_grain_window(
@@ -658,6 +616,17 @@ const BAND_HALO: usize = 24;
 /// the editor's preview. Larger frames scale them up, so an export at full resolution
 /// looks like the preview instead of having 3x finer clarity and grain.
 pub const REFERENCE_EDGE: f32 = 3840.0;
+
+/// Presence, detail and defringe on a `w` x `h` RGB buffer: on the GPU when one pays
+/// off (see [`crate::gpu::local`]), otherwise on the CPU, with the same result.
+fn neighbourhood_passes(buf: &mut [f32], w: usize, h: usize, recipe: &Recipe, scale: f32) {
+    if crate::gpu::local::run(buf, w, h, recipe, scale) {
+        return;
+    }
+    presence::apply_presence_scaled(buf, w, h, recipe.clarity, recipe.texture, recipe.dehaze, recipe.midtone_detail, scale);
+    detail::apply_detail_scaled(buf, w, h, recipe.sharpness, recipe.denoise_lum, recipe.denoise_col, scale);
+    detail::apply_defringe_buffer(buf, w, h, recipe.defringe, scale);
+}
 
 /// How much larger than [`REFERENCE_EDGE`] a `w` x `h` frame is.
 pub fn frame_scale(w: usize, h: usize) -> f32 {
@@ -1018,18 +987,7 @@ fn process_band(
     }
 
     let scale = frame_scale(window.frame_w, window.frame_h);
-    presence::apply_presence_scaled(
-        &mut buf,
-        w,
-        rows,
-        recipe.clarity,
-        recipe.texture,
-        recipe.dehaze,
-        recipe.midtone_detail,
-        scale,
-    );
-    detail::apply_detail_scaled(&mut buf, w, rows, recipe.sharpness, recipe.denoise_lum, recipe.denoise_col, scale);
-    detail::apply_defringe_buffer(&mut buf, w, rows, recipe.defringe, scale);
+    neighbourhood_passes(&mut buf, w, rows, recipe, scale);
     if recipe.grain_amount > 0.001 {
         film_grain::apply_film_grain_window(
             &mut buf,

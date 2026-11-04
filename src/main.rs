@@ -1850,7 +1850,10 @@ fn run_daemon() {
                 // first export doesn't wait ~2 s for them
                 static WARM_UP: std::sync::Once = std::sync::Once::new();
                 WARM_UP.call_once(|| {
-                    std::thread::spawn(gpu::point_ops::warm_up);
+                    std::thread::spawn(|| {
+                        gpu::point_ops::warm_up();
+                        gpu::local::warm_up();
+                    });
                 });
                 let p = match cmd_obj.path {
                     Some(ref path) => path,
