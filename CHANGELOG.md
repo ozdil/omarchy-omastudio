@@ -12,6 +12,13 @@ Removed, Fixed and Security. Releases up to 3.1.0 group their entries by area.
 
 ## [Unreleased]
 
+## [3.2.1] - 2026-11-04
+
+The 3.2.0 changes, published. The v3.2.0 tag exists, but its release workflow file was invalid, so no 3.2.0 archive was built or released.
+
+### Fixed
+- The release workflow is valid YAML again, so tagged releases build and publish, and Dependabot can read it.
+
 ## [3.2.0] - 2026-11-04
 
 Previews, exports and full-quality renders run on a discrete GPU, 16-bit TIFF exports are about three times faster, and the AI assistant is confined to the photo it is shown.
@@ -313,7 +320,8 @@ A large stability and correctness release covering the engine, the UI, colour ha
 ### CI
 - Build, test and `clippy -D warnings` run on every pull request on a pinned toolchain; the workflow token is read-only.
 
-[Unreleased]: https://github.com/ozdil/omarchy-omastudio/compare/v3.2.0...HEAD
+[Unreleased]: https://github.com/ozdil/omarchy-omastudio/compare/v3.2.1...HEAD
+[3.2.1]: https://github.com/ozdil/omarchy-omastudio/compare/v3.2.0...v3.2.1
 [3.2.0]: https://github.com/ozdil/omarchy-omastudio/compare/v3.1.0...v3.2.0
 [3.1.0]: https://github.com/ozdil/omarchy-omastudio/compare/v3.0.0...v3.1.0
 [3.0.0]: https://github.com/ozdil/omarchy-omastudio/compare/v2.4.0...v3.0.0
