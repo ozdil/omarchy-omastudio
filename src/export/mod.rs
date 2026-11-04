@@ -1,4 +1,5 @@
 pub mod watermark;
+pub mod exif;
 pub mod tiff_writer;
 
 use crate::icc::{self, ExportProfile, RenderingIntent};
@@ -211,6 +212,25 @@ pub fn export_photo<P: AsRef<Path>>(
         dyn_img
     };
     let dyn_img_size = (dyn_img.width(), dyn_img.height());
+    // Camera metadata the TIFF and JPEG writers embed themselves (Fujifilm RAF sources);
+    // everything else is copied by exiftool afterwards
+    let artist = options.artist_copyright.as_deref().filter(|a| !a.trim().is_empty());
+    let srgb = options.icc_profile.as_deref().is_none_or(|p| p.eq_ignore_ascii_case("srgb"));
+    let own_exif = if options.preserve_exif {
+        exif::from_raf(raw_path.as_ref())
+    } else {
+        artist.map(|_| exif::Exif::default())
+    }
+    .map(|e| {
+        e.adjusted(&exif::Adjust {
+            strip_gps: options.strip_gps,
+            srgb,
+            artist,
+            width: dyn_img_size.0,
+            height: dyn_img_size.1,
+        })
+    });
+    let mut exif_written = false;
     let quality = options.quality.clamp(1, 100);
     prof.mark("watermark+depth");
 
@@ -307,7 +327,8 @@ pub fn export_photo<P: AsRef<Path>>(
                             tiff_writer::Samples::U16(rgb16.as_raw())
                         }
                     };
-                    let parts = tiff_writer::build(dyn_img.width(), dyn_img.height(), samples, codec, icc_bytes)?;
+                    let parts = tiff_writer::build(dyn_img.width(), dyn_img.height(), samples, codec, icc_bytes, own_exif.as_ref())?;
+                    exif_written = own_exif.is_some();
                     prof.mark("encode");
                     crate::security::atomic_write_user_parts(&final_dest, &parts.slices()).map_err(write_err)?;
                 }
@@ -331,7 +352,13 @@ pub fn export_photo<P: AsRef<Path>>(
                 dyn_img.write_with_encoder(encoder)
                     .map_err(|e| format!("Failed to encode JPEG: {}", e))?;
             }
-            crate::security::atomic_write_user(&final_dest, &buf.into_inner())
+            let mut buf = buf.into_inner();
+            if let Some(seg) = own_exif.as_ref().and_then(exif::Exif::app1) {
+                buf = exif::insert_app1(buf, &seg);
+                exif_written = true;
+            }
+            prof.mark("encode");
+            crate::security::atomic_write_user(&final_dest, &buf)
                 .map_err(|e| format!("Failed to securely write JPEG file: {}", e))?;
         }
         "exr" => {
@@ -347,7 +374,7 @@ pub fn export_photo<P: AsRef<Path>>(
 
     prof.mark("write");
     // Copy camera EXIF and GPS settings; the ICC profile is already in the file
-    if options.preserve_exif || options.artist_copyright.is_some() {
+    if !exif_written && (options.preserve_exif || options.artist_copyright.is_some()) {
         // Enforce 512 MiB RLIMIT_AS ceiling on ExifTool helper to defend against
         // unbounded pointer array allocations (e.g. unchecked APP11/JUMBF sequence numbers)
         let mut exif_cmd = secure_command_with_mem_limit("exiftool", Some(512 * 1024 * 1024));

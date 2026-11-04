@@ -5,6 +5,7 @@
 //! independent, so each one is predicted and compressed on its own thread here and
 //! the file is assembled in order afterwards. LZW still goes through the `tiff` crate.
 
+use super::exif::{Entry, Exif};
 use rayon::prelude::*;
 use std::io::Write;
 
@@ -82,6 +83,7 @@ pub fn build<'a>(
     samples: Samples<'a>,
     codec: Codec,
     icc: Option<&[u8]>,
+    exif: Option<&Exif>,
 ) -> Result<TiffParts<'a>, String> {
     let bits = samples.bits();
     let bytes_per_sample = (bits / 8) as usize;
@@ -144,29 +146,11 @@ pub fn build<'a>(
     };
     debug_assert_eq!(strips.len(), strip_count);
 
-    // Layout: header (8) | bits per sample (6) | resolution (16) | ICC | strips | IFD | arrays
-    let mut head = Vec::with_capacity(64 + icc.map_or(0, |p| p.len()));
+    // Layout: header (8) | strips | IFD0 with its values | Exif and GPS IFDs
+    let mut head = Vec::with_capacity(8);
     head.extend_from_slice(b"II");
     head.extend_from_slice(&42u16.to_le_bytes());
     head.extend_from_slice(&0u32.to_le_bytes()); // IFD offset, patched below
-    let bps_off = head.len() as u32;
-    for _ in 0..3 {
-        head.extend_from_slice(&bits.to_le_bytes());
-    }
-    let xres_off = head.len() as u32;
-    // 300 / 1 pixels per inch, as the `tiff` crate wrote
-    for _ in 0..2 {
-        head.extend_from_slice(&300u32.to_le_bytes());
-        head.extend_from_slice(&1u32.to_le_bytes());
-    }
-    let yres_off = xres_off + 8;
-    let icc_off = head.len() as u32;
-    if let Some(p) = icc {
-        head.extend_from_slice(p);
-    }
-    if head.len() % 2 == 1 {
-        head.push(0);
-    }
 
     let mut offsets = Vec::with_capacity(strip_count);
     let mut pos = head.len() as u64;
@@ -174,77 +158,45 @@ pub fn build<'a>(
         offsets.push(pos);
         pos += s.len() as u64;
     }
-    if pos % 2 == 1 {
-        // Word alignment for the directory: one pad byte after the last strip
-        pos += 1;
-    }
-    let ifd_off = pos;
-    let compression: u16 = if codec == Codec::Deflate { 8 } else { 1 };
-    let predictor: u16 = if codec == Codec::Deflate { 2 } else { 1 };
-
-    // Entries: (tag, type, count, value-or-offset); types 3 SHORT, 4 LONG, 5 RATIONAL, 7 UNDEFINED
-    let mut entries: Vec<(u16, u16, u32, u32)> = vec![
-        (256, 4, 1, width),
-        (257, 4, 1, height),
-        (258, 3, 3, bps_off),
-        (259, 3, 1, compression as u32),
-        (262, 3, 1, 2),
-        (273, 4, strip_count as u32, 0), // patched: strip offsets
-        (277, 3, 1, 3),
-        (278, 4, 1, rps),
-        (279, 4, strip_count as u32, 0), // patched: strip byte counts
-        (282, 5, 1, xres_off),
-        (283, 5, 1, yres_off),
-        (284, 3, 1, 1),
-        (296, 3, 1, 2),
-        (317, 3, 1, predictor as u32),
-    ];
-    if let Some(p) = icc {
-        entries.push((34675, 7, p.len() as u32, icc_off));
-    }
-    let ifd_len = 2 + entries.len() as u64 * 12 + 4;
-    let arrays_off = ifd_off + ifd_len;
-    let counts_off = arrays_off + strip_count as u64 * 4;
-    let end = counts_off + strip_count as u64 * 4;
-    if end > u32::MAX as u64 {
+    let pad = pos % 2 == 1;
+    let ifd_off = pos + pad as u64;
+    if ifd_off > u32::MAX as u64 {
         return Err("TIFF: the image is larger than 4 GB; choose deflate compression or a smaller size".into());
     }
-    let single = strip_count == 1;
-    for e in entries.iter_mut() {
-        match e.0 {
-            273 => e.3 = if single { offsets[0] as u32 } else { arrays_off as u32 },
-            279 => e.3 = if single { strips[0].len() as u32 } else { counts_off as u32 },
-            _ => {}
-        }
+    let longs = |tag: u16, v: &mut dyn Iterator<Item = u32>| {
+        let data: Vec<u8> = v.flat_map(u32::to_le_bytes).collect();
+        Entry { tag, ty: 4, count: (data.len() / 4) as u32, data }
+    };
+    // 300 / 1 pixels per inch, as the `tiff` crate wrote
+    let ppi = Entry { tag: 0, ty: 5, count: 1, data: [300u32.to_le_bytes(), 1u32.to_le_bytes()].concat() };
+    let mut entries = vec![
+        Entry::long(256, width),
+        Entry::long(257, height),
+        Entry { tag: 258, ty: 3, count: 3, data: [bits.to_le_bytes(); 3].concat() },
+        Entry::short(259, if codec == Codec::Deflate { 8 } else { 1 }),
+        Entry::short(262, 2),
+        longs(273, &mut offsets.iter().map(|&o| o as u32)),
+        Entry::short(277, 3),
+        Entry::long(278, rps),
+        longs(279, &mut strips.iter().map(|s| s.len() as u32)),
+        Entry { tag: 282, ..ppi.clone() },
+        Entry { tag: 283, ..ppi },
+        Entry::short(284, 1),
+        Entry::short(296, 2),
+        Entry::short(317, if codec == Codec::Deflate { 2 } else { 1 }),
+    ];
+    if let Some(p) = icc {
+        entries.push(Entry { tag: 34675, ty: 7, count: p.len() as u32, data: p.to_vec() });
     }
-    head[4..8].copy_from_slice(&(ifd_off as u32).to_le_bytes());
-
-    let mut tail = Vec::with_capacity((end - ifd_off + 1) as usize);
-    if (head.len() as u64 + strips.iter().map(|s| s.len() as u64).sum::<u64>()) % 2 == 1 {
+    let mut tail = Vec::new();
+    if pad {
         tail.push(0);
     }
-    tail.extend_from_slice(&(entries.len() as u16).to_le_bytes());
-    for (tag, ty, count, value) in &entries {
-        tail.extend_from_slice(&tag.to_le_bytes());
-        tail.extend_from_slice(&ty.to_le_bytes());
-        tail.extend_from_slice(&count.to_le_bytes());
-        // A SHORT value sits in the first two bytes of the field
-        if *ty == 3 && *count == 1 {
-            tail.extend_from_slice(&(*value as u16).to_le_bytes());
-            tail.extend_from_slice(&0u16.to_le_bytes());
-        } else {
-            tail.extend_from_slice(&value.to_le_bytes());
-        }
+    tail.extend(exif.cloned().unwrap_or_default().layout(entries, ifd_off as u32)?);
+    if ifd_off + tail.len() as u64 > u32::MAX as u64 + 1 {
+        return Err("TIFF: the image is larger than 4 GB; choose deflate compression or a smaller size".into());
     }
-    tail.extend_from_slice(&0u32.to_le_bytes()); // no next IFD
-    if !single {
-        for o in &offsets {
-            tail.extend_from_slice(&(*o as u32).to_le_bytes());
-        }
-        for s in &strips {
-            tail.extend_from_slice(&(s.len() as u32).to_le_bytes());
-        }
-    }
+    head[4..8].copy_from_slice(&(ifd_off as u32).to_le_bytes());
     Ok(TiffParts { head, strips, tail })
 }
 
@@ -271,7 +223,7 @@ mod tests {
         let (w, h) = (301, 97);
         let px = pattern16(w, h);
         for codec in [Codec::None, Codec::Deflate] {
-            let file = build(w, h, Samples::U16(&px), codec, None).unwrap().concat();
+            let file = build(w, h, Samples::U16(&px), codec, None, None).unwrap().concat();
             let img = decode(&file).to_rgb16();
             assert_eq!((img.width(), img.height()), (w, h));
             assert_eq!(img.as_raw(), &px, "{codec:?}");
@@ -285,7 +237,7 @@ mod tests {
         let px: Vec<u8> = (0..w * h * 3).map(|i| (i % 251) as u8).collect();
         let icc = vec![7u8; 301];
         for codec in [Codec::None, Codec::Deflate] {
-            let file = build(w, h, Samples::U8(&px), codec, Some(&icc)).unwrap().concat();
+            let file = build(w, h, Samples::U8(&px), codec, Some(&icc), None).unwrap().concat();
             let mut dec = tiff::decoder::Decoder::new(std::io::Cursor::new(&file)).unwrap();
             assert_eq!(dec.get_tag_u8_vec(tiff::tags::Tag::IccProfile).unwrap(), icc);
             assert!(dec.strip_count().unwrap() > 1);
@@ -298,13 +250,30 @@ mod tests {
     fn single_strip_and_odd_sizes() {
         let (w, h) = (3, 1);
         let px = vec![1u8, 2, 3, 4, 5, 6, 7, 8, 9];
-        let parts = build(w, h, Samples::U8(&px), Codec::None, Some(&[1, 2, 3])).unwrap();
+        let parts = build(w, h, Samples::U8(&px), Codec::None, Some(&[1, 2, 3]), None).unwrap();
         assert_eq!(parts.len(), parts.concat().len());
         assert_eq!(decode(&parts.concat()).to_rgb8().as_raw(), &px);
     }
 
     #[test]
+    fn carries_camera_exif() {
+        let (w, h) = (40, 30);
+        let px = pattern16(w, h);
+        let a = super::super::exif::Adjust { strip_gps: false, srgb: true, artist: Some("A"), width: w, height: h };
+        let exif = super::super::exif::parse(&super::super::exif::tests::camera_tiff()).unwrap().adjusted(&a);
+        let file = build(w, h, Samples::U16(&px), Codec::Deflate, Some(&[9; 33]), Some(&exif)).unwrap().concat();
+        assert_eq!(decode(&file).to_rgb16().as_raw(), &px);
+        let mut dec = tiff::decoder::Decoder::new(std::io::Cursor::new(&file)).unwrap();
+        assert_eq!(dec.get_tag_u8_vec(tiff::tags::Tag::IccProfile).unwrap(), vec![9; 33]);
+        assert_eq!(dec.get_tag_ascii_string(tiff::tags::Tag::Make).unwrap(), "FUJIFILM");
+        let back = super::super::exif::parse(&file).unwrap();
+        let iso = back.exif.iter().find(|e| e.tag == 0x8827).unwrap();
+        assert_eq!(iso.data, 400u16.to_le_bytes());
+        assert_eq!(back.gps.len(), 1);
+    }
+
+    #[test]
     fn rejects_wrong_sample_count() {
-        assert!(build(4, 4, Samples::U8(&[0; 10]), Codec::None, None).is_err());
+        assert!(build(4, 4, Samples::U8(&[0; 10]), Codec::None, None, None).is_err());
     }
 }
