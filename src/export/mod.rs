@@ -1,7 +1,7 @@
 pub mod watermark;
 
 use crate::icc::{self, ExportProfile, RenderingIntent};
-use crate::pipeline::process_buffer_16_to_16_ex;
+use crate::pipeline::render_16;
 use crate::raw::{OutputColorSpace, RawImage};
 use crate::recipe::Recipe;
 use crate::security::{run_bounded_command, secure_command, secure_command_with_mem_limit};
@@ -81,7 +81,7 @@ pub fn export_photo<P: AsRef<Path>>(
     let processed = raw.process_full_16(3)
         .map_err(|e| format!("Failed to demosaic full resolution 16-bit: {}", e))?;
 
-    let (mut final_buf, _) = process_buffer_16_to_16_ex(
+    let mut final_buf = render_16(
         processed.as_slice_u16(),
         processed.width,
         processed.height,

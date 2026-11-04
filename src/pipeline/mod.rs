@@ -680,6 +680,13 @@ pub fn process_buffer_16_to_16_ex(
     recipe: &Recipe,
     transfer: Transfer,
 ) -> (Vec<u16>, HistogramData) {
+    let out = process_16_to_16_banded(input, width, height, channels, recipe, transfer, BAND_ROWS);
+    let hist = compute_histogram_16_with_dimensions(&out, width as usize, height as usize, channels as usize);
+    (out, hist)
+}
+
+/// [`process_buffer_16_to_16_ex`] without the histogram, which an export doesn't show.
+pub fn render_16(input: &[u16], width: u32, height: u32, channels: u32, recipe: &Recipe, transfer: Transfer) -> Vec<u16> {
     process_16_to_16_banded(input, width, height, channels, recipe, transfer, BAND_ROWS)
 }
 
@@ -691,13 +698,15 @@ fn process_16_to_16_banded(
     recipe: &Recipe,
     transfer: Transfer,
     max_band_rows: usize,
-) -> (Vec<u16>, HistogramData) {
+) -> Vec<u16> {
     let ch = channels as usize;
     let w = width as usize;
     let h = height as usize;
     let num_pixels = w * h;
+    let mut prof = Profile::start();
     let retouched = retouch::apply(input, w, h, ch, &recipe.retouch);
     let input = &*retouched;
+    prof.mark("retouch");
 
     let stage = PointStage::new(recipe, transfer);
     let lens = detail::Geometry::new(w, h, recipe);
@@ -707,7 +716,8 @@ fn process_16_to_16_banded(
     let bands = h.div_ceil(max_band_rows).max(1);
     let band_rows = h.div_ceil(bands).max(1);
 
-    let mut output = vec![0u16; num_pixels * ch];
+    // Filled band by band, or at the end when the lens remap reads across bands
+    let mut output = if lens.is_some() { Vec::new() } else { vec![0u16; num_pixels * ch] };
     // With lens distortion the remap can read rows of any band, so the bands are
     // collected first and the remap, defringe and vignette run on the whole frame
     let mut pre = if lens.is_some() { vec![0u16; num_pixels * 3] } else { Vec::new() };
@@ -740,34 +750,55 @@ fn process_16_to_16_banded(
             });
     }
 
+    prof.mark("bands");
     if let Some(lens) = lens {
-        output.par_chunks_mut(w * ch).enumerate().for_each(|(y, row)| {
-            for x in 0..w {
-                let (sx, sy) = lens.source(x as f32, y as f32);
-                let px = if sx >= 0.0 && sx < (w - 1) as f32 && sy >= 0.0 && sy < (h - 1) as f32 {
-                    let (x0, y0) = (sx.floor() as usize, sy.floor() as usize);
-                    let (x1, y1) = ((x0 + 1).min(w - 1), (y0 + 1).min(h - 1));
-                    let (fx, fy) = (sx - x0 as f32, sy - y0 as f32);
-                    let at = |yy: usize, xx: usize, c: usize| pre[(yy * w + xx) * 3 + c] as f32 / PRE_DISTORTION_SCALE;
-                    let sample = |c: usize| {
-                        let top = at(y0, x0, c) * (1.0 - fx) + at(y0, x1, c) * fx;
-                        let bottom = at(y1, x0, c) * (1.0 - fx) + at(y1, x1, c) * fx;
-                        top * (1.0 - fy) + bottom * fy
-                    };
-                    (sample(0), sample(1), sample(2))
-                } else {
-                    (0.0, 0.0, 0.0)
-                };
-                finish_pixel(&mut row[x * ch..x * ch + 3], px, x, y, width, height, recipe);
-                if ch == 4 {
+        // Stays on the CPU: on an RTX 4060 laptop the upload and readback of the frame
+        // cost more than the CPU's remap (250 against 197 ms for a GFX 50R photo)
+        let rgb = remap_16_cpu(&pre, w, h, &lens, recipe);
+        drop(pre);
+        if ch == 3 {
+            output = rgb;
+        } else {
+            output = vec![0u16; num_pixels * ch];
+            output.par_chunks_mut(w * ch).zip(rgb.par_chunks(w * 3)).enumerate().for_each(|(y, (row, src))| {
+                for x in 0..w {
+                    row[x * ch..x * ch + 3].copy_from_slice(&src[x * 3..x * 3 + 3]);
                     row[x * ch + 3] = input[(y * w + x) * ch + 3];
                 }
-            }
-        });
+            });
+        }
     }
+    prof.mark("geometry");
+    prof.finish(w, h);
+    output
+}
 
-    let hist = compute_histogram_16_with_dimensions(&output, w, h, ch);
-    (output, hist)
+/// The export's lens remap on the CPU: `pre` (u16 RGB scaled by
+/// [`PRE_DISTORTION_SCALE`]) resampled through `lens`, with vignette and 16-bit
+/// quantization, as RGB.
+fn remap_16_cpu(pre: &[u16], w: usize, h: usize, lens: &detail::Geometry, recipe: &Recipe) -> Vec<u16> {
+    let mut output = vec![0u16; w * h * 3];
+    output.par_chunks_mut(w * 3).enumerate().for_each(|(y, row)| {
+        for x in 0..w {
+            let (sx, sy) = lens.source(x as f32, y as f32);
+            let px = if sx >= 0.0 && sx < (w - 1) as f32 && sy >= 0.0 && sy < (h - 1) as f32 {
+                let (x0, y0) = (sx.floor() as usize, sy.floor() as usize);
+                let (x1, y1) = ((x0 + 1).min(w - 1), (y0 + 1).min(h - 1));
+                let (fx, fy) = (sx - x0 as f32, sy - y0 as f32);
+                let at = |yy: usize, xx: usize, c: usize| pre[(yy * w + xx) * 3 + c] as f32 / PRE_DISTORTION_SCALE;
+                let sample = |c: usize| {
+                    let top = at(y0, x0, c) * (1.0 - fx) + at(y0, x1, c) * fx;
+                    let bottom = at(y1, x0, c) * (1.0 - fx) + at(y1, x1, c) * fx;
+                    top * (1.0 - fy) + bottom * fy
+                };
+                (sample(0), sample(1), sample(2))
+            } else {
+                (0.0, 0.0, 0.0)
+            };
+            finish_pixel(&mut row[x * 3..x * 3 + 3], px, x, y, w as u32, h as u32, recipe);
+        }
+    });
+    output
 }
 
 /// Vignette and 16-bit quantisation of one output pixel.
@@ -1179,8 +1210,8 @@ mod tests {
         for lens in [0.0, 25.0] {
             recipe.lens_distortion = lens;
             let t = Transfer::bt709();
-            let (whole, _) = process_16_to_16_banded(&input, w as u32, h as u32, 3, &recipe, t, h);
-            let (banded, _) = process_16_to_16_banded(&input, w as u32, h as u32, 3, &recipe, t, 40);
+            let whole = process_16_to_16_banded(&input, w as u32, h as u32, 3, &recipe, t, h);
+            let banded = process_16_to_16_banded(&input, w as u32, h as u32, 3, &recipe, t, 40);
             let worst = whole.iter().zip(&banded).map(|(a, b)| a.abs_diff(*b)).max().unwrap();
             // Rolling blur sums start at a different row, so float rounding can move a
             // value by one step (two with lens distortion's 15-bit intermediate)
