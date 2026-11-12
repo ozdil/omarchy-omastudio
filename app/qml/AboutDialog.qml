@@ -10,7 +10,7 @@ Rectangle {
     implicitHeight: content.implicitHeight + 2 * pad
     radius: Theme.radiusLg
     color: Theme.bgSurface
-    border.color: Theme.borderLight
+    border.color: Theme.dialogBorder
     border.width: 1
     clip: true
 
@@ -102,7 +102,7 @@ Rectangle {
         implicitHeight: Theme.px(28)
         radius: Theme.radiusSm
         color: lbMouse.containsMouse ? Theme.bgCardHover : Theme.bgCard
-        border.color: lbMouse.containsMouse ? Theme.accent : Theme.border
+        border.color: lbMouse.containsMouse ? Theme.accent : Theme.controlBorder("normal")
         border.width: 1
 
         Text {

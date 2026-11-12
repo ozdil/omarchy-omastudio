@@ -55,7 +55,7 @@ graph TD
 | **Qt 6** (6.12, Qt Quick / QML) | 인터페이스: 패널, 뷰포트, 측정 도구, 대화 상자 | GPU로 그리는 인터페이스, 네이티브 Wayland 지원과 분수 배율, 오른쪽에서 왼쪽 레이아웃, Qt Linguist 번역 체계 | LGPL-3.0 |
 | **cxx-qt** (0.10) | Rust와 Qt 연결: 호스트 타입 `Process`, `Host`와 제어 소켓은 QML에서 쓰는 Rust 객체 | 손으로 쓴 C++ 없이 양방향의 안전한 바인딩 | MIT / Apache-2.0 |
 | **Qt Wayland** | 창을 네이티브 Wayland 클라이언트(app id `omastudio`)로 실행 | Omarchy는 Wayland 위에서 Hyprland를 쓰며, Hyprland 창 규칙으로 app id를 지정할 수 있음 | LGPL-3.0 |
-| **zenity** | 파일 및 폴더 대화 상자 | 작고 모든 Omarchy 설치에 들어 있음 | LGPL-2.1+ |
+| **xdg-desktop-portal** | 파일 및 폴더 대화 상자 | 작고 모든 Omarchy 설치에 들어 있음 | LGPL-2.1+ |
 
 QML 파일은 Qt 리소스로 바이너리에 포함되므로, 설치된 버전에 관계없는 인터페이스 파일이 섞이지 않습니다.
 

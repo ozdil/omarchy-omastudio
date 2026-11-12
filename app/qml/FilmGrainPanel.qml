@@ -52,7 +52,7 @@ Rectangle {
 
             Rectangle {
                 implicitWidth: resetGrainText.implicitWidth + 10
-                implicitHeight: 18
+                implicitHeight: Theme.sp(18)
                 radius: Theme.r(4)
                 color: resetGrainMouse.containsMouse ? Theme.bgCardHover : "transparent"
                 border.color: Theme.border

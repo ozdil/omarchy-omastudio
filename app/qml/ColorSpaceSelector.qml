@@ -32,7 +32,7 @@ Rectangle {
         implicitHeight: rowLayout.implicitHeight + 12
         radius: Theme.radiusSm
         color: row.checked ? Theme.bgCardHover : Theme.bgCard
-        border.color: row.checked ? Theme.accent : Theme.border
+        border.color: row.checked ? "transparent" : Theme.controlBorder("normal")
         border.width: row.checked ? 1.5 : 1
 
         RowLayout {
@@ -75,7 +75,7 @@ Rectangle {
             CustomSwitch {
                 Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
                 Layout.preferredWidth: 36
-                Layout.preferredHeight: 20
+                Layout.preferredHeight: Theme.sp(20)
                 checked: row.checked
                 onToggled: function(isChecked) { row.toggled(isChecked); }
             }

@@ -43,7 +43,7 @@ Comanda instalează `omastudio`, `omastudio-app`, `omastudio-engine`, profiluril
 
 **Dintr-o arhivă de versiune.** Descărcați `omastudio-<versiune>-x86_64-linux.tar.gz` de pe [pagina de versiuni](https://github.com/ozdil/omarchy-omastudio/releases), verificați-o cu `checksums.txt`, dezarhivați-o și copiați `bin/*` în `~/.local/bin` și `share/omastudio` în `~/.local/share/omastudio`.
 
-**Pachete necesare:** `libraw` 0.22 sau mai nou, `lcms2`, `qt6-base`, `qt6-declarative`, `qt6-wayland` și `qt6-svg` 6.12 sau mai noi, plus `zenity` pentru dialogurile de fișiere.
+**Pachete necesare:** `libraw` 0.22 sau mai nou, `lcms2`, `qt6-base`, `qt6-declarative`, `qt6-wayland` și `qt6-svg` 6.12 sau mai noi, plus `xdg-desktop-portal` pentru dialogurile de fișiere.
 
 **Pachete opționale:**
 

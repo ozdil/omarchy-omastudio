@@ -85,7 +85,7 @@ flowchart LR
 
 ## Kurulum
 
-Gereksinimler: Wayland ve Hyprland ile Omarchy (Arch Linux); `libraw` 0.22 veya üstü, `lcms2`, `qt6-base`, `qt6-declarative`, `qt6-wayland` ve `qt6-svg` 6.12 veya üstü ve `zenity`. İsteğe bağlı paketler [kullanım kılavuzunda](docs/guide/tr.md#1-kurulum) listelenir.
+Gereksinimler: Wayland ve Hyprland ile Omarchy (Arch Linux); `libraw` 0.22 veya üstü, `lcms2`, `qt6-base`, `qt6-declarative`, `qt6-wayland` ve `qt6-svg` 6.12 veya üstü ve `xdg-desktop-portal`. İsteğe bağlı paketler [kullanım kılavuzunda](docs/guide/tr.md#1-kurulum) listelenir.
 
 ### Paket
 

@@ -136,7 +136,7 @@ Rectangle {
                 }
                 implicitHeight: msg.implicitHeight + Theme.px(12)
                 radius: Theme.radiusSm
-                color: mine ? Theme.accent : Theme.bgCard
+                color: mine ? Theme.controlFill("selected") : Theme.controlFill("normal")
                 border.color: modelData.role === "error" ? Theme.accentMagenta : "transparent"
                 Text {
                     id: msg
@@ -150,7 +150,7 @@ Rectangle {
                     wrapMode: Text.Wrap
                     font.family: Theme.fontFamily
                     font.pixelSize: Theme.px(10)
-                    color: parent.mine ? Theme.bgBase : (modelData.role === "error" ? Theme.accentMagenta : Theme.textMain)
+                    color: parent.mine ? Theme.selectedText : (modelData.role === "error" ? Theme.accentMagenta : Theme.textMain)
                 }
             }
 
@@ -186,7 +186,7 @@ Rectangle {
                 implicitHeight: Theme.px(30)
                 radius: Theme.radiusSm
                 color: Theme.bgCard
-                border.color: input.activeFocus ? Theme.accent : Theme.border
+                border.color: input.activeFocus ? Theme.accent : Theme.controlBorder("normal")
                 BoundedTextInput {
                     id: input
                     anchors.fill: parent

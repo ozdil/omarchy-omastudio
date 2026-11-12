@@ -55,7 +55,7 @@ Finestra e motore sono processi separati. La finestra non decodifica mai una fot
 | **Qt 6** (6.12, Qt Quick / QML) | L'interfaccia: pannelli, area immagine, strumenti di misura, finestre di dialogo | Interfaccia disegnata dalla GPU con supporto nativo a Wayland e scala frazionaria, layout da destra a sinistra e il sistema di traduzione Qt Linguist | LGPL-3.0 |
 | **cxx-qt** (0.10) | Collega Rust e Qt: i tipi `Process`, `Host` e il socket di controllo sono oggetti Rust usati da QML | Collegamenti sicuri nei due sensi senza C++ scritto a mano | MIT / Apache-2.0 |
 | **Qt Wayland** | Esegue la finestra come client Wayland nativo (ID applicazione `omastudio`) | Omarchy usa Hyprland su Wayland; le regole delle finestre di Hyprland possono riconoscere l'ID | LGPL-3.0 |
-| **zenity** | Finestre di selezione di file e cartelle | Leggero e presente in ogni installazione di Omarchy | LGPL-2.1+ |
+| **xdg-desktop-portal** | Finestre di selezione di file e cartelle | Leggero e presente in ogni installazione di Omarchy | LGPL-2.1+ |
 
 I file QML sono compilati nell'eseguibile come risorse Qt, così una versione installata non si mescola mai con file d'interfaccia sparsi.
 

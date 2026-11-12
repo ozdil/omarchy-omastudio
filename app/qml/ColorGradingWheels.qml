@@ -82,7 +82,7 @@ ColumnLayout {
         // Layout Toggle (Single / 4-Wheels)
         Rectangle {
             implicitWidth: viewToggleText.implicitWidth + 8
-            implicitHeight: 18
+            implicitHeight: Theme.sp(18)
             radius: Theme.r(4)
             color: viewToggleMouse.containsMouse ? Theme.bgCardHover : "transparent"
             border.color: Theme.border
@@ -111,7 +111,7 @@ ColumnLayout {
         // Reset Button
         Rectangle {
             implicitWidth: resetAllText.implicitWidth + 8
-            implicitHeight: 18
+            implicitHeight: Theme.sp(18)
             radius: Theme.r(4)
             color: resetAllMouse.containsMouse ? Theme.bgCardHover : "transparent"
             border.color: Theme.border
@@ -155,11 +155,11 @@ ColumnLayout {
             model: parent.tabs
             delegate: Rectangle {
                 Layout.fillWidth: true
-                implicitHeight: 26
+                implicitHeight: Theme.sp(26)
                 radius: Theme.r(4)
                 property bool isCur: root.activeTab === index
-                color: isCur ? Qt.rgba(Theme.accent.r, Theme.accent.g, Theme.accent.b, 0.2) : Theme.bgCard
-                border.color: isCur ? Theme.accent : Theme.border
+                color: isCur ? Theme.controlFill("selected") : Theme.bgCard
+                border.color: isCur ? "transparent" : Theme.controlBorder("normal")
                 border.width: 1
 
                 Text {

@@ -55,7 +55,7 @@ Okno i silnik to osobne procesy. Okno nigdy samo nie dekoduje zdjęcia: wysyła 
 | **Qt 6** (6.12, Qt Quick / QML) | Interfejs: panele, podgląd, narzędzia pomiarowe, okna dialogowe | Interfejs rysowany przez GPU z natywną obsługą Wayland i skalowania ułamkowego, układem od prawej do lewej i systemem tłumaczeń Qt Linguist | LGPL-3.0 |
 | **cxx-qt** (0.10) | Łączy Rust i Qt: typy `Process`, `Host` i gniazdo sterujące to obiekty Rust używane w QML | Bezpieczne powiązania w obu kierunkach bez ręcznie pisanego C++ | MIT / Apache-2.0 |
 | **Qt Wayland** | Uruchamia okno jako natywnego klienta Wayland (identyfikator aplikacji `omastudio`) | Omarchy używa Hyprland na Wayland; reguły okien Hyprland mogą korzystać z identyfikatora | LGPL-3.0 |
-| **zenity** | Okna wyboru plików i folderów | Mały i obecny w każdej instalacji Omarchy | LGPL-2.1+ |
+| **xdg-desktop-portal** | Okna wyboru plików i folderów | Mały i obecny w każdej instalacji Omarchy | LGPL-2.1+ |
 
 Pliki QML są kompilowane do pliku wykonywalnego jako zasoby Qt, dzięki czemu zainstalowana wersja nigdy nie miesza się z luźnymi plikami interfejsu.
 

@@ -67,7 +67,7 @@ ColumnLayout {
             Rectangle {
                 visible: Math.abs(root.effectiveValue - root.defaultValue) > 0.001
                 implicitWidth: 18
-                implicitHeight: 18
+                implicitHeight: Theme.sp(18)
                 radius: Theme.r(4)
                 color: sliderResetMouse.containsMouse ? root.accentColor : "transparent"
                 border.color: root.accentColor
@@ -95,7 +95,7 @@ ColumnLayout {
 
             Rectangle {
                 implicitWidth: valText.implicitWidth + 10
-                implicitHeight: 18
+                implicitHeight: Theme.sp(18)
                 radius: Theme.radiusSm
                 color: root.effectiveValue !== root.defaultValue ? Qt.rgba(root.accentColor.r, root.accentColor.g, root.accentColor.b, 0.18) : Qt.rgba(Theme.textMain.r, Theme.textMain.g, Theme.textMain.b, 0.04)
                 border.color: root.effectiveValue !== root.defaultValue ? root.accentColor : Theme.border
@@ -166,7 +166,7 @@ ColumnLayout {
             border.color: Theme.bgDark
             border.width: 1.5
 
-            Behavior on color { ColorAnimation { duration: 100 } }
+            Behavior on color { ColorAnimation { duration: Theme.duration(100) } }
         }
 
         onMoved: {

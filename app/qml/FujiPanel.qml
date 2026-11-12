@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
+import QtQuick.Dialogs
 import OmaStudio.Host
 
 // Fujifilm workspace: the recipe library, a camera on USB (custom settings C1-C7 and
@@ -117,13 +118,13 @@ Rectangle {
     }
 
     // Recipe files to import: photos, X RAW Studio profiles and recipe text
-    Process {
+    FileDialog {
         id: pickProc
-        command: ["zenity", "--file-selection", "--title=" + qsTr("Import Fujifilm Recipe"),
-                  "--file-filter=" + qsTr("Fujifilm recipes") + " | *.RAF *.raf *.JPG *.jpg *.FP1 *.fp1 *.FP2 *.fp2 *.FP3 *.fp3 *.txt"]
-        onFinished: function(exitCode, output) {
-            var p = String(output || "").trim();
-            if (exitCode === 0 && p.length > 0) root.run("import", ["fuji-recipe", "save", p]);
+        title: qsTr("Import Fujifilm Recipe")
+        nameFilters: [qsTr("Fujifilm recipes") + " (*.RAF *.raf *.JPG *.jpg *.FP1 *.fp1 *.FP2 *.fp2 *.FP3 *.fp3 *.txt)"]
+        onAccepted: {
+            var p = Host.localPath(selectedFile);
+            if (p.length > 0) root.run("import", ["fuji-recipe", "save", p]);
         }
     }
 
@@ -134,13 +135,13 @@ Rectangle {
         property bool busy: false
         signal clicked()
         implicitWidth: btnText.implicitWidth + 16
-        implicitHeight: 24
+        implicitHeight: Theme.sp(24)
         radius: Theme.r(4)
         // A disabled button is an outline, never a filled accent bar
         readonly property bool filled: primary && enabled
         color: filled ? (btnMouse.containsMouse ? Theme.accentHover : Theme.accent)
                       : (btnMouse.containsMouse && enabled ? Theme.bgCardHover : "transparent")
-        border.color: filled ? Theme.accent : Theme.border
+        border.color: filled ? "transparent" : Theme.controlBorder("normal")
         border.width: 1
 
         Text {
@@ -154,7 +155,7 @@ Rectangle {
             font.family: Theme.fontFamily
             font.pixelSize: Theme.px(9)
             font.weight: Font.Bold
-            color: btn.filled ? Theme.onAccent : (btn.enabled ? Theme.textMain : Theme.textDim)
+            color: btn.filled ? Theme.selectedText : (btn.enabled ? Theme.textMain : Theme.textDim)
         }
 
         MouseArea {
@@ -189,8 +190,8 @@ Rectangle {
             SectionTitle { text: qsTr("Fujifilm recipes") }
             PanelButton {
                 label: qsTr("Import")
-                enabled: root.busyAction === "" && !pickProc.running
-                onClicked: pickProc.running = true
+                enabled: root.busyAction === "" && !pickProc.visible
+                onClicked: pickProc.open()
             }
             PanelButton {
                 label: Theme.iconRefresh
@@ -238,12 +239,12 @@ Rectangle {
                 model: root.recipes
                 delegate: Rectangle {
                     Layout.fillWidth: true
-                    implicitHeight: 34
+                    implicitHeight: Theme.sp(34)
                     radius: Theme.radiusSm
                     property bool isCur: root.selectedRecipePath === modelData.path
                     color: isCur ? Qt.rgba(Theme.accent.r, Theme.accent.g, Theme.accent.b, 0.18)
                                  : (rowMouse.containsMouse ? Theme.bgCardHover : Theme.bgCard)
-                    border.color: isCur ? Theme.accent : Theme.border
+                    border.color: isCur ? "transparent" : Theme.controlBorder("normal")
                     border.width: 1
 
                     ColumnLayout {
@@ -354,7 +355,7 @@ Rectangle {
                 model: root.presets
                 delegate: Rectangle {
                     Layout.fillWidth: true
-                    implicitHeight: 26
+                    implicitHeight: Theme.sp(26)
                     radius: Theme.r(4)
                     color: presetMouse.containsMouse ? Theme.bgCardHover : Theme.bgCard
                     border.color: Theme.border
@@ -404,11 +405,11 @@ Rectangle {
                     model: 7
                     delegate: Rectangle {
                         Layout.fillWidth: true
-                        implicitHeight: 22
+                        implicitHeight: Theme.sp(22)
                         radius: Theme.r(4)
                         property bool isCur: root.targetSlot === index + 1
-                        color: isCur ? Theme.accent : Theme.bgCard
-                        border.color: isCur ? Theme.accent : Theme.border
+                        color: isCur ? Theme.controlFill("selected") : Theme.controlFill("normal")
+                        border.color: isCur ? "transparent" : Theme.controlBorder("normal")
                         border.width: 1
                         Text {
                             font.family: Theme.fontFamily
@@ -417,7 +418,7 @@ Rectangle {
                             textFormat: Text.PlainText
                             font.pixelSize: Theme.px(9)
                             font.weight: Font.Bold
-                            color: parent.isCur ? Theme.bgBase : Theme.textMain
+                            color: parent.isCur ? Theme.selectedText : Theme.textMain
                         }
                         MouseArea {
                             anchors.fill: parent

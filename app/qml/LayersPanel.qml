@@ -210,7 +210,7 @@ Rectangle {
         property bool active: false
         signal clicked()
         implicitWidth: sbText.implicitWidth + 12
-        implicitHeight: 20
+        implicitHeight: Theme.sp(20)
         radius: Theme.r(4)
         opacity: enabled ? 1.0 : 0.4
         color: active ? Theme.bgCardHover : (sbMouse.containsMouse ? Theme.bgCardHover : Theme.bgCard)
@@ -252,7 +252,7 @@ Rectangle {
         property bool on: false
         signal clicked()
         implicitWidth: 16
-        implicitHeight: 16
+        implicitHeight: Theme.sp(16)
         radius: Theme.r(3)
         color: it.on ? Theme.accentCyan : "transparent"
         border.color: Theme.border
@@ -277,7 +277,7 @@ Rectangle {
         id: db
         signal clicked()
         implicitWidth: 16
-        implicitHeight: 16
+        implicitHeight: Theme.sp(16)
         radius: Theme.r(3)
         color: "transparent"
         Text {
@@ -361,10 +361,10 @@ Rectangle {
                 delegate: Rectangle {
                     id: layerItem
                     Layout.fillWidth: true
-                    implicitHeight: 28
+                    implicitHeight: Theme.sp(28)
                     radius: Theme.r(4)
                     color: root.selectedLayerIndex === index ? Theme.bgCardHover : Theme.bgCard
-                    border.color: root.selectedLayerIndex === index ? Theme.accent : Theme.border
+                    border.color: root.selectedLayerIndex === index ? "transparent" : Theme.controlBorder("normal")
                     border.width: 1
 
                     readonly property var curLayer: root.layersList[index]
@@ -457,10 +457,10 @@ Rectangle {
 
                 Rectangle {
                     Layout.fillWidth: true
-                    implicitHeight: 24
+                    implicitHeight: Theme.sp(24)
                     radius: Theme.r(4)
                     color: root.editTarget < 0 ? Theme.bgCardHover : Theme.bgCard
-                    border.color: root.editTarget < 0 ? Theme.accent : Theme.border
+                    border.color: root.editTarget < 0 ? "transparent" : Theme.controlBorder("normal")
                     border.width: 1
                     Text {
                         anchors.verticalCenter: parent.verticalCenter
@@ -486,10 +486,10 @@ Rectangle {
                         required property int index
                         readonly property var comp: root.activeComponents[index]
                         Layout.fillWidth: true
-                        implicitHeight: 24
+                        implicitHeight: Theme.sp(24)
                         radius: Theme.r(4)
                         color: root.editTarget === index ? Theme.bgCardHover : Theme.bgCard
-                        border.color: root.editTarget === index ? Theme.accent : Theme.border
+                        border.color: root.editTarget === index ? "transparent" : Theme.controlBorder("normal")
                         border.width: 1
 
                         MouseArea {
@@ -617,7 +617,7 @@ Rectangle {
                     spacing: 8
                     Rectangle {
                         implicitWidth: 28
-                        implicitHeight: 20
+                        implicitHeight: Theme.sp(20)
                         radius: Theme.r(4)
                         border.color: Theme.border
                         color: root.editType === "color_range" ? Qt.rgba(root.editShape.r, root.editShape.g, root.editShape.b, 1) : "transparent"

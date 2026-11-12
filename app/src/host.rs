@@ -14,6 +14,8 @@ pub mod qobject {
     unsafe extern "C++" {
         include!("cxx-qt-lib/qstring.h");
         type QString = cxx_qt_lib::QString;
+        include!("cxx-qt-lib/qurl.h");
+        type QUrl = cxx_qt_lib::QUrl;
     }
 
     #[auto_cxx_name]
@@ -27,7 +29,8 @@ pub mod qobject {
         #[qproperty(QString, version, READ, CONSTANT)]
         #[qproperty(QString, ui_language, READ, NOTIFY)]
         #[qproperty(QString, language_choice, READ, NOTIFY)]
-        #[qproperty(QString, system_language, READ, CONSTANT)]
+        #[qproperty(QString, system_language, READ, NOTIFY)]
+        #[qproperty(QString, omarchy_language_file, READ, CONSTANT)]
         #[qproperty(QString, available_languages, READ, CONSTANT)]
         type Host = super::HostRust;
 
@@ -42,10 +45,24 @@ pub mod qobject {
         #[qinvokable]
         fn ipc_reply(self: &Host, id: i32, text: &QString);
 
+        /// The local path of a `file://` URL from a file dialog, "" for anything else.
+        #[qinvokable]
+        fn local_path(self: &Host, url: &QUrl) -> QString;
+
+        /// A `file://` URL for a local path ("~/" is the home folder), for a file
+        /// dialog's starting folder; empty for anything that is not a folder.
+        #[qinvokable]
+        fn folder_url(self: &Host, path: &QString) -> QUrl;
+
         /// Stores the interface language ("" follows the system) and updates
         /// `uiLanguage`; false when the choice could not be saved.
         #[qinvokable]
         fn set_ui_language(self: Pin<&mut Host>, code: &QString) -> bool;
+
+        /// Reads the system language again (Omarchy's language file changed) and
+        /// switches the interface when it follows the system.
+        #[qinvokable]
+        fn refresh_system_language(self: Pin<&mut Host>);
 
         /// Interface state saved by `saveUiState` (panels, sections), "" when none.
         #[qinvokable]
@@ -67,6 +84,7 @@ pub struct HostRust {
     ui_language: QString,
     language_choice: QString,
     system_language: QString,
+    omarchy_language_file: QString,
     available_languages: QString,
 }
 
@@ -81,6 +99,9 @@ impl Default for HostRust {
             ui_language: QString::from(language::effective().as_str()),
             language_choice: QString::from(language::stored().as_str()),
             system_language: QString::from(language::system().as_str()),
+            omarchy_language_file: QString::from(
+                language::omarchy_file().map(|p| p.to_string_lossy().into_owned()).unwrap_or_default().as_str(),
+            ),
             available_languages: QString::from(language::AVAILABLE),
         }
     }
@@ -127,6 +148,23 @@ impl qobject::Host {
         ipc::reply(id, String::from(text));
     }
 
+    pub fn local_path(&self, url: &cxx_qt_lib::QUrl) -> QString {
+        url.to_local_file().unwrap_or_default()
+    }
+
+    pub fn folder_url(&self, path: &QString) -> cxx_qt_lib::QUrl {
+        let path = String::from(path);
+        let path = match path.strip_prefix("~/") {
+            Some(rest) => Path::new(&String::from(&self.home_dir)).join(rest),
+            None => PathBuf::from(path),
+        };
+        if path.is_absolute() && path.is_dir() {
+            cxx_qt_lib::QUrl::from_local_file(&QString::from(path.to_string_lossy().as_ref()))
+        } else {
+            cxx_qt_lib::QUrl::default()
+        }
+    }
+
     pub fn set_ui_language(mut self: Pin<&mut Self>, code: &QString) -> bool {
         let requested = String::from(code);
         let mut choice = if requested.is_empty() { String::new() } else { language::best_match(&requested).unwrap_or_default() };
@@ -150,6 +188,19 @@ impl qobject::Host {
             self.as_mut().ui_language_changed();
         }
         saved.is_ok()
+    }
+
+    pub fn refresh_system_language(mut self: Pin<&mut Self>) {
+        let system = QString::from(language::system().as_str());
+        if system == self.system_language {
+            return;
+        }
+        self.as_mut().rust_mut().get_mut().system_language = system.clone();
+        self.as_mut().system_language_changed();
+        if self.language_choice.is_empty() && system != self.ui_language {
+            self.as_mut().rust_mut().get_mut().ui_language = system;
+            self.as_mut().ui_language_changed();
+        }
     }
 
     pub fn ui_state(&self) -> QString {

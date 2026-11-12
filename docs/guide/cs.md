@@ -43,7 +43,7 @@ Nainstaluje se `omastudio`, `omastudio-app`, `omastudio-engine`, profily ICC, po
 
 **Z archivu vydání.** Stáhněte `omastudio-<verze>-x86_64-linux.tar.gz` ze [stránky vydání](https://github.com/ozdil/omarchy-omastudio/releases), ověřte jej pomocí `checksums.txt`, rozbalte a zkopírujte `bin/*` do `~/.local/bin` a `share/omastudio` do `~/.local/share/omastudio`.
 
-**Povinné balíčky:** `libraw` 0.22 nebo novější, `lcms2`, `qt6-base`, `qt6-declarative`, `qt6-wayland` a `qt6-svg` 6.12 nebo novější a `zenity` pro dialogy výběru souborů.
+**Povinné balíčky:** `libraw` 0.22 nebo novější, `lcms2`, `qt6-base`, `qt6-declarative`, `qt6-wayland` a `qt6-svg` 6.12 nebo novější a `xdg-desktop-portal` pro dialogy výběru souborů.
 
 **Volitelné balíčky:**
 

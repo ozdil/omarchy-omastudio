@@ -83,7 +83,7 @@ flowchart LR
 
 ## Installation
 
-Requirements: Omarchy (Arch Linux) with Wayland and Hyprland; `libraw` 0.22 or newer, `lcms2`, `qt6-base`, `qt6-declarative`, `qt6-wayland` and `qt6-svg` 6.12 or newer, and `zenity`. Optional packages are listed in the [user guide](docs/guide/en.md#1-installation).
+Requirements: Omarchy (Arch Linux) with Wayland and Hyprland; `libraw` 0.22 or newer, `lcms2`, `qt6-base`, `qt6-declarative`, `qt6-wayland` and `qt6-svg` 6.12 or newer, and `xdg-desktop-portal`. Optional packages are listed in the [user guide](docs/guide/en.md#1-installation).
 
 ### Package
 

@@ -43,7 +43,7 @@ Ez telepíti az `omastudio`, `omastudio-app` és `omastudio-engine` programokat,
 
 **Kiadási archívumból.** Töltse le az `omastudio-<verzió>-x86_64-linux.tar.gz` fájlt a [kiadások oldaláról](https://github.com/ozdil/omarchy-omastudio/releases), ellenőrizze a `checksums.txt` alapján, csomagolja ki, majd másolja a `bin/*` tartalmát a `~/.local/bin`, a `share/omastudio` mappát pedig a `~/.local/share/omastudio` helyre.
 
-**Szükséges csomagok:** `libraw` 0.22 vagy újabb, `lcms2`, `qt6-base`, `qt6-declarative`, `qt6-wayland` és `qt6-svg` 6.12 vagy újabb, valamint `zenity` a fájlpárbeszédekhez.
+**Szükséges csomagok:** `libraw` 0.22 vagy újabb, `lcms2`, `qt6-base`, `qt6-declarative`, `qt6-wayland` és `qt6-svg` 6.12 vagy újabb, valamint `xdg-desktop-portal` a fájlpárbeszédekhez.
 
 **Nem kötelező csomagok:**
 

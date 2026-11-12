@@ -43,7 +43,7 @@ Perintah ini memasang `omastudio`, `omastudio-app`, `omastudio-engine`, profil I
 
 **Dari arsip rilis.** Unduh `omastudio-<versi>-x86_64-linux.tar.gz` dari [halaman rilis](https://github.com/ozdil/omarchy-omastudio/releases), periksa dengan `checksums.txt`, ekstrak, lalu salin `bin/*` ke `~/.local/bin` dan `share/omastudio` ke `~/.local/share/omastudio`.
 
-**Paket wajib:** `libraw` 0.22 atau lebih baru, `lcms2`, `qt6-base`, `qt6-declarative`, `qt6-wayland`, dan `qt6-svg` 6.12 atau lebih baru, serta `zenity` untuk dialog berkas.
+**Paket wajib:** `libraw` 0.22 atau lebih baru, `lcms2`, `qt6-base`, `qt6-declarative`, `qt6-wayland`, dan `qt6-svg` 6.12 atau lebih baru, serta `xdg-desktop-portal` untuk dialog berkas.
 
 **Paket opsional:**
 

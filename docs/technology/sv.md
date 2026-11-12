@@ -55,7 +55,7 @@ Fönstret och motorn är separata processer. Fönstret avkodar aldrig ett foto s
 | **Qt 6** (6.12, Qt Quick / QML) | Gränssnittet: paneler, visningsytan, mätare, dialoger | GPU-ritat gränssnitt med inbyggt Wayland-stöd och fraktionell skalning, höger-till-vänster-layout och översättningssystemet Qt Linguist | LGPL-3.0 |
 | **cxx-qt** (0.10) | Kopplar ihop Rust och Qt: värdtyperna `Process`, `Host` och kontrollsocketen är Rust-objekt som används från QML | Säkra bindningar åt båda hållen utan handskriven C++ | MIT / Apache-2.0 |
 | **Qt Wayland** | Kör fönstret som en inbyggd Wayland-klient (app-id `omastudio`) | Omarchy kör Hyprland på Wayland; Hyprlands fönsterregler kan matcha app-id:t | LGPL-3.0 |
-| **zenity** | Fil- och mappdialoger | Litet och finns i varje Omarchy-installation | LGPL-2.1+ |
+| **xdg-desktop-portal** | Fil- och mappdialoger | Litet och finns i varje Omarchy-installation | LGPL-2.1+ |
 
 QML-filerna kompileras in i binären som Qt-resurser, så en installerad version blandas aldrig med lösa gränssnittsfiler.
 

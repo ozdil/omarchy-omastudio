@@ -1502,6 +1502,14 @@
 </context>
 <context>
     <name>MainWindow</name>
+    <message>
+        <source>Export finished</source>
+        <translation>Eksport fuldført</translation>
+    </message>
+    <message>
+        <source>Open folder</source>
+        <translation>Åbn mappe</translation>
+    </message>
     <message numerus="yes">
         <source>Rating: %n star(s)</source>
         <translation>

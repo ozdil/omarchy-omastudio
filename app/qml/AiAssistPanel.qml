@@ -198,11 +198,11 @@ ColumnLayout {
         property bool primary: false
         signal clicked()
         implicitWidth: sbText.implicitWidth + 16
-        implicitHeight: 24
+        implicitHeight: Theme.sp(24)
         radius: Theme.r(4)
         opacity: enabled ? 1.0 : 0.4
         color: primary ? (sbMouse.containsMouse ? Theme.accentHover : Theme.accent) : (sbMouse.containsMouse ? Theme.bgCardHover : Theme.bgCard)
-        border.color: primary ? Theme.accent : Theme.border
+        border.color: primary ? "transparent" : Theme.controlBorder("normal")
         border.width: 1
         Text {
             id: sbText
@@ -212,7 +212,7 @@ ColumnLayout {
             font.family: Theme.fontFamily
             font.pixelSize: Theme.px(9)
             font.weight: Font.Bold
-            color: sb.primary ? Theme.bgBase : Theme.textMain
+            color: sb.primary ? Theme.selectedText : Theme.textMain
         }
         MouseArea {
             id: sbMouse
@@ -225,7 +225,7 @@ ColumnLayout {
 
     component InputBox: Rectangle {
         Layout.fillWidth: true
-        implicitHeight: 28
+        implicitHeight: Theme.sp(28)
         radius: Theme.r(4)
         color: Theme.bgCard
         border.color: Theme.border
@@ -315,9 +315,9 @@ ColumnLayout {
                 delegate: Rectangle {
                     property bool isCur: root.setupProvider === modelData.id
                     implicitWidth: pText.implicitWidth + 14
-                    implicitHeight: 22
+                    implicitHeight: Theme.sp(22)
                     radius: Theme.r(4)
-                    color: isCur ? Theme.accent : Theme.bgCard
+                    color: isCur ? Theme.controlFill("selected") : Theme.controlFill("normal")
                     border.color: modelData.ready ? Theme.accentGreen : Theme.border
                     border.width: 1
                     Text {
@@ -328,7 +328,7 @@ ColumnLayout {
                         textFormat: Text.PlainText
                         font.pixelSize: Theme.px(9)
                         font.weight: parent.isCur ? Font.Bold : Font.Normal
-                        color: parent.isCur ? Theme.bgBase : Theme.textMain
+                        color: parent.isCur ? Theme.selectedText : Theme.textMain
                     }
                     MouseArea {
                         anchors.fill: parent

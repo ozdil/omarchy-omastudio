@@ -55,7 +55,7 @@ The window and the engine are separate processes. The window never decodes a pho
 | **Qt 6** (6.12, Qt Quick / QML) | The interface: panels, the viewport, scopes, dialogs | GPU-drawn interface with native Wayland support and fractional scaling, right-to-left layout and the Qt Linguist translation system | LGPL-3.0 |
 | **cxx-qt** (0.10) | Connects Rust and Qt: the host types `Process`, `Host` and the control socket are Rust objects used from QML | Safe bindings in both directions without hand-written C++ | MIT / Apache-2.0 |
 | **Qt Wayland** | Runs the window as a native Wayland client (app id `omastudio`) | Omarchy runs Hyprland on Wayland; Hyprland window rules can match the app id | LGPL-3.0 |
-| **zenity** | File and folder dialogs | Small, available on every Omarchy install | LGPL-2.1+ |
+| **xdg-desktop-portal** | File and folder dialogs | The desktop's own chooser, in its theme; part of every Omarchy install | LGPL-2.1+ |
 
 The QML files are compiled into the binary as Qt resources, so an installed version never mixes with stray interface files.
 

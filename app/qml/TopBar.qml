@@ -4,10 +4,22 @@ import QtQuick.Controls
 
 Rectangle {
     id: root
-    implicitHeight: 46
+    implicitHeight: Theme.sp(38)
     color: Theme.bgDark
-    border.color: Theme.border
-    border.width: 1
+
+    // The bar's lower edge only; the window frame is Hyprland's
+    Rectangle { anchors.left: parent.left; anchors.right: parent.right; anchors.bottom: parent.bottom; height: 1; color: Theme.border }
+
+    // Labels give way to icons when the bar is narrower than it needs: a tiled
+    // window, a scrolling-layout column or a large Omarchy font
+    readonly property real requiredWidth: brand.implicitWidth + (root.hasPhoto ? photoBadge.implicitWidth + culling.implicitWidth : 0)
+        + aiButton.fullWidth + essentialsBtn.fullWidth + proBtn.fullWidth + undoBtn.implicitWidth + redoBtn.implicitWidth
+        + splitBtn.fullWidth + cropBtn.fullWidth + langMenu.implicitWidth + infoBtn.implicitWidth
+        + openBtn.fullWidth + exportBtn.fullWidth + 14 * bar.spacing + bar.anchors.leftMargin + bar.anchors.rightMargin
+    readonly property bool compact: root.requiredWidth > root.width
+    // Still too narrow with icons: the app name goes too
+    readonly property bool tight: root.compact && (root.requiredWidth - splitBtn.fullWidth - cropBtn.fullWidth - openBtn.fullWidth
+        - aiButton.fullWidth + 4 * root.height) > root.width
 
     property bool isProMode: false
     property bool isSplitView: false
@@ -66,54 +78,51 @@ Rectangle {
 
 
     RowLayout {
+        id: bar
         anchors.fill: parent
-        anchors.leftMargin: 12
-        anchors.rightMargin: 12
-        spacing: 12
+        anchors.leftMargin: Theme.sp(10)
+        anchors.rightMargin: Theme.sp(10)
+        spacing: Theme.sp(6)
 
-        // App Emblem & Title (Theme-reactive)
+        // App emblem and name
         RowLayout {
-            spacing: 8
-            Rectangle {
-                width: 26
-                height: 26
-                radius: Theme.r(6)
-                color: Qt.rgba(Theme.accent.r, Theme.accent.g, Theme.accent.b, 0.15)
-                border.color: Theme.accent
-                border.width: 1
-
-                Text {
-                    anchors.centerIn: parent
-                    text: Theme.iconCamera
-                    font.family: Theme.iconFont
-                    font.pixelSize: Theme.px(13)
-                    color: Theme.accent
-                }
+            id: brand
+            spacing: Theme.sp(7)
+            Text {
+                text: Theme.iconCamera
+                font.family: Theme.iconFont
+                font.pixelSize: Theme.px(13)
+                color: Theme.accent
+                Accessible.ignored: true
             }
             Text {
+                visible: !root.tight
                 font.family: Theme.fontFamily
                 text: "OmaStudio"
                 textFormat: Text.PlainText
-                font.pixelSize: Theme.px(14)
-                font.weight: Font.Black
+                font.pixelSize: Theme.px(12)
+                font.weight: Font.Bold
                 color: Theme.textMain
             }
         }
 
-        // Active filename badge
+        // Active filename
         Rectangle {
-            visible: root.activePhotoName !== ""
-            // Cap the badge so long camera filenames don't push the toolbar off-screen
-            implicitWidth: Math.min(photoNameText.implicitWidth + 14, 280)
-            implicitHeight: 22
-            radius: Theme.r(4)
-            color: Theme.bgCard
-            border.color: Theme.border
+            id: photoBadge
+            visible: root.hasPhoto
+            // Capped so long camera filenames don't push the toolbar off-screen
+            implicitWidth: Math.min(photoNameText.implicitWidth + Theme.sp(14), Theme.px(220))
+            Layout.maximumWidth: implicitWidth
+            Layout.minimumWidth: Theme.px(60)
+            Layout.fillWidth: true
+            implicitHeight: Theme.sp(20)
+            radius: Theme.radiusSm
+            color: Theme.controlFill("normal")
             Text {
                 id: photoNameText
                 anchors.fill: parent
-                anchors.leftMargin: 7
-                anchors.rightMargin: 7
+                anchors.leftMargin: Theme.sp(7)
+                anchors.rightMargin: Theme.sp(7)
                 elide: Text.ElideMiddle
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
@@ -121,118 +130,72 @@ Rectangle {
                 textFormat: Text.PlainText
                 font.pixelSize: Theme.px(10)
                 font.family: Theme.monoFont
-                color: Theme.textMain
+                color: Theme.textMuted
             }
         }
 
-        // Lightroom Studio Culling & Rating Widget (P / X Flags & 1-5 Stars)
+        // Culling: pick and reject flags, 1-5 stars
         RowLayout {
-            visible: root.activePhotoName !== ""
-            spacing: 3
+            id: culling
+            visible: root.hasPhoto
+            spacing: Theme.sp(2)
 
-            // Pick Flag (P)
-            Rectangle {
-                implicitWidth: 20
-                implicitHeight: 20
-                radius: Theme.r(3)
-                color: root.photoFlag === "pick" ? Theme.accentGreen : Theme.bgCard
-                border.color: root.photoFlag === "pick" ? Theme.accentGreen : Theme.border
-                Text {
-                    anchors.centerIn: parent
-                    text: Theme.iconFlag
-                    font.family: Theme.iconFont
-                    font.pixelSize: Theme.px(10)
-                    color: root.photoFlag === "pick" ? Theme.onAccent : Theme.textMuted
-                }
-                MouseArea {
-                    anchors.fill: parent
-                    cursorShape: Qt.PointingHandCursor
-                    hoverEnabled: true
-                    ToolTip.visible: containsMouse
-                    ToolTip.delay: 500
-                    ToolTip.text: qsTr("Pick (P)")
-                    Accessible.role: Accessible.Button
-                    Accessible.name: qsTr("Pick")
-                    onClicked: root.flagChanged(root.photoFlag === "pick" ? "none" : "pick")
-                }
-                KeyFocus {
-                    name: qsTr("Pick")
-                    checkable: true
-                    checked: root.photoFlag === "pick"
-                    onActivated: root.flagChanged(root.photoFlag === "pick" ? "none" : "pick")
-                }
+            OmaButton {
+                implicitHeight: Theme.sp(20)
+                implicitWidth: implicitHeight
+                padding: 0
+                icon: Theme.iconFlag
+                checkable: true
+                checked: root.photoFlag === "pick"
+                text: qsTr("Pick")
+                showLabel: false
+                tip: qsTr("Pick (P)")
+                onClicked: root.flagChanged(root.photoFlag === "pick" ? "none" : "pick")
+            }
+            OmaButton {
+                implicitHeight: Theme.sp(20)
+                implicitWidth: implicitHeight
+                padding: 0
+                icon: Theme.iconBan
+                checkable: true
+                checked: root.photoFlag === "reject"
+                danger: root.photoFlag === "reject"
+                text: qsTr("Reject")
+                showLabel: false
+                tip: qsTr("Reject (X)")
+                onClicked: root.flagChanged(root.photoFlag === "reject" ? "none" : "reject")
             }
 
-            // Reject Flag (X)
-            Rectangle {
-                implicitWidth: 20
-                implicitHeight: 20
-                radius: Theme.r(3)
-                color: root.photoFlag === "reject" ? Theme.highlightClip : Theme.bgCard
-                border.color: root.photoFlag === "reject" ? Theme.highlightClip : Theme.border
-                Text {
-                    anchors.centerIn: parent
-                    text: Theme.iconBan
-                    font.family: Theme.iconFont
-                    font.pixelSize: Theme.px(10)
-                    color: root.photoFlag === "reject" ? "#ffffff" : Theme.textMuted
-                }
-                MouseArea {
-                    anchors.fill: parent
-                    cursorShape: Qt.PointingHandCursor
-                    hoverEnabled: true
-                    ToolTip.visible: containsMouse
-                    ToolTip.delay: 500
-                    ToolTip.text: qsTr("Reject (X)")
-                    Accessible.role: Accessible.Button
-                    Accessible.name: qsTr("Reject")
-                    onClicked: root.flagChanged(root.photoFlag === "reject" ? "none" : "reject")
-                }
-                KeyFocus {
-                    name: qsTr("Reject")
-                    checkable: true
-                    checked: root.photoFlag === "reject"
-                    onActivated: root.flagChanged(root.photoFlag === "reject" ? "none" : "reject")
-                }
-            }
-
-            // Star Rating (1..5)
-            RowLayout {
-                spacing: 2
+            Row {
+                spacing: 0
                 Repeater {
                     model: 5
-                    Rectangle {
-                        implicitWidth: 16
-                        implicitHeight: 20
-                        radius: Theme.r(2)
-                        color: "transparent"
+                    Item {
+                        width: Theme.px(15)
+                        height: Theme.sp(20)
                         Text {
                             anchors.centerIn: parent
-                            text: (index + 1) <= root.photoRating ? Theme.iconStar : Theme.iconStarEmpty
+                            text: (index + 1) <= root.photoRating || starMouse.containsMouse ? Theme.iconStar : Theme.iconStarEmpty
                             font.family: Theme.iconFont
                             font.pixelSize: Theme.px(11)
-                            color: (index + 1) <= root.photoRating ? Theme.accentYellow : Theme.textDim
+                            color: (index + 1) <= root.photoRating ? Theme.accentYellow
+                                 : starMouse.containsMouse ? Theme.textMuted : Theme.textDim
                         }
                         MouseArea {
+                            id: starMouse
                             anchors.fill: parent
                             cursorShape: Qt.PointingHandCursor
                             hoverEnabled: true
                             ToolTip.visible: containsMouse
                             ToolTip.delay: 500
                             ToolTip.text: qsTr("%n star(s)", "", index + 1)
-                            onClicked: {
-                                var newR = (root.photoRating === (index + 1)) ? 0 : (index + 1);
-                                root.ratingChanged(newR);
-                            }
+                            onClicked: root.ratingChanged(root.photoRating === (index + 1) ? 0 : (index + 1))
                         }
                         KeyFocus {
                             name: qsTr("%n star(s)", "", index + 1)
                             checkable: true
                             checked: root.photoRating === index + 1
-                            onActivated: {
-                                var newR = (root.photoRating === (index + 1)) ? 0 : (index + 1);
-                                root.ratingChanged(newR);
-                            }
+                            onActivated: root.ratingChanged(root.photoRating === (index + 1) ? 0 : (index + 1))
                         }
                     }
                 }
@@ -243,42 +206,57 @@ Rectangle {
 
         // Local AI: Omarchy's default agent, else Ollama or LM Studio on this machine
         Rectangle {
-            implicitWidth: aiRow.implicitWidth + 16
-            implicitHeight: 28
+            id: aiButton
+            readonly property string state_: aiMouse.pressed ? "pressed" : root.aiChatOpen ? "selected"
+                : aiMouse.containsMouse ? "hover-cursor" : aiKey.activeFocus ? "focus" : "normal"
+            readonly property real fullWidth: aiIcon.implicitWidth + aiName.implicitWidth + aiRow.spacing + Theme.sp(16)
+            implicitWidth: aiRow.implicitWidth + Theme.sp(16)
+            implicitHeight: Theme.sp(24)
             radius: Theme.radiusSm
-            color: root.aiChatOpen ? Theme.bgCardHover : (aiMouse.containsMouse ? Theme.bgCardHover : Theme.bgCard)
-            border.color: root.aiChatOpen ? Theme.accent : (root.aiConnected ? Theme.accentGreen : Theme.border)
+            color: Theme.controlFill(state_)
+            border.width: Theme.controlBorderWidth(state_)
+            border.color: Theme.controlBorder(state_)
 
             RowLayout {
                 id: aiRow
                 anchors.centerIn: parent
-                spacing: 6
-                Text {
-                    visible: !root.aiConnected || root.aiBusy
-                    text: Theme.iconAi
-                    font.family: Theme.iconFont
-                    font.pixelSize: Theme.px(10)
-                    color: Theme.textMuted
-                }
-                Rectangle {
-                    visible: root.aiConnected && !root.aiBusy
-                    implicitWidth: Math.max(implicitHeight, monogram.implicitWidth + Theme.px(8))
-                    implicitHeight: Theme.px(18)
-                    radius: implicitHeight / 2
-                    color: root.aiBadgeColor
-
+                spacing: Theme.sp(6)
+                Item {
+                    id: aiIcon
+                    implicitWidth: root.aiConnected && !root.aiBusy ? badge.implicitWidth : glyph.implicitWidth
+                    implicitHeight: Theme.px(16)
                     Text {
-                        id: monogram
+                        id: glyph
                         anchors.centerIn: parent
-                        text: root.aiMonogram
-                        textFormat: Text.PlainText
-                        font.family: Theme.fontFamily
-                        font.pixelSize: Theme.px(9)
-                        font.weight: Font.Bold
-                        color: Theme.bgBase
+                        visible: !root.aiConnected || root.aiBusy
+                        text: Theme.iconAi
+                        font.family: Theme.iconFont
+                        font.pixelSize: Theme.px(10)
+                        color: Theme.textMuted
+                    }
+                    Rectangle {
+                        id: badge
+                        anchors.centerIn: parent
+                        visible: root.aiConnected && !root.aiBusy
+                        implicitWidth: Math.max(implicitHeight, monogram.implicitWidth + Theme.px(8))
+                        implicitHeight: Theme.px(16)
+                        radius: implicitHeight / 2
+                        color: root.aiBadgeColor
+                        Text {
+                            id: monogram
+                            anchors.centerIn: parent
+                            text: root.aiMonogram
+                            textFormat: Text.PlainText
+                            font.family: Theme.fontFamily
+                            font.pixelSize: Theme.px(9)
+                            font.weight: Font.Bold
+                            color: Theme.contrast(root.aiBadgeColor, "#ffffff") >= Theme.contrast(root.aiBadgeColor, "#0b0c10") ? "#ffffff" : "#0b0c10"
+                        }
                     }
                 }
                 Text {
+                    id: aiName
+                    visible: !root.compact
                     font.family: Theme.fontFamily
                     text: root.aiBusy ? qsTr("Connecting…")
                         : root.aiConnected ? root.aiLabel : qsTr("Connect local AI")
@@ -287,7 +265,7 @@ Rectangle {
                     Layout.maximumWidth: Theme.px(180)
                     font.pixelSize: Theme.px(10)
                     font.weight: Font.DemiBold
-                    color: root.aiConnected ? Theme.textMain : Theme.textMuted
+                    color: root.aiChatOpen ? Theme.selectedText : root.aiConnected ? Theme.textMain : Theme.textMuted
                 }
             }
 
@@ -303,387 +281,118 @@ Rectangle {
                 ToolTip.text: root.aiConnected ? (root.aiChatOpen ? qsTr("Connected: %1. Click to close the chat.").arg(root.aiLabel)
                                                                     : qsTr("Connected: %1. Click to open the chat.").arg(root.aiLabel))
                                                : qsTr("Use Omarchy's default AI agent, or Ollama or LM Studio on this computer")
-                Accessible.role: Accessible.Button
-                Accessible.name: root.aiConnected ? qsTr("AI chat") : qsTr("Connect local AI")
             }
             KeyFocus {
+                id: aiKey
                 name: root.aiConnected ? qsTr("AI chat") : qsTr("Connect local AI")
+                checkable: root.aiConnected
+                checked: root.aiChatOpen
                 onActivated: root.aiConnected ? root.toggleAiChat() : root.connectLocalAi()
             }
         }
 
-        // Mode Switcher: Essentials vs Pro Studio
-        Rectangle {
-            implicitWidth: Theme.px(170)
-            implicitHeight: 28
-            radius: Theme.radiusSm
-            color: Theme.bgCard
-            border.color: Theme.border
-
-            RowLayout {
-                anchors.fill: parent
-                spacing: 0
-
-                Rectangle {
-                    Layout.fillWidth: true
-                    Layout.fillHeight: true
-                    radius: Theme.radiusSm
-                    color: !root.isProMode ? Theme.accent : "transparent"
-
-                    RowLayout {
-                        anchors.centerIn: parent
-                        spacing: 6
-                        Text {
-                            text: Theme.iconImage
-                            font.family: Theme.iconFont
-                            font.pixelSize: Theme.px(10)
-                            color: !root.isProMode ? Theme.bgBase : Theme.textMuted
-                        }
-                        Text {
-                            font.family: Theme.fontFamily
-                            text: qsTr("Essentials")
-                            textFormat: Text.PlainText
-                            font.pixelSize: Theme.px(10)
-                            font.weight: Font.DemiBold
-                            color: !root.isProMode ? Theme.bgBase : Theme.textMuted
-                        }
-                    }
-
-                    MouseArea {
-                        anchors.fill: parent
-                        cursorShape: Qt.PointingHandCursor
-                        hoverEnabled: true
-                        onClicked: if (root.isProMode) root.toggleMode()
-                        ToolTip.visible: containsMouse
-                        ToolTip.delay: 500
-                        ToolTip.text: qsTr("Essentials: white balance, tone, presence, film simulation, presets and LUT")
-                        Accessible.role: Accessible.Button
-                        Accessible.name: qsTr("Essentials")
-                    }
-                    KeyFocus {
-                        name: qsTr("Essentials")
-                        checkable: true
-                        checked: !root.isProMode
-                        onActivated: if (root.isProMode) root.toggleMode()
-                    }
-                }
-
-                Rectangle {
-                    Layout.fillWidth: true
-                    Layout.fillHeight: true
-                    radius: Theme.radiusSm
-                    color: root.isProMode ? Theme.accent : "transparent"
-
-                    RowLayout {
-                        anchors.centerIn: parent
-                        spacing: 6
-                        Text {
-                            text: Theme.iconSliders
-                            font.family: Theme.iconFont
-                            font.pixelSize: Theme.px(10)
-                            color: root.isProMode ? Theme.bgBase : Theme.textMuted
-                        }
-                        Text {
-                            font.family: Theme.fontFamily
-                            text: qsTr("Pro")
-                            textFormat: Text.PlainText
-                            font.pixelSize: Theme.px(10)
-                            font.weight: Font.DemiBold
-                            color: root.isProMode ? Theme.bgBase : Theme.textMuted
-                        }
-                    }
-
-                    MouseArea {
-                        anchors.fill: parent
-                        cursorShape: Qt.PointingHandCursor
-                        hoverEnabled: true
-                        onClicked: if (!root.isProMode) root.toggleMode()
-                        ToolTip.visible: containsMouse
-                        ToolTip.delay: 500
-                        ToolTip.text: qsTr("Pro adds tone curve, colour mixer, colour grading, detail, grain, colour management and masks")
-                        Accessible.role: Accessible.Button
-                        Accessible.name: qsTr("Pro")
-                    }
-                    KeyFocus {
-                        name: qsTr("Pro")
-                        checkable: true
-                        checked: root.isProMode
-                        onActivated: if (!root.isProMode) root.toggleMode()
-                    }
-                }
-            }
-        }
-
-        // Undo / Redo Quick Actions
-        RowLayout {
-            enabled: root.hasPhoto
-            opacity: enabled ? 1 : 0.4
-            spacing: 2
-
-            Rectangle {
-                implicitWidth: 28
-                implicitHeight: 28
-                radius: Theme.r(4)
-                color: undoMouse.containsMouse ? Theme.bgCardHover : Theme.bgCard
-                border.color: Theme.border
-
-                Text {
-                    anchors.centerIn: parent
-                    text: Theme.iconUndo
-                    font.family: Theme.iconFont
-                    font.pixelSize: Theme.px(11)
-                    color: undoMouse.containsMouse ? Theme.accent : Theme.textMain
-                }
-
-                MouseArea {
-                    id: undoMouse
-                    anchors.fill: parent
-                    cursorShape: Qt.PointingHandCursor
-                    hoverEnabled: true
-                    ToolTip.visible: containsMouse
-                    ToolTip.delay: 500
-                    ToolTip.text: qsTr("Undo (Ctrl+Z)")
-                    Accessible.role: Accessible.Button
-                    Accessible.name: qsTr("Undo")
-                    onClicked: root.undoClicked()
-                }
-                KeyFocus {
-                    name: qsTr("Undo")
-                    onActivated: root.undoClicked()
-                }
-            }
-
-            Rectangle {
-                implicitWidth: 28
-                implicitHeight: 28
-                radius: Theme.r(4)
-                color: redoMouse.containsMouse ? Theme.bgCardHover : Theme.bgCard
-                border.color: Theme.border
-
-                Text {
-                    anchors.centerIn: parent
-                    text: Theme.iconRedo
-                    font.family: Theme.iconFont
-                    font.pixelSize: Theme.px(11)
-                    color: redoMouse.containsMouse ? Theme.accent : Theme.textMain
-                }
-
-                MouseArea {
-                    id: redoMouse
-                    anchors.fill: parent
-                    cursorShape: Qt.PointingHandCursor
-                    hoverEnabled: true
-                    ToolTip.visible: containsMouse
-                    ToolTip.delay: 500
-                    ToolTip.text: qsTr("Redo (Ctrl+Shift+Z)")
-                    Accessible.role: Accessible.Button
-                    Accessible.name: qsTr("Redo")
-                    onClicked: root.redoClicked()
-                }
-                KeyFocus {
-                    name: qsTr("Redo")
-                    onActivated: root.redoClicked()
-                }
-            }
-        }
-
-        // Before / After Split Button (A | B)
-        Rectangle {
-            enabled: root.hasPhoto
-            opacity: enabled ? 1 : 0.4
-            implicitWidth: Math.max(70, label374.implicitWidth + 16)
-            implicitHeight: 28
-            radius: Theme.radiusSm
-            color: root.isSplitView ? Qt.rgba(Theme.accent.r, Theme.accent.g, Theme.accent.b, 0.25) : Theme.bgCard
-            border.color: root.isSplitView ? Theme.accent : Theme.border
-
-            RowLayout {
-                id: label374
-                anchors.centerIn: parent
-                spacing: 5
-                Text {
-                    text: Theme.iconSplit
-                    font.family: Theme.iconFont
-                    font.pixelSize: Theme.px(10)
-                    color: root.isSplitView ? Theme.accent : Theme.textMuted
-                }
-                Text {
-                    font.family: Theme.fontFamily
-                    text: "A | B"
-                    textFormat: Text.PlainText
-                    font.pixelSize: Theme.px(10)
-                    font.weight: Font.DemiBold
-                    color: root.isSplitView ? Theme.accent : Theme.textMain
-                }
-            }
-
-            MouseArea {
-                anchors.fill: parent
-                cursorShape: Qt.PointingHandCursor
-                onClicked: root.toggleSplit()
-            }
-            KeyFocus {
-                name: qsTr("Before and after")
+        // Mode switcher: Essentials or Pro
+        Row {
+            spacing: Theme.sp(2)
+            OmaButton {
+                id: essentialsBtn
+                icon: Theme.iconImage
+                text: qsTr("Essentials")
+                showLabel: !root.tight
                 checkable: true
-                checked: root.isSplitView
-                onActivated: root.toggleSplit()
+                checked: !root.isProMode
+                tip: qsTr("Essentials: white balance, tone, presence, film simulation, presets and LUT")
+                onClicked: if (root.isProMode) root.toggleMode()
+            }
+            OmaButton {
+                id: proBtn
+                icon: Theme.iconSliders
+                text: qsTr("Pro")
+                showLabel: !root.tight
+                checkable: true
+                checked: root.isProMode
+                tip: qsTr("Pro adds tone curve, colour mixer, colour grading, detail, grain, colour management and masks")
+                onClicked: if (!root.isProMode) root.toggleMode()
             }
         }
 
-        // Crop Mode Toggle Button (C)
-        Rectangle {
+        // Undo and redo
+        Row {
             enabled: root.hasPhoto
-            opacity: enabled ? 1 : 0.4
-            implicitWidth: Math.max(68, label409.implicitWidth + 16)
-            implicitHeight: 28
-            radius: Theme.radiusSm
-            color: root.isCropMode ? Qt.rgba(Theme.accent.r, Theme.accent.g, Theme.accent.b, 0.25) : Theme.bgCard
-            border.color: root.isCropMode ? Theme.accent : Theme.border
+            spacing: Theme.sp(2)
+            OmaButton {
+                id: undoBtn
+                icon: Theme.iconUndo
+                text: qsTr("Undo")
+                showLabel: false
+                tip: qsTr("Undo (Ctrl+Z)")
+                onClicked: root.undoClicked()
+            }
+            OmaButton {
+                id: redoBtn
+                icon: Theme.iconRedo
+                text: qsTr("Redo")
+                showLabel: false
+                tip: qsTr("Redo (Ctrl+Shift+Z)")
+                onClicked: root.redoClicked()
+            }
+        }
 
-            RowLayout {
-                id: label409
-                anchors.centerIn: parent
-                spacing: 5
-                Text {
-                    text: Theme.iconCrop
-                    font.family: Theme.iconFont
-                    font.pixelSize: Theme.px(10)
-                    color: root.isCropMode ? Theme.accent : Theme.textMuted
-                }
-                Text {
-                    font.family: Theme.fontFamily
-                    text: qsTr("Crop")
-                    textFormat: Text.PlainText
-                    font.pixelSize: Theme.px(10)
-                    font.weight: Font.DemiBold
-                    color: root.isCropMode ? Theme.accent : Theme.textMain
-                }
-            }
+        // Before / after split
+        OmaButton {
+            id: splitBtn
+            enabled: root.hasPhoto
+            icon: Theme.iconSplit
+            text: "A | B"
+            accessibleName: qsTr("Before and after")
+            showLabel: !root.compact
+            checkable: true
+            checked: root.isSplitView
+            tip: qsTr("Before and after")
+            onClicked: root.toggleSplit()
+        }
 
-            MouseArea {
-                anchors.fill: parent
-                cursorShape: Qt.PointingHandCursor
-                onClicked: root.toggleCrop()
-            }
-            KeyFocus {
-                name: qsTr("Crop")
-                checkable: true
-                checked: root.isCropMode
-                onActivated: root.toggleCrop()
-            }
+        // Crop mode (C)
+        OmaButton {
+            id: cropBtn
+            enabled: root.hasPhoto
+            icon: Theme.iconCrop
+            text: qsTr("Crop")
+            showLabel: !root.compact
+            checkable: true
+            checked: root.isCropMode
+            onClicked: root.toggleCrop()
         }
 
         Item { Layout.fillWidth: true }
 
-        LanguageMenu {}
+        LanguageMenu { id: langMenu }
 
-        // Omarchy Studio Info & About Button
-        Rectangle {
-            implicitWidth: Math.max(32, label513.implicitWidth + 16)
-            implicitHeight: 28
-            radius: Theme.radiusSm
-            color: mouseInfo.containsMouse ? Theme.bgCardHover : Theme.bgCard
-            border.color: mouseInfo.containsMouse ? Theme.accent : Theme.border
-            border.width: 1
-
-            Text {
-                id: label513
-                anchors.centerIn: parent
-                text: Theme.iconInfo
-                font.family: Theme.iconFont
-                font.pixelSize: Theme.px(13)
-                color: mouseInfo.containsMouse ? Theme.accent : Theme.textDim
-            }
-
-            MouseArea {
-                id: mouseInfo
-                anchors.fill: parent
-                hoverEnabled: true
-                cursorShape: Qt.PointingHandCursor
-                onClicked: root.infoClicked()
-            }
-            KeyFocus {
-                name: qsTr("About OmaStudio")
-                onActivated: root.infoClicked()
-            }
+        OmaButton {
+            id: infoBtn
+            icon: Theme.iconInfo
+            text: qsTr("About OmaStudio")
+            showLabel: false
+            onClicked: root.infoClicked()
         }
 
-
-        // Open Photo Button
-        Rectangle {
-            implicitWidth: Math.max(92, label541.implicitWidth + 16)
-            implicitHeight: 28
-            radius: Theme.radiusSm
-            color: Theme.bgCard
-            border.color: Theme.border
-
-            RowLayout {
-                id: label541
-                anchors.centerIn: parent
-                spacing: 6
-                Text {
-                    text: Theme.iconFolder
-                    font.family: Theme.iconFont
-                    font.pixelSize: Theme.px(11)
-                    color: Theme.textMain
-                }
-                Text {
-                    font.family: Theme.fontFamily
-                    text: qsTr("Open RAW")
-                    textFormat: Text.PlainText
-                    font.pixelSize: Theme.px(11)
-                    font.weight: Font.Medium
-                    color: Theme.textMain
-                }
-            }
-
-            MouseArea {
-                anchors.fill: parent
-                cursorShape: Qt.PointingHandCursor
-                onClicked: root.openFileClicked()
-            }
-            KeyFocus {
-                name: qsTr("Open photo")
-                onActivated: root.openFileClicked()
-            }
+        OmaButton {
+            id: openBtn
+            icon: Theme.iconFolder
+            text: qsTr("Open RAW")
+            accessibleName: qsTr("Open photo")
+            showLabel: !root.compact
+            onClicked: root.openFileClicked()
         }
 
-        // Export Button (Bright CTA)
-        Rectangle {
-            implicitWidth: Math.max(88, label576.implicitWidth + 16)
-            implicitHeight: 28
-            radius: Theme.radiusSm
-            color: Theme.accent
-
-            RowLayout {
-                id: label576
-                anchors.centerIn: parent
-                spacing: 6
-                Text {
-                    text: Theme.iconExport
-                    font.family: Theme.iconFont
-                    font.pixelSize: Theme.px(11)
-                    color: Theme.bgBase
-                }
-                Text {
-                    font.family: Theme.fontFamily
-                    text: qsTr("Export")
-                    textFormat: Text.PlainText
-                    font.pixelSize: Theme.px(11)
-                    font.weight: Font.Bold
-                    color: Theme.bgBase
-                }
-            }
-
-            MouseArea {
-                anchors.fill: parent
-                cursorShape: Qt.PointingHandCursor
-                onClicked: root.exportClicked()
-            }
-            KeyFocus {
-                name: qsTr("Export")
-                onActivated: root.exportClicked()
-            }
+        // The main action
+        OmaButton {
+            id: exportBtn
+            primary: true
+            icon: Theme.iconExport
+            text: qsTr("Export")
+            showLabel: !root.tight
+            onClicked: root.exportClicked()
         }
     }
 }

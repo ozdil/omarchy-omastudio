@@ -38,7 +38,7 @@ Rectangle {
         property color labelColor: Theme.accent
         signal clicked()
         implicitWidth: sbText.implicitWidth + 12
-        implicitHeight: 20
+        implicitHeight: Theme.sp(20)
         radius: Theme.r(4)
         color: sbMouse.containsMouse ? Theme.bgCardHover : Theme.bgCard
         border.color: Theme.border
@@ -173,7 +173,7 @@ Rectangle {
                     implicitHeight: Theme.px(20)
                     radius: Theme.r(3)
                     color: Theme.bgCard
-                    border.color: nameInput.activeFocus ? Theme.accent : Theme.border
+                    border.color: nameInput.activeFocus ? Theme.accent : Theme.controlBorder("normal")
                     border.width: 1
 
                     BoundedTextInput {

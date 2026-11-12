@@ -50,7 +50,7 @@ OmaStudio follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html):
 | MINOR (`3.2.0`) | New features or behaviour that keep working with what came before |
 | PATCH (`3.1.1`) | Bug fixes only |
 
-The version is stated in `Cargo.toml`, `app/Cargo.toml` (with `Cargo.lock`), `PKGBUILD` and `manifest.json`. The binaries and the About dialog read it from Cargo at build time. `tools/release/check-version.py` checks that all of them agree.
+The version is stated in `Cargo.toml`, `app/Cargo.toml` (with `Cargo.lock`), `PKGBUILD` and `omarchy-plugin/manifest.json`. The binaries and the About dialog read it from Cargo at build time. `tools/release/check-version.py` checks that all of them agree.
 
 To release version X.Y.Z:
 

@@ -55,7 +55,7 @@ Ikkuna ja moottori ovat erillisiä prosesseja. Ikkuna ei koskaan pura kuvaa itse
 | **Qt 6** (6.12, Qt Quick / QML) | Käyttöliittymä: paneelit, katselualue, mittarit, valintaikkunat | GPU:lla piirretty käyttöliittymä natiivilla Wayland-tuella ja murtolukuskaalauksella, oikealta vasemmalle -asettelu ja Qt Linguist -käännösjärjestelmä | LGPL-3.0 |
 | **cxx-qt** (0.10) | Yhdistää Rustin ja Qt:n: isäntätyypit `Process`, `Host` ja ohjaussoketti ovat Rust-olioita, joita käytetään QML:stä | Turvalliset sidokset molempiin suuntiin ilman käsin kirjoitettua C++:aa | MIT / Apache-2.0 |
 | **Qt Wayland** | Ajaa ikkunan natiivina Wayland-asiakkaana (app id `omastudio`) | Omarchy ajaa Hyprlandia Waylandilla; Hyprlandin ikkunasäännöt voivat kohdistua app id:hen | LGPL-3.0 |
-| **zenity** | Tiedosto- ja kansioikkunat | Pieni ja saatavilla jokaisessa Omarchy-asennuksessa | LGPL-2.1+ |
+| **xdg-desktop-portal** | Tiedosto- ja kansioikkunat | Pieni ja saatavilla jokaisessa Omarchy-asennuksessa | LGPL-2.1+ |
 
 QML-tiedostot käännetään binääriin Qt-resursseina, joten asennettu versio ei koskaan sekoitu irrallisiin käyttöliittymätiedostoihin.
 

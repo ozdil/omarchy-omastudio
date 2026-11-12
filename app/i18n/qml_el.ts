@@ -1502,6 +1502,14 @@
 </context>
 <context>
     <name>MainWindow</name>
+    <message>
+        <source>Export finished</source>
+        <translation>Η εξαγωγή ολοκληρώθηκε</translation>
+    </message>
+    <message>
+        <source>Open folder</source>
+        <translation>Άνοιγμα φακέλου</translation>
+    </message>
     <message numerus="yes">
         <source>Rating: %n star(s)</source>
         <translation>

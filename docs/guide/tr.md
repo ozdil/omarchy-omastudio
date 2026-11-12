@@ -43,7 +43,7 @@ Bu komut `omastudio`, `omastudio-app`, `omastudio-engine`, ICC profillerini, mas
 
 **Sürüm arşivinden.** [Sürümler sayfasından](https://github.com/ozdil/omarchy-omastudio/releases) `omastudio-<sürüm>-x86_64-linux.tar.gz` dosyasını indirin, `checksums.txt` ile doğrulayın, açın ve `bin/*` içeriğini `~/.local/bin` klasörüne, `share/omastudio` klasörünü `~/.local/share/omastudio` konumuna kopyalayın.
 
-**Gerekli paketler:** `libraw` 0.22 veya üstü, `lcms2`, 6.12 veya üstü `qt6-base`, `qt6-declarative`, `qt6-wayland` ve `qt6-svg`, dosya pencereleri için `zenity`.
+**Gerekli paketler:** `libraw` 0.22 veya üstü, `lcms2`, 6.12 veya üstü `qt6-base`, `qt6-declarative`, `qt6-wayland` ve `qt6-svg`, dosya pencereleri için `xdg-desktop-portal`.
 
 **İsteğe bağlı paketler:**
 

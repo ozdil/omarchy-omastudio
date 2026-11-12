@@ -32,6 +32,8 @@ QtObject {
     property color accentYellow: "#e0af68"
 
     property color accentRed: "#f7768e"
+    // Omarchy's urgent role: the theme's red (colour 1); destructive actions use it
+    property color urgent: "#f7768e"
     property color accentBlue: "#7aa2f7"
 
     // Clipping warnings keep their meaning in every theme: red highlights, blue shadows
@@ -39,8 +41,9 @@ QtObject {
     property color highlightClip: "#ff3b4e"
     property color shadowClip: "#388bfd"
 
-    // Text and icons drawn on the accent colour
-    readonly property color onAccent: luminance(accent) > 0.45 ? "#0b0c10" : "#ffffff"
+    // Text and icons drawn on the accent colour: whichever of white and near-black
+    // contrasts more (WCAG), so a mid blue such as Catppuccin Latte's gets white text
+    readonly property color onAccent: contrast(accent, "#ffffff") >= contrast(accent, "#0b0c10") ? "#ffffff" : "#0b0c10"
 
     // Corners follow Hyprland's decoration:rounding (Omarchy: square)
     property int rounding: 6
@@ -50,9 +53,13 @@ QtObject {
     readonly property int radiusLg: r(14)
 
     // Typography: Omarchy's font (omarchy-font-set writes fontconfig's monospace) and
-    // its shell base size; the layout was designed at a 10 px base
+    // the shell's [font] base-size, from the theme's shell.toml with the user's
+    // ~/.config/omarchy/shell.toml on top; the layout was designed at a 10 px base
     property string systemFont: "JetBrainsMono Nerd Font"
-    property real fontBase: 10
+    readonly property real fontBase: {
+        var v = parseFloat(shellValue("font", "base-size", "12"));
+        return isFinite(v) && v >= 6 && v <= 32 ? v : 12;
+    }
     readonly property real fontScale: Math.max(0.8, Math.min(2.0, fontBase / 10))
     // Nothing is drawn below 10 px at the base size: smaller text is not legible
     function px(n) { return Math.round(Math.max(n, 10) * root.fontScale); }
@@ -60,6 +67,137 @@ QtObject {
     readonly property string monoFont: systemFont
     // Nerd Font glyphs stay available whatever the text font is
     readonly property string iconFont: "JetBrainsMono Nerd Font"
+
+    // Spacing and control sizes follow the shell's [spacing] scale and, as in the
+    // Omarchy shell, grow with the font unless the theme says otherwise
+    readonly property real spacingScale: {
+        var v = parseFloat(shellValue("spacing", "scale", "1"));
+        var withFont = String(shellValue("spacing", "scale-with-font", "true")) !== "false";
+        var base = isFinite(v) && v > 0 ? Math.min(v, 3) : 1;
+        return withFont ? base * root.fontScale : base;
+    }
+    function sp(n) { return Math.round(n * root.spacingScale); }
+
+    // Motion: off with Hyprland's animations (omarchy toggle animations, Appearance >
+    // Animations); every transition then takes 0 ms and spinners stop
+    property bool reduceMotion: false
+    function duration(ms) { return root.reduceMotion ? 0 : ms; }
+
+    // Omarchy shell tokens: the theme's shell.toml, overridden key by key by the
+    // user's ~/.config/omarchy/shell.toml (which survives theme switches)
+    property var shellTheme: ({})
+    property var shellUser: ({})
+    function shellValue(section, key, fallback) {
+        var k = section + "." + key;
+        if (root.shellUser[k] !== undefined) return root.shellUser[k];
+        if (root.shellTheme[k] !== undefined) return root.shellTheme[k];
+        return fallback;
+    }
+    function shellNumber(section, key, fallback) {
+        var v = parseFloat(shellValue(section, key, ""));
+        return isFinite(v) ? v : fallback;
+    }
+    // "section.key" -> value; strings lose their quotes, comments are dropped
+    function parseShellToml(raw) {
+        var out = {};
+        var section = "";
+        var lines = String(raw || "").split("\n");
+        for (var i = 0; i < lines.length && i < 4000; i++) {
+            var line = lines[i].trim();
+            if (!line || line.charAt(0) === "#") continue;
+            var head = line.match(/^\[([^\]]+)\]$/);
+            if (head) { section = head[1].trim(); continue; }
+            var m = line.match(/^([A-Za-z0-9_-]+)\s*=\s*(.+)$/);
+            if (!m || section === "") continue;
+            var v = m[2].trim();
+            var q = v.match(/^"([^"]*)"|^'([^']*)'/);
+            if (q) v = q[1] !== undefined ? q[1] : q[2];
+            else v = v.replace(/\s+#.*$/, "").trim();
+            out[section + "." + m[1]] = v;
+        }
+        return out;
+    }
+    // A colour token: "#rrggbb[aa]", Hyprland's "rgba(rrggbbaa)"/"rgb(rrggbb)", the
+    // first stop of a gradient, or a reference such as "hyprland.active-border"
+    function shellColor(v, fallback, depth) {
+        var s = String(v === undefined || v === null ? "" : v).trim();
+        if (s === "") return fallback;
+        var first = s.split(/\s+/)[0];
+        var hex = first.match(/^#([0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})$/);
+        if (hex) return first;
+        var hypr = first.match(/^rgba?\(([0-9A-Fa-f]{6})([0-9A-Fa-f]{2})?\)$/);
+        if (hypr) return "#" + (hypr[2] || "") + hypr[1];
+        var ref = first.match(/^([A-Za-z0-9_-]+)\.([A-Za-z0-9_-]+)$/);
+        if (ref && (depth || 0) < 3) return shellColor(shellValue(ref[1], ref[2], ""), fallback, (depth || 0) + 1);
+        return fallback;
+    }
+    function withAlpha(c, a) {
+        var k = Qt.lighter(c, 1.0);
+        return Qt.rgba(k.r, k.g, k.b, Math.max(0, Math.min(1, a)));
+    }
+
+    // Interactive controls, styled like the Omarchy shell's own ([controls]): a state
+    // is "normal", "hover-cursor", "focus", "selected" or "pressed"; colours default to
+    // the foreground, at the shell's default strengths
+    readonly property var controlDefaults: ({
+        "normal": { fill: 0.04, border: 0.4, width: 1 },
+        "hover-cursor": { fill: 0.08, border: 0.25, width: 1 },
+        "focus": { fill: 0.08, border: 0.25, width: 1 },
+        "selected": { fill: 0.18, border: 1.0, width: 0 },
+        "pressed": { fill: 0.22, border: 0.25, width: 1 }
+    })
+    function controlColor(state) {
+        return shellColor(shellValue("controls", state + "-color", ""), root.textMain);
+    }
+    function controlFill(state) {
+        var d = root.controlDefaults[state] || root.controlDefaults["normal"];
+        var a = state === "pressed" ? shellNumber("controls", "pressed-fill-alpha", d.fill)
+                                    : shellNumber("controls", state + "-fill-alpha", d.fill);
+        return withAlpha(controlColor(state === "pressed" ? "selected" : state), a);
+    }
+    function controlBorder(state) {
+        var d = root.controlDefaults[state] || root.controlDefaults["normal"];
+        var s = state === "pressed" ? "hover-cursor" : state;
+        var c = shellColor(shellValue("controls", s + "-border", ""), controlColor(s));
+        return withAlpha(c, shellNumber("controls", s + "-border-alpha", d.border));
+    }
+    function controlBorderWidth(state) {
+        var d = root.controlDefaults[state] || root.controlDefaults["normal"];
+        var s = state === "pressed" ? "hover-cursor" : state;
+        return Math.max(0, Math.min(4, Math.round(shellNumber("controls", s + "-border-width", d.width))));
+    }
+    // Selected text in Omarchy's menus and launcher (the accent by default)
+    readonly property color selectedText: shellColor(shellValue("menu", "selected-text", ""), root.accent)
+    readonly property real selectionAlpha: shellNumber("controls", "selection-fill-alpha", 0.35)
+
+    // Surfaces the shell themes separately: popups (menus, dropdowns), tooltips and
+    // dialogs (polkit)
+    readonly property color popupBg: withAlpha(shellColor(shellValue("popups", "background", ""), root.bgBase),
+                                               shellNumber("popups", "background-alpha", 1))
+    readonly property color popupText: shellColor(shellValue("popups", "text", ""), root.textMain)
+    readonly property color popupBorder: withAlpha(shellColor(shellValue("popups", "border", ""), root.borderLight),
+                                                   shellNumber("popups", "border-alpha", 1))
+    readonly property color tooltipBg: withAlpha(shellColor(shellValue("tooltip", "background", ""), root.bgBase),
+                                                 shellNumber("tooltip", "background-alpha", 0.97))
+    readonly property color tooltipText: shellColor(shellValue("tooltip", "text", ""), root.textMain)
+    readonly property color tooltipBorder: withAlpha(shellColor(shellValue("tooltip", "border", ""), root.border),
+                                                     shellNumber("tooltip", "border-alpha", 1))
+    readonly property color dialogBorder: withAlpha(shellColor(shellValue("polkit", "border", ""), root.popupBorder),
+                                                    shellNumber("polkit", "border-alpha", 1))
+    // Menus and pickers, as Omarchy's menu draws them: a faint row highlight and the
+    // accent for the chosen row's text
+    readonly property color menuBg: withAlpha(shellColor(shellValue("menu", "background", ""), root.popupBg),
+                                              shellNumber("menu", "background-alpha", 1))
+    readonly property color menuText: shellColor(shellValue("menu", "text", ""), root.textMain)
+    readonly property color menuBorder: withAlpha(shellColor(shellValue("menu", "border", ""), root.popupBorder),
+                                                  shellNumber("menu", "border-alpha", 1))
+    readonly property color menuSelectedBg: withAlpha(shellColor(shellValue("menu", "selected-background", ""), root.textMain),
+                                                      shellNumber("menu", "selected-background-alpha", 0.08))
+    readonly property color scrim: withAlpha(shellColor(shellValue("menu", "scrim", ""), root.bgDark),
+                                             shellNumber("menu", "scrim-alpha", 0.5))
+    // Hyprland's active border colour: the frame of the focused window in this theme
+    readonly property color activeBorder: shellColor(shellValue("hyprland", "active-border", ""), root.accent)
+    readonly property int borderWidth: 1
 
     // Themeable Monochrome Icons (Unicode Font Glyph Standard)
     readonly property string iconCamera: "\uf030"
@@ -190,6 +328,7 @@ QtObject {
         root.accentGreen = dict["bright_green"] || dict["green"] || dict["color2"] || dict["color10"] || "#9ece6a";
         root.accentOrange = dict["orange"] || dict["color9"] || dict["color1"] || "#ff9e64";
         root.accentCyan = dict["bright_cyan"] || dict["cyan"] || dict["color6"] || dict["color14"] || "#7dcfff";
+        root.urgent = dict["red"] || dict["color1"] || "#f7768e";
         root.accentYellow = dict["bright_yellow"] || dict["yellow"] || dict["color3"] || dict["color11"] || "#e0af68";
         root.ensureContrast();
     }
@@ -197,8 +336,9 @@ QtObject {
     function reloadTheme() {
         lastLoadedRaw = "";
         root.fontProc.running = true;
-        root.roundingProc.running = true;
+        root.refreshHyprland();
         root.shellToml.reload();
+        root.userShellToml.reload();
         root.themeNameFile.reload();
         root.colorsFile.reload();
         return "Theme reloaded: " + root.themeName;
@@ -226,27 +366,22 @@ QtObject {
         onLoadFailed: if (!root.fontProc.running) root.fontProc.running = true
     }
 
-    // Base text size of the Omarchy shell ([font] base-size in the theme's shell.toml)
+    // The Omarchy shell's tokens: the theme's shell.toml and the user's own
     property WatchedFile shellToml: WatchedFile {
         path: root.omarchyStateDir + "/theme/shell.toml"
         watch: true
-        onLoaded: {
-            var section = "";
-            var lines = String(text).split("\n");
-            for (var i = 0; i < lines.length; i++) {
-                var line = lines[i].trim();
-                var head = line.match(/^\[([^\]]+)\]$/);
-                if (head) { section = head[1].trim(); continue; }
-                var m = line.match(/^base-size\s*=\s*([0-9.]+)/);
-                if (section === "font" && m) {
-                    var v = parseFloat(m[1]);
-                    if (v >= 8 && v <= 24) root.fontBase = v;
-                }
-            }
-        }
+        onLoaded: root.shellTheme = root.parseShellToml(text)
+        onLoadFailed: root.shellTheme = ({})
+    }
+    property WatchedFile userShellToml: WatchedFile {
+        path: root.homeDir + "/.config/omarchy/shell.toml"
+        watch: true
+        onLoaded: root.shellUser = root.parseShellToml(text)
+        onLoadFailed: root.shellUser = ({})
     }
 
-    // Hyprland's corner rounding
+    // Hyprland's corner rounding and animations, read again whenever Hyprland applies
+    // a new configuration (Appearance > Window Corners / Animations, theme switches)
     property Process roundingProc: Process {
         command: ["hyprctl", "-j", "getoption", "decoration:rounding"]
         onFinished: function(exitCode, output) {
@@ -258,11 +393,29 @@ QtObject {
             }
         }
     }
+    property Process animationsProc: Process {
+        command: ["hyprctl", "-j", "getoption", "animations:enabled"]
+        onFinished: function(exitCode, output) {
+            try {
+                var o = JSON.parse(String(output));
+                if (exitCode === 0) root.reduceMotion = o.bool === false || o.int === 0;
+            } catch (e) {
+                // Not running under Hyprland: animations stay on
+            }
+        }
+    }
+    function refreshHyprland() {
+        if (!root.roundingProc.running) root.roundingProc.running = true;
+        if (!root.animationsProc.running) root.animationsProc.running = true;
+    }
+    property HyprlandEvents hyprland: HyprlandEvents {
+        onConfigReloaded: root.refreshHyprland()
+    }
 
     Component.onCompleted: {
         root.ensureContrast();
         root.fontProc.running = true;
-        root.roundingProc.running = true;
+        root.refreshHyprland();
     }
 
     // theme.name: the active theme's identifier (both files are polled by path, so

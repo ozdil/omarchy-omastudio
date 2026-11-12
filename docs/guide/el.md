@@ -43,7 +43,7 @@ makepkg -si
 
 **Από αρχείο έκδοσης.** Κατεβάστε το `omastudio-<έκδοση>-x86_64-linux.tar.gz` από τη [σελίδα εκδόσεων](https://github.com/ozdil/omarchy-omastudio/releases), ελέγξτε το με το `checksums.txt`, αποσυμπιέστε το και αντιγράψτε το `bin/*` στο `~/.local/bin` και το `share/omastudio` στο `~/.local/share/omastudio`.
 
-**Απαιτούμενα πακέτα:** `libraw` 0.22 ή νεότερο, `lcms2`, `qt6-base`, `qt6-declarative`, `qt6-wayland` και `qt6-svg` 6.12 ή νεότερα, καθώς και `zenity` για τα παράθυρα αρχείων.
+**Απαιτούμενα πακέτα:** `libraw` 0.22 ή νεότερο, `lcms2`, `qt6-base`, `qt6-declarative`, `qt6-wayland` και `qt6-svg` 6.12 ή νεότερα, καθώς και `xdg-desktop-portal` για τα παράθυρα αρχείων.
 
 **Προαιρετικά πακέτα:**
 

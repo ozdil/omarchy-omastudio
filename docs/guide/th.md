@@ -43,7 +43,7 @@ makepkg -si
 
 **จากไฟล์รีลีส** ดาวน์โหลด `omastudio-<version>-x86_64-linux.tar.gz` จาก[หน้ารีลีส](https://github.com/ozdil/omarchy-omastudio/releases) ตรวจสอบกับ `checksums.txt` แตกไฟล์ แล้วคัดลอก `bin/*` ไปที่ `~/.local/bin` และ `share/omastudio` ไปที่ `~/.local/share/omastudio`
 
-**แพ็กเกจที่จำเป็น:** `libraw` 0.22 ขึ้นไป, `lcms2`, `qt6-base`, `qt6-declarative`, `qt6-wayland` และ `qt6-svg` 6.12 ขึ้นไป และ `zenity` สำหรับหน้าต่างเลือกไฟล์
+**แพ็กเกจที่จำเป็น:** `libraw` 0.22 ขึ้นไป, `lcms2`, `qt6-base`, `qt6-declarative`, `qt6-wayland` และ `qt6-svg` 6.12 ขึ้นไป และ `xdg-desktop-portal` สำหรับหน้าต่างเลือกไฟล์
 
 **แพ็กเกจเสริม:**
 

@@ -1,4 +1,5 @@
 //! Interface language: the choice stored in `~/.config/omastudio/language`, else the
+//! language picked in Omarchy (Setup > Language, `omarchy language <code>`), else the
 //! system locale, matched against the translations compiled into the binary.
 
 use std::io::Read;
@@ -13,12 +14,44 @@ pub fn available() -> impl Iterator<Item = &'static str> {
     AVAILABLE.split(',').filter(|c| !c.is_empty())
 }
 
-fn config_file() -> Option<PathBuf> {
-    let base = std::env::var_os("XDG_CONFIG_HOME")
+fn config_dir() -> Option<PathBuf> {
+    std::env::var_os("XDG_CONFIG_HOME")
         .filter(|v| !v.is_empty())
         .map(PathBuf::from)
-        .or_else(|| std::env::var_os("HOME").filter(|v| !v.is_empty()).map(|h| PathBuf::from(h).join(".config")))?;
-    Some(base.join("omastudio").join("language"))
+        .or_else(|| std::env::var_os("HOME").filter(|v| !v.is_empty()).map(|h| PathBuf::from(h).join(".config")))
+}
+
+fn config_file() -> Option<PathBuf> {
+    Some(config_dir()?.join("omastudio").join("language"))
+}
+
+/// Where Omarchy keeps the desktop language: `OMARCHY_LANGUAGE_FILE`, else
+/// `$XDG_CONFIG_HOME/omarchy/language` (the same lookup as `omarchy-language`).
+pub fn omarchy_file() -> Option<PathBuf> {
+    if let Some(p) = std::env::var_os("OMARCHY_LANGUAGE_FILE").filter(|v| !v.is_empty()) {
+        return Some(PathBuf::from(p));
+    }
+    Some(config_dir()?.join("omarchy").join("language"))
+}
+
+/// The language picked in Omarchy, when it has a translation here. The file holds one
+/// code from `omarchy language list` ("tr", "pt-BR", "zh-TW", "no").
+pub fn omarchy() -> Option<String> {
+    let path = omarchy_file()?;
+    let ok = std::fs::metadata(&path).is_ok_and(|m| m.is_file() && m.len() <= MAX_BYTES);
+    if !ok {
+        return None;
+    }
+    let mut text = String::new();
+    std::fs::File::open(&path).and_then(|f| f.take(MAX_BYTES).read_to_string(&mut text)).ok()?;
+    omarchy_code(&text)
+}
+
+fn omarchy_code(text: &str) -> Option<String> {
+    let code = text.lines().next()?.trim();
+    // Omarchy names Norwegian Bokmål "no"; the translation here is "nb"
+    let code = if code == "no" { "nb" } else { code };
+    best_match(code)
 }
 
 /// The language the user picked in the application ("" when it follows the system).
@@ -57,11 +90,15 @@ pub fn store(code: &str) -> std::io::Result<()> {
     std::fs::rename(&tmp, &path)
 }
 
-/// The system language: the usual locale variables, else the locale Omarchy (or
-/// localectl) configured in `~/.config/locale.conf` or `/etc/locale.conf`, for
+/// The system language: Omarchy's own language setting, which the desktop applies at
+/// once while LANG only follows at the next login; else the usual locale variables,
+/// else the locale configured in `~/.config/locale.conf` or `/etc/locale.conf`, for
 /// sessions started without LANG. The launcher passes the user's own locale as
 /// `OMASTUDIO_SYSTEM_LANG`, since it runs the application under a fixed C locale.
 pub fn system() -> String {
+    if let Some(code) = omarchy() {
+        return code;
+    }
     let vars = ["OMASTUDIO_SYSTEM_LANG", "LANGUAGE", "LC_ALL", "LC_MESSAGES", "LANG"];
     for var in vars {
         let Ok(value) = std::env::var(var) else { continue };
@@ -159,6 +196,17 @@ mod tests {
         assert_eq!(locale_from_conf("LANG=\"de_DE.UTF-8\"\nLC_MESSAGES=fr_FR.UTF-8\n").as_deref(), Some("fr"));
         assert_eq!(locale_from_conf("LANG=C.UTF-8\n"), None);
         assert_eq!(locale_from_conf("# nothing\n"), None);
+    }
+
+    #[test]
+    fn reads_omarchy_language_codes() {
+        assert_eq!(omarchy_code("tr\n").as_deref(), Some("tr"));
+        assert_eq!(omarchy_code("pt-BR").as_deref(), Some("pt_BR"));
+        assert_eq!(omarchy_code("zh-TW\n").as_deref(), Some("zh_TW"));
+        assert_eq!(omarchy_code("es-MX").as_deref(), Some("es"));
+        assert_eq!(omarchy_code("no").as_deref(), Some("nb"));
+        assert_eq!(omarchy_code(""), None);
+        assert_eq!(omarchy_code("sw"), None);
     }
 
     #[test]

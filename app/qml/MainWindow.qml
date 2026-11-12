@@ -1,6 +1,8 @@
 import QtQuick
 import QtQuick.Layouts
+import QtQuick.Window
 import QtQuick.Controls
+import QtQuick.Dialogs
 import OmaStudio.Host
 
 Rectangle {
@@ -48,6 +50,12 @@ Rectangle {
     property string cloudUploadAccount: ""
     property int cloudUploaded: 0
     property bool showLeftPanel: true
+    // A narrow window (tiled beside another, a scrolling-layout column) keeps the
+    // photo large: the left panel steps aside and the inspector narrows
+    readonly property bool leftPanelFits: root.width >= Theme.px(780)
+    readonly property bool leftPanelShown: root.showLeftPanel && root.leftPanelFits
+    readonly property real leftPanelWidth: Math.round(Math.min(Theme.px(280), root.width * 0.24))
+    readonly property real rightPanelWidth: Math.round(Math.max(Math.min(Theme.px(320), root.width * 0.32), Math.min(Theme.px(260), root.width * 0.45)))
 
     property bool showRightPanel: true
     // Same lists as RAW_EXTENSIONS and RASTER_EXTENSIONS in the engine
@@ -1175,6 +1183,9 @@ Rectangle {
                     root.uploadExported(exported);
                     root.showToast(qsTr("Batch export: %1 succeeded, %2 failed").arg(data.succeeded).arg(data.failed),
                                    data.failed > 0 ? Theme.highlightClip : Theme.accentGreen);
+                    root.notifyDesktop(qsTr("Export finished"),
+                                       qsTr("Batch export: %1 succeeded, %2 failed").arg(data.succeeded).arg(data.failed),
+                                       exported.length > 0 ? exported[0] : "");
                 }
             }
         } catch(e) {
@@ -1360,17 +1371,18 @@ Rectangle {
     }
 
     // Process: File picker
-    Process {
+    // File chooser: the desktop's own (xdg-desktop-portal on Omarchy), opening in the
+    // folder the filmstrip shows
+    FileDialog {
         id: openFileProc
-        command: ["zenity", "--file-selection", "--title=" + qsTr("Open photo"),
-                  "--file-filter=" + qsTr("Photos") + " | " + root.globs(root.rawExtensions.concat(root.imageExtensions)),
-                  "--file-filter=" + qsTr("RAW") + " | " + root.globs(root.rawExtensions),
-                  "--file-filter=" + qsTr("Images") + " | " + root.globs(root.imageExtensions)]
-        onFinished: function(exitCode, output) {
-            var p = String(output || "").trim();
-            if (exitCode === 0 && p.length > 0) {
-                root.loadPhoto(p);
-            }
+        title: qsTr("Open photo")
+        currentFolder: Host.folderUrl(filmstrip.currentFolder)
+        nameFilters: [qsTr("Photos") + " (" + root.globs(root.rawExtensions.concat(root.imageExtensions)) + ")",
+                      qsTr("RAW") + " (" + root.globs(root.rawExtensions) + ")",
+                      qsTr("Images") + " (" + root.globs(root.imageExtensions) + ")"]
+        onAccepted: {
+            var p = Host.localPath(selectedFile);
+            if (p.length > 0) root.loadPhoto(p);
         }
     }
 
@@ -1390,6 +1402,7 @@ Rectangle {
                     exportDialog.exportStatusIsError = false;
                     exportDialog.exportStatusText = qsTr("Saved to %1").arg(resp.data.exported_path);
                     root.uploadExported([resp.data.exported_path]);
+                    root.notifyDesktop(qsTr("Export finished"), String(resp.data.exported_path).split("/").pop(), resp.data.exported_path);
                 } else {
                     exportDialog.exportStatusIsError = true;
                     exportDialog.exportStatusText = resp.error || qsTr("Export failed");
@@ -1397,6 +1410,33 @@ Rectangle {
             } catch(e) {
                 exportDialog.exportStatusIsError = true;
                 exportDialog.exportStatusText = qsTr("Export finished without a result");
+            }
+        }
+    }
+
+    // A desktop notification for work that finishes while OmaStudio is in the
+    // background (another workspace, another window focused): Omarchy's own
+    // notification card with a button that opens the folder, else notify-send
+    function notifyDesktop(title, body, path) {
+        if (Window.window && Window.window.active) return;
+        var dir = String(path || "");
+        dir = dir.lastIndexOf("/") > 0 ? dir.substring(0, dir.lastIndexOf("/")) : "";
+        var cmd = ["omarchy-notification-send", "--app-name", "OmaStudio", "-g", "󰄄", String(title), String(body || "")];
+        if (dir !== "") cmd = cmd.concat(["--action", qsTr("Open folder"), "xdg-open", dir]);
+        desktopNotifyProc.fallback = ["notify-send", "--app-name=OmaStudio", "--icon=omastudio", String(title), String(body || "")];
+        desktopNotifyProc.command = cmd;
+        desktopNotifyProc.running = true;
+    }
+    Process {
+        id: desktopNotifyProc
+        property var fallback: []
+        onFinished: function(exitCode, output) {
+            // Not on Omarchy (no omarchy-notification-send): the freedesktop one
+            if (exitCode !== 0 && desktopNotifyProc.fallback.length > 0) {
+                var next = desktopNotifyProc.fallback;
+                desktopNotifyProc.fallback = [];
+                desktopNotifyProc.command = next;
+                desktopNotifyProc.running = true;
             }
         }
     }
@@ -1580,7 +1620,7 @@ Rectangle {
     }
     Shortcut {
         sequences: [StandardKey.Open]
-        onActivated: openFileProc.running = true
+        onActivated: openFileProc.open()
     }
     Shortcut {
         sequence: "Ctrl+0"
@@ -2168,7 +2208,7 @@ Rectangle {
             onToggleAiChat: root.aiChatOpen = !root.aiChatOpen
             onUndoClicked: root.undo()
             onRedoClicked: root.redo()
-            onOpenFileClicked: openFileProc.running = true
+            onOpenFileClicked: openFileProc.open()
             onToggleSplit: {
                 root.isSplitView = !root.isSplitView;
                 requestRender();
@@ -2198,14 +2238,14 @@ Rectangle {
 
             // LEFT PANEL: NAVIGATOR & HISTOGRAM & METADATA (Lightroom Studio Layout)
             Rectangle {
-                visible: root.showLeftPanel
-                implicitWidth: root.showLeftPanel ? Theme.px(280) : 0
+                visible: root.leftPanelShown
+                implicitWidth: root.leftPanelShown ? root.leftPanelWidth : 0
                 Layout.minimumWidth: implicitWidth
                 Layout.preferredWidth: implicitWidth
                 Layout.fillHeight: true
                 color: Theme.bgBase
                 border.color: Theme.border
-                border.width: root.showLeftPanel ? 1 : 0
+                border.width: root.leftPanelShown ? 1 : 0
 
                 ScrollView {
                     anchors.fill: parent
@@ -2352,7 +2392,7 @@ Rectangle {
                 Rectangle {
                     id: gradeStrip
                     Layout.fillWidth: true
-                    implicitHeight: 32
+                    implicitHeight: Theme.sp(32)
                     color: Theme.bgDark
                     border.color: Theme.border
                     border.width: 1
@@ -2381,7 +2421,7 @@ Rectangle {
                         Rectangle {
                             visible: root.softProof
                             implicitWidth: proofBadge.implicitWidth + 14
-                            implicitHeight: 20
+                            implicitHeight: Theme.sp(20)
                             radius: Theme.r(4)
                             color: Qt.rgba(Theme.accentYellow.r, Theme.accentYellow.g, Theme.accentYellow.b, 0.15)
                             border.color: Theme.accentYellow
@@ -2508,7 +2548,7 @@ Rectangle {
             // RIGHT ADJUSTMENT INSPECTOR (Dedicated Pure Tone & Color Controls)
             Rectangle {
                 visible: root.showRightPanel
-                implicitWidth: root.showRightPanel ? Theme.px(320) : 0
+                implicitWidth: root.showRightPanel ? root.rightPanelWidth : 0
                 Layout.minimumWidth: implicitWidth
                 Layout.preferredWidth: implicitWidth
                 Layout.fillHeight: true
@@ -2611,7 +2651,7 @@ Rectangle {
 
                             Rectangle {
                                 Layout.fillWidth: true
-                                implicitHeight: 28
+                                implicitHeight: Theme.sp(28)
                                 radius: Theme.radiusSm
                                 color: copyBtnMouse.containsMouse ? Theme.bgCardHover : Theme.bgCard
                                 border.color: Theme.border
@@ -2639,7 +2679,7 @@ Rectangle {
 
                             Rectangle {
                                 Layout.fillWidth: true
-                                implicitHeight: 28
+                                implicitHeight: Theme.sp(28)
                                 radius: Theme.radiusSm
                                 color: pasteBtnMouse.containsMouse ? Theme.bgCardHover : Theme.bgCard
                                 border.color: Theme.border
@@ -2668,7 +2708,7 @@ Rectangle {
                             Rectangle {
                                 // Wide enough for the longest translation of Reset
                                 implicitWidth: Math.max(70, resetBtnText.implicitWidth + 16)
-                                implicitHeight: 28
+                                implicitHeight: Theme.sp(28)
                                 radius: Theme.radiusSm
                                 color: resetBtnMouse.containsMouse ? Theme.bgCardHover : Theme.bgCard
                                 border.color: Theme.border
@@ -2705,7 +2745,7 @@ Rectangle {
                                 ]
                                 delegate: Rectangle {
                                     Layout.fillWidth: true
-                                    implicitHeight: 28
+                                    implicitHeight: Theme.sp(28)
                                     radius: Theme.radiusSm
                                     opacity: root.activePhotoPath !== "" ? 1.0 : 0.4
                                     color: xmpBtnMouse.containsMouse ? Theme.bgCardHover : Theme.bgCard
@@ -3608,7 +3648,7 @@ Rectangle {
             return gradeStrip.mapToItem(root, 0, gradeStrip.height + 8).y;
         }
         implicitWidth: Math.min(centerColumn.width - 32, toastContent.implicitWidth + 28)
-        implicitHeight: 32
+        implicitHeight: Theme.sp(32)
         radius: Theme.r(16)
         color: Theme.bgDark
         border.color: root.toastColor
@@ -3639,7 +3679,7 @@ Rectangle {
     Rectangle {
         visible: root.showExportModal
         anchors.fill: parent
-        color: Qt.rgba(0, 0, 0, 0.65)
+        color: Theme.scrim
         z: 100
 
         MouseArea {
@@ -3698,7 +3738,7 @@ Rectangle {
     Rectangle {
         visible: root.showCloudModal
         anchors.fill: parent
-        color: Qt.rgba(0, 0, 0, 0.65)
+        color: Theme.scrim
         z: 100
 
         MouseArea {
@@ -3759,7 +3799,7 @@ Rectangle {
     Rectangle {
         visible: root.showAboutModal
         anchors.fill: parent
-        color: Qt.rgba(0, 0, 0, 0.65)
+        color: Theme.scrim
         z: 101
 
         MouseArea {
@@ -3798,7 +3838,6 @@ Rectangle {
         if (listProc.running) listProc.running = false;
         if (cloudConnectProc.running) cloudConnectProc.running = false;
         if (cloudFetchProc.running) cloudFetchProc.running = false;
-        if (openFileProc.running) openFileProc.running = false;
     }
 
     AiChatPanel {

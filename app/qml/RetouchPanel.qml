@@ -50,7 +50,7 @@ ColumnLayout {
         property bool active: false
         signal clicked()
         implicitWidth: sbText.implicitWidth + 12
-        implicitHeight: 20
+        implicitHeight: Theme.sp(20)
         // Shrinks (the label elides) when a row's translations don't fit the panel,
         // instead of widening the panel past its edge
         Layout.fillWidth: true

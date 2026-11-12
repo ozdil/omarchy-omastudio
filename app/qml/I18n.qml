@@ -63,6 +63,15 @@ QtObject {
     // translation is in place before any component reports its first message
     Component.onCompleted: root.apply()
 
+    // Omarchy's language (Setup > Language) switches the desktop at once; following
+    // the system, the interface switches with it
+    property WatchedFile omarchyLanguage: WatchedFile {
+        path: Host.omarchyLanguageFile
+        watch: path !== ""
+        onLoaded: { Host.refreshSystemLanguage(); root.apply(); }
+        onLoadFailed: { Host.refreshSystemLanguage(); root.apply(); }
+    }
+
     // "" follows the system language again
     function setLanguage(code) {
         var saved = Host.setUiLanguage(code);

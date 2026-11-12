@@ -43,7 +43,7 @@ makepkg -si
 
 **通过发布包安装。** 从[发布页面](https://github.com/ozdil/omarchy-omastudio/releases)下载 `omastudio-<版本>-x86_64-linux.tar.gz`，用 `checksums.txt` 校验后解压，将 `bin/*` 复制到 `~/.local/bin`，将 `share/omastudio` 复制到 `~/.local/share/omastudio`。
 
-**必需的软件包：** `libraw` 0.22 或更高版本、`lcms2`、`qt6-base`、`qt6-declarative`、`qt6-wayland` 和 `qt6-svg` 6.12 或更高版本，以及用于文件对话框的 `zenity`。
+**必需的软件包：** `libraw` 0.22 或更高版本、`lcms2`、`qt6-base`、`qt6-declarative`、`qt6-wayland` 和 `qt6-svg` 6.12 或更高版本，以及用于文件对话框的 `xdg-desktop-portal`。
 
 **可选的软件包：**
 

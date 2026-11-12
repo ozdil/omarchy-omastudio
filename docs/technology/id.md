@@ -55,7 +55,7 @@ Jendela dan mesin adalah proses yang terpisah. Jendela tidak pernah mendekode fo
 | **Qt 6** (6.12, Qt Quick / QML) | Antarmuka: panel, area tampilan, alat ukur, dialog | Antarmuka yang digambar GPU dengan dukungan Wayland native dan penskalaan pecahan, tata letak kanan-ke-kiri, dan sistem terjemahan Qt Linguist | LGPL-3.0 |
 | **cxx-qt** (0.10) | Menghubungkan Rust dan Qt: tipe host `Process`, `Host`, dan soket kontrol adalah objek Rust yang dipakai dari QML | Binding yang aman ke dua arah tanpa C++ yang ditulis tangan | MIT / Apache-2.0 |
 | **Qt Wayland** | Menjalankan jendela sebagai klien Wayland native (app id `omastudio`) | Omarchy menjalankan Hyprland di Wayland; aturan jendela Hyprland dapat mencocokkan app id | LGPL-3.0 |
-| **zenity** | Dialog berkas dan folder | Kecil dan tersedia di setiap pemasangan Omarchy | LGPL-2.1+ |
+| **xdg-desktop-portal** | Dialog berkas dan folder | Kecil dan tersedia di setiap pemasangan Omarchy | LGPL-2.1+ |
 
 Berkas QML dikompilasi ke dalam biner sebagai resource Qt, sehingga versi yang terpasang tidak pernah tercampur dengan berkas antarmuka yang tercecer.
 

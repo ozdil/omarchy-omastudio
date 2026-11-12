@@ -76,7 +76,7 @@ fn main() {
     CxxQtBuilder::new_qml_module(QmlModule::new("OmaStudio.Host"))
         .qt_module("Gui")
         .qt_module("Quick")
-        .files(["src/host.rs", "src/process.rs", "src/watched_file.rs"])
+        .files(["src/host.rs", "src/hyprland.rs", "src/process.rs", "src/watched_file.rs"])
         .qrc_resources(QResources::new().resource(ui))
         .build();
 }

@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
+import QtQuick.Dialogs
 import OmaStudio.Host
 
 // Export window: file format, bit depth, size, colour, metadata, and on the right
@@ -12,7 +13,7 @@ Rectangle {
     height: Math.min(outer.implicitHeight + 2 * pad, parent ? parent.height - 32 : outer.implicitHeight + 2 * pad)
     radius: Theme.radiusLg
     color: Theme.bgSurface
-    border.color: Theme.borderLight
+    border.color: Theme.dialogBorder
     border.width: 1
 
     readonly property int pad: Theme.px(18)
@@ -30,12 +31,12 @@ Rectangle {
         return name;
     }
 
-    Process {
+    FolderDialog {
         id: folderPick
-        command: ["zenity", "--file-selection", "--directory", "--title=" + qsTr("Export folder")]
-        onFinished: function(exitCode, output) {
-            var p = String(output || "").trim();
-            if (exitCode === 0 && p.length > 0) root.localOutputDir = p;
+        title: qsTr("Export folder")
+        onAccepted: {
+            var p = Host.localPath(selectedFolder);
+            if (p.length > 0) root.localOutputDir = p;
         }
     }
     property string selectedFormat: "jpeg"
@@ -163,12 +164,20 @@ Rectangle {
                 required property var modelData
                 readonly property bool isCur: seg.current === modelData.id
                 Layout.fillWidth: true
+                Layout.minimumWidth: Theme.sp(28)
+                // Wide enough for its label while there is room; elided past that
+                implicitWidth: segText.implicitWidth + Theme.sp(12)
                 implicitHeight: Theme.px(26)
                 radius: Theme.radiusSm
-                color: isCur ? Qt.rgba(Theme.accent.r, Theme.accent.g, Theme.accent.b, 0.18) : (segMouse.containsMouse ? Theme.bgCardHover : Theme.bgCard)
-                border.color: isCur ? Theme.accent : Theme.border
+                color: isCur ? Theme.controlFill("selected") : (segMouse.containsMouse ? Theme.controlFill("hover-cursor") : Theme.controlFill("normal"))
+                border.color: isCur ? "transparent" : Theme.controlBorder("normal")
+                border.width: isCur ? 0 : Theme.controlBorderWidth("normal")
                 Text {
+                    id: segText
                     anchors.centerIn: parent
+                    width: Math.min(implicitWidth, parent.width - Theme.sp(6))
+                    horizontalAlignment: Text.AlignHCenter
+                    elide: Text.ElideRight
                     text: modelData.label
                     textFormat: Text.PlainText
                     font.family: Theme.fontFamily
@@ -290,8 +299,8 @@ Rectangle {
                                 Layout.fillWidth: true
                                 implicitHeight: Theme.px(42)
                                 radius: Theme.radiusSm
-                                color: isCur ? Qt.rgba(Theme.accent.r, Theme.accent.g, Theme.accent.b, 0.18) : (fmtMouse.containsMouse ? Theme.bgCardHover : Theme.bgCard)
-                                border.color: isCur ? Theme.accent : Theme.border
+                                color: isCur ? Theme.controlFill("selected") : (fmtMouse.containsMouse ? Theme.bgCardHover : Theme.bgCard)
+                                border.color: isCur ? "transparent" : Theme.controlBorder("normal")
                                 ColumnLayout {
                                     anchors.fill: parent
                                     anchors.margins: Theme.px(6)
@@ -398,8 +407,8 @@ Rectangle {
                                 Layout.fillWidth: true
                                 implicitHeight: Theme.px(38)
                                 radius: Theme.radiusSm
-                                color: isCur ? Qt.rgba(Theme.accent.r, Theme.accent.g, Theme.accent.b, 0.18) : (iccMouse.containsMouse ? Theme.bgCardHover : Theme.bgCard)
-                                border.color: isCur ? Theme.accent : Theme.border
+                                color: isCur ? Theme.controlFill("selected") : (iccMouse.containsMouse ? Theme.bgCardHover : Theme.bgCard)
+                                border.color: isCur ? "transparent" : Theme.controlBorder("normal")
                                 ColumnLayout {
                                     anchors.fill: parent
                                     anchors.margins: Theme.px(6)
@@ -528,7 +537,7 @@ Rectangle {
                         implicitHeight: Theme.px(30)
                         radius: Theme.radiusSm
                         color: Theme.bgCard
-                        border.color: folderInput.activeFocus ? Theme.accent : Theme.border
+                        border.color: folderInput.activeFocus ? Theme.accent : Theme.controlBorder("normal")
                         BoundedTextInput {
                             id: folderInput
                             anchors.fill: parent
@@ -562,7 +571,7 @@ Rectangle {
                             anchors.fill: parent
                             hoverEnabled: true
                             cursorShape: Qt.PointingHandCursor
-                            onClicked: if (!folderPick.running) folderPick.running = true
+                            onClicked: folderPick.open()
                         }
                     }
                     }
@@ -573,7 +582,7 @@ Rectangle {
                         implicitHeight: Theme.px(30)
                         radius: Theme.radiusSm
                         color: Theme.bgCard
-                        border.color: nameTagInput.activeFocus ? Theme.accent : Theme.border
+                        border.color: nameTagInput.activeFocus ? Theme.accent : Theme.controlBorder("normal")
                         BoundedTextInput {
                             id: nameTagInput
                             anchors.fill: parent
@@ -609,8 +618,8 @@ Rectangle {
                                 implicitWidth: upText.implicitWidth + Theme.px(16)
                                 implicitHeight: Theme.px(26)
                                 radius: Theme.radiusSm
-                                color: isCur ? Qt.rgba(Theme.accent.r, Theme.accent.g, Theme.accent.b, 0.18) : (upMouse.containsMouse ? Theme.bgCardHover : Theme.bgCard)
-                                border.color: isCur ? Theme.accent : Theme.border
+                                color: isCur ? Theme.controlFill("selected") : (upMouse.containsMouse ? Theme.bgCardHover : Theme.bgCard)
+                                border.color: isCur ? "transparent" : Theme.controlBorder("normal")
                                 Text {
                                     id: upText
                                     anchors.centerIn: parent

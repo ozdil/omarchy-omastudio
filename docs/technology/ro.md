@@ -55,7 +55,7 @@ Fereastra și motorul sunt procese separate. Fereastra nu decodează niciodată 
 | **Qt 6** (6.12, Qt Quick / QML) | Interfața: panourile, zona de vizualizare, instrumentele de măsură, dialogurile | Interfață desenată pe GPU, cu suport nativ Wayland și scalare fracționară, aranjare de la dreapta la stânga și sistemul de traducere Qt Linguist | LGPL-3.0 |
 | **cxx-qt** (0.10) | Leagă Rust și Qt: tipurile gazdă `Process`, `Host` și socketul de control sunt obiecte Rust folosite din QML | Legături sigure în ambele direcții, fără C++ scris de mână | MIT / Apache-2.0 |
 | **Qt Wayland** | Rulează fereastra ca client Wayland nativ (app id `omastudio`) | Omarchy rulează Hyprland pe Wayland; regulile de fereastră Hyprland pot ținti app id-ul | LGPL-3.0 |
-| **zenity** | Dialoguri de fișiere și dosare | Mic și disponibil în orice instalare Omarchy | LGPL-2.1+ |
+| **xdg-desktop-portal** | Dialoguri de fișiere și dosare | Mic și disponibil în orice instalare Omarchy | LGPL-2.1+ |
 
 Fișierele QML sunt compilate în binar ca resurse Qt, așa că o versiune instalată nu se amestecă niciodată cu fișiere de interfață rătăcite.
 

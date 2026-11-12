@@ -34,7 +34,7 @@ ColumnLayout {
         Rectangle {
             visible: !root.embedded
             implicitWidth: Math.max(46, label33.implicitWidth + 16)
-            implicitHeight: 18
+            implicitHeight: Theme.sp(18)
             radius: Theme.radiusSm
             color: resetPresetMouse.containsMouse ? Qt.rgba(Theme.accentMagenta.r, Theme.accentMagenta.g, Theme.accentMagenta.b, 0.2) : (root.activePreset !== "" ? Qt.rgba(Theme.accentMagenta.r, Theme.accentMagenta.g, Theme.accentMagenta.b, 0.1) : "transparent")
             border.color: root.activePreset !== "" ? Theme.accentMagenta : Theme.border
@@ -67,9 +67,9 @@ ColumnLayout {
     // AI Auto Quick Action
     Rectangle {
         Layout.fillWidth: true
-        implicitHeight: 32
+        implicitHeight: Theme.sp(32)
         radius: Theme.radiusSm
-        color: aiAutoMouse.containsMouse ? Qt.rgba(Theme.accent.r, Theme.accent.g, Theme.accent.b, 0.18) : Qt.rgba(Theme.accent.r, Theme.accent.g, Theme.accent.b, 0.08)
+        color: aiAutoMouse.containsMouse ? Theme.controlFill("selected") : Qt.rgba(Theme.accent.r, Theme.accent.g, Theme.accent.b, 0.08)
         border.color: aiAutoMouse.containsMouse ? Theme.accent : Qt.rgba(Theme.accent.r, Theme.accent.g, Theme.accent.b, 0.3)
         border.width: 1
 
@@ -137,7 +137,7 @@ ColumnLayout {
             model: parent.presets
             delegate: Rectangle {
                 Layout.fillWidth: true
-                implicitHeight: 34
+                implicitHeight: Theme.sp(34)
                 radius: Theme.radiusSm
                 color: root.activePreset === modelData.name
                        ? Qt.rgba(Theme.accent.r, Theme.accent.g, Theme.accent.b, 0.20)

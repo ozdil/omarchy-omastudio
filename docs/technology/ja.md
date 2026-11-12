@@ -55,7 +55,7 @@ graph TD
 | **Qt 6**（6.12、Qt Quick / QML） | インターフェース: パネル、ビューポート、計測表示、ダイアログ | GPU 描画のインターフェース、ネイティブ Wayland 対応と分数スケーリング、右から左へのレイアウト、Qt Linguist 翻訳システム | LGPL-3.0 |
 | **cxx-qt**（0.10） | Rust と Qt をつなぐ。ホストの型 `Process`、`Host` と制御ソケットは QML から使う Rust オブジェクト | 手書きの C++ なしで双方向に安全なバインディング | MIT / Apache-2.0 |
 | **Qt Wayland** | ウィンドウをネイティブ Wayland クライアント（app id `omastudio`）として実行 | Omarchy は Wayland 上で Hyprland を動かしており、Hyprland のウィンドウルールで app id を指定できる | LGPL-3.0 |
-| **zenity** | ファイルとフォルダーのダイアログ | 小さく、すべての Omarchy 環境に入っている | LGPL-2.1+ |
+| **xdg-desktop-portal** | ファイルとフォルダーのダイアログ | 小さく、すべての Omarchy 環境に入っている | LGPL-2.1+ |
 
 QML ファイルは Qt リソースとしてバイナリに組み込まれるため、インストール済みのバージョンに無関係なインターフェースファイルが混ざることはありません。
 

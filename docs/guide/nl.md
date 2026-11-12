@@ -43,7 +43,7 @@ Dit installeert `omastudio`, `omastudio-app`, `omastudio-engine`, de ICC-profiel
 
 **Vanuit een release-archief.** Download `omastudio-<versie>-x86_64-linux.tar.gz` van de [releasepagina](https://github.com/ozdil/omarchy-omastudio/releases), controleer het met `checksums.txt`, pak het uit en kopieer `bin/*` naar `~/.local/bin` en `share/omastudio` naar `~/.local/share/omastudio`.
 
-**Vereiste pakketten:** `libraw` 0.22 of nieuwer, `lcms2`, `qt6-base`, `qt6-declarative`, `qt6-wayland` en `qt6-svg` 6.12 of nieuwer, en `zenity` voor de bestandsdialogen.
+**Vereiste pakketten:** `libraw` 0.22 of nieuwer, `lcms2`, `qt6-base`, `qt6-declarative`, `qt6-wayland` en `qt6-svg` 6.12 of nieuwer, en `xdg-desktop-portal` voor de bestandsdialogen.
 
 **Optionele pakketten:**
 

@@ -77,7 +77,7 @@ ColumnLayout {
             model: 8
             delegate: Rectangle {
                 Layout.fillWidth: true
-                implicitHeight: 24
+                implicitHeight: Theme.sp(24)
                 radius: Theme.r(4)
                 color: root.activeChannel === index ? root.channelColors[index] : Theme.bgCard
                 border.color: root.channelColors[index]
@@ -120,7 +120,7 @@ ColumnLayout {
         // Reset Channel Button
         Rectangle {
             implicitWidth: resetChText.implicitWidth + 10
-            implicitHeight: 18
+            implicitHeight: Theme.sp(18)
             radius: Theme.r(4)
             color: resetChMouse.containsMouse ? Theme.bgCardHover : "transparent"
             border.color: Theme.border
@@ -149,7 +149,7 @@ ColumnLayout {
         // Reset All Channels Button
         Rectangle {
             implicitWidth: resetAllHslText.implicitWidth + 10
-            implicitHeight: 18
+            implicitHeight: Theme.sp(18)
             radius: Theme.r(4)
             color: resetAllHslMouse.containsMouse ? Theme.bgCardHover : "transparent"
             border.color: Theme.border

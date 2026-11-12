@@ -17,6 +17,7 @@ FilmGrainPanel 1.0 FilmGrainPanel.qml
 FilmSimulationPanel 1.0 FilmSimulationPanel.qml
 Filmstrip 1.0 Filmstrip.qml
 KeyFocus 1.0 KeyFocus.qml
+OmaButton 1.0 OmaButton.qml
 FujiPanel 1.0 FujiPanel.qml
 GradeVersionsBar 1.0 GradeVersionsBar.qml
 HistogramView 1.0 HistogramView.qml

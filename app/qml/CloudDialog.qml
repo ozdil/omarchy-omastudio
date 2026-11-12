@@ -13,7 +13,7 @@ Rectangle {
     height: Math.min(content.implicitHeight + 2 * pad, parent ? parent.height - 32 : content.implicitHeight + 2 * pad)
     radius: Theme.radiusLg
     color: Theme.bgSurface
-    border.color: Theme.borderLight
+    border.color: Theme.dialogBorder
     border.width: 1
     clip: true
 
@@ -89,7 +89,7 @@ Rectangle {
             font.family: Theme.fontFamily
             font.pixelSize: Theme.px(11)
             font.weight: btn.filled ? Font.DemiBold : Font.Normal
-            color: btn.filled ? Theme.onAccent : Theme.textMain
+            color: btn.filled ? Theme.selectedText : Theme.textMain
         }
         MouseArea {
             id: btnMouse
@@ -108,7 +108,7 @@ Rectangle {
         implicitHeight: Theme.px(28)
         radius: Theme.radiusSm
         color: Theme.bgCard
-        border.color: input.activeFocus ? Theme.accent : Theme.border
+        border.color: input.activeFocus ? Theme.accent : Theme.controlBorder("normal")
         BoundedTextInput {
             id: input
             anchors.fill: parent
@@ -350,7 +350,7 @@ Rectangle {
                         radius: Theme.radiusSm
                         opacity: available ? 1 : 0.6
                         color: provMouse.containsMouse && usable ? Theme.bgCardHover : Theme.bgCard
-                        border.color: provMouse.containsMouse && usable ? Theme.accent : Theme.border
+                        border.color: provMouse.containsMouse && usable ? Theme.accent : Theme.controlBorder("normal")
 
                         ColumnLayout {
                             anchors.centerIn: parent
