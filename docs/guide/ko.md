@@ -43,7 +43,7 @@ makepkg -si
 
 **릴리스 압축 파일로 설치.** [릴리스 페이지](https://github.com/ozdil/omarchy-omastudio/releases)에서 `omastudio-<버전>-x86_64-linux.tar.gz`를 내려받아 `checksums.txt`로 확인한 뒤 압축을 풀고, `bin/*`를 `~/.local/bin`에, `share/omastudio`를 `~/.local/share/omastudio`에 복사합니다.
 
-**필수 패키지:** `libraw` 0.22 이상, `lcms2`, `qt6-base`, `qt6-declarative`, `qt6-wayland`, `qt6-svg` 6.12 이상, 파일 대화 상자용 `zenity`.
+**필수 패키지:** `libraw` 0.22 이상, `lcms2`, `qt6-base`, `qt6-declarative`, `qt6-wayland`, `qt6-svg` 6.12 이상, 파일 대화 상자용 `xdg-desktop-portal`.
 
 **선택 패키지:**
 

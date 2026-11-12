@@ -43,7 +43,7 @@ makepkg -si
 
 **من أرشيف إصدار.** نزّل `omastudio-<version>-x86_64-linux.tar.gz` من [صفحة الإصدارات](https://github.com/ozdil/omarchy-omastudio/releases)، وتحقق منه مقابل `checksums.txt`، ثم فك ضغطه وانسخ `bin/*` إلى `~/.local/bin` و`share/omastudio` إلى `~/.local/share/omastudio`.
 
-**الحزم المطلوبة:** `libraw` 0.22 أو أحدث، و`lcms2`، و`qt6-base` و`qt6-declarative` و`qt6-wayland` و`qt6-svg` 6.12 أو أحدث، و`zenity` لنوافذ اختيار الملفات.
+**الحزم المطلوبة:** `libraw` 0.22 أو أحدث، و`lcms2`، و`qt6-base` و`qt6-declarative` و`qt6-wayland` و`qt6-svg` 6.12 أو أحدث، و`xdg-desktop-portal` لنوافذ اختيار الملفات.
 
 **الحزم الاختيارية:**
 

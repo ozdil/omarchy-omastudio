@@ -43,7 +43,7 @@ makepkg -si
 
 **از بایگانی انتشار.** فایل `omastudio-<version>-x86_64-linux.tar.gz` را از [صفحهٔ انتشارها](https://github.com/ozdil/omarchy-omastudio/releases) بارگیری کنید، آن را با `checksums.txt` بسنجید، از حالت فشرده خارج کنید و `bin/*` را در `~/.local/bin` و `share/omastudio` را در `~/.local/share/omastudio` رونوشت کنید.
 
-**بسته‌های لازم:** `libraw` نسخهٔ 0.22 یا جدیدتر، `lcms2`، `qt6-base`، `qt6-declarative`، `qt6-wayland` و `qt6-svg` نسخهٔ 6.12 یا جدیدتر، و `zenity` برای پنجره‌های انتخاب فایل.
+**بسته‌های لازم:** `libraw` نسخهٔ 0.22 یا جدیدتر، `lcms2`، `qt6-base`، `qt6-declarative`، `qt6-wayland` و `qt6-svg` نسخهٔ 6.12 یا جدیدتر، و `xdg-desktop-portal` برای پنجره‌های انتخاب فایل.
 
 **بسته‌های اختیاری:**
 

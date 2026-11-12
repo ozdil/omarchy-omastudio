@@ -1499,6 +1499,14 @@
 </context>
 <context>
     <name>MainWindow</name>
+    <message>
+        <source>Export finished</source>
+        <translation>Dışa aktarma tamamlandı</translation>
+    </message>
+    <message>
+        <source>Open folder</source>
+        <translation>Klasörü aç</translation>
+    </message>
     <message numerus="yes">
         <source>Rating: %n star(s)</source>
         <translation>

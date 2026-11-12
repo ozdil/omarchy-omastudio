@@ -55,7 +55,7 @@ Az ablak és a motor külön folyamat. Az ablak soha nem dekódol fotót: paranc
 | **Qt 6** (6.12, Qt Quick / QML) | A felület: panelek, nézőtér, mérők, párbeszédek | GPU-val rajzolt felület natív Wayland-támogatással és tört skálázással, jobbról balra írt elrendezés és a Qt Linguist fordítási rendszer | LGPL-3.0 |
 | **cxx-qt** (0.10) | Összeköti a Rustot és a Qt-t: a `Process`, a `Host` gazdatípus és a vezérlőfoglalat QML-ből használt Rust-objektumok | Biztonságos kötések mindkét irányban, kézzel írt C++ nélkül | MIT / Apache-2.0 |
 | **Qt Wayland** | Natív Wayland-kliensként futtatja az ablakot (alkalmazásazonosító: `omastudio`) | Az Omarchy Hyprlandot futtat Waylanden; a Hyprland ablakszabályai illeszkedhetnek az azonosítóhoz | LGPL-3.0 |
-| **zenity** | Fájl- és mappapárbeszédek | Kicsi, és minden Omarchy-telepítésben megtalálható | LGPL-2.1+ |
+| **xdg-desktop-portal** | Fájl- és mappapárbeszédek | Kicsi, és minden Omarchy-telepítésben megtalálható | LGPL-2.1+ |
 
 A QML-fájlok Qt-erőforrásként a binárisba fordulnak, így egy telepített verzió soha nem keveredik kósza felületfájlokkal.
 

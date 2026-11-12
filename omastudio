@@ -20,7 +20,7 @@ if [ "${OMASTUDIO_SECURE_ENV:-0}" != "1" ]; then
                QT_AUTO_SCREEN_SCALE_FACTOR XDG_ACTIVATION_TOKEN DESKTOP_STARTUP_ID TZ \
                __NV_PRIME_RENDER_OFFLOAD __NV_PRIME_RENDER_OFFLOAD_PROVIDER __GLX_VENDOR_LIBRARY_NAME \
                __VK_LAYER_NV_optimus DRI_PRIME MESA_VK_DEVICE_SELECT VK_ICD_FILENAMES VK_DRIVER_FILES \
-               LIBVA_DRIVER_NAME NVD_BACKEND OMASTUDIO_GPU \
+               LIBVA_DRIVER_NAME NVD_BACKEND OMASTUDIO_GPU OMARCHY_PATH OMARCHY_LANGUAGE_FILE \
                ANTHROPIC_API_KEY OPENAI_API_KEY OPENROUTER_API_KEY GEMINI_API_KEY; do
         if [ -n "${!var:-}" ]; then
             SESSION_ENV+=("${var}=${!var}")
@@ -135,6 +135,70 @@ case "${1:-}" in
         done
         echo "SKILL.md not found" >&2
         exit 1
+        ;;
+    omarchy-plugin)
+        # `omastudio omarchy-plugin [install|remove|status]`: the OmaStudio button in the
+        # Omarchy bar. Omarchy loads bar widgets from ~/.config/omarchy/plugins; install
+        # links the packaged widget there and enables it, remove takes it out again
+        PLUGIN_ID="ozdil.omastudio"
+        PLUGIN_LINK="${XDG_CONFIG_HOME:-${HOME}/.config}/omarchy/plugins/${PLUGIN_ID}"
+        PLUGIN_SRC=""
+        for SRC in "${DIR}/omarchy-plugin" "${HOME}/.local/share/omastudio/omarchy-plugin" "/usr/share/omastudio/omarchy-plugin"; do
+            if [[ -f "${SRC}/manifest.json" && -f "${SRC}/Panel.qml" ]]; then
+                PLUGIN_SRC="${SRC}"
+                break
+            fi
+        done
+        case "${2:-install}" in
+            install)
+                if [[ -z "${PLUGIN_SRC}" ]]; then
+                    echo "The OmaStudio bar widget was not found (omarchy-plugin/manifest.json)" >&2
+                    exit 1
+                fi
+                if [[ -e "${PLUGIN_LINK}" && ! -L "${PLUGIN_LINK}" ]]; then
+                    echo "${PLUGIN_LINK} exists and is not a link made by OmaStudio; leaving it alone" >&2
+                    exit 1
+                fi
+                if command -v omarchy-plugin-validate >/dev/null 2>&1; then
+                    omarchy-plugin-validate "${PLUGIN_SRC}" || exit 1
+                fi
+                /usr/bin/mkdir -p "$(/usr/bin/dirname "${PLUGIN_LINK}")"
+                /usr/bin/ln -sfn "${PLUGIN_SRC}" "${PLUGIN_LINK}"
+                echo "Linked ${PLUGIN_LINK} -> ${PLUGIN_SRC}"
+                if command -v omarchy-shell >/dev/null 2>&1; then
+                    omarchy-shell -q shell rescanPlugins >/dev/null 2>&1 || true
+                fi
+                if command -v omarchy-plugin-enable >/dev/null 2>&1; then
+                    omarchy-plugin-enable "${PLUGIN_ID}" && echo "Enabled ${PLUGIN_ID} in the Omarchy bar"
+                else
+                    echo "Enable it in the Omarchy bar settings, or: omarchy plugin enable ${PLUGIN_ID}"
+                fi
+                ;;
+            remove)
+                if command -v omarchy-plugin-disable >/dev/null 2>&1; then
+                    omarchy-plugin-disable "${PLUGIN_ID}" >/dev/null 2>&1 || true
+                fi
+                if [[ -L "${PLUGIN_LINK}" ]]; then
+                    /usr/bin/rm -f "${PLUGIN_LINK}"
+                    echo "Removed ${PLUGIN_LINK}"
+                fi
+                if command -v omarchy-shell >/dev/null 2>&1; then
+                    omarchy-shell -q shell rescanPlugins >/dev/null 2>&1 || true
+                fi
+                ;;
+            status)
+                if [[ -L "${PLUGIN_LINK}" ]]; then
+                    echo "installed: ${PLUGIN_LINK} -> $(/usr/bin/readlink "${PLUGIN_LINK}")"
+                else
+                    echo "not installed (omastudio omarchy-plugin install)"
+                fi
+                ;;
+            *)
+                echo "Usage: omastudio omarchy-plugin [install|remove|status]" >&2
+                exit 2
+                ;;
+        esac
+        exit 0
         ;;
     inspect|render|export|ai-auto|ai-social|ai-jev|icc|scan|catalog|dag|daemon|gpu|npu|ai-mask|mcp|ai|xmp|cloud|cameras|medium-format|fuji-*)
         exec "${BIN}" "$@"

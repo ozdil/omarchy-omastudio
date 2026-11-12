@@ -5,26 +5,18 @@
   "version": "3.2.1",
   "author": "Ozan Özdil (ozdil)",
   "license": "MIT",
-  "description": "The complete medium format RAW editor for Omarchy: own X-Trans and Bayer development, Fujifilm recipes and colour-managed export.",
+  "description": "The Complete Medium Format RAW Editor for Omarchy: shows, hides or starts the editor from the bar.",
   "kinds": [
     "bar-widget"
   ],
-  "activation": "on-demand",
   "entryPoints": {
     "barWidget": "Panel.qml"
   },
   "barWidget": {
     "displayName": "OmaStudio",
-    "description": "The complete medium format RAW editor for Omarchy.",
+    "description": "Shows, hides or starts the OmaStudio RAW editor.",
     "category": "Media",
     "defaultSection": "right",
-    "aliases": [
-      "omastudio",
-      "omaraw",
-      "raw",
-      "photo",
-      "lightroom"
-    ],
     "allowMultiple": false
   }
 }

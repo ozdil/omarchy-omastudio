@@ -47,8 +47,8 @@ Rectangle {
                         implicitHeight: Theme.px(11) + 8
                         radius: Theme.r(3)
                         property bool isCur: root.activeScope === modelData.idx
-                        color: isCur ? Qt.rgba(Theme.accent.r, Theme.accent.g, Theme.accent.b, 0.25) : Theme.bgCard
-                        border.color: isCur ? Theme.accent : Theme.border
+                        color: isCur ? Theme.controlFill("selected") : Theme.bgCard
+                        border.color: isCur ? "transparent" : Theme.controlBorder("normal")
                         border.width: 1
 
                         Text {

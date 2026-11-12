@@ -43,7 +43,7 @@ Cette commande installe `omastudio`, `omastudio-app`, `omastudio-engine`, les pr
 
 **Depuis une archive de version.** Téléchargez `omastudio-<version>-x86_64-linux.tar.gz` sur la [page des versions](https://github.com/ozdil/omarchy-omastudio/releases), vérifiez-la avec `checksums.txt`, décompressez-la, puis copiez `bin/*` dans `~/.local/bin` et `share/omastudio` dans `~/.local/share/omastudio`.
 
-**Paquets requis :** `libraw` 0.22 ou plus récent, `lcms2`, `qt6-base`, `qt6-declarative`, `qt6-wayland` et `qt6-svg` 6.12 ou plus récent, et `zenity` pour les boîtes de dialogue de fichiers.
+**Paquets requis :** `libraw` 0.22 ou plus récent, `lcms2`, `qt6-base`, `qt6-declarative`, `qt6-wayland` et `qt6-svg` 6.12 ou plus récent, et `xdg-desktop-portal` pour les boîtes de dialogue de fichiers.
 
 **Paquets facultatifs :**
 

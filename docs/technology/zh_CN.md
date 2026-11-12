@@ -55,7 +55,7 @@ graph TD
 | **Qt 6**（6.12，Qt Quick / QML） | 界面：面板、视图区、测量工具、对话框 | 由 GPU 绘制的界面，原生支持 Wayland 和分数缩放，支持从右到左布局和 Qt Linguist 翻译体系 | LGPL-3.0 |
 | **cxx-qt**（0.10） | 连接 Rust 与 Qt：宿主类型 `Process`、`Host` 和控制套接字都是在 QML 中使用的 Rust 对象 | 无需手写 C++ 即可获得双向安全绑定 | MIT / Apache-2.0 |
 | **Qt Wayland** | 将窗口作为原生 Wayland 客户端运行（app id 为 `omastudio`） | Omarchy 在 Wayland 上运行 Hyprland；Hyprland 的窗口规则可以匹配 app id | LGPL-3.0 |
-| **zenity** | 文件和文件夹对话框 | 体积小，每个 Omarchy 安装中都有 | LGPL-2.1+ |
+| **xdg-desktop-portal** | 文件和文件夹对话框 | 体积小，每个 Omarchy 安装中都有 | LGPL-2.1+ |
 
 QML 文件作为 Qt 资源编译进二进制文件，因此已安装的版本不会与零散的界面文件混在一起。
 

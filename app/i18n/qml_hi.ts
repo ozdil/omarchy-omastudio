@@ -1502,6 +1502,14 @@
 </context>
 <context>
     <name>MainWindow</name>
+    <message>
+        <source>Export finished</source>
+        <translation>निर्यात पूरा हुआ</translation>
+    </message>
+    <message>
+        <source>Open folder</source>
+        <translation>फ़ोल्डर खोलें</translation>
+    </message>
     <message numerus="yes">
         <source>Rating: %n star(s)</source>
         <translation>

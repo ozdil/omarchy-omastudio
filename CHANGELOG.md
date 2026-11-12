@@ -12,6 +12,26 @@ Removed, Fixed and Security. Releases up to 3.1.0 group their entries by area.
 
 ## [Unreleased]
 
+Fits into Omarchy 4.5: OmaStudio now follows the Omarchy shell's own theme tokens, language, corners and animations live, draws its controls the way the shell does, and fits a tiled window at any Omarchy font size.
+
+### Added
+- The interface follows the language picked in Omarchy (Setup > Language, `omarchy language <code>`), and switches at once when it changes, as the desktop does. A language picked in OmaStudio still wins; "System default" means Omarchy's language, then the locale.
+- `omastudio omarchy-plugin install|remove|status` puts the OmaStudio button into the Omarchy bar: it links the packaged widget into `~/.config/omarchy/plugins`, validates and enables it. The widget is now a real Omarchy 4.5 bar plugin (`BarWidget` and the shell's own `BarIconButton`), so its size, colours, tooltip and press feedback match the built-in widgets.
+- A desktop notification when an export or batch export finishes while OmaStudio is in the background, as an Omarchy notification card with an "Open folder" button (`notify-send` elsewhere).
+- `omastudio ipc resize <w> <h>` sets the window size, to check layouts at tiled sizes.
+
+### Changed
+- Buttons, chips and toggles are drawn with the theme's `[controls]` tokens (normal, hover, focus, selected, pressed) from `shell.toml`, like the Omarchy shell: a faint fill and border, the accent in the selected label instead of a solid accent block. Menus, popups, tooltips, dialog frames and the backdrop behind dialogs use the `[menu]`, `[popups]`, `[tooltip]`, `[polkit]` tokens; Qt's own controls (scroll bars, sliders, tooltips) get the theme's palette.
+- Text size, spacing and control heights follow `[font] base-size` and `[spacing]` of the theme with `~/.config/omarchy/shell.toml` on top (it overrides the theme key by key and survives theme switches); OmaStudio read only the theme's file, so a base size set there was ignored.
+- Window corners and animations follow Hyprland live: OmaStudio listens for Hyprland's `configreloaded` event, so Appearance > Window Corners and `omarchy toggle animations` apply without a restart. With animations off every transition takes no time and spinners stop.
+- Destructive actions use the theme's urgent colour (its red).
+- File and folder choosers are the desktop's own, through xdg-desktop-portal, in its theme and with its bookmarks; `zenity` is no longer needed. A Qt platform theme the session sets (such as Omarchy's coming qtengine) is kept.
+- The window fits narrow tiles: the top bar and the view toolbar fall back to icons when their labels don't fit, the left panel steps aside below about 780 px (at the base font size) and the inspector narrows, and the window can be made as small as 720 × 520.
+
+### Fixed
+- Buttons and chips with text no longer clip it at Omarchy's default font size and above: fixed control heights now grow with the font.
+- The language menu's text no longer stays at a fixed size when the font size changes.
+
 ## [3.2.1] - 2026-11-04
 
 The 3.2.0 changes, published. The v3.2.0 tag exists, but its release workflow file was invalid, so no 3.2.0 archive was built or released.

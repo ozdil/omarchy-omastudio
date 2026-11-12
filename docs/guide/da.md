@@ -43,7 +43,7 @@ Det installerer `omastudio`, `omastudio-app`, `omastudio-engine`, ICC-profilerne
 
 **Fra et udgivelsesarkiv.** Hent `omastudio-<version>-x86_64-linux.tar.gz` fra [udgivelsessiden](https://github.com/ozdil/omarchy-omastudio/releases), kontrollér det mod `checksums.txt`, pak det ud, og kopiér `bin/*` til `~/.local/bin` og `share/omastudio` til `~/.local/share/omastudio`.
 
-**Nødvendige pakker:** `libraw` 0.22 eller nyere, `lcms2`, `qt6-base`, `qt6-declarative`, `qt6-wayland` og `qt6-svg` 6.12 eller nyere samt `zenity` til fildialogerne.
+**Nødvendige pakker:** `libraw` 0.22 eller nyere, `lcms2`, `qt6-base`, `qt6-declarative`, `qt6-wayland` og `qt6-svg` 6.12 eller nyere samt `xdg-desktop-portal` til fildialogerne.
 
 **Valgfrie pakker:**
 

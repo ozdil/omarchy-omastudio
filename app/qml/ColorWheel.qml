@@ -94,7 +94,7 @@ ColumnLayout {
         // Reset Button
         Rectangle {
             implicitWidth: 18
-            implicitHeight: 18
+            implicitHeight: Theme.sp(18)
             radius: 9
             color: resetMouse.containsMouse ? Theme.bgCardHover : "transparent"
             Text {
@@ -191,8 +191,8 @@ ColumnLayout {
             border.width: 2
             z: 10
 
-            Behavior on x { NumberAnimation { duration: 40; easing.type: Easing.OutQuad } }
-            Behavior on y { NumberAnimation { duration: 40; easing.type: Easing.OutQuad } }
+            Behavior on x { NumberAnimation { duration: Theme.duration(40); easing.type: Easing.OutQuad } }
+            Behavior on y { NumberAnimation { duration: Theme.duration(40); easing.type: Easing.OutQuad } }
         }
 
         MouseArea {

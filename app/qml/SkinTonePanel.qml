@@ -57,7 +57,7 @@ Rectangle {
 
             Rectangle {
                 implicitWidth: resetSkinText.implicitWidth + 10
-                implicitHeight: 18
+                implicitHeight: Theme.sp(18)
                 radius: Theme.r(4)
                 color: resetSkinMouse.containsMouse ? Theme.bgCardHover : "transparent"
                 border.color: Theme.border

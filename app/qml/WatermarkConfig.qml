@@ -101,10 +101,10 @@ Rectangle {
                 Rectangle {
                     Layout.fillWidth: true
                     Layout.minimumWidth: 0
-                    implicitHeight: 28
+                    implicitHeight: Theme.sp(28)
                     radius: Theme.radiusSm
-                    color: root.watermarkType === "text" ? Theme.accent : Theme.bgCard
-                    border.color: root.watermarkType === "text" ? Theme.accent : Theme.border
+                    color: root.watermarkType === "text" ? Theme.controlFill("selected") : Theme.controlFill("normal")
+                    border.color: root.watermarkType === "text" ? "transparent" : Theme.controlBorder("normal")
                     border.width: 1
 
                     Text {
@@ -116,7 +116,7 @@ Rectangle {
                         font.family: Theme.fontFamily
                         font.pixelSize: Theme.px(9)
                         font.weight: root.watermarkType === "text" ? Font.Bold : Font.Normal
-                        color: root.watermarkType === "text" ? Theme.bgBase : Theme.textMain
+                        color: root.watermarkType === "text" ? Theme.selectedText : Theme.textMain
                         elide: Text.ElideRight
                     }
 
@@ -133,10 +133,10 @@ Rectangle {
                 Rectangle {
                     Layout.fillWidth: true
                     Layout.minimumWidth: 0
-                    implicitHeight: 28
+                    implicitHeight: Theme.sp(28)
                     radius: Theme.radiusSm
-                    color: root.watermarkType === "logo" ? Theme.accent : Theme.bgCard
-                    border.color: root.watermarkType === "logo" ? Theme.accent : Theme.border
+                    color: root.watermarkType === "logo" ? Theme.controlFill("selected") : Theme.controlFill("normal")
+                    border.color: root.watermarkType === "logo" ? "transparent" : Theme.controlBorder("normal")
                     border.width: 1
 
                     Text {
@@ -148,7 +148,7 @@ Rectangle {
                         font.family: Theme.fontFamily
                         font.pixelSize: Theme.px(9)
                         font.weight: root.watermarkType === "logo" ? Font.Bold : Font.Normal
-                        color: root.watermarkType === "logo" ? Theme.bgBase : Theme.textMain
+                        color: root.watermarkType === "logo" ? Theme.selectedText : Theme.textMain
                         elide: Text.ElideRight
                     }
 
@@ -179,7 +179,7 @@ Rectangle {
 
                 Rectangle {
                     Layout.fillWidth: true
-                    implicitHeight: 28
+                    implicitHeight: Theme.sp(28)
                     radius: Theme.radiusSm
                     color: Theme.bgCard
                     border.color: Theme.border
@@ -228,7 +228,7 @@ Rectangle {
                         Rectangle {
                             Layout.fillWidth: true
                             Layout.minimumWidth: 0
-                            implicitHeight: 22
+                            implicitHeight: Theme.sp(22)
                             radius: Theme.r(3)
                             color: Theme.bgCard
                             border.color: Theme.border
@@ -275,7 +275,7 @@ Rectangle {
 
                 Rectangle {
                     Layout.fillWidth: true
-                    implicitHeight: 28
+                    implicitHeight: Theme.sp(28)
                     radius: Theme.radiusSm
                     color: Theme.bgCard
                     border.color: Theme.border
@@ -333,8 +333,8 @@ Rectangle {
                                 width: 22
                                 height: 22
                                 radius: Theme.r(3)
-                                color: root.positionIndex === index ? Theme.accent : Theme.bgCard
-                                border.color: root.positionIndex === index ? Theme.accent : Theme.border
+                                color: root.positionIndex === index ? Theme.controlFill("selected") : Theme.controlFill("normal")
+                                border.color: root.positionIndex === index ? "transparent" : Theme.controlBorder("normal")
                                 border.width: 1
 
                                 Rectangle {
@@ -342,7 +342,7 @@ Rectangle {
                                     width: 4
                                     height: 4
                                     radius: Theme.r(2)
-                                    color: root.positionIndex === index ? Theme.bgBase : Theme.textDim
+                                    color: root.positionIndex === index ? Theme.selectedText : Theme.textDim
                                 }
 
                                 MouseArea {
@@ -380,7 +380,7 @@ Rectangle {
                         CustomSwitch {
                             Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
                             Layout.preferredWidth: 36
-                            Layout.preferredHeight: 20
+                            Layout.preferredHeight: Theme.sp(20)
                             checked: root.dropShadow
                             activeColor: Theme.accent
                             onToggled: function(isChecked) {
@@ -401,7 +401,7 @@ Rectangle {
                                 height: 18
                                 radius: 9
                                 color: modelData
-                                border.color: root.colorHex === modelData ? Theme.accent : Theme.border
+                                border.color: root.colorHex === modelData ? Theme.textMain : Theme.controlBorder("normal")
                                 border.width: root.colorHex === modelData ? 2 : 1
 
                                 MouseArea {
@@ -479,7 +479,7 @@ Rectangle {
                         color: opSlider.pressed ? Theme.accent : (opSlider.hovered ? Theme.accentHover : Theme.textMain)
                         border.color: Theme.bgDark
                         border.width: 1.5
-                        Behavior on color { ColorAnimation { duration: 100 } }
+                        Behavior on color { ColorAnimation { duration: Theme.duration(100) } }
                     }
 
                     onMoved: {
@@ -544,7 +544,7 @@ Rectangle {
                         color: szSlider.pressed ? Theme.accent : (szSlider.hovered ? Theme.accentHover : Theme.textMain)
                         border.color: Theme.bgDark
                         border.width: 1.5
-                        Behavior on color { ColorAnimation { duration: 100 } }
+                        Behavior on color { ColorAnimation { duration: Theme.duration(100) } }
                     }
 
                     onMoved: {

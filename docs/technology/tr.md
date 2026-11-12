@@ -55,7 +55,7 @@ Pencere ve motor ayrı süreçlerdir. Pencere bir fotoğrafı hiçbir zaman kend
 | **Qt 6** (6.12, Qt Quick / QML) | Arayüz: paneller, görüntü alanı, ölçüm araçları, pencereler | Yerel Wayland desteği ve kesirli ölçekleme, sağdan sola düzen ve Qt Linguist çeviri sistemiyle GPU'da çizilen arayüz | LGPL-3.0 |
 | **cxx-qt** (0.10) | Rust ile Qt'yi bağlar: `Process`, `Host` türleri ve denetim soketi QML'den kullanılan Rust nesneleridir | Elle yazılmış C++ olmadan iki yönde güvenli bağlantı | MIT / Apache-2.0 |
 | **Qt Wayland** | Pencereyi yerel bir Wayland istemcisi olarak çalıştırır (uygulama kimliği `omastudio`) | Omarchy, Wayland üzerinde Hyprland çalıştırır; Hyprland pencere kuralları uygulama kimliğiyle eşleşebilir | LGPL-3.0 |
-| **zenity** | Dosya ve klasör pencereleri | Küçük ve her Omarchy kurulumunda mevcut | LGPL-2.1+ |
+| **xdg-desktop-portal** | Dosya ve klasör pencereleri | Masaüstünün kendi seçicisi, kendi temasıyla; her Omarchy kurulumunda var | LGPL-2.1+ |
 
 QML dosyaları Qt kaynakları olarak ikili dosyanın içine derlenir; böylece kurulu bir sürüm başıboş arayüz dosyalarıyla hiçbir zaman karışmaz.
 

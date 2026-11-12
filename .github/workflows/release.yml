@@ -39,7 +39,7 @@ jobs:
           install -m755 target/release/omastudio-engine "dist/$package/bin/omastudio-engine"
           install -m755 target/release/omastudio-app "dist/$package/bin/omastudio-app"
           install -m755 omastudio omastudio-dashboard omastudio-status "dist/$package/bin/"
-          install -m644 Panel.qml manifest.json "dist/$package/share/omastudio/"
+          install -Dm644 -t "dist/$package/share/omastudio/omarchy-plugin" omarchy-plugin/Panel.qml omarchy-plugin/manifest.json
           cp -r assets/icc skill "dist/$package/share/omastudio/"
           install -Dm644 omastudio.desktop "dist/$package/share/applications/omastudio.desktop"
           install -Dm644 assets/icon.svg "dist/$package/share/icons/hicolor/scalable/apps/omastudio.svg"

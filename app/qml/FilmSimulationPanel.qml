@@ -80,7 +80,7 @@ Rectangle {
             Rectangle {
                 visible: !root.embedded
                 implicitWidth: resetSimText.implicitWidth + 10
-                implicitHeight: 18
+                implicitHeight: Theme.sp(18)
                 radius: Theme.r(4)
                 color: resetSimMouse.containsMouse ? Theme.bgCardHover : "transparent"
                 border.color: Theme.border
@@ -118,10 +118,10 @@ Rectangle {
                 model: [{ "key": "All", "label": qsTr("All") }, { "key": "Fujifilm", "label": "Fujifilm" }, { "key": "Acros B&W", "label": qsTr("Acros B&W") }, { "key": "Hasselblad", "label": "Hasselblad" }]
                 Rectangle {
                     implicitWidth: brandText.implicitWidth + 12
-                    implicitHeight: 20
+                    implicitHeight: Theme.sp(20)
                     radius: Theme.r(4)
-                    color: root.selectedBrand === modelData.key ? Theme.accent : Theme.bgCard
-                    border.color: root.selectedBrand === modelData.key ? Theme.accent : Theme.border
+                    color: root.selectedBrand === modelData.key ? Theme.controlFill("selected") : Theme.controlFill("normal")
+                    border.color: root.selectedBrand === modelData.key ? "transparent" : Theme.controlBorder("normal")
                     border.width: 1
 
                     Text {
@@ -132,7 +132,7 @@ Rectangle {
                         font.family: Theme.fontFamily
                         font.pixelSize: Theme.px(9)
                         font.weight: root.selectedBrand === modelData.key ? Font.Bold : Font.Normal
-                        color: root.selectedBrand === modelData.key ? Theme.bgBase : Theme.textMain
+                        color: root.selectedBrand === modelData.key ? Theme.selectedText : Theme.textMain
                     }
 
                     MouseArea {
@@ -280,7 +280,7 @@ Rectangle {
                     color: intensitySlider.pressed ? Theme.accent : (intensitySlider.hovered ? Theme.accentHover : Theme.textMain)
                     border.color: Theme.bgDark
                     border.width: 1.5
-                    Behavior on color { ColorAnimation { duration: 100 } }
+                    Behavior on color { ColorAnimation { duration: Theme.duration(100) } }
                 }
 
                 onMoved: {

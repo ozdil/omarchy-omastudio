@@ -10,10 +10,31 @@ Window {
     title: mainWin.activePhotoPath !== "" ? mainWin.activePhotoPath.split("/").pop() + " - OmaStudio" : "OmaStudio"
     width: 1440
     height: 920
-    minimumWidth: 1024
-    minimumHeight: 680
+    // Hyprland tiles windows narrower than this; the layout follows down to here
+    minimumWidth: 720
+    minimumHeight: 520
     visible: true
     color: Theme.bgBase
+
+    // Qt Quick Controls (tooltips, scroll bars, popups, sliders) in the Omarchy theme
+    palette.window: Theme.bgBase
+    palette.windowText: Theme.textMain
+    palette.base: Theme.bgSurface
+    palette.alternateBase: Theme.bgCard
+    palette.text: Theme.textMain
+    palette.button: Theme.bgCard
+    palette.buttonText: Theme.textMain
+    palette.brightText: Theme.textMain
+    palette.highlight: Theme.accent
+    palette.highlightedText: Theme.onAccent
+    palette.mid: Theme.border
+    palette.dark: Theme.textDim
+    palette.light: Theme.bgCardHover
+    palette.midlight: Theme.borderLight
+    palette.shadow: Theme.bgDark
+    palette.placeholderText: Theme.textDim
+    palette.toolTipBase: Theme.tooltipBg
+    palette.toolTipText: Theme.tooltipText
 
     MainWindow {
         id: mainWin
@@ -195,6 +216,15 @@ Window {
             case "switchGradeVersion":
                 if (str(a[0]).length === 0) return "Error: empty version";
                 mainWin.switchGradeVersion(str(a[0]));
+                return "OK";
+            case "resize":
+                // Window size in logical pixels, to check layouts at tiled sizes
+                var w = Number(a[0]), h = Number(a[1]);
+                if (!(w >= 320 && w <= 8192 && h >= 240 && h <= 8192)) return "Error: size out of range";
+                win.minimumWidth = Math.min(win.minimumWidth, w);
+                win.minimumHeight = Math.min(win.minimumHeight, h);
+                win.width = w;
+                win.height = h;
                 return "OK";
             case "screenshot":
                 // Saves the window as PNG and answers once the file is written

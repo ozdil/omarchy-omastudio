@@ -43,7 +43,7 @@ Vengono installati `omastudio`, `omastudio-app`, `omastudio-engine`, i profili I
 
 **Da un archivio di rilascio.** Scaricate `omastudio-<versione>-x86_64-linux.tar.gz` dalla [pagina dei rilasci](https://github.com/ozdil/omarchy-omastudio/releases), verificatelo con `checksums.txt`, estraetelo e copiate `bin/*` in `~/.local/bin` e `share/omastudio` in `~/.local/share/omastudio`.
 
-**Pacchetti necessari:** `libraw` 0.22 o successivo, `lcms2`, `qt6-base`, `qt6-declarative`, `qt6-wayland` e `qt6-svg` 6.12 o successivi, e `zenity` per le finestre di selezione dei file.
+**Pacchetti necessari:** `libraw` 0.22 o successivo, `lcms2`, `qt6-base`, `qt6-declarative`, `qt6-wayland` e `qt6-svg` 6.12 o successivi, e `xdg-desktop-portal` per le finestre di selezione dei file.
 
 **Pacchetti facoltativi:**
 

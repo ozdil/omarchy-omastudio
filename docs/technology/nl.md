@@ -55,7 +55,7 @@ Het venster en de engine zijn afzonderlijke processen. Het venster decodeert noo
 | **Qt 6** (6.12, Qt Quick / QML) | De interface: panelen, beeldweergave, meetinstrumenten, dialogen | Door de GPU getekende interface met native Wayland-ondersteuning en fractionele schaling, rechts-naar-links-indeling en het vertaalsysteem Qt Linguist | LGPL-3.0 |
 | **cxx-qt** (0.10) | Verbindt Rust en Qt: de hosttypen `Process`, `Host` en de besturingssocket zijn Rust-objecten die QML gebruikt | Veilige koppelingen in beide richtingen zonder handgeschreven C++ | MIT / Apache-2.0 |
 | **Qt Wayland** | Draait het venster als native Wayland-client (app-ID `omastudio`) | Omarchy draait Hyprland op Wayland; vensterregels van Hyprland kunnen op de app-ID filteren | LGPL-3.0 |
-| **zenity** | Bestands- en mapdialogen | Klein en aanwezig op elke Omarchy-installatie | LGPL-2.1+ |
+| **xdg-desktop-portal** | Bestands- en mapdialogen | Klein en aanwezig op elke Omarchy-installatie | LGPL-2.1+ |
 
 De QML-bestanden worden als Qt-resources in het programma gecompileerd, zodat een geïnstalleerde versie nooit vermengd raakt met losse interfacebestanden.
 

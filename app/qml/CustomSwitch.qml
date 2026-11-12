@@ -25,8 +25,8 @@ Item {
         border.color: root.checked ? root.activeColor : root.inactiveColor
         border.width: 1
 
-        Behavior on color { ColorAnimation { duration: 120 } }
-        Behavior on border.color { ColorAnimation { duration: 120 } }
+        Behavior on color { ColorAnimation { duration: Theme.duration(120) } }
+        Behavior on border.color { ColorAnimation { duration: Theme.duration(120) } }
 
         Rectangle {
             id: thumb
@@ -37,7 +37,7 @@ Item {
             x: root.checked ? parent.width - width - 2 : 2
             color: root.thumbColor
 
-            Behavior on x { NumberAnimation { duration: 120; easing.type: Easing.OutQuad } }
+            Behavior on x { NumberAnimation { duration: Theme.duration(120); easing.type: Easing.OutQuad } }
         }
     }
 

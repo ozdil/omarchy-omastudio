@@ -43,7 +43,7 @@ This installs `omastudio`, `omastudio-app`, `omastudio-engine`, the ICC profiles
 
 **From a release archive.** Download `omastudio-<version>-x86_64-linux.tar.gz` from the [releases page](https://github.com/ozdil/omarchy-omastudio/releases), check it against `checksums.txt`, unpack it and copy `bin/*` to `~/.local/bin` and `share/omastudio` to `~/.local/share/omastudio`.
 
-**Required packages:** `libraw` 0.22 or newer, `lcms2`, `qt6-base`, `qt6-declarative`, `qt6-wayland` and `qt6-svg` 6.12 or newer, and `zenity` for the file dialogs.
+**Required packages:** `libraw` 0.22 or newer, `lcms2`, `qt6-base`, `qt6-declarative`, `qt6-wayland` and `qt6-svg` 6.12 or newer, and `xdg-desktop-portal` for the file dialogs.
 
 **Optional packages:**
 

@@ -1499,6 +1499,14 @@
 </context>
 <context>
     <name>MainWindow</name>
+    <message>
+        <source>Export finished</source>
+        <translation>Đã xuất xong</translation>
+    </message>
+    <message>
+        <source>Open folder</source>
+        <translation>Mở thư mục</translation>
+    </message>
     <message numerus="yes">
         <source>Rating: %n star(s)</source>
         <translation>

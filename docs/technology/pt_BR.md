@@ -55,7 +55,7 @@ A janela e o motor são processos separados. A janela nunca decodifica uma foto 
 | **Qt 6** (6.12, Qt Quick / QML) | A interface: painéis, visualizador, instrumentos, caixas de diálogo | Interface desenhada pela GPU, com suporte nativo a Wayland e escala fracionária, layout da direita para a esquerda e o sistema de tradução Qt Linguist | LGPL-3.0 |
 | **cxx-qt** (0.10) | Liga Rust e Qt: os tipos `Process`, `Host` e o soquete de controle são objetos Rust usados no QML | Ligações seguras nos dois sentidos, sem C++ escrito à mão | MIT / Apache-2.0 |
 | **Qt Wayland** | Executa a janela como cliente Wayland nativo (ID do aplicativo `omastudio`) | O Omarchy usa Hyprland sobre Wayland; as regras de janela do Hyprland podem usar o ID | LGPL-3.0 |
-| **zenity** | Caixas de diálogo de arquivos e pastas | Pequeno e presente em toda instalação do Omarchy | LGPL-2.1+ |
+| **xdg-desktop-portal** | Caixas de diálogo de arquivos e pastas | Pequeno e presente em toda instalação do Omarchy | LGPL-2.1+ |
 
 Os arquivos QML são compilados no binário como recursos do Qt, de modo que uma versão instalada nunca se mistura com arquivos de interface soltos.
 

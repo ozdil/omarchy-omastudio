@@ -52,210 +52,63 @@ Rectangle {
             Layout.fillWidth: true
             spacing: 8
 
-            // Local Tab
-            Rectangle {
-                id: localTab
-                implicitWidth: localRow.implicitWidth + 16
-                implicitHeight: 22
-                radius: Theme.r(4)
-                readonly property bool active: !root.isCatalogMode && root.cloudAccount === ""
-                color: active ? Theme.accent : Theme.bgCard
-
-                RowLayout {
-                    id: localRow
-                    anchors.centerIn: parent
-                    spacing: 6
-                    Text {
-                        text: Theme.iconFolder
-                        font.family: Theme.iconFont
-                        font.pixelSize: Theme.px(10)
-                        color: localTab.active ? Theme.bgBase : Theme.textMuted
-                    }
-                    Text {
-                        font.family: Theme.fontFamily
-                        text: qsTr("Folders")
-                        textFormat: Text.PlainText
-                        font.pixelSize: Theme.px(10)
-                        font.weight: Font.DemiBold
-                        color: localTab.active ? Theme.bgBase : Theme.textMuted
-                    }
-                }
-
-                MouseArea {
-                    anchors.fill: parent
-                    cursorShape: Qt.PointingHandCursor
-                    onClicked: {
-                        if (root.isCatalogMode || root.cloudAccount !== "") {
-                            root.isCatalogMode = false
-                            root.switchSource(false)
-                        }
+            // Sources: local folders, the catalog, then each connected cloud account
+            OmaButton {
+                implicitHeight: Theme.sp(20)
+                icon: Theme.iconFolder
+                text: qsTr("Folders")
+                checkable: true
+                checked: !root.isCatalogMode && root.cloudAccount === ""
+                onClicked: {
+                    if (root.isCatalogMode || root.cloudAccount !== "") {
+                        root.isCatalogMode = false
+                        root.switchSource(false)
                     }
                 }
             }
-
-            // Library Catalog Tab
-            Rectangle {
-                implicitWidth: catalogRow.implicitWidth + 16
-                implicitHeight: 22
-                radius: Theme.r(4)
-                color: root.isCatalogMode ? Theme.accentCyan : Theme.bgCard
-
-                RowLayout {
-                    id: catalogRow
-                    anchors.centerIn: parent
-                    spacing: 6
-                    Text {
-                        text: Theme.iconLayers || Theme.iconFolder
-                        font.family: Theme.iconFont
-                        font.pixelSize: Theme.px(10)
-                        color: root.isCatalogMode ? Theme.bgBase : Theme.textMuted
-                    }
-                    Text {
-                        font.family: Theme.fontFamily
-                        text: qsTr("Catalog")
-                        textFormat: Text.PlainText
-                        font.pixelSize: Theme.px(10)
-                        font.weight: Font.DemiBold
-                        color: root.isCatalogMode ? Theme.bgBase : Theme.textMuted
-                    }
-                }
-
-                MouseArea {
-                    anchors.fill: parent
-                    cursorShape: Qt.PointingHandCursor
-                    onClicked: {
-                        if (!root.isCatalogMode) {
-                            root.isCatalogMode = true
-                            root.switchSource(true)
-                        }
+            OmaButton {
+                implicitHeight: Theme.sp(20)
+                icon: "\uf02d"
+                text: qsTr("Catalog")
+                checkable: true
+                checked: root.isCatalogMode
+                onClicked: {
+                    if (!root.isCatalogMode) {
+                        root.isCatalogMode = true
+                        root.switchSource(true)
                     }
                 }
             }
-
-            // Connected cloud accounts, one tab each
             Repeater {
                 model: root.cloudAccounts
-                delegate: Rectangle {
-                    id: cloudTab
+                delegate: OmaButton {
                     required property var modelData
-                    readonly property bool active: !root.isCatalogMode && root.cloudAccount === modelData.id
-                    implicitWidth: cloudTabRow.implicitWidth + 16
-                    implicitHeight: 22
-                    radius: Theme.r(4)
-                    color: active ? Theme.accentCyan : Theme.bgCard
-
-                    RowLayout {
-                        id: cloudTabRow
-                        anchors.centerIn: parent
-                        spacing: 6
-                        Text {
-                            text: Theme.iconCloud
-                            font.family: Theme.iconFont
-                            font.pixelSize: Theme.px(10)
-                            color: cloudTab.active ? Theme.bgBase : Theme.textMuted
-                        }
-                        Text {
-                            font.family: Theme.fontFamily
-                            text: cloudTab.modelData.label
-                            textFormat: Text.PlainText
-                            font.pixelSize: Theme.px(10)
-                            font.weight: Font.DemiBold
-                            color: cloudTab.active ? Theme.bgBase : Theme.textMuted
-                        }
+                    implicitHeight: Theme.sp(20)
+                    icon: Theme.iconCloud
+                    text: modelData.label
+                    tip: modelData.user || ""
+                    checkable: true
+                    checked: !root.isCatalogMode && root.cloudAccount === modelData.id
+                    onClicked: {
+                        root.isCatalogMode = false
+                        root.openCloudAccount(modelData.id)
                     }
-
-                    MouseArea {
-                        id: cloudTabMouse
-                        anchors.fill: parent
-                        hoverEnabled: true
-                        cursorShape: Qt.PointingHandCursor
-                        onClicked: {
-                            root.isCatalogMode = false
-                            root.openCloudAccount(cloudTab.modelData.id)
-                        }
-                    }
-                    ToolTip.visible: cloudTabMouse.containsMouse && cloudTab.modelData.user !== ""
-                    ToolTip.delay: 400
-                    ToolTip.text: cloudTab.modelData.user || ""
                 }
             }
-
-            // Connect a cloud account
-            Rectangle {
-                implicitWidth: connectRow.implicitWidth + 12
-                implicitHeight: 22
-                radius: Theme.r(4)
-                color: connectMouse.containsMouse ? Theme.bgCardHover : Theme.bgCard
-                border.color: Theme.border
-                border.width: 1
-
-                RowLayout {
-                    id: connectRow
-                    anchors.centerIn: parent
-                    spacing: 4
-                    Text {
-                        text: Theme.iconCloud
-                        font.family: Theme.iconFont
-                        font.pixelSize: Theme.px(10)
-                        color: Theme.accentCyan
-                    }
-                    Text {
-                        font.family: Theme.fontFamily
-                        text: qsTr("Connect")
-                        textFormat: Text.PlainText
-                        font.pixelSize: Theme.px(9)
-                        font.weight: Font.DemiBold
-                        color: Theme.textMain
-                    }
-                }
-
-                MouseArea {
-                    id: connectMouse
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    cursorShape: Qt.PointingHandCursor
-                    onClicked: root.connectRequested()
-                }
-                ToolTip.visible: connectMouse.containsMouse
-                ToolTip.delay: 400
-                ToolTip.text: qsTr("Connect Google Drive, OneDrive, Dropbox, GitHub and other accounts")
+            OmaButton {
+                implicitHeight: Theme.sp(20)
+                icon: "\uf067"
+                text: qsTr("Connect")
+                tip: qsTr("Connect Google Drive, OneDrive, Dropbox, GitHub and other accounts")
+                onClicked: root.connectRequested()
             }
 
-            // Up / Parent button
-            Rectangle {
+            OmaButton {
                 visible: !root.isCatalogMode && (root.cloudAccount !== "" ? root.cloudPath !== "" : root.currentFolder !== "/")
-                implicitWidth: parentBtnRow.implicitWidth + 12
-                implicitHeight: 22
-                radius: Theme.r(4)
-                color: Theme.bgCard
-                border.color: Theme.border
-                border.width: 1
-
-                RowLayout {
-                    id: parentBtnRow
-                    anchors.centerIn: parent
-                    spacing: 4
-                    Text {
-                        text: Theme.iconArrowUp
-                        font.family: Theme.iconFont
-                        font.pixelSize: Theme.px(10)
-                        color: Theme.textMain
-                    }
-                    Text {
-                        font.family: Theme.fontFamily
-                        text: qsTr("Up")
-                        textFormat: Text.PlainText
-                        font.pixelSize: Theme.px(9)
-                        font.weight: Font.DemiBold
-                        color: Theme.textMain
-                    }
-                }
-
-                MouseArea {
-                    anchors.fill: parent
-                    cursorShape: Qt.PointingHandCursor
-                    onClicked: root.parentFolderRequested()
-                }
+                implicitHeight: Theme.sp(20)
+                icon: Theme.iconArrowUp
+                text: qsTr("Up")
+                onClicked: root.parentFolderRequested()
             }
 
             Text {
@@ -274,7 +127,7 @@ Rectangle {
             Rectangle {
                 visible: root.isListingFolder
                 implicitWidth: listRow.implicitWidth + 12
-                implicitHeight: 22
+                implicitHeight: Theme.sp(22)
                 radius: Theme.r(4)
                 color: Qt.rgba(Theme.accentYellow.r, Theme.accentYellow.g, Theme.accentYellow.b, 0.2)
                 border.color: Theme.accentYellow
@@ -295,7 +148,7 @@ Rectangle {
                             to: 360
                             duration: 1000
                             loops: Animation.Infinite
-                            running: root.isListingFolder
+                            running: root.isListingFolder && !Theme.reduceMotion
                         }
                     }
                     Text {
@@ -313,7 +166,7 @@ Rectangle {
             Rectangle {
                 visible: root.isDownloadingRemote
                 implicitWidth: dlRow.implicitWidth + 12
-                implicitHeight: 22
+                implicitHeight: Theme.sp(22)
                 radius: Theme.r(4)
                 color: Qt.rgba(Theme.accentCyan.r, Theme.accentCyan.g, Theme.accentCyan.b, 0.2)
                 border.color: Theme.accentCyan
@@ -334,7 +187,7 @@ Rectangle {
                             to: 360
                             duration: 1000
                             loops: Animation.Infinite
-                            running: root.isDownloadingRemote
+                            running: root.isDownloadingRemote && !Theme.reduceMotion
                         }
                     }
                     Text {
@@ -352,7 +205,7 @@ Rectangle {
             Rectangle {
                 visible: root.selectedPaths.length > 1
                 implicitWidth: batchExportRow.implicitWidth + 14
-                implicitHeight: 22
+                implicitHeight: Theme.sp(22)
                 radius: Theme.r(4)
                 color: Theme.accent
                 border.color: Theme.accent
@@ -460,8 +313,8 @@ Rectangle {
                 width: 90
                 height: listView.height
                 radius: Theme.radiusSm
-                color: isSelected ? Qt.rgba(Theme.accent.r, Theme.accent.g, Theme.accent.b, 0.25) : Theme.bgCard
-                border.color: isSelected ? Theme.accent : Theme.border
+                color: isSelected ? Theme.controlFill("selected") : Theme.bgCard
+                border.color: isSelected ? "transparent" : Theme.controlBorder("normal")
                 border.width: isSelected ? 2 : 1
 
                 ColumnLayout {

@@ -55,7 +55,7 @@ Cửa sổ và bộ xử lý là hai tiến trình riêng biệt. Cửa sổ kh�
 | **Qt 6** (6.12, Qt Quick / QML) | Giao diện: bảng điều khiển, vùng xem, công cụ đo, hộp thoại | Giao diện do GPU vẽ, hỗ trợ Wayland gốc và co giãn phân số, bố cục từ phải sang trái và hệ thống dịch Qt Linguist | LGPL-3.0 |
 | **cxx-qt** (0.10) | Nối Rust với Qt: các kiểu host `Process`, `Host` và socket điều khiển là đối tượng Rust được dùng từ QML | Liên kết an toàn theo cả hai chiều mà không cần viết C++ thủ công | MIT / Apache-2.0 |
 | **Qt Wayland** | Chạy cửa sổ như một client Wayland gốc (app id `omastudio`) | Omarchy chạy Hyprland trên Wayland; quy tắc cửa sổ của Hyprland có thể khớp theo app id | LGPL-3.0 |
-| **zenity** | Hộp thoại tệp và thư mục | Nhỏ gọn và có sẵn trong mọi bản cài Omarchy | LGPL-2.1+ |
+| **xdg-desktop-portal** | Hộp thoại tệp và thư mục | Nhỏ gọn và có sẵn trong mọi bản cài Omarchy | LGPL-2.1+ |
 
 Các tệp QML được biên dịch vào tệp thực thi dưới dạng tài nguyên Qt, nên một phiên bản đã cài không bao giờ bị lẫn với các tệp giao diện rời rạc.
 

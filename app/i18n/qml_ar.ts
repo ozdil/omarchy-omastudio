@@ -1514,6 +1514,14 @@
 </context>
 <context>
     <name>MainWindow</name>
+    <message>
+        <source>Export finished</source>
+        <translation>اكتمل التصدير</translation>
+    </message>
+    <message>
+        <source>Open folder</source>
+        <translation>فتح المجلد</translation>
+    </message>
     <message numerus="yes">
         <source>Rating: %n star(s)</source>
         <translation>

@@ -3,7 +3,7 @@ import QtQuick.Layouts
 
 Rectangle {
     id: root
-    implicitHeight: 28
+    implicitHeight: Theme.sp(28)
     implicitWidth: contentRow.implicitWidth + 16
     radius: Theme.radiusSm
     color: Theme.bgDark
@@ -35,11 +35,11 @@ Rectangle {
             model: ["A", "B", "C", "D"]
             delegate: Rectangle {
                 implicitWidth: 22
-                implicitHeight: 20
+                implicitHeight: Theme.sp(20)
                 radius: Theme.r(4)
                 property bool isCur: root.currentVersion === modelData
                 property bool hasData: root.activeVersions && root.activeVersions[modelData] === true
-                color: isCur ? Qt.rgba(Theme.accent.r, Theme.accent.g, Theme.accent.b, 0.25) : (mouseArea.containsMouse ? Theme.bgCardHover : Theme.bgCard)
+                color: isCur ? Theme.controlFill("selected") : (mouseArea.containsMouse ? Theme.bgCardHover : Theme.bgCard)
                 border.color: isCur ? Theme.accent : (hasData ? Theme.borderLight : Theme.border)
                 border.width: 1
 

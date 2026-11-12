@@ -3,7 +3,7 @@
 
 The version lives in Cargo.toml and app/Cargo.toml (the binaries and the
 About dialog read it through CARGO_PKG_VERSION), Cargo.lock, PKGBUILD and
-manifest.json. CI runs this on every pull request.
+omarchy-plugin/manifest.json. CI runs this on every pull request.
 
 With a tag (`check-version.py v3.2.0`, as the release workflow does) it also
 checks that the tag names that version and that CHANGELOG.md has a section
@@ -54,7 +54,7 @@ def main() -> int:
         "Cargo.lock (omastudio-engine)": lock_version("omastudio-engine"),
         "Cargo.lock (omastudio-app)": lock_version("omastudio-app"),
         "PKGBUILD": pkgbuild_version(),
-        "manifest.json": json.loads((ROOT / "manifest.json").read_text(encoding="utf-8"))["version"],
+        "omarchy-plugin/manifest.json": json.loads((ROOT / "omarchy-plugin" / "manifest.json").read_text(encoding="utf-8"))["version"],
     }
     version = found["Cargo.toml"]
     errors = [f"{where}: {v} (Cargo.toml says {version})" for where, v in found.items() if v != version]

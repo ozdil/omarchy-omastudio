@@ -55,7 +55,7 @@ Vinduet og motoren er separate prosesser. Vinduet dekoder aldri et bilde selv: d
 | **Qt 6** (6.12, Qt Quick / QML) | Grensesnittet: paneler, visningsflaten, målere, dialoger | GPU-tegnet grensesnitt med innebygd Wayland-støtte og brøkskalering, høyre-til-venstre-oppsett og oversettelsessystemet Qt Linguist | LGPL-3.0 |
 | **cxx-qt** (0.10) | Kobler sammen Rust og Qt: verttypene `Process`, `Host` og kontrollsocketen er Rust-objekter som brukes fra QML | Trygge bindinger begge veier uten håndskrevet C++ | MIT / Apache-2.0 |
 | **Qt Wayland** | Kjører vinduet som en innebygd Wayland-klient (app-id `omastudio`) | Omarchy kjører Hyprland på Wayland; Hyprlands vindusregler kan treffe app-id-en | LGPL-3.0 |
-| **zenity** | Fil- og mappedialoger | Lite og finnes i alle Omarchy-installasjoner | LGPL-2.1+ |
+| **xdg-desktop-portal** | Fil- og mappedialoger | Lite og finnes i alle Omarchy-installasjoner | LGPL-2.1+ |
 
 QML-filene kompileres inn i binærfilen som Qt-ressurser, så en installert versjon blandes aldri med løse grensesnittfiler.
 

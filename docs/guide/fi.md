@@ -43,7 +43,7 @@ Tämä asentaa ohjelmat `omastudio`, `omastudio-app` ja `omastudio-engine`, ICC-
 
 **Julkaisuarkistosta.** Lataa `omastudio-<versio>-x86_64-linux.tar.gz` [julkaisusivulta](https://github.com/ozdil/omarchy-omastudio/releases), tarkista se tiedostoa `checksums.txt` vasten, pura se ja kopioi `bin/*` kansioon `~/.local/bin` ja `share/omastudio` kansioon `~/.local/share/omastudio`.
 
-**Vaaditut paketit:** `libraw` 0.22 tai uudempi, `lcms2`, `qt6-base`, `qt6-declarative`, `qt6-wayland` ja `qt6-svg` 6.12 tai uudempi sekä `zenity` tiedostoikkunoita varten.
+**Vaaditut paketit:** `libraw` 0.22 tai uudempi, `lcms2`, `qt6-base`, `qt6-declarative`, `qt6-wayland` ja `qt6-svg` 6.12 tai uudempi sekä `xdg-desktop-portal` tiedostoikkunoita varten.
 
 **Valinnaiset paketit:**
 

@@ -82,7 +82,7 @@ Rectangle {
             // ISO Badge
             Rectangle {
                 Layout.fillWidth: true
-                implicitHeight: 22
+                implicitHeight: Theme.sp(22)
                 radius: Theme.r(4)
                 color: Theme.bgCard
                 border.color: Theme.border
@@ -101,7 +101,7 @@ Rectangle {
             // Focal Length Badge
             Rectangle {
                 Layout.fillWidth: true
-                implicitHeight: 22
+                implicitHeight: Theme.sp(22)
                 radius: Theme.r(4)
                 color: Theme.bgCard
                 border.color: Theme.border
@@ -119,7 +119,7 @@ Rectangle {
             // Aperture Badge
             Rectangle {
                 Layout.fillWidth: true
-                implicitHeight: 22
+                implicitHeight: Theme.sp(22)
                 radius: Theme.r(4)
                 color: Theme.bgCard
                 border.color: Theme.border
@@ -137,7 +137,7 @@ Rectangle {
             // Shutter Speed Badge
             Rectangle {
                 Layout.fillWidth: true
-                implicitHeight: 22
+                implicitHeight: Theme.sp(22)
                 radius: Theme.r(4)
                 color: Theme.bgCard
                 border.color: Theme.border

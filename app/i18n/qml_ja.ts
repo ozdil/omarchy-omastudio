@@ -1499,6 +1499,14 @@
 </context>
 <context>
     <name>MainWindow</name>
+    <message>
+        <source>Export finished</source>
+        <translation>書き出しが完了しました</translation>
+    </message>
+    <message>
+        <source>Open folder</source>
+        <translation>フォルダーを開く</translation>
+    </message>
     <message numerus="yes">
         <source>Rating: %n star(s)</source>
         <translation>

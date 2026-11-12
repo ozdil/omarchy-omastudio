@@ -6,39 +6,6 @@ import QtQuick.Controls
 Rectangle {
     id: root
 
-    component ViewToggle: Rectangle {
-        id: vt
-        property string label: ""
-        property string tip: ""
-        property bool active: false
-        signal clicked()
-        implicitWidth: vtText.implicitWidth + 14
-        implicitHeight: 24
-        radius: Theme.r(4)
-        color: vt.active ? Theme.accent : (vtMouse.containsMouse ? Theme.bgCardHover : "transparent")
-        Text {
-            id: vtText
-            anchors.centerIn: parent
-            text: vt.label
-            textFormat: Text.PlainText
-            font.pixelSize: Theme.px(10)
-            font.family: Theme.monoFont
-            font.weight: Font.Bold
-            color: vt.active ? Theme.onAccent : Theme.textMain
-        }
-        MouseArea {
-            id: vtMouse
-            anchors.fill: parent
-            hoverEnabled: true
-            cursorShape: Qt.PointingHandCursor
-            ToolTip.visible: containsMouse
-            ToolTip.delay: 500
-            ToolTip.text: vt.tip
-            Accessible.role: Accessible.Button
-            Accessible.name: vt.label
-            onClicked: vt.clicked()
-        }
-    }
     // Neutral surround so the theme's tint does not shift how colours are judged:
     // "dark" (default), "grey" (middle grey) or "theme"
     property string surround: "dark"
@@ -480,10 +447,10 @@ Rectangle {
     // Smooth Animations
     ParallelAnimation {
         id: resetAnim
-        NumberAnimation { target: root; property: "zoomFactor"; to: 1.0; duration: 220; easing.type: Easing.OutCubic }
-        NumberAnimation { target: root; property: "rotationAngle"; to: 0.0; duration: 220; easing.type: Easing.OutCubic }
-        NumberAnimation { target: root; property: "panX"; to: 0.0; duration: 220; easing.type: Easing.OutCubic }
-        NumberAnimation { target: root; property: "panY"; to: 0.0; duration: 220; easing.type: Easing.OutCubic }
+        NumberAnimation { target: root; property: "zoomFactor"; to: 1.0; duration: Theme.duration(220); easing.type: Easing.OutCubic }
+        NumberAnimation { target: root; property: "rotationAngle"; to: 0.0; duration: Theme.duration(220); easing.type: Easing.OutCubic }
+        NumberAnimation { target: root; property: "panX"; to: 0.0; duration: Theme.duration(220); easing.type: Easing.OutCubic }
+        NumberAnimation { target: root; property: "panY"; to: 0.0; duration: Theme.duration(220); easing.type: Easing.OutCubic }
         onFinished: {
             root.updateNormCoordinates();
             root.rotationChangedByUser(0.0);
@@ -492,9 +459,9 @@ Rectangle {
 
     ParallelAnimation {
         id: resetZoomAnim
-        NumberAnimation { target: root; property: "zoomFactor"; to: 1.0; duration: 220; easing.type: Easing.OutCubic }
-        NumberAnimation { target: root; property: "panX"; to: 0.0; duration: 220; easing.type: Easing.OutCubic }
-        NumberAnimation { target: root; property: "panY"; to: 0.0; duration: 220; easing.type: Easing.OutCubic }
+        NumberAnimation { target: root; property: "zoomFactor"; to: 1.0; duration: Theme.duration(220); easing.type: Easing.OutCubic }
+        NumberAnimation { target: root; property: "panX"; to: 0.0; duration: Theme.duration(220); easing.type: Easing.OutCubic }
+        NumberAnimation { target: root; property: "panY"; to: 0.0; duration: Theme.duration(220); easing.type: Easing.OutCubic }
         onFinished: root.updateNormCoordinates()
     }
 
@@ -503,7 +470,7 @@ Rectangle {
         target: root
         property: "rotationAngle"
         to: 0.0
-        duration: 220
+        duration: Theme.duration(220)
         easing.type: Easing.OutCubic
         onFinished: {
             root.updateNormCoordinates();
@@ -515,7 +482,7 @@ Rectangle {
         id: rotStepAnim
         target: root
         property: "rotationAngle"
-        duration: 200
+        duration: Theme.duration(200)
         easing.type: Easing.OutCubic
         onFinished: {
             root.updateNormCoordinates();
@@ -526,9 +493,9 @@ Rectangle {
     ParallelAnimation {
         id: absZoomAnim
         property alias to: zoomPropAnim.to
-        NumberAnimation { id: zoomPropAnim; target: root; property: "zoomFactor"; duration: 220; easing.type: Easing.OutCubic }
-        NumberAnimation { target: root; property: "panX"; to: 0.0; duration: 220; easing.type: Easing.OutCubic }
-        NumberAnimation { target: root; property: "panY"; to: 0.0; duration: 220; easing.type: Easing.OutCubic }
+        NumberAnimation { id: zoomPropAnim; target: root; property: "zoomFactor"; duration: Theme.duration(220); easing.type: Easing.OutCubic }
+        NumberAnimation { target: root; property: "panX"; to: 0.0; duration: Theme.duration(220); easing.type: Easing.OutCubic }
+        NumberAnimation { target: root; property: "panY"; to: 0.0; duration: Theme.duration(220); easing.type: Easing.OutCubic }
         onFinished: root.updateNormCoordinates()
     }
 
@@ -1082,8 +1049,8 @@ Rectangle {
                             width: choiceText.implicitWidth + 12
                             height: 20
                             radius: Theme.r(4)
-                            color: isCur ? Theme.accent : (choiceMouse.containsMouse ? Theme.bgCardHover : Theme.bgCard)
-                            border.color: isCur ? Theme.accent : Theme.border
+                            color: isCur ? Theme.controlFill("selected") : (choiceMouse.containsMouse ? Theme.controlFill("hover-cursor") : Theme.controlFill("normal"))
+                            border.color: isCur ? "transparent" : Theme.controlBorder("normal")
                             Text {
                                 id: choiceText
                                 anchors.centerIn: parent
@@ -1092,7 +1059,7 @@ Rectangle {
                                 font.family: Theme.monoFont
                                 font.pixelSize: Theme.px(9)
                                 font.weight: Font.Bold
-                                color: choice.isCur ? Theme.onAccent : Theme.textMain
+                                color: choice.isCur ? Theme.selectedText : Theme.textMain
                             }
                             MouseArea {
                                 id: choiceMouse
@@ -1122,7 +1089,7 @@ Rectangle {
                 Layout.preferredWidth: 1
                 spacing: 6
                 Text {
-                    Layout.preferredHeight: 20
+                    Layout.preferredHeight: Theme.sp(20)
                     verticalAlignment: Text.AlignVCenter
                     text: qsTr("Current edit")
                     textFormat: Text.PlainText
@@ -1198,7 +1165,7 @@ Rectangle {
         anchors.top: parent.top
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.topMargin: 14
-        implicitHeight: 28
+        implicitHeight: Theme.sp(28)
         implicitWidth: rotRow.implicitWidth + 20
         radius: Theme.r(14)
         color: Theme.isDarkTheme ? Qt.rgba(Theme.bgDark.r, Theme.bgDark.g, Theme.bgDark.b, 0.92) : Qt.rgba(Theme.bgSurface.r, Theme.bgSurface.g, Theme.bgSurface.b, 0.96)
@@ -1229,7 +1196,7 @@ Rectangle {
 
             Rectangle {
                 implicitWidth: resetTxt.implicitWidth + 10
-                implicitHeight: 18
+                implicitHeight: Theme.sp(18)
                 radius: Theme.r(9)
                 color: resetMouse.containsMouse ? Theme.accentHover : Qt.rgba(Theme.accent.r, Theme.accent.g, Theme.accent.b, 0.2)
 
@@ -1241,7 +1208,7 @@ Rectangle {
                     textFormat: Text.PlainText
                     font.pixelSize: Theme.px(9)
                     font.weight: Font.Bold
-                    color: resetMouse.containsMouse ? Theme.bgBase : Theme.accent
+                    color: resetMouse.containsMouse ? Theme.onAccent : Theme.accent
                 }
 
                 MouseArea {
@@ -1255,168 +1222,86 @@ Rectangle {
         }
     }
 
-    // FLOATING QUICK TRANSFORM TOOLBAR (Bottom Center)
+    // Floating view toolbar (bottom centre): rotation, zoom, surround and the view
+    // aids. Drawn like an Omarchy popup; when the viewport is too narrow for its
+    // labels (a tiled window, a large Omarchy font) the buttons show their icons
+    component Divider: Rectangle {
+        implicitWidth: 1
+        implicitHeight: Theme.sp(14)
+        color: Theme.border
+    }
     Rectangle {
+        id: viewBar
         anchors.bottom: parent.bottom
         anchors.horizontalCenter: parent.horizontalCenter
-        anchors.bottomMargin: 14
-        implicitHeight: 34
-        implicitWidth: transformRow.implicitWidth + 20
-        radius: Theme.r(17)
-        color: Theme.isDarkTheme ? Qt.rgba(Theme.bgDark.r, Theme.bgDark.g, Theme.bgDark.b, 0.94) : Qt.rgba(Theme.bgSurface.r, Theme.bgSurface.g, Theme.bgSurface.b, 0.98)
-        border.color: Theme.borderLight
-        border.width: 1
+        anchors.bottomMargin: Theme.sp(12)
+        readonly property real fullWidth: rotLeftBtn.fullWidth + rotRightBtn.fullWidth + fitBtn.fullWidth + pct100Btn.fullWidth
+            + pct200Btn.fullWidth + zoomText.implicitWidth + surroundBtn.implicitWidth + loupeBtn.fullWidth + peakingBtn.fullWidth
+            + compareBtn.fullWidth + 4 + 13 * transformRow.spacing + 2 * Theme.sp(6)
+        readonly property bool compact: fullWidth > root.width - 2 * Theme.sp(12)
+        implicitHeight: transformRow.implicitHeight + 2 * Theme.sp(4)
+        implicitWidth: transformRow.implicitWidth + 2 * Theme.sp(6)
+        radius: Math.min(Theme.rounding, height / 2)
+        color: Theme.popupBg
+        border.color: Theme.popupBorder
+        border.width: Theme.borderWidth
         z: 25
         visible: root.imageSource !== ""
 
         RowLayout {
             id: transformRow
             anchors.centerIn: parent
-            spacing: 6
+            spacing: Theme.sp(3)
 
-            // Rotate 90° CCW
-            // Labelled "90°" so it does not read as undo / redo
-            Rectangle {
-                implicitWidth: ccwMouseLabel.implicitWidth + 12
-                implicitHeight: 24
-                radius: Theme.r(4)
-                color: ccwMouse.containsMouse ? Theme.bgCardHover : "transparent"
-                Text {
-                    id: ccwMouseLabel
-                    anchors.centerIn: parent
-                    text: Theme.iconRotateLeft + " 90°"
-                    font.family: Theme.iconFont
-                    font.pixelSize: Theme.px(11)
-                    color: ccwMouse.containsMouse ? Theme.accent : Theme.textMain
-                }
-                MouseArea {
-                    id: ccwMouse
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    cursorShape: Qt.PointingHandCursor
-                    ToolTip.visible: containsMouse
-                    ToolTip.delay: 500
-                    ToolTip.text: qsTr("Rotate left")
-                    onClicked: root.rotateStep(-90)
-                }
+            // Labelled "90°" so they do not read as undo / redo
+            OmaButton {
+                id: rotLeftBtn
+                icon: Theme.iconRotateLeft
+                text: "90°"
+                accessibleName: qsTr("Rotate left")
+                tip: qsTr("Rotate left")
+                showLabel: !viewBar.compact
+                onClicked: root.rotateStep(-90)
+            }
+            OmaButton {
+                id: rotRightBtn
+                icon: Theme.iconRotateRight
+                text: "90°"
+                accessibleName: qsTr("Rotate right")
+                tip: qsTr("Rotate right")
+                showLabel: !viewBar.compact
+                onClicked: root.rotateStep(90)
             }
 
-            // Rotate 90° CW
-            // Labelled "90°" so it does not read as undo / redo
-            Rectangle {
-                implicitWidth: cwMouseLabel.implicitWidth + 12
-                implicitHeight: 24
-                radius: Theme.r(4)
-                color: cwMouse.containsMouse ? Theme.bgCardHover : "transparent"
-                Text {
-                    id: cwMouseLabel
-                    anchors.centerIn: parent
-                    text: Theme.iconRotateRight + " 90°"
-                    font.family: Theme.iconFont
-                    font.pixelSize: Theme.px(11)
-                    color: cwMouse.containsMouse ? Theme.accent : Theme.textMain
-                }
-                MouseArea {
-                    id: cwMouse
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    cursorShape: Qt.PointingHandCursor
-                    ToolTip.visible: containsMouse
-                    ToolTip.delay: 500
-                    ToolTip.text: qsTr("Rotate right")
-                    onClicked: root.rotateStep(90)
-                }
-            }
+            Divider {}
 
-            Rectangle {
-                implicitWidth: 1
-                implicitHeight: 16
-                color: Theme.borderLight
+            OmaButton {
+                id: fitBtn
+                text: qsTr("Fit")
+                checkable: true
+                checked: root.zoomFactor <= 1.05
+                onClicked: root.resetZoomFit()
             }
-
-            // Fit Button
-            Rectangle {
-                implicitWidth: Math.max(34, label978.implicitWidth + 16)
-                implicitHeight: 24
-                radius: Theme.r(4)
-                color: root.zoomFactor <= 1.05 ? Theme.accent : (fitMouse.containsMouse ? Theme.bgCardHover : "transparent")
-                Text {
-                    id: label978
-                    anchors.centerIn: parent
-                    text: qsTr("Fit")
-                    textFormat: Text.PlainText
-                    font.pixelSize: Theme.px(10)
-                    font.family: Theme.monoFont
-                    font.weight: Font.Bold
-                    color: root.zoomFactor <= 1.05 ? Theme.onAccent : Theme.textMain
-                }
-                MouseArea {
-                    id: fitMouse
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    cursorShape: Qt.PointingHandCursor
-                    onClicked: root.resetZoomFit()
-                }
+            OmaButton {
+                id: pct100Btn
+                visible: !viewBar.compact
+                text: "100%"
+                checkable: true
+                checked: Math.abs(root.pixelScale - 1.0) < 0.02
+                onClicked: root.setZoomAtPoint(root.width / 2, root.height / 2, root.zoomForPixelScale(1.0))
             }
-
-            // 100% Button
-            Rectangle {
-                implicitWidth: Math.max(42, label1003.implicitWidth + 16)
-                implicitHeight: 24
-                radius: Theme.r(4)
-                color: Math.abs(root.pixelScale - 1.0) < 0.02 ? Theme.accent : (pct100Mouse.containsMouse ? Theme.bgCardHover : "transparent")
-                Text {
-                    id: label1003
-                    anchors.centerIn: parent
-                    text: "100%"
-                    textFormat: Text.PlainText
-                    font.pixelSize: Theme.px(10)
-                    font.family: Theme.monoFont
-                    font.weight: Font.Bold
-                    color: Math.abs(root.pixelScale - 1.0) < 0.02 ? Theme.onAccent : Theme.textMain
-                }
-                MouseArea {
-                    id: pct100Mouse
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    cursorShape: Qt.PointingHandCursor
-                    onClicked: root.setZoomAtPoint(root.width / 2, root.height / 2, root.zoomForPixelScale(1.0))
-                }
-            }
-
-            // 200% Button
-            Rectangle {
-                implicitWidth: Math.max(42, label1028.implicitWidth + 16)
-                implicitHeight: 24
-                radius: Theme.r(4)
-                color: Math.abs(root.pixelScale - 2.0) < 0.04 ? Theme.accent : (pct200Mouse.containsMouse ? Theme.bgCardHover : "transparent")
-                Text {
-                    id: label1028
-                    anchors.centerIn: parent
-                    text: "200%"
-                    textFormat: Text.PlainText
-                    font.pixelSize: Theme.px(10)
-                    font.family: Theme.monoFont
-                    font.weight: Font.Bold
-                    color: Math.abs(root.pixelScale - 2.0) < 0.04 ? Theme.onAccent : Theme.textMain
-                }
-                MouseArea {
-                    id: pct200Mouse
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    cursorShape: Qt.PointingHandCursor
-                    onClicked: root.setZoomAtPoint(root.width / 2, root.height / 2, root.zoomForPixelScale(2.0))
-                }
-            }
-
-            Rectangle {
-                implicitWidth: 1
-                implicitHeight: 16
-                color: Theme.borderLight
+            OmaButton {
+                id: pct200Btn
+                visible: !viewBar.compact
+                text: "200%"
+                checkable: true
+                checked: Math.abs(root.pixelScale - 2.0) < 0.04
+                onClicked: root.setZoomAtPoint(root.width / 2, root.height / 2, root.zoomForPixelScale(2.0))
             }
 
             // Current zoom
             Text {
+                id: zoomText
                 Layout.minimumWidth: Theme.px(34)
                 horizontalAlignment: Text.AlignHCenter
                 text: Math.round(root.pixelScale * 100) + "%"
@@ -1426,63 +1311,50 @@ Rectangle {
                 color: Theme.textMuted
             }
 
-            Rectangle {
-                implicitWidth: 1
-                implicitHeight: 16
-                color: Theme.borderLight
-            }
+            Divider {}
 
             // Surround: dark, middle grey or theme colour
-            Rectangle {
-                implicitWidth: 28
-                implicitHeight: 24
-                radius: Theme.r(4)
-                color: surroundMouse.containsMouse ? Theme.bgCardHover : "transparent"
-                Text {
-                    anchors.centerIn: parent
-                    text: "\uf042"
-                    font.family: Theme.iconFont
-                    font.pixelSize: Theme.px(12)
-                    color: surroundMouse.containsMouse ? Theme.accent : Theme.textMain
-                }
-                MouseArea {
-                    id: surroundMouse
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    cursorShape: Qt.PointingHandCursor
-                    ToolTip.visible: containsMouse
-                    ToolTip.delay: 500
-                    ToolTip.text: qsTr("Surround: %1").arg(root.surround === "grey" ? qsTr("middle grey")
-                        : root.surround === "theme" ? qsTr("theme colour") : qsTr("dark grey"))
-                    Accessible.role: Accessible.Button
-                    Accessible.name: qsTr("Surround colour")
-                    onClicked: root.surroundCycled(root.surround === "dark" ? "grey"
-                        : root.surround === "grey" ? "theme" : "dark")
-                }
+            OmaButton {
+                id: surroundBtn
+                icon: "\uf042"
+                text: qsTr("Surround colour")
+                showLabel: false
+                tip: qsTr("Surround: %1").arg(root.surround === "grey" ? qsTr("middle grey")
+                    : root.surround === "theme" ? qsTr("theme colour") : qsTr("dark grey"))
+                onClicked: root.surroundCycled(root.surround === "dark" ? "grey"
+                    : root.surround === "grey" ? "theme" : "dark")
             }
 
-            Rectangle {
-                implicitWidth: 1
-                implicitHeight: 16
-                color: Theme.borderLight
-            }
+            Divider {}
 
-            ViewToggle {
-                label: qsTr("Loupe")
+            OmaButton {
+                id: loupeBtn
+                icon: Theme.iconSearch
+                text: qsTr("Loupe")
+                showLabel: !viewBar.compact
                 tip: qsTr("Loupe (L): the photo at 1:1 around the pointer")
-                active: root.loupeActive
+                checkable: true
+                checked: root.loupeActive
                 onClicked: root.loupeActive = !root.loupeActive
             }
-            ViewToggle {
-                label: qsTr("Peaking")
+            OmaButton {
+                id: peakingBtn
+                icon: "\uf05b"
+                text: qsTr("Peaking")
+                showLabel: !viewBar.compact
                 tip: qsTr("Focus peaking (Shift+F): marks the sharpest edges in green")
-                active: root.focusPeaking
+                checkable: true
+                checked: root.focusPeaking
                 onClicked: root.focusPeakingToggled()
             }
-            ViewToggle {
-                label: qsTr("Compare")
+            OmaButton {
+                id: compareBtn
+                icon: "\uf24d"
+                text: qsTr("Compare")
+                showLabel: !viewBar.compact
                 tip: qsTr("Compare (Shift+C): another state of the edit beside this one")
-                active: root.compareActive
+                checkable: true
+                checked: root.compareActive
                 onClicked: root.compareToggled()
             }
         }
@@ -1494,7 +1366,7 @@ Rectangle {
         anchors.top: parent.top
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.topMargin: 14
-        implicitHeight: 34
+        implicitHeight: Theme.sp(34)
         implicitWidth: cropRow.implicitWidth + 20
         radius: Theme.r(17)
         color: Theme.isDarkTheme ? Qt.rgba(Theme.bgDark.r, Theme.bgDark.g, Theme.bgDark.b, 0.94) : Qt.rgba(Theme.bgSurface.r, Theme.bgSurface.g, Theme.bgSurface.b, 0.98)
@@ -1531,10 +1403,10 @@ Rectangle {
                 model: parent.aspects
                 delegate: Rectangle {
                     implicitWidth: aspText.implicitWidth + 10
-                    implicitHeight: 22
+                    implicitHeight: Theme.sp(22)
                     radius: Theme.r(4)
                     property bool isCur: root.cropAspect.indexOf(modelData) !== -1
-                    color: isCur ? Theme.accent : (aspMouse.containsMouse ? Theme.bgCardHover : "transparent")
+                    color: isCur ? Theme.controlFill("selected") : (aspMouse.containsMouse ? Theme.controlFill("hover-cursor") : Theme.controlFill("normal"))
 
                     Text {
                         font.family: Theme.fontFamily
@@ -1544,7 +1416,7 @@ Rectangle {
                         textFormat: Text.PlainText
                         font.pixelSize: Theme.px(9)
                         font.weight: Font.DemiBold
-                        color: parent.isCur ? Theme.bgBase : Theme.textMain
+                        color: parent.isCur ? Theme.selectedText : Theme.textMain
                     }
                     MouseArea {
                         id: aspMouse
@@ -1560,7 +1432,7 @@ Rectangle {
             // Composition Guides Cycle
             Rectangle {
                 implicitWidth: guideText.implicitWidth + 12
-                implicitHeight: 22
+                implicitHeight: Theme.sp(22)
                 radius: Theme.r(4)
                 color: root.guideMode > 0 ? Qt.rgba(Theme.accentCyan.r, Theme.accentCyan.g, Theme.accentCyan.b, 0.2) : "transparent"
                 border.color: root.guideMode > 0 ? Theme.accentCyan : Theme.border
@@ -1593,7 +1465,7 @@ Rectangle {
             // Reset Crop
             Rectangle {
                 implicitWidth: Math.max(46, label1212.implicitWidth + 16)
-                implicitHeight: 22
+                implicitHeight: Theme.sp(22)
                 radius: Theme.r(4)
                 color: rstCropMouse.containsMouse ? Theme.bgCardHover : "transparent"
                 Text {
@@ -1617,7 +1489,7 @@ Rectangle {
             // Done Button
             Rectangle {
                 implicitWidth: Math.max(46, label1236.implicitWidth + 16)
-                implicitHeight: 22
+                implicitHeight: Theme.sp(22)
                 radius: Theme.r(4)
                 color: Theme.accent
                 Text {
@@ -1650,7 +1522,7 @@ Rectangle {
 
         Rectangle {
             implicitWidth: beforeText.implicitWidth + 16
-            implicitHeight: 22
+            implicitHeight: Theme.sp(22)
             radius: Theme.r(4)
             color: Qt.rgba(0, 0, 0, 0.75)
             Text {
@@ -1669,7 +1541,7 @@ Rectangle {
 
         Rectangle {
             implicitWidth: afterText.implicitWidth + 16
-            implicitHeight: 22
+            implicitHeight: Theme.sp(22)
             radius: Theme.r(4)
             color: Qt.rgba(0, 0, 0, 0.75)
             Text {
@@ -1696,7 +1568,7 @@ Rectangle {
         Rectangle {
             visible: root.showShadowMask
             implicitWidth: shadowClipTxt.implicitWidth + 12
-            implicitHeight: 22
+            implicitHeight: Theme.sp(22)
             radius: Theme.r(4)
             color: Qt.rgba(Theme.shadowClip.r, Theme.shadowClip.g, Theme.shadowClip.b, 0.85)
             border.color: Theme.shadowClip
@@ -1717,7 +1589,7 @@ Rectangle {
         Rectangle {
             visible: root.showHighlightMask
             implicitWidth: highClipTxt.implicitWidth + 12
-            implicitHeight: 22
+            implicitHeight: Theme.sp(22)
             radius: Theme.r(4)
             color: Qt.rgba(Theme.highlightClip.r, Theme.highlightClip.g, Theme.highlightClip.b, 0.85)
             border.color: Theme.highlightClip

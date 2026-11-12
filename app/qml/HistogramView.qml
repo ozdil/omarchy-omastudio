@@ -28,7 +28,7 @@ Rectangle {
         // Shadow clipping button
         Rectangle {
             implicitWidth: shadowText.implicitWidth + 12
-            implicitHeight: 18
+            implicitHeight: Theme.sp(18)
             radius: Theme.r(4)
             color: root.showClippingShadows ? Theme.shadowClip : Qt.rgba(0.2, 0.5, 1.0, 0.15)
             border.color: Theme.shadowClip
@@ -70,7 +70,7 @@ Rectangle {
         // Highlight clipping button
         Rectangle {
             implicitWidth: highText.implicitWidth + 12
-            implicitHeight: 18
+            implicitHeight: Theme.sp(18)
             radius: Theme.r(4)
             color: root.showClippingHighlights ? Theme.highlightClip : Qt.rgba(1.0, 0.3, 0.4, 0.15)
             border.color: Theme.highlightClip

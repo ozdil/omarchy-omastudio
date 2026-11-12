@@ -43,7 +43,7 @@ makepkg -si
 
 **リリースアーカイブから。** [リリースページ](https://github.com/ozdil/omarchy-omastudio/releases)から `omastudio-<バージョン>-x86_64-linux.tar.gz` をダウンロードし、`checksums.txt` で検証してから展開し、`bin/*` を `~/.local/bin` に、`share/omastudio` を `~/.local/share/omastudio` にコピーします。
 
-**必須パッケージ:** `libraw` 0.22 以降、`lcms2`、`qt6-base`、`qt6-declarative`、`qt6-wayland`、`qt6-svg` 6.12 以降、およびファイルダイアログ用の `zenity`。
+**必須パッケージ:** `libraw` 0.22 以降、`lcms2`、`qt6-base`、`qt6-declarative`、`qt6-wayland`、`qt6-svg` 6.12 以降、およびファイルダイアログ用の `xdg-desktop-portal`。
 
 **任意のパッケージ:**
 

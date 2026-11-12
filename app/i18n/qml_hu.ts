@@ -1499,6 +1499,14 @@
 </context>
 <context>
     <name>MainWindow</name>
+    <message>
+        <source>Export finished</source>
+        <translation>Az exportálás kész</translation>
+    </message>
+    <message>
+        <source>Open folder</source>
+        <translation>Mappa megnyitása</translation>
+    </message>
     <message numerus="yes">
         <source>Rating: %n star(s)</source>
         <translation>

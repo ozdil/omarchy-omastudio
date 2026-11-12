@@ -43,7 +43,7 @@ makepkg -si
 
 **透過發行套件安裝。** 從[發行頁面](https://github.com/ozdil/omarchy-omastudio/releases)下載 `omastudio-<版本>-x86_64-linux.tar.gz`，用 `checksums.txt` 校驗後解壓，將 `bin/*` 複製到 `~/.local/bin`，將 `share/omastudio` 複製到 `~/.local/share/omastudio`。
 
-**必要的軟體套件：** `libraw` 0.22 或更高版本、`lcms2`、`qt6-base`、`qt6-declarative`、`qt6-wayland` 和 `qt6-svg` 6.12 或更高版本，以及用於檔案對話方塊的 `zenity`。
+**必要的軟體套件：** `libraw` 0.22 或更高版本、`lcms2`、`qt6-base`、`qt6-declarative`、`qt6-wayland` 和 `qt6-svg` 6.12 或更高版本，以及用於檔案對話方塊的 `xdg-desktop-portal`。
 
 **選用的軟體套件：**
 

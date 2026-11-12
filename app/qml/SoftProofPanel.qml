@@ -38,7 +38,7 @@ ColumnLayout {
         }
         CustomSwitch {
             Layout.preferredWidth: 36
-            Layout.preferredHeight: 20
+            Layout.preferredHeight: Theme.sp(20)
             checked: sw.checked
             onToggled: function(on) { sw.toggled(on) }
         }
@@ -79,7 +79,7 @@ ColumnLayout {
                 radius: Theme.r(4)
                 color: isCur ? Qt.rgba(Theme.accent.r, Theme.accent.g, Theme.accent.b, 0.18)
                              : (chipMouse.containsMouse ? Theme.bgCardHover : Theme.bgCard)
-                border.color: isCur ? Theme.accent : Theme.border
+                border.color: isCur ? "transparent" : Theme.controlBorder("normal")
                 border.width: 1
                 Text {
                     id: chipText
@@ -129,7 +129,7 @@ ColumnLayout {
                 radius: Theme.r(4)
                 color: isCur ? Qt.rgba(Theme.accent.r, Theme.accent.g, Theme.accent.b, 0.18)
                              : (segMouse.containsMouse ? Theme.bgCardHover : Theme.bgCard)
-                border.color: isCur ? Theme.accent : Theme.border
+                border.color: isCur ? "transparent" : Theme.controlBorder("normal")
                 border.width: 1
                 Text {
                     anchors.centerIn: parent

@@ -7,6 +7,7 @@
 //! ```
 
 mod host;
+mod hyprland;
 mod ipc;
 mod language;
 mod process;
@@ -73,6 +74,10 @@ fn run(photo: Option<&Path>) -> i32 {
     // a fallback; a fixed Controls style so the platform theme can't restyle the UI
     set_default_env("QT_QPA_PLATFORM", "wayland;xcb");
     set_default_env("QT_QUICK_CONTROLS_STYLE", "Basic");
+    // File and folder choosers through xdg-desktop-portal: the desktop's own dialog,
+    // in its theme, with its bookmarks. A platform theme the session already sets
+    // (Omarchy's qtengine, KDE's) is kept
+    set_default_env("QT_QPA_PLATFORMTHEME", "xdgdesktopportal");
     if let Some(p) = photo {
         // SAFETY: single-threaded at this point, before Qt starts
         unsafe { std::env::set_var("OMASTUDIO_OPEN_PATH", p) };

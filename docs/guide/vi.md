@@ -43,7 +43,7 @@ Lệnh này cài `omastudio`, `omastudio-app`, `omastudio-engine`, các hồ sơ
 
 **Từ gói phát hành.** Tải `omastudio-<phiên bản>-x86_64-linux.tar.gz` từ [trang phát hành](https://github.com/ozdil/omarchy-omastudio/releases), kiểm tra bằng `checksums.txt`, giải nén rồi chép `bin/*` vào `~/.local/bin` và `share/omastudio` vào `~/.local/share/omastudio`.
 
-**Gói bắt buộc:** `libraw` 0.22 trở lên, `lcms2`, `qt6-base`, `qt6-declarative`, `qt6-wayland` và `qt6-svg` 6.12 trở lên, cùng `zenity` cho các hộp thoại tệp.
+**Gói bắt buộc:** `libraw` 0.22 trở lên, `lcms2`, `qt6-base`, `qt6-declarative`, `qt6-wayland` và `qt6-svg` 6.12 trở lên, cùng `xdg-desktop-portal` cho các hộp thoại tệp.
 
 **Gói tùy chọn:**
 

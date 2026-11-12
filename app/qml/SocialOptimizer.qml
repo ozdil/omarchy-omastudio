@@ -35,7 +35,7 @@ ColumnLayout {
         Rectangle {
             visible: !root.embedded
             implicitWidth: Math.max(46, label33.implicitWidth + 16)
-            implicitHeight: 18
+            implicitHeight: Theme.sp(18)
             radius: Theme.radiusSm
             color: resetSocialMouse.containsMouse ? Qt.rgba(Theme.accentCyan.r, Theme.accentCyan.g, Theme.accentCyan.b, 0.2) : (root.activePlatform !== "" ? Qt.rgba(Theme.accentCyan.r, Theme.accentCyan.g, Theme.accentCyan.b, 0.1) : "transparent")
             border.color: root.activePlatform !== "" ? Theme.accentCyan : Theme.border
@@ -85,7 +85,7 @@ ColumnLayout {
             model: parent.platforms
             delegate: Rectangle {
                 Layout.fillWidth: true
-                implicitHeight: 38
+                implicitHeight: Theme.sp(38)
                 radius: Theme.radiusSm
                 color: root.activePlatform === modelData.id
                        ? Qt.rgba(Theme.accent.r, Theme.accent.g, Theme.accent.b, 0.20)

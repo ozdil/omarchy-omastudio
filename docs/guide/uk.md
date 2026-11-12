@@ -43,7 +43,7 @@ makepkg -si
 
 **З архіву випуску.** Завантажте `omastudio-<версія>-x86_64-linux.tar.gz` зі [сторінки випусків](https://github.com/ozdil/omarchy-omastudio/releases), перевірте його за `checksums.txt`, розпакуйте й скопіюйте `bin/*` до `~/.local/bin`, а `share/omastudio` — до `~/.local/share/omastudio`.
 
-**Обов'язкові пакети:** `libraw` 0.22 або новіший, `lcms2`, `qt6-base`, `qt6-declarative`, `qt6-wayland` і `qt6-svg` 6.12 або новіші, а також `zenity` для діалогів вибору файлів.
+**Обов'язкові пакети:** `libraw` 0.22 або новіший, `lcms2`, `qt6-base`, `qt6-declarative`, `qt6-wayland` і `qt6-svg` 6.12 або новіші, а також `xdg-desktop-portal` для діалогів вибору файлів.
 
 **Необов'язкові пакети:**
 

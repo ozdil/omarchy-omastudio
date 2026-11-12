@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
+import QtQuick.Dialogs
 import OmaStudio.Host
 
 Rectangle {
@@ -26,13 +27,14 @@ Rectangle {
 
     signal lutChanged(string name, real intensity, string path)
 
-    Process {
+    // The desktop's file chooser (xdg-desktop-portal on Omarchy)
+    FileDialog {
         id: cubePick
-        command: ["zenity", "--file-selection", "--title=" + qsTr("Load 3D LUT"),
-                  "--file-filter=" + qsTr("3D LUT") + " | *.cube *.CUBE"]
-        onFinished: function(exitCode, output) {
-            var p = String(output || "").trim();
-            if (exitCode !== 0 || p.length === 0) return;
+        title: qsTr("Load 3D LUT")
+        nameFilters: [qsTr("3D LUT") + " (*.cube *.CUBE)"]
+        onAccepted: {
+            var p = Host.localPath(selectedFile);
+            if (p.length === 0) return;
             root.activeLut = p.split("/").pop().replace(/\.cube$/i, "");
             root.customLutPath = p;
             root.lutChanged(root.activeLut, root.lutIntensity, p);
@@ -68,7 +70,7 @@ Rectangle {
             Rectangle {
                 visible: !root.embedded
                 implicitWidth: resetText.implicitWidth + 10
-                implicitHeight: 18
+                implicitHeight: Theme.sp(18)
                 radius: Theme.r(4)
                 color: resetMouse.containsMouse ? Theme.bgCardHover : "transparent"
                 border.color: Theme.border
@@ -117,7 +119,7 @@ Rectangle {
                 anchors.fill: parent
                 hoverEnabled: true
                 cursorShape: Qt.PointingHandCursor
-                onClicked: if (!cubePick.running) cubePick.running = true
+                onClicked: cubePick.open()
             }
         }
 
@@ -193,7 +195,7 @@ Rectangle {
                     color: intensitySlider.pressed ? Theme.accentCyan : (intensitySlider.hovered ? Theme.accent : Theme.textMain)
                     border.color: Theme.bgDark
                     border.width: 1.5
-                    Behavior on color { ColorAnimation { duration: 100 } }
+                    Behavior on color { ColorAnimation { duration: Theme.duration(100) } }
                 }
 
                 onMoved: {
