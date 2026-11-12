@@ -169,7 +169,21 @@ case "${1:-}" in
                     omarchy-shell -q shell rescanPlugins >/dev/null 2>&1 || true
                 fi
                 if command -v omarchy-plugin-enable >/dev/null 2>&1; then
-                    omarchy-plugin-enable "${PLUGIN_ID}" && echo "Enabled ${PLUGIN_ID} in the Omarchy bar"
+                    # The shell rescans in the background, so the new plugin can take a
+                    # moment to become known; try for up to five seconds
+                    ENABLED=0
+                    for _ in 1 2 3 4 5 6 7 8 9 10; do
+                        if omarchy-plugin-enable "${PLUGIN_ID}" >/dev/null 2>&1; then
+                            ENABLED=1
+                            break
+                        fi
+                        /usr/bin/sleep 0.5
+                    done
+                    if [[ "${ENABLED}" == "1" ]]; then
+                        echo "Enabled ${PLUGIN_ID} in the Omarchy bar"
+                    else
+                        omarchy-plugin-enable "${PLUGIN_ID}" || exit 1
+                    fi
                 else
                     echo "Enable it in the Omarchy bar settings, or: omarchy plugin enable ${PLUGIN_ID}"
                 fi
