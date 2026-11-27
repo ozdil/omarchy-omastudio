@@ -323,6 +323,22 @@ mod tests {
         assert_eq!(written, "autosave_ok\n");
     }
 
+    fn is_process_alive(pid: libc::pid_t) -> bool {
+        // SAFETY: signal 0 checks process existence without delivering a signal.
+        if unsafe { libc::kill(pid, 0) } != 0 {
+            return false;
+        }
+        // In minimal containers where PID 1 does not reap reparented orphans, a
+        // SIGKILLed grandchild remains a zombie (State: Z) even though it is dead.
+        let Ok(stat) = std::fs::read_to_string(format!("/proc/{pid}/stat")) else {
+            return false;
+        };
+        let Some(rest) = stat.rsplit_once(')').map(|(_, s)| s.trim_start()) else {
+            return false;
+        };
+        !matches!(rest.as_bytes().first(), Some(b'Z' | b'X' | b'x'))
+    }
+
     #[test]
     fn process_group_reap_kills_sigterm_ignoring_descendants() {
         let mut cmd = Command::new("/bin/sh");
@@ -343,9 +359,8 @@ mod tests {
 
         // Give the kernel a brief moment to finish tearing down the killed grandchild
         let mut alive = true;
-        for _ in 0..20 {
-            // SAFETY: signal 0 checks process existence without delivering a signal.
-            if unsafe { libc::kill(grandchild, 0) } != 0 {
+        for _ in 0..50 {
+            if !is_process_alive(grandchild) {
                 alive = false;
                 break;
             }
