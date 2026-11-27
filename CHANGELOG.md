@@ -32,6 +32,9 @@ Fits into Omarchy 4.5: OmaStudio now follows the Omarchy shell's own theme token
 - Buttons and chips with text no longer clip it at Omarchy's default font size and above: fixed control heights now grow with the font.
 - The language menu's text no longer stays at a fixed size when the font size changes.
 
+### Security
+- Updated `rustix` from `1.1.5` to `1.1.6` to address `RUSTSEC-2026-0486` (`GHSA-jh2m-fhpj-3vr7`).
+
 ## [3.2.1] - 2026-11-04
 
 The 3.2.0 changes, published. The v3.2.0 tag exists, but its release workflow file was invalid, so no 3.2.0 archive was built or released.
