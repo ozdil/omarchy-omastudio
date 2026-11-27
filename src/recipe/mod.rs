@@ -577,8 +577,46 @@ pub struct CatalogFilter {
     pub search_query: Option<String>,
 }
 
+struct CatalogLock(#[allow(dead_code)] std::fs::File);
+
+impl CatalogLock {
+    fn acquire(catalog_path: &Path, exclusive: bool) -> io::Result<Self> {
+        use std::os::unix::fs::OpenOptionsExt;
+        use std::os::unix::io::AsRawFd;
+
+        let parent = catalog_path.parent().unwrap_or_else(|| Path::new("."));
+        crate::security::ensure_secure_dir(parent)?;
+        let lock_path = catalog_path.with_extension("lock");
+        let file = std::fs::OpenOptions::new()
+            .create(true)
+            .read(true)
+            .write(true)
+            .mode(0o600)
+            .custom_flags(libc::O_NOFOLLOW | libc::O_CLOEXEC)
+            .open(&lock_path)?;
+        let op = if exclusive { libc::LOCK_EX } else { libc::LOCK_SH };
+        loop {
+            // SAFETY: file.as_raw_fd() is an open descriptor owned by `file` for the duration of flock.
+            let rc = unsafe { libc::flock(file.as_raw_fd(), op) };
+            if rc == 0 {
+                return Ok(Self(file));
+            }
+            let err = io::Error::last_os_error();
+            if err.kind() != io::ErrorKind::Interrupted {
+                return Err(err);
+            }
+        }
+    }
+}
+
 impl Catalog {
     pub fn default_catalog_path() -> PathBuf {
+        if let Ok(xdg) = std::env::var("XDG_DATA_HOME") {
+            let p = PathBuf::from(xdg.trim());
+            if p.is_absolute() {
+                return p.join("omastudio").join("catalog.json");
+            }
+        }
         let home = std::env::var("HOME").unwrap_or_else(|_| ".".to_string());
         PathBuf::from(&home)
             .join(".local/share/omastudio")
@@ -593,6 +631,11 @@ impl Catalog {
     }
 
     fn load_from(path: &Path) -> Self {
+        let _lock = if path.parent().is_some_and(|p| p.exists()) {
+            CatalogLock::acquire(path, false).ok()
+        } else {
+            None
+        };
         match crate::security::read_secure_file(path, 16 * 1024 * 1024) {
             Ok(bytes) => match serde_json::from_slice::<Catalog>(&bytes) {
                 Ok(cat) => cat,
@@ -618,6 +661,7 @@ impl Catalog {
     }
 
     fn save_to(&self, path: &Path) -> io::Result<()> {
+        let _lock = CatalogLock::acquire(path, true)?;
         if self.unreadable && path.exists() {
             let secs = std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap_or_default().as_secs();
             let mut backup = path.as_os_str().to_owned();

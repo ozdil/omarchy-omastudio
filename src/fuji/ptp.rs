@@ -202,8 +202,12 @@ pub fn patch_profile(base: &[u8], r: &CameraRecipe) -> Result<Vec<u8>> {
     let mut out = base.to_vec();
     let mut set = |i: usize, v: i32| out[off + i * 4..off + i * 4 + 4].copy_from_slice(&v.to_le_bytes());
     set(idx::FILM_SIMULATION, film_sim_code(r.film_simulation) as i32);
-    set(idx::EXPOSURE_BIAS, (r.exposure_bias * 1000.0).round() as i32);
-    if let Some(dr) = r.dynamic_range.filter(|_| !r.dynamic_range_auto) {
+    let exp = if r.exposure_bias.is_finite() { r.exposure_bias.clamp(-5.0, 5.0) } else { 0.0 };
+    set(idx::EXPOSURE_BIAS, (exp * 1000.0).round() as i32);
+    if !r.dynamic_range_auto
+        && let Some(dr) = r.dynamic_range
+        && [100, 200, 400].contains(&dr)
+    {
         set(idx::DYNAMIC_RANGE, dr as i32);
     }
     set(idx::GRAIN, grain_code(r.grain, r.grain_size));
@@ -213,19 +217,21 @@ pub fn patch_profile(base: &[u8], r: &CameraRecipe) -> Result<Vec<u8>> {
     if wb != 0 {
         set(idx::WHITE_BALANCE, wb as i32);
         if let Some(k) = r.color_temperature.filter(|_| r.white_balance == "Kelvin") {
-            set(idx::WB_COLOR_TEMP, k as i32);
+            set(idx::WB_COLOR_TEMP, k.clamp(2500, 10000) as i32);
         }
     }
-    set(idx::WB_SHIFT_R, r.wb_shift.0);
-    set(idx::WB_SHIFT_B, r.wb_shift.1);
-    set(idx::HIGHLIGHT, (r.highlight * 10.0).round() as i32);
-    set(idx::SHADOW, (r.shadow * 10.0).round() as i32);
+    set(idx::WB_SHIFT_R, r.wb_shift.0.clamp(-9, 9));
+    set(idx::WB_SHIFT_B, r.wb_shift.1.clamp(-9, 9));
+    let hl = if r.highlight.is_finite() { r.highlight.clamp(-2.0, 4.0) } else { 0.0 };
+    let sh = if r.shadow.is_finite() { r.shadow.clamp(-2.0, 4.0) } else { 0.0 };
+    set(idx::HIGHLIGHT, (hl * 10.0).round() as i32);
+    set(idx::SHADOW, (sh * 10.0).round() as i32);
     if !r.film_simulation.is_monochrome() {
-        set(idx::COLOR, r.color * 10);
+        set(idx::COLOR, r.color.clamp(-4, 4) * 10);
     }
-    set(idx::SHARPNESS, r.sharpness * 10);
+    set(idx::SHARPNESS, r.sharpness.clamp(-4, 4) * 10);
     set(idx::NOISE_REDUCTION, nr_code(r.noise_reduction) as i32);
-    set(idx::CLARITY, r.clarity * 10);
+    set(idx::CLARITY, r.clarity.clamp(-5, 5) * 10);
     Ok(out)
 }
 
@@ -237,6 +243,7 @@ pub fn profile_recipe(profile: &[u8]) -> Result<CameraRecipe> {
     let (g, gs) = grain(get(idx::GRAIN));
     let wb = wb_name(get(idx::WHITE_BALANCE) as u16);
     let dr = get(idx::DYNAMIC_RANGE);
+    let wb_temp = get(idx::WB_COLOR_TEMP);
     Ok(CameraRecipe {
         film_simulation: sim,
         film_simulation_name: sim.display_name().to_string(),
@@ -244,10 +251,11 @@ pub fn profile_recipe(profile: &[u8]) -> Result<CameraRecipe> {
         grain_size: gs,
         color_chrome: effect(get(idx::COLOR_CHROME)),
         color_chrome_fx_blue: effect(get(idx::COLOR_CHROME_BLUE)),
-        color_temperature: (wb == "Kelvin").then(|| get(idx::WB_COLOR_TEMP) as u32),
+        color_temperature: (wb == "Kelvin" && wb_temp > 0).then_some(wb_temp as u32),
         white_balance: wb,
         wb_shift: (get(idx::WB_SHIFT_R), get(idx::WB_SHIFT_B)),
         dynamic_range: [100, 200, 400].contains(&dr).then_some(dr as u32),
+        dynamic_range_auto: dr == 0xFFFF || dr == 0,
         highlight: get(idx::HIGHLIGHT) as f32 / 10.0,
         shadow: get(idx::SHADOW) as f32 / 10.0,
         color: get(idx::COLOR) / 10,
@@ -282,34 +290,48 @@ mod preset {
 
 /// The property writes that store a recipe in a custom setting slot.
 pub fn preset_writes(r: &CameraRecipe) -> Vec<(u16, i16)> {
+    let hl = if r.highlight.is_finite() { r.highlight.clamp(-2.0, 4.0) } else { 0.0 };
+    let sh = if r.shadow.is_finite() { r.shadow.clamp(-2.0, 4.0) } else { 0.0 };
     let mut w = vec![
         (preset::FILM_SIMULATION, film_sim_code(r.film_simulation) as i16),
-        (preset::DYNAMIC_RANGE, r.dynamic_range.unwrap_or(100) as i16),
         (preset::GRAIN, grain_code(r.grain, r.grain_size) as i16),
         (preset::COLOR_CHROME, effect_code(r.color_chrome) as i16),
         (preset::COLOR_CHROME_BLUE, effect_code(r.color_chrome_fx_blue) as i16),
-        (preset::WHITE_BALANCE, wb_code(&r.white_balance).max(0x0002) as i16),
-        (preset::WB_SHIFT_R, r.wb_shift.0 as i16),
-        (preset::WB_SHIFT_B, r.wb_shift.1 as i16),
-        (preset::HIGHLIGHT, (r.highlight * 10.0).round() as i16),
-        (preset::SHADOW, (r.shadow * 10.0).round() as i16),
-        (preset::SHARPNESS, (r.sharpness * 10) as i16),
+        (preset::WB_SHIFT_R, r.wb_shift.0.clamp(-9, 9) as i16),
+        (preset::WB_SHIFT_B, r.wb_shift.1.clamp(-9, 9) as i16),
+        (preset::HIGHLIGHT, (hl * 10.0).round() as i16),
+        (preset::SHADOW, (sh * 10.0).round() as i16),
+        (preset::SHARPNESS, (r.sharpness.clamp(-4, 4) * 10) as i16),
         (preset::NOISE_REDUCTION, nr_code(r.noise_reduction) as i16),
-        (preset::CLARITY, (r.clarity * 10) as i16),
+        (preset::CLARITY, (r.clarity.clamp(-5, 5) * 10) as i16),
     ];
+    if r.dynamic_range_auto {
+        w.push((preset::DYNAMIC_RANGE, 0xFFFFu16 as i16));
+    } else {
+        let dr = r.dynamic_range.filter(|d| [100, 200, 400].contains(d)).unwrap_or(100);
+        w.push((preset::DYNAMIC_RANGE, dr as i16));
+    }
+    // Preserve "As Shot" (code 0) by leaving the slot's white balance untouched instead of
+    // silently overwriting it with Auto.
+    let wb = wb_code(&r.white_balance);
+    if wb != 0 {
+        w.push((preset::WHITE_BALANCE, wb as i16));
+    }
     if r.film_simulation.is_monochrome() {
         // The camera refuses 0 for the monochrome toning steps
-        if r.mono_warm_cool != 0 {
-            w.push((preset::MONO_WC, (r.mono_warm_cool * 10) as i16));
+        let wc = r.mono_warm_cool.clamp(-9, 9);
+        if wc != 0 {
+            w.push((preset::MONO_WC, (wc * 10) as i16));
         }
-        if r.mono_magenta_green != 0 {
-            w.push((preset::MONO_MG, (r.mono_magenta_green * 10) as i16));
+        let mg = r.mono_magenta_green.clamp(-9, 9);
+        if mg != 0 {
+            w.push((preset::MONO_MG, (mg * 10) as i16));
         }
     } else {
-        w.push((preset::COLOR, (r.color * 10) as i16));
+        w.push((preset::COLOR, (r.color.clamp(-4, 4) * 10) as i16));
     }
     if let Some(k) = r.color_temperature.filter(|_| r.white_balance == "Kelvin") {
-        w.push((preset::COLOR_TEMP, k as i16));
+        w.push((preset::COLOR_TEMP, k.clamp(2500, 10000) as i16));
     }
     w
 }
@@ -365,13 +387,20 @@ impl<T: Transport> Camera<T> {
     }
 
     /// Converts the loaded RAF with `profile` and returns the camera's JPEG.
+    /// Snapshots existing object handles before triggering conversion so pre-existing
+    /// files on the camera's storage card are never downloaded or deleted.
     pub fn convert(&mut self, profile: &[u8], timeout: Duration) -> Result<Vec<u8>> {
+        let existing: std::collections::HashSet<u32> = self
+            .session
+            .object_handles(0xFFFF_FFFF, 0, 0)?
+            .into_iter()
+            .collect();
         self.session.set_prop_value(PROP_PROFILE, profile)?;
         self.session.set_prop_u16(PROP_START_CONVERSION, 0)?;
         let start = Instant::now();
         loop {
             let handles = self.session.object_handles(0xFFFF_FFFF, 0, 0)?;
-            if let Some(&h) = handles.first() {
+            if let Some(h) = handles.into_iter().find(|h| !existing.contains(h)) {
                 let jpeg = self.session.object(h)?;
                 let _ = self.session.delete_object(h);
                 return Ok(jpeg);
@@ -397,65 +426,77 @@ impl<T: Transport> Camera<T> {
         Ok(self.session.prop_u16(prop)? as i16)
     }
 
-    /// Reads custom setting slots C1–C7.
+    /// Reads custom setting slots C1–C7, always restoring the camera's active preset slot.
     pub fn presets(&mut self) -> Result<Vec<Preset>> {
         if !self.info.has_property(PROP_PRESET_SLOT) {
             return Err(Error::Response { op: ptp::op::GET_DEVICE_PROP_VALUE, code: ptp::rc::OPERATION_NOT_SUPPORTED });
         }
         let original = self.session.prop_u16(PROP_PRESET_SLOT).unwrap_or(1);
-        let mut out = Vec::new();
-        for slot in 1..=7u8 {
-            self.session.set_prop_u16(PROP_PRESET_SLOT, slot as u16)?;
-            let name = ptp::Reader::new(&self.session.prop_value(PROP_PRESET_NAME)?).string().unwrap_or_default();
-            let sim = film_sim_from_code(self.prop_i16(preset::FILM_SIMULATION)? as u16);
-            let (g, gs) = grain(self.prop_i16(preset::GRAIN)? as i32);
-            let wb = wb_name(self.prop_i16(preset::WHITE_BALANCE)? as u16);
-            let dr = self.prop_i16(preset::DYNAMIC_RANGE)? as u32;
-            let tenth = |v: i16| v as f32 / 10.0;
-            let recipe = CameraRecipe {
-                camera: self.info.model.clone(),
-                film_simulation: sim,
-                film_simulation_name: sim.display_name().to_string(),
-                grain: g,
-                grain_size: gs,
-                color_chrome: effect(self.prop_i16(preset::COLOR_CHROME)? as i32),
-                color_chrome_fx_blue: effect(self.prop_i16(preset::COLOR_CHROME_BLUE)? as i32),
-                color_temperature: if wb == "Kelvin" { Some(self.session.prop_u16(preset::COLOR_TEMP)? as u32) } else { None },
-                white_balance: wb,
-                wb_shift: (self.prop_i16(preset::WB_SHIFT_R)? as i32, self.prop_i16(preset::WB_SHIFT_B)? as i32),
-                dynamic_range: [100, 200, 400].contains(&dr).then_some(dr),
-                highlight: tenth(self.prop_i16(preset::HIGHLIGHT)?),
-                shadow: tenth(self.prop_i16(preset::SHADOW)?),
-                color: if sim.is_monochrome() { 0 } else { self.prop_i16(preset::COLOR)? as i32 / 10 },
-                sharpness: self.prop_i16(preset::SHARPNESS)? as i32 / 10,
-                noise_reduction: nr_step(self.session.prop_u16(preset::NOISE_REDUCTION)?),
-                clarity: self.prop_i16(preset::CLARITY)? as i32 / 10,
-                mono_warm_cool: if sim.is_monochrome() { self.prop_i16(preset::MONO_WC)? as i32 / 10 } else { 0 },
-                mono_magenta_green: if sim.is_monochrome() { self.prop_i16(preset::MONO_MG)? as i32 / 10 } else { 0 },
-                ..CameraRecipe::default()
-            };
-            out.push(Preset { slot, name, recipe });
-        }
+        let result = (|| {
+            let mut out = Vec::new();
+            for slot in 1..=7u8 {
+                self.session.set_prop_u16(PROP_PRESET_SLOT, slot as u16)?;
+                let name = ptp::Reader::new(&self.session.prop_value(PROP_PRESET_NAME)?).string().unwrap_or_default();
+                let sim = film_sim_from_code(self.prop_i16(preset::FILM_SIMULATION)? as u16);
+                let (g, gs) = grain(self.prop_i16(preset::GRAIN)? as i32);
+                let wb = wb_name(self.prop_i16(preset::WHITE_BALANCE)? as u16);
+                let dr_raw = self.session.prop_u16(preset::DYNAMIC_RANGE)?;
+                let dr = dr_raw as u32;
+                let tenth = |v: i16| v as f32 / 10.0;
+                let recipe = CameraRecipe {
+                    camera: self.info.model.clone(),
+                    film_simulation: sim,
+                    film_simulation_name: sim.display_name().to_string(),
+                    grain: g,
+                    grain_size: gs,
+                    color_chrome: effect(self.prop_i16(preset::COLOR_CHROME)? as i32),
+                    color_chrome_fx_blue: effect(self.prop_i16(preset::COLOR_CHROME_BLUE)? as i32),
+                    color_temperature: if wb == "Kelvin" { Some(self.session.prop_u16(preset::COLOR_TEMP)? as u32) } else { None },
+                    white_balance: wb,
+                    wb_shift: (self.prop_i16(preset::WB_SHIFT_R)? as i32, self.prop_i16(preset::WB_SHIFT_B)? as i32),
+                    dynamic_range: [100, 200, 400].contains(&dr).then_some(dr),
+                    dynamic_range_auto: dr_raw == 0xFFFF || dr_raw == 0,
+                    highlight: tenth(self.prop_i16(preset::HIGHLIGHT)?),
+                    shadow: tenth(self.prop_i16(preset::SHADOW)?),
+                    color: if sim.is_monochrome() { 0 } else { self.prop_i16(preset::COLOR)? as i32 / 10 },
+                    sharpness: self.prop_i16(preset::SHARPNESS)? as i32 / 10,
+                    noise_reduction: nr_step(self.session.prop_u16(preset::NOISE_REDUCTION)?),
+                    clarity: self.prop_i16(preset::CLARITY)? as i32 / 10,
+                    mono_warm_cool: if sim.is_monochrome() { self.prop_i16(preset::MONO_WC)? as i32 / 10 } else { 0 },
+                    mono_magenta_green: if sim.is_monochrome() { self.prop_i16(preset::MONO_MG)? as i32 / 10 } else { 0 },
+                    ..CameraRecipe::default()
+                };
+                out.push(Preset { slot, name, recipe });
+            }
+            Ok(out)
+        })();
         let _ = self.session.set_prop_u16(PROP_PRESET_SLOT, original);
-        Ok(out)
+        result
     }
 
-    /// Stores a recipe in custom setting slot `slot` (1–7). Returns the properties the
-    /// camera refused (some bodies treat a few as read-only).
+    /// Stores a recipe in custom setting slot `slot` (1–7). Always restores the previously
+    /// selected slot and returns the properties the camera refused.
     pub fn write_preset(&mut self, slot: u8, name: &str, r: &CameraRecipe) -> Result<Vec<u16>> {
         if !(1..=7).contains(&slot) {
             return Err(Error::Protocol(format!("slot {} is not C1–C7", slot)));
         }
-        self.session.set_prop_u16(PROP_PRESET_SLOT, slot as u16)?;
-        let name: String = name.chars().take(25).collect();
-        self.session.set_prop_value(PROP_PRESET_NAME, &ptp::string(&name))?;
-        let mut refused = Vec::new();
-        for (prop, value) in preset_writes(r) {
-            if self.session.set_prop_value(prop, &value.to_le_bytes()).is_err() {
-                refused.push(prop);
+        let original = self.session.prop_u16(PROP_PRESET_SLOT).ok();
+        let result = (|| {
+            self.session.set_prop_u16(PROP_PRESET_SLOT, slot as u16)?;
+            let name: String = name.chars().take(25).collect();
+            self.session.set_prop_value(PROP_PRESET_NAME, &ptp::string(&name))?;
+            let mut refused = Vec::new();
+            for (prop, value) in preset_writes(r) {
+                if self.session.set_prop_value(prop, &value.to_le_bytes()).is_err() {
+                    refused.push(prop);
+                }
             }
+            Ok(refused)
+        })();
+        if let Some(orig) = original {
+            let _ = self.session.set_prop_u16(PROP_PRESET_SLOT, orig);
         }
-        Ok(refused)
+        result
     }
 
     pub fn close(self) {
@@ -524,10 +565,23 @@ mod tests {
     }
 
     #[test]
-    fn preset_writes_follow_camera_rules() {
-        let mono = CameraRecipe { film_simulation: FilmSim::AcrosRed, mono_warm_cool: 2, ..CameraRecipe::default() };
+    fn preset_writes_follow_camera_rules_and_clamp_ranges() {
+        let mono = CameraRecipe {
+            film_simulation: FilmSim::AcrosRed,
+            mono_warm_cool: 2,
+            white_balance: "As Shot".into(),
+            sharpness: 99,
+            clarity: -99,
+            wb_shift: (50, -50),
+            ..CameraRecipe::default()
+        };
         let w = preset_writes(&mono);
         assert!(w.contains(&(preset::MONO_WC, 20)));
+        assert!(w.contains(&(preset::SHARPNESS, 40)));
+        assert!(w.contains(&(preset::CLARITY, -50)));
+        assert!(w.contains(&(preset::WB_SHIFT_R, 9)));
+        assert!(w.contains(&(preset::WB_SHIFT_B, -9)));
+        assert!(!w.iter().any(|(p, _)| *p == preset::WHITE_BALANCE), "As Shot must not overwrite WB with Auto");
         assert!(!w.iter().any(|(p, _)| *p == preset::MONO_MG || *p == preset::COLOR));
         assert!(preset_writes(&CameraRecipe::default()).contains(&(preset::NOISE_REDUCTION, 0x2000)));
     }
@@ -543,7 +597,7 @@ mod tests {
     }
 
     #[test]
-    fn converts_a_raf_over_a_scripted_camera() {
+    fn converts_a_raf_over_a_scripted_camera_without_touching_existing_handles() {
         use crate::ptp::{op, tests::Mock};
         let mut m = Mock::default();
         m.reply(op::OPEN_SESSION, 0, None, &[]);
@@ -562,11 +616,14 @@ mod tests {
         m.reply(OP_SEND_OBJECT_INFO, 2, None, &[]);
         m.reply(OP_SEND_OBJECT, 3, None, &[]);
         m.reply(op::GET_DEVICE_PROP_VALUE, 4, Some(&base_profile()), &[]);
-        m.reply(op::SET_DEVICE_PROP_VALUE, 5, None, &[]);
+        // Pre-conversion handle snapshot: card already holds handle 5
+        m.reply(op::GET_OBJECT_HANDLES, 5, Some(&[1, 0, 0, 0, 5, 0, 0, 0]), &[]);
         m.reply(op::SET_DEVICE_PROP_VALUE, 6, None, &[]);
-        m.reply(op::GET_OBJECT_HANDLES, 7, Some(&[1, 0, 0, 0, 9, 0, 0, 0]), &[]);
-        m.reply(op::GET_OBJECT, 8, Some(&[0xFF, 0xD8, 0xFF, 0xD9]), &[]);
-        m.reply(op::DELETE_OBJECT, 9, None, &[]);
+        m.reply(op::SET_DEVICE_PROP_VALUE, 7, None, &[]);
+        // Post-conversion handles: existing 5 plus newly generated 9
+        m.reply(op::GET_OBJECT_HANDLES, 8, Some(&[2, 0, 0, 0, 5, 0, 0, 0, 9, 0, 0, 0]), &[]);
+        m.reply(op::GET_OBJECT, 9, Some(&[0xFF, 0xD8, 0xFF, 0xD9]), &[]);
+        m.reply(op::DELETE_OBJECT, 10, None, &[]);
 
         let mut cam = Camera::open(m).unwrap();
         assert!(cam.can_convert());

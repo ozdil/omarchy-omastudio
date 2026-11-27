@@ -118,10 +118,18 @@ impl JevClient {
     pub fn load_default_config() -> JevConfig {
         let mut config = JevConfig::default();
 
-        // 1. Try reading ~/.config/omastudio/ai.json with strict bounds (max 64 KiB, 0600 mode, UID check)
+        // 1. Try reading $XDG_CONFIG_HOME/omastudio/ai.json (or ~/.config/omastudio/ai.json)
+        // with strict bounds (max 64 KiB, 0600 mode, UID check)
         const MAX_CONFIG_BYTES: usize = 64 * 1024;
-        let home = std::env::var("HOME").unwrap_or_else(|_| ".".to_string());
-        let config_dir = PathBuf::from(&home).join(".config/omastudio");
+        let config_dir = std::env::var("XDG_CONFIG_HOME")
+            .ok()
+            .map(|s| PathBuf::from(s.trim()))
+            .filter(|p| p.is_absolute())
+            .map(|p| p.join("omastudio"))
+            .unwrap_or_else(|| {
+                let home = std::env::var("HOME").unwrap_or_else(|_| ".".to_string());
+                PathBuf::from(&home).join(".config/omastudio")
+            });
 
         if let Ok(sec_dir) = SecureDir::open_or_create_hierarchy(&config_dir)
             && let Ok(c_name) = std::ffi::CString::new("ai.json")
@@ -153,7 +161,7 @@ impl JevClient {
                 config.api_key = trimmed;
                 config.provider = "openrouter".to_string();
                 if config.endpoint == "https://api.typesafe.ai/v1/systemone" {
-                    config.endpoint = "https://openrouter.ai/api/v1/decisions".to_string();
+                    config.endpoint = "https://openrouter.ai/api/v1/chat/completions".to_string();
                 }
             }
         }
@@ -379,7 +387,7 @@ pub fn extract_photographic_state(
     meta: &RawMetadata,
 ) -> JevStateInput {
     let ch = channels as usize;
-    let total_pixels = buffer.len() / ch;
+    let total_pixels = if ch >= 3 { buffer.len() / ch } else { 0 };
     if total_pixels == 0 {
         return JevStateInput {
             camera_make: meta.make.clone(),
@@ -455,23 +463,26 @@ pub fn extract_photographic_state(
     let p95_idx = (tot_f * 0.95) as u32;
 
     let mut accum = 0u32;
-    let mut p5 = 0u8;
-    let mut p50 = 128u8;
-    let mut p95 = 255u8;
+    let mut p5: Option<u8> = None;
+    let mut p50: Option<u8> = None;
+    let mut p95: Option<u8> = None;
 
     for (val, &count) in luma_hist.iter().enumerate() {
         accum += count;
-        if accum >= p5_idx && p5 == 0 {
-            p5 = val as u8;
+        if p5.is_none() && accum >= p5_idx {
+            p5 = Some(val as u8);
         }
-        if accum >= p50_idx && p50 == 128 {
-            p50 = val as u8;
+        if p50.is_none() && accum >= p50_idx {
+            p50 = Some(val as u8);
         }
         if accum >= p95_idx {
-            p95 = val as u8;
+            p95 = Some(val as u8);
             break;
         }
     }
+    let p5 = p5.unwrap_or(0);
+    let p50 = p50.unwrap_or(128);
+    let p95 = p95.unwrap_or(255);
 
     let total_f32 = total_pixels as f32;
     JevStateInput {
@@ -614,5 +625,50 @@ pub fn ai_classify_scene_with_jev(
             analysis.description = format!("{} (Local Heuristic Engine)", analysis.description);
             (analysis, None)
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn dummy_meta() -> RawMetadata {
+        RawMetadata {
+            width: 4,
+            height: 4,
+            raw_width: 4,
+            raw_height: 4,
+            make: "Fujifilm".into(),
+            model: "X-T5".into(),
+            lens: "XF 35mm".into(),
+            iso: 160.0,
+            shutter: 0.004,
+            aperture: 2.8,
+            focal_length: 35.0,
+            timestamp: 0,
+            cam_mul: [1.0; 4],
+        }
+    }
+
+    #[test]
+    fn extract_state_guards_invalid_channels_and_exact_percentiles() {
+        let meta = dummy_meta();
+        // channels == 0 and channels == 2 must not panic
+        let s0 = extract_photographic_state(&[1, 2, 3], 1, 1, 0, &meta);
+        assert_eq!(s0.p50_luma, 128);
+        let s2 = extract_photographic_state(&[1, 2, 3, 4], 2, 1, 2, &meta);
+        assert_eq!(s2.p50_luma, 128);
+
+        // 50% black (luma 0) + 50% mid-grey (luma 128) + 1 pixel at 129:
+        // p5 must stay 0 (not 1), and p50 on an all-128+129 buffer must stay 128 (not 129)
+        let mut dark_mix = vec![0u8; 10 * 3];
+        dark_mix.extend_from_slice(&[1, 1, 1, 250, 250, 250]);
+        let st_dark = extract_photographic_state(&dark_mix, 12, 1, 3, &meta);
+        assert_eq!(st_dark.p5_luma, 0, "true p5 == 0 must not be overwritten by sentinel");
+
+        let mut mid_mix = vec![128u8; 10 * 3];
+        mid_mix.extend_from_slice(&[129, 129, 129, 200, 200, 200]);
+        let st_mid = extract_photographic_state(&mid_mix, 12, 1, 3, &meta);
+        assert_eq!(st_mid.p50_luma, 128, "true p50 == 128 must not be overwritten by sentinel");
     }
 }

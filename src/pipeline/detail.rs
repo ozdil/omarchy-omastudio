@@ -383,12 +383,15 @@ impl Geometry {
 /// Resamples the developed photo through `geometry` (lens distortion and perspective).
 /// Samples outside the photo are black.
 pub fn apply_geometry(input: &[f32], width: usize, height: usize, channels: usize, geometry: &Geometry) -> Vec<f32> {
+    if width == 0 || height == 0 || channels == 0 {
+        return Vec::new();
+    }
     let mut output = vec![0.0f32; input.len()];
     output.par_chunks_mut(width * channels).enumerate().for_each(|(y_idx, row)| {
         for x_idx in 0..width {
             let (src_x, src_y) = geometry.source(x_idx as f32, y_idx as f32);
             let px = x_idx * channels;
-            if src_x >= 0.0 && src_x < (width - 1) as f32 && src_y >= 0.0 && src_y < (height - 1) as f32 {
+            if src_x >= 0.0 && src_x <= (width - 1) as f32 && src_y >= 0.0 && src_y <= (height - 1) as f32 {
                 let (x0, y0) = (src_x.floor() as usize, src_y.floor() as usize);
                 let (x1, y1) = ((x0 + 1).min(width - 1), (y0 + 1).min(height - 1));
                 let (fx, fy) = (src_x - x0 as f32, src_y - y0 as f32);

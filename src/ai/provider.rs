@@ -149,31 +149,60 @@ fn checked_endpoint(url: &str) -> Result<&str, String> {
     }
 }
 
-/// Runs curl with headers on stdin and an optional body file; returns the response body.
-fn curl(url: &str, headers: &[String], body: Option<&std::path::Path>, timeout: Duration) -> Result<Value, String> {
-    let url = checked_endpoint(url)?;
+/// Runs curl with headers on stdin and an optional body file; returns `(http_status, body)`.
+fn curl_with_status(
+    url: &str,
+    headers: &[String],
+    body: Option<&std::path::Path>,
+    timeout: Duration,
+) -> Result<(u16, Value), (Option<u16>, String)> {
+    let url = checked_endpoint(url).map_err(|e| (None, e))?;
     let mut cmd = secure_command("curl");
-    cmd.args(["-sS", "--max-time", &timeout.as_secs().to_string(), "-K", "-"]);
+    cmd.args(["-sS", "--max-time", &timeout.as_secs().to_string(), "-w", "\n%{http_code}", "-K", "-"]);
     if let Some(body) = body {
         cmd.args(["-X", "POST", "--data-binary"]).arg(format!("@{}", body.display()));
     }
     cmd.args(["--", url]);
     let mut config = String::new();
     for h in headers {
-        let escaped = security::escape_curl_config_value(h)?;
+        let escaped = security::escape_curl_config_value(h).map_err(|e| (None, e))?;
         config.push_str(&format!("header = \"{escaped}\"\n"));
     }
     let (code, out, err) = run_bounded_command_with_stdin(cmd, timeout + Duration::from_secs(5), Some(config.as_bytes()))
-        .map_err(|e| format!("Cannot run curl: {e}"))?;
+        .map_err(|e| (None, format!("Cannot run curl: {e}")))?;
     if code != 0 {
-        return Err(format!("Request to {url} failed: {}", String::from_utf8_lossy(&err).trim()));
+        return Err((None, format!("Request to {url} failed: {}", String::from_utf8_lossy(&err).trim())));
     }
-    let value: Value = serde_json::from_slice(&out).map_err(|_| format!("Unexpected answer from {url}"))?;
+    let (body_bytes, http_status) = split_curl_status(&out);
+    let value: Value = serde_json::from_slice(body_bytes)
+        .map_err(|_| (http_status, format!("Unexpected answer from {url}")))?;
     if let Some(e) = value.get("error") {
         let msg = e.get("message").and_then(Value::as_str).map(String::from).unwrap_or_else(|| e.to_string());
-        return Err(format!("Provider error: {msg}"));
+        return Err((http_status, format!("Provider error: {msg}")));
     }
-    Ok(value)
+    if let Some(status) = http_status
+        && status >= 400
+    {
+        return Err((Some(status), format!("Provider returned HTTP {status}")));
+    }
+    Ok((http_status.unwrap_or(200), value))
+}
+
+fn split_curl_status(out: &[u8]) -> (&[u8], Option<u16>) {
+    if let Some(pos) = out.iter().rposition(|&b| b == b'\n') {
+        let tail = std::str::from_utf8(&out[pos + 1..]).ok().map(str::trim);
+        if let Some(code) = tail.and_then(|s| s.parse::<u16>().ok()) {
+            return (&out[..pos], Some(code));
+        }
+    }
+    (out, None)
+}
+
+/// Runs curl with headers on stdin and an optional body file; returns the response body.
+fn curl(url: &str, headers: &[String], body: Option<&std::path::Path>, timeout: Duration) -> Result<Value, String> {
+    curl_with_status(url, headers, body, timeout)
+        .map(|(_, v)| v)
+        .map_err(|(_, e)| e)
 }
 
 /// Models a local server offers (`GET /v1/models`); None when it is not running.
@@ -280,13 +309,31 @@ pub fn resolve(provider: Option<&str>, model: Option<&str>) -> Result<Target, St
     Ok(Target { provider: p, model, endpoint, key })
 }
 
+static AI_REQ_SEQ: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(0);
+
+struct TempFileGuard(PathBuf);
+
+impl Drop for TempFileGuard {
+    fn drop(&mut self) {
+        let _ = std::fs::remove_file(&self.0);
+    }
+}
+
+fn should_fallback_openai_schema(status: Option<u16>) -> bool {
+    matches!(status, Some(400 | 422))
+}
+
+fn downgrade_openai_response_format(body: &mut Value) {
+    body["response_format"] = json!({ "type": "json_object" });
+}
+
 /// Sends a system prompt, a JPEG and a text, and asks for JSON matching `schema`.
 pub fn ask_json(target: &Target, system: &str, jpeg: &[u8], text: &str, schema: &Value) -> Result<Value, String> {
     if target.provider.wire == Wire::Agent {
         return super::agent::ask_json(system, jpeg, text, schema);
     }
     let image = base64(jpeg);
-    let (body, mut headers) = match target.provider.wire {
+    let (mut body, mut headers) = match target.provider.wire {
         Wire::Anthropic => {
             let mut body = json!({
                 "model": target.model,
@@ -334,13 +381,28 @@ pub fn ask_json(target: &Target, system: &str, jpeg: &[u8], text: &str, schema: 
         headers.push("X-Title: OmaStudio".to_string());
     }
 
-    // The body holds the image: too large for an argument, so it goes through a file
-    let file = security::get_secure_preview_dir().join(format!("omastudio_ai_{}.json", std::process::id()));
-    security::atomic_write_user(&file, body.to_string().as_bytes()).map_err(|e| e.to_string())?;
+    // The body holds the image: too large for an argument, so it goes through a private temp file
+    let seq = AI_REQ_SEQ.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+    let file = security::get_secure_preview_dir().join(format!("omastudio_ai_{}_{}.json", std::process::id(), seq));
+    let _guard = TempFileGuard(file.clone());
     let timeout = Duration::from_secs(if target.provider.local { 600 } else { 180 });
-    let answer = curl(&target.endpoint, &headers, Some(&file), timeout);
-    let _ = std::fs::remove_file(&file);
-    let answer = answer?;
+
+    security::atomic_write_secure(&file, body.to_string().as_bytes()).map_err(|e| e.to_string())?;
+    let answer = match curl_with_status(&target.endpoint, &headers, Some(&file), timeout) {
+        Ok((_, v)) => v,
+        Err((status, first_err))
+            if target.provider.wire == Wire::OpenAi && should_fallback_openai_schema(status) =>
+        {
+            // Some OpenAI-compatible servers (Ollama, LM Studio, OpenRouter models) reject
+            // strict `json_schema`; fall back once to `json_object`.
+            downgrade_openai_response_format(&mut body);
+            security::atomic_write_secure(&file, body.to_string().as_bytes()).map_err(|e| e.to_string())?;
+            curl_with_status(&target.endpoint, &headers, Some(&file), timeout)
+                .map(|(_, v)| v)
+                .map_err(|(_, _)| first_err)?
+        }
+        Err((_, err)) => return Err(err),
+    };
 
     let text = match target.provider.wire {
         Wire::Anthropic => {
@@ -409,5 +471,21 @@ mod tests {
     fn finds_json_in_prose() {
         assert_eq!(parse_json_object("```json\n{\"a\": 1}\n```").unwrap()["a"], 1);
         assert!(parse_json_object("no json").is_none());
+    }
+
+    #[test]
+    fn curl_status_split_and_openai_schema_fallback() {
+        let (body, status) = split_curl_status(b"{\"error\":{\"message\":\"bad schema\"}}\n400");
+        assert_eq!(status, Some(400));
+        assert_eq!(body, b"{\"error\":{\"message\":\"bad schema\"}}");
+        assert!(should_fallback_openai_schema(Some(400)));
+        assert!(should_fallback_openai_schema(Some(422)));
+        assert!(!should_fallback_openai_schema(Some(401)));
+
+        let mut req = json!({
+            "response_format": { "type": "json_schema", "json_schema": { "strict": true } }
+        });
+        downgrade_openai_response_format(&mut req);
+        assert_eq!(req["response_format"], json!({ "type": "json_object" }));
     }
 }

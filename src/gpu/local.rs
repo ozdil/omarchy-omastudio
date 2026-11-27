@@ -1261,6 +1261,59 @@ mod tests {
         run_on(&gpu, &mut retry, w, h, &recipe, 1.0).expect("Subsequent local job must recover after error");
     }
 
+    /// Verifies that the right-most column and bottom-most row match CPU geometry
+    /// resampling (no spurious 1px black border from strict `< w - 1` bounds).
+    #[test]
+    fn geometry_border_matches_cpu_on_gpu() {
+        use crate::pipeline::transfer::Transfer;
+        use crate::pipeline::{PointOps, white_balance};
+        let _test_lock = super::super::TEST_GPU_LOCK.lock().unwrap_or_else(|e| e.into_inner());
+        let Some(gpu) = super::super::acquire() else {
+            eprintln!("no GPU, skipped");
+            return;
+        };
+        let (w, h) = (32usize, 24usize);
+        let input = vec![32768u16; w * h * 3];
+        let recipe = Recipe {
+            lens_distortion: 10.0,
+            sharpness: 0.0,
+            denoise_col: 0.0,
+            denoise_lum: 0.0,
+            ..Recipe::default()
+        };
+        let transfer = Transfer::bt709();
+        let (cpu, _) = crate::pipeline::process_buffer_16_to_8_ex(&input, w as u32, h as u32, 3, &recipe, transfer, false, false);
+        let ops = PointOps::new(&recipe);
+        let (wr, wg, wb) = white_balance::kelvin_to_rgb_multipliers(recipe.wb_temperature, recipe.wb_tint);
+        let (gpu_out, _) = display_on(&gpu, &input, w, h, 3, &recipe, &ops.gpu_inputs([wr, wg, wb], transfer), 1.0)
+            .expect("GPU display geometry");
+        for y in 0..h {
+            for x in [0, w - 1] {
+                let idx = (y * w + x) * 3;
+                for c in 0..3 {
+                    assert!(
+                        cpu[idx + c].abs_diff(gpu_out[idx + c]) <= 2,
+                        "border ({x},{y}) c={c}: cpu={} gpu={}",
+                        cpu[idx + c],
+                        gpu_out[idx + c]
+                    );
+                }
+            }
+        }
+        for x in 0..w {
+            let idx = ((h - 1) * w + x) * 3;
+            for c in 0..3 {
+                assert!(
+                    cpu[idx + c].abs_diff(gpu_out[idx + c]) <= 2,
+                    "bottom ({x},{}) c={c}: cpu={} gpu={}",
+                    h - 1,
+                    cpu[idx + c],
+                    gpu_out[idx + c]
+                );
+            }
+        }
+    }
+
     /// One layer of each kind of mask, with components and every adjustment.
     fn test_layers() -> Vec<crate::pipeline::layers::AdjustmentLayer> {
         use crate::pipeline::layers::{AdjustmentLayer, BrushStroke, MaskComponent, MaskMode, MaskShape};

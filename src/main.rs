@@ -29,6 +29,10 @@ use std::time::{SystemTime, UNIX_EPOCH};
 struct ResponseWrapper<T: Serialize> {
     success: bool,
     action: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    request_id: Option<u64>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    photo_path: Option<String>,
     data: Option<T>,
     error: Option<String>,
 }
@@ -38,6 +42,8 @@ impl<T: Serialize> ResponseWrapper<T> {
         Self {
             success: true,
             action: None,
+            request_id: None,
+            photo_path: None,
             data: Some(data),
             error: None,
         }
@@ -47,6 +53,8 @@ impl<T: Serialize> ResponseWrapper<T> {
         Self {
             success: true,
             action: Some(action.to_string()),
+            request_id: None,
+            photo_path: None,
             data: Some(data),
             error: None,
         }
@@ -56,6 +64,8 @@ impl<T: Serialize> ResponseWrapper<T> {
         Self {
             success: false,
             action: None,
+            request_id: None,
+            photo_path: None,
             data: None,
             error: Some(msg.into()),
         }
@@ -65,9 +75,17 @@ impl<T: Serialize> ResponseWrapper<T> {
         Self {
             success: false,
             action: Some(action.to_string()),
+            request_id: None,
+            photo_path: None,
             data: None,
             error: Some(msg.into()),
         }
+    }
+
+    fn with_context(mut self, request_id: Option<u64>, photo_path: Option<String>) -> Self {
+        self.request_id = request_id;
+        self.photo_path = photo_path;
+        self
     }
 }
 
@@ -286,14 +304,14 @@ fn spawn_full_decode(cache: Arc<Mutex<DaemonCache>>, path: String) {
             data: full.to_vec_u16(),
         };
         let ready = FullReady { path: path.clone(), width: frame.width, height: frame.height };
-        let Ok(mut c) = cache.lock() else { return };
+        let mut c = cache.lock().unwrap_or_else(|e| e.into_inner());
         if c.current_path.as_deref() != Some(path.as_str()) {
             return;
         }
         c.full = Some(Arc::new(frame));
         c.full_retouched = None;
         drop(c);
-        print_json(&ResponseWrapper::ok_action("full_ready", ready));
+        print_json(&ResponseWrapper::ok_action("full_ready", ready).with_context(None, Some(path)));
     });
 }
 
@@ -305,7 +323,7 @@ fn retouched_full(cache: &Mutex<DaemonCache>, full: Arc<FullFrame>, spots: &[pip
     if spots.is_empty() {
         return full;
     }
-    if let Some((base, cached_spots, done)) = &cache.lock().unwrap().full_retouched
+    if let Some((base, cached_spots, done)) = &cache.lock().unwrap_or_else(|e| e.into_inner()).full_retouched
         && Arc::ptr_eq(base, &full)
         && cached_spots.as_slice() == spots
     {
@@ -315,7 +333,7 @@ fn retouched_full(cache: &Mutex<DaemonCache>, full: Arc<FullFrame>, spots: &[pip
         std::borrow::Cow::Borrowed(_) => return full,
         std::borrow::Cow::Owned(data) => Arc::new(FullFrame { data, ..*full }),
     };
-    cache.lock().unwrap().full_retouched = Some((full, spots.to_vec(), done.clone()));
+    cache.lock().unwrap_or_else(|e| e.into_inner()).full_retouched = Some((full, spots.to_vec(), done.clone()));
     done
 }
 
@@ -1199,6 +1217,8 @@ fn run_ai_social(raw_path: &str, platform: &str) -> Result<ai::SocialOptimizatio
 struct DaemonCommand {
     cmd: String, // "load", "adjust", "ai_auto", "ai_social", "save_recipe", "export", "ping", "exit"
     #[serde(default)]
+    request_id: Option<u64>,
+    #[serde(default)]
     path: Option<String>,
     #[serde(default)]
     platform: Option<String>,
@@ -1700,8 +1720,17 @@ fn run_medium_format(args: &[String]) {
                 // Linear sRGB primaries; encode with the sRGB curve for a viewable file
                 let tf = pipeline::transfer::Transfer::srgb();
                 let encoded: Vec<u16> = rgb.iter().map(|&v| (tf.encode(v as f32 / 65535.0) * 65535.0).round() as u16).collect();
-                let img: image::ImageBuffer<image::Rgb<u16>, Vec<u16>> = image::ImageBuffer::from_raw(w as u32, h as u32, encoded).ok_or("Merged image has the wrong size")?;
-                img.save_with_format(&out, image::ImageFormat::Tiff).map_err(|e| format!("Cannot write {}: {}", out, e))?;
+                let icc_bytes = icc::builtin_profile(raw::OutputColorSpace::Srgb).icc().ok();
+                let parts = export::tiff_writer::build(
+                    w as u32,
+                    h as u32,
+                    export::tiff_writer::Samples::U16(&encoded),
+                    export::tiff_writer::Codec::Deflate,
+                    icc_bytes.as_deref(),
+                    None,
+                )?;
+                security::atomic_write_user_parts(Path::new(&out), &parts.slices())
+                    .map_err(|e| format!("Cannot write {}: {}", out, e))?;
                 Ok(serde_json::json!({ "path": out, "width": w, "height": h }))
             }
             "tether" => {
@@ -1743,6 +1772,90 @@ fn run_medium_format(args: &[String]) {
     }
 }
 
+enum ExportJob {
+    Single {
+        path: String,
+        recipe: Box<Recipe>,
+        options: Box<ExportOptions>,
+        request_id: Option<u64>,
+    },
+    Batch {
+        items: Vec<BatchExportItem>,
+        options: Box<ExportOptions>,
+        request_id: Option<u64>,
+    },
+}
+
+fn spawn_export_worker() -> (std::sync::mpsc::SyncSender<ExportJob>, std::thread::JoinHandle<()>) {
+    // One export at a time keeps peak RAM bounded (a 100 MP frame uses ~1.7 GB) while
+    // keeping the daemon's interactive stdin loop completely non-blocking.
+    let (tx, rx) = std::sync::mpsc::sync_channel::<ExportJob>(16);
+    let handle = std::thread::spawn(move || {
+        while let Ok(job) = rx.recv() {
+            match job {
+                ExportJob::Single { path, recipe, options, request_id } => {
+                    match export_photo(&path, &recipe, &options) {
+                        Ok(dest) => print_json(
+                            &ResponseWrapper::ok_action(
+                                "export",
+                                ExportResult { exported_path: dest.to_string_lossy().to_string() },
+                            )
+                            .with_context(request_id, Some(path)),
+                        ),
+                        Err(e) => print_json::<()>(
+                            &ResponseWrapper::err_action("export", e).with_context(request_id, Some(path)),
+                        ),
+                    }
+                }
+                ExportJob::Batch { items, options, request_id } => {
+                    let item_paths: Vec<&str> = items.iter().map(|i| i.path.as_str()).collect();
+                    let name_tags = export::batch_name_tags(&item_paths);
+                    let results: Vec<BatchExportItemResult> = items
+                        .iter()
+                        .zip(name_tags.iter())
+                        .map(|(item, tag)| {
+                            let recipe = item.recipe.clone().unwrap_or_else(|| Recipe::load_initial(&item.path));
+                            let mut item_options = (*options).clone();
+                            // The user's tag stays; the disambiguating tag is added after it
+                            item_options.name_tag = match (&options.name_tag, tag) {
+                                (Some(user), Some(t)) if !user.is_empty() => Some(format!("{}{}", user, t)),
+                                (Some(user), _) if !user.is_empty() => Some(user.clone()),
+                                (_, t) => t.clone(),
+                            };
+                            match export_photo(&item.path, &recipe, &item_options) {
+                                Ok(dest) => BatchExportItemResult {
+                                    path: item.path.clone(),
+                                    success: true,
+                                    exported_path: Some(dest.to_string_lossy().to_string()),
+                                    error: None,
+                                },
+                                Err(e) => BatchExportItemResult {
+                                    path: item.path.clone(),
+                                    success: false,
+                                    exported_path: None,
+                                    error: Some(e),
+                                },
+                            }
+                        })
+                        .collect();
+
+                    let succeeded = results.iter().filter(|r| r.success).count();
+                    let failed = results.len() - succeeded;
+
+                    print_json(
+                        &ResponseWrapper::ok_action(
+                            "batch_export",
+                            BatchExportResult { total: results.len(), succeeded, failed, results },
+                        )
+                        .with_context(request_id, None),
+                    );
+                }
+            }
+        }
+    });
+    (tx, handle)
+}
+
 fn run_daemon() {
     let cache = Arc::new(Mutex::new(DaemonCache {
         current_path: None,
@@ -1759,6 +1872,8 @@ fn run_daemon() {
         full_retouched: None,
         detail_ping_pong: 0,
     }));
+
+    let (export_tx, export_worker) = spawn_export_worker();
 
     let stdin = io::stdin();
     let mut stdin_lock = stdin.lock();
@@ -1820,22 +1935,35 @@ fn run_daemon() {
             }
         };
 
+        let req_id = cmd_obj.request_id;
+
         match cmd_obj.cmd.as_str() {
             "ping" => {
-                print_json(&ResponseWrapper::ok_action("ping", "pong"));
+                print_json(&ResponseWrapper::ok_action("ping", "pong").with_context(req_id, None));
             }
             "icc_profiles" => {
-                print_json(&ResponseWrapper::ok_action("icc_profiles", icc::list_icc_profiles()));
+                print_json(&ResponseWrapper::ok_action("icc_profiles", icc::list_icc_profiles()).with_context(req_id, None));
             }
             "reference" => {
                 // The other side of the compare view: the open photo with another recipe
                 // (a snapshot, a version, or the defaults for "before")
-                let (buffer, width, height, channels, transfer, baseline) = {
-                    let c = cache.lock().unwrap();
+                let (buffer, width, height, channels, transfer, baseline, photo_path) = {
+                    let c = cache.lock().unwrap_or_else(|e| e.into_inner());
                     match c.raw_buffer_16.as_ref() {
-                        Some(b) => (Arc::clone(b), c.width, c.height, c.channels, c.transfer, c.baseline_exposure),
+                        Some(b) => (
+                            Arc::clone(b),
+                            c.width,
+                            c.height,
+                            c.channels,
+                            c.transfer,
+                            c.baseline_exposure,
+                            c.current_path.clone(),
+                        ),
                         None => {
-                            print_json::<()>(&ResponseWrapper::err_action("reference", "No RAW image currently loaded in daemon cache"));
+                            print_json::<()>(
+                                &ResponseWrapper::err_action("reference", "No RAW image currently loaded in daemon cache")
+                                    .with_context(req_id, None),
+                            );
                             continue;
                         }
                     }
@@ -1848,12 +1976,21 @@ fn run_daemon() {
                 let mut ppm = format!("P6\n{} {}\n255\n", width, height).into_bytes();
                 ppm.extend_from_slice(&rgb);
                 match security::atomic_write_secure(&dest, &ppm) {
-                    Ok(()) => print_json(&ResponseWrapper::ok_action("reference", RenderResult {
-                        image: dest.to_string_lossy().to_string(),
-                        histogram: Default::default(),
-                        proof_error,
-                    })),
-                    Err(e) => print_json::<()>(&ResponseWrapper::err_action("reference", format!("Failed to write compare view: {}", e))),
+                    Ok(()) => print_json(
+                        &ResponseWrapper::ok_action(
+                            "reference",
+                            RenderResult {
+                                image: dest.to_string_lossy().to_string(),
+                                histogram: Default::default(),
+                                proof_error,
+                            },
+                        )
+                        .with_context(req_id, photo_path),
+                    ),
+                    Err(e) => print_json::<()>(
+                        &ResponseWrapper::err_action("reference", format!("Failed to write compare view: {}", e))
+                            .with_context(req_id, photo_path),
+                    ),
                 }
             }
             "load" => {
@@ -1869,7 +2006,10 @@ fn run_daemon() {
                 let p = match cmd_obj.path {
                     Some(ref path) => path,
                     None => {
-                        print_json::<()>(&ResponseWrapper::err_action("load", "Missing path in load command"));
+                        print_json::<()>(
+                            &ResponseWrapper::err_action("load", "Missing path in load command")
+                                .with_context(req_id, None),
+                        );
                         continue;
                     }
                 };
@@ -1904,7 +2044,7 @@ fn run_daemon() {
                                     .collect();
                                 let u8_arc = Arc::new(u8_vec);
 
-                                let mut c = cache.lock().unwrap();
+                                let mut c = cache.lock().unwrap_or_else(|e| e.into_inner());
                                 c.current_path = Some(p.clone());
                                 c.baseline_exposure = raw.baseline_exposure_from(&prev);
                                 c.width = pw;
@@ -1928,24 +2068,38 @@ fn run_daemon() {
                                 let sidecar = Recipe::load_initial(p);
                                 let scene = ai_classify_scene(&u8_arc, pw, ph, prev.channels, &meta);
 
-                                print_json(&ResponseWrapper::ok_action("load", InspectResult {
-                                    path: p.clone(),
-                                    metadata: meta,
-                                    thumbnail: thumb_path.to_string_lossy().to_string(),
-                                    recipe: sidecar,
-                                    scene,
-                                }));
+                                print_json(
+                                    &ResponseWrapper::ok_action(
+                                        "load",
+                                        InspectResult {
+                                            path: p.clone(),
+                                            metadata: meta,
+                                            thumbnail: thumb_path.to_string_lossy().to_string(),
+                                            recipe: sidecar,
+                                            scene,
+                                        },
+                                    )
+                                    .with_context(req_id, Some(p.clone())),
+                                );
                             }
-                            Err(e) => print_json::<()>(&ResponseWrapper::err_action("load", e)),
+                            Err(e) => print_json::<()>(
+                                &ResponseWrapper::err_action("load", e).with_context(req_id, Some(p.clone())),
+                            ),
                         }
                     }
-                    Err(e) => print_json::<()>(&ResponseWrapper::err_action("load", e)),
+                    Err(e) => print_json::<()>(
+                        &ResponseWrapper::err_action("load", e).with_context(req_id, Some(p.clone())),
+                    ),
                 }
             }
             "adjust" => {
-                let mut c = cache.lock().unwrap();
+                let mut c = cache.lock().unwrap_or_else(|e| e.into_inner());
+                let photo_path = c.current_path.clone();
                 if c.raw_buffer_16.is_none() {
-                    print_json::<()>(&ResponseWrapper::err_action("adjust", "No RAW image currently loaded in daemon cache"));
+                    print_json::<()>(
+                        &ResponseWrapper::err_action("adjust", "No RAW image currently loaded in daemon cache")
+                            .with_context(req_id, photo_path),
+                    );
                     continue;
                 }
 
@@ -1962,7 +2116,10 @@ fn run_daemon() {
                 let buffer_arc = match c.raw_buffer_16.as_ref() {
                     Some(b) => Arc::clone(b),
                     None => {
-                        print_json::<()>(&ResponseWrapper::err_action("adjust", "Buffer unavailable"));
+                        print_json::<()>(
+                            &ResponseWrapper::err_action("adjust", "Buffer unavailable")
+                                .with_context(req_id, photo_path),
+                        );
                         continue;
                     }
                 };
@@ -2035,38 +2192,64 @@ fn run_daemon() {
 
                 // Report write failures instead of handing the UI a stale preview path
                 if let Err(e) = write_result {
-                    print_json::<()>(&ResponseWrapper::err_action("adjust", format!("Failed to write preview: {}", e)));
+                    print_json::<()>(
+                        &ResponseWrapper::err_action("adjust", format!("Failed to write preview: {}", e))
+                            .with_context(req_id, photo_path),
+                    );
                     continue;
                 }
 
-                print_json(&ResponseWrapper::ok_action("adjust", RenderResult {
-                    image: out_dest,
-                    histogram: hist,
-                    proof_error,
-                }));
+                print_json(
+                    &ResponseWrapper::ok_action(
+                        "adjust",
+                        RenderResult { image: out_dest, histogram: hist, proof_error },
+                    )
+                    .with_context(req_id, photo_path),
+                );
             }
             "detail" => {
-                let (full, slot) = {
-                    let mut c = cache.lock().unwrap();
+                let (full, slot, photo_path) = {
+                    let mut c = cache.lock().unwrap_or_else(|e| e.into_inner());
                     c.detail_ping_pong = (c.detail_ping_pong + 1) % 2;
-                    (c.full.clone(), c.detail_ping_pong)
+                    (c.full.clone(), c.detail_ping_pong, c.current_path.clone())
                 };
                 let Some(full) = full else {
-                    print_json::<()>(&ResponseWrapper::err_action("detail", "Full resolution not ready"));
+                    print_json::<()>(
+                        &ResponseWrapper::err_action("detail", "Full resolution not ready")
+                            .with_context(req_id, photo_path),
+                    );
                     continue;
                 };
                 let [rx, ry, rw, rh] = cmd_obj.region.unwrap_or([0.0, 0.0, 1.0, 1.0]);
                 let (ow, oh) = (cmd_obj.out_width.unwrap_or(0) as usize, cmd_obj.out_height.unwrap_or(0) as usize);
-                if !(rw > 0.0 && rh > 0.0) || ow == 0 || oh == 0 || ow * oh > 64 << 20 {
-                    print_json::<()>(&ResponseWrapper::err_action("detail", "Invalid detail region"));
+                let valid_region = rx.is_finite()
+                    && ry.is_finite()
+                    && rw.is_finite()
+                    && rh.is_finite()
+                    && rw >= 1e-6
+                    && rh >= 1e-6
+                    && rw <= 1.0 + 1e-6
+                    && rh <= 1.0 + 1e-6;
+                let valid_dims = ow > 0
+                    && oh > 0
+                    && ow.checked_mul(oh).is_some_and(|px| px <= (64 << 20))
+                    && full.width > 0
+                    && full.height > 0;
+                if !valid_region || !valid_dims {
+                    print_json::<()>(
+                        &ResponseWrapper::err_action("detail", "Invalid detail region")
+                            .with_context(req_id, photo_path),
+                    );
                     continue;
                 }
                 // The frame at the requested scale; the region is cut from it
-                let scale = (ow as f64 / (rw * full.width as f64)).min(8.0);
-                let (vw, vh) = ((full.width as f64 * scale).round() as usize, (full.height as f64 * scale).round() as usize);
-                let ox = ((rx * vw as f64).round().max(0.0) as usize).min(vw.saturating_sub(1));
-                let oy = ((ry * vh as f64).round().max(0.0) as usize).min(vh.saturating_sub(1));
-                let (ow, oh) = (ow.min(vw - ox), oh.min(vh - oy));
+                let scale = (ow as f64 / (rw * full.width as f64)).clamp(1e-6, 8.0);
+                let vw = ((full.width as f64 * scale).round() as usize).max(1);
+                let vh = ((full.height as f64 * scale).round() as usize).max(1);
+                let ox = ((rx * vw as f64).round().max(0.0) as usize).min(vw - 1);
+                let oy = ((ry * vh as f64).round().max(0.0) as usize).min(vh - 1);
+                let ow = ow.min(vw - ox).max(1);
+                let oh = oh.min(vh - oy).max(1);
                 let recipe = Recipe { baseline_exposure: full.baseline_exposure, ..cmd_obj.recipe.unwrap_or_default() };
                 let out = (ox, oy, ow, oh);
                 let src = pipeline::region_source(out, vw, vh, &recipe);
@@ -2074,6 +2257,12 @@ fn run_daemon() {
                 let input = resample_rect(&full, scale, src);
                 let window = pipeline::Window { x0: src.0, y0: src.1, frame_w: vw, frame_h: vh };
                 let mut rgb = pipeline::render_region_8(&input, src.2, src.3, window, out, &recipe, full.transfer);
+                pipeline::clipping_overlay(
+                    &mut rgb,
+                    3,
+                    cmd_obj.highlight_mask.unwrap_or(false),
+                    cmd_obj.shadow_mask.unwrap_or(false),
+                );
                 let proof_error = apply_proof(&mut rgb, cmd_obj.proof.as_ref());
                 if cmd_obj.focus_peaking == Some(true) {
                     pipeline::peaking::apply(&mut rgb, ow, oh);
@@ -2086,37 +2275,57 @@ fn run_daemon() {
                 let mut ppm = format!("P6\n{} {}\n255\n", ow, oh).into_bytes();
                 ppm.extend_from_slice(&rgb);
                 if let Err(e) = security::atomic_write_secure(&dest, &ppm) {
-                    print_json::<()>(&ResponseWrapper::err_action("detail", format!("Failed to write detail view: {}", e)));
+                    print_json::<()>(
+                        &ResponseWrapper::err_action("detail", format!("Failed to write detail view: {}", e))
+                            .with_context(req_id, photo_path),
+                    );
                     continue;
                 }
-                print_json(&ResponseWrapper::ok_action("detail", DetailResult {
-                    image: dest.to_string_lossy().to_string(),
-                    tag,
-                    proof_error,
-                    region: [ox as f64 / vw as f64, oy as f64 / vh as f64, ow as f64 / vw as f64, oh as f64 / vh as f64],
-                    width: ow,
-                    height: oh,
-                }));
+                print_json(
+                    &ResponseWrapper::ok_action(
+                        "detail",
+                        DetailResult {
+                            image: dest.to_string_lossy().to_string(),
+                            tag,
+                            proof_error,
+                            region: [ox as f64 / vw as f64, oy as f64 / vh as f64, ow as f64 / vw as f64, oh as f64 / vh as f64],
+                            width: ow,
+                            height: oh,
+                        },
+                    )
+                    .with_context(req_id, photo_path),
+                );
             }
             "ai_auto" => {
-                let c = cache.lock().unwrap();
+                let c = cache.lock().unwrap_or_else(|e| e.into_inner());
+                let photo_path = c.current_path.clone();
                 if let (Some(buffer), Some(meta)) = (&c.raw_buffer_8, &c.metadata) {
                     let auto_recipe = ai_auto_enhance(buffer, c.width, c.height, c.channels, meta);
                     let scene = ai_classify_scene(buffer, c.width, c.height, c.channels, meta);
-                    let path_str = c.current_path.clone().unwrap_or_default();
-                    print_json(&ResponseWrapper::ok_action("ai_auto", InspectResult {
-                        path: path_str,
-                        metadata: meta.clone(),
-                        thumbnail: String::new(),
-                        recipe: auto_recipe,
-                        scene,
-                    }));
+                    let path_str = photo_path.clone().unwrap_or_default();
+                    print_json(
+                        &ResponseWrapper::ok_action(
+                            "ai_auto",
+                            InspectResult {
+                                path: path_str,
+                                metadata: meta.clone(),
+                                thumbnail: String::new(),
+                                recipe: auto_recipe,
+                                scene,
+                            },
+                        )
+                        .with_context(req_id, photo_path),
+                    );
                 } else {
-                    print_json::<()>(&ResponseWrapper::err_action("ai_auto", "No image loaded in cache for AI Auto"));
+                    print_json::<()>(
+                        &ResponseWrapper::err_action("ai_auto", "No image loaded in cache for AI Auto")
+                            .with_context(req_id, photo_path),
+                    );
                 }
             }
             "ai_jev" => {
-                let c = cache.lock().unwrap();
+                let c = cache.lock().unwrap_or_else(|e| e.into_inner());
+                let photo_path = c.current_path.clone();
                 if let (Some(buffer), Some(meta)) = (&c.raw_buffer_8, &c.metadata) {
                     let mut auto_recipe = ai_auto_enhance(buffer, c.width, c.height, c.channels, meta);
                     let (mut scene, mut jev_opt) = ai_classify_scene_with_jev(buffer, c.width, c.height, c.channels, meta);
@@ -2130,22 +2339,32 @@ fn run_daemon() {
                     } else if let Some(ref jev) = jev_opt {
                         apply_jev_decisions_to_recipe(&mut auto_recipe, jev);
                     }
-                    let path_str = c.current_path.clone().unwrap_or_default();
-                    print_json(&ResponseWrapper::ok_action("ai_jev", JevInspectResult {
-                        path: path_str,
-                        metadata: meta.clone(),
-                        thumbnail: String::new(),
-                        recipe: auto_recipe,
-                        scene,
-                        jev_decisions: jev_opt,
-                    }));
+                    let path_str = photo_path.clone().unwrap_or_default();
+                    print_json(
+                        &ResponseWrapper::ok_action(
+                            "ai_jev",
+                            JevInspectResult {
+                                path: path_str,
+                                metadata: meta.clone(),
+                                thumbnail: String::new(),
+                                recipe: auto_recipe,
+                                scene,
+                                jev_decisions: jev_opt,
+                            },
+                        )
+                        .with_context(req_id, photo_path),
+                    );
                 } else {
-                    print_json::<()>(&ResponseWrapper::err_action("ai_jev", "No image loaded in cache for AI Jev"));
+                    print_json::<()>(
+                        &ResponseWrapper::err_action("ai_jev", "No image loaded in cache for AI Jev")
+                            .with_context(req_id, photo_path),
+                    );
                 }
             }
             "ai_social" => {
                 let platform = cmd_obj.platform.unwrap_or_else(|| "ig".to_string());
-                let c = cache.lock().unwrap();
+                let c = cache.lock().unwrap_or_else(|e| e.into_inner());
+                let photo_path = c.current_path.clone();
                 if let Some(ref buffer) = c.raw_buffer_8 {
                     // The edit on screen, so unsaved changes are kept
                     let base = cmd_obj.recipe.clone().unwrap_or_else(|| {
@@ -2159,15 +2378,21 @@ fn run_daemon() {
                         &platform,
                         &base,
                     );
-                    print_json(&ResponseWrapper::ok_action("ai_social", result));
+                    print_json(&ResponseWrapper::ok_action("ai_social", result).with_context(req_id, photo_path));
                 } else {
-                    print_json::<()>(&ResponseWrapper::err_action("ai_social", "No image loaded in cache for AI Social"));
+                    print_json::<()>(
+                        &ResponseWrapper::err_action("ai_social", "No image loaded in cache for AI Social")
+                            .with_context(req_id, photo_path),
+                    );
                 }
             }
             "save_recipe" => {
                 // The photo is named by the request, so a save sent just before the
                 // next photo loads still lands next to the photo it belongs to
-                let target = cmd_obj.path.clone().or_else(|| cache.lock().unwrap().current_path.clone());
+                let target = cmd_obj
+                    .path
+                    .clone()
+                    .or_else(|| cache.lock().unwrap_or_else(|e| e.into_inner()).current_path.clone());
                 if let (Some(p), Some(recipe)) = (&target, &cmd_obj.recipe) {
                     match recipe.save_sidecar(p) {
                         Ok(sidecar_path) => {
@@ -2176,108 +2401,102 @@ fn run_daemon() {
                             if cat.update_culling(p, Some(recipe.rating), Some(&recipe.flag), None) && let Err(e) = cat.save() {
                                 eprintln!("omastudio: cannot write the catalogue: {e}");
                             }
-                            print_json(&ResponseWrapper::ok_action("save_recipe", sidecar_path.to_string_lossy().to_string()))
+                            print_json(
+                                &ResponseWrapper::ok_action("save_recipe", sidecar_path.to_string_lossy().to_string())
+                                    .with_context(req_id, Some(p.clone())),
+                            )
                         }
-                        Err(e) => print_json::<()>(&ResponseWrapper::err_action("save_recipe", format!("Failed to save sidecar: {}", e))),
+                        Err(e) => print_json::<()>(
+                            &ResponseWrapper::err_action("save_recipe", format!("Failed to save sidecar: {}", e))
+                                .with_context(req_id, Some(p.clone())),
+                        ),
                     }
                 } else {
-                    print_json::<()>(&ResponseWrapper::err_action("save_recipe", "No image loaded or recipe missing"));
+                    print_json::<()>(
+                        &ResponseWrapper::err_action("save_recipe", "No image loaded or recipe missing")
+                            .with_context(req_id, target),
+                    );
                 }
             }
             "export" => {
-                let c = cache.lock().unwrap();
-                let p = match &c.current_path {
-                    Some(p) => p.clone(),
-                    None => {
-                        print_json::<()>(&ResponseWrapper::err_action("export", "No image loaded"));
-                        continue;
+                let p = {
+                    let c = cache.lock().unwrap_or_else(|e| e.into_inner());
+                    match cmd_obj.path.clone().or_else(|| c.current_path.clone()) {
+                        Some(p) => p,
+                        None => {
+                            print_json::<()>(
+                                &ResponseWrapper::err_action("export", "No image loaded")
+                                    .with_context(req_id, None),
+                            );
+                            continue;
+                        }
                     }
                 };
-                let recipe = cmd_obj.recipe.unwrap_or_default();
-                let options = cmd_obj.options.unwrap_or_default();
-                drop(c); // release lock during full export
-
-                match export_photo(&p, &recipe, &options) {
-                    Ok(dest) => print_json(&ResponseWrapper::ok_action("export", ExportResult {
-                        exported_path: dest.to_string_lossy().to_string(),
-                    })),
-                    Err(e) => print_json::<()>(&ResponseWrapper::err_action("export", e)),
+                let recipe = Box::new(cmd_obj.recipe.unwrap_or_default());
+                let options = Box::new(cmd_obj.options.unwrap_or_default());
+                let job = ExportJob::Single { path: p.clone(), recipe, options, request_id: req_id };
+                if let Err(err) = export_tx.try_send(job) {
+                    let msg = match err {
+                        std::sync::mpsc::TrySendError::Full(_) => "Export queue is full; wait for pending exports to finish",
+                        std::sync::mpsc::TrySendError::Disconnected(_) => "Export worker is unavailable",
+                    };
+                    print_json::<()>(
+                        &ResponseWrapper::err_action("export", msg).with_context(req_id, Some(p)),
+                    );
                 }
             }
             "batch_export" => {
                 let items = match cmd_obj.items {
                     Some(its) if !its.is_empty() => its,
                     _ => {
-                        print_json::<()>(&ResponseWrapper::err_action("batch_export", "No items provided for batch export"));
+                        print_json::<()>(
+                            &ResponseWrapper::err_action("batch_export", "No items provided for batch export")
+                                .with_context(req_id, None),
+                        );
                         continue;
                     }
                 };
 
                 if items.len() > 100 {
-                    print_json::<()>(&ResponseWrapper::err_action(
-                        "batch_export",
-                        "Batch export exceeds maximum limit of 100 items",
-                    ));
+                    print_json::<()>(
+                        &ResponseWrapper::err_action(
+                            "batch_export",
+                            "Batch export exceeds maximum limit of 100 items",
+                        )
+                        .with_context(req_id, None),
+                    );
                     continue;
                 }
-                let options = cmd_obj.options.unwrap_or_default();
-                // On its own thread, so the editor keeps rendering while the batch runs.
-                // One photo at a time: each export already uses every core, and running
-                // them side by side multiplied the memory (about 1.7 GB per 100 MP frame).
-                std::thread::spawn(move || {
-                    let item_paths: Vec<&str> = items.iter().map(|i| i.path.as_str()).collect();
-                    let name_tags = export::batch_name_tags(&item_paths);
-                    let results: Vec<BatchExportItemResult> = items
-                        .iter()
-                        .zip(name_tags.iter())
-                        .map(|(item, tag)| {
-                            let recipe = item.recipe.clone().unwrap_or_else(|| Recipe::load_initial(&item.path));
-                            let mut item_options = options.clone();
-                            // The user's tag stays; the disambiguating tag is added after it
-                            item_options.name_tag = match (&options.name_tag, tag) {
-                                (Some(user), Some(t)) if !user.is_empty() => Some(format!("{}{}", user, t)),
-                                (Some(user), _) if !user.is_empty() => Some(user.clone()),
-                                (_, t) => t.clone(),
-                            };
-                            match export_photo(&item.path, &recipe, &item_options) {
-                                Ok(dest) => BatchExportItemResult {
-                                    path: item.path.clone(),
-                                    success: true,
-                                    exported_path: Some(dest.to_string_lossy().to_string()),
-                                    error: None,
-                                },
-                                Err(e) => BatchExportItemResult {
-                                    path: item.path.clone(),
-                                    success: false,
-                                    exported_path: None,
-                                    error: Some(e),
-                                },
-                            }
-                        })
-                        .collect();
-
-                    let succeeded = results.iter().filter(|r| r.success).count();
-                    let failed = results.len() - succeeded;
-
-                    print_json(&ResponseWrapper::ok_action("batch_export", BatchExportResult {
-                        total: results.len(),
-                        succeeded,
-                        failed,
-                        results,
-                    }));
-                });
+                let options = Box::new(cmd_obj.options.unwrap_or_default());
+                let job = ExportJob::Batch { items, options, request_id: req_id };
+                if let Err(err) = export_tx.try_send(job) {
+                    let msg = match err {
+                        std::sync::mpsc::TrySendError::Full(_) => "Export queue is full; wait for pending exports to finish",
+                        std::sync::mpsc::TrySendError::Disconnected(_) => "Export worker is unavailable",
+                    };
+                    print_json::<()>(
+                        &ResponseWrapper::err_action("batch_export", msg).with_context(req_id, None),
+                    );
+                }
             }
             "fuji_recipes" => {
                 let list: Vec<_> = fuji::library::list()
                     .into_iter()
                     .map(|e| serde_json::json!({ "path": e.path, "recipe": FujiRecipeResult::new(e.profile) }))
                     .collect();
-                print_json(&ResponseWrapper::ok_action("fuji_recipes", list));
+                print_json(&ResponseWrapper::ok_action("fuji_recipes", list).with_context(req_id, None));
             }
             "fuji_import" => match cmd_obj.path.as_deref().map(|p| fuji::library::import(Path::new(p))) {
-                Some(Ok(profile)) => print_json(&ResponseWrapper::ok_action("fuji_import", FujiRecipeResult::new(profile))),
-                Some(Err(e)) => print_json::<()>(&ResponseWrapper::err_action("fuji_import", e)),
-                None => print_json::<()>(&ResponseWrapper::err_action("fuji_import", "Missing path")),
+                Some(Ok(profile)) => print_json(
+                    &ResponseWrapper::ok_action("fuji_import", FujiRecipeResult::new(profile))
+                        .with_context(req_id, cmd_obj.path),
+                ),
+                Some(Err(e)) => print_json::<()>(
+                    &ResponseWrapper::err_action("fuji_import", e).with_context(req_id, cmd_obj.path),
+                ),
+                None => print_json::<()>(
+                    &ResponseWrapper::err_action("fuji_import", "Missing path").with_context(req_id, None),
+                ),
             },
             "catalog_query" => {
                 let cat = Catalog::load();
@@ -2292,17 +2511,20 @@ fn run_daemon() {
                     search_query: cmd_obj.search_query.clone(),
                 };
                 let results = cat.filter_items(&filter);
-                print_json(&ResponseWrapper::ok_action("catalog_query", results));
+                print_json(&ResponseWrapper::ok_action("catalog_query", results).with_context(req_id, None));
             }
             "catalog_cull" => {
                 let target_path = match cmd_obj.path {
                     Some(ref p) => p.clone(),
                     None => {
-                        let c = cache.lock().unwrap();
+                        let c = cache.lock().unwrap_or_else(|e| e.into_inner());
                         match c.current_path.as_ref() {
                             Some(p) => p.clone(),
                             None => {
-                                print_json::<()>(&ResponseWrapper::err_action("catalog_cull", "No path specified and no image loaded"));
+                                print_json::<()>(
+                                    &ResponseWrapper::err_action("catalog_cull", "No path specified and no image loaded")
+                                        .with_context(req_id, None),
+                                );
                                 continue;
                             }
                         }
@@ -2319,20 +2541,35 @@ fn run_daemon() {
 
                 if updated {
                     match cat.save() {
-                        Ok(()) => print_json(&ResponseWrapper::ok_action("catalog_cull", "Culling metadata saved successfully")),
-                        Err(e) => print_json::<()>(&ResponseWrapper::err_action("catalog_cull", format!("Cannot write the catalogue: {e}"))),
+                        Ok(()) => print_json(
+                            &ResponseWrapper::ok_action("catalog_cull", "Culling metadata saved successfully")
+                                .with_context(req_id, Some(target_path)),
+                        ),
+                        Err(e) => print_json::<()>(
+                            &ResponseWrapper::err_action("catalog_cull", format!("Cannot write the catalogue: {e}"))
+                                .with_context(req_id, Some(target_path)),
+                        ),
                     }
                 } else {
-                    print_json::<()>(&ResponseWrapper::err_action("catalog_cull", "Item not found in catalog"));
+                    print_json::<()>(
+                        &ResponseWrapper::err_action("catalog_cull", "Item not found in catalog")
+                            .with_context(req_id, Some(target_path)),
+                    );
                 }
             }
             "exit" => {
-                print_json(&ResponseWrapper::ok_action("exit", "Daemon exiting"));
+                print_json(&ResponseWrapper::ok_action("exit", "Daemon exiting").with_context(req_id, None));
                 break;
             }
             unknown => {
-                print_json::<()>(&ResponseWrapper::err_action("error", format!("Unknown daemon command: {}", unknown)));
+                print_json::<()>(
+                    &ResponseWrapper::err_action("error", format!("Unknown daemon command: {}", unknown))
+                        .with_context(req_id, None),
+                );
             }
         }
     }
+
+    drop(export_tx);
+    let _ = export_worker.join();
 }

@@ -478,17 +478,36 @@ pub fn calibrated_lut_dir() -> PathBuf {
 
 type LutCache = HashMap<&'static str, (Option<SystemTime>, Option<Arc<Lut3D>>)>;
 static CALIBRATED: Mutex<Option<LutCache>> = Mutex::new(None);
+static CALIBRATED_SUSPENDED: std::sync::atomic::AtomicUsize = std::sync::atomic::AtomicUsize::new(0);
+
+/// RAII guard that suspends user-calibrated film simulation LUTs while baseline
+/// exposure or calibration pairs are being measured, preventing feedback loops.
+pub struct CalibratedLutGuard;
+
+impl Drop for CalibratedLutGuard {
+    fn drop(&mut self) {
+        CALIBRATED_SUSPENDED.fetch_sub(1, std::sync::atomic::Ordering::Release);
+    }
+}
+
+pub fn suspend_calibrated_luts() -> CalibratedLutGuard {
+    CALIBRATED_SUSPENDED.fetch_add(1, std::sync::atomic::Ordering::Acquire);
+    CalibratedLutGuard
+}
 
 /// The calibrated LUT for a simulation, if the user made one. Reloaded when the file
 /// changes; `OMASTUDIO_FILM_LUTS=off` uses the built-in approximations only.
 pub fn calibrated_lut(sim: FilmSimulation) -> Option<Arc<Lut3D>> {
-    if sim == FilmSimulation::None || std::env::var("OMASTUDIO_FILM_LUTS").is_ok_and(|v| v == "off") {
+    if sim == FilmSimulation::None
+        || CALIBRATED_SUSPENDED.load(std::sync::atomic::Ordering::Acquire) > 0
+        || std::env::var("OMASTUDIO_FILM_LUTS").is_ok_and(|v| v == "off")
+    {
         return None;
     }
     let id = sim.as_id();
     let path = calibrated_lut_dir().join(format!("{}.cube", id));
     let mtime = std::fs::symlink_metadata(&path).ok().and_then(|m| m.modified().ok());
-    let mut guard = CALIBRATED.lock().ok()?;
+    let mut guard = CALIBRATED.lock().unwrap_or_else(|e| e.into_inner());
     let cache = guard.get_or_insert_with(HashMap::new);
     if let Some((cached_mtime, lut)) = cache.get(id)
         && *cached_mtime == mtime

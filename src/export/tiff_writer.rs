@@ -87,9 +87,15 @@ pub fn build<'a>(
 ) -> Result<TiffParts<'a>, String> {
     let bits = samples.bits();
     let bytes_per_sample = (bits / 8) as usize;
-    let row_samples = width as usize * 3;
-    let row_bytes = row_samples * bytes_per_sample;
-    let expected = row_samples * height as usize;
+    let row_samples = (width as usize)
+        .checked_mul(3)
+        .ok_or_else(|| format!("TIFF: width overflow for {width}x{height}"))?;
+    let row_bytes = row_samples
+        .checked_mul(bytes_per_sample)
+        .ok_or_else(|| format!("TIFF: row byte overflow for {width}x{height}"))?;
+    let expected = row_samples
+        .checked_mul(height as usize)
+        .ok_or_else(|| format!("TIFF: image size overflow for {width}x{height}"))?;
     let len = match &samples {
         Samples::U8(s) => s.len(),
         Samples::U16(s) => s.len(),
@@ -99,7 +105,9 @@ pub fn build<'a>(
     }
     let rps = rows_per_strip(row_bytes, height);
     let strip_count = height.div_ceil(rps) as usize;
-    let strip_samples = row_samples * rps as usize;
+    let strip_samples = row_samples
+        .checked_mul(rps as usize)
+        .ok_or_else(|| format!("TIFF: strip size overflow for {width}x{height}"))?;
 
     let strips: Vec<std::borrow::Cow<'a, [u8]>> = match (codec, samples) {
         (Codec::None, Samples::U8(s)) => s.chunks(strip_samples).map(std::borrow::Cow::Borrowed).collect(),
@@ -275,5 +283,10 @@ mod tests {
     #[test]
     fn rejects_wrong_sample_count() {
         assert!(build(4, 4, Samples::U8(&[0; 10]), Codec::None, None, None).is_err());
+    }
+
+    #[test]
+    fn rejects_dimension_overflow() {
+        assert!(build(u32::MAX, u32::MAX, Samples::U16(&[]), Codec::None, None, None).is_err());
     }
 }

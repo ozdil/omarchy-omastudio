@@ -1,5 +1,4 @@
-use std::fs;
-use std::io::{BufRead, BufReader, Read};
+use std::io::{BufRead, BufReader};
 use std::path::Path;
 
 /// High-performance 3D Look-Up Table for DaVinci Resolve grading
@@ -195,35 +194,30 @@ impl Lut3D {
 }
 
 /// Reads a DaVinci Resolve standard .cube file with strict security boundaries
-/// (1 MiB ceiling, symlink rejection).
+/// (12 MiB ceiling, symlink rejection via O_NOFOLLOW).
 pub fn read_cube_file<P: AsRef<Path>>(path: P) -> Result<Lut3D, String> {
     let p = path.as_ref();
 
-    // Reject symlinks
-    let meta = fs::symlink_metadata(p).map_err(|e| format!("Cannot stat LUT file: {}", e))?;
-    if meta.file_type().is_symlink() {
-        return Err("Security violation: symlink rejected for LUT file".to_string());
-    }
-
     // Max 12 MiB limit for up to 65^3 cinematic LUT tables
-    const MAX_SIZE: u64 = 12 * 1024 * 1024;
-    let file = fs::File::open(p).map_err(|e| format!("Cannot open LUT file: {}", e))?;
-    let limited = file.take(MAX_SIZE + 1);
-    let reader = BufReader::new(limited);
+    const MAX_SIZE: usize = 12 * 1024 * 1024;
+    let bytes = crate::security::read_secure_file(p, MAX_SIZE).map_err(|e| {
+        if e.kind() == std::io::ErrorKind::OutOfMemory {
+            format!("LUT file exceeds maximum allowable size ({} MiB)", MAX_SIZE / (1024 * 1024))
+        } else if e.raw_os_error() == Some(libc::ELOOP) {
+            "Security violation: symlink rejected for LUT file".to_string()
+        } else {
+            format!("Cannot read LUT file: {}", e)
+        }
+    })?;
+    let reader = BufReader::new(bytes.as_slice());
 
     let mut size: Option<usize> = None;
     let mut domain_min = [0.0f32; 3];
     let mut domain_max = [1.0f32; 3];
     let mut table = Vec::new();
 
-    let mut byte_count = 0u64;
-
     for line_res in reader.lines() {
         let line = line_res.map_err(|e| format!("Error reading LUT file: {}", e))?;
-        byte_count += line.len() as u64 + 1;
-        if byte_count > MAX_SIZE {
-            return Err("LUT file exceeds maximum allowable size (1 MiB)".to_string());
-        }
 
         let trimmed = line.trim();
         if trimmed.is_empty() || trimmed.starts_with('#') {
@@ -308,5 +302,41 @@ pub fn apply_lut_pixel(
             g * (1.0 - intensity) + lut_g * intensity,
             b * (1.0 - intensity) + lut_b * intensity,
         )
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn read_cube_file_rejects_symlinks_and_parses_valid_lut() {
+        let dir = std::env::temp_dir().join(format!("omastudio_lut_test_{}", std::process::id()));
+        let _ = std::fs::remove_dir_all(&dir);
+        std::fs::create_dir_all(&dir).unwrap();
+
+        let real = dir.join("valid.cube");
+        let content = "\
+LUT_3D_SIZE 2
+0.0 0.0 0.0
+1.0 0.0 0.0
+0.0 1.0 0.0
+1.0 1.0 0.0
+0.0 0.0 1.0
+1.0 0.0 1.0
+0.0 1.0 1.0
+1.0 1.0 1.0
+";
+        std::fs::write(&real, content).unwrap();
+        let lut = read_cube_file(&real).expect("valid 2x2x2 cube must parse");
+        assert_eq!(lut.size, 2);
+        assert_eq!(lut.table.len(), 8);
+
+        let link = dir.join("link.cube");
+        std::os::unix::fs::symlink(&real, &link).unwrap();
+        let err = read_cube_file(&link).expect_err("symlink cube must be rejected");
+        assert!(err.contains("symlink"), "unexpected error: {err}");
+
+        let _ = std::fs::remove_dir_all(&dir);
     }
 }

@@ -365,13 +365,22 @@ impl FlatField {
 
     pub fn save(&self, path: &Path) -> Result<(), String> {
         let json = serde_json::to_vec(self).map_err(|e| e.to_string())?;
-        std::fs::write(path, json).map_err(|e| format!("Cannot write {}: {}", path.display(), e))
+        crate::security::atomic_write_user(path, &json)
+            .map_err(|e| format!("Cannot write {}: {}", path.display(), e))
     }
 
     pub fn load(path: &Path) -> Result<Self, String> {
         let data = crate::security::read_secure_file(path, 4 * 1024 * 1024).map_err(|e| e.to_string())?;
         let f: Self = serde_json::from_slice(&data).map_err(|e| format!("Not a flat field file: {}", e))?;
-        if f.grid_w == 0 || f.grid_h == 0 || f.gain.len() != f.grid_w * f.grid_h * 3 {
+        let expected = f
+            .grid_w
+            .checked_mul(f.grid_h)
+            .and_then(|n| n.checked_mul(3));
+        if f.grid_w == 0
+            || f.grid_h == 0
+            || expected != Some(f.gain.len())
+            || !f.gain.iter().all(|&g| g.is_finite() && g > 0.0)
+        {
             return Err("Flat field grid is inconsistent".into());
         }
         Ok(f)
@@ -459,7 +468,13 @@ fn to_sensor(x: usize, y: usize, width: usize, height: usize, flip: i32) -> (usi
 /// Applies flat field, vignetting, lateral CA and distortion to linear 16-bit RGB
 /// (`flip` is the rotation the image was developed with).
 pub fn apply(rgb: &mut [u16], width: usize, height: usize, flip: i32, flat: Option<&FlatField>, c: &Correction) {
-    if flat.is_none() && c.is_empty() {
+    if width == 0 || height == 0 || (flat.is_none() && c.is_empty()) {
+        return;
+    }
+    let Some(expected) = width.checked_mul(height).and_then(|n| n.checked_mul(3)) else {
+        return;
+    };
+    if rgb.len() < expected {
         return;
     }
     let (cx, cy) = ((width as f32 - 1.0) / 2.0, (height as f32 - 1.0) / 2.0);
@@ -468,7 +483,7 @@ pub fn apply(rgb: &mut [u16], width: usize, height: usize, flip: i32, flat: Opti
     let (sw, sh) = if matches!(flip, 5 | 6) { (height as f32, width as f32) } else { (width as f32, height as f32) };
 
     // 1. Falloff: flat field gain map, else the profile's vignetting model
-    rgb.par_chunks_mut(width * 3).enumerate().for_each(|(y, row)| {
+    rgb[..expected].par_chunks_mut(width * 3).enumerate().for_each(|(y, row)| {
         for x in 0..width {
             let mut gain = [1f32; 3];
             if let Some(f) = flat {
@@ -481,7 +496,7 @@ pub fn apply(rgb: &mut [u16], width: usize, height: usize, flip: i32, flat: Opti
                 gain = [g; 3];
             }
             for ch in 0..3 {
-                let v = row[x * 3 + ch] as f32 / gain[ch];
+                let v = row[x * 3 + ch] as f32 / gain[ch].max(1e-6);
                 row[x * 3 + ch] = v.round().clamp(0.0, 65535.0) as u16;
             }
         }
@@ -491,10 +506,10 @@ pub fn apply(rgb: &mut [u16], width: usize, height: usize, flip: i32, flat: Opti
     if c.distortion.is_none() && c.tca.is_none() {
         return;
     }
-    let src = rgb.to_vec();
+    let src = rgb[..expected].to_vec();
     let dist = c.distortion;
     let tca = c.tca.unwrap_or(Tca { kr: 1.0, kb: 1.0 });
-    rgb.par_chunks_mut(width * 3).enumerate().for_each(|(y, row)| {
+    rgb[..expected].par_chunks_mut(width * 3).enumerate().for_each(|(y, row)| {
         for x in 0..width {
             let (nx, ny) = ((x as f32 - cx) / short, (y as f32 - cy) / short);
             let ru = (nx * nx + ny * ny).sqrt();
@@ -512,7 +527,7 @@ pub fn apply(rgb: &mut [u16], width: usize, height: usize, flip: i32, flat: Opti
 }
 
 fn bilinear(src: &[u16], width: usize, height: usize, x: f32, y: f32, ch: usize) -> u16 {
-    if x < 0.0 || y < 0.0 || x > (width - 1) as f32 || y > (height - 1) as f32 {
+    if width == 0 || height == 0 || !(x >= 0.0 && y >= 0.0 && x <= (width - 1) as f32 && y <= (height - 1) as f32) {
         return 0;
     }
     let (x0, y0) = (x as usize, y as usize);

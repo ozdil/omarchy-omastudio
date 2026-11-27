@@ -257,3 +257,152 @@ fn test_export_reads_a_large_recipe_from_stdin() {
     assert!(out.contains("\"success\":false"), "{out}");
     assert!(!out.contains("Invalid recipe") && !out.contains("stdin"), "the recipe itself must be accepted: {out}");
 }
+
+#[test]
+fn test_daemon_echoes_request_id_and_photo_path_and_keeps_export_non_blocking() {
+    let mut child = Command::new(env!("CARGO_BIN_EXE_omastudio-engine"))
+        .arg("daemon")
+        .stdin(Stdio::piped())
+        .stdout(Stdio::piped())
+        .spawn()
+        .expect("Failed to start omastudio-engine daemon");
+    let mut stdin = child.stdin.take().expect("Failed to open stdin");
+    let mut reader = BufReader::new(child.stdout.take().expect("Failed to open stdout"));
+
+    // 1. Ping echoes request_id
+    writeln!(stdin, r#"{{"cmd": "ping", "request_id": 42}}"#).unwrap();
+    stdin.flush().unwrap();
+    let mut line = String::new();
+    reader.read_line(&mut line).unwrap();
+    let v: serde_json::Value = serde_json::from_str(&line).unwrap();
+    assert_eq!(v["success"], true);
+    assert_eq!(v["action"], "ping");
+    assert_eq!(v["request_id"], 42);
+
+    // 2. Load error echoes request_id and target photo_path
+    writeln!(stdin, r#"{{"cmd": "load", "request_id": 43, "path": "/nonexistent/sample.RAF"}}"#).unwrap();
+    stdin.flush().unwrap();
+    line.clear();
+    reader.read_line(&mut line).unwrap();
+    let v: serde_json::Value = serde_json::from_str(&line).unwrap();
+    assert_eq!(v["success"], false);
+    assert_eq!(v["action"], "load");
+    assert_eq!(v["request_id"], 43);
+    assert_eq!(v["photo_path"], "/nonexistent/sample.RAF");
+
+    // 3. Batch export carries request_id through the bounded export worker while ping stays responsive
+    writeln!(stdin, r#"{{"cmd": "batch_export", "request_id": 44, "items": [{{"path": "/nonexistent/b.RAF"}}]}}"#).unwrap();
+    writeln!(stdin, r#"{{"cmd": "ping", "request_id": 45}}"#).unwrap();
+    stdin.flush().unwrap();
+    let mut responses = Vec::new();
+    for _ in 0..2 {
+        let mut l = String::new();
+        reader.read_line(&mut l).unwrap();
+        responses.push(serde_json::from_str::<serde_json::Value>(&l).unwrap());
+    }
+    let ping = responses.iter().find(|r| r["action"] == "ping").expect("ping response");
+    assert_eq!(ping["request_id"], 45);
+    let batch = responses.iter().find(|r| r["action"] == "batch_export").expect("batch_export response");
+    assert_eq!(batch["request_id"], 44);
+    assert_eq!(batch["data"]["failed"], 1);
+
+    // 4. Exit echoes request_id
+    writeln!(stdin, r#"{{"cmd": "exit", "request_id": 46}}"#).unwrap();
+    stdin.flush().unwrap();
+    line.clear();
+    reader.read_line(&mut line).unwrap();
+    let v: serde_json::Value = serde_json::from_str(&line).unwrap();
+    assert_eq!(v["action"], "exit");
+    assert_eq!(v["request_id"], 46);
+    assert!(child.wait().unwrap().success());
+}
+
+#[test]
+fn test_daemon_detail_rejects_extreme_or_invalid_regions_and_renders_valid_ppm() {
+    let dir = std::env::temp_dir().join(format!("omastudio_daemon_detail_test_{}", std::process::id()));
+    let _ = std::fs::remove_dir_all(&dir);
+    std::fs::create_dir_all(&dir).unwrap();
+    let img_path = dir.join("tiny.png");
+    let img = image::RgbImage::from_pixel(32, 24, image::Rgb([255, 255, 255]));
+    img.save(&img_path).unwrap();
+
+    let mut child = Command::new(env!("CARGO_BIN_EXE_omastudio-engine"))
+        .arg("daemon")
+        .stdin(Stdio::piped())
+        .stdout(Stdio::piped())
+        .spawn()
+        .expect("Failed to start omastudio-engine daemon");
+    let mut stdin = child.stdin.take().expect("Failed to open stdin");
+    let mut reader = BufReader::new(child.stdout.take().expect("Failed to open stdout"));
+
+    writeln!(
+        stdin,
+        "{}",
+        serde_json::json!({ "cmd": "load", "request_id": 1, "path": img_path.to_string_lossy() })
+    )
+    .unwrap();
+    stdin.flush().unwrap();
+
+    // Wait for both `load` and background `full_ready`
+    let mut got_load = false;
+    let mut got_full = false;
+    while !(got_load && got_full) {
+        let mut line = String::new();
+        reader.read_line(&mut line).unwrap();
+        let v: serde_json::Value = serde_json::from_str(&line).unwrap();
+        if v["action"] == "load" {
+            assert_eq!(v["success"], true);
+            assert_eq!(v["request_id"], 1);
+            assert_eq!(v["photo_path"], img_path.to_string_lossy().as_ref());
+            got_load = true;
+        } else if v["action"] == "full_ready" {
+            assert_eq!(v["photo_path"], img_path.to_string_lossy().as_ref());
+            got_full = true;
+        }
+    }
+
+    // Huge rw (previously produced vw=0, vh=0 -> NaN in region) must be cleanly rejected
+    writeln!(
+        stdin,
+        r#"{{"cmd": "detail", "request_id": 2, "region": [0.0, 0.0, 1e12, 1.0], "out_width": 16, "out_height": 16}}"#
+    )
+    .unwrap();
+    stdin.flush().unwrap();
+    let mut line = String::new();
+    reader.read_line(&mut line).unwrap();
+    let v: serde_json::Value = serde_json::from_str(&line).unwrap();
+    assert_eq!(v["success"], false);
+    assert_eq!(v["action"], "detail");
+    assert_eq!(v["request_id"], 2);
+    assert_eq!(v["photo_path"], img_path.to_string_lossy().as_ref());
+
+    // Valid detail with highlight_mask=true must render red clipping overlay on pure white image
+    writeln!(
+        stdin,
+        r#"{{"cmd": "detail", "request_id": 3, "region": [0.0, 0.0, 1.0, 1.0], "out_width": 16, "out_height": 12, "highlight_mask": true}}"#
+    )
+    .unwrap();
+    stdin.flush().unwrap();
+    line.clear();
+    reader.read_line(&mut line).unwrap();
+    let v: serde_json::Value = serde_json::from_str(&line).unwrap();
+    assert_eq!(v["success"], true, "valid detail failed: {v}");
+    assert_eq!(v["request_id"], 3);
+    assert_eq!(v["photo_path"], img_path.to_string_lossy().as_ref());
+    let ppm_path = v["data"]["image"].as_str().unwrap();
+    let ppm = std::fs::read(ppm_path).unwrap();
+    // Skip P6 header (3 newlines) and check first pixel is highlight-clipped red (255, 0, 0)
+    let mut nl = 0;
+    let header_end = ppm.iter().position(|&b| {
+        if b == b'\n' {
+            nl += 1;
+        }
+        nl == 3
+    }).unwrap() + 1;
+    assert_eq!(&ppm[header_end..header_end + 3], &[255, 0, 0], "detail must apply highlight_mask overlay");
+
+    writeln!(stdin, r#"{{"cmd": "exit"}}"#).unwrap();
+    stdin.flush().unwrap();
+    assert!(child.wait().unwrap().success());
+    let _ = std::fs::remove_dir_all(&dir);
+}

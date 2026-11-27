@@ -107,11 +107,20 @@ pub trait Transport {
     fn event(&mut self, timeout: Duration) -> Result<Option<Vec<u8>>>;
 }
 
-/// Builds a container: length, type, code, transaction id, then params or payload.
-pub fn container(kind: u16, code: u16, transaction: u32, params: &[u32], payload: &[u8]) -> Vec<u8> {
-    let len = HEADER + params.len() * 4 + payload.len();
+/// Builds a container, rejecting payloads whose total length exceeds `u32::MAX`.
+pub fn try_container(kind: u16, code: u16, transaction: u32, params: &[u32], payload: &[u8]) -> Result<Vec<u8>> {
+    let param_bytes = params
+        .len()
+        .checked_mul(4)
+        .ok_or_else(|| Error::Protocol("PTP parameter list overflow".into()))?;
+    let len = HEADER
+        .checked_add(param_bytes)
+        .and_then(|n| n.checked_add(payload.len()))
+        .ok_or_else(|| Error::Protocol("PTP container length overflow".into()))?;
+    let len_u32 = u32::try_from(len)
+        .map_err(|_| Error::Protocol(format!("PTP container exceeds u32::MAX ({len} bytes)")))?;
     let mut out = Vec::with_capacity(len);
-    out.extend_from_slice(&(len.min(u32::MAX as usize) as u32).to_le_bytes());
+    out.extend_from_slice(&len_u32.to_le_bytes());
     out.extend_from_slice(&kind.to_le_bytes());
     out.extend_from_slice(&code.to_le_bytes());
     out.extend_from_slice(&transaction.to_le_bytes());
@@ -119,7 +128,12 @@ pub fn container(kind: u16, code: u16, transaction: u32, params: &[u32], payload
         out.extend_from_slice(&p.to_le_bytes());
     }
     out.extend_from_slice(payload);
-    out
+    Ok(out)
+}
+
+/// Builds a container: length, type, code, transaction id, then params or payload.
+pub fn container(kind: u16, code: u16, transaction: u32, params: &[u32], payload: &[u8]) -> Vec<u8> {
+    try_container(kind, code, transaction, params, payload).expect("PTP container exceeds u32::MAX")
 }
 
 /// (type, code, transaction id, rest) of a container.
@@ -187,8 +201,15 @@ impl<'a> Reader<'a> {
     }
 
     fn take(&mut self, n: usize) -> Result<&'a [u8]> {
-        let s = self.data.get(self.pos..self.pos + n).ok_or_else(|| Error::Protocol("dataset truncated".into()))?;
-        self.pos += n;
+        let end = self
+            .pos
+            .checked_add(n)
+            .ok_or_else(|| Error::Protocol("dataset length overflow".into()))?;
+        let s = self
+            .data
+            .get(self.pos..end)
+            .ok_or_else(|| Error::Protocol("dataset truncated".into()))?;
+        self.pos = end;
         Ok(s)
     }
 
@@ -363,26 +384,52 @@ impl<T: Transport> Session<T> {
     }
 
     pub fn transaction_timeout(&mut self, code: u16, params: &[u32], data_out: Option<&[u8]>, timeout: Duration) -> Result<Response> {
+        const MAX_SKIPPED_CONTAINERS: usize = 64;
+        let deadline = std::time::Instant::now() + timeout;
+        let remaining = || {
+            deadline
+                .checked_duration_since(std::time::Instant::now())
+                .filter(|d| !d.is_zero())
+                .ok_or(Error::Timeout)
+        };
+
         // OpenSession uses transaction id 0
         let tid = if code == op::OPEN_SESSION { 0 } else { self.next_tid() };
-        self.transport.send(&container(COMMAND, code, tid, &params[..params.len().min(5)], &[]), timeout)?;
+        let cmd = try_container(COMMAND, code, tid, &params[..params.len().min(5)], &[])?;
+        self.transport.send(&cmd, remaining()?)?;
         if let Some(payload) = data_out {
-            self.transport.send(&container(DATA, code, tid, &[], payload), timeout)?;
+            let data_pkt = try_container(DATA, code, tid, &[], payload)?;
+            self.transport.send(&data_pkt, remaining()?)?;
         }
         let mut data = Vec::new();
+        let mut skipped = 0usize;
         loop {
-            let raw = self.transport.receive(timeout)?;
-            let (kind, rcode, rtid, rest) = split(&raw)?;
+            let mut raw = self.transport.receive(remaining()?)?;
+            let (kind, rcode, rtid, params_out) = {
+                let (kind, rcode, rtid, rest) = split(&raw)?;
+                let params_out = if kind == RESPONSE { params_of(rest) } else { Vec::new() };
+                (kind, rcode, rtid, params_out)
+            };
             match kind {
-                DATA if rtid == tid => data = rest.to_vec(),
+                DATA if rtid == tid => {
+                    // Strip the 12-byte header in place to avoid doubling peak RAM on large RAWs
+                    raw.drain(..HEADER);
+                    data = raw;
+                }
                 RESPONSE if rtid == tid || code == op::OPEN_SESSION => {
                     if rcode != rc::OK {
                         return Err(Error::Response { op: code, code: rcode });
                     }
-                    return Ok(Response { params: params_of(rest), data });
+                    return Ok(Response { params: params_out, data });
                 }
-                // Leftovers of an aborted transaction: skip them
-                DATA | RESPONSE => continue,
+                // Leftovers of an aborted transaction: skip up to MAX_SKIPPED_CONTAINERS
+                DATA | RESPONSE => {
+                    skipped += 1;
+                    if skipped > MAX_SKIPPED_CONTAINERS {
+                        return Err(Error::Protocol("too many stale PTP containers skipped".into()));
+                    }
+                    continue;
+                }
                 other => return Err(Error::Protocol(format!("unexpected container type {}", other))),
             }
         }

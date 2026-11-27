@@ -81,6 +81,50 @@ const CLAUDE_ARGS: &[&str] = &[
     "4",
 ];
 
+static AGENT_DIR_SEQ: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(0);
+
+/// Environment variables forwarded to headless AI agents (`claude`, `codex`) so keychain,
+/// API key auth, XDG paths, custom CAs, and proxies work without exposing loader variables.
+const AGENT_PASSTHROUGH_ENV: &[&str] = &[
+    "ANTHROPIC_API_KEY",
+    "OPENAI_API_KEY",
+    "OPENROUTER_API_KEY",
+    "GEMINI_API_KEY",
+    "DBUS_SESSION_BUS_ADDRESS",
+    "XDG_CONFIG_HOME",
+    "XDG_DATA_HOME",
+    "XDG_CACHE_HOME",
+    "XDG_RUNTIME_DIR",
+    "SSL_CERT_FILE",
+    "SSL_CERT_DIR",
+    "HTTP_PROXY",
+    "HTTPS_PROXY",
+    "NO_PROXY",
+    "http_proxy",
+    "https_proxy",
+    "no_proxy",
+    "CLAUDE_CONFIG_DIR",
+    "CODEX_HOME",
+];
+
+fn apply_agent_env(cmd: &mut std::process::Command) {
+    for &key in AGENT_PASSTHROUGH_ENV {
+        if let Ok(val) = std::env::var(key)
+            && !val.is_empty()
+        {
+            cmd.env(key, val);
+        }
+    }
+}
+
+struct TempDirGuard(PathBuf);
+
+impl Drop for TempDirGuard {
+    fn drop(&mut self) {
+        let _ = std::fs::remove_dir_all(&self.0);
+    }
+}
+
 /// Shows the agent the photo and returns the JSON object it answers with.
 pub fn ask_json(system: &str, jpeg: &[u8], text: &str, schema: &Value) -> Result<Value, String> {
     let Some((agent, program)) = available() else {
@@ -93,12 +137,15 @@ pub fn ask_json(system: &str, jpeg: &[u8], text: &str, schema: &Value) -> Result
             }
         });
     };
-    let dir =
-        security::get_secure_preview_dir().join(format!("omastudio_agent_{}", std::process::id()));
+    let seq = AGENT_DIR_SEQ.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+    let dir = security::get_secure_preview_dir().join(format!(
+        "omastudio_agent_{}_{}",
+        std::process::id(),
+        seq
+    ));
     std::fs::create_dir_all(&dir).map_err(|e| e.to_string())?;
-    let result = run(&agent, &program, &dir, system, jpeg, text, schema);
-    let _ = std::fs::remove_dir_all(&dir);
-    result
+    let _guard = TempDirGuard(dir.clone());
+    run(&agent, &program, &dir, system, jpeg, text, schema)
 }
 
 fn run(
@@ -116,6 +163,7 @@ fn run(
          Answer with only a JSON object that matches this JSON schema, without code fences or other text:\n{schema}"
     );
     let mut cmd = secure_command(&program.to_string_lossy());
+    apply_agent_env(&mut cmd);
     cmd.current_dir(dir);
     match agent {
         "claude" => {

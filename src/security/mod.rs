@@ -716,6 +716,17 @@ impl SecureDir {
 
     /// Creates an exclusive, no-follow temporary staging file with mode 0600 relative to this directory
     pub fn open_staging_file(&self, prefix: &str, suffix: &str) -> io::Result<(fs::File, std::ffi::CString)> {
+        self.open_staging_file_with_mode(prefix, suffix, 0o600)
+    }
+
+    /// Creates an exclusive, no-follow temporary staging file with the requested mode (masked by process umask)
+    /// relative to this directory.
+    pub fn open_staging_file_with_mode(
+        &self,
+        prefix: &str,
+        suffix: &str,
+        mode: libc::mode_t,
+    ) -> io::Result<(fs::File, std::ffi::CString)> {
         use std::ffi::CString;
         use std::os::unix::io::FromRawFd;
 
@@ -735,7 +746,7 @@ impl SecureDir {
                 self.fd,
                 c_name.as_ptr(),
                 libc::O_RDWR | libc::O_CREAT | libc::O_EXCL | libc::O_NOFOLLOW | libc::O_CLOEXEC,
-                0o600,
+                mode,
             )
         };
 
@@ -888,13 +899,13 @@ pub fn read_secure_file(path: &Path, max_bytes: usize) -> io::Result<Vec<u8>> {
 pub fn atomic_write_secure(target: &Path, data: &[u8]) -> io::Result<()> {
     let parent = target.parent().unwrap_or_else(|| Path::new("."));
     let secure_dir = SecureDir::open_or_create_hierarchy(parent)?;
-    atomic_write_in(&secure_dir, target, data)
+    atomic_write_parts_in(&secure_dir, target, &[data], 0o600)
 }
 
-/// Atomic write into a user-chosen folder (exports, sidecars, render output).
-/// The folder may be a symlink or live on a mount owned by another uid; see
-/// [`SecureDir::open_user_dir`]. Engine-private state keeps using
-/// [`atomic_write_secure`].
+/// Atomic write into a user-chosen folder (exports, sidecars, render output) with
+/// umask-respecting mode 0644. The folder may be a symlink or live on a mount owned by
+/// another uid; see [`SecureDir::open_user_dir`]. Engine-private state keeps using
+/// [`atomic_write_secure`] (strict 0600).
 pub fn atomic_write_user(target: &Path, data: &[u8]) -> io::Result<()> {
     atomic_write_user_parts(target, &[data])
 }
@@ -907,14 +918,15 @@ pub fn atomic_write_user_parts(target: &Path, parts: &[&[u8]]) -> io::Result<()>
         _ => Path::new("."),
     };
     let dir = SecureDir::open_user_dir(parent)?;
-    atomic_write_parts_in(&dir, target, parts)
+    atomic_write_parts_in(&dir, target, parts, 0o644)
 }
 
-fn atomic_write_in(secure_dir: &SecureDir, target: &Path, data: &[u8]) -> io::Result<()> {
-    atomic_write_parts_in(secure_dir, target, &[data])
-}
-
-fn atomic_write_parts_in(secure_dir: &SecureDir, target: &Path, parts: &[&[u8]]) -> io::Result<()> {
+fn atomic_write_parts_in(
+    secure_dir: &SecureDir,
+    target: &Path,
+    parts: &[&[u8]],
+    mode: libc::mode_t,
+) -> io::Result<()> {
     use std::ffi::CString;
 
     let filename = target
@@ -925,7 +937,7 @@ fn atomic_write_parts_in(secure_dir: &SecureDir, target: &Path, parts: &[&[u8]])
     let c_dest_name = CString::new(filename.as_bytes())
         .map_err(|e| io::Error::new(io::ErrorKind::InvalidInput, e))?;
 
-    let (mut stage_file, c_stage_name) = secure_dir.open_staging_file(".tmp_atomic", filename)?;
+    let (mut stage_file, c_stage_name) = secure_dir.open_staging_file_with_mode(".tmp_atomic", filename, mode)?;
     let mut guard = SecureDirCleanupGuard {
         secure_dir,
         filename: c_stage_name.clone(),
@@ -943,7 +955,8 @@ fn atomic_write_parts_in(secure_dir: &SecureDir, target: &Path, parts: &[&[u8]])
 }
 
 /// Streams child process stdout directly to a file descriptor, enforcing a hard byte limit and deadline.
-/// If max_bytes is exceeded or timeout occurs, the process group is reaped and an error is returned.
+/// Uses `libc::poll()` to drain both stdout and stderr to EOF before reaping the child and defusing the
+/// process-group guard; if `max_bytes` is exceeded or timeout occurs, the process group is reaped.
 pub fn run_bounded_command_stream_to_file(
     mut cmd: Command,
     target_file: &mut fs::File,
@@ -957,47 +970,75 @@ pub fn run_bounded_command_stream_to_file(
 
     let mut child = cmd.spawn()?;
     let guard = ProcessGroupGuard::new(&mut child);
-
     let deadline = Instant::now() + timeout;
 
-    let stdout_fd = guard.child.stdout.as_ref().map(|p| p.as_raw_fd());
-    let stderr_fd = guard.child.stderr.as_ref().map(|p| p.as_raw_fd());
+    let mut stdout = guard.child.stdout.take();
+    let mut stderr = guard.child.stderr.take();
 
-    // Set non-blocking on pipes
-    for &fd_opt in &[stdout_fd, stderr_fd] {
-        if let Some(fd) = fd_opt {
-            set_nonblocking(fd);
-        }
+    if let Some(ref p) = stdout {
+        set_nonblocking(p.as_raw_fd());
+    }
+    if let Some(ref p) = stderr {
+        set_nonblocking(p.as_raw_fd());
     }
 
     let mut total_written = 0usize;
     let mut chunk = [0u8; 8192];
-    let mut err_chunk = [0u8; 1024];
+    let mut err_chunk = [0u8; 4096];
     let mut stderr_buf = Vec::new();
-    let mut child_exited = false;
-    let mut exit_code = -1;
-    let mut stdout_closed = false;
 
-    while Instant::now() < deadline {
-        if !child_exited
-            && let Ok(Some(status)) = guard.child.try_wait()
-        {
-            child_exited = true;
-            exit_code = status.code().unwrap_or(-1);
+    while stdout.is_some() || stderr.is_some() {
+        let remaining = deadline.saturating_duration_since(Instant::now());
+        if remaining.is_zero() {
+            return Err(io::Error::new(
+                io::ErrorKind::TimedOut,
+                "Command exceeded monotonic deadline",
+            ));
         }
 
-        // Drain stdout into target_file
-        if let Some(ref mut pipe) = guard.child.stdout
-            && !stdout_closed
+        let mut pollfds = [libc::pollfd { fd: -1, events: 0, revents: 0 }; 2];
+        let mut nfds = 0usize;
+        let mut stdout_idx = None;
+        let mut stderr_idx = None;
+
+        if let Some(ref p) = stdout {
+            stdout_idx = Some(nfds);
+            pollfds[nfds] = libc::pollfd { fd: p.as_raw_fd(), events: libc::POLLIN, revents: 0 };
+            nfds += 1;
+        }
+        if let Some(ref p) = stderr {
+            stderr_idx = Some(nfds);
+            pollfds[nfds] = libc::pollfd { fd: p.as_raw_fd(), events: libc::POLLIN, revents: 0 };
+            nfds += 1;
+        }
+
+        let timeout_ms = remaining.as_millis().clamp(1, i32::MAX as u128) as libc::c_int;
+        // SAFETY: pollfds holds nfds valid open pipe descriptors for the duration of the call.
+        let rc = unsafe { libc::poll(pollfds.as_mut_ptr(), nfds as libc::nfds_t, timeout_ms) };
+        if rc < 0 {
+            let err = io::Error::last_os_error();
+            if err.kind() == io::ErrorKind::Interrupted {
+                continue;
+            }
+            return Err(err);
+        }
+        if rc == 0 {
+            continue;
+        }
+
+        if let Some(i) = stdout_idx
+            && pollfds[i].revents != 0
+            && let Some(ref mut pipe) = stdout
         {
+            let mut eof = false;
             loop {
                 match pipe.read(&mut chunk) {
                     Ok(0) => {
-                        stdout_closed = true;
+                        eof = true;
                         break;
                     }
                     Ok(n) => {
-                        if total_written + n > max_bytes {
+                        if total_written.saturating_add(n) > max_bytes {
                             return Err(io::Error::new(
                                 io::ErrorKind::OutOfMemory,
                                 format!("Output exceeded maximum allowed size of {} bytes", max_bytes),
@@ -1007,45 +1048,57 @@ pub fn run_bounded_command_stream_to_file(
                         total_written += n;
                     }
                     Err(ref e) if e.kind() == io::ErrorKind::WouldBlock => break,
+                    Err(ref e) if e.kind() == io::ErrorKind::Interrupted => continue,
                     Err(e) => return Err(e),
                 }
             }
+            if eof {
+                stdout = None;
+            }
         }
 
-        // Drain stderr
-        if let Some(ref mut pipe) = guard.child.stderr {
+        if let Some(i) = stderr_idx
+            && pollfds[i].revents != 0
+            && let Some(ref mut pipe) = stderr
+        {
+            let mut eof = false;
             loop {
                 match pipe.read(&mut err_chunk) {
-                    Ok(0) => break,
+                    Ok(0) => {
+                        eof = true;
+                        break;
+                    }
                     Ok(n) => {
-                        if stderr_buf.len() + n <= MAX_COMMAND_OUTPUT_BYTES {
-                            stderr_buf.extend_from_slice(&err_chunk[..n]);
+                        // Drain all stderr to EOF while keeping captured diagnostics bounded.
+                        let room = MAX_COMMAND_OUTPUT_BYTES.saturating_sub(stderr_buf.len());
+                        if room > 0 {
+                            stderr_buf.extend_from_slice(&err_chunk[..n.min(room)]);
                         }
                     }
                     Err(ref e) if e.kind() == io::ErrorKind::WouldBlock => break,
+                    Err(ref e) if e.kind() == io::ErrorKind::Interrupted => continue,
                     Err(e) => return Err(e),
                 }
             }
+            if eof {
+                stderr = None;
+            }
         }
+    }
 
-        if child_exited && stdout_closed {
-            break;
+    let exit_code = loop {
+        if let Some(status) = guard.child.try_wait()? {
+            break status.code().unwrap_or(-1);
         }
-
         let remaining = deadline.saturating_duration_since(Instant::now());
-        let sleep_step = Duration::from_millis(10).min(remaining);
-        if sleep_step.is_zero() {
-            break;
+        if remaining.is_zero() {
+            return Err(io::Error::new(
+                io::ErrorKind::TimedOut,
+                "Command exceeded monotonic deadline",
+            ));
         }
-        thread::sleep(sleep_step);
-    }
-
-    if !child_exited {
-        return Err(io::Error::new(
-            io::ErrorKind::TimedOut,
-            "Command exceeded monotonic deadline",
-        ));
-    }
+        thread::sleep(Duration::from_millis(5).min(remaining));
+    };
 
     if exit_code != 0 {
         return Err(io::Error::other(format!(
