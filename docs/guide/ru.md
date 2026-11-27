@@ -4,7 +4,7 @@
 
 [Все языки](../README.md) · [Технологии](../technology/ru.md) · [README](../../README.md)
 
-Это руководство описывает OmaStudio 3.1. В нём рассказано, как установить приложение, как устроено окно и как пользоваться каждой панелью и каждым инструментом. На снимках экрана — примеры файлов Fujifilm GFX 50R и Hasselblad CFV-50c с сайта [raw.pixls.us](https://raw.pixls.us) (CC0).
+Это руководство описывает OmaStudio 3.2. В нём рассказано, как установить приложение, как устроено окно и как пользоваться каждой панелью и каждым инструментом. На снимках экрана — примеры файлов Fujifilm GFX 50R и Hasselblad CFV-50c с сайта [raw.pixls.us](https://raw.pixls.us) (CC0).
 
 ![OmaStudio со снимком Fujifilm GFX 50R](../images/lang/main-ru.webp)
 
@@ -358,7 +358,7 @@ omastudio --cli help                                # все команды
 | Путь | Содержимое |
 | :--- | :--- |
 | `<фото>.omastudio` | Правка фотографии (файл правок) |
-| `~/.local/share/omastudio/catalog.json` | Каталог: рейтинги, отметки и цветовые метки |
+| `~/.local/share/omastudio/catalog.db` | Каталог: рейтинги, отметки и цветовые метки |
 | `~/.local/share/omastudio/fuji-recipes/` | Сохранённые рецепты Fujifilm |
 | `~/.local/share/omastudio/icc/` | Ваши ICC-профили |
 | `~/.local/share/omastudio/models/` | Локальные модели ИИ |

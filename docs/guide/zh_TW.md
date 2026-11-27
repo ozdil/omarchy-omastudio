@@ -4,7 +4,7 @@
 
 [所有語言](../README.md) · [所用技術](../technology/zh_TW.md) · [README](../../README.md)
 
-本指南適用於 OmaStudio 3.1，介紹如何安裝應用、視窗的佈局，以及每個面板和工具的用法。截圖使用的是 [raw.pixls.us](https://raw.pixls.us)（CC0）上的 Fujifilm GFX 50R 和 Hasselblad CFV-50c 示例檔案。
+本指南適用於 OmaStudio 3.2，介紹如何安裝應用、視窗的佈局，以及每個面板和工具的用法。截圖使用的是 [raw.pixls.us](https://raw.pixls.us)（CC0）上的 Fujifilm GFX 50R 和 Hasselblad CFV-50c 示例檔案。
 
 ![開啟 Fujifilm GFX 50R 照片的 OmaStudio](../images/lang/main-zh_TW.webp)
 
@@ -358,7 +358,7 @@ omastudio --cli help                                # 所有命令
 | 路徑 | 內容 |
 | :--- | :--- |
 | `<照片>.omastudio` | 一張照片的編輯（附屬檔案） |
-| `~/.local/share/omastudio/catalog.json` | 目錄：星級、旗標和顏色標籤 |
+| `~/.local/share/omastudio/catalog.db` | 目錄：星級、旗標和顏色標籤 |
 | `~/.local/share/omastudio/fuji-recipes/` | 已儲存的 Fujifilm 配方 |
 | `~/.local/share/omastudio/icc/` | 你自己的 ICC 配置檔案 |
 | `~/.local/share/omastudio/models/` | 本地 AI 模型 |

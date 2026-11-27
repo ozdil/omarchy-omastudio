@@ -4,7 +4,7 @@
 
 [كل اللغات](../README.md) · [التقنيات](../technology/ar.md) · [README](../../README.md)
 
-يغطي هذا الدليل OmaStudio 3.1. يشرح كيفية تثبيت التطبيق، والتنقل في النافذة، واستخدام كل لوحة وأداة. تعرض لقطات الشاشة ملفات نموذجية من Fujifilm GFX 50R وHasselblad CFV-50c مأخوذة من [raw.pixls.us](https://raw.pixls.us) (CC0).
+يغطي هذا الدليل OmaStudio 3.2. يشرح كيفية تثبيت التطبيق، والتنقل في النافذة، واستخدام كل لوحة وأداة. تعرض لقطات الشاشة ملفات نموذجية من Fujifilm GFX 50R وHasselblad CFV-50c مأخوذة من [raw.pixls.us](https://raw.pixls.us) (CC0).
 
 ![OmaStudio مع صورة من Fujifilm GFX 50R](../images/lang/main-ar.webp)
 
@@ -358,7 +358,7 @@ omastudio --cli help                                # every command
 | المسار | المحتوى |
 | :--- | :--- |
 | `<photo>.omastudio` | تعديل الصورة (ملف جانبي) |
-| `~/.local/share/omastudio/catalog.json` | الكتالوج: التقييمات والأعلام وتسميات الألوان |
+| `~/.local/share/omastudio/catalog.db` | الكتالوج: التقييمات والأعلام وتسميات الألوان |
 | `~/.local/share/omastudio/fuji-recipes/` | وصفات Fujifilm المحفوظة |
 | `~/.local/share/omastudio/icc/` | ملفات تعريف ICC الخاصة بك |
 | `~/.local/share/omastudio/models/` | نماذج الذكاء الاصطناعي المحلية |

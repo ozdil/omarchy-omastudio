@@ -5,18 +5,39 @@ fn main() {
     println!("cargo:rerun-if-changed=src/raw/libraw_shim.c");
     println!("cargo:rerun-if-changed=src/raw/libraw_shim.h");
 
+    println!("cargo:rerun-if-env-changed=OMASTUDIO_ALLOW_LEGACY_LIBRAW");
+
+    // LibRaw >= 0.22 is required on Omarchy / Arch Linux (and track 0.22.4+ for CVE-2026-135177,
+    // `pentax_4shot_load_raw` OOB read). Set OMASTUDIO_ALLOW_LEGACY_LIBRAW=1 only on older LTS
+    // development hosts that still ship 0.20/0.21.
+    let allow_legacy = env::var("OMASTUDIO_ALLOW_LEGACY_LIBRAW")
+        .map(|v| v == "1" || v.eq_ignore_ascii_case("true"))
+        .unwrap_or(false);
+    let min_libraw = if allow_legacy { "0.20" } else { "0.22" };
+
     let lib = match pkg_config::Config::new()
-        .atleast_version("0.20")
+        .atleast_version(min_libraw)
         .cargo_metadata(false)
         .probe("libraw_r")
     {
         Ok(l) => l,
         Err(_) => pkg_config::Config::new()
-            .atleast_version("0.20")
+            .atleast_version(min_libraw)
             .cargo_metadata(false)
             .probe("libraw")
-            .expect("libraw development files required"),
+            .unwrap_or_else(|e| {
+                panic!(
+                    "libraw development files (>= {min_libraw}) required: {e} \
+                     (on older LTS hosts with LibRaw 0.21, set OMASTUDIO_ALLOW_LEGACY_LIBRAW=1)"
+                )
+            }),
     };
+    if allow_legacy && lib.version.starts_with("0.20.") || allow_legacy && lib.version.starts_with("0.21.") {
+        println!(
+            "cargo:warning=Building against legacy LibRaw {} (recommended >= 0.22.4 for CVE-2026-135177 and modern camera support)",
+            lib.version
+        );
+    }
 
     let mut build = cc::Build::new();
     build.file("src/raw/libraw_shim.c");

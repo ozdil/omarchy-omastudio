@@ -4,7 +4,7 @@
 
 [Alle Sprachen](../README.md) · [Technologien](../technology/de.md) · [README](../../README.md)
 
-Dieses Handbuch beschreibt OmaStudio 3.1. Es erklärt die Installation, den Aufbau des Fensters und die Verwendung aller Bereiche und Werkzeuge. Die Bildschirmfotos zeigen Beispieldateien einer Fujifilm GFX 50R und einer Hasselblad CFV-50c von [raw.pixls.us](https://raw.pixls.us) (CC0).
+Dieses Handbuch beschreibt OmaStudio 3.2. Es erklärt die Installation, den Aufbau des Fensters und die Verwendung aller Bereiche und Werkzeuge. Die Bildschirmfotos zeigen Beispieldateien einer Fujifilm GFX 50R und einer Hasselblad CFV-50c von [raw.pixls.us](https://raw.pixls.us) (CC0).
 
 ![OmaStudio mit einem Foto der Fujifilm GFX 50R](../images/lang/main-de.webp)
 
@@ -358,7 +358,7 @@ omastudio --cli help                                # alle Befehle
 | Pfad | Inhalt |
 | :--- | :--- |
 | `<Foto>.omastudio` | Die Bearbeitung eines Fotos (Begleitdatei) |
-| `~/.local/share/omastudio/catalog.json` | Katalog: Bewertungen, Markierungen und Farbetiketten |
+| `~/.local/share/omastudio/catalog.db` | Katalog: Bewertungen, Markierungen und Farbetiketten |
 | `~/.local/share/omastudio/fuji-recipes/` | Gespeicherte Fujifilm-Rezepte |
 | `~/.local/share/omastudio/icc/` | Eigene ICC-Profile |
 | `~/.local/share/omastudio/models/` | Lokale KI-Modelle |

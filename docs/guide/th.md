@@ -4,7 +4,7 @@
 
 [ทุกภาษา](../README.md) · [เทคโนโลยี](../technology/th.md) · [README](../../README.md)
 
-คู่มือนี้ครอบคลุม OmaStudio 3.1 อธิบายวิธีติดตั้งแอปพลิเคชัน ส่วนต่าง ๆ ของหน้าต่าง และการใช้แต่ละแผงและเครื่องมือ ภาพหน้าจอใช้ไฟล์ตัวอย่างจาก Fujifilm GFX 50R และ Hasselblad CFV-50c จาก [raw.pixls.us](https://raw.pixls.us) (CC0)
+คู่มือนี้ครอบคลุม OmaStudio 3.2 อธิบายวิธีติดตั้งแอปพลิเคชัน ส่วนต่าง ๆ ของหน้าต่าง และการใช้แต่ละแผงและเครื่องมือ ภาพหน้าจอใช้ไฟล์ตัวอย่างจาก Fujifilm GFX 50R และ Hasselblad CFV-50c จาก [raw.pixls.us](https://raw.pixls.us) (CC0)
 
 ![OmaStudio พร้อมภาพจาก Fujifilm GFX 50R](../images/lang/main-th.webp)
 
@@ -358,7 +358,7 @@ omastudio --cli help                                # every command
 | ตำแหน่ง | เนื้อหา |
 | :--- | :--- |
 | `<photo>.omastudio` | การแก้ไขของภาพ (ไซด์คาร์) |
-| `~/.local/share/omastudio/catalog.json` | แค็ตตาล็อก: ดาว ธง และป้ายสี |
+| `~/.local/share/omastudio/catalog.db` | แค็ตตาล็อก: ดาว ธง และป้ายสี |
 | `~/.local/share/omastudio/fuji-recipes/` | สูตร Fujifilm ที่บันทึกไว้ |
 | `~/.local/share/omastudio/icc/` | โปรไฟล์ ICC ของคุณเอง |
 | `~/.local/share/omastudio/models/` | โมเดล AI ภายในเครื่อง |

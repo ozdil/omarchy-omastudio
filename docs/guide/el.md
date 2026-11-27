@@ -4,7 +4,7 @@
 
 [Όλες οι γλώσσες](../README.md) · [Τεχνολογίες](../technology/el.md) · [README](../../README.md)
 
-Ο οδηγός αυτός αφορά το OmaStudio 3.1. Εξηγεί πώς εγκαθίσταται η εφαρμογή, πώς είναι οργανωμένο το παράθυρο και πώς χρησιμοποιείται κάθε πίνακας και εργαλείο. Τα στιγμιότυπα οθόνης δείχνουν δείγματα αρχείων Fujifilm GFX 50R και Hasselblad CFV-50c από το [raw.pixls.us](https://raw.pixls.us) (CC0).
+Ο οδηγός αυτός αφορά το OmaStudio 3.2. Εξηγεί πώς εγκαθίσταται η εφαρμογή, πώς είναι οργανωμένο το παράθυρο και πώς χρησιμοποιείται κάθε πίνακας και εργαλείο. Τα στιγμιότυπα οθόνης δείχνουν δείγματα αρχείων Fujifilm GFX 50R και Hasselblad CFV-50c από το [raw.pixls.us](https://raw.pixls.us) (CC0).
 
 ![Το OmaStudio με μια φωτογραφία Fujifilm GFX 50R](../images/lang/main-el.webp)
 
@@ -358,7 +358,7 @@ omastudio --cli help                                # όλες οι εντολέ
 | Διαδρομή | Περιεχόμενο |
 | :--- | :--- |
 | `<φωτογραφία>.omastudio` | Η επεξεργασία μιας φωτογραφίας (συνοδευτικό αρχείο) |
-| `~/.local/share/omastudio/catalog.json` | Κατάλογος: βαθμολογίες, σημάνσεις και ετικέτες χρώματος |
+| `~/.local/share/omastudio/catalog.db` | Κατάλογος: βαθμολογίες, σημάνσεις και ετικέτες χρώματος |
 | `~/.local/share/omastudio/fuji-recipes/` | Αποθηκευμένες συνταγές Fujifilm |
 | `~/.local/share/omastudio/icc/` | Τα δικά σας προφίλ ICC |
 | `~/.local/share/omastudio/models/` | Τοπικά μοντέλα ΤΝ |

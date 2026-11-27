@@ -4,7 +4,7 @@ Thank you for helping. OmaStudio targets Omarchy (Arch Linux, Wayland, Hyprland)
 
 ## Building and testing
 
-You need the packages CI installs (see `.github/workflows/ci.yml`): `base-devel clang lcms2 libraw mold pkgconf qt6-base qt6-declarative qt6-tools python rustup`. The Rust toolchain is pinned in `rust-toolchain.toml`; `rustup` installs it on first use.
+You need the packages CI installs (see `.github/workflows/ci.yml`): `base-devel clang lcms2 libraw mold pkgconf sqlite qt6-base qt6-declarative qt6-tools python rustup` (plus `vulkan-icd-loader vulkan-swrast` for Mesa lavapipe GPU parity tests). The workspace configures `clang` + `mold` in `.cargo/config.toml` and pins the Rust toolchain (`1.100.0`) in `rust-toolchain.toml`; `rustup` installs it on first use.
 
 ```bash
 cargo build --locked --workspace --all-targets
@@ -14,7 +14,7 @@ python3 tools/i18n/check.py          # every qsTr() string is translated
 python3 tools/release/check-version.py
 ```
 
-CI runs the same commands on every pull request; a pull request is merged only when they pass.
+CI runs the same commands (plus Mesa `lavapipe` `gpu::` parity tests, `cargo audit --deny warnings`, `qmllint`, and `shellcheck`) on every pull request; a pull request is merged only when they pass.
 
 ## Code rules
 

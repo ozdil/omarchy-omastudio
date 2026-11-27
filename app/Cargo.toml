@@ -2,7 +2,7 @@
 name = "omastudio-app"
 version = "3.2.1"
 edition = "2024"
-rust-version = "1.99"
+rust-version = "1.100"
 authors = ["Ozan Özdil"]
 description = "OmaStudio desktop application (Qt 6 / QML) for Omarchy"
 license = "MIT"

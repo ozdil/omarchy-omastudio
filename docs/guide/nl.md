@@ -4,7 +4,7 @@
 
 [Alle talen](../README.md) · [Technologieën](../technology/nl.md) · [README](../../README.md)
 
-Deze handleiding gaat over OmaStudio 3.1. Ze legt uit hoe u de toepassing installeert, hoe het venster is ingedeeld en hoe u elk paneel en elk gereedschap gebruikt. De schermafbeeldingen tonen voorbeeldbestanden van een Fujifilm GFX 50R en een Hasselblad CFV-50c van [raw.pixls.us](https://raw.pixls.us) (CC0).
+Deze handleiding gaat over OmaStudio 3.2. Ze legt uit hoe u de toepassing installeert, hoe het venster is ingedeeld en hoe u elk paneel en elk gereedschap gebruikt. De schermafbeeldingen tonen voorbeeldbestanden van een Fujifilm GFX 50R en een Hasselblad CFV-50c van [raw.pixls.us](https://raw.pixls.us) (CC0).
 
 ![OmaStudio met een foto van de Fujifilm GFX 50R](../images/lang/main-nl.webp)
 
@@ -358,7 +358,7 @@ omastudio --cli help                                # alle opdrachten
 | Pad | Inhoud |
 | :--- | :--- |
 | `<foto>.omastudio` | De bewerking van een foto (sidecar-bestand) |
-| `~/.local/share/omastudio/catalog.json` | Catalogus: beoordelingen, markeringen en kleurlabels |
+| `~/.local/share/omastudio/catalog.db` | Catalogus: beoordelingen, markeringen en kleurlabels |
 | `~/.local/share/omastudio/fuji-recipes/` | Opgeslagen Fujifilm-recepten |
 | `~/.local/share/omastudio/icc/` | Uw eigen ICC-profielen |
 | `~/.local/share/omastudio/models/` | Lokale AI-modellen |

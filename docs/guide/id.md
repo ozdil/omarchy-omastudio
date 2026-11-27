@@ -4,7 +4,7 @@
 
 [Semua bahasa](../README.md) · [Teknologi](../technology/id.md) · [README](../../README.md)
 
-Panduan ini membahas OmaStudio 3.1. Isinya menjelaskan cara memasang aplikasi, mengenali bagian-bagian jendela, dan menggunakan setiap panel dan alat. Tangkapan layar menampilkan berkas contoh Fujifilm GFX 50R dan Hasselblad CFV-50c dari [raw.pixls.us](https://raw.pixls.us) (CC0).
+Panduan ini membahas OmaStudio 3.2. Isinya menjelaskan cara memasang aplikasi, mengenali bagian-bagian jendela, dan menggunakan setiap panel dan alat. Tangkapan layar menampilkan berkas contoh Fujifilm GFX 50R dan Hasselblad CFV-50c dari [raw.pixls.us](https://raw.pixls.us) (CC0).
 
 ![OmaStudio dengan foto Fujifilm GFX 50R](../images/lang/main-id.webp)
 
@@ -358,7 +358,7 @@ omastudio --cli help                                # semua perintah
 | Jalur | Isi |
 | :--- | :--- |
 | `<foto>.omastudio` | Suntingan sebuah foto (berkas pendamping) |
-| `~/.local/share/omastudio/catalog.json` | Katalog: peringkat, penanda, dan label warna |
+| `~/.local/share/omastudio/catalog.db` | Katalog: peringkat, penanda, dan label warna |
 | `~/.local/share/omastudio/fuji-recipes/` | Resep Fujifilm yang tersimpan |
 | `~/.local/share/omastudio/icc/` | Profil ICC milik Anda |
 | `~/.local/share/omastudio/models/` | Model AI lokal |
