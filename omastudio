@@ -15,13 +15,23 @@ if [ "${OMASTUDIO_SECURE_ENV:-0}" != "1" ]; then
     # OMASTUDIO_GPU=off|software) and the API keys the AI assistant falls back to when
     # none is in the keyring.
     SESSION_ENV=()
-    for var in XDG_CURRENT_DESKTOP XDG_SESSION_TYPE DBUS_SESSION_BUS_ADDRESS HYPRLAND_INSTANCE_SIGNATURE \
+    for var in XDG_CURRENT_DESKTOP XDG_SESSION_TYPE XDG_DATA_HOME DBUS_SESSION_BUS_ADDRESS HYPRLAND_INSTANCE_SIGNATURE \
                XCURSOR_THEME XCURSOR_SIZE QT_QPA_PLATFORM QT_QPA_PLATFORMTHEME QT_SCALE_FACTOR QT_SCREEN_SCALE_FACTORS \
-               QT_AUTO_SCREEN_SCALE_FACTOR XDG_ACTIVATION_TOKEN DESKTOP_STARTUP_ID TZ \
+               QT_AUTO_SCREEN_SCALE_FACTOR QSG_RHI_BACKEND QSG_RHI_HDR QT_QUICK_BACKEND \
+               XDG_ACTIVATION_TOKEN DESKTOP_STARTUP_ID TZ BROWSER \
+               SSL_CERT_FILE SSL_CERT_DIR HTTP_PROXY HTTPS_PROXY NO_PROXY \
                __NV_PRIME_RENDER_OFFLOAD __NV_PRIME_RENDER_OFFLOAD_PROVIDER __GLX_VENDOR_LIBRARY_NAME \
                __VK_LAYER_NV_optimus DRI_PRIME MESA_VK_DEVICE_SELECT VK_ICD_FILENAMES VK_DRIVER_FILES \
-               LIBVA_DRIVER_NAME NVD_BACKEND OMASTUDIO_GPU OMARCHY_PATH OMARCHY_LANGUAGE_FILE \
-               ANTHROPIC_API_KEY OPENAI_API_KEY OPENROUTER_API_KEY GEMINI_API_KEY; do
+               VK_LOADER_DRIVERS_SELECT AMD_VULKAN_ICD RADV_PERFTEST \
+               WGPU_BACKEND WGPU_ADAPTER_NAME WGPU_POWER_PREF \
+               CUDA_VISIBLE_DEVICES HIP_VISIBLE_DEVICES ROCR_VISIBLE_DEVICES HSA_OVERRIDE_GFX_VERSION ONEAPI_DEVICE_SELECTOR \
+               LIBVA_DRIVER_NAME NVD_BACKEND \
+               OMASTUDIO_GPU OMASTUDIO_GPU_STAGES OMASTUDIO_GPU_DEVICE OMASTUDIO_GPU_TIMEOUT_MS \
+               OMASTUDIO_PREVIEW_MODE OMASTUDIO_NPU ORT_DYLIB_PATH OMASTUDIO_DEMOSAIC \
+               OMASTUDIO_LENS_CORRECTION OMASTUDIO_BASELINE_EXPOSURE OMASTUDIO_BASELINE_DEBUG \
+               OMASTUDIO_FILM_LUTS OMASTUDIO_PROFILE OMASTUDIO_QML_DIR \
+               OMARCHY_PATH OMARCHY_LANGUAGE_FILE \
+               ANTHROPIC_API_KEY OPENAI_API_KEY OPENROUTER_API_KEY GEMINI_API_KEY TYPESAFE_API_KEY; do
         if [ -n "${!var:-}" ]; then
             SESSION_ENV+=("${var}=${!var}")
         fi
@@ -62,7 +72,13 @@ done
 DIR="$(cd "$(/usr/bin/dirname "$(/usr/bin/realpath "${BASH_SOURCE[0]}")")" && /usr/bin/pwd)"
 BIN="${DIR}/omastudio-engine"
 if [[ ! -x "${BIN}" ]]; then
-    BIN="${HOME}/.local/bin/omastudio-engine"
+    if [[ -x "${HOME}/.local/bin/omastudio-engine" ]]; then
+        BIN="${HOME}/.local/bin/omastudio-engine"
+    elif [[ -x /usr/bin/omastudio-engine ]]; then
+        BIN="/usr/bin/omastudio-engine"
+    else
+        BIN="${HOME}/.local/bin/omastudio-engine"
+    fi
 fi
 
 # Resolve trusted cargo binary
@@ -103,6 +119,10 @@ case "${1:-}" in
     ipc)
         # `omastudio ipc [call] <method> [args...]`: talk to the running window
         shift
+        if [[ ! -x "${APP}" ]]; then
+            echo "omastudio-app is not installed" >&2
+            exit 1
+        fi
         exec "${APP}" ipc "$@"
         ;;
     --help|-h|help)
@@ -125,7 +145,8 @@ case "${1:-}" in
     skill)
         # `omastudio skill [dir]`: installs the agent skill (default ~/.claude/skills)
         TARGET="${2:-${HOME}/.claude/skills}"
-        for SRC in "${DIR}/skill/omastudio/SKILL.md" "${HOME}/.local/share/omastudio/skill/omastudio/SKILL.md" \
+        for SRC in "${DIR}/skill/omastudio/SKILL.md" "${DIR}/../share/omastudio/skill/omastudio/SKILL.md" \
+                   "${HOME}/.local/share/omastudio/skill/omastudio/SKILL.md" \
                    "/usr/share/omastudio/skill/omastudio/SKILL.md"; do
             if [[ -f "${SRC}" ]]; then
                 /usr/bin/install -Dm644 "${SRC}" "${TARGET}/omastudio/SKILL.md"
@@ -143,7 +164,8 @@ case "${1:-}" in
         PLUGIN_ID="ozdil.omastudio"
         PLUGIN_LINK="${XDG_CONFIG_HOME:-${HOME}/.config}/omarchy/plugins/${PLUGIN_ID}"
         PLUGIN_SRC=""
-        for SRC in "${DIR}/omarchy-plugin" "${HOME}/.local/share/omastudio/omarchy-plugin" "/usr/share/omastudio/omarchy-plugin"; do
+        for SRC in "${DIR}/omarchy-plugin" "${DIR}/../share/omastudio/omarchy-plugin" \
+                   "${HOME}/.local/share/omastudio/omarchy-plugin" "/usr/share/omastudio/omarchy-plugin"; do
             if [[ -f "${SRC}/manifest.json" && -f "${SRC}/Panel.qml" ]]; then
                 PLUGIN_SRC="${SRC}"
                 break
@@ -214,7 +236,7 @@ case "${1:-}" in
         esac
         exit 0
         ;;
-    inspect|render|export|ai-auto|ai-social|ai-jev|icc|scan|catalog|dag|daemon|gpu|npu|ai-mask|mcp|ai|xmp|cloud|cameras|medium-format|fuji-*)
+    inspect|render|export|ai-auto|ai-social|ai-jev|icc|scan|catalog|dag|daemon|gpu|npu|bench|ai-mask|mcp|ai|xmp|cloud|cameras|medium-format|fuji-*)
         exec "${BIN}" "$@"
         ;;
 esac

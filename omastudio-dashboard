@@ -1,12 +1,19 @@
-#!/usr/bin/env bash
+#!/bin/bash -p
 set -euo pipefail
 
-# Show or hide the running window; start it when none is running
-if [[ "${1:-}" != "--cli" ]] && command -v omastudio-app >/dev/null 2>&1; then
-    if omastudio-app ipc toggle >/dev/null 2>&1; then
+# Immediate rejection of loader injection
+if [ -n "${LD_PRELOAD:-}" ] || [ -n "${LD_LIBRARY_PATH:-}" ]; then
+    echo "Security Error: Prohibited loader control variable detected" >&2
+    exit 1
+fi
+
+DIR="$(cd "$(/usr/bin/dirname "$(/usr/bin/realpath "${BASH_SOURCE[0]}")")" && /usr/bin/pwd)"
+
+# Show or hide the running window through the sanitized launcher; start it when none is running
+if [[ "${1:-}" != "--cli" ]]; then
+    if "${DIR}/omastudio" ipc toggle >/dev/null 2>&1; then
         exit 0
     fi
 fi
 
-DIR="$(cd "$(dirname "$(realpath "${BASH_SOURCE[0]}")")" && pwd)"
 exec "${DIR}/omastudio" "$@"
