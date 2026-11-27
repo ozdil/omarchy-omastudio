@@ -42,6 +42,15 @@ Rectangle {
             && (item instanceof TextInput || item instanceof TextEdit);
     }
     property bool _shuttingDown: false
+    // Monotonic daemon request IDs for discarding stale out-of-order responses across photo switches
+    property int nextDaemonRequestId: 0
+    property int latestLoadReqId: 0
+    property int latestAdjustReqId: 0
+    property int latestDetailReqId: 0
+    property int latestLoupeReqId: 0
+    property int latestRefReqId: 0
+    property int latestAiAutoReqId: 0
+    property int latestAiSocialReqId: 0
     // Cloud accounts (`omastudio-engine cloud status`), the one open in the filmstrip
     // and the folder inside it
     property var cloudAccounts: []
@@ -890,16 +899,24 @@ Rectangle {
         for (var i = 0; i < list.length; i++) {
             if (list[i].path === name || list[i].recipe.label === name) {
                 root.pushUndoState();
-                root.applyRecipeObject(list[i].recipe.omastudio);
+                root.patchRecipe(list[i].recipe.omastudio);
                 return "OK";
             }
         }
         return "Error: no recipe named " + name;
     }
 
+    // Backwards-compatible alias for full-recipe replacement callers
     function applyRecipeObject(r) {
+        root.replaceRecipe(r);
+    }
+
+    // Replaces the entire recipe state cleanly from a full recipe object (load, undo/redo,
+    // snapshots, grade versions, paste, XMP import, presets). Every omitted key resets to its
+    // engine default so switching photos never leaks LUTs, grain, layers, crops, or flips.
+    function replaceRecipe(r) {
         if (!r) return;
-        root.wbTemp = Number(r.wb_temperature) || 5500.0;
+        root.wbTemp = root.num(r.wb_temperature, 5500.0);
         root.wbTint = root.num(r.wb_tint, 0.0);
         root.expValue = root.num(r.exposure, 0.0);
         root.contrastValue = root.num(r.contrast, 0.0);
@@ -916,96 +933,208 @@ Rectangle {
         root.curveLights = root.num(r.curve_lights, 0.0);
         root.curveDarks = root.num(r.curve_darks, 0.0);
         root.curveShadows = root.num(r.curve_shadows, 0.0);
-        root.curvePoints = r.curve_points || [];
-        root.curvePointsRed = r.curve_points_red || [];
-        root.curvePointsGreen = r.curve_points_green || [];
-        root.curvePointsBlue = r.curve_points_blue || [];
-        root.hslH = r.hsl_hue || [0,0,0,0,0,0,0,0];
-        root.hslS = r.hsl_sat || [0,0,0,0,0,0,0,0];
-        root.hslL = r.hsl_lum || [0,0,0,0,0,0,0,0];
+        root.curvePoints = Array.isArray(r.curve_points) ? r.curve_points : [];
+        root.curvePointsRed = Array.isArray(r.curve_points_red) ? r.curve_points_red : [];
+        root.curvePointsGreen = Array.isArray(r.curve_points_green) ? r.curve_points_green : [];
+        root.curvePointsBlue = Array.isArray(r.curve_points_blue) ? r.curve_points_blue : [];
+        root.hslH = Array.isArray(r.hsl_hue) ? r.hsl_hue : [0, 0, 0, 0, 0, 0, 0, 0];
+        root.hslS = Array.isArray(r.hsl_sat) ? r.hsl_sat : [0, 0, 0, 0, 0, 0, 0, 0];
+        root.hslL = Array.isArray(r.hsl_lum) ? r.hsl_lum : [0, 0, 0, 0, 0, 0, 0, 0];
         root.sharpnessVal = root.num(r.sharpness, 25.0);
         root.denoiseLumVal = root.num(r.denoise_lum, 0.0);
         root.denoiseColVal = root.num(r.denoise_col, 10.0);
         root.vignetteVal = root.num(r.vignette, 0.0);
-        if (r.rotation !== undefined) viewport.rotationAngle = root.num(r.rotation, 0.0);
-        if (r.flip_h !== undefined) viewport.flipH = Boolean(r.flip_h);
-        if (r.flip_v !== undefined) viewport.flipV = Boolean(r.flip_v);
+        viewport.rotationAngle = root.num(r.rotation, 0.0);
+        viewport.flipH = Boolean(r.flip_h);
+        viewport.flipV = Boolean(r.flip_v);
 
         // Color Wheels
-        if (r.lift) root.liftRgb = r.lift;
-        if (r.lift_luma !== undefined) root.liftLuma = root.num(r.lift_luma, 0.0);
-        if (r.gamma) root.gammaRgb = r.gamma;
-        if (r.gamma_luma !== undefined) root.gammaLuma = root.num(r.gamma_luma, 0.0);
-        if (r.gain) root.gainRgb = r.gain;
-        if (r.gain_luma !== undefined) root.gainLuma = root.num(r.gain_luma, 0.0);
-        if (r.offset) root.offsetRgb = r.offset;
-        if (r.offset_luma !== undefined) root.offsetLuma = root.num(r.offset_luma, 0.0);
+        root.liftRgb = Array.isArray(r.lift) ? r.lift : [0.0, 0.0, 0.0];
+        root.liftLuma = root.num(r.lift_luma, 0.0);
+        root.gammaRgb = Array.isArray(r.gamma) ? r.gamma : [0.0, 0.0, 0.0];
+        root.gammaLuma = root.num(r.gamma_luma, 0.0);
+        root.gainRgb = Array.isArray(r.gain) ? r.gain : [0.0, 0.0, 0.0];
+        root.gainLuma = root.num(r.gain_luma, 0.0);
+        root.offsetRgb = Array.isArray(r.offset) ? r.offset : [0.0, 0.0, 0.0];
+        root.offsetLuma = root.num(r.offset_luma, 0.0);
 
         // DaVinci Primaries & 3D LUT
-        if (r.contrast_pivot !== undefined) root.contrastPivot = root.num(r.contrast_pivot, 0.435);
-        if (r.color_boost !== undefined) root.colorBoost = root.num(r.color_boost, 0.0);
-        if (r.midtone_detail !== undefined) root.midtoneDetail = root.num(r.midtone_detail, 0.0);
-        if (r.lut_name !== undefined) root.activeLutName = r.lut_name || "";
-        if (r.lut_intensity !== undefined) root.activeLutIntensity = root.num(r.lut_intensity, 1.0);
-        if (r.lut_path !== undefined) root.activeLutPath = r.lut_path || "";
+        root.contrastPivot = root.num(r.contrast_pivot, 0.435);
+        root.colorBoost = root.num(r.color_boost, 0.0);
+        root.midtoneDetail = root.num(r.midtone_detail, 0.0);
+        root.activeLutName = r.lut_name || "";
+        root.activeLutIntensity = root.num(r.lut_intensity, 1.0);
+        root.activeLutPath = r.lut_path || "";
 
         // Gamut compression, ACES tone curve & Film Simulations
         // Recipes from earlier versions stored "ACEScg" for gamut compression
-        if (r.gamut_compression !== undefined || r.color_space !== undefined)
-            root.gamutCompression = Boolean(r.gamut_compression) || String(r.color_space || "").toLowerCase() === "acescg";
-        if (r.aces_tonemap !== undefined) root.activeAcesTonemap = Boolean(r.aces_tonemap);
-        if (r.film_simulation !== undefined) root.activeFilmSimulation = r.film_simulation || "none";
-        if (r.film_sim_intensity !== undefined) root.activeFilmSimIntensity = root.num(r.film_sim_intensity, 1.0);
+        root.gamutCompression = Boolean(r.gamut_compression) || String(r.color_space || "").toLowerCase() === "acescg";
+        root.activeAcesTonemap = Boolean(r.aces_tonemap);
+        root.activeFilmSimulation = r.film_simulation || "none";
+        root.activeFilmSimIntensity = root.num(r.film_sim_intensity, 1.0);
 
         // Capture One Skin Tone Uniformity
-        if (r.skin_tone_enabled !== undefined) root.skinToneEnabled = Boolean(r.skin_tone_enabled);
-        if (r.skin_target_hue !== undefined) root.skinTargetHue = root.num(r.skin_target_hue, 50.0);
-        if (r.skin_hue_range !== undefined) root.skinHueRange = root.num(r.skin_hue_range, 32.0);
-        if (r.skin_uniformity_hue !== undefined) root.skinUniformityHue = root.num(r.skin_uniformity_hue, 0.0);
-        if (r.skin_uniformity_sat !== undefined) root.skinUniformitySat = root.num(r.skin_uniformity_sat, 0.0);
-        if (r.skin_amount_hue !== undefined) root.skinAmountHue = root.num(r.skin_amount_hue, 0.0);
-        if (r.skin_amount_sat !== undefined) root.skinAmountSat = root.num(r.skin_amount_sat, 0.0);
+        root.skinToneEnabled = Boolean(r.skin_tone_enabled);
+        root.skinTargetHue = root.num(r.skin_target_hue, 50.0);
+        root.skinHueRange = root.num(r.skin_hue_range, 32.0);
+        root.skinUniformityHue = root.num(r.skin_uniformity_hue, 0.0);
+        root.skinUniformitySat = root.num(r.skin_uniformity_sat, 0.0);
+        root.skinAmountHue = root.num(r.skin_amount_hue, 0.0);
+        root.skinAmountSat = root.num(r.skin_amount_sat, 0.0);
 
         // DaVinci RGB Primary Mixer
-        if (r.rgb_mixer_enabled !== undefined) root.rgbMixerEnabled = Boolean(r.rgb_mixer_enabled);
-        if (r.rgb_mixer_monochrome !== undefined) root.rgbMixerMonochrome = Boolean(r.rgb_mixer_monochrome);
-        if (r.mixer_red_in_r !== undefined) root.mixerRedInR = root.num(r.mixer_red_in_r, 1.0);
-        if (r.mixer_green_in_r !== undefined) root.mixerGreenInR = root.num(r.mixer_green_in_r, 0.0);
-        if (r.mixer_blue_in_r !== undefined) root.mixerBlueInR = root.num(r.mixer_blue_in_r, 0.0);
-        if (r.mixer_red_in_g !== undefined) root.mixerRedInG = root.num(r.mixer_red_in_g, 0.0);
-        if (r.mixer_green_in_g !== undefined) root.mixerGreenInG = root.num(r.mixer_green_in_g, 1.0);
-        if (r.mixer_blue_in_g !== undefined) root.mixerBlueInG = root.num(r.mixer_blue_in_g, 0.0);
-        if (r.mixer_red_in_b !== undefined) root.mixerRedInB = root.num(r.mixer_red_in_b, 0.0);
-        if (r.mixer_green_in_b !== undefined) root.mixerGreenInB = root.num(r.mixer_green_in_b, 0.0);
-        if (r.mixer_blue_in_b !== undefined) root.mixerBlueInB = root.num(r.mixer_blue_in_b, 1.0);
+        root.rgbMixerEnabled = Boolean(r.rgb_mixer_enabled);
+        root.rgbMixerMonochrome = Boolean(r.rgb_mixer_monochrome);
+        root.mixerRedInR = root.num(r.mixer_red_in_r, 1.0);
+        root.mixerGreenInR = root.num(r.mixer_green_in_r, 0.0);
+        root.mixerBlueInR = root.num(r.mixer_blue_in_r, 0.0);
+        root.mixerRedInG = root.num(r.mixer_red_in_g, 0.0);
+        root.mixerGreenInG = root.num(r.mixer_green_in_g, 1.0);
+        root.mixerBlueInG = root.num(r.mixer_blue_in_g, 0.0);
+        root.mixerRedInB = root.num(r.mixer_red_in_b, 0.0);
+        root.mixerGreenInB = root.num(r.mixer_green_in_b, 0.0);
+        root.mixerBlueInB = root.num(r.mixer_blue_in_b, 1.0);
 
         // Silver-Halide Film Grain
-        if (r.grain_amount !== undefined) root.grainAmount = root.num(r.grain_amount, 0.0);
-        if (r.grain_size !== undefined) root.grainSize = Number(r.grain_size) || 1.0;
-        if (r.grain_roughness !== undefined) root.grainRoughness = root.num(r.grain_roughness, 50.0);
+        root.grainAmount = root.num(r.grain_amount, 0.0);
+        root.grainSize = root.num(r.grain_size, 1.0);
+        root.grainRoughness = root.num(r.grain_roughness, 50.0);
         root.colorChrome = root.num(r.color_chrome, 0.0);
         root.colorChromeBlue = root.num(r.color_chrome_blue, 0.0);
 
-        // Local Adjustment Layers
-        if (r.layers !== undefined && Array.isArray(r.layers)) {
-            root.adjustmentLayers = r.layers;
-        }
+        // Local Adjustment Layers & Retouch
+        root.adjustmentLayers = Array.isArray(r.layers) ? r.layers : [];
         root.retouchSpots = Array.isArray(r.retouch) ? r.retouch : [];
 
         // Optics
-        if (r.defringe !== undefined) root.defringeVal = Number(r.defringe) || 0.0;
-        if (r.lens_distortion !== undefined) root.lensDistortionVal = Number(r.lens_distortion) || 0.0;
+        root.defringeVal = root.num(r.defringe, 0.0);
+        root.lensDistortionVal = root.num(r.lens_distortion, 0.0);
         root.perspectiveVertical = root.num(r.perspective_vertical, 0.0);
         root.perspectiveHorizontal = root.num(r.perspective_horizontal, 0.0);
         root.perspectiveScale = root.num(r.perspective_scale, 100.0);
 
         // Crop
-        if (r.crop_x !== undefined) {
-            root.cropX = Number(r.crop_x) || 0.0;
-            root.cropY = Number(r.crop_y) || 0.0;
-            root.cropW = Number(r.crop_w) || 1.0;
-            root.cropH = Number(r.crop_h) || 1.0;
-            root.cropAspect = r.crop_aspect || "Original";
+        root.cropX = root.num(r.crop_x, 0.0);
+        root.cropY = root.num(r.crop_y, 0.0);
+        root.cropW = root.num(r.crop_w, 1.0);
+        root.cropH = root.num(r.crop_h, 1.0);
+        root.cropAspect = r.crop_aspect || "Original";
+        viewport.cropX = root.cropX;
+        viewport.cropY = root.cropY;
+        viewport.cropW = root.cropW;
+        viewport.cropH = root.cropH;
+        viewport.cropAspect = root.cropAspect;
+
+        root.photoRating = root.num(r.rating, 0);
+        root.photoFlag = r.flag || "none";
+        root.highlightReconstruct = r.highlight_reconstruct !== undefined ? Boolean(r.highlight_reconstruct) : true;
+        root.filmicAgx = Boolean(r.filmic_agx);
+
+        try { root.syncPanels(); } catch (e) { console.warn("syncPanels failed: " + e); }
+        // Programmatic recipe changes (load, undo, paste, AI) are not user edits
+        root.undoBaselineJson = JSON.stringify(root.buildRecipeObject());
+        requestRender();
+    }
+
+    // Patches only keys explicitly present in a partial recipe delta (IPC applyRecipe,
+    // Fujifilm looks, AI deltas) without resetting unspecified settings.
+    function patchRecipe(r) {
+        if (!r || typeof r !== "object") return;
+        if (r.wb_temperature !== undefined) root.wbTemp = root.num(r.wb_temperature, root.wbTemp);
+        if (r.wb_tint !== undefined) root.wbTint = root.num(r.wb_tint, root.wbTint);
+        if (r.exposure !== undefined) root.expValue = root.num(r.exposure, root.expValue);
+        if (r.contrast !== undefined) root.contrastValue = root.num(r.contrast, root.contrastValue);
+        if (r.highlights !== undefined) root.highlightsValue = root.num(r.highlights, root.highlightsValue);
+        if (r.shadows !== undefined) root.shadowsValue = root.num(r.shadows, root.shadowsValue);
+        if (r.whites !== undefined) root.whitesValue = root.num(r.whites, root.whitesValue);
+        if (r.blacks !== undefined) root.blacksValue = root.num(r.blacks, root.blacksValue);
+        if (r.texture !== undefined) root.textureValue = root.num(r.texture, root.textureValue);
+        if (r.clarity !== undefined) root.clarityValue = root.num(r.clarity, root.clarityValue);
+        if (r.dehaze !== undefined) root.dehazeValue = root.num(r.dehaze, root.dehazeValue);
+        if (r.vibrance !== undefined) root.vibranceValue = root.num(r.vibrance, root.vibranceValue);
+        if (r.saturation !== undefined) root.saturationValue = root.num(r.saturation, root.saturationValue);
+        if (r.curve_highlights !== undefined) root.curveHighlights = root.num(r.curve_highlights, root.curveHighlights);
+        if (r.curve_lights !== undefined) root.curveLights = root.num(r.curve_lights, root.curveLights);
+        if (r.curve_darks !== undefined) root.curveDarks = root.num(r.curve_darks, root.curveDarks);
+        if (r.curve_shadows !== undefined) root.curveShadows = root.num(r.curve_shadows, root.curveShadows);
+        if (Array.isArray(r.curve_points)) root.curvePoints = r.curve_points;
+        if (Array.isArray(r.curve_points_red)) root.curvePointsRed = r.curve_points_red;
+        if (Array.isArray(r.curve_points_green)) root.curvePointsGreen = r.curve_points_green;
+        if (Array.isArray(r.curve_points_blue)) root.curvePointsBlue = r.curve_points_blue;
+        if (Array.isArray(r.hsl_hue)) root.hslH = r.hsl_hue;
+        if (Array.isArray(r.hsl_sat)) root.hslS = r.hsl_sat;
+        if (Array.isArray(r.hsl_lum)) root.hslL = r.hsl_lum;
+        if (r.sharpness !== undefined) root.sharpnessVal = root.num(r.sharpness, root.sharpnessVal);
+        if (r.denoise_lum !== undefined) root.denoiseLumVal = root.num(r.denoise_lum, root.denoiseLumVal);
+        if (r.denoise_col !== undefined) root.denoiseColVal = root.num(r.denoise_col, root.denoiseColVal);
+        if (r.vignette !== undefined) root.vignetteVal = root.num(r.vignette, root.vignetteVal);
+        if (r.rotation !== undefined) viewport.rotationAngle = root.num(r.rotation, viewport.rotationAngle);
+        if (r.flip_h !== undefined) viewport.flipH = Boolean(r.flip_h);
+        if (r.flip_v !== undefined) viewport.flipV = Boolean(r.flip_v);
+
+        if (Array.isArray(r.lift)) root.liftRgb = r.lift;
+        if (r.lift_luma !== undefined) root.liftLuma = root.num(r.lift_luma, root.liftLuma);
+        if (Array.isArray(r.gamma)) root.gammaRgb = r.gamma;
+        if (r.gamma_luma !== undefined) root.gammaLuma = root.num(r.gamma_luma, root.gammaLuma);
+        if (Array.isArray(r.gain)) root.gainRgb = r.gain;
+        if (r.gain_luma !== undefined) root.gainLuma = root.num(r.gain_luma, root.gainLuma);
+        if (Array.isArray(r.offset)) root.offsetRgb = r.offset;
+        if (r.offset_luma !== undefined) root.offsetLuma = root.num(r.offset_luma, root.offsetLuma);
+
+        if (r.contrast_pivot !== undefined) root.contrastPivot = root.num(r.contrast_pivot, root.contrastPivot);
+        if (r.color_boost !== undefined) root.colorBoost = root.num(r.color_boost, root.colorBoost);
+        if (r.midtone_detail !== undefined) root.midtoneDetail = root.num(r.midtone_detail, root.midtoneDetail);
+        if (r.lut_name !== undefined) root.activeLutName = r.lut_name || "";
+        if (r.lut_intensity !== undefined) root.activeLutIntensity = root.num(r.lut_intensity, root.activeLutIntensity);
+        if (r.lut_path !== undefined) root.activeLutPath = r.lut_path || "";
+
+        if (r.gamut_compression !== undefined || r.color_space !== undefined)
+            root.gamutCompression = Boolean(r.gamut_compression) || String(r.color_space || "").toLowerCase() === "acescg";
+        if (r.aces_tonemap !== undefined) root.activeAcesTonemap = Boolean(r.aces_tonemap);
+        if (r.film_simulation !== undefined) root.activeFilmSimulation = r.film_simulation || "none";
+        if (r.film_sim_intensity !== undefined) root.activeFilmSimIntensity = root.num(r.film_sim_intensity, root.activeFilmSimIntensity);
+
+        if (r.skin_tone_enabled !== undefined) root.skinToneEnabled = Boolean(r.skin_tone_enabled);
+        if (r.skin_target_hue !== undefined) root.skinTargetHue = root.num(r.skin_target_hue, root.skinTargetHue);
+        if (r.skin_hue_range !== undefined) root.skinHueRange = root.num(r.skin_hue_range, root.skinHueRange);
+        if (r.skin_uniformity_hue !== undefined) root.skinUniformityHue = root.num(r.skin_uniformity_hue, root.skinUniformityHue);
+        if (r.skin_uniformity_sat !== undefined) root.skinUniformitySat = root.num(r.skin_uniformity_sat, root.skinUniformitySat);
+        if (r.skin_amount_hue !== undefined) root.skinAmountHue = root.num(r.skin_amount_hue, root.skinAmountHue);
+        if (r.skin_amount_sat !== undefined) root.skinAmountSat = root.num(r.skin_amount_sat, root.skinAmountSat);
+
+        if (r.rgb_mixer_enabled !== undefined) root.rgbMixerEnabled = Boolean(r.rgb_mixer_enabled);
+        if (r.rgb_mixer_monochrome !== undefined) root.rgbMixerMonochrome = Boolean(r.rgb_mixer_monochrome);
+        if (r.mixer_red_in_r !== undefined) root.mixerRedInR = root.num(r.mixer_red_in_r, root.mixerRedInR);
+        if (r.mixer_green_in_r !== undefined) root.mixerGreenInR = root.num(r.mixer_green_in_r, root.mixerGreenInR);
+        if (r.mixer_blue_in_r !== undefined) root.mixerBlueInR = root.num(r.mixer_blue_in_r, root.mixerBlueInR);
+        if (r.mixer_red_in_g !== undefined) root.mixerRedInG = root.num(r.mixer_red_in_g, root.mixerRedInG);
+        if (r.mixer_green_in_g !== undefined) root.mixerGreenInG = root.num(r.mixer_green_in_g, root.mixerGreenInG);
+        if (r.mixer_blue_in_g !== undefined) root.mixerBlueInG = root.num(r.mixer_blue_in_g, root.mixerBlueInG);
+        if (r.mixer_red_in_b !== undefined) root.mixerRedInB = root.num(r.mixer_red_in_b, root.mixerRedInB);
+        if (r.mixer_green_in_b !== undefined) root.mixerGreenInB = root.num(r.mixer_green_in_b, root.mixerGreenInB);
+        if (r.mixer_blue_in_b !== undefined) root.mixerBlueInB = root.num(r.mixer_blue_in_b, root.mixerBlueInB);
+
+        if (r.grain_amount !== undefined) root.grainAmount = root.num(r.grain_amount, root.grainAmount);
+        if (r.grain_size !== undefined) root.grainSize = root.num(r.grain_size, root.grainSize);
+        if (r.grain_roughness !== undefined) root.grainRoughness = root.num(r.grain_roughness, root.grainRoughness);
+        if (r.color_chrome !== undefined) root.colorChrome = root.num(r.color_chrome, root.colorChrome);
+        if (r.color_chrome_blue !== undefined) root.colorChromeBlue = root.num(r.color_chrome_blue, root.colorChromeBlue);
+
+        if (Array.isArray(r.layers)) root.adjustmentLayers = r.layers;
+        if (Array.isArray(r.retouch)) root.retouchSpots = r.retouch;
+
+        if (r.defringe !== undefined) root.defringeVal = root.num(r.defringe, root.defringeVal);
+        if (r.lens_distortion !== undefined) root.lensDistortionVal = root.num(r.lens_distortion, root.lensDistortionVal);
+        if (r.perspective_vertical !== undefined) root.perspectiveVertical = root.num(r.perspective_vertical, root.perspectiveVertical);
+        if (r.perspective_horizontal !== undefined) root.perspectiveHorizontal = root.num(r.perspective_horizontal, root.perspectiveHorizontal);
+        if (r.perspective_scale !== undefined) root.perspectiveScale = root.num(r.perspective_scale, root.perspectiveScale);
+
+        if (r.crop_x !== undefined || r.crop_y !== undefined || r.crop_w !== undefined || r.crop_h !== undefined || r.crop_aspect !== undefined) {
+            if (r.crop_x !== undefined) root.cropX = root.num(r.crop_x, root.cropX);
+            if (r.crop_y !== undefined) root.cropY = root.num(r.crop_y, root.cropY);
+            if (r.crop_w !== undefined) root.cropW = root.num(r.crop_w, root.cropW);
+            if (r.crop_h !== undefined) root.cropH = root.num(r.crop_h, root.cropH);
+            if (r.crop_aspect !== undefined) root.cropAspect = r.crop_aspect || "Original";
             viewport.cropX = root.cropX;
             viewport.cropY = root.cropY;
             viewport.cropW = root.cropW;
@@ -1013,13 +1142,12 @@ Rectangle {
             viewport.cropAspect = root.cropAspect;
         }
 
-        if (r.rating !== undefined) root.photoRating = Number(r.rating) || 0;
+        if (r.rating !== undefined) root.photoRating = root.num(r.rating, root.photoRating);
         if (r.flag !== undefined) root.photoFlag = r.flag || "none";
-        root.highlightReconstruct = r.highlight_reconstruct !== undefined ? Boolean(r.highlight_reconstruct) : true;
-        root.filmicAgx = Boolean(r.filmic_agx);
+        if (r.highlight_reconstruct !== undefined) root.highlightReconstruct = Boolean(r.highlight_reconstruct);
+        if (r.filmic_agx !== undefined) root.filmicAgx = Boolean(r.filmic_agx);
 
         try { root.syncPanels(); } catch (e) { console.warn("syncPanels failed: " + e); }
-        // Programmatic recipe changes (load, undo, paste, AI) are not user edits
         root.undoBaselineJson = JSON.stringify(root.buildRecipeObject());
         requestRender();
     }
@@ -1084,6 +1212,17 @@ Rectangle {
     }
 
     function sendDaemonCommand(obj) {
+        var reqId = ++root.nextDaemonRequestId;
+        obj.request_id = reqId;
+        if (obj.cmd === "load") root.latestLoadReqId = reqId;
+        else if (obj.cmd === "adjust") root.latestAdjustReqId = reqId;
+        else if (obj.cmd === "detail") {
+            if (obj.tag === "loupe") root.latestLoupeReqId = reqId;
+            else root.latestDetailReqId = reqId;
+        } else if (obj.cmd === "reference") root.latestRefReqId = reqId;
+        else if (obj.cmd === "ai_auto") root.latestAiAutoReqId = reqId;
+        else if (obj.cmd === "ai_social") root.latestAiSocialReqId = reqId;
+
         if (!daemonProc.running) {
             daemonProc.running = true;
         }
@@ -1092,6 +1231,13 @@ Rectangle {
         } else {
             root.daemonQueue.push(obj);
         }
+        return reqId;
+    }
+
+    function isStalePhotoResponse(respReqId, respPhoto, expectedReqId) {
+        if (respPhoto !== "" && respPhoto !== root.activePhotoPath) return true;
+        if (respReqId > 0 && expectedReqId > 0 && respReqId < expectedReqId) return true;
+        return false;
     }
 
     function handleDaemonMessage(line) {
@@ -1099,39 +1245,57 @@ Rectangle {
         if (trimmed.length === 0) return;
         try {
             var resp = JSON.parse(trimmed);
+            var act = resp.action;
+            var data = resp.data;
+            var respReqId = (typeof resp.request_id === "number") ? resp.request_id : 0;
+            var respPhoto = (typeof resp.photo_path === "string") ? resp.photo_path : "";
+
             if (!resp.success) {
-                console.warn("Daemon returned error for action " + resp.action + ": " + resp.error);
-                if (resp.action === "load") {
-                    root.engineReloading = false;
-                    root.showToast(qsTr("Failed to load RAW: %1").arg(resp.error || qsTr("Unknown error")), Theme.highlightClip);
-                } else if (resp.action === "ai_auto" || resp.action === "ai_social") {
-                    root.showToast(resp.error || qsTr("AI action failed"), Theme.highlightClip);
-                } else if (resp.action === "batch_export") {
+                console.warn("Daemon returned error for action " + act + ": " + resp.error);
+                if (act === "adjust") {
+                    // Always account for the outstanding render slot so the queue never stalls
+                    root.adjustAnswered();
+                    if (!root.isStalePhotoResponse(respReqId, respPhoto, root.latestAdjustReqId)) {
+                        root.showToast((resp.error || qsTr("Preview render failed")), Theme.highlightClip);
+                    }
+                } else if (act === "load") {
+                    if (!root.isStalePhotoResponse(respReqId, respPhoto, root.latestLoadReqId)) {
+                        root.engineReloading = false;
+                        root.showToast(qsTr("Failed to load RAW: %1").arg(resp.error || qsTr("Unknown error")), Theme.highlightClip);
+                    }
+                } else if (act === "ai_auto") {
+                    if (!root.isStalePhotoResponse(respReqId, respPhoto, root.latestAiAutoReqId)) {
+                        root.showToast(resp.error || qsTr("AI action failed"), Theme.highlightClip);
+                    }
+                } else if (act === "ai_social") {
+                    if (!root.isStalePhotoResponse(respReqId, respPhoto, root.latestAiSocialReqId)) {
+                        root.showToast(resp.error || qsTr("AI action failed"), Theme.highlightClip);
+                    }
+                } else if (act === "batch_export") {
                     // Without this the dialog stays stuck on "Exporting Batch..."
                     exportDialog.isExporting = false;
                     exportDialog.exportStatusIsError = true;
                     exportDialog.exportStatusText = resp.error || qsTr("Batch export failed");
-                } else if (resp.action === "adjust") {
-                    root.adjustAnswered();
-                    root.showToast((resp.error || qsTr("Preview render failed")), Theme.highlightClip);
-                } else if (resp.action === "detail") {
-                    viewport.detailFailed();
+                } else if (act === "detail") {
+                    var isLatestDetail = (respReqId === 0 || respReqId === root.latestDetailReqId || respReqId === root.latestLoupeReqId);
+                    if (isLatestDetail && (respPhoto === "" || respPhoto === root.activePhotoPath)) {
+                        viewport.detailFailed();
+                    }
                 }
                 return;
             }
 
-            var act = resp.action;
-            var data = resp.data;
-
             if (act === "load" && root.engineReloading) {
+                if (root.isStalePhotoResponse(respReqId, respPhoto, root.latestLoadReqId)) return;
                 // Reloaded after an engine restart: the window's recipe stays as it is
                 root.engineReloading = false;
                 renderDebounce.restart();
             } else if (act === "load") {
+                if (root.isStalePhotoResponse(respReqId, respPhoto, root.latestLoadReqId)) return;
                 if (data) {
                     root.activeMetadata = data.metadata;
                     root.activeScene = data.scene;
-                    root.applyRecipeObject(data.recipe);
+                    root.replaceRecipe(data.recipe);
                     root.snapshots = data.recipe && Array.isArray(data.recipe.snapshots) ? data.recipe.snapshots : [];
                     root.savedRecipeJson = JSON.stringify(root.buildRecipeObject());
                     root.refreshHistory();
@@ -1140,6 +1304,7 @@ Rectangle {
                 }
             } else if (act === "adjust") {
                 root.adjustAnswered();
+                if (root.isStalePhotoResponse(respReqId, respPhoto, root.latestAdjustReqId)) return;
                 if (data) {
                     root.activeHistogram = data.histogram;
                     viewport.imageSource = data.image;
@@ -1147,27 +1312,36 @@ Rectangle {
                     root.reportProofError(data.proof_error);
                 }
             } else if (act === "full_ready") {
-                if (data && data.path === root.activePhotoPath) {
+                var readyPath = respPhoto !== "" ? respPhoto : (data && data.path ? data.path : "");
+                if (data && readyPath === root.activePhotoPath) {
                     viewport.fullWidth = data.width;
                     viewport.fullHeight = data.height;
                 }
             } else if (act === "detail") {
-                if (data && data.tag === "loupe") viewport.showLoupe(data.image, data.region);
-                else if (data) viewport.showDetail(data.image, data.region);
+                if (data && data.tag === "loupe") {
+                    if (root.isStalePhotoResponse(respReqId, respPhoto, root.latestLoupeReqId)) return;
+                    viewport.showLoupe(data.image, data.region);
+                } else if (data) {
+                    if (root.isStalePhotoResponse(respReqId, respPhoto, root.latestDetailReqId)) return;
+                    viewport.showDetail(data.image, data.region);
+                }
             } else if (act === "reference") {
+                if (root.isStalePhotoResponse(respReqId, respPhoto, root.latestRefReqId)) return;
                 if (data) root.referenceImage = "file://" + data.image + "?v=" + (++root.referenceRevision);
             } else if (act === "icc_profiles") {
                 if (Array.isArray(data)) root.iccProfiles = data;
             } else if (act === "ai_auto") {
+                if (root.isStalePhotoResponse(respReqId, respPhoto, root.latestAiAutoReqId)) return;
                 if (data) {
-                    root.applyRecipeObject(data.recipe);
+                    root.replaceRecipe(data.recipe);
                     root.activeScene = data.scene;
                     root.showToast(qsTr("Auto applied"), Theme.accentCyan);
                 }
             } else if (act === "ai_social") {
+                if (root.isStalePhotoResponse(respReqId, respPhoto, root.latestAiSocialReqId)) return;
                 if (data) {
                     if (data.recipe) {
-                        root.applyRecipeObject(data.recipe);
+                        root.replaceRecipe(data.recipe);
                     }
                     // The platform's size and quality go to the export settings
                     if (data.max_dimension) {
@@ -1205,6 +1379,7 @@ Rectangle {
     function importXmp() {
         if (root.activePhotoPath === "" || xmpProc.running) return "Error: no photo open or busy";
         xmpProc.action = "import";
+        xmpProc.targetPhotoPath = root.activePhotoPath;
         xmpProc.command = [root.resolveEnginePath(), "xmp", "import", root.activePhotoPath];
         xmpProc.running = true;
         return "OK";
@@ -1213,6 +1388,7 @@ Rectangle {
     function writeXmp(force) {
         if (root.activePhotoPath === "" || xmpProc.running) return "Error: no photo open or busy";
         xmpProc.action = "export";
+        xmpProc.targetPhotoPath = root.activePhotoPath;
         xmpProc.recipeJson = JSON.stringify(root.buildRecipeObject());
         var cmd = [root.resolveEnginePath(), "xmp", "export", root.activePhotoPath, "--recipe", "-"];
         if (force) cmd.push("--force");
@@ -1226,6 +1402,7 @@ Rectangle {
         stdinEnabled: true
         property string action: ""
         property string recipeJson: ""
+        property string targetPhotoPath: ""
         onStarted: {
             if (xmpProc.action === "export") {
                 xmpProc.write(xmpProc.recipeJson + "\n");
@@ -1233,13 +1410,16 @@ Rectangle {
             }
         }
         onFinished: function(exitCode, output) {
+            if (xmpProc.action === "import" && xmpProc.targetPhotoPath !== "" && xmpProc.targetPhotoPath !== root.activePhotoPath) {
+                return;
+            }
             var resp;
             try { resp = JSON.parse(String(output || "")); } catch (e) { resp = { "success": false, "error": qsTr("No answer from the engine") }; }
             if (!resp.success) {
                 root.showToast(String(resp.error || qsTr("XMP failed")).split("\n")[0], Theme.accentMagenta);
             } else if (xmpProc.action === "import") {
                 root.pushUndoState();
-                root.applyRecipeObject(resp.data.recipe);
+                root.replaceRecipe(resp.data.recipe);
                 root.showToast(qsTr("Edit read from %1").arg(String(resp.data.source).split("/").pop()), Theme.accentGreen);
             } else {
                 root.showToast(qsTr("Wrote %1").arg(String(resp.data.path).split("/").pop()), Theme.accentGreen);
@@ -1380,8 +1560,10 @@ Rectangle {
             root.adjustOutstanding = 0;
             if (root.activePhotoPath !== "" && !root.engineReloading) {
                 root.engineReloading = true;
+                var reloadReqId = ++root.nextDaemonRequestId;
+                root.latestLoadReqId = reloadReqId;
                 // Queued, not sent: the next command starts the engine, this goes first
-                root.daemonQueue.unshift({ cmd: "load", path: root.activePhotoPath });
+                root.daemonQueue.unshift({ cmd: "load", path: root.activePhotoPath, request_id: reloadReqId });
             }
             root.renderFinished();
         }
@@ -1672,7 +1854,7 @@ Rectangle {
     }
     Shortcut {
         sequence: "Ctrl+1"
-        onActivated: viewport.setZoomAbsolute(1.0)
+        onActivated: viewport.setZoomAtPoint(viewport.width / 2, viewport.height / 2, viewport.zoomForPixelScale(1.0))
     }
     Shortcut {
         sequence: "Ctrl+Right"
@@ -1892,9 +2074,12 @@ Rectangle {
             root.snapshots = [];
         }
         root.activePhotoPath = path;
-        // The full-resolution frame is decoded again for this photo (see full_ready)
+        // The full-resolution frame is decoded again for this photo (see full_ready);
+        // discard any pending detail/loupe/reference/AI replies belonging to the previous photo.
         viewport.fullWidth = 0;
         viewport.fullHeight = 0;
+        viewport.detailFailed();
+        viewport.loupeShown = null;
         root.sendDaemonCommand({
             cmd: "load",
             path: path
@@ -2594,6 +2779,8 @@ Rectangle {
                         root.cropW = cw;
                         root.cropH = ch;
                         root.cropAspect = aspect;
+                        if (!root.isPerformingUndoRedo) undoCommitTimer.restart();
+                        if (root.savedRecipeJson !== "") autosaveTimer.restart();
                     }
                     onFileDropped: function(filePath) {
                         root.loadPhoto(filePath);
@@ -2923,7 +3110,7 @@ Rectangle {
                                             return;
                                         }
                                         root.pushUndoState();
-                                        root.applyRecipeObject(recipe);
+                                        root.patchRecipe(recipe);
                                         root.showToast(label, Theme.accentGreen);
                                     }
                                     onFileProduced: function(path, openIt) {
@@ -3576,7 +3763,7 @@ Rectangle {
                                 recipeProvider: function() { return root.buildRecipeObject(); }
                                 onRecipeSuggested: function(recipe, explanation) {
                                     root.pushUndoState();
-                                    root.applyRecipeObject(recipe);
+                                    root.patchRecipe(recipe);
                                     root.showToast(qsTr("Assistant edit applied"), Theme.accentGreen);
                                 }
                                 onNotify: function(text, isError) {
@@ -3595,6 +3782,7 @@ Rectangle {
         // BOTTOM FILMSTRIP
         Filmstrip {
             id: filmstrip
+            visible: root.showFilmstrip
             Layout.fillWidth: true
             photoList: root.photoList
             activePhotoPath: root.activePhotoPath

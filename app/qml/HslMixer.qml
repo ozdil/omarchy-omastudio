@@ -88,7 +88,7 @@ ColumnLayout {
                     height: 8
                     radius: Theme.r(4)
                     anchors.centerIn: parent
-                    color: root.activeChannel === index ? Theme.bgBase : root.channelColors[index]
+                    color: root.activeChannel === index ? Theme.onColor(root.channelColors[index]) : root.channelColors[index]
                 }
 
                 MouseArea {

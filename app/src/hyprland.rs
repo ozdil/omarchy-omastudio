@@ -3,13 +3,15 @@
 //! effect: Omarchy's Appearance menu (window corners, animations), a theme switch or
 //! the user's own config. Without Hyprland it stays idle.
 
-use std::io::{BufRead, BufReader};
+use std::io::{BufRead, BufReader, Read};
 use std::os::unix::net::UnixStream;
 use std::path::PathBuf;
 use std::pin::Pin;
 use std::time::Duration;
 
 use cxx_qt::{CxxQtType, Threading};
+
+const MAX_EVENT_LINE_BYTES: usize = 64 * 1024;
 
 #[cxx_qt::bridge]
 pub mod qobject {
@@ -57,6 +59,45 @@ fn event_name(line: &str) -> &str {
     line.split_once(">>").map_or(line, |(name, _)| name)
 }
 
+/// Reads one newline-delimited event line up to `max_bytes`.
+/// Returns `Ok(None)` on EOF, `Ok(Some(true))` when `buf` contains a complete line
+/// within `max_bytes`, and `Ok(Some(false))` when a line exceeded `max_bytes` and
+/// its remainder was drained up to the next newline.
+fn read_bounded_event_line<R: BufRead>(
+    reader: &mut R,
+    buf: &mut Vec<u8>,
+    max_bytes: usize,
+) -> std::io::Result<Option<bool>> {
+    buf.clear();
+    let n = reader.take(max_bytes as u64 + 1).read_until(b'\n', buf)?;
+    if n == 0 {
+        return Ok(None);
+    }
+    if buf.len() > max_bytes {
+        let ended = buf.last() == Some(&b'\n');
+        buf.clear();
+        if !ended {
+            loop {
+                let available = reader.fill_buf()?;
+                if available.is_empty() {
+                    break;
+                }
+                if let Some(pos) = available.iter().position(|&b| b == b'\n') {
+                    reader.consume(pos + 1);
+                    break;
+                }
+                let len = available.len();
+                reader.consume(len);
+            }
+        }
+        return Ok(Some(false));
+    }
+    while buf.last().is_some_and(|&b| b == b'\n' || b == b'\r') {
+        buf.pop();
+    }
+    Ok(Some(true))
+}
+
 impl cxx_qt::Initialize for qobject::HyprlandEvents {
     fn initialize(self: Pin<&mut Self>) {
         let Some(path) = event_socket() else { return };
@@ -79,10 +120,16 @@ impl cxx_qt::Initialize for qobject::HyprlandEvents {
                     if !set(true) {
                         return;
                     }
-                    // Events are short; a line longer than 64 KiB is cut and skipped
-                    for line in BufReader::new(stream).split(b'\n').map_while(Result::ok) {
-                        let line = String::from_utf8_lossy(&line[..line.len().min(64 * 1024)])
-                            .into_owned();
+                    // Events are short; lines exceeding 64 KiB are drained without unbounded allocation
+                    let mut reader = BufReader::new(stream);
+                    let mut buf = Vec::new();
+                    while let Ok(Some(valid)) =
+                        read_bounded_event_line(&mut reader, &mut buf, MAX_EVENT_LINE_BYTES)
+                    {
+                        if !valid {
+                            continue;
+                        }
+                        let line = String::from_utf8_lossy(&buf);
                         if event_name(&line) == "configreloaded"
                             && qt
                                 .queue(|obj: Pin<&mut qobject::HyprlandEvents>| {
@@ -124,5 +171,34 @@ mod tests {
             "activewindow"
         );
         assert_eq!(event_name("configreloaded"), "configreloaded");
+    }
+
+    #[test]
+    fn bounded_event_reader_caps_memory_and_drains_oversized_lines() {
+        let mut payload = vec![b'x'; 256 * 1024];
+        payload.push(b'\n');
+        payload.extend_from_slice(b"configreloaded>>\r\n");
+        let mut reader = BufReader::new(payload.as_slice());
+        let mut buf = Vec::new();
+
+        // First line exceeds the 64 KiB cap and is drained without allocating 256 KiB
+        assert_eq!(
+            read_bounded_event_line(&mut reader, &mut buf, MAX_EVENT_LINE_BYTES).unwrap(),
+            Some(false)
+        );
+        assert!(buf.capacity() <= MAX_EVENT_LINE_BYTES * 2);
+
+        // Following valid line is read cleanly
+        assert_eq!(
+            read_bounded_event_line(&mut reader, &mut buf, MAX_EVENT_LINE_BYTES).unwrap(),
+            Some(true)
+        );
+        assert_eq!(event_name(&String::from_utf8_lossy(&buf)), "configreloaded");
+
+        // EOF
+        assert_eq!(
+            read_bounded_event_line(&mut reader, &mut buf, MAX_EVENT_LINE_BYTES).unwrap(),
+            None
+        );
     }
 }

@@ -46,6 +46,7 @@ Rectangle {
         if (root.enginePath === "" || engineProc.running) return false;
         root.busyAction = action;
         engineProc.action = action;
+        engineProc.targetPhotoPath = root.activePhotoPath;
         engineProc.command = [root.enginePath].concat(args);
         engineProc.running = true;
         return true;
@@ -103,9 +104,14 @@ Rectangle {
     Process {
         id: engineProc
         property string action: ""
+        property string targetPhotoPath: ""
         onFinished: function(exitCode, output) {
             var action = engineProc.action;
+            var target = engineProc.targetPhotoPath;
             root.busyAction = "";
+            if (action === "read" && target !== "" && target !== root.activePhotoPath) {
+                return;
+            }
             var resp;
             try {
                 resp = JSON.parse(String(output || ""));

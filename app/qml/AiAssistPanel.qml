@@ -73,6 +73,7 @@ ColumnLayout {
     function runEdit() {
         if (root.activePhotoPath === "" || editProc.running) return;
         var recipe = root.recipeProvider ? root.recipeProvider() : {};
+        editProc.targetPhotoPath = root.activePhotoPath;
         editProc.recipeJson = JSON.stringify(recipe);
         editProc.command = [root.enginePath, "ai", "edit", root.activePhotoPath,
                             "--prompt", promptInput.text, "--recipe", "-"];
@@ -103,11 +104,15 @@ ColumnLayout {
         id: editProc
         stdinEnabled: true
         property string recipeJson: ""
+        property string targetPhotoPath: ""
         onStarted: {
             editProc.write(editProc.recipeJson + "\n");
             editProc.recipeJson = "";
         }
         onFinished: function(exitCode, output) {
+            if (editProc.targetPhotoPath !== "" && editProc.targetPhotoPath !== root.activePhotoPath) {
+                return;
+            }
             var resp = root.parse(output);
             if (resp.success) {
                 root.explanation = resp.data.explanation || "";

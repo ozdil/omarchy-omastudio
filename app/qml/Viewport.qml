@@ -51,7 +51,8 @@ Rectangle {
     // Screen pixels per full-resolution pixel (1.0 = 100%)
     readonly property real pixelScale: (root.fullWidth > 0 && root.fitWidth > 0) ? root.fitWidth * root.zoomFactor * root.dpr / root.fullWidth : root.zoomFactor
     readonly property bool detailWanted: root.fullWidth > 0 && root.imageSource !== ""
-        && Math.abs(root.rotationAngle) < 0.01 && !root.isCropMode && !root.isSplitView
+        && Math.abs(root.rotationAngle) < 0.01 && !root.flipH && !root.flipV
+        && !root.isCropMode && !root.isSplitView
         && !root.showHighlightMask && !root.showShadowMask
         && root.fitWidth * root.zoomFactor * root.dpr > mainImage.imageWidth * 1.05
     property var detailRegion: null          // normalised x, y, w, h of the shown detail
@@ -309,6 +310,109 @@ Rectangle {
         root.cropChangedByUser(0.0, 0.0, 1.0, 1.0, "Original");
     }
 
+    function lockedCropNormAspect() {
+        if (root.cropAspect === "Free") return 0.0;
+        var baseAspect = (mainImage.imageWidth > 0 && mainImage.imageHeight > 0)
+            ? (mainImage.imageWidth / mainImage.imageHeight) : 1.0;
+        var targetRatio = baseAspect;
+        if (root.cropAspect === "1:1") targetRatio = 1.0;
+        else if (root.cropAspect === "4:5") targetRatio = 4.0 / 5.0;
+        else if (root.cropAspect === "16:9") targetRatio = 16.0 / 9.0;
+        else if (root.cropAspect === "9:16") targetRatio = 9.0 / 16.0;
+        else if (root.cropAspect === "3:2") targetRatio = 3.0 / 2.0;
+        return baseAspect > 0 ? (targetRatio / baseAspect) : 1.0;
+    }
+
+    // Computes a clamped [0, 1] crop rectangle from a captured start snapshot and
+    // normalized pointer delta (dx, dy) in mainImage space, honoring locked cropAspect.
+    function applyCropHandleDrag(handle, startRect, dx, dy) {
+        var minSize = 0.05;
+        var sx = startRect.x, sy = startRect.y, sw = startRect.w, sh = startRect.h;
+        var left = sx, top = sy, right = sx + sw, bottom = sy + sh;
+
+        if (handle === "move") {
+            var nx = Math.max(0.0, Math.min(1.0 - sw, sx + dx));
+            var ny = Math.max(0.0, Math.min(1.0 - sh, sy + dy));
+            root.cropX = nx;
+            root.cropY = ny;
+            root.cropChangedByUser(root.cropX, root.cropY, root.cropW, root.cropH, root.cropAspect);
+            return;
+        }
+
+        var normAspect = root.lockedCropNormAspect();
+        var hasLeft = handle === "tl" || handle === "bl" || handle === "l";
+        var hasRight = handle === "tr" || handle === "br" || handle === "r";
+        var hasTop = handle === "tl" || handle === "tr" || handle === "t";
+        var hasBottom = handle === "bl" || handle === "br" || handle === "b";
+
+        if (normAspect <= 0.0) {
+            if (hasLeft) left = Math.max(0.0, Math.min(right - minSize, sx + dx));
+            if (hasRight) right = Math.min(1.0, Math.max(left + minSize, sx + sw + dx));
+            if (hasTop) top = Math.max(0.0, Math.min(bottom - minSize, sy + dy));
+            if (hasBottom) bottom = Math.min(1.0, Math.max(top + minSize, sy + sh + dy));
+            root.cropX = left;
+            root.cropY = top;
+            root.cropW = right - left;
+            root.cropH = bottom - top;
+            root.cropChangedByUser(root.cropX, root.cropY, root.cropW, root.cropH, root.cropAspect);
+            return;
+        }
+
+        var minW = Math.max(minSize, minSize * normAspect);
+        var minH = Math.max(minSize, minSize / normAspect);
+        var newW, newH, maxW, maxH;
+
+        if ((hasLeft || hasRight) && (hasTop || hasBottom)) {
+            // Corner drag: opposite corner is anchored
+            var anchorX = hasLeft ? right : left;
+            var anchorY = hasTop ? bottom : top;
+            var rawW = hasLeft ? (anchorX - (sx + dx)) : ((sx + sw + dx) - anchorX);
+            var rawH = hasTop ? (anchorY - (sy + dy)) : ((sy + sh + dy) - anchorY);
+            maxW = hasLeft ? anchorX : (1.0 - anchorX);
+            maxH = hasTop ? anchorY : (1.0 - anchorY);
+            var capW = Math.min(maxW, maxH * normAspect);
+            if (Math.abs(rawW - sw) >= Math.abs(rawH - sh) * normAspect) {
+                newW = Math.max(minW, Math.min(capW, rawW));
+                newH = newW / normAspect;
+            } else {
+                newH = Math.max(minH, Math.min(capW / normAspect, rawH));
+                newW = newH * normAspect;
+            }
+            left = hasLeft ? (anchorX - newW) : anchorX;
+            top = hasTop ? (anchorY - newH) : anchorY;
+        } else if (hasLeft || hasRight) {
+            // Horizontal edge drag with aspect lock: opposite edge anchored, vertical centered
+            var ax = hasLeft ? right : left;
+            var cy = sy + sh * 0.5;
+            maxW = hasLeft ? ax : (1.0 - ax);
+            maxH = Math.min(1.0, 2.0 * Math.min(cy, 1.0 - cy));
+            var capEW = Math.min(maxW, maxH * normAspect);
+            var propW = hasLeft ? (ax - (sx + dx)) : ((sx + sw + dx) - ax);
+            newW = Math.max(minW, Math.min(capEW, propW));
+            newH = newW / normAspect;
+            left = hasLeft ? (ax - newW) : ax;
+            top = Math.max(0.0, Math.min(1.0 - newH, cy - newH * 0.5));
+        } else {
+            // Vertical edge drag with aspect lock: opposite edge anchored, horizontal centered
+            var ay = hasTop ? bottom : top;
+            var cx = sx + sw * 0.5;
+            maxH = hasTop ? ay : (1.0 - ay);
+            maxW = Math.min(1.0, 2.0 * Math.min(cx, 1.0 - cx));
+            var capEH = Math.min(maxH, maxW / normAspect);
+            var propH = hasTop ? (ay - (sy + dy)) : ((sy + sh + dy) - ay);
+            newH = Math.max(minH, Math.min(capEH, propH));
+            newW = newH * normAspect;
+            top = hasTop ? (ay - newH) : ay;
+            left = Math.max(0.0, Math.min(1.0 - newW, cx - newW * 0.5));
+        }
+
+        root.cropX = Math.max(0.0, Math.min(1.0 - newW, left));
+        root.cropY = Math.max(0.0, Math.min(1.0 - newH, top));
+        root.cropW = Math.max(minSize, Math.min(1.0 - root.cropX, newW));
+        root.cropH = Math.max(minSize, Math.min(1.0 - root.cropY, newH));
+        root.cropChangedByUser(root.cropX, root.cropY, root.cropW, root.cropH, root.cropAspect);
+    }
+
     function applyAspectPreset(aspect) {
         root.cropAspect = aspect;
         var baseAspect = (mainImage.imageWidth > 0 && mainImage.imageHeight > 0)
@@ -356,6 +460,9 @@ Rectangle {
         return imgAspect > vpAspect ? width / imgAspect : height;
     }
 
+    // Up to 8x the fit size, or 4:1 on the photo's own pixels for large files
+    readonly property real maxZoom: Math.max(8.0, root.zoomForPixelScale(4.0))
+
     function updateNormCoordinates() {
         var effW = fitWidth * root.zoomFactor;
         var effH = fitHeight * root.zoomFactor;
@@ -398,8 +505,7 @@ Rectangle {
 
     function setZoomAtPoint(cx, cy, targetZoom) {
         var oldZoom = root.zoomFactor;
-        // Up to 8x the fit size, or 4:1 on the photo's own pixels for large files
-        var newZoom = Math.max(0.2, Math.min(Math.max(8.0, root.zoomForPixelScale(4.0)), targetZoom));
+        var newZoom = Math.max(0.2, Math.min(root.maxZoom, targetZoom));
         if (Math.abs(newZoom - oldZoom) < 0.0005) return;
 
         var curCenterX = root.width / 2 + root.panX;
@@ -512,7 +618,7 @@ Rectangle {
             z: -100
         }
 
-        // TRANSFORM CONTAINER (Target of scale, rotation, and pan)
+        // TRANSFORM CONTAINER (Target of scale, rotation, flip, and pan)
         Item {
             id: transformContainer
             width: root.fitWidth
@@ -522,6 +628,12 @@ Rectangle {
             scale: root.zoomFactor
             rotation: root.rotationAngle
             transformOrigin: Item.Center
+            transform: Scale {
+                origin.x: transformContainer.width / 2
+                origin.y: transformContainer.height / 2
+                xScale: root.flipH ? -1.0 : 1.0
+                yScale: root.flipV ? -1.0 : 1.0
+            }
 
             // 100% Solid Underlay directly under photo bounding box
             Rectangle {
@@ -635,22 +747,20 @@ Rectangle {
                             textFormat: Text.PlainText
                             font.pixelSize: Theme.px(8)
                             font.weight: Font.Bold
-                            color: Theme.bgBase
+                            color: Theme.onColor("#ffffff")
                         }
                     }
 
                     MouseArea {
+                        id: splitDragArea
                         anchors.fill: parent
                         anchors.margins: -12
                         cursorShape: Qt.SplitHCursor
-                        drag.target: splitLine
-                        drag.axis: Drag.XAxis
-                        drag.minimumX: 0
-                        drag.maximumX: mainImage.width
 
-                        onPositionChanged: {
-                            if (drag.active) {
-                                var newRatio = (splitLine.x + splitLine.width / 2) / mainImage.width;
+                        onPositionChanged: function(mouse) {
+                            if (pressed && mainImage.width > 0) {
+                                var pt = splitDragArea.mapToItem(mainImage, mouse.x, mouse.y);
+                                var newRatio = pt.x / mainImage.width;
                                 root.splitRatio = Math.max(0.05, Math.min(0.95, newRatio));
                                 root.splitRatioChangedByUser(root.splitRatio);
                             }
@@ -765,9 +875,43 @@ Rectangle {
                                     ctx.moveTo(0, phiY2); ctx.lineTo(width, phiY2);
                                     ctx.stroke();
                                 } else if (root.guideMode === 3) {
-                                    // Golden Spiral (Fibonacci)
+                                    // Golden Spiral (7-quarter Fibonacci subdivision across golden rectangles)
+                                    var invPhi = 0.6180339887;
+                                    var rx = 0, ry = 0, rw = width, rh = height;
                                     ctx.beginPath();
-                                    ctx.ellipse(width * 0.618, height * 0.618, width * 0.382, height * 0.382);
+                                    for (var step = 0; step < 7 && rw > 1 && rh > 1; step++) {
+                                        var dir = step % 4;
+                                        var s, cx, cy, radX, radY, a0, a1;
+                                        if (dir === 0) {
+                                            s = rw * invPhi;
+                                            cx = rx + s; cy = ry + rh; radX = s; radY = rh;
+                                            a0 = Math.PI; a1 = 1.5 * Math.PI;
+                                            rx += s; rw -= s;
+                                        } else if (dir === 1) {
+                                            s = rh * invPhi;
+                                            cx = rx; cy = ry + s; radX = rw; radY = s;
+                                            a0 = 1.5 * Math.PI; a1 = 2.0 * Math.PI;
+                                            ry += s; rh -= s;
+                                        } else if (dir === 2) {
+                                            s = rw * invPhi;
+                                            cx = rx + rw - s; cy = ry; radX = s; radY = rh;
+                                            a0 = 0.0; a1 = 0.5 * Math.PI;
+                                            rw -= s;
+                                        } else {
+                                            s = rh * invPhi;
+                                            cx = rx + rw; cy = ry + rh - s; radX = rw; radY = s;
+                                            a0 = 0.5 * Math.PI; a1 = Math.PI;
+                                            rh -= s;
+                                        }
+                                        var segs = 16;
+                                        for (var k = 0; k <= segs; k++) {
+                                            var ang = a0 + (a1 - a0) * (k / segs);
+                                            var px = cx + Math.cos(ang) * radX;
+                                            var py = cy + Math.sin(ang) * radY;
+                                            if (step === 0 && k === 0) ctx.moveTo(px, py);
+                                            else ctx.lineTo(px, py);
+                                        }
+                                    }
                                     ctx.stroke();
                                 }
                             }
@@ -780,73 +924,82 @@ Rectangle {
                             }
                         }
 
-                        // Drag Whole Crop Box
+                        // Drag Whole Crop Box (mainImage coordinates from captured press snapshot)
                         MouseArea {
+                            id: cropBoxDrag
                             anchors.fill: parent
                             enabled: root.isCropMode
                             cursorShape: Qt.SizeAllCursor
 
-                            property real startMouseX: 0
-                            property real startMouseY: 0
-                            property real startCropX: 0
-                            property real startCropY: 0
+                            property real pressImgX: 0
+                            property real pressImgY: 0
+                            property var startRect: null
 
                             onPressed: function(mouse) {
-                                startMouseX = mouse.x;
-                                startMouseY = mouse.y;
-                                startCropX = root.cropX;
-                                startCropY = root.cropY;
+                                var pt = cropBoxDrag.mapToItem(mainImage, mouse.x, mouse.y);
+                                pressImgX = pt.x;
+                                pressImgY = pt.y;
+                                startRect = { x: root.cropX, y: root.cropY, w: root.cropW, h: root.cropH };
                             }
 
                             onPositionChanged: function(mouse) {
-                                if (pressed && mainImage.width > 0 && mainImage.height > 0) {
-                                    var dx = (mouse.x - startMouseX) / mainImage.width;
-                                    var dy = (mouse.y - startMouseY) / mainImage.height;
-                                    root.cropX = Math.max(0.0, Math.min(1.0 - root.cropW, startCropX + dx));
-                                    root.cropY = Math.max(0.0, Math.min(1.0 - root.cropH, startCropY + dy));
-                                    root.cropChangedByUser(root.cropX, root.cropY, root.cropW, root.cropH, root.cropAspect);
+                                if (pressed && startRect && mainImage.width > 0 && mainImage.height > 0) {
+                                    var pt = cropBoxDrag.mapToItem(mainImage, mouse.x, mouse.y);
+                                    var dx = (pt.x - pressImgX) / mainImage.width;
+                                    var dy = (pt.y - pressImgY) / mainImage.height;
+                                    root.applyCropHandleDrag("move", startRect, dx, dy);
                                 }
                             }
                         }
 
-                        // Corner Handles
-                        Rectangle {
-                            width: 14; height: 14; color: "#ffffff"; border.color: Theme.bgBase; border.width: 1
-                            x: -2; y: -2
-                            visible: root.isCropMode
-                            MouseArea {
-                                anchors.fill: parent; anchors.margins: -4
-                                cursorShape: Qt.SizeFDiagCursor
-                                property real sX: 0; property real sY: 0
-                                onPressed: function(m) { sX = m.x; sY = m.y; }
-                                onPositionChanged: function(m) {
-                                    if (pressed && mainImage.width > 0) {
-                                        var deltaX = (m.x - sX) / mainImage.width;
-                                        var newW = Math.max(0.1, root.cropW - deltaX);
-                                        var newX = Math.max(0.0, root.cropX + (root.cropW - newW));
-                                        root.cropX = newX;
-                                        root.cropW = newW;
-                                        root.cropChangedByUser(root.cropX, root.cropY, root.cropW, root.cropH, root.cropAspect);
+                        // 4 Corner + 4 Edge Crop Handles (oscillation-free mainImage-space delta + aspect lock)
+                        Repeater {
+                            model: [
+                                { id: "tl", fx: 0.0, fy: 0.0, corner: true,  cursor: Qt.SizeFDiagCursor },
+                                { id: "tr", fx: 1.0, fy: 0.0, corner: true,  cursor: Qt.SizeBDiagCursor },
+                                { id: "bl", fx: 0.0, fy: 1.0, corner: true,  cursor: Qt.SizeBDiagCursor },
+                                { id: "br", fx: 1.0, fy: 1.0, corner: true,  cursor: Qt.SizeFDiagCursor },
+                                { id: "t",  fx: 0.5, fy: 0.0, corner: false, cursor: Qt.SizeVerCursor },
+                                { id: "b",  fx: 0.5, fy: 1.0, corner: false, cursor: Qt.SizeVerCursor },
+                                { id: "l",  fx: 0.0, fy: 0.5, corner: false, cursor: Qt.SizeHorCursor },
+                                { id: "r",  fx: 1.0, fy: 0.5, corner: false, cursor: Qt.SizeHorCursor }
+                            ]
+                            delegate: Rectangle {
+                                id: cropHandle
+                                required property var modelData
+                                visible: root.isCropMode
+                                width: modelData.corner ? 14 : (modelData.fx === 0.5 ? 24 : 8)
+                                height: modelData.corner ? 14 : (modelData.fy === 0.5 ? 24 : 8)
+                                x: cropBox.width * modelData.fx - width / 2
+                                y: cropBox.height * modelData.fy - height / 2
+                                radius: modelData.corner ? 2 : 3
+                                color: "#ffffff"
+                                border.color: "#0b0c10"
+                                border.width: 1
+                                z: 5
+
+                                MouseArea {
+                                    id: handleArea
+                                    anchors.fill: parent
+                                    anchors.margins: -5
+                                    cursorShape: cropHandle.modelData.cursor
+                                    property real pressImgX: 0
+                                    property real pressImgY: 0
+                                    property var startRect: null
+
+                                    onPressed: function(m) {
+                                        var pt = handleArea.mapToItem(mainImage, m.x, m.y);
+                                        pressImgX = pt.x;
+                                        pressImgY = pt.y;
+                                        startRect = { x: root.cropX, y: root.cropY, w: root.cropW, h: root.cropH };
                                     }
-                                }
-                            }
-                        }
-                        Rectangle {
-                            width: 14; height: 14; color: "#ffffff"; border.color: Theme.bgBase; border.width: 1
-                            x: parent.width - 12; y: parent.height - 12
-                            visible: root.isCropMode
-                            MouseArea {
-                                anchors.fill: parent; anchors.margins: -4
-                                cursorShape: Qt.SizeFDiagCursor
-                                property real sX: 0; property real sY: 0
-                                onPressed: function(m) { sX = m.x; sY = m.y; }
-                                onPositionChanged: function(m) {
-                                    if (pressed && mainImage.width > 0) {
-                                        var deltaX = (m.x - sX) / mainImage.width;
-                                        root.cropW = Math.max(0.1, Math.min(1.0 - root.cropX, root.cropW + deltaX));
-                                        var deltaY = (m.y - sY) / mainImage.height;
-                                        root.cropH = Math.max(0.1, Math.min(1.0 - root.cropY, root.cropH + deltaY));
-                                        root.cropChangedByUser(root.cropX, root.cropY, root.cropW, root.cropH, root.cropAspect);
+                                    onPositionChanged: function(m) {
+                                        if (pressed && startRect && mainImage.width > 0 && mainImage.height > 0) {
+                                            var pt = handleArea.mapToItem(mainImage, m.x, m.y);
+                                            var dx = (pt.x - pressImgX) / mainImage.width;
+                                            var dy = (pt.y - pressImgY) / mainImage.height;
+                                            root.applyCropHandleDrag(cropHandle.modelData.id, startRect, dx, dy);
+                                        }
                                     }
                                 }
                             }
@@ -878,7 +1031,7 @@ Rectangle {
 
             onScaleChanged: {
                 if (!active) return;
-                var targetZoom = Math.max(0.2, Math.min(8.0, startZoom * pinchHandler.scale));
+                var targetZoom = Math.max(0.2, Math.min(root.maxZoom, startZoom * pinchHandler.scale));
                 var cx = pinchHandler.centroid.position.x;
                 var cy = pinchHandler.centroid.position.y;
                 root.setZoomAtPoint(cx, cy, targetZoom);
@@ -940,11 +1093,12 @@ Rectangle {
             }
         }
 
-        // MOUSE PAN (CLICK & DRAG WITH DELTA TRACKING)
+        // LEFT-BUTTON PAN (disabled during Crop/Mask/Retouch so canvas edits never pan)
         DragHandler {
             id: dragHandler
             target: null
-            acceptedButtons: Qt.LeftButton | Qt.MiddleButton
+            acceptedButtons: Qt.LeftButton
+            enabled: !root.isCropMode && root.maskTool === "" && !root.retouchActive
             cursorShape: (root.zoomFactor > 1.05 || Math.abs(root.rotationAngle) > 0.5) ? (active ? Qt.ClosedHandCursor : Qt.OpenHandCursor) : Qt.ArrowCursor
 
             property real lastDragX: 0
@@ -971,9 +1125,41 @@ Rectangle {
             }
         }
 
-        // MAC DOUBLE-TAP TO TOGGLE FIT <-> 200% ZOOM
+        // MIDDLE-BUTTON PAN (always available, even while cropping, masking, or retouching)
+        DragHandler {
+            id: middleDragHandler
+            target: null
+            acceptedButtons: Qt.MiddleButton
+            cursorShape: active ? Qt.ClosedHandCursor : Qt.ArrowCursor
+
+            property real lastDragX: 0
+            property real lastDragY: 0
+
+            onActiveChanged: {
+                if (active) {
+                    lastDragX = translation.x;
+                    lastDragY = translation.y;
+                }
+            }
+
+            onTranslationChanged: {
+                if (!active) return;
+                var dx = translation.x - lastDragX;
+                var dy = translation.y - lastDragY;
+                lastDragX = translation.x;
+                lastDragY = translation.y;
+
+                root.panX += dx;
+                root.panY += dy;
+                root.clampPan();
+                root.updateNormCoordinates();
+            }
+        }
+
+        // MAC DOUBLE-TAP TO TOGGLE FIT <-> 200% ZOOM (disabled during Crop/Mask/Retouch)
         TapHandler {
             acceptedButtons: Qt.LeftButton
+            enabled: !root.isCropMode && root.maskTool === "" && !root.retouchActive
             onDoubleTapped: function(event) {
                 if (root.zoomFactor > 1.05 || Math.abs(root.rotationAngle) > 0.5) {
                     root.resetTransform();
@@ -1074,7 +1260,7 @@ Rectangle {
                 Image {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
-                    source: root.compareImage
+                    source: root.compareActive ? root.compareImage : ""
                     fillMode: Image.PreserveAspectFit
                     asynchronous: true
                     cache: false
@@ -1101,7 +1287,7 @@ Rectangle {
                 Image {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
-                    source: mainImage.currentSource
+                    source: root.compareActive ? mainImage.currentSource : ""
                     fillMode: Image.PreserveAspectFit
                     asynchronous: true
                     cache: false
@@ -1128,8 +1314,8 @@ Rectangle {
 
         Image {
             readonly property var shown: root.loupeShown
-            source: shown ? shown.path : ""
-            asynchronous: false
+            source: (root.loupeActive && shown) ? shown.path : ""
+            asynchronous: true
             cache: false
             smooth: false
             width: implicitWidth / root.dpr
@@ -1500,7 +1686,7 @@ Rectangle {
                     textFormat: Text.PlainText
                     font.pixelSize: Theme.px(9)
                     font.weight: Font.Bold
-                    color: Theme.bgBase
+                    color: Theme.onAccent
                 }
                 MouseArea {
                     anchors.fill: parent

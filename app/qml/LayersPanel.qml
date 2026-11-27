@@ -180,13 +180,18 @@ Rectangle {
     function addAiLayer(kind) {
         if (root.enginePath === "" || root.activePhotoPath === "" || aiProc.running) return;
         root.aiKind = kind;
+        aiProc.targetPhotoPath = root.activePhotoPath;
         aiProc.command = [root.enginePath, "ai-mask", root.activePhotoPath, "--kind", kind];
         aiProc.running = true;
     }
 
     Process {
         id: aiProc
+        property string targetPhotoPath: ""
         onFinished: function(exitCode, output) {
+            if (aiProc.targetPhotoPath !== "" && aiProc.targetPhotoPath !== root.activePhotoPath) {
+                return;
+            }
             var resp;
             try { resp = JSON.parse(String(output || "")); } catch (e) { resp = { "success": false, "error": qsTr("The engine gave no answer") }; }
             if (!resp.success) {
