@@ -4,7 +4,7 @@
 
 [همهٔ زبان‌ها](../README.md) · [فناوری‌ها](../technology/fa.md) · [README](../../README.md)
 
-این راهنما دربارهٔ OmaStudio 3.1 است. توضیح می‌دهد برنامه را چگونه نصب کنید، در پنجره چگونه جابه‌جا شوید و از هر پنل و ابزار چگونه استفاده کنید. تصویرهای صفحه فایل‌های نمونهٔ Fujifilm GFX 50R و Hasselblad CFV-50c از [raw.pixls.us](https://raw.pixls.us) (CC0) را نشان می‌دهند.
+این راهنما دربارهٔ OmaStudio 3.2 است. توضیح می‌دهد برنامه را چگونه نصب کنید، در پنجره چگونه جابه‌جا شوید و از هر پنل و ابزار چگونه استفاده کنید. تصویرهای صفحه فایل‌های نمونهٔ Fujifilm GFX 50R و Hasselblad CFV-50c از [raw.pixls.us](https://raw.pixls.us) (CC0) را نشان می‌دهند.
 
 ![OmaStudio با عکسی از Fujifilm GFX 50R](../images/lang/main-fa.webp)
 
@@ -358,7 +358,7 @@ omastudio --cli help                                # every command
 | مسیر | محتوا |
 | :--- | :--- |
 | `<photo>.omastudio` | ویرایش یک عکس (فایل جانبی) |
-| `~/.local/share/omastudio/catalog.json` | کاتالوگ: امتیازها، پرچم‌ها و برچسب‌های رنگی |
+| `~/.local/share/omastudio/catalog.db` | کاتالوگ: امتیازها، پرچم‌ها و برچسب‌های رنگی |
 | `~/.local/share/omastudio/fuji-recipes/` | دستورهای ذخیره‌شدهٔ Fujifilm |
 | `~/.local/share/omastudio/icc/` | نمایه‌های ICC خودتان |
 | `~/.local/share/omastudio/models/` | مدل‌های هوش مصنوعی محلی |

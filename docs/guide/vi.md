@@ -4,7 +4,7 @@
 
 [Tất cả ngôn ngữ](../README.md) · [Công nghệ](../technology/vi.md) · [README](../../README.md)
 
-Hướng dẫn này dành cho OmaStudio 3.1. Tài liệu giải thích cách cài đặt ứng dụng, bố cục cửa sổ và cách dùng từng bảng điều khiển và công cụ. Ảnh chụp màn hình dùng các tệp mẫu Fujifilm GFX 50R và Hasselblad CFV-50c từ [raw.pixls.us](https://raw.pixls.us) (CC0).
+Hướng dẫn này dành cho OmaStudio 3.2. Tài liệu giải thích cách cài đặt ứng dụng, bố cục cửa sổ và cách dùng từng bảng điều khiển và công cụ. Ảnh chụp màn hình dùng các tệp mẫu Fujifilm GFX 50R và Hasselblad CFV-50c từ [raw.pixls.us](https://raw.pixls.us) (CC0).
 
 ![OmaStudio với một ảnh Fujifilm GFX 50R](../images/lang/main-vi.webp)
 
@@ -358,7 +358,7 @@ omastudio --cli help                                # mọi lệnh
 | Đường dẫn | Nội dung |
 | :--- | :--- |
 | `<ảnh>.omastudio` | Bản chỉnh sửa của một ảnh (tệp đi kèm) |
-| `~/.local/share/omastudio/catalog.json` | Danh mục: xếp hạng, cờ và nhãn màu |
+| `~/.local/share/omastudio/catalog.db` | Danh mục: xếp hạng, cờ và nhãn màu |
 | `~/.local/share/omastudio/fuji-recipes/` | Các công thức Fujifilm đã lưu |
 | `~/.local/share/omastudio/icc/` | Hồ sơ ICC của riêng bạn |
 | `~/.local/share/omastudio/models/` | Mô hình AI cục bộ |

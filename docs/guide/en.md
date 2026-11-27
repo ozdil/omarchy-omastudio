@@ -4,7 +4,7 @@
 
 [All languages](../README.md) · [Technologies](../technology/en.md) · [README](../../README.md)
 
-This guide covers OmaStudio 3.1. It explains how to install the application, find your way around the window, and use each panel and tool. The screenshots show Fujifilm GFX 50R and Hasselblad CFV-50c sample files from [raw.pixls.us](https://raw.pixls.us) (CC0).
+This guide covers OmaStudio 3.2. It explains how to install the application, find your way around the window, and use each panel and tool. The screenshots show Fujifilm GFX 50R and Hasselblad CFV-50c sample files from [raw.pixls.us](https://raw.pixls.us) (CC0).
 
 ![OmaStudio with a Fujifilm GFX 50R photo](../images/main-essentials.webp)
 
@@ -39,20 +39,21 @@ OmaStudio runs on Omarchy (Arch Linux) under Wayland and Hyprland.
 makepkg -si
 ```
 
-This installs `omastudio`, `omastudio-app`, `omastudio-engine`, the ICC profiles, the desktop entry, the icons and a udev rule for Fujifilm cameras on USB.
+This installs `omastudio`, `omastudio-app`, `omastudio-engine`, the ICC profiles, the desktop entry, the icons, the MIT licence and a udev rule for Fujifilm cameras on USB.
 
 **From a release archive.** Download `omastudio-<version>-x86_64-linux.tar.gz` from the [releases page](https://github.com/ozdil/omarchy-omastudio/releases), check it against `checksums.txt`, unpack it and copy `bin/*` to `~/.local/bin` and `share/omastudio` to `~/.local/share/omastudio`.
 
-**Required packages:** `libraw` 0.22 or newer, `lcms2`, `qt6-base`, `qt6-declarative`, `qt6-wayland` and `qt6-svg` 6.12 or newer, and `xdg-desktop-portal` for the file dialogs.
+**Required packages:** `libraw` 0.22 or newer (track `0.22.4+` for CVE-2026-135177), `lcms2`, `sqlite`, `qt6-base`, `qt6-declarative`, `qt6-wayland` and `qt6-svg` 6.12 or newer, `xdg-desktop-portal`, `libjxl`, `libavif`, `libwebp-utils` and `libheif`.
 
 **Optional packages:**
 
 | Package | Used for |
 | :--- | :--- |
-| `vulkan-icd-loader` and your GPU's Vulkan driver | Demosaicing on the GPU |
+| `vulkan-icd-loader` + GPU driver (`nvidia-utils`, `vulkan-nouveau`, `vulkan-radeon`, `vulkan-intel`, `vulkan-asahi`, `vulkan-freedreno`) | Full GPU compute pipeline (demosaic, point ops and halo-banded local filters up to 150 MP) |
+| `lensfun` | Medium format lens correction profiles |
 | `perl-image-exiftool` | Keeping EXIF metadata in exported files |
-| `libwebp-utils`, `libheif`, `ffmpeg` | Lossy WebP, HEIF and the AVIF fallback |
-| `onnxruntime` | Local AI masks on an NPU, GPU or CPU |
+| `ffmpeg` | AVIF export fallback |
+| `onnxruntime` / `onnxruntime-cuda` / `onnxruntime-rocm` | Local AI masks on an NPU, GPU or CPU |
 | `rclone`, `libsecret`, `gnome-keyring` | Google Drive, OneDrive, Dropbox, Box, pCloud and Yandex Disk |
 | `github-cli` | GitHub account |
 | `ollama` | Local AI models for the edit assistant |
@@ -343,7 +344,8 @@ omastudio fuji-recipe DSCF0001.RAF                  # the camera's recipe
 omastudio fuji-pixel-shift DSCF*.RAF --out merged.dng
 omastudio xmp export DSCF0001.RAF
 omastudio cameras GFX                               # cameras the RAW decoder supports
-omastudio gpu                                       # GPU used for demosaicing
+omastudio gpu                                       # GPU compute pipeline status
+omastudio bench --runs 5                            # stage-by-stage preview benchmark
 omastudio npu                                       # ONNX Runtime and accelerators
 omastudio cloud status
 omastudio --cli help                                # every command
@@ -358,18 +360,25 @@ omastudio --cli help                                # every command
 | Path | Contents |
 | :--- | :--- |
 | `<photo>.omastudio` | The edit of a photo (sidecar) |
-| `~/.local/share/omastudio/catalog.json` | Catalog: ratings, flags and colour labels |
+| `~/.local/share/omastudio/catalog.db` | Catalog (SQLite WAL): ratings, flags, colour labels and indexed metadata |
 | `~/.local/share/omastudio/fuji-recipes/` | Saved Fujifilm recipes |
 | `~/.local/share/omastudio/icc/` | Your own ICC profiles |
 | `~/.local/share/omastudio/models/` | Local AI models |
 | `~/.local/share/omastudio/film-luts/` | Film simulation LUTs measured from your photos (`fuji-calibrate`) |
 | `~/.config/omastudio/` | Settings, interface state, language, cloud accounts |
-| `~/.cache/omastudio/` | Thumbnails, previews and downloaded cloud photos |
+| `~/.cache/omastudio/` | Thumbnails, previews, Vulkan `PipelineCache`, APU benchmark cache and downloaded cloud photos |
 
 ## 18. Troubleshooting
 
 - **The window does not open.** Run `omastudio` in a terminal and read the message. `omastudio --version` and `omastudio status` show what is installed.
-- **The GPU is not used.** `omastudio gpu` shows the device. Install `vulkan-icd-loader` and your GPU's Vulkan driver. `OMASTUDIO_GPU=off` forces the CPU.
+- **The GPU is not used or resets under load.** `omastudio gpu` shows the active adapter and reason for fallback. Install `vulkan-icd-loader` plus your GPU driver:
+  - **NVIDIA RTX 20–50**: `nvidia-open` + `nvidia-utils` (`onnxruntime-cuda` for AI masks)
+  - **NVIDIA GTX 900/10xx**: AUR `nvidia-580xx-dkms` + `nvidia-580xx-utils` or Mesa NVK (`vulkan-nouveau`)
+  - **AMD Radeon (RDNA 2–4 & Strix Halo APU)**: `vulkan-radeon` (`onnxruntime-rocm` for AI masks)
+  - **Intel Arc & Core Ultra (Xe/Xe2/Xe3)**: `vulkan-intel` + OpenVINO Runtime
+  - **Apple Silicon (`omarchy-mac`)**: `vulkan-asahi` (Mesa Honeykrisp) · **Qualcomm Snapdragon X/X2**: `vulkan-freedreno` (Mesa Turnip)
+  - Runtime overrides: `OMASTUDIO_GPU=off|software`, `OMASTUDIO_GPU_STAGES=on|off`, `OMASTUDIO_GPU_DEVICE=<index|name>`, `OMASTUDIO_GPU_TIMEOUT_MS=<ms>`, `QSG_RHI_BACKEND=vulkan|opengl`.
+- **Crash (`SIGILL`) on older non-AVX-512 CPUs with Arch `openexr 3.5.3-2`.** If `kimageformats` is installed alongside a broken Arch `openexr` build, Qt image plugin probing can hit an illegal instruction on non-AVX-512 CPUs. Update `openexr` (or remove `kimageformats` if unused); OmaStudio's Rust engine decodes EXR directly through the pure-Rust `exr` crate.
 - **A camera is not found on USB.** Set its USB mode to USB RAW CONV./BACKUP RESTORE, reconnect it and check that the package's udev rule is installed.
 - **A cloud service says it needs a program.** Install the package the dialog names, for example `sudo pacman -S rclone libsecret`.
 - **Copy system info** in the About window copies the version, GPU and Omarchy details for a bug report. Report issues at [github.com/ozdil/omarchy-omastudio/issues](https://github.com/ozdil/omarchy-omastudio/issues).

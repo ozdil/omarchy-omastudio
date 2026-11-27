@@ -4,7 +4,7 @@
 
 [Všechny jazyky](../README.md) · [Technologie](../technology/cs.md) · [README](../../README.md)
 
-Tato příručka popisuje OmaStudio 3.1. Vysvětluje, jak aplikaci nainstalovat, jak je okno uspořádané a jak používat jednotlivé panely a nástroje. Snímky obrazovky ukazují ukázkové soubory z fotoaparátů Fujifilm GFX 50R a Hasselblad CFV-50c ze serveru [raw.pixls.us](https://raw.pixls.us) (CC0).
+Tato příručka popisuje OmaStudio 3.2. Vysvětluje, jak aplikaci nainstalovat, jak je okno uspořádané a jak používat jednotlivé panely a nástroje. Snímky obrazovky ukazují ukázkové soubory z fotoaparátů Fujifilm GFX 50R a Hasselblad CFV-50c ze serveru [raw.pixls.us](https://raw.pixls.us) (CC0).
 
 ![OmaStudio se snímkem z Fujifilm GFX 50R](../images/lang/main-cs.webp)
 
@@ -358,7 +358,7 @@ omastudio --cli help                                # všechny příkazy
 | Cesta | Obsah |
 | :--- | :--- |
 | `<fotografie>.omastudio` | Úprava fotografie (doprovodný soubor) |
-| `~/.local/share/omastudio/catalog.json` | Katalog: hodnocení, značky a barevné štítky |
+| `~/.local/share/omastudio/catalog.db` | Katalog: hodnocení, značky a barevné štítky |
 | `~/.local/share/omastudio/fuji-recipes/` | Uložené recepty Fujifilm |
 | `~/.local/share/omastudio/icc/` | Vaše profily ICC |
 | `~/.local/share/omastudio/models/` | Místní modely AI |

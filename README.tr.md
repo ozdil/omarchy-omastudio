@@ -85,7 +85,7 @@ flowchart LR
 
 ## Kurulum
 
-Gereksinimler: Wayland ve Hyprland ile Omarchy (Arch Linux); `libraw` 0.22 veya üstü, `lcms2`, `qt6-base`, `qt6-declarative`, `qt6-wayland` ve `qt6-svg` 6.12 veya üstü ve `xdg-desktop-portal`. İsteğe bağlı paketler [kullanım kılavuzunda](docs/guide/tr.md#1-kurulum) listelenir.
+Gereksinimler: Wayland ve Hyprland ile Omarchy (Arch Linux); `libraw` 0.22 veya üstü (CVE-2026-135177 için `0.22.4+` takip edin), `lcms2`, `sqlite`, `qt6-base`, `qt6-declarative`, `qt6-wayland` ve `qt6-svg` 6.12 veya üstü ve `xdg-desktop-portal`. İsteğe bağlı paketler ve GPU sürücüleri [kullanım kılavuzunda](docs/guide/tr.md#1-kurulum) listelenir.
 
 ### Paket
 
@@ -93,7 +93,7 @@ Gereksinimler: Wayland ve Hyprland ile Omarchy (Arch Linux); `libraw` 0.22 veya 
 makepkg -si
 ```
 
-Bu komut uygulamayı, motoru, ICC profillerini, masaüstü girdisini ve oturum açan kullanıcıya PTP modundaki Fujifilm kameralara USB erişimi veren bir udev kuralını (`70-omastudio-cameras.rules`) kurar.
+Bu komut uygulamayı, motoru, ICC profillerini, masaüstü girdisini, MIT lisansını ve oturum açan kullanıcıya PTP modundaki Fujifilm kameralara USB erişimi veren bir udev kuralını (`70-omastudio-cameras.rules`) kurar.
 
 ### Sürüm arşivi
 
@@ -101,7 +101,7 @@ Bu komut uygulamayı, motoru, ICC profillerini, masaüstü girdisini ve oturum a
 
 ### Kaynaktan derleme
 
-Derlemek için Rust 1.99.1 veya üstü (`rust-toolchain.toml` içinde sabitlenmiştir), `clang`, `pkgconf` ve `qt6-tools` gerekir.
+Derlemek için Rust 1.100.0 veya üstü (`rust-toolchain.toml` içinde sabitlenmiştir), `clang`, `mold`, `pkgconf`, `sqlite` ve `qt6-tools` gerekir.
 
 ```bash
 cargo build --release --locked --workspace
@@ -197,7 +197,7 @@ Diğer MCP istemcileri (opencode, Codex, Gemini CLI ve başkaları) aynı komutu
 | Yol | İçerik |
 | :--- | :--- |
 | `<fotoğraf>.omastudio` | Fotoğrafın düzenlemesi (yan dosya) |
-| `~/.local/share/omastudio/catalog.json` | Katalog: puanlar, bayraklar, renk etiketleri |
+| `~/.local/share/omastudio/catalog.db` | Katalog (SQLite WAL): puanlar, bayraklar, renk etiketleri |
 | `~/.local/share/omastudio/fuji-recipes/` | Kaydedilmiş Fujifilm reçeteleri |
 | `~/.local/share/omastudio/icc/` | Kendi ICC profilleriniz |
 | `~/.local/share/omastudio/models/` | Yerel yapay zekâ modelleri (`subject.onnx`, `sky.onnx`) |

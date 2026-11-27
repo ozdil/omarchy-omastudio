@@ -2,7 +2,7 @@
 name = "omastudio-engine"
 version = "3.2.1"
 edition = "2024"
-rust-version = "1.99"
+rust-version = "1.100"
 authors = ["Ozan Özdil"]
 description = "RAW development engine of OmaStudio, the complete medium format RAW editor for Omarchy"
 license = "MIT"
@@ -28,8 +28,8 @@ tiff = { version = "0.11", default-features = false, features = ["deflate", "lzw
 exr = { version = "1.74", default-features = false }
 libc = "0.2"
 lcms2 = "6.2"
-nusb = "0.2.8"
-wgpu = { version = "30.0.1", default-features = false, features = ["std", "wgsl", "vulkan", "gles"] }
+nusb = "0.2.9"
+wgpu = { version = "30.0.2", default-features = false, features = ["std", "wgsl", "vulkan", "gles"] }
 pollster = "1.0.1"
 quick-xml = "0.42"
 ort = { version = "=2.0.0-rc.15", default-features = false, features = ["std", "load-dynamic", "api-23", "openvino", "qnn", "vitis", "nvrtx", "tensorrt", "cuda", "rocm", "migraphx", "xnnpack", "webgpu"] }

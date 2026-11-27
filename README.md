@@ -32,7 +32,7 @@ OmaStudio is a non-destructive RAW editor for Omarchy Linux. It develops RAW fil
 
 | Area | What OmaStudio provides |
 | :--- | :--- |
-| **RAW development** | Own demosaicing for X-Trans and Bayer sensors on linear light, with the camera's colour matrix and black levels from the file. Demosaicing runs on the GPU through Vulkan (NVIDIA, AMD, Intel, Qualcomm Adreno) or OpenGL ES, with a matching CPU path. LibRaw 0.22 unpacks the sensor data. |
+| **RAW development** | Own demosaicing for X-Trans and Bayer sensors on linear light, with the camera's colour matrix and black levels from the file. Demosaicing, point operations and halo-aware row-striped local filters (up to 150 MP) run on the GPU through Vulkan (NVIDIA, AMD, Intel, Apple Silicon Honeykrisp, Qualcomm Turnip) or OpenGL ES, with a matching CPU path and automatic APU benchmarking. LibRaw 0.22 unpacks the sensor data. |
 | **Medium format** | 16-bit pipeline from sensor to export. Hasselblad 3FR/FFF default crop, Phase One and Leaf IIQ/MOS sensor calibration, Mamiya MEF and Pentax 645 PEF, flat-field (LCC) correction and 4-shot multi-shot merge. |
 | **Fujifilm** | Photos open with the recipe they were shot with (film simulation, tone, colour, grain, Color Chrome, white balance shift, dynamic range including D-Range Priority) and at the brightness of the camera's JPEG. Camera lens corrections for XF, XC and GF lenses. Recipe library with X RAW Studio profiles (.FP1/.FP2/.FP3) and text recipes. Custom settings C1–C7 read and written over USB, in-camera RAW conversion, GFX Pixel Shift merged to DNG. |
 | **Editing** | White balance, tone, presence, point and RGB tone curves, colour mixer, three-way colour grading, channel mixer, 3D LUTs, detail and optics, perspective, film grain, crop and straighten. |
@@ -40,10 +40,10 @@ OmaStudio is a non-destructive RAW editor for Omarchy Linux. It develops RAW fil
 | **Colour management** | Little CMS 2 with sRGB, Display P3, Adobe RGB, ProPhoto RGB, Rec. 2020, ACEScg and your own ICC profiles; gamut compression, ACES tone curve, soft proofing with gamut warning. |
 | **Viewing** | Zoom to 100% at any display scale, loupe, focus peaking, compare, before/after, histogram, waveform, RGB parade and vectorscope with clipping warnings. |
 | **History** | Named history steps, snapshots, versions A–D per photo, copy/paste of edits, XMP sidecars for Lightroom, Capture One, darktable and digiKam. |
-| **Library** | Folders and a catalog with star ratings, pick/reject flags and colour labels. Edits live in a sidecar next to the photo; the original is never modified. |
+| **Library** | Folders and an indexed SQLite (WAL) catalog with star ratings, pick/reject flags and colour labels. Edits live in a sidecar next to the photo; the original is never modified. |
 | **Export** | JPEG, PNG, TIFF, WebP, AVIF, HEIF, JPEG XL and OpenEXR with an embedded ICC profile, resizing, output sharpening for social media, watermarks, batch export and upload to a cloud account. |
 | **Cloud** | Google Drive, OneDrive, Dropbox, Box, pCloud and Yandex Disk through rclone, GitHub through the GitHub CLI; secrets stay in the keyring. |
-| **AI** | Edit assistant and AI chat through Omarchy's default agent (Claude Code or Codex), Ollama, LM Studio or a cloud provider. AI masks run on the computer with ONNX Runtime on an NPU, GPU or CPU. |
+| **AI** | Edit assistant and AI chat through Omarchy's default agent (Claude Code or Codex), Ollama, LM Studio or a cloud provider. AI masks run on the computer with ONNX Runtime (CUDA, TensorRT, TensorRT-RTX, ROCm, MIGraphX, OpenVINO, QNN, WebGPU or CPU). |
 | **Automation** | JSON command line, a control socket for the open window and a Model Context Protocol server for AI agents. |
 | **Omarchy** | Follows the active Omarchy theme, font and Hyprland rounding live, and the system language (30 languages, right to left for Arabic, Hebrew and Persian). |
 
@@ -74,8 +74,8 @@ flowchart LR
     A["RAW sensor data (LibRaw)"] --> B["Black level and white balance (linear)"]
     B --> C["Demosaic X-Trans / Bayer (GPU or CPU)"]
     C --> D["Camera matrix to working space"]
-    D --> E["Exposure, tone, colour, film simulation"]
-    E --> F["Detail, masks, retouch, grain, lens"]
+    D --> E["Exposure, tone, colour, film simulation (GPU or CPU)"]
+    E --> F["Detail, masks, retouch, grain, lens (GPU or CPU)"]
     F --> G["Little CMS 2 and encoders"]
 ```
 
@@ -83,7 +83,20 @@ flowchart LR
 
 ## Installation
 
-Requirements: Omarchy (Arch Linux) with Wayland and Hyprland; `libraw` 0.22 or newer, `lcms2`, `qt6-base`, `qt6-declarative`, `qt6-wayland` and `qt6-svg` 6.12 or newer, and `xdg-desktop-portal`. Optional packages are listed in the [user guide](docs/guide/en.md#1-installation).
+Requirements: Omarchy (Arch Linux) with Wayland and Hyprland; `libraw` 0.22 or newer (track `0.22.4+` for CVE-2026-135177), `lcms2`, `sqlite`, `qt6-base`, `qt6-declarative`, `qt6-wayland` and `qt6-svg` 6.12 or newer, and `xdg-desktop-portal`. Optional packages and GPU drivers are listed below and in the [user guide](docs/guide/en.md#1-installation).
+
+### Linux GPU & AI driver support
+
+| Hardware | Vulkan compute driver | Local AI masks (ONNX Runtime) |
+| :--- | :--- | :--- |
+| **NVIDIA RTX 20–50** (Turing–Blackwell) | `nvidia-open` + `nvidia-utils` (R590–R615+) | `onnxruntime-cuda` / `onnxruntime-opt-cuda` (CUDA, TensorRT, TensorRT-RTX) |
+| **NVIDIA GTX 900/10xx** (Maxwell/Pascal) | AUR `nvidia-580xx-dkms` + `nvidia-580xx-utils`, or Mesa NVK (`vulkan-nouveau`) | `onnxruntime` (CPU / WebGPU) |
+| **AMD Radeon** (RDNA 2–4 & Strix Halo APU) | `vulkan-radeon` (Mesa RADV) | `onnxruntime-rocm` / `onnxruntime-opt-rocm` (ROCm / MIGraphX) |
+| **Intel Arc & Core Ultra** (Xe / Xe2 / Xe3) | `vulkan-intel` (Mesa ANV, Linux `xe` KMD) | OpenVINO Runtime (Intel NPU / GPU / CPU) |
+| **Apple Silicon** (`omarchy-mac`, `aarch64`) | `vulkan-asahi` (Mesa Honeykrisp) | `onnxruntime` (CPU / WebGPU) |
+| **Qualcomm Snapdragon X / X2** (`aarch64`) | `vulkan-freedreno` (Mesa Turnip) | QNN (`libQnnHtp.so`) / `onnxruntime` |
+
+Useful runtime controls: `OMASTUDIO_GPU=off|software`, `OMASTUDIO_GPU_STAGES=on|off`, `OMASTUDIO_GPU_DEVICE=<index|name>`, `OMASTUDIO_GPU_TIMEOUT_MS=<ms>`, `OMASTUDIO_NPU=<ep>`, `ORT_DYLIB_PATH=<path>`, `QSG_RHI_BACKEND=vulkan|opengl`. Run `omastudio gpu`, `omastudio npu` and `omastudio bench` to verify your setup.
 
 ### Package
 
@@ -91,7 +104,7 @@ Requirements: Omarchy (Arch Linux) with Wayland and Hyprland; `libraw` 0.22 or n
 makepkg -si
 ```
 
-This installs the application, the engine, the ICC profiles, the desktop entry and a udev rule (`70-omastudio-cameras.rules`) that gives the logged-in user USB access to Fujifilm cameras in PTP mode.
+This installs the application, the engine, the ICC profiles, the desktop entry, the MIT licence and a udev rule (`70-omastudio-cameras.rules`) that gives the logged-in user USB access to Fujifilm cameras in PTP mode.
 
 ### Release archive
 
@@ -99,7 +112,7 @@ Download `omastudio-<version>-x86_64-linux.tar.gz` from the [releases page](http
 
 ### Build from source
 
-Building needs Rust 1.99.1 or newer (pinned in `rust-toolchain.toml`), `clang`, `pkgconf` and `qt6-tools`.
+Building needs Rust 1.100.0 or newer (pinned in `rust-toolchain.toml`), `clang`, `mold`, `pkgconf`, `sqlite`, `libraw>=0.22`, `lcms2` and `qt6-tools`.
 
 ```bash
 cargo build --release --locked --workspace
@@ -195,7 +208,7 @@ Other MCP clients (opencode, Codex, Gemini CLI and others) take the same command
 | Path | Contents |
 | :--- | :--- |
 | `<photo>.omastudio` | The edit of a photo (sidecar) |
-| `~/.local/share/omastudio/catalog.json` | Catalog: ratings, flags, colour labels |
+| `~/.local/share/omastudio/catalog.db` | Catalog (SQLite WAL): ratings, flags, colour labels, metadata |
 | `~/.local/share/omastudio/fuji-recipes/` | Saved Fujifilm recipes |
 | `~/.local/share/omastudio/icc/` | Your own ICC profiles |
 | `~/.local/share/omastudio/models/` | Local AI models (`subject.onnx`, `sky.onnx`) |

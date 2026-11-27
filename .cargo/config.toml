@@ -1,2 +1,9 @@
+# Use clang + mold on Linux x86_64 and aarch64 for fast workspace linking
+# (requires the `clang` and `mold` packages, documented in README.md and CONTRIBUTING.md).
 [target.x86_64-unknown-linux-gnu]
 linker = "clang"
+rustflags = ["-C", "link-arg=-fuse-ld=mold"]
+
+[target.aarch64-unknown-linux-gnu]
+linker = "clang"
+rustflags = ["-C", "link-arg=-fuse-ld=mold"]

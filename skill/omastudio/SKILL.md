@@ -25,9 +25,14 @@ OmaStudio is the RAW photo editor of the user's Omarchy desktop. It has an engin
    - `omastudio fuji-camera info|presets`, `fuji-camera convert <raf> [--recipe F]`,
      `fuji-camera write-preset <1-7> <recipe-file>`
    - `omastudio fuji-pixel-shift <raf>... --out merged.dng`
+   - `omastudio fuji-calibrate <raf>... [--any] [--dry-run]`, `omastudio fuji-compat <raf>... [--full]`
+   - `omastudio medium-format info|lcc-create|multishot|tether ...`: Hasselblad/Phase One metadata, flat-field LCC calibration, 4-shot merge
    - `omastudio xmp export <photo>` / `xmp import <photo>`: XMP sidecars for Lightroom, Capture One, darktable
-   - `omastudio ai edit <photo> --prompt "..." --recipe '<json>'`: the user's configured AI provider proposes a recipe
-   - `omastudio npu`: local model runtime (ONNX Runtime), NPU/GPU providers, installed models
+   - `omastudio cloud status|connect|list|fetch|upload|disconnect`: cloud accounts through rclone and `gh`
+   - `omastudio ai edit <photo> --prompt "..." --recipe '<json|->'`: the user's configured AI provider proposes a recipe
+   - `omastudio gpu`: GPU compute pipeline status (Vulkan / OpenGL ES, `OMASTUDIO_GPU`, `OMASTUDIO_GPU_STAGES`, `OMASTUDIO_GPU_DEVICE`)
+   - `omastudio bench [photo] [--runs N]`: stage-by-stage preview benchmark (set `OMASTUDIO_PROFILE=1` for per-pass GPU timings)
+   - `omastudio npu`: local model runtime (ONNX Runtime), hardware-verified NPU/GPU providers, installed models
    - `omastudio ai-mask <photo> --kind subject|sky`: mask image from a local model, usable as a
      `{"type": "bitmap", "path": ...}` layer shape
 3. **The open window.** `omastudio ipc <method> [args]` answers with one line:
@@ -62,15 +67,17 @@ field and send it with `apply_recipe`, or use `adjust` for exposure and white ba
 
 ## Export options
 
-`format` (jxl, avif, webp, tiff, png, jpeg), `quality` (1-100), `scale_percent`,
-`max_dimension`, `icc_profile` (sRGB, DisplayP3, AdobeRGB1998, ProPhotoRGB, Rec2020),
+`format` (jxl, avif, heic, webp, tiff, png, jpeg, exr), `quality` (1-100), `bit_depth` (8 or 16),
+`tiff_compression` (deflate, lzw, none), `scale_percent`, `max_dimension`,
+`icc_profile` (sRGB, DisplayP3, AdobeRGB1998, ProPhotoRGB, Rec2020, ACEScg),
 `rendering_intent` (perceptual, relative_colorimetric, saturation, absolute_colorimetric),
-`output_dir` (default `~/Pictures/OmaStudio_Exports`), `strip_gps`, `preserve_exif`.
+`output_dir` (default `~/Pictures/OmaStudio_Exports`), `name_tag`, `watermark`,
+`artist_copyright`, `strip_gps`, `preserve_exif`.
 
 ## Rules
 
 - Original RAW files are never modified; adjustments live in `<photo>.omastudio` sidecars.
-- Never delete or rewrite `~/.local/share/omastudio/catalog.json`, sidecars or the recipe
+- Never delete or rewrite `$XDG_DATA_HOME/omastudio/catalog.db` (SQLite WAL), sidecars or the recipe
   library by hand; use the commands above.
 - Writing a camera's custom setting slot (`fuji-camera write-preset`) replaces what is
   stored there: confirm the slot with the user first.

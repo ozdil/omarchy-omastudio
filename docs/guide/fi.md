@@ -4,7 +4,7 @@
 
 [Kaikki kielet](../README.md) · [Teknologiat](../technology/fi.md) · [README](../../README.md)
 
-Tämä opas koskee OmaStudio 3.1:tä. Se kertoo, miten sovellus asennetaan, miten ikkuna on jäsennelty ja miten kutakin paneelia ja työkalua käytetään. Kuvakaappauksissa on Fujifilm GFX 50R- ja Hasselblad CFV-50c -esimerkkitiedostoja sivustolta [raw.pixls.us](https://raw.pixls.us) (CC0).
+Tämä opas koskee OmaStudio 3.2:tä. Se kertoo, miten sovellus asennetaan, miten ikkuna on jäsennelty ja miten kutakin paneelia ja työkalua käytetään. Kuvakaappauksissa on Fujifilm GFX 50R- ja Hasselblad CFV-50c -esimerkkitiedostoja sivustolta [raw.pixls.us](https://raw.pixls.us) (CC0).
 
 ![OmaStudio ja Fujifilm GFX 50R -kuva](../images/lang/main-fi.webp)
 
@@ -358,7 +358,7 @@ omastudio --cli help                                # kaikki komennot
 | Polku | Sisältö |
 | :--- | :--- |
 | `<kuva>.omastudio` | Kuvan muokkaus (sivutiedosto) |
-| `~/.local/share/omastudio/catalog.json` | Luettelo: arviot, liput ja värimerkinnät |
+| `~/.local/share/omastudio/catalog.db` | Luettelo: arviot, liput ja värimerkinnät |
 | `~/.local/share/omastudio/fuji-recipes/` | Tallennetut Fujifilm-reseptit |
 | `~/.local/share/omastudio/icc/` | Omat ICC-profiilisi |
 | `~/.local/share/omastudio/models/` | Paikalliset tekoälymallit |

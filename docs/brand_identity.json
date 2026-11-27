@@ -2,8 +2,8 @@
   "$schema": "./brand_identity.schema.json",
   "brand": {
     "name": "Omarchy",
-    "ecosystem": "OmaSend / OmaStudio",
-    "tagline": "Sovereign High-Performance Linux Desktop & Distributed Tooling",
+    "ecosystem": "OmaStudio",
+    "tagline": "Sovereign High-Performance Linux Desktop & RAW Photo Studio",
     "version": "1.0.0"
   },
   "symbols": {
@@ -78,9 +78,9 @@
     }
   },
   "asset_hierarchy": {
-    "logos": "~/Pictures/logos/omarchy/",
+    "logos": "assets/",
     "banners": "~/Pictures/banners/<platform>/",
-    "avatars": "~/Pictures/avatars/<kategori>/",
+    "avatars": "~/Pictures/avatars/<category>/",
     "exports": "~/Pictures/OmaStudio_Exports/",
     "projects": "~/Projects/omarchy/",
     "projects_web": "~/Projects/web/",
@@ -92,8 +92,8 @@
     "desktop_linux": {
       "quickshell_bar": {
         "component": "Panel.qml",
-        "icon_type": "NerdFontGlyph",
-        "codepoint": "\\uf1d8",
+        "icon_type": "SVG",
+        "icon_asset": "assets/icon-mono.svg",
         "font_family": "JetBrainsMono Nerd Font, JetBrains Mono, monospace",
         "default_color": "#f8fafc",
         "hover_color": "#38bdf8",
@@ -101,9 +101,9 @@
       },
       "desktop_launcher": {
         "file_name": "omastudio.desktop",
-        "location": "~/.local/share/applications/omastudio.desktop",
-        "icon_name": "omarchy-logo",
-        "icon_path": "/home/ozdil/Pictures/logos/omarchy/omarchy-logo.svg"
+        "location": "/usr/share/applications/omastudio.desktop",
+        "icon_name": "omastudio",
+        "icon_path": "assets/icon.svg"
       },
       "system_tray": {
         "icon_format": "SVG / PNG 24x24 & 48x48",
@@ -117,7 +117,7 @@
         "monochrome": "res/drawable/ic_launcher_monochrome.xml"
       },
       "notification_icon": {
-        "drawable": "res/drawable/ic_stat_omasend.xml",
+        "drawable": "res/drawable/ic_stat_omastudio.xml",
         "tint": "#38bdf8"
       },
       "brand_theme": {
@@ -127,7 +127,7 @@
       }
     },
     "web_pwa": {
-      "favicon_svg": "/assets/logos/omarchy-icon.svg",
+      "favicon_svg": "/assets/icon.svg",
       "apple_touch_icon": "/assets/logos/apple-touch-icon-180x180.png",
       "manifest_icons": [
         {
@@ -152,7 +152,7 @@
     "cli_terminal": {
       "glyph": "\uf1d8",
       "nerd_char": "",
-      "ansi_banner": "OMARCHY // OMASEND",
+      "ansi_banner": "OMARCHY // OMASTUDIO",
       "color_support": "Truecolor 24-bit ANSI (#0284c7, #38bdf8)",
       "badge": "[OMARCHY::VERIFIED]"
     }

@@ -4,7 +4,7 @@
 
 [सभी भाषाएँ](../README.md) · [तकनीकें](../technology/hi.md) · [README](../../README.md)
 
-यह गाइड OmaStudio 3.1 के लिए है। इसमें बताया गया है कि ऐप्लिकेशन कैसे इंस्टॉल करें, विंडो में क्या कहाँ है, और हर पैनल व टूल का उपयोग कैसे करें। स्क्रीनशॉट में [raw.pixls.us](https://raw.pixls.us) (CC0) की Fujifilm GFX 50R और Hasselblad CFV-50c नमूना फ़ाइलें दिखाई गई हैं।
+यह गाइड OmaStudio 3.2 के लिए है। इसमें बताया गया है कि ऐप्लिकेशन कैसे इंस्टॉल करें, विंडो में क्या कहाँ है, और हर पैनल व टूल का उपयोग कैसे करें। स्क्रीनशॉट में [raw.pixls.us](https://raw.pixls.us) (CC0) की Fujifilm GFX 50R और Hasselblad CFV-50c नमूना फ़ाइलें दिखाई गई हैं।
 
 ![Fujifilm GFX 50R फ़ोटो के साथ OmaStudio](../images/lang/main-hi.webp)
 
@@ -358,7 +358,7 @@ omastudio --cli help                                # सभी कमांड
 | पाथ | सामग्री |
 | :--- | :--- |
 | `<फ़ोटो>.omastudio` | किसी फ़ोटो का संपादन (साइडकार) |
-| `~/.local/share/omastudio/catalog.json` | कैटलॉग: रेटिंग, फ़्लैग और रंग लेबल |
+| `~/.local/share/omastudio/catalog.db` | कैटलॉग: रेटिंग, फ़्लैग और रंग लेबल |
 | `~/.local/share/omastudio/fuji-recipes/` | सहेजी गई Fujifilm रेसिपी |
 | `~/.local/share/omastudio/icc/` | आपकी अपनी ICC प्रोफ़ाइलें |
 | `~/.local/share/omastudio/models/` | स्थानीय AI मॉडल |

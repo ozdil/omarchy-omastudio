@@ -4,7 +4,7 @@
 
 [Toate limbile](../README.md) · [Tehnologii](../technology/ro.md) · [README](../../README.md)
 
-Acest ghid se referă la OmaStudio 3.1. Explică instalarea aplicației, organizarea ferestrei și folosirea fiecărui panou și instrument. Capturile de ecran arată fișiere de exemplu Fujifilm GFX 50R și Hasselblad CFV-50c de pe [raw.pixls.us](https://raw.pixls.us) (CC0).
+Acest ghid se referă la OmaStudio 3.2. Explică instalarea aplicației, organizarea ferestrei și folosirea fiecărui panou și instrument. Capturile de ecran arată fișiere de exemplu Fujifilm GFX 50R și Hasselblad CFV-50c de pe [raw.pixls.us](https://raw.pixls.us) (CC0).
 
 ![OmaStudio cu o fotografie Fujifilm GFX 50R](../images/lang/main-ro.webp)
 
@@ -358,7 +358,7 @@ omastudio --cli help                                # toate comenzile
 | Cale | Conținut |
 | :--- | :--- |
 | `<fotografie>.omastudio` | Editarea unei fotografii (fișier însoțitor) |
-| `~/.local/share/omastudio/catalog.json` | Catalog: evaluări, marcaje și etichete de culoare |
+| `~/.local/share/omastudio/catalog.db` | Catalog: evaluări, marcaje și etichete de culoare |
 | `~/.local/share/omastudio/fuji-recipes/` | Rețete Fujifilm salvate |
 | `~/.local/share/omastudio/icc/` | Profilurile ICC proprii |
 | `~/.local/share/omastudio/models/` | Modele IA locale |

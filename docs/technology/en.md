@@ -19,8 +19,8 @@ graph TD
         Daemon["JSON-lines daemon and command line"]
         Decode["LibRaw: unpack sensor data"]
         Develop["Own demosaic, white balance, camera matrix (linear light)"]
-        GPU["wgpu: demosaic on Vulkan / OpenGL ES"]
-        Pipeline["Tone, colour, detail, masks, retouch (rayon)"]
+        GPU["wgpu: demosaic, point ops and halo-banded local filters on Vulkan / OpenGL ES"]
+        Pipeline["Tone, colour, detail, masks, retouch (wgpu + rayon)"]
         CMS["Little CMS 2: ICC conversion, soft proof"]
         Encode["Encoders: JPEG, PNG, TIFF, WebP, AVIF, HEIF, JPEG XL, EXR"]
         ML["ONNX Runtime: AI masks on NPU / GPU / CPU"]
@@ -51,9 +51,9 @@ The window and the engine are separate processes. The window never decodes a pho
 
 | Technology | Role in OmaStudio | Why | Licence |
 | :--- | :--- | :--- | :--- |
-| **Rust** (1.99, edition 2024) | Language of the engine and of the application host | Memory safety for code that parses untrusted files, native speed, and one language for both processes | MIT / Apache-2.0 |
+| **Rust** (1.100, edition 2024) | Language of the engine and of the application host | Memory safety for code that parses untrusted files, native speed, and one language for both processes | MIT / Apache-2.0 |
 | **Qt 6** (6.12, Qt Quick / QML) | The interface: panels, the viewport, scopes, dialogs | GPU-drawn interface with native Wayland support and fractional scaling, right-to-left layout and the Qt Linguist translation system | LGPL-3.0 |
-| **cxx-qt** (0.10) | Connects Rust and Qt: the host types `Process`, `Host` and the control socket are Rust objects used from QML | Safe bindings in both directions without hand-written C++ | MIT / Apache-2.0 |
+| **cxx-qt** (0.10) | Connects Rust and Qt: `Host`, `HistoryController`, `Process`, `WatchedFile` (single Linux `inotify` hub) and the control socket | Safe bindings in both directions without hand-written C++ | MIT / Apache-2.0 |
 | **Qt Wayland** | Runs the window as a native Wayland client (app id `omastudio`) | Omarchy runs Hyprland on Wayland; Hyprland window rules can match the app id | LGPL-3.0 |
 | **xdg-desktop-portal** | File and folder dialogs | The desktop's own chooser, in its theme; part of every Omarchy install | LGPL-2.1+ |
 
@@ -66,11 +66,13 @@ The QML files are compiled into the binary as Qt resources, so an installed vers
 | **LibRaw** (0.22) | Reads the RAW container and unpacks the sensor data, metadata and embedded previews | The widest camera support available as a library, including Fujifilm GFX, Hasselblad, Phase One and Leaf | LGPL-2.1 or CDDL-1.0 (linked dynamically) |
 | **Own development pipeline** | Black level, white balance, X-Trans and Bayer demosaicing, camera colour matrix, lens corrections, all on linear light | Control over colour from the sensor onward and a 16-bit path to export; the demosaic chooses between four directional candidates per pixel | MIT (OmaStudio) |
 | **rayon** (1.12) | Parallel processing on all CPU cores | Data parallelism without hand-written thread pools | MIT / Apache-2.0 |
-| **wgpu** (30) | Demosaicing on the GPU through Vulkan (NVIDIA, AMD, Intel, Qualcomm Adreno) or OpenGL ES, in bands that fit the GPU's limits | One code path for every GPU vendor, written in WGSL; the result matches the CPU path to within one level in 65535 | MIT / Apache-2.0 |
+| **wgpu** (30.0.2) | Full GPU compute pipeline (demosaic, point ops with hardware 3D LUT textures, halo-aware row-striped local filters up to 150 MP) with persistent `PipelineCache`, GPU-resident preview sources, and APU auto-benchmarking on Vulkan (NVIDIA, AMD RADV, Intel ANV, Apple Honeykrisp, Qualcomm Turnip) or OpenGL ES | One code path for every GPU vendor, written in WGSL; matches the CPU path to within one level in 65535 and recovers transparently from driver resets | MIT / Apache-2.0 |
 | **Little CMS 2** (via the `lcms2` crate) | ICC profiles, conversion to the export colour space, rendering intents, soft proofing and the gamut warning | The reference open-source colour management engine | MIT |
+| **SQLite** (WAL mode, system `libsqlite3`) | Persistent indexed catalog (`$XDG_DATA_HOME/omastudio/catalog.db`) with one-time migration from legacy `catalog.json` | Concurrent multi-process safety and sub-millisecond rating/flag/film-simulation queries across large libraries | Public Domain |
+| **quick-xml** (0.42) | Parsing XMP sidecars, Fujifilm `.FP1` profiles and Lensfun XML databases | Zero-unsafe streaming XML parser handling comments, CDATA and character entities cleanly | MIT |
 | **image-rs**, **tiff**, **exr** | Reading and writing PNG, JPEG, TIFF, WebP, OpenEXR, Radiance HDR and PNM | Pure Rust codecs with bounded memory use | MIT / Apache-2.0; exr: BSD-3-Clause |
 | **libjxl**, **libavif**, **libheif**, **libwebp** | JPEG XL, AVIF, HEIF and lossy WebP export | The reference encoders for these formats | BSD-3-Clause, BSD-2-Clause, LGPL-3.0, BSD-3-Clause |
-| **ExifTool** (optional) | Carries camera EXIF metadata into exported files | Writes metadata to every format OmaStudio exports | Artistic / GPL (separate program) |
+| **ExifTool** (optional) | Carries camera EXIF metadata into exported files (with built-in Fujifilm RAF EXIF writer) | Writes metadata to every format OmaStudio exports | Artistic / GPL (separate program) |
 | **Lensfun data** (optional) | Lens profiles for medium format lenses | A large, maintained lens database, read at run time | Data CC BY-SA 3.0 |
 
 The colour pipeline works in linear light: exposure is a photographic EV step and white balance acts on light as the camera's own multipliers do. Images are display-encoded once, before the creative tone and colour modules, and converted with Little CMS at export.
@@ -79,8 +81,8 @@ The colour pipeline works in linear light: exposure is a photographic EV step an
 
 | Technology | Role in OmaStudio | Why | Licence |
 | :--- | :--- | :--- | :--- |
-| **ONNX Runtime** (through the `ort` crate, loaded at run time) | Runs segmentation models for **AI Subject** and **AI Sky** masks | One runtime for NPUs, GPUs and CPUs; optional, so OmaStudio starts without it | MIT |
-| **Execution providers** | OpenVINO (Intel Core Ultra NPU), QNN (Snapdragon X NPU), Vitis AI (AMD Ryzen AI NPU), CUDA, MIGraphX, WebGPU, XNNPACK | Uses the fastest accelerator in the computer and falls back to the CPU | Each provider's own licence |
+| **ONNX Runtime** (through the `ort` crate, `api-23`, loaded at run time) | Runs segmentation models for **AI Subject** and **AI Sky** masks with a 3-entry LRU session cache and hardware-verified provider probing | One runtime for NPUs, GPUs and CPUs; optional, so OmaStudio starts without it | MIT |
+| **Execution providers** | OpenVINO (Intel NPU/GPU), QNN (Snapdragon X NPU), TensorRT-RTX (`nvrtx`), TensorRT (FP16), CUDA, ROCm, MIGraphX, WebGPU, Vitis AI, XNNPACK | Uses the fastest hardware-verified accelerator in the computer and falls back to the CPU | Each provider's own licence |
 | **Omarchy default agent** (Claude Code or Codex) | The edit assistant and the AI chat use the agent picked with `omarchy-default-agent`, with its own sign-in | No extra account or key in OmaStudio | The agent's own terms |
 | **Ollama**, **LM Studio** | Local vision models for the edit assistant | Photos stay on the computer | MIT; LM Studio: proprietary |
 | **Cloud providers** (Anthropic, OpenAI, OpenRouter, Google Gemini) | Optional providers for the edit assistant, reached with `curl` | Keys are stored in the keyring and passed on stdin, never on a command line | The provider's own terms |
@@ -92,7 +94,7 @@ The assistant's answer is constrained to a JSON schema and clamped to each contr
 
 | Technology | Role in OmaStudio | Why | Licence |
 | :--- | :--- | :--- | :--- |
-| **nusb** (0.2) | USB access for the PTP layer | Pure Rust, no libusb or gphoto2 needed | MIT / Apache-2.0 |
+| **nusb** (0.2.9) | USB access for the PTP layer | Pure Rust, no libusb or gphoto2 needed | MIT / Apache-2.0 |
 | **PTP / Fujifilm protocol** | Custom settings C1–C7, recipes written to the camera, in-camera RAW conversion | Documented clean-room from observation; no vendor code | MIT (OmaStudio) |
 | **udev rule** | Gives the logged-in user access to Fujifilm cameras in PTP mode | No root needed to use a camera | MIT (OmaStudio) |
 
@@ -106,7 +108,7 @@ The assistant's answer is constrained to a JSON schema and clamped to each contr
 
 ## Omarchy integration
 
-- **Theme.** Every colour comes from the active Omarchy theme (`~/.local/state/omarchy/current/theme/colors.toml`) and changes live when the theme changes.
+- **Theme.** Every colour comes from the active Omarchy theme (`~/.local/state/omarchy/current/theme/colors.toml`) and changes live via Linux `inotify` when the theme changes.
 - **Font.** The interface uses Omarchy's font (`omarchy-font-set`, read through fontconfig) and scales text from the Omarchy shell's base size.
 - **Hyprland.** Corners follow Hyprland's rounding; the window is a regular Wayland client with app id `omastudio`.
 - **Default agent.** OmaStudio follows `~/.config/omarchy/defaults/agent` live.
@@ -124,12 +126,12 @@ The assistant's answer is constrained to a JSON schema and clamped to each contr
 
 | Technology | Role in OmaStudio | Licence |
 | :--- | :--- | :--- |
-| **Cargo** with a pinned toolchain (`rust-toolchain.toml`) | Builds the engine and the application as one workspace; `Cargo.lock` is committed | MIT / Apache-2.0 |
-| **clang**, **pkgconf** | C compiler and linker driver for the LibRaw shim, library discovery | Apache-2.0 with LLVM exception, ISC |
-| **GitHub Actions** in an `archlinux` container | Build, tests, `clippy -D warnings` and the translation check on every change, with the same packages Omarchy uses | — |
-| **CodeQL** | Static analysis of the Rust code and the workflows | — |
+| **Cargo** with a pinned toolchain (`rust-toolchain.toml`, `1.100.0`) | Builds the engine and the application as one workspace; `Cargo.lock` is committed | MIT / Apache-2.0 |
+| **clang**, **mold**, **pkgconf** | C compiler, fast linker (`.cargo/config.toml`) and library discovery for LibRaw and SQLite | Apache-2.0 with LLVM exception, MIT, ISC |
+| **GitHub Actions** in an `archlinux` container | Build, unit/integration tests, Mesa `lavapipe` WGSL GPU parity tests, `clippy -D warnings`, `cargo audit`, `qmllint`, `shellcheck` and the translation check on every change | — |
+| **CodeQL** | Static analysis of Rust, Python, GitHub Actions workflows, and the `libraw_shim.c` C shim | — |
 | **Release workflow** | Builds the archive on a tag, publishes it with SHA-256 checksums and build provenance attestations | — |
-| **PKGBUILD** | Arch package with dependencies, optional dependencies and the udev rule | — |
+| **PKGBUILD** | Arch package with dependencies, cross-vendor GPU/ML optional dependencies, MIT licence and the udev rule | — |
 
 ## Security
 

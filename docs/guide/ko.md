@@ -4,7 +4,7 @@
 
 [모든 언어](../README.md) · [사용 기술](../technology/ko.md) · [README](../../README.md)
 
-이 설명서는 OmaStudio 3.1을 다룹니다. 응용 프로그램 설치 방법, 창의 구성, 각 패널과 도구의 사용법을 설명합니다. 스크린샷에는 [raw.pixls.us](https://raw.pixls.us)(CC0)의 Fujifilm GFX 50R 및 Hasselblad CFV-50c 샘플 파일을 사용했습니다.
+이 설명서는 OmaStudio 3.2을 다룹니다. 응용 프로그램 설치 방법, 창의 구성, 각 패널과 도구의 사용법을 설명합니다. 스크린샷에는 [raw.pixls.us](https://raw.pixls.us)(CC0)의 Fujifilm GFX 50R 및 Hasselblad CFV-50c 샘플 파일을 사용했습니다.
 
 ![Fujifilm GFX 50R 사진을 연 OmaStudio](../images/lang/main-ko.webp)
 
@@ -358,7 +358,7 @@ omastudio --cli help                                # 모든 명령
 | 경로 | 내용 |
 | :--- | :--- |
 | `<사진>.omastudio` | 사진의 편집 내용(사이드카) |
-| `~/.local/share/omastudio/catalog.json` | 카탈로그: 별점, 플래그, 색상 라벨 |
+| `~/.local/share/omastudio/catalog.db` | 카탈로그: 별점, 플래그, 색상 라벨 |
 | `~/.local/share/omastudio/fuji-recipes/` | 저장된 Fujifilm 레시피 |
 | `~/.local/share/omastudio/icc/` | 직접 추가한 ICC 프로필 |
 | `~/.local/share/omastudio/models/` | 로컬 AI 모델 |
