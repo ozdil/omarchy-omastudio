@@ -141,6 +141,173 @@
     </message>
 </context>
 <context>
+    <name>AdjustTab</name>
+    <message>
+        <source>Blacks</source>
+        <translation>黑色</translation>
+    </message>
+    <message>
+        <source>Clarity (Midtone Contrast)</source>
+        <translation>清晰度（中间调对比度）</translation>
+    </message>
+    <message>
+        <source>Color Chrome Effect</source>
+        <translation>彩色效果</translation>
+    </message>
+    <message>
+        <source>Color Chrome FX Blue</source>
+        <translation>彩色 FX 蓝色</translation>
+    </message>
+    <message>
+        <source>Colour grading</source>
+        <translation>调色</translation>
+    </message>
+    <message>
+        <source>Colour management</source>
+        <translation>色彩管理</translation>
+    </message>
+    <message>
+        <source>Colour mixer</source>
+        <translation>混色器</translation>
+    </message>
+    <message>
+        <source>Contrast</source>
+        <translation>对比度</translation>
+    </message>
+    <message>
+        <source>Curve Darks (Lower Mids)</source>
+        <translation>曲线：暗调（中间调偏下）</translation>
+    </message>
+    <message>
+        <source>Curve Highlights</source>
+        <translation>曲线：高光</translation>
+    </message>
+    <message>
+        <source>Curve Lights (Upper Mids)</source>
+        <translation>曲线：亮调（中间调偏上）</translation>
+    </message>
+    <message>
+        <source>Curve Shadows</source>
+        <translation>曲线：阴影</translation>
+    </message>
+    <message>
+        <source>Defringe (Chromatic Aberration)</source>
+        <translation>去边（色差）</translation>
+    </message>
+    <message>
+        <source>Dehaze</source>
+        <translation>去朦胧</translation>
+    </message>
+    <message>
+        <source>Detail and optics</source>
+        <translation>细节与光学</translation>
+    </message>
+    <message>
+        <source>Exposure</source>
+        <translation>曝光</translation>
+    </message>
+    <message>
+        <source>Grain</source>
+        <translation>颗粒</translation>
+    </message>
+    <message>
+        <source>Highlights</source>
+        <translation>高光</translation>
+    </message>
+    <message>
+        <source>Horizontal</source>
+        <translation>水平</translation>
+    </message>
+    <message>
+        <source>Lens Distortion Correction</source>
+        <translation>镜头畸变校正</translation>
+    </message>
+    <message>
+        <source>Noise Reduction (Color)</source>
+        <translation>降噪（颜色）</translation>
+    </message>
+    <message>
+        <source>Noise Reduction (Luma)</source>
+        <translation>降噪（明亮度）</translation>
+    </message>
+    <message>
+        <source>Open a photo first</source>
+        <translation>请先打开照片</translation>
+    </message>
+    <message>
+        <source>Presence</source>
+        <translation>鲜明度</translation>
+    </message>
+    <message>
+        <source>Profile</source>
+        <translation>配置文件</translation>
+    </message>
+    <message>
+        <source>Saturation</source>
+        <translation>饱和度</translation>
+    </message>
+    <message>
+        <source>Scale</source>
+        <translation>缩放</translation>
+    </message>
+    <message>
+        <source>Shadows</source>
+        <translation>阴影</translation>
+    </message>
+    <message>
+        <source>Sharpening</source>
+        <translation>锐化</translation>
+    </message>
+    <message>
+        <source>Temperature</source>
+        <translation>色温</translation>
+    </message>
+    <message>
+        <source>Texture</source>
+        <translation>纹理</translation>
+    </message>
+    <message>
+        <source>Tint</source>
+        <translation>色调</translation>
+    </message>
+    <message>
+        <source>Tone</source>
+        <translation>色调</translation>
+    </message>
+    <message>
+        <source>Tone curve</source>
+        <translation>色调曲线</translation>
+    </message>
+    <message>
+        <source>Transform</source>
+        <translation>变换</translation>
+    </message>
+    <message>
+        <source>Vertical</source>
+        <translation>垂直</translation>
+    </message>
+    <message>
+        <source>Vertical straightens converging lines, such as buildings photographed from below. Crop afterwards to remove the empty edges.</source>
+        <translation>垂直可校正汇聚的线条，例如从下方拍摄的建筑。之后裁剪以去除空白边缘。</translation>
+    </message>
+    <message>
+        <source>Vibrance</source>
+        <translation>自然饱和度</translation>
+    </message>
+    <message>
+        <source>Vignette</source>
+        <translation>暗角</translation>
+    </message>
+    <message>
+        <source>White balance</source>
+        <translation>白平衡</translation>
+    </message>
+    <message>
+        <source>Whites</source>
+        <translation>白色</translation>
+    </message>
+</context>
+<context>
     <name>AiAssistPanel</name>
     <message>
         <source>%1 (automatic)</source>
@@ -291,10 +458,123 @@
     </message>
 </context>
 <context>
+    <name>AiTab</name>
+    <message>
+        <source>Assistant edit applied</source>
+        <translation>已应用助手的编辑</translation>
+    </message>
+    <message>
+        <source>Edit assistant</source>
+        <translation>编辑助手</translation>
+    </message>
+</context>
+<context>
     <name>BoundedTextInput</name>
     <message>
         <source>Clipboard content exceeded byte limit or timed out.</source>
         <translation>剪贴板内容超出字节限制或已超时。</translation>
+    </message>
+</context>
+<context>
+    <name>CenterWorkspace</name>
+    <message>
+        <source>Opened %1</source>
+        <translation>已打开 %1</translation>
+    </message>
+    <message>
+        <source>Scanning folder %1</source>
+        <translation>正在扫描文件夹 %1</translation>
+    </message>
+    <message>
+        <source>Soft proof: %1</source>
+        <translation>软打样：%1</translation>
+    </message>
+</context>
+<context>
+    <name>CloudDialog</name>
+    <message>
+        <source>Add an account</source>
+        <translation>添加账户</translation>
+    </message>
+    <message>
+        <source>Browse</source>
+        <translation>浏览</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>取消</translation>
+    </message>
+    <message>
+        <source>Client ID</source>
+        <translation>客户端 ID</translation>
+    </message>
+    <message>
+        <source>Client secret</source>
+        <translation>客户端密钥</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>关闭</translation>
+    </message>
+    <message>
+        <source>Cloud accounts</source>
+        <translation>云账户</translation>
+    </message>
+    <message>
+        <source>Confirm</source>
+        <translation>确认</translation>
+    </message>
+    <message>
+        <source>Connected</source>
+        <translation>已连接</translation>
+    </message>
+    <message>
+        <source>Disconnect</source>
+        <translation>断开连接</translation>
+    </message>
+    <message>
+        <source>Disconnecting removes the account&apos;s keys and downloaded copies from this computer. Files in the account stay as they are.</source>
+        <translation>断开连接会从这台电脑上删除该账户的密钥和已下载的副本。账户中的文件保持不变。</translation>
+    </message>
+    <message>
+        <source>Enter this code on the GitHub page that opened in your browser:</source>
+        <translation>请在浏览器中打开的 GitHub 页面上输入此代码:</translation>
+    </message>
+    <message>
+        <source>Finish signing in in your browser. This window updates when you are done.</source>
+        <translation>请在浏览器中完成登录。完成后此窗口会更新。</translation>
+    </message>
+    <message>
+        <source>Install it with: sudo pacman -S %1</source>
+        <translation>安装命令:sudo pacman -S %1</translation>
+    </message>
+    <message>
+        <source>Needs %1</source>
+        <translation>需要 %1</translation>
+    </message>
+    <message>
+        <source>No account connected yet.</source>
+        <translation>尚未连接任何账户。</translation>
+    </message>
+    <message>
+        <source>Open the page again</source>
+        <translation>再次打开页面</translation>
+    </message>
+    <message>
+        <source>Own Google client ID (optional)</source>
+        <translation>自有 Google 客户端 ID(可选)</translation>
+    </message>
+    <message>
+        <source>Signing in to %1</source>
+        <translation>正在登录 %1</translation>
+    </message>
+    <message>
+        <source>The shared client rclone uses for Google Drive is being retired. With a client ID of your own from the Google Cloud Console, Google Drive keeps working. It is used the next time you connect Google Drive.</source>
+        <translation>rclone 用于 Google Drive 的共享客户端即将停用。使用您在 Google Cloud Console 中创建的客户端 ID,Google Drive 可以继续使用。下次连接 Google Drive 时会使用它。</translation>
+    </message>
+    <message>
+        <source>You sign in on the service&apos;s own page in your browser. OmaStudio keeps the access keys in the system keyring and creates a folder named %1 in each account for uploads.</source>
+        <translation>您在浏览器中通过服务自己的页面登录。OmaStudio 将访问密钥保存在系统密钥环中,并在每个账户中创建名为 %1 的文件夹用于上传。</translation>
     </message>
 </context>
 <context>
@@ -1090,23 +1370,6 @@
     </message>
 </context>
 <context>
-    <name>HistogramView</name>
-    <message>
-        <source>[S] %1%</source>
-        <comment>S: shadow clipping</comment>
-        <translation>[暗] %1%</translation>
-    </message>
-    <message>
-        <source>Histogram</source>
-        <translation>直方图</translation>
-    </message>
-    <message>
-        <source>[H] %1%</source>
-        <comment>H: highlight clipping</comment>
-        <translation>[亮] %1%</translation>
-    </message>
-</context>
-<context>
     <name>HistoryPanel</name>
     <message>
         <source>History</source>
@@ -1471,6 +1734,32 @@
     </message>
 </context>
 <context>
+    <name>LeftInspector</name>
+    <message>
+        <source>Analyzing...</source>
+        <translation>分析中...</translation>
+    </message>
+    <message>
+        <source>Extracting dynamic range...</source>
+        <translation>正在提取动态范围...</translation>
+    </message>
+    <message>
+        <source>Suggested scene</source>
+        <translation>推测场景</translation>
+    </message>
+</context>
+<context>
+    <name>LooksTab</name>
+    <message>
+        <source>LUT</source>
+        <translation>LUT</translation>
+    </message>
+    <message>
+        <source>Presets</source>
+        <translation>预设</translation>
+    </message>
+</context>
+<context>
     <name>LutSelector</name>
     <message>
         <source>Load 3D LUT</source>
@@ -1590,22 +1879,6 @@
         <translation>裁剪模式：关</translation>
     </message>
     <message>
-        <source>Analyzing...</source>
-        <translation>分析中...</translation>
-    </message>
-    <message>
-        <source>Extracting dynamic range...</source>
-        <translation>正在提取动态范围...</translation>
-    </message>
-    <message>
-        <source>Opened %1</source>
-        <translation>已打开 %1</translation>
-    </message>
-    <message>
-        <source>Scanning folder %1</source>
-        <translation>正在扫描文件夹 %1</translation>
-    </message>
-    <message>
         <source>Contrast</source>
         <translation>对比度</translation>
     </message>
@@ -1630,28 +1903,8 @@
         <translation>黑色</translation>
     </message>
     <message>
-        <source>Curve Highlights</source>
-        <translation>曲线：高光</translation>
-    </message>
-    <message>
-        <source>Curve Lights (Upper Mids)</source>
-        <translation>曲线：亮调（中间调偏上）</translation>
-    </message>
-    <message>
-        <source>Curve Darks (Lower Mids)</source>
-        <translation>曲线：暗调（中间调偏下）</translation>
-    </message>
-    <message>
-        <source>Curve Shadows</source>
-        <translation>曲线：阴影</translation>
-    </message>
-    <message>
         <source>Texture</source>
         <translation>纹理</translation>
-    </message>
-    <message>
-        <source>Suggested scene</source>
-        <translation>推测场景</translation>
     </message>
     <message>
         <source>Clarity (Midtone Contrast)</source>
@@ -1674,28 +1927,8 @@
         <translation>锐化</translation>
     </message>
     <message>
-        <source>Noise Reduction (Luma)</source>
-        <translation>降噪（明亮度）</translation>
-    </message>
-    <message>
-        <source>Noise Reduction (Color)</source>
-        <translation>降噪（颜色）</translation>
-    </message>
-    <message>
         <source>Vignette</source>
         <translation>暗角</translation>
-    </message>
-    <message>
-        <source>Defringe (Chromatic Aberration)</source>
-        <translation>去边（色差）</translation>
-    </message>
-    <message>
-        <source>Lens Distortion Correction</source>
-        <translation>镜头畸变校正</translation>
-    </message>
-    <message>
-        <source>Open a photo first</source>
-        <translation>请先打开照片</translation>
     </message>
     <message>
         <source>Version %1</source>
@@ -1822,34 +2055,6 @@
         <translation>文件夹扫描没有响应。</translation>
     </message>
     <message>
-        <source>Soft proof: %1</source>
-        <translation>软打样：%1</translation>
-    </message>
-    <message>
-        <source>Soft proof off</source>
-        <translation>软打样已关闭</translation>
-    </message>
-    <message>
-        <source>Rating: ★</source>
-        <translation>评级：★</translation>
-    </message>
-    <message>
-        <source>Rating: ★★</source>
-        <translation>评级：★★</translation>
-    </message>
-    <message>
-        <source>Rating: ★★★</source>
-        <translation>评级：★★★</translation>
-    </message>
-    <message>
-        <source>Rating: ★★★★</source>
-        <translation>评级：★★★★</translation>
-    </message>
-    <message>
-        <source>Rating: ★★★★★</source>
-        <translation>评级：★★★★★</translation>
-    </message>
-    <message>
         <source>Flag cleared</source>
         <translation>已清除旗标</translation>
     </message>
@@ -1870,60 +2075,12 @@
         <translation>已排除</translation>
     </message>
     <message>
-        <source>Adjust</source>
-        <translation>调整</translation>
-    </message>
-    <message>
-        <source>Masks</source>
-        <translation>蒙版</translation>
-    </message>
-    <message>
-        <source>Looks</source>
-        <translation>风格</translation>
-    </message>
-    <message>
-        <source>AI</source>
-        <translation>AI 功能</translation>
-    </message>
-    <message>
-        <source>Read the photo&apos;s .xmp sidecar written by another editor</source>
-        <translation>读取其他编辑器写入的 .xmp 文件</translation>
-    </message>
-    <message>
-        <source>Write the edit, rating and label to an .xmp sidecar for other editors</source>
-        <translation>将编辑、评级和标签写入 .xmp 文件供其他编辑器使用</translation>
-    </message>
-    <message>
         <source>Profile</source>
         <translation>配置文件</translation>
     </message>
     <message>
-        <source>Color Chrome Effect</source>
-        <translation>彩色效果</translation>
-    </message>
-    <message>
-        <source>Color Chrome FX Blue</source>
-        <translation>彩色 FX 蓝色</translation>
-    </message>
-    <message>
         <source>White balance</source>
         <translation>白平衡</translation>
-    </message>
-    <message>
-        <source>Temperature</source>
-        <translation>色温</translation>
-    </message>
-    <message>
-        <source>Tint</source>
-        <translation>色调</translation>
-    </message>
-    <message>
-        <source>Tone</source>
-        <translation>色调</translation>
-    </message>
-    <message>
-        <source>Presence</source>
-        <translation>鲜明度</translation>
     </message>
     <message>
         <source>Tone curve</source>
@@ -1946,28 +2103,8 @@
         <translation>变换</translation>
     </message>
     <message>
-        <source>Vertical</source>
-        <translation>垂直</translation>
-    </message>
-    <message>
-        <source>Horizontal</source>
-        <translation>水平</translation>
-    </message>
-    <message>
-        <source>Scale</source>
-        <translation>缩放</translation>
-    </message>
-    <message>
-        <source>Vertical straightens converging lines, such as buildings photographed from below. Crop afterwards to remove the empty edges.</source>
-        <translation>垂直可校正汇聚的线条，例如从下方拍摄的建筑。之后裁剪以去除空白边缘。</translation>
-    </message>
-    <message>
         <source>Grain</source>
         <translation>颗粒</translation>
-    </message>
-    <message>
-        <source>Colour management</source>
-        <translation>色彩管理</translation>
     </message>
     <message>
         <source>Heal and clone</source>
@@ -1984,34 +2121,6 @@
     <message>
         <source>LUT</source>
         <translation>LUT</translation>
-    </message>
-    <message>
-        <source>Edit assistant</source>
-        <translation>编辑助手</translation>
-    </message>
-    <message>
-        <source>Assistant edit applied</source>
-        <translation>已应用助手的编辑</translation>
-    </message>
-    <message>
-        <source>Copy</source>
-        <translation>复制</translation>
-    </message>
-    <message>
-        <source>Paste</source>
-        <translation>粘贴</translation>
-    </message>
-    <message>
-        <source>Reset</source>
-        <translation>重置</translation>
-    </message>
-    <message>
-        <source>Import XMP</source>
-        <translation>导入 XMP</translation>
-    </message>
-    <message>
-        <source>Write XMP</source>
-        <translation>写入 XMP</translation>
     </message>
     <message>
         <source>Opening %1</source>
@@ -2090,6 +2199,17 @@
     <message>
         <source>no answer from the engine</source>
         <translation>引擎无响应</translation>
+    </message>
+</context>
+<context>
+    <name>MasksTab</name>
+    <message>
+        <source>Heal and clone</source>
+        <translation>修复与仿制</translation>
+    </message>
+    <message>
+        <source>Local adjustments</source>
+        <translation>局部调整</translation>
     </message>
 </context>
 <context>
@@ -2284,6 +2404,53 @@
     </message>
 </context>
 <context>
+    <name>RightInspector</name>
+    <message>
+        <source>AI</source>
+        <translation>AI 功能</translation>
+    </message>
+    <message>
+        <source>Adjust</source>
+        <translation>调整</translation>
+    </message>
+    <message>
+        <source>Copy</source>
+        <translation>复制</translation>
+    </message>
+    <message>
+        <source>Import XMP</source>
+        <translation>导入 XMP</translation>
+    </message>
+    <message>
+        <source>Looks</source>
+        <translation>风格</translation>
+    </message>
+    <message>
+        <source>Masks</source>
+        <translation>蒙版</translation>
+    </message>
+    <message>
+        <source>Paste</source>
+        <translation>粘贴</translation>
+    </message>
+    <message>
+        <source>Read the photo&apos;s .xmp sidecar written by another editor</source>
+        <translation>读取其他编辑器写入的 .xmp 文件</translation>
+    </message>
+    <message>
+        <source>Reset</source>
+        <translation>重置</translation>
+    </message>
+    <message>
+        <source>Write XMP</source>
+        <translation>写入 XMP</translation>
+    </message>
+    <message>
+        <source>Write the edit, rating and label to an .xmp sidecar for other editors</source>
+        <translation>将编辑、评级和标签写入 .xmp 文件供其他编辑器使用</translation>
+    </message>
+</context>
+<context>
     <name>ScopesView</name>
     <message>
         <source>HIST</source>
@@ -2338,6 +2505,57 @@
     <message>
         <source>SKIN</source>
         <translation>肤色</translation>
+    </message>
+</context>
+<context>
+    <name>ShortcutRouter</name>
+    <message>
+        <source>Crop mode: off</source>
+        <translation>裁剪模式：关</translation>
+    </message>
+    <message>
+        <source>Crop mode: on (C)</source>
+        <translation>裁剪模式：开（C）</translation>
+    </message>
+    <message>
+        <source>Flag cleared</source>
+        <translation>已清除旗标</translation>
+    </message>
+    <message>
+        <source>Open a photo first</source>
+        <translation>请先打开照片</translation>
+    </message>
+    <message>
+        <source>Rating cleared</source>
+        <translation>已清除评级</translation>
+    </message>
+    <message>
+        <source>Rating: ★</source>
+        <translation>评级：★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★</source>
+        <translation>评级：★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★</source>
+        <translation>评级：★★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★★</source>
+        <translation>评级：★★★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★★★</source>
+        <translation>评级：★★★★★</translation>
+    </message>
+    <message>
+        <source>Soft proof off</source>
+        <translation>软打样已关闭</translation>
+    </message>
+    <message>
+        <source>Soft proof: %1</source>
+        <translation>软打样：%1</translation>
     </message>
 </context>
 <context>
@@ -2725,93 +2943,6 @@
     <message>
         <source>Drop Shadow</source>
         <translation>投影</translation>
-    </message>
-</context>
-<context>
-    <name>CloudDialog</name>
-    <message>
-        <source>Add an account</source>
-        <translation>添加账户</translation>
-    </message>
-    <message>
-        <source>Browse</source>
-        <translation>浏览</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation>取消</translation>
-    </message>
-    <message>
-        <source>Client ID</source>
-        <translation>客户端 ID</translation>
-    </message>
-    <message>
-        <source>Client secret</source>
-        <translation>客户端密钥</translation>
-    </message>
-    <message>
-        <source>Close</source>
-        <translation>关闭</translation>
-    </message>
-    <message>
-        <source>Cloud accounts</source>
-        <translation>云账户</translation>
-    </message>
-    <message>
-        <source>Confirm</source>
-        <translation>确认</translation>
-    </message>
-    <message>
-        <source>Connected</source>
-        <translation>已连接</translation>
-    </message>
-    <message>
-        <source>Disconnect</source>
-        <translation>断开连接</translation>
-    </message>
-    <message>
-        <source>Disconnecting removes the account's keys and downloaded copies from this computer. Files in the account stay as they are.</source>
-        <translation>断开连接会从这台电脑上删除该账户的密钥和已下载的副本。账户中的文件保持不变。</translation>
-    </message>
-    <message>
-        <source>Enter this code on the GitHub page that opened in your browser:</source>
-        <translation>请在浏览器中打开的 GitHub 页面上输入此代码:</translation>
-    </message>
-    <message>
-        <source>Finish signing in in your browser. This window updates when you are done.</source>
-        <translation>请在浏览器中完成登录。完成后此窗口会更新。</translation>
-    </message>
-    <message>
-        <source>Install it with: sudo pacman -S %1</source>
-        <translation>安装命令:sudo pacman -S %1</translation>
-    </message>
-    <message>
-        <source>Needs %1</source>
-        <translation>需要 %1</translation>
-    </message>
-    <message>
-        <source>No account connected yet.</source>
-        <translation>尚未连接任何账户。</translation>
-    </message>
-    <message>
-        <source>Open the page again</source>
-        <translation>再次打开页面</translation>
-    </message>
-    <message>
-        <source>Own Google client ID (optional)</source>
-        <translation>自有 Google 客户端 ID(可选)</translation>
-    </message>
-    <message>
-        <source>Signing in to %1</source>
-        <translation>正在登录 %1</translation>
-    </message>
-    <message>
-        <source>The shared client rclone uses for Google Drive is being retired. With a client ID of your own from the Google Cloud Console, Google Drive keeps working. It is used the next time you connect Google Drive.</source>
-        <translation>rclone 用于 Google Drive 的共享客户端即将停用。使用您在 Google Cloud Console 中创建的客户端 ID,Google Drive 可以继续使用。下次连接 Google Drive 时会使用它。</translation>
-    </message>
-    <message>
-        <source>You sign in on the service's own page in your browser. OmaStudio keeps the access keys in the system keyring and creates a folder named %1 in each account for uploads.</source>
-        <translation>您在浏览器中通过服务自己的页面登录。OmaStudio 将访问密钥保存在系统密钥环中,并在每个账户中创建名为 %1 的文件夹用于上传。</translation>
     </message>
 </context>
 </TS>

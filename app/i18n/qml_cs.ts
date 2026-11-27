@@ -141,6 +141,173 @@
     </message>
 </context>
 <context>
+    <name>AdjustTab</name>
+    <message>
+        <source>Blacks</source>
+        <translation>Černé</translation>
+    </message>
+    <message>
+        <source>Clarity (Midtone Contrast)</source>
+        <translation>Zřetelnost (kontrast středních tónů)</translation>
+    </message>
+    <message>
+        <source>Color Chrome Effect</source>
+        <translation>Efekt Color Chrome</translation>
+    </message>
+    <message>
+        <source>Color Chrome FX Blue</source>
+        <translation>Color Chrome FX Modrá</translation>
+    </message>
+    <message>
+        <source>Colour grading</source>
+        <translation>Barevné korekce</translation>
+    </message>
+    <message>
+        <source>Colour management</source>
+        <translation>Správa barev</translation>
+    </message>
+    <message>
+        <source>Colour mixer</source>
+        <translation>Míchání barev</translation>
+    </message>
+    <message>
+        <source>Contrast</source>
+        <translation>Kontrast</translation>
+    </message>
+    <message>
+        <source>Curve Darks (Lower Mids)</source>
+        <translation>Křivka: tmavé tóny (dolní středy)</translation>
+    </message>
+    <message>
+        <source>Curve Highlights</source>
+        <translation>Křivka: světla</translation>
+    </message>
+    <message>
+        <source>Curve Lights (Upper Mids)</source>
+        <translation>Křivka: jasné tóny (horní středy)</translation>
+    </message>
+    <message>
+        <source>Curve Shadows</source>
+        <translation>Křivka: stíny</translation>
+    </message>
+    <message>
+        <source>Defringe (Chromatic Aberration)</source>
+        <translation>Odstranění lemování (chromatická vada)</translation>
+    </message>
+    <message>
+        <source>Dehaze</source>
+        <translation>Odstranění závoje</translation>
+    </message>
+    <message>
+        <source>Detail and optics</source>
+        <translation>Detaily a optika</translation>
+    </message>
+    <message>
+        <source>Exposure</source>
+        <translation>Expozice</translation>
+    </message>
+    <message>
+        <source>Grain</source>
+        <translation>Zrno</translation>
+    </message>
+    <message>
+        <source>Highlights</source>
+        <translation>Světla</translation>
+    </message>
+    <message>
+        <source>Horizontal</source>
+        <translation>Vodorovně</translation>
+    </message>
+    <message>
+        <source>Lens Distortion Correction</source>
+        <translation>Korekce zkreslení objektivu</translation>
+    </message>
+    <message>
+        <source>Noise Reduction (Color)</source>
+        <translation>Redukce šumu (barva)</translation>
+    </message>
+    <message>
+        <source>Noise Reduction (Luma)</source>
+        <translation>Redukce šumu (jas)</translation>
+    </message>
+    <message>
+        <source>Open a photo first</source>
+        <translation>Nejprve otevřete fotografii</translation>
+    </message>
+    <message>
+        <source>Presence</source>
+        <translation>Výraznost</translation>
+    </message>
+    <message>
+        <source>Profile</source>
+        <translation>Profil</translation>
+    </message>
+    <message>
+        <source>Saturation</source>
+        <translation>Sytost</translation>
+    </message>
+    <message>
+        <source>Scale</source>
+        <translation>Měřítko</translation>
+    </message>
+    <message>
+        <source>Shadows</source>
+        <translation>Stíny</translation>
+    </message>
+    <message>
+        <source>Sharpening</source>
+        <translation>Doostření</translation>
+    </message>
+    <message>
+        <source>Temperature</source>
+        <translation>Teplota</translation>
+    </message>
+    <message>
+        <source>Texture</source>
+        <translation>Textura</translation>
+    </message>
+    <message>
+        <source>Tint</source>
+        <translation>Odstín</translation>
+    </message>
+    <message>
+        <source>Tone</source>
+        <translation>Tóny</translation>
+    </message>
+    <message>
+        <source>Tone curve</source>
+        <translation>Tónová křivka</translation>
+    </message>
+    <message>
+        <source>Transform</source>
+        <translation>Transformace</translation>
+    </message>
+    <message>
+        <source>Vertical</source>
+        <translation>Svisle</translation>
+    </message>
+    <message>
+        <source>Vertical straightens converging lines, such as buildings photographed from below. Crop afterwards to remove the empty edges.</source>
+        <translation>Svisle narovná sbíhající se linie, například budovy fotografované zdola. Poté ořízněte prázdné okraje.</translation>
+    </message>
+    <message>
+        <source>Vibrance</source>
+        <translation>Živost</translation>
+    </message>
+    <message>
+        <source>Vignette</source>
+        <translation>Vinětace</translation>
+    </message>
+    <message>
+        <source>White balance</source>
+        <translation>Vyvážení bílé</translation>
+    </message>
+    <message>
+        <source>Whites</source>
+        <translation>Bílé</translation>
+    </message>
+</context>
+<context>
     <name>AiAssistPanel</name>
     <message>
         <source>%1 (automatic)</source>
@@ -291,10 +458,123 @@
     </message>
 </context>
 <context>
+    <name>AiTab</name>
+    <message>
+        <source>Assistant edit applied</source>
+        <translation>Úprava asistenta použita</translation>
+    </message>
+    <message>
+        <source>Edit assistant</source>
+        <translation>Asistent úprav</translation>
+    </message>
+</context>
+<context>
     <name>BoundedTextInput</name>
     <message>
         <source>Clipboard content exceeded byte limit or timed out.</source>
         <translation>Obsah schránky překročil limit bajtů nebo vypršel časový limit.</translation>
+    </message>
+</context>
+<context>
+    <name>CenterWorkspace</name>
+    <message>
+        <source>Opened %1</source>
+        <translation>Otevřeno %1</translation>
+    </message>
+    <message>
+        <source>Scanning folder %1</source>
+        <translation>Prohledává se složka %1</translation>
+    </message>
+    <message>
+        <source>Soft proof: %1</source>
+        <translation>Softproof: %1</translation>
+    </message>
+</context>
+<context>
+    <name>CloudDialog</name>
+    <message>
+        <source>Add an account</source>
+        <translation>Přidat účet</translation>
+    </message>
+    <message>
+        <source>Browse</source>
+        <translation>Procházet</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Zrušit</translation>
+    </message>
+    <message>
+        <source>Client ID</source>
+        <translation>ID klienta</translation>
+    </message>
+    <message>
+        <source>Client secret</source>
+        <translation>Tajný klíč klienta</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>Zavřít</translation>
+    </message>
+    <message>
+        <source>Cloud accounts</source>
+        <translation>Cloudové účty</translation>
+    </message>
+    <message>
+        <source>Confirm</source>
+        <translation>Potvrdit</translation>
+    </message>
+    <message>
+        <source>Connected</source>
+        <translation>Připojené</translation>
+    </message>
+    <message>
+        <source>Disconnect</source>
+        <translation>Odpojit</translation>
+    </message>
+    <message>
+        <source>Disconnecting removes the account&apos;s keys and downloaded copies from this computer. Files in the account stay as they are.</source>
+        <translation>Odpojení odstraní z tohoto počítače klíče účtu a stažené kopie. Soubory v účtu zůstanou beze změny.</translation>
+    </message>
+    <message>
+        <source>Enter this code on the GitHub page that opened in your browser:</source>
+        <translation>Zadejte tento kód na stránce GitHubu, která se otevřela v prohlížeči:</translation>
+    </message>
+    <message>
+        <source>Finish signing in in your browser. This window updates when you are done.</source>
+        <translation>Dokončete přihlášení v prohlížeči. Okno se potom aktualizuje.</translation>
+    </message>
+    <message>
+        <source>Install it with: sudo pacman -S %1</source>
+        <translation>Instalace: sudo pacman -S %1</translation>
+    </message>
+    <message>
+        <source>Needs %1</source>
+        <translation>Vyžaduje %1</translation>
+    </message>
+    <message>
+        <source>No account connected yet.</source>
+        <translation>Zatím není připojen žádný účet.</translation>
+    </message>
+    <message>
+        <source>Open the page again</source>
+        <translation>Znovu otevřít stránku</translation>
+    </message>
+    <message>
+        <source>Own Google client ID (optional)</source>
+        <translation>Vlastní ID klienta Google (volitelné)</translation>
+    </message>
+    <message>
+        <source>Signing in to %1</source>
+        <translation>Přihlašování k %1</translation>
+    </message>
+    <message>
+        <source>The shared client rclone uses for Google Drive is being retired. With a client ID of your own from the Google Cloud Console, Google Drive keeps working. It is used the next time you connect Google Drive.</source>
+        <translation>Sdílený klient, kterého rclone používá pro Google Drive, se ruší. S vlastním ID klienta z Google Cloud Console bude Google Drive fungovat dál. Použije se při příštím připojení Google Drive.</translation>
+    </message>
+    <message>
+        <source>You sign in on the service&apos;s own page in your browser. OmaStudio keeps the access keys in the system keyring and creates a folder named %1 in each account for uploads.</source>
+        <translation>Přihlašujete se na stránce služby v prohlížeči. OmaStudio uchovává přístupové klíče v systémové klíčence a v každém účtu vytvoří pro nahrávání složku %1.</translation>
     </message>
 </context>
 <context>
@@ -1096,23 +1376,6 @@
     </message>
 </context>
 <context>
-    <name>HistogramView</name>
-    <message>
-        <source>[S] %1%</source>
-        <comment>S: shadow clipping</comment>
-        <translation>[St] %1%</translation>
-    </message>
-    <message>
-        <source>Histogram</source>
-        <translation>Histogram</translation>
-    </message>
-    <message>
-        <source>[H] %1%</source>
-        <comment>H: highlight clipping</comment>
-        <translation>[Sv] %1%</translation>
-    </message>
-</context>
-<context>
     <name>HistoryPanel</name>
     <message>
         <source>History</source>
@@ -1477,6 +1740,32 @@
     </message>
 </context>
 <context>
+    <name>LeftInspector</name>
+    <message>
+        <source>Analyzing...</source>
+        <translation>Analýza...</translation>
+    </message>
+    <message>
+        <source>Extracting dynamic range...</source>
+        <translation>Zjišťování dynamického rozsahu...</translation>
+    </message>
+    <message>
+        <source>Suggested scene</source>
+        <translation>Navržená scéna</translation>
+    </message>
+</context>
+<context>
+    <name>LooksTab</name>
+    <message>
+        <source>LUT</source>
+        <translation>LUT</translation>
+    </message>
+    <message>
+        <source>Presets</source>
+        <translation>Předvolby</translation>
+    </message>
+</context>
+<context>
     <name>LutSelector</name>
     <message>
         <source>Load 3D LUT</source>
@@ -1598,22 +1887,6 @@
         <translation>Režim ořezu: vypnuto</translation>
     </message>
     <message>
-        <source>Analyzing...</source>
-        <translation>Analýza...</translation>
-    </message>
-    <message>
-        <source>Extracting dynamic range...</source>
-        <translation>Zjišťování dynamického rozsahu...</translation>
-    </message>
-    <message>
-        <source>Opened %1</source>
-        <translation>Otevřeno %1</translation>
-    </message>
-    <message>
-        <source>Scanning folder %1</source>
-        <translation>Prohledává se složka %1</translation>
-    </message>
-    <message>
         <source>Contrast</source>
         <translation>Kontrast</translation>
     </message>
@@ -1638,28 +1911,8 @@
         <translation>Černé</translation>
     </message>
     <message>
-        <source>Curve Highlights</source>
-        <translation>Křivka: světla</translation>
-    </message>
-    <message>
-        <source>Curve Lights (Upper Mids)</source>
-        <translation>Křivka: jasné tóny (horní středy)</translation>
-    </message>
-    <message>
-        <source>Curve Darks (Lower Mids)</source>
-        <translation>Křivka: tmavé tóny (dolní středy)</translation>
-    </message>
-    <message>
-        <source>Curve Shadows</source>
-        <translation>Křivka: stíny</translation>
-    </message>
-    <message>
         <source>Texture</source>
         <translation>Textura</translation>
-    </message>
-    <message>
-        <source>Suggested scene</source>
-        <translation>Navržená scéna</translation>
     </message>
     <message>
         <source>Clarity (Midtone Contrast)</source>
@@ -1682,28 +1935,8 @@
         <translation>Doostření</translation>
     </message>
     <message>
-        <source>Noise Reduction (Luma)</source>
-        <translation>Redukce šumu (jas)</translation>
-    </message>
-    <message>
-        <source>Noise Reduction (Color)</source>
-        <translation>Redukce šumu (barva)</translation>
-    </message>
-    <message>
         <source>Vignette</source>
         <translation>Vinětace</translation>
-    </message>
-    <message>
-        <source>Defringe (Chromatic Aberration)</source>
-        <translation>Odstranění lemování (chromatická vada)</translation>
-    </message>
-    <message>
-        <source>Lens Distortion Correction</source>
-        <translation>Korekce zkreslení objektivu</translation>
-    </message>
-    <message>
-        <source>Open a photo first</source>
-        <translation>Nejprve otevřete fotografii</translation>
     </message>
     <message>
         <source>Version %1</source>
@@ -1830,34 +2063,6 @@
         <translation>Prohledávání složky neodpovědělo.</translation>
     </message>
     <message>
-        <source>Soft proof: %1</source>
-        <translation>Softproof: %1</translation>
-    </message>
-    <message>
-        <source>Soft proof off</source>
-        <translation>Softproof vypnut</translation>
-    </message>
-    <message>
-        <source>Rating: ★</source>
-        <translation>Hodnocení: ★</translation>
-    </message>
-    <message>
-        <source>Rating: ★★</source>
-        <translation>Hodnocení: ★★</translation>
-    </message>
-    <message>
-        <source>Rating: ★★★</source>
-        <translation>Hodnocení: ★★★</translation>
-    </message>
-    <message>
-        <source>Rating: ★★★★</source>
-        <translation>Hodnocení: ★★★★</translation>
-    </message>
-    <message>
-        <source>Rating: ★★★★★</source>
-        <translation>Hodnocení: ★★★★★</translation>
-    </message>
-    <message>
         <source>Flag cleared</source>
         <translation>Označení odstraněno</translation>
     </message>
@@ -1878,60 +2083,12 @@
         <translation>Zamítnuto</translation>
     </message>
     <message>
-        <source>Adjust</source>
-        <translation>Upravit</translation>
-    </message>
-    <message>
-        <source>Masks</source>
-        <translation>Masky</translation>
-    </message>
-    <message>
-        <source>Looks</source>
-        <translation>Styly</translation>
-    </message>
-    <message>
-        <source>AI</source>
-        <translation>AI</translation>
-    </message>
-    <message>
-        <source>Read the photo&apos;s .xmp sidecar written by another editor</source>
-        <translation>Načíst soubor .xmp zapsaný jiným editorem</translation>
-    </message>
-    <message>
-        <source>Write the edit, rating and label to an .xmp sidecar for other editors</source>
-        <translation>Zapsat úpravy, hodnocení a štítek do souboru .xmp pro jiné editory</translation>
-    </message>
-    <message>
         <source>Profile</source>
         <translation>Profil</translation>
     </message>
     <message>
-        <source>Color Chrome Effect</source>
-        <translation>Efekt Color Chrome</translation>
-    </message>
-    <message>
-        <source>Color Chrome FX Blue</source>
-        <translation>Color Chrome FX Modrá</translation>
-    </message>
-    <message>
         <source>White balance</source>
         <translation>Vyvážení bílé</translation>
-    </message>
-    <message>
-        <source>Temperature</source>
-        <translation>Teplota</translation>
-    </message>
-    <message>
-        <source>Tint</source>
-        <translation>Odstín</translation>
-    </message>
-    <message>
-        <source>Tone</source>
-        <translation>Tóny</translation>
-    </message>
-    <message>
-        <source>Presence</source>
-        <translation>Výraznost</translation>
     </message>
     <message>
         <source>Tone curve</source>
@@ -1954,28 +2111,8 @@
         <translation>Transformace</translation>
     </message>
     <message>
-        <source>Vertical</source>
-        <translation>Svisle</translation>
-    </message>
-    <message>
-        <source>Horizontal</source>
-        <translation>Vodorovně</translation>
-    </message>
-    <message>
-        <source>Scale</source>
-        <translation>Měřítko</translation>
-    </message>
-    <message>
-        <source>Vertical straightens converging lines, such as buildings photographed from below. Crop afterwards to remove the empty edges.</source>
-        <translation>Svisle narovná sbíhající se linie, například budovy fotografované zdola. Poté ořízněte prázdné okraje.</translation>
-    </message>
-    <message>
         <source>Grain</source>
         <translation>Zrno</translation>
-    </message>
-    <message>
-        <source>Colour management</source>
-        <translation>Správa barev</translation>
     </message>
     <message>
         <source>Heal and clone</source>
@@ -1992,34 +2129,6 @@
     <message>
         <source>LUT</source>
         <translation>LUT</translation>
-    </message>
-    <message>
-        <source>Edit assistant</source>
-        <translation>Asistent úprav</translation>
-    </message>
-    <message>
-        <source>Assistant edit applied</source>
-        <translation>Úprava asistenta použita</translation>
-    </message>
-    <message>
-        <source>Copy</source>
-        <translation>Kopírovat</translation>
-    </message>
-    <message>
-        <source>Paste</source>
-        <translation>Vložit</translation>
-    </message>
-    <message>
-        <source>Reset</source>
-        <translation>Obnovit</translation>
-    </message>
-    <message>
-        <source>Import XMP</source>
-        <translation>Importovat XMP</translation>
-    </message>
-    <message>
-        <source>Write XMP</source>
-        <translation>Zapsat XMP</translation>
     </message>
     <message>
         <source>Opening %1</source>
@@ -2104,6 +2213,17 @@
     <message>
         <source>no answer from the engine</source>
         <translation>žádná odpověď od jádra</translation>
+    </message>
+</context>
+<context>
+    <name>MasksTab</name>
+    <message>
+        <source>Heal and clone</source>
+        <translation>Retuš a klonování</translation>
+    </message>
+    <message>
+        <source>Local adjustments</source>
+        <translation>Místní úpravy</translation>
     </message>
 </context>
 <context>
@@ -2298,6 +2418,53 @@
     </message>
 </context>
 <context>
+    <name>RightInspector</name>
+    <message>
+        <source>AI</source>
+        <translation>AI</translation>
+    </message>
+    <message>
+        <source>Adjust</source>
+        <translation>Upravit</translation>
+    </message>
+    <message>
+        <source>Copy</source>
+        <translation>Kopírovat</translation>
+    </message>
+    <message>
+        <source>Import XMP</source>
+        <translation>Importovat XMP</translation>
+    </message>
+    <message>
+        <source>Looks</source>
+        <translation>Styly</translation>
+    </message>
+    <message>
+        <source>Masks</source>
+        <translation>Masky</translation>
+    </message>
+    <message>
+        <source>Paste</source>
+        <translation>Vložit</translation>
+    </message>
+    <message>
+        <source>Read the photo&apos;s .xmp sidecar written by another editor</source>
+        <translation>Načíst soubor .xmp zapsaný jiným editorem</translation>
+    </message>
+    <message>
+        <source>Reset</source>
+        <translation>Obnovit</translation>
+    </message>
+    <message>
+        <source>Write XMP</source>
+        <translation>Zapsat XMP</translation>
+    </message>
+    <message>
+        <source>Write the edit, rating and label to an .xmp sidecar for other editors</source>
+        <translation>Zapsat úpravy, hodnocení a štítek do souboru .xmp pro jiné editory</translation>
+    </message>
+</context>
+<context>
     <name>ScopesView</name>
     <message>
         <source>HIST</source>
@@ -2352,6 +2519,57 @@
     <message>
         <source>SKIN</source>
         <translation>PLEŤ</translation>
+    </message>
+</context>
+<context>
+    <name>ShortcutRouter</name>
+    <message>
+        <source>Crop mode: off</source>
+        <translation>Režim ořezu: vypnuto</translation>
+    </message>
+    <message>
+        <source>Crop mode: on (C)</source>
+        <translation>Režim ořezu: zapnuto (C)</translation>
+    </message>
+    <message>
+        <source>Flag cleared</source>
+        <translation>Označení odstraněno</translation>
+    </message>
+    <message>
+        <source>Open a photo first</source>
+        <translation>Nejprve otevřete fotografii</translation>
+    </message>
+    <message>
+        <source>Rating cleared</source>
+        <translation>Hodnocení vymazáno</translation>
+    </message>
+    <message>
+        <source>Rating: ★</source>
+        <translation>Hodnocení: ★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★</source>
+        <translation>Hodnocení: ★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★</source>
+        <translation>Hodnocení: ★★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★★</source>
+        <translation>Hodnocení: ★★★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★★★</source>
+        <translation>Hodnocení: ★★★★★</translation>
+    </message>
+    <message>
+        <source>Soft proof off</source>
+        <translation>Softproof vypnut</translation>
+    </message>
+    <message>
+        <source>Soft proof: %1</source>
+        <translation>Softproof: %1</translation>
     </message>
 </context>
 <context>
@@ -2741,93 +2959,6 @@
     <message>
         <source>Drop Shadow</source>
         <translation>Vržený stín</translation>
-    </message>
-</context>
-<context>
-    <name>CloudDialog</name>
-    <message>
-        <source>Add an account</source>
-        <translation>Přidat účet</translation>
-    </message>
-    <message>
-        <source>Browse</source>
-        <translation>Procházet</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation>Zrušit</translation>
-    </message>
-    <message>
-        <source>Client ID</source>
-        <translation>ID klienta</translation>
-    </message>
-    <message>
-        <source>Client secret</source>
-        <translation>Tajný klíč klienta</translation>
-    </message>
-    <message>
-        <source>Close</source>
-        <translation>Zavřít</translation>
-    </message>
-    <message>
-        <source>Cloud accounts</source>
-        <translation>Cloudové účty</translation>
-    </message>
-    <message>
-        <source>Confirm</source>
-        <translation>Potvrdit</translation>
-    </message>
-    <message>
-        <source>Connected</source>
-        <translation>Připojené</translation>
-    </message>
-    <message>
-        <source>Disconnect</source>
-        <translation>Odpojit</translation>
-    </message>
-    <message>
-        <source>Disconnecting removes the account's keys and downloaded copies from this computer. Files in the account stay as they are.</source>
-        <translation>Odpojení odstraní z tohoto počítače klíče účtu a stažené kopie. Soubory v účtu zůstanou beze změny.</translation>
-    </message>
-    <message>
-        <source>Enter this code on the GitHub page that opened in your browser:</source>
-        <translation>Zadejte tento kód na stránce GitHubu, která se otevřela v prohlížeči:</translation>
-    </message>
-    <message>
-        <source>Finish signing in in your browser. This window updates when you are done.</source>
-        <translation>Dokončete přihlášení v prohlížeči. Okno se potom aktualizuje.</translation>
-    </message>
-    <message>
-        <source>Install it with: sudo pacman -S %1</source>
-        <translation>Instalace: sudo pacman -S %1</translation>
-    </message>
-    <message>
-        <source>Needs %1</source>
-        <translation>Vyžaduje %1</translation>
-    </message>
-    <message>
-        <source>No account connected yet.</source>
-        <translation>Zatím není připojen žádný účet.</translation>
-    </message>
-    <message>
-        <source>Open the page again</source>
-        <translation>Znovu otevřít stránku</translation>
-    </message>
-    <message>
-        <source>Own Google client ID (optional)</source>
-        <translation>Vlastní ID klienta Google (volitelné)</translation>
-    </message>
-    <message>
-        <source>Signing in to %1</source>
-        <translation>Přihlašování k %1</translation>
-    </message>
-    <message>
-        <source>The shared client rclone uses for Google Drive is being retired. With a client ID of your own from the Google Cloud Console, Google Drive keeps working. It is used the next time you connect Google Drive.</source>
-        <translation>Sdílený klient, kterého rclone používá pro Google Drive, se ruší. S vlastním ID klienta z Google Cloud Console bude Google Drive fungovat dál. Použije se při příštím připojení Google Drive.</translation>
-    </message>
-    <message>
-        <source>You sign in on the service's own page in your browser. OmaStudio keeps the access keys in the system keyring and creates a folder named %1 in each account for uploads.</source>
-        <translation>Přihlašujete se na stránce služby v prohlížeči. OmaStudio uchovává přístupové klíče v systémové klíčence a v každém účtu vytvoří pro nahrávání složku %1.</translation>
     </message>
 </context>
 </TS>

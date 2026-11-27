@@ -275,13 +275,7 @@ pub struct RawImage {
 // SAFETY: RawImage handle/backend is managed exclusively by Rust wrapper
 unsafe impl Send for RawImage {}
 
-/// Camera RAW extensions LibRaw reads (by file contents; the list decides what
-/// folder scans, the file dialog and the desktop entry offer).
-pub const RAW_EXTENSIONS: &[&str] = &[
-    "3fr", "ari", "arw", "bay", "cap", "cr2", "cr3", "crw", "cs1", "dc2", "dcr", "dcs", "dng", "drf", "eip", "erf",
-    "fff", "gpr", "iiq", "k25", "kc2", "kdc", "mdc", "mef", "mfw", "mos", "mrw", "nef", "nrw", "orf", "ori", "pef",
-    "ptx", "pxn", "qtk", "raf", "raw", "rdc", "rw2", "rwl", "rwz", "sr2", "srf", "srw", "sti", "x3f",
-];
+include!("supported_extensions.inc");
 
 /// RAW or raster extension that OmaStudio opens.
 /// Cameras the linked LibRaw can read, as "Make Model".

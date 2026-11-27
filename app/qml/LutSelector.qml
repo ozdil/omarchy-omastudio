@@ -9,9 +9,6 @@ Rectangle {
     // Inside a panel section, which shows the title
     property bool embedded: false
     function reset() {
-        root.activeLut = "";
-        root.lutIntensity = 1.0;
-        root.customLutPath = "";
         root.lutChanged("", 1.0, "");
     }
     Layout.fillWidth: true
@@ -35,9 +32,8 @@ Rectangle {
         onAccepted: {
             var p = Host.localPath(selectedFile);
             if (p.length === 0) return;
-            root.activeLut = p.split("/").pop().replace(/\.cube$/i, "");
-            root.customLutPath = p;
-            root.lutChanged(root.activeLut, root.lutIntensity, p);
+            var lutName = p.split("/").pop().replace(/\.cube$/i, "");
+            root.lutChanged(lutName, root.lutIntensity, p);
         }
     }
 
@@ -94,6 +90,10 @@ Rectangle {
                     hoverEnabled: true
                     onClicked: root.reset()
                 }
+                KeyFocus {
+                    name: resetText.text
+                    onActivated: root.reset()
+                }
             }
         }
 
@@ -104,6 +104,7 @@ Rectangle {
             color: loadMouse.containsMouse ? Theme.bgCardHover : Theme.bgCard
             border.color: Theme.border
             Text {
+                id: loadLabel
                 anchors.centerIn: parent
                 text: root.customLutPath !== "" ? root.customLutPath.split("/").pop() : qsTr("Load .cube file…")
                 textFormat: Text.PlainText
@@ -120,6 +121,10 @@ Rectangle {
                 hoverEnabled: true
                 cursorShape: Qt.PointingHandCursor
                 onClicked: cubePick.open()
+            }
+            KeyFocus {
+                name: loadLabel.text
+                onActivated: cubePick.open()
             }
         }
 
@@ -199,9 +204,15 @@ Rectangle {
                 }
 
                 onMoved: {
-                    root.lutIntensity = value;
-                    root.lutChanged(root.activeLut, root.lutIntensity, root.customLutPath);
+                    root.lutChanged(root.activeLut, intensitySlider.value, root.customLutPath);
                 }
+            }
+
+            Binding {
+                target: intensitySlider
+                property: "value"
+                value: root.lutIntensity
+                when: !intensitySlider.pressed
             }
         }
     }

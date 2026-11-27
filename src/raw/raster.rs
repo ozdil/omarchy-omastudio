@@ -14,11 +14,7 @@ use image::{DynamicImage, ImageDecoder, ImageReader};
 use std::path::{Path, PathBuf};
 use std::time::{Duration, SystemTime, UNIX_EPOCH};
 
-/// Extensions opened as raster images.
-pub const RASTER_EXTENSIONS: &[&str] = &[
-    "jpg", "jpeg", "jpe", "png", "webp", "tif", "tiff", "heic", "heif", "hif", "avif", "jxl", "exr", "hdr", "pnm",
-    "ppm", "pgm", "pam",
-];
+pub use crate::raw::RASTER_EXTENSIONS;
 
 /// Largest memory an external decoder may use.
 const DECODER_MEMORY: u64 = 4 * 1024 * 1024 * 1024;

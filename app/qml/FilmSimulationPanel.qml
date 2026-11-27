@@ -7,8 +7,6 @@ Rectangle {
     // Inside a panel section, which shows the title
     property bool embedded: false
     function reset() {
-        root.activeSimulation = "none";
-        root.intensity = 1.0;
         root.simulationChanged("none", 1.0);
     }
     Layout.fillWidth: true
@@ -104,6 +102,10 @@ Rectangle {
                     hoverEnabled: true
                     onClicked: root.reset()
                 }
+                KeyFocus {
+                    name: resetSimText.text
+                    onActivated: root.reset()
+                }
             }
         }
 
@@ -116,7 +118,8 @@ Rectangle {
 
             Repeater {
                 model: [{ "key": "All", "label": qsTr("All") }, { "key": "Fujifilm", "label": "Fujifilm" }, { "key": "Acros B&W", "label": qsTr("Acros B&W") }, { "key": "Hasselblad", "label": "Hasselblad" }]
-                Rectangle {
+                delegate: Rectangle {
+                    required property var modelData
                     implicitWidth: brandText.implicitWidth + 12
                     implicitHeight: Theme.sp(20)
                     radius: Theme.r(4)
@@ -139,6 +142,12 @@ Rectangle {
                         anchors.fill: parent
                         cursorShape: Qt.PointingHandCursor
                         onClicked: root.selectedBrand = modelData.key
+                    }
+                    KeyFocus {
+                        name: modelData.label
+                        checkable: true
+                        checked: root.selectedBrand === modelData.key
+                        onActivated: root.selectedBrand = modelData.key
                     }
                 }
             }
@@ -165,7 +174,7 @@ Rectangle {
                         return item.brand === root.selectedBrand;
                     })
 
-                    Rectangle {
+                    delegate: Rectangle {
                         required property var modelData
                         readonly property bool isCur: root.activeSimulation === modelData.id
                         width: simColumn.width
@@ -207,9 +216,15 @@ Rectangle {
                             hoverEnabled: true
                             cursorShape: Qt.PointingHandCursor
                             onClicked: {
-                                root.activeSimulation = modelData.id;
-                                root.simulationChanged(root.activeSimulation, root.intensity);
+                                root.simulationChanged(modelData.id, root.intensity);
                             }
+                        }
+                        KeyFocus {
+                            name: modelData.name
+                            description: modelData.desc
+                            checkable: true
+                            checked: parent.isCur
+                            onActivated: root.simulationChanged(modelData.id, root.intensity)
                         }
                         ToolTip.visible: simMouse.containsMouse && modelData.desc !== ""
                         ToolTip.delay: 600
@@ -284,9 +299,15 @@ Rectangle {
                 }
 
                 onMoved: {
-                    root.intensity = value;
-                    root.simulationChanged(root.activeSimulation, root.intensity);
+                    root.simulationChanged(root.activeSimulation, intensitySlider.value);
                 }
+            }
+
+            Binding {
+                target: intensitySlider
+                property: "value"
+                value: root.intensity
+                when: !intensitySlider.pressed
             }
         }
     }

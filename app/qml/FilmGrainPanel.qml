@@ -17,13 +17,10 @@ Rectangle {
     property real grainSize: 1.0
     property real grainRoughness: 50.0
 
-    signal grainChanged()
+    signal grainChanged(real amount, real size, real roughness)
 
     function reset() {
-        root.grainAmount = 0.0;
-        root.grainSize = 1.0;
-        root.grainRoughness = 50.0;
-        root.grainChanged();
+        root.grainChanged(0.0, 1.0, 50.0);
     }
 
     ColumnLayout {
@@ -76,6 +73,10 @@ Rectangle {
                     hoverEnabled: true
                     onClicked: root.reset()
                 }
+                KeyFocus {
+                    name: resetGrainText.text
+                    onActivated: root.reset()
+                }
             }
         }
 
@@ -93,8 +94,7 @@ Rectangle {
                 stepSize: 1.0
                 accentColor: Theme.accentYellow
                 onSliderMoved: function(v) {
-                    root.grainAmount = v;
-                    root.grainChanged();
+                    root.grainChanged(v, root.grainSize, root.grainRoughness);
                 }
             }
 
@@ -110,8 +110,7 @@ Rectangle {
                 opacity: root.grainAmount > 0 ? 1.0 : 0.4
                 enabled: root.grainAmount > 0
                 onSliderMoved: function(v) {
-                    root.grainSize = v;
-                    root.grainChanged();
+                    root.grainChanged(root.grainAmount, v, root.grainRoughness);
                 }
             }
 
@@ -126,8 +125,7 @@ Rectangle {
                 opacity: root.grainAmount > 0 ? 1.0 : 0.4
                 enabled: root.grainAmount > 0
                 onSliderMoved: function(v) {
-                    root.grainRoughness = v;
-                    root.grainChanged();
+                    root.grainChanged(root.grainAmount, root.grainSize, v);
                 }
             }
         }

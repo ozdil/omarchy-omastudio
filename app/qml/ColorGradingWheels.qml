@@ -29,41 +29,22 @@ ColumnLayout {
     property int activeTab: 0 // 0: Lift, 1: Gamma, 2: Gain, 3: Offset
     property bool fourWheelsMode: false
 
-    signal gradingChanged()
-
-    // Restore wheel -> panel bindings for both tabbed and 4-wheel grid views
-    function rebindWheels() {
-        var pairs = [
-            [liftWheel, liftWheelGrid, function() { return root.liftRgb; }, function() { return root.liftLuma; }],
-            [gammaWheel, gammaWheelGrid, function() { return root.gammaRgb; }, function() { return root.gammaLuma; }],
-            [gainWheel, gainWheelGrid, function() { return root.gainRgb; }, function() { return root.gainLuma; }],
-            [offsetWheel, offsetWheelGrid, function() { return root.offsetRgb; }, function() { return root.offsetLuma; }]
-        ];
-        for (var i = 0; i < pairs.length; i++) {
-            var tabW = pairs[i][0], gridW = pairs[i][1], rgbFn = pairs[i][2], lumaFn = pairs[i][3];
-            tabW.rgbOffset = Qt.binding(rgbFn);
-            tabW.lumaOffset = Qt.binding(lumaFn);
-            gridW.rgbOffset = Qt.binding(rgbFn);
-            gridW.lumaOffset = Qt.binding(lumaFn);
-            tabW.syncPuckFromRgb();
-            gridW.syncPuckFromRgb();
-        }
-    }
+    signal gradingChanged(var patch)
 
     function resetAllWheels() {
-        liftRgb = [0.0, 0.0, 0.0];
-        liftLuma = 0.0;
-        gammaRgb = [0.0, 0.0, 0.0];
-        gammaLuma = 0.0;
-        gainRgb = [0.0, 0.0, 0.0];
-        gainLuma = 0.0;
-        offsetRgb = [0.0, 0.0, 0.0];
-        offsetLuma = 0.0;
-        colorBoost = 0.0;
-        midtoneDetail = 0.0;
-        contrastPivot = 0.435;
-        rebindWheels();
-        root.gradingChanged();
+        root.gradingChanged({
+            "liftRgb": [0.0, 0.0, 0.0],
+            "liftLuma": 0.0,
+            "gammaRgb": [0.0, 0.0, 0.0],
+            "gammaLuma": 0.0,
+            "gainRgb": [0.0, 0.0, 0.0],
+            "gainLuma": 0.0,
+            "offsetRgb": [0.0, 0.0, 0.0],
+            "offsetLuma": 0.0,
+            "colorBoost": 0.0,
+            "midtoneDetail": 0.0,
+            "contrastPivot": 0.435
+        });
     }
 
     // Header with Title, Mode Switcher, and Reset All
@@ -110,6 +91,12 @@ ColumnLayout {
                 hoverEnabled: true
                 onClicked: root.fourWheelsMode = !root.fourWheelsMode
             }
+            KeyFocus {
+                name: viewToggleText.text
+                checkable: true
+                checked: root.fourWheelsMode
+                onActivated: root.fourWheelsMode = !root.fourWheelsMode
+            }
         }
 
         // Reset Button
@@ -139,6 +126,10 @@ ColumnLayout {
                 hoverEnabled: true
                 onClicked: root.resetAllWheels()
             }
+            KeyFocus {
+                name: resetAllText.text
+                onActivated: root.resetAllWheels()
+            }
         }
     }
 
@@ -158,6 +149,8 @@ ColumnLayout {
         Repeater {
             model: parent.tabs
             delegate: Rectangle {
+                required property var modelData
+                required property int index
                 Layout.fillWidth: true
                 implicitHeight: Theme.sp(26)
                 radius: Theme.r(4)
@@ -180,6 +173,14 @@ ColumnLayout {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
                     onClicked: root.activeTab = index
+                }
+                KeyFocus {
+                    name: modelData.name
+                    description: modelData.sub
+                    role: Accessible.PageTab
+                    checkable: true
+                    checked: root.activeTab === index
+                    onActivated: root.activeTab = index
                 }
             }
         }
@@ -208,9 +209,7 @@ ColumnLayout {
                 lumaOffset: root.liftLuma
                 wheelAccent: Theme.accentCyan
                 onWheelChanged: function(rgb, luma) {
-                    root.liftRgb = rgb;
-                    root.liftLuma = luma;
-                    root.gradingChanged();
+                    root.gradingChanged({ "liftRgb": rgb, "liftLuma": luma });
                 }
             }
 
@@ -223,9 +222,7 @@ ColumnLayout {
                 lumaOffset: root.gammaLuma
                 wheelAccent: Theme.accentYellow
                 onWheelChanged: function(rgb, luma) {
-                    root.gammaRgb = rgb;
-                    root.gammaLuma = luma;
-                    root.gradingChanged();
+                    root.gradingChanged({ "gammaRgb": rgb, "gammaLuma": luma });
                 }
             }
 
@@ -238,9 +235,7 @@ ColumnLayout {
                 lumaOffset: root.gainLuma
                 wheelAccent: Theme.accentOrange
                 onWheelChanged: function(rgb, luma) {
-                    root.gainRgb = rgb;
-                    root.gainLuma = luma;
-                    root.gradingChanged();
+                    root.gradingChanged({ "gainRgb": rgb, "gainLuma": luma });
                 }
             }
 
@@ -253,9 +248,7 @@ ColumnLayout {
                 lumaOffset: root.offsetLuma
                 wheelAccent: Theme.accentPurple
                 onWheelChanged: function(rgb, luma) {
-                    root.offsetRgb = rgb;
-                    root.offsetLuma = luma;
-                    root.gradingChanged();
+                    root.gradingChanged({ "offsetRgb": rgb, "offsetLuma": luma });
                 }
             }
         }
@@ -287,9 +280,7 @@ ColumnLayout {
                     lumaOffset: root.liftLuma
                     wheelAccent: Theme.accentCyan
                     onWheelChanged: function(rgb, luma) {
-                        root.liftRgb = rgb;
-                        root.liftLuma = luma;
-                        root.gradingChanged();
+                        root.gradingChanged({ "liftRgb": rgb, "liftLuma": luma });
                     }
                 }
             }
@@ -313,9 +304,7 @@ ColumnLayout {
                     lumaOffset: root.gammaLuma
                     wheelAccent: Theme.accentYellow
                     onWheelChanged: function(rgb, luma) {
-                        root.gammaRgb = rgb;
-                        root.gammaLuma = luma;
-                        root.gradingChanged();
+                        root.gradingChanged({ "gammaRgb": rgb, "gammaLuma": luma });
                     }
                 }
             }
@@ -339,9 +328,7 @@ ColumnLayout {
                     lumaOffset: root.gainLuma
                     wheelAccent: Theme.accentOrange
                     onWheelChanged: function(rgb, luma) {
-                        root.gainRgb = rgb;
-                        root.gainLuma = luma;
-                        root.gradingChanged();
+                        root.gradingChanged({ "gainRgb": rgb, "gainLuma": luma });
                     }
                 }
             }
@@ -365,9 +352,7 @@ ColumnLayout {
                     lumaOffset: root.offsetLuma
                     wheelAccent: Theme.accentPurple
                     onWheelChanged: function(rgb, luma) {
-                        root.offsetRgb = rgb;
-                        root.offsetLuma = luma;
-                        root.gradingChanged();
+                        root.gradingChanged({ "offsetRgb": rgb, "offsetLuma": luma });
                     }
                 }
             }
@@ -389,8 +374,7 @@ ColumnLayout {
             suffix: "%"
             accentColor: Theme.accentOrange
             onSliderMoved: function(v) {
-                root.colorBoost = v;
-                root.gradingChanged();
+                root.gradingChanged({ "colorBoost": v });
             }
         }
 
@@ -404,8 +388,7 @@ ColumnLayout {
             suffix: "%"
             accentColor: Theme.accentCyan
             onSliderMoved: function(v) {
-                root.midtoneDetail = v;
-                root.gradingChanged();
+                root.gradingChanged({ "midtoneDetail": v });
             }
         }
 
@@ -419,8 +402,7 @@ ColumnLayout {
             decimals: 3
             accentColor: Theme.accentPurple
             onSliderMoved: function(v) {
-                root.contrastPivot = v;
-                root.gradingChanged();
+                root.gradingChanged({ "contrastPivot": v });
             }
         }
     }

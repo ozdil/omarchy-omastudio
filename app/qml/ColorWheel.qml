@@ -112,6 +112,10 @@ ColumnLayout {
                 hoverEnabled: true
                 onClicked: root.resetWheel()
             }
+            KeyFocus {
+                name: root.title
+                onActivated: root.resetWheel()
+            }
         }
     }
 

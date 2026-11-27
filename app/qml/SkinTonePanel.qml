@@ -21,7 +21,18 @@ Rectangle {
     property real skinAmountHue: 0.0
     property real skinAmountSat: 0.0
 
-    signal skinToneChanged()
+    signal skinToneChanged(var patch)
+
+    function resetSkinTone() {
+        root.skinToneChanged({
+            "skinTargetHue": 50.0,
+            "skinHueRange": 32.0,
+            "skinUniformityHue": 0.0,
+            "skinUniformitySat": 0.0,
+            "skinAmountHue": 0.0,
+            "skinAmountSat": 0.0
+        });
+    }
 
     ColumnLayout {
         id: mainCol
@@ -35,6 +46,7 @@ Rectangle {
             spacing: 6
 
             Text {
+                id: skinHeader
                 visible: !root.embedded
                 text: qsTr("Skin tone")
                 textFormat: Text.PlainText
@@ -48,10 +60,10 @@ Rectangle {
 
             CustomSwitch {
                 checked: root.skinToneEnabled
+                accessibleName: skinHeader.text
                 activeColor: Theme.accentOrange
                 onToggled: function(isChecked) {
-                    root.skinToneEnabled = isChecked;
-                    root.skinToneChanged();
+                    root.skinToneChanged({ "skinToneEnabled": isChecked });
                 }
             }
 
@@ -79,15 +91,11 @@ Rectangle {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
                     hoverEnabled: true
-                    onClicked: {
-                        root.skinTargetHue = 50.0;
-                        root.skinHueRange = 32.0;
-                        root.skinUniformityHue = 0.0;
-                        root.skinUniformitySat = 0.0;
-                        root.skinAmountHue = 0.0;
-                        root.skinAmountSat = 0.0;
-                        root.skinToneChanged();
-                    }
+                    onClicked: root.resetSkinTone()
+                }
+                KeyFocus {
+                    name: resetSkinText.text
+                    onActivated: root.resetSkinTone()
                 }
             }
         }
@@ -142,8 +150,7 @@ Rectangle {
                 suffix: "°"
                 accentColor: Theme.accentOrange
                 onSliderMoved: function(v) {
-                    root.skinTargetHue = v;
-                    root.skinToneChanged();
+                    root.skinToneChanged({ "skinTargetHue": v });
                 }
             }
 
@@ -157,8 +164,7 @@ Rectangle {
                 suffix: "°"
                 accentColor: Theme.accentYellow
                 onSliderMoved: function(v) {
-                    root.skinHueRange = v;
-                    root.skinToneChanged();
+                    root.skinToneChanged({ "skinHueRange": v });
                 }
             }
 
@@ -171,8 +177,7 @@ Rectangle {
                 suffix: " %"
                 accentColor: Theme.accentCyan
                 onSliderMoved: function(v) {
-                    root.skinUniformityHue = v;
-                    root.skinToneChanged();
+                    root.skinToneChanged({ "skinUniformityHue": v });
                 }
             }
 
@@ -185,8 +190,7 @@ Rectangle {
                 suffix: " %"
                 accentColor: Theme.accent
                 onSliderMoved: function(v) {
-                    root.skinUniformitySat = v;
-                    root.skinToneChanged();
+                    root.skinToneChanged({ "skinUniformitySat": v });
                 }
             }
 
@@ -198,8 +202,7 @@ Rectangle {
                 defaultValue: 0.0
                 accentColor: Theme.accentMagenta
                 onSliderMoved: function(v) {
-                    root.skinAmountHue = v;
-                    root.skinToneChanged();
+                    root.skinToneChanged({ "skinAmountHue": v });
                 }
             }
 
@@ -211,8 +214,7 @@ Rectangle {
                 defaultValue: 0.0
                 accentColor: Theme.accentGreen
                 onSliderMoved: function(v) {
-                    root.skinAmountSat = v;
-                    root.skinToneChanged();
+                    root.skinToneChanged({ "skinAmountSat": v });
                 }
             }
         }

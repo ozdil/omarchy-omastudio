@@ -17,48 +17,39 @@ ColumnLayout {
     signal hslValuesChanged(var h, var s, var l)
 
     function setChannelHue(val) {
-        var arr = (root.hslHue ? root.hslHue.slice() : [0,0,0,0,0,0,0,0]);
+        var arr = (root.hslHue ? root.hslHue.slice() : [0, 0, 0, 0, 0, 0, 0, 0]);
         arr[root.activeChannel] = val;
-        root.hslHue = arr;
-        root.hslValuesChanged(root.hslHue, root.hslSat, root.hslLum);
+        root.hslValuesChanged(arr, root.hslSat, root.hslLum);
         root.colorChanged();
     }
 
     function setChannelSat(val) {
-        var arr = (root.hslSat ? root.hslSat.slice() : [0,0,0,0,0,0,0,0]);
+        var arr = (root.hslSat ? root.hslSat.slice() : [0, 0, 0, 0, 0, 0, 0, 0]);
         arr[root.activeChannel] = val;
-        root.hslSat = arr;
-        root.hslValuesChanged(root.hslHue, root.hslSat, root.hslLum);
+        root.hslValuesChanged(root.hslHue, arr, root.hslLum);
         root.colorChanged();
     }
 
     function setChannelLum(val) {
-        var arr = (root.hslLum ? root.hslLum.slice() : [0,0,0,0,0,0,0,0]);
+        var arr = (root.hslLum ? root.hslLum.slice() : [0, 0, 0, 0, 0, 0, 0, 0]);
         arr[root.activeChannel] = val;
-        root.hslLum = arr;
-        root.hslValuesChanged(root.hslHue, root.hslSat, root.hslLum);
+        root.hslValuesChanged(root.hslHue, root.hslSat, arr);
         root.colorChanged();
     }
 
     function resetCurrentChannel() {
-        var h = (root.hslHue ? root.hslHue.slice() : [0,0,0,0,0,0,0,0]);
-        var s = (root.hslSat ? root.hslSat.slice() : [0,0,0,0,0,0,0,0]);
-        var l = (root.hslLum ? root.hslLum.slice() : [0,0,0,0,0,0,0,0]);
+        var h = (root.hslHue ? root.hslHue.slice() : [0, 0, 0, 0, 0, 0, 0, 0]);
+        var s = (root.hslSat ? root.hslSat.slice() : [0, 0, 0, 0, 0, 0, 0, 0]);
+        var l = (root.hslLum ? root.hslLum.slice() : [0, 0, 0, 0, 0, 0, 0, 0]);
         h[root.activeChannel] = 0;
         s[root.activeChannel] = 0;
         l[root.activeChannel] = 0;
-        root.hslHue = h;
-        root.hslSat = s;
-        root.hslLum = l;
-        root.hslValuesChanged(root.hslHue, root.hslSat, root.hslLum);
+        root.hslValuesChanged(h, s, l);
         root.colorChanged();
     }
 
     function resetAll() {
-        root.hslHue = [0, 0, 0, 0, 0, 0, 0, 0];
-        root.hslSat = [0, 0, 0, 0, 0, 0, 0, 0];
-        root.hslLum = [0, 0, 0, 0, 0, 0, 0, 0];
-        root.hslValuesChanged(root.hslHue, root.hslSat, root.hslLum);
+        root.hslValuesChanged([0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0]);
         root.colorChanged();
     }
 
@@ -76,6 +67,7 @@ ColumnLayout {
         Repeater {
             model: 8
             delegate: Rectangle {
+                required property int index
                 Layout.fillWidth: true
                 implicitHeight: Theme.sp(24)
                 radius: Theme.r(4)
@@ -97,6 +89,12 @@ ColumnLayout {
                     onClicked: {
                         root.activeChannel = index
                     }
+                }
+                KeyFocus {
+                    name: root.channelNames[index]
+                    checkable: true
+                    checked: root.activeChannel === index
+                    onActivated: root.activeChannel = index
                 }
             }
         }
@@ -144,6 +142,10 @@ ColumnLayout {
                 hoverEnabled: true
                 onClicked: root.resetCurrentChannel()
             }
+            KeyFocus {
+                name: resetChText.text
+                onActivated: root.resetCurrentChannel()
+            }
         }
 
         // Reset All Channels Button
@@ -172,6 +174,10 @@ ColumnLayout {
                 cursorShape: Qt.PointingHandCursor
                 hoverEnabled: true
                 onClicked: root.resetAll()
+            }
+            KeyFocus {
+                name: resetAllHslText.text
+                onActivated: root.resetAll()
             }
         }
     }

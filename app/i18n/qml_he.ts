@@ -141,6 +141,173 @@
     </message>
 </context>
 <context>
+    <name>AdjustTab</name>
+    <message>
+        <source>Blacks</source>
+        <translation>שחורים</translation>
+    </message>
+    <message>
+        <source>Clarity (Midtone Contrast)</source>
+        <translation>בהירות פרטים (ניגודיות גוונים בינוניים)</translation>
+    </message>
+    <message>
+        <source>Color Chrome Effect</source>
+        <translation>אפקט Color Chrome</translation>
+    </message>
+    <message>
+        <source>Color Chrome FX Blue</source>
+        <translation>Color Chrome FX כחול</translation>
+    </message>
+    <message>
+        <source>Colour grading</source>
+        <translation>דירוג צבע</translation>
+    </message>
+    <message>
+        <source>Colour management</source>
+        <translation>ניהול צבע</translation>
+    </message>
+    <message>
+        <source>Colour mixer</source>
+        <translation>מערבל צבעים</translation>
+    </message>
+    <message>
+        <source>Contrast</source>
+        <translation>ניגודיות</translation>
+    </message>
+    <message>
+        <source>Curve Darks (Lower Mids)</source>
+        <translation>עקומה: גוונים כהים (בינוניים תחתונים)</translation>
+    </message>
+    <message>
+        <source>Curve Highlights</source>
+        <translation>עקומה: בהירים</translation>
+    </message>
+    <message>
+        <source>Curve Lights (Upper Mids)</source>
+        <translation>עקומה: גוונים בהירים (בינוניים עליונים)</translation>
+    </message>
+    <message>
+        <source>Curve Shadows</source>
+        <translation>עקומה: צללים</translation>
+    </message>
+    <message>
+        <source>Defringe (Chromatic Aberration)</source>
+        <translation>הסרת שוליים צבעוניים (סטייה כרומטית)</translation>
+    </message>
+    <message>
+        <source>Dehaze</source>
+        <translation>הסרת אובך</translation>
+    </message>
+    <message>
+        <source>Detail and optics</source>
+        <translation>פרטים ואופטיקה</translation>
+    </message>
+    <message>
+        <source>Exposure</source>
+        <translation>חשיפה</translation>
+    </message>
+    <message>
+        <source>Grain</source>
+        <translation>גרעיניות</translation>
+    </message>
+    <message>
+        <source>Highlights</source>
+        <translation>בהירים</translation>
+    </message>
+    <message>
+        <source>Horizontal</source>
+        <translation>אופקי</translation>
+    </message>
+    <message>
+        <source>Lens Distortion Correction</source>
+        <translation>תיקון עיוות עדשה</translation>
+    </message>
+    <message>
+        <source>Noise Reduction (Color)</source>
+        <translation>הפחתת רעש (צבע)</translation>
+    </message>
+    <message>
+        <source>Noise Reduction (Luma)</source>
+        <translation>הפחתת רעש (בהירות)</translation>
+    </message>
+    <message>
+        <source>Open a photo first</source>
+        <translation>יש לפתוח תמונה תחילה</translation>
+    </message>
+    <message>
+        <source>Presence</source>
+        <translation>נוכחות</translation>
+    </message>
+    <message>
+        <source>Profile</source>
+        <translation>פרופיל</translation>
+    </message>
+    <message>
+        <source>Saturation</source>
+        <translation>רוויה</translation>
+    </message>
+    <message>
+        <source>Scale</source>
+        <translation>קנה מידה</translation>
+    </message>
+    <message>
+        <source>Shadows</source>
+        <translation>צללים</translation>
+    </message>
+    <message>
+        <source>Sharpening</source>
+        <translation>חידוד</translation>
+    </message>
+    <message>
+        <source>Temperature</source>
+        <translation>טמפרטורה</translation>
+    </message>
+    <message>
+        <source>Texture</source>
+        <translation>מרקם</translation>
+    </message>
+    <message>
+        <source>Tint</source>
+        <translation>גוון</translation>
+    </message>
+    <message>
+        <source>Tone</source>
+        <translation>טון</translation>
+    </message>
+    <message>
+        <source>Tone curve</source>
+        <translation>עקומת טונים</translation>
+    </message>
+    <message>
+        <source>Transform</source>
+        <translation>התמרה</translation>
+    </message>
+    <message>
+        <source>Vertical</source>
+        <translation>אנכי</translation>
+    </message>
+    <message>
+        <source>Vertical straightens converging lines, such as buildings photographed from below. Crop afterwards to remove the empty edges.</source>
+        <translation>אנכי מיישר קווים מתכנסים, כמו בניינים שצולמו מלמטה. לאחר מכן חתכו כדי להסיר את השוליים הריקים.</translation>
+    </message>
+    <message>
+        <source>Vibrance</source>
+        <translation>חיוניות</translation>
+    </message>
+    <message>
+        <source>Vignette</source>
+        <translation>הצללת שוליים</translation>
+    </message>
+    <message>
+        <source>White balance</source>
+        <translation>איזון לבן</translation>
+    </message>
+    <message>
+        <source>Whites</source>
+        <translation>לבנים</translation>
+    </message>
+</context>
+<context>
     <name>AiAssistPanel</name>
     <message>
         <source>%1 (automatic)</source>
@@ -291,10 +458,123 @@
     </message>
 </context>
 <context>
+    <name>AiTab</name>
+    <message>
+        <source>Assistant edit applied</source>
+        <translation>עריכת העוזר הוחלה</translation>
+    </message>
+    <message>
+        <source>Edit assistant</source>
+        <translation>עוזר עריכה</translation>
+    </message>
+</context>
+<context>
     <name>BoundedTextInput</name>
     <message>
         <source>Clipboard content exceeded byte limit or timed out.</source>
         <translation>תוכן הלוח חרג ממגבלת הבתים או שהזמן הקצוב פג.</translation>
+    </message>
+</context>
+<context>
+    <name>CenterWorkspace</name>
+    <message>
+        <source>Opened %1</source>
+        <translation>נפתח %1</translation>
+    </message>
+    <message>
+        <source>Scanning folder %1</source>
+        <translation>סורק את התיקייה %1</translation>
+    </message>
+    <message>
+        <source>Soft proof: %1</source>
+        <translation>הגהה על המסך: %1</translation>
+    </message>
+</context>
+<context>
+    <name>CloudDialog</name>
+    <message>
+        <source>Add an account</source>
+        <translation>הוספת חשבון</translation>
+    </message>
+    <message>
+        <source>Browse</source>
+        <translation>עיון</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>ביטול</translation>
+    </message>
+    <message>
+        <source>Client ID</source>
+        <translation>מזהה לקוח</translation>
+    </message>
+    <message>
+        <source>Client secret</source>
+        <translation>סוד לקוח</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>סגירה</translation>
+    </message>
+    <message>
+        <source>Cloud accounts</source>
+        <translation>חשבונות ענן</translation>
+    </message>
+    <message>
+        <source>Confirm</source>
+        <translation>אישור</translation>
+    </message>
+    <message>
+        <source>Connected</source>
+        <translation>מחוברים</translation>
+    </message>
+    <message>
+        <source>Disconnect</source>
+        <translation>ניתוק</translation>
+    </message>
+    <message>
+        <source>Disconnecting removes the account&apos;s keys and downloaded copies from this computer. Files in the account stay as they are.</source>
+        <translation>הניתוק מסיר ממחשב זה את מפתחות החשבון ואת העותקים שהורדו. הקבצים בחשבון נשארים כפי שהם.</translation>
+    </message>
+    <message>
+        <source>Enter this code on the GitHub page that opened in your browser:</source>
+        <translation>הזינו את הקוד הזה בדף GitHub שנפתח בדפדפן:</translation>
+    </message>
+    <message>
+        <source>Finish signing in in your browser. This window updates when you are done.</source>
+        <translation>סיימו את ההתחברות בדפדפן. החלון יתעדכן בסיום.</translation>
+    </message>
+    <message>
+        <source>Install it with: sudo pacman -S %1</source>
+        <translation>התקנה: sudo pacman -S %1</translation>
+    </message>
+    <message>
+        <source>Needs %1</source>
+        <translation>נדרש %1</translation>
+    </message>
+    <message>
+        <source>No account connected yet.</source>
+        <translation>עדיין לא חובר חשבון.</translation>
+    </message>
+    <message>
+        <source>Open the page again</source>
+        <translation>פתיחת הדף שוב</translation>
+    </message>
+    <message>
+        <source>Own Google client ID (optional)</source>
+        <translation>מזהה לקוח Google משלכם (רשות)</translation>
+    </message>
+    <message>
+        <source>Signing in to %1</source>
+        <translation>מתחבר אל %1</translation>
+    </message>
+    <message>
+        <source>The shared client rclone uses for Google Drive is being retired. With a client ID of your own from the Google Cloud Console, Google Drive keeps working. It is used the next time you connect Google Drive.</source>
+        <translation>הלקוח המשותף ש־rclone משתמש בו עבור Google Drive יוצא משימוש. עם מזהה לקוח משלכם מ־Google Cloud Console, ‏Google Drive ממשיך לעבוד. הוא ישמש בפעם הבאה שתחברו את Google Drive.</translation>
+    </message>
+    <message>
+        <source>You sign in on the service&apos;s own page in your browser. OmaStudio keeps the access keys in the system keyring and creates a folder named %1 in each account for uploads.</source>
+        <translation>ההתחברות נעשית בדף של השירות עצמו, בדפדפן. OmaStudio שומר את מפתחות הגישה במחזיק המפתחות של המערכת ויוצר בכל חשבון תיקייה בשם %1 להעלאות.</translation>
     </message>
 </context>
 <context>
@@ -1093,23 +1373,6 @@
     </message>
 </context>
 <context>
-    <name>HistogramView</name>
-    <message>
-        <source>[S] %1%</source>
-        <comment>S: shadow clipping</comment>
-        <translation>[צ] %1%</translation>
-    </message>
-    <message>
-        <source>Histogram</source>
-        <translation>היסטוגרמה</translation>
-    </message>
-    <message>
-        <source>[H] %1%</source>
-        <comment>H: highlight clipping</comment>
-        <translation>[ב] %1%</translation>
-    </message>
-</context>
-<context>
     <name>HistoryPanel</name>
     <message>
         <source>History</source>
@@ -1474,6 +1737,32 @@
     </message>
 </context>
 <context>
+    <name>LeftInspector</name>
+    <message>
+        <source>Analyzing...</source>
+        <translation>מנתח...</translation>
+    </message>
+    <message>
+        <source>Extracting dynamic range...</source>
+        <translation>מחלץ טווח דינמי...</translation>
+    </message>
+    <message>
+        <source>Suggested scene</source>
+        <translation>סצנה מוצעת</translation>
+    </message>
+</context>
+<context>
+    <name>LooksTab</name>
+    <message>
+        <source>LUT</source>
+        <translation>LUT</translation>
+    </message>
+    <message>
+        <source>Presets</source>
+        <translation>הגדרות קבועות מראש</translation>
+    </message>
+</context>
+<context>
     <name>LutSelector</name>
     <message>
         <source>Load 3D LUT</source>
@@ -1594,22 +1883,6 @@
         <translation>מצב חיתוך: כבוי</translation>
     </message>
     <message>
-        <source>Analyzing...</source>
-        <translation>מנתח...</translation>
-    </message>
-    <message>
-        <source>Extracting dynamic range...</source>
-        <translation>מחלץ טווח דינמי...</translation>
-    </message>
-    <message>
-        <source>Opened %1</source>
-        <translation>נפתח %1</translation>
-    </message>
-    <message>
-        <source>Scanning folder %1</source>
-        <translation>סורק את התיקייה %1</translation>
-    </message>
-    <message>
         <source>Contrast</source>
         <translation>ניגודיות</translation>
     </message>
@@ -1634,28 +1907,8 @@
         <translation>שחורים</translation>
     </message>
     <message>
-        <source>Curve Highlights</source>
-        <translation>עקומה: בהירים</translation>
-    </message>
-    <message>
-        <source>Curve Lights (Upper Mids)</source>
-        <translation>עקומה: גוונים בהירים (בינוניים עליונים)</translation>
-    </message>
-    <message>
-        <source>Curve Darks (Lower Mids)</source>
-        <translation>עקומה: גוונים כהים (בינוניים תחתונים)</translation>
-    </message>
-    <message>
-        <source>Curve Shadows</source>
-        <translation>עקומה: צללים</translation>
-    </message>
-    <message>
         <source>Texture</source>
         <translation>מרקם</translation>
-    </message>
-    <message>
-        <source>Suggested scene</source>
-        <translation>סצנה מוצעת</translation>
     </message>
     <message>
         <source>Clarity (Midtone Contrast)</source>
@@ -1678,28 +1931,8 @@
         <translation>חידוד</translation>
     </message>
     <message>
-        <source>Noise Reduction (Luma)</source>
-        <translation>הפחתת רעש (בהירות)</translation>
-    </message>
-    <message>
-        <source>Noise Reduction (Color)</source>
-        <translation>הפחתת רעש (צבע)</translation>
-    </message>
-    <message>
         <source>Vignette</source>
         <translation>הצללת שוליים</translation>
-    </message>
-    <message>
-        <source>Defringe (Chromatic Aberration)</source>
-        <translation>הסרת שוליים צבעוניים (סטייה כרומטית)</translation>
-    </message>
-    <message>
-        <source>Lens Distortion Correction</source>
-        <translation>תיקון עיוות עדשה</translation>
-    </message>
-    <message>
-        <source>Open a photo first</source>
-        <translation>יש לפתוח תמונה תחילה</translation>
     </message>
     <message>
         <source>Version %1</source>
@@ -1826,34 +2059,6 @@
         <translation>סריקת התיקייה לא הגיבה.</translation>
     </message>
     <message>
-        <source>Soft proof: %1</source>
-        <translation>הגהה על המסך: %1</translation>
-    </message>
-    <message>
-        <source>Soft proof off</source>
-        <translation>הגהה על המסך כבויה</translation>
-    </message>
-    <message>
-        <source>Rating: ★</source>
-        <translation>דירוג: ★</translation>
-    </message>
-    <message>
-        <source>Rating: ★★</source>
-        <translation>דירוג: ★★</translation>
-    </message>
-    <message>
-        <source>Rating: ★★★</source>
-        <translation>דירוג: ★★★</translation>
-    </message>
-    <message>
-        <source>Rating: ★★★★</source>
-        <translation>דירוג: ★★★★</translation>
-    </message>
-    <message>
-        <source>Rating: ★★★★★</source>
-        <translation>דירוג: ★★★★★</translation>
-    </message>
-    <message>
         <source>Flag cleared</source>
         <translation>הסימון הוסר</translation>
     </message>
@@ -1874,60 +2079,12 @@
         <translation>נדחתה</translation>
     </message>
     <message>
-        <source>Adjust</source>
-        <translation>כוונון</translation>
-    </message>
-    <message>
-        <source>Masks</source>
-        <translation>מסכות</translation>
-    </message>
-    <message>
-        <source>Looks</source>
-        <translation>סגנונות</translation>
-    </message>
-    <message>
-        <source>AI</source>
-        <translation>בינה מלאכותית</translation>
-    </message>
-    <message>
-        <source>Read the photo&apos;s .xmp sidecar written by another editor</source>
-        <translation>קריאת קובץ ‎.xmp שנכתב בעורך אחר</translation>
-    </message>
-    <message>
-        <source>Write the edit, rating and label to an .xmp sidecar for other editors</source>
-        <translation>כתיבת העריכה, הדירוג והתווית לקובץ ‎.xmp לעורכים אחרים</translation>
-    </message>
-    <message>
         <source>Profile</source>
         <translation>פרופיל</translation>
     </message>
     <message>
-        <source>Color Chrome Effect</source>
-        <translation>אפקט Color Chrome</translation>
-    </message>
-    <message>
-        <source>Color Chrome FX Blue</source>
-        <translation>Color Chrome FX כחול</translation>
-    </message>
-    <message>
         <source>White balance</source>
         <translation>איזון לבן</translation>
-    </message>
-    <message>
-        <source>Temperature</source>
-        <translation>טמפרטורה</translation>
-    </message>
-    <message>
-        <source>Tint</source>
-        <translation>גוון</translation>
-    </message>
-    <message>
-        <source>Tone</source>
-        <translation>טון</translation>
-    </message>
-    <message>
-        <source>Presence</source>
-        <translation>נוכחות</translation>
     </message>
     <message>
         <source>Tone curve</source>
@@ -1950,28 +2107,8 @@
         <translation>התמרה</translation>
     </message>
     <message>
-        <source>Vertical</source>
-        <translation>אנכי</translation>
-    </message>
-    <message>
-        <source>Horizontal</source>
-        <translation>אופקי</translation>
-    </message>
-    <message>
-        <source>Scale</source>
-        <translation>קנה מידה</translation>
-    </message>
-    <message>
-        <source>Vertical straightens converging lines, such as buildings photographed from below. Crop afterwards to remove the empty edges.</source>
-        <translation>אנכי מיישר קווים מתכנסים, כמו בניינים שצולמו מלמטה. לאחר מכן חתכו כדי להסיר את השוליים הריקים.</translation>
-    </message>
-    <message>
         <source>Grain</source>
         <translation>גרעיניות</translation>
-    </message>
-    <message>
-        <source>Colour management</source>
-        <translation>ניהול צבע</translation>
     </message>
     <message>
         <source>Heal and clone</source>
@@ -1988,34 +2125,6 @@
     <message>
         <source>LUT</source>
         <translation>LUT</translation>
-    </message>
-    <message>
-        <source>Edit assistant</source>
-        <translation>עוזר עריכה</translation>
-    </message>
-    <message>
-        <source>Assistant edit applied</source>
-        <translation>עריכת העוזר הוחלה</translation>
-    </message>
-    <message>
-        <source>Copy</source>
-        <translation>העתקה</translation>
-    </message>
-    <message>
-        <source>Paste</source>
-        <translation>הדבקה</translation>
-    </message>
-    <message>
-        <source>Reset</source>
-        <translation>איפוס</translation>
-    </message>
-    <message>
-        <source>Import XMP</source>
-        <translation>ייבוא XMP</translation>
-    </message>
-    <message>
-        <source>Write XMP</source>
-        <translation>כתיבת XMP</translation>
     </message>
     <message>
         <source>Opening %1</source>
@@ -2097,6 +2206,17 @@
     <message>
         <source>no answer from the engine</source>
         <translation>אין תשובה מהמנוע</translation>
+    </message>
+</context>
+<context>
+    <name>MasksTab</name>
+    <message>
+        <source>Heal and clone</source>
+        <translation>ריפוי ושכפול</translation>
+    </message>
+    <message>
+        <source>Local adjustments</source>
+        <translation>כוונונים מקומיים</translation>
     </message>
 </context>
 <context>
@@ -2291,6 +2411,53 @@
     </message>
 </context>
 <context>
+    <name>RightInspector</name>
+    <message>
+        <source>AI</source>
+        <translation>בינה מלאכותית</translation>
+    </message>
+    <message>
+        <source>Adjust</source>
+        <translation>כוונון</translation>
+    </message>
+    <message>
+        <source>Copy</source>
+        <translation>העתקה</translation>
+    </message>
+    <message>
+        <source>Import XMP</source>
+        <translation>ייבוא XMP</translation>
+    </message>
+    <message>
+        <source>Looks</source>
+        <translation>סגנונות</translation>
+    </message>
+    <message>
+        <source>Masks</source>
+        <translation>מסכות</translation>
+    </message>
+    <message>
+        <source>Paste</source>
+        <translation>הדבקה</translation>
+    </message>
+    <message>
+        <source>Read the photo&apos;s .xmp sidecar written by another editor</source>
+        <translation>קריאת קובץ ‎.xmp שנכתב בעורך אחר</translation>
+    </message>
+    <message>
+        <source>Reset</source>
+        <translation>איפוס</translation>
+    </message>
+    <message>
+        <source>Write XMP</source>
+        <translation>כתיבת XMP</translation>
+    </message>
+    <message>
+        <source>Write the edit, rating and label to an .xmp sidecar for other editors</source>
+        <translation>כתיבת העריכה, הדירוג והתווית לקובץ ‎.xmp לעורכים אחרים</translation>
+    </message>
+</context>
+<context>
     <name>ScopesView</name>
     <message>
         <source>HIST</source>
@@ -2345,6 +2512,57 @@
     <message>
         <source>SKIN</source>
         <translation>עור</translation>
+    </message>
+</context>
+<context>
+    <name>ShortcutRouter</name>
+    <message>
+        <source>Crop mode: off</source>
+        <translation>מצב חיתוך: כבוי</translation>
+    </message>
+    <message>
+        <source>Crop mode: on (C)</source>
+        <translation>מצב חיתוך: מופעל (C)</translation>
+    </message>
+    <message>
+        <source>Flag cleared</source>
+        <translation>הסימון הוסר</translation>
+    </message>
+    <message>
+        <source>Open a photo first</source>
+        <translation>יש לפתוח תמונה תחילה</translation>
+    </message>
+    <message>
+        <source>Rating cleared</source>
+        <translation>הדירוג נוקה</translation>
+    </message>
+    <message>
+        <source>Rating: ★</source>
+        <translation>דירוג: ★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★</source>
+        <translation>דירוג: ★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★</source>
+        <translation>דירוג: ★★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★★</source>
+        <translation>דירוג: ★★★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★★★</source>
+        <translation>דירוג: ★★★★★</translation>
+    </message>
+    <message>
+        <source>Soft proof off</source>
+        <translation>הגהה על המסך כבויה</translation>
+    </message>
+    <message>
+        <source>Soft proof: %1</source>
+        <translation>הגהה על המסך: %1</translation>
     </message>
 </context>
 <context>
@@ -2733,93 +2951,6 @@
     <message>
         <source>Drop Shadow</source>
         <translation>הטלת צל</translation>
-    </message>
-</context>
-<context>
-    <name>CloudDialog</name>
-    <message>
-        <source>Add an account</source>
-        <translation>הוספת חשבון</translation>
-    </message>
-    <message>
-        <source>Browse</source>
-        <translation>עיון</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation>ביטול</translation>
-    </message>
-    <message>
-        <source>Client ID</source>
-        <translation>מזהה לקוח</translation>
-    </message>
-    <message>
-        <source>Client secret</source>
-        <translation>סוד לקוח</translation>
-    </message>
-    <message>
-        <source>Close</source>
-        <translation>סגירה</translation>
-    </message>
-    <message>
-        <source>Cloud accounts</source>
-        <translation>חשבונות ענן</translation>
-    </message>
-    <message>
-        <source>Confirm</source>
-        <translation>אישור</translation>
-    </message>
-    <message>
-        <source>Connected</source>
-        <translation>מחוברים</translation>
-    </message>
-    <message>
-        <source>Disconnect</source>
-        <translation>ניתוק</translation>
-    </message>
-    <message>
-        <source>Disconnecting removes the account's keys and downloaded copies from this computer. Files in the account stay as they are.</source>
-        <translation>הניתוק מסיר ממחשב זה את מפתחות החשבון ואת העותקים שהורדו. הקבצים בחשבון נשארים כפי שהם.</translation>
-    </message>
-    <message>
-        <source>Enter this code on the GitHub page that opened in your browser:</source>
-        <translation>הזינו את הקוד הזה בדף GitHub שנפתח בדפדפן:</translation>
-    </message>
-    <message>
-        <source>Finish signing in in your browser. This window updates when you are done.</source>
-        <translation>סיימו את ההתחברות בדפדפן. החלון יתעדכן בסיום.</translation>
-    </message>
-    <message>
-        <source>Install it with: sudo pacman -S %1</source>
-        <translation>התקנה: sudo pacman -S %1</translation>
-    </message>
-    <message>
-        <source>Needs %1</source>
-        <translation>נדרש %1</translation>
-    </message>
-    <message>
-        <source>No account connected yet.</source>
-        <translation>עדיין לא חובר חשבון.</translation>
-    </message>
-    <message>
-        <source>Open the page again</source>
-        <translation>פתיחת הדף שוב</translation>
-    </message>
-    <message>
-        <source>Own Google client ID (optional)</source>
-        <translation>מזהה לקוח Google משלכם (רשות)</translation>
-    </message>
-    <message>
-        <source>Signing in to %1</source>
-        <translation>מתחבר אל %1</translation>
-    </message>
-    <message>
-        <source>The shared client rclone uses for Google Drive is being retired. With a client ID of your own from the Google Cloud Console, Google Drive keeps working. It is used the next time you connect Google Drive.</source>
-        <translation>הלקוח המשותף ש־rclone משתמש בו עבור Google Drive יוצא משימוש. עם מזהה לקוח משלכם מ־Google Cloud Console, ‏Google Drive ממשיך לעבוד. הוא ישמש בפעם הבאה שתחברו את Google Drive.</translation>
-    </message>
-    <message>
-        <source>You sign in on the service's own page in your browser. OmaStudio keeps the access keys in the system keyring and creates a folder named %1 in each account for uploads.</source>
-        <translation>ההתחברות נעשית בדף של השירות עצמו, בדפדפן. OmaStudio שומר את מפתחות הגישה במחזיק המפתחות של המערכת ויוצר בכל חשבון תיקייה בשם %1 להעלאות.</translation>
     </message>
 </context>
 </TS>

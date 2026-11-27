@@ -13,6 +13,14 @@ use cxx_qt_lib::QString;
 
 use crate::{ipc, language};
 
+mod supported_extensions {
+    include!("../../src/raw/supported_extensions.inc");
+}
+
+mod look_presets {
+    include!("../../src/recipe/look_presets.inc");
+}
+
 static TMP_COUNTER: AtomicU64 = AtomicU64::new(0);
 
 #[cxx_qt::bridge]
@@ -39,6 +47,8 @@ pub mod qobject {
         #[qproperty(QString, system_language, READ, NOTIFY)]
         #[qproperty(QString, omarchy_language_file, READ, CONSTANT)]
         #[qproperty(QString, available_languages, READ, CONSTANT)]
+        #[qproperty(QString, raw_extensions, READ, CONSTANT)]
+        #[qproperty(QString, image_extensions, READ, CONSTANT)]
         type Host = super::HostRust;
 
         /// A control-socket call; answer it with `ipcReply(id, text)`. `args` is a
@@ -80,6 +90,13 @@ pub mod qobject {
 
         #[qinvokable]
         fn save_ui_state(self: &Host, json: &QString);
+
+        /// Applies one of the 5 built-in look presets (matching `Recipe::fuji_classic_chrome`
+        /// and friends in `src/recipe/mod.rs`) on top of `current_recipe_json`, resetting
+        /// look-specific fields while keeping WB (unless overridden by the preset), exposure,
+        /// crop and film simulation. Returns the updated recipe JSON, or `""` for unknown names.
+        #[qinvokable]
+        fn apply_look_preset(self: &Host, current_recipe_json: &QString, name: &QString) -> QString;
     }
 
     impl cxx_qt::Threading for Host {}
@@ -96,11 +113,15 @@ pub struct HostRust {
     system_language: QString,
     omarchy_language_file: QString,
     available_languages: QString,
+    raw_extensions: QString,
+    image_extensions: QString,
 }
 
 impl Default for HostRust {
     fn default() -> Self {
         let home = std::env::var("HOME").unwrap_or_default();
+        let raw_json = serde_json::to_string(supported_extensions::RAW_EXTENSIONS).unwrap_or_else(|_| "[]".into());
+        let img_json = serde_json::to_string(supported_extensions::RASTER_EXTENSIONS).unwrap_or_else(|_| "[]".into());
         Self {
             open_path: QString::from(std::env::var("OMASTUDIO_OPEN_PATH").unwrap_or_default().as_str()),
             engine_path: QString::from(engine_path(&home).to_string_lossy().as_ref()),
@@ -113,6 +134,8 @@ impl Default for HostRust {
                 language::omarchy_file().map(|p| p.to_string_lossy().into_owned()).unwrap_or_default().as_str(),
             ),
             available_languages: QString::from(language::AVAILABLE),
+            raw_extensions: QString::from(raw_json.as_str()),
+            image_extensions: QString::from(img_json.as_str()),
         }
     }
 }
@@ -232,6 +255,82 @@ impl qobject::Host {
             eprintln!("omastudio: cannot save {}: {e}", path.display());
         }
     }
+
+    pub fn apply_look_preset(&self, current_recipe_json: &QString, name: &QString) -> QString {
+        let cur = String::from(current_recipe_json);
+        let preset_name = String::from(name);
+        match apply_look_preset_json(&cur, &preset_name) {
+            Some(updated) => QString::from(updated.as_str()),
+            None => QString::default(),
+        }
+    }
+}
+
+/// Applies one of the 5 shared look presets on top of `current_recipe_json`.
+///
+/// Resets look-related fields (tone, presence, parametric curve, HSL, grading wheels,
+/// sharpening, vignette) to engine defaults before applying the preset so looks replace
+/// rather than stack, while preserving exposure, crop, rotation, film simulation, and
+/// (unless overridden by the preset) white balance.
+fn apply_look_preset_json(current_recipe_json: &str, name: &str) -> Option<String> {
+    let spec = look_presets::find_look_preset(name)?;
+    let mut val: serde_json::Value = serde_json::from_str(current_recipe_json).ok()?;
+    let obj = val.as_object_mut()?;
+
+    let zero_keys = [
+        "contrast",
+        "highlights",
+        "shadows",
+        "whites",
+        "blacks",
+        "texture",
+        "clarity",
+        "dehaze",
+        "vibrance",
+        "saturation",
+        "curve_highlights",
+        "curve_lights",
+        "curve_darks",
+        "curve_shadows",
+        "vignette",
+        "lift_luma",
+        "gamma_luma",
+        "gain_luma",
+        "offset_luma",
+    ];
+    for key in zero_keys {
+        obj.insert(key.to_string(), serde_json::json!(0.0));
+    }
+    obj.insert("sharpness".to_string(), serde_json::json!(spec.sharpness));
+    obj.insert("lift".to_string(), serde_json::json!(spec.lift));
+    obj.insert("lift_luma".to_string(), serde_json::json!(spec.lift_luma));
+    obj.insert("gamma".to_string(), serde_json::json!([0.0, 0.0, 0.0]));
+    obj.insert("gain".to_string(), serde_json::json!(spec.gain));
+    obj.insert("gain_luma".to_string(), serde_json::json!(spec.gain_luma));
+    obj.insert("offset".to_string(), serde_json::json!([0.0, 0.0, 0.0]));
+    obj.insert("hsl_hue".to_string(), serde_json::json!(spec.hsl_hue));
+    obj.insert("hsl_sat".to_string(), serde_json::json!(spec.hsl_sat));
+    obj.insert("hsl_lum".to_string(), serde_json::json!(spec.hsl_lum));
+
+    if let Some(temp) = spec.wb_temperature {
+        obj.insert("wb_temperature".to_string(), serde_json::json!(temp));
+    }
+    if let Some(tint) = spec.wb_tint {
+        obj.insert("wb_tint".to_string(), serde_json::json!(tint));
+    }
+    obj.insert("contrast".to_string(), serde_json::json!(spec.contrast));
+    obj.insert("highlights".to_string(), serde_json::json!(spec.highlights));
+    obj.insert("shadows".to_string(), serde_json::json!(spec.shadows));
+    obj.insert("whites".to_string(), serde_json::json!(spec.whites));
+    obj.insert("blacks".to_string(), serde_json::json!(spec.blacks));
+    obj.insert("texture".to_string(), serde_json::json!(spec.texture));
+    obj.insert("clarity".to_string(), serde_json::json!(spec.clarity));
+    obj.insert("vibrance".to_string(), serde_json::json!(spec.vibrance));
+    obj.insert("saturation".to_string(), serde_json::json!(spec.saturation));
+    obj.insert("vignette".to_string(), serde_json::json!(spec.vignette));
+    obj.insert("preset_name".to_string(), serde_json::json!(spec.id));
+
+    serde_json::to_string(&val).ok()
 }
 
 const UI_STATE_MAX: u64 = 64 * 1024;
@@ -421,5 +520,31 @@ mod tests {
         assert!(read_private_file_bounded(&link, UI_STATE_MAX).is_err());
 
         let _ = std::fs::remove_dir_all(&base);
+    }
+
+    #[test]
+    fn apply_look_preset_replaces_previous_look_and_preserves_exposure_and_wb() {
+        let base = r#"{"exposure":1.25,"wb_temperature":6200.0,"wb_tint":3.0,"contrast":40.0,"vignette":-30.0,"film_simulation":"fuji_provia"}"#;
+        let out = apply_look_preset_json(base, "muted").expect("alias resolves to Fuji Classic Chrome");
+        let val: serde_json::Value = serde_json::from_str(&out).unwrap();
+        assert_eq!(val["preset_name"], "Fuji Classic Chrome");
+        assert_eq!(val["exposure"], 1.25);
+        assert_eq!(val["wb_temperature"], 6200.0);
+        assert_eq!(val["film_simulation"], "fuji_provia");
+        assert_eq!(val["contrast"], 15.0);
+        assert_eq!(val["vignette"], -12.0);
+        assert_eq!(val["hsl_hue"][5], -8.0);
+        assert_eq!(val["hsl_sat"][1], 10.0);
+        assert_eq!(val["hsl_sat"][5], -20.0);
+
+        // Switching to Kodak Portra resets previous vignette and sets Portra's warm WB
+        let portra = apply_look_preset_json(&out, "Kodak Portra 400").unwrap();
+        let pval: serde_json::Value = serde_json::from_str(&portra).unwrap();
+        assert_eq!(pval["vignette"], 0.0);
+        assert_eq!(pval["wb_temperature"], 5700.0);
+        assert_eq!(pval["wb_tint"], 4.0);
+        assert_eq!(pval["hsl_lum"][1], 12.0);
+
+        assert!(apply_look_preset_json(base, "No Such Preset").is_none());
     }
 }

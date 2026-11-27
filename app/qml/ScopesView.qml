@@ -43,6 +43,7 @@ Rectangle {
                 Repeater {
                     model: parent.modes
                     delegate: Rectangle {
+                        required property var modelData
                         implicitWidth: modeText.implicitWidth + 8
                         implicitHeight: Theme.px(11) + 8
                         radius: Theme.r(3)
@@ -66,6 +67,16 @@ Rectangle {
                             anchors.fill: parent
                             cursorShape: Qt.PointingHandCursor
                             onClicked: {
+                                root.activeScope = modelData.idx;
+                                scopeCanvas.requestPaint();
+                            }
+                        }
+                        KeyFocus {
+                            name: modelData.name
+                            role: Accessible.PageTab
+                            checkable: true
+                            checked: root.activeScope === modelData.idx
+                            onActivated: {
                                 root.activeScope = modelData.idx;
                                 scopeCanvas.requestPaint();
                             }
@@ -108,6 +119,12 @@ Rectangle {
                             root.toggleShadowMask();
                         }
                     }
+                    KeyFocus {
+                        name: shadowText.text
+                        checkable: true
+                        checked: root.showClippingShadows
+                        onActivated: root.toggleShadowMask()
+                    }
                 }
 
                 // Highlight clipping button
@@ -138,6 +155,12 @@ Rectangle {
                         onClicked: {
                             root.toggleHighlightMask();
                         }
+                    }
+                    KeyFocus {
+                        name: highText.text
+                        checkable: true
+                        checked: root.showClippingHighlights
+                        onActivated: root.toggleHighlightMask()
                     }
                 }
             }

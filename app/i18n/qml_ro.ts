@@ -141,6 +141,173 @@
     </message>
 </context>
 <context>
+    <name>AdjustTab</name>
+    <message>
+        <source>Blacks</source>
+        <translation>Negre</translation>
+    </message>
+    <message>
+        <source>Clarity (Midtone Contrast)</source>
+        <translation>Claritate (contrastul tonurilor medii)</translation>
+    </message>
+    <message>
+        <source>Color Chrome Effect</source>
+        <translation>Efect Color Chrome</translation>
+    </message>
+    <message>
+        <source>Color Chrome FX Blue</source>
+        <translation>Color Chrome FX Albastru</translation>
+    </message>
+    <message>
+        <source>Colour grading</source>
+        <translation>Corecție de culoare</translation>
+    </message>
+    <message>
+        <source>Colour management</source>
+        <translation>Gestionarea culorii</translation>
+    </message>
+    <message>
+        <source>Colour mixer</source>
+        <translation>Mixer de culori</translation>
+    </message>
+    <message>
+        <source>Contrast</source>
+        <translation>Contrast</translation>
+    </message>
+    <message>
+        <source>Curve Darks (Lower Mids)</source>
+        <translation>Curbă: tonuri închise (medii inferioare)</translation>
+    </message>
+    <message>
+        <source>Curve Highlights</source>
+        <translation>Curbă: lumini</translation>
+    </message>
+    <message>
+        <source>Curve Lights (Upper Mids)</source>
+        <translation>Curbă: tonuri deschise (medii superioare)</translation>
+    </message>
+    <message>
+        <source>Curve Shadows</source>
+        <translation>Curbă: umbre</translation>
+    </message>
+    <message>
+        <source>Defringe (Chromatic Aberration)</source>
+        <translation>Eliminarea franjurilor (aberație cromatică)</translation>
+    </message>
+    <message>
+        <source>Dehaze</source>
+        <translation>Eliminare ceață</translation>
+    </message>
+    <message>
+        <source>Detail and optics</source>
+        <translation>Detalii și optică</translation>
+    </message>
+    <message>
+        <source>Exposure</source>
+        <translation>Expunere</translation>
+    </message>
+    <message>
+        <source>Grain</source>
+        <translation>Granulație</translation>
+    </message>
+    <message>
+        <source>Highlights</source>
+        <translation>Lumini</translation>
+    </message>
+    <message>
+        <source>Horizontal</source>
+        <translation>Orizontal</translation>
+    </message>
+    <message>
+        <source>Lens Distortion Correction</source>
+        <translation>Corecția distorsiunii obiectivului</translation>
+    </message>
+    <message>
+        <source>Noise Reduction (Color)</source>
+        <translation>Reducerea zgomotului (culoare)</translation>
+    </message>
+    <message>
+        <source>Noise Reduction (Luma)</source>
+        <translation>Reducerea zgomotului (luminanță)</translation>
+    </message>
+    <message>
+        <source>Open a photo first</source>
+        <translation>Deschideți mai întâi o fotografie</translation>
+    </message>
+    <message>
+        <source>Presence</source>
+        <translation>Prezență</translation>
+    </message>
+    <message>
+        <source>Profile</source>
+        <translation>Profil</translation>
+    </message>
+    <message>
+        <source>Saturation</source>
+        <translation>Saturație</translation>
+    </message>
+    <message>
+        <source>Scale</source>
+        <translation>Scară</translation>
+    </message>
+    <message>
+        <source>Shadows</source>
+        <translation>Umbre</translation>
+    </message>
+    <message>
+        <source>Sharpening</source>
+        <translation>Clarificare</translation>
+    </message>
+    <message>
+        <source>Temperature</source>
+        <translation>Temperatură</translation>
+    </message>
+    <message>
+        <source>Texture</source>
+        <translation>Textură</translation>
+    </message>
+    <message>
+        <source>Tint</source>
+        <translation>Nuanță</translation>
+    </message>
+    <message>
+        <source>Tone</source>
+        <translation>Ton</translation>
+    </message>
+    <message>
+        <source>Tone curve</source>
+        <translation>Curbă de ton</translation>
+    </message>
+    <message>
+        <source>Transform</source>
+        <translation>Transformare</translation>
+    </message>
+    <message>
+        <source>Vertical</source>
+        <translation>Vertical</translation>
+    </message>
+    <message>
+        <source>Vertical straightens converging lines, such as buildings photographed from below. Crop afterwards to remove the empty edges.</source>
+        <translation>Vertical îndreaptă liniile convergente, cum ar fi clădirile fotografiate de jos. Decupați apoi pentru a elimina marginile goale.</translation>
+    </message>
+    <message>
+        <source>Vibrance</source>
+        <translation>Vivacitate</translation>
+    </message>
+    <message>
+        <source>Vignette</source>
+        <translation>Vignetare</translation>
+    </message>
+    <message>
+        <source>White balance</source>
+        <translation>Balansul de alb</translation>
+    </message>
+    <message>
+        <source>Whites</source>
+        <translation>Albe</translation>
+    </message>
+</context>
+<context>
     <name>AiAssistPanel</name>
     <message>
         <source>%1 (automatic)</source>
@@ -291,10 +458,123 @@
     </message>
 </context>
 <context>
+    <name>AiTab</name>
+    <message>
+        <source>Assistant edit applied</source>
+        <translation>Editarea asistentului a fost aplicată</translation>
+    </message>
+    <message>
+        <source>Edit assistant</source>
+        <translation>Asistent de editare</translation>
+    </message>
+</context>
+<context>
     <name>BoundedTextInput</name>
     <message>
         <source>Clipboard content exceeded byte limit or timed out.</source>
         <translation>Conținutul clipboardului a depășit limita de octeți sau timpul a expirat.</translation>
+    </message>
+</context>
+<context>
+    <name>CenterWorkspace</name>
+    <message>
+        <source>Opened %1</source>
+        <translation>Deschis %1</translation>
+    </message>
+    <message>
+        <source>Scanning folder %1</source>
+        <translation>Se scanează dosarul %1</translation>
+    </message>
+    <message>
+        <source>Soft proof: %1</source>
+        <translation>Probă pe ecran: %1</translation>
+    </message>
+</context>
+<context>
+    <name>CloudDialog</name>
+    <message>
+        <source>Add an account</source>
+        <translation>Adaugă un cont</translation>
+    </message>
+    <message>
+        <source>Browse</source>
+        <translation>Răsfoiește</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Anulează</translation>
+    </message>
+    <message>
+        <source>Client ID</source>
+        <translation>ID client</translation>
+    </message>
+    <message>
+        <source>Client secret</source>
+        <translation>Secret client</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>Închide</translation>
+    </message>
+    <message>
+        <source>Cloud accounts</source>
+        <translation>Conturi în cloud</translation>
+    </message>
+    <message>
+        <source>Confirm</source>
+        <translation>Confirmă</translation>
+    </message>
+    <message>
+        <source>Connected</source>
+        <translation>Conectate</translation>
+    </message>
+    <message>
+        <source>Disconnect</source>
+        <translation>Deconectează</translation>
+    </message>
+    <message>
+        <source>Disconnecting removes the account&apos;s keys and downloaded copies from this computer. Files in the account stay as they are.</source>
+        <translation>Deconectarea șterge de pe acest computer cheile contului și copiile descărcate. Fișierele din cont rămân neschimbate.</translation>
+    </message>
+    <message>
+        <source>Enter this code on the GitHub page that opened in your browser:</source>
+        <translation>Introduceți acest cod pe pagina GitHub deschisă în browser:</translation>
+    </message>
+    <message>
+        <source>Finish signing in in your browser. This window updates when you are done.</source>
+        <translation>Finalizați conectarea în browser. Fereastra se actualizează după aceea.</translation>
+    </message>
+    <message>
+        <source>Install it with: sudo pacman -S %1</source>
+        <translation>Instalare: sudo pacman -S %1</translation>
+    </message>
+    <message>
+        <source>Needs %1</source>
+        <translation>Necesită %1</translation>
+    </message>
+    <message>
+        <source>No account connected yet.</source>
+        <translation>Niciun cont conectat încă.</translation>
+    </message>
+    <message>
+        <source>Open the page again</source>
+        <translation>Deschide din nou pagina</translation>
+    </message>
+    <message>
+        <source>Own Google client ID (optional)</source>
+        <translation>ID client Google propriu (opțional)</translation>
+    </message>
+    <message>
+        <source>Signing in to %1</source>
+        <translation>Conectare la %1</translation>
+    </message>
+    <message>
+        <source>The shared client rclone uses for Google Drive is being retired. With a client ID of your own from the Google Cloud Console, Google Drive keeps working. It is used the next time you connect Google Drive.</source>
+        <translation>Clientul comun pe care rclone îl folosește pentru Google Drive este retras. Cu un ID client propriu din Google Cloud Console, Google Drive continuă să funcționeze. Va fi folosit la următoarea conectare a Google Drive.</translation>
+    </message>
+    <message>
+        <source>You sign in on the service&apos;s own page in your browser. OmaStudio keeps the access keys in the system keyring and creates a folder named %1 in each account for uploads.</source>
+        <translation>Vă conectați pe pagina serviciului, în browser. OmaStudio păstrează cheile de acces în portchei-ul sistemului și creează în fiecare cont un dosar numit %1 pentru încărcări.</translation>
     </message>
 </context>
 <context>
@@ -1096,23 +1376,6 @@
     </message>
 </context>
 <context>
-    <name>HistogramView</name>
-    <message>
-        <source>[S] %1%</source>
-        <comment>S: shadow clipping</comment>
-        <translation>[U] %1%</translation>
-    </message>
-    <message>
-        <source>Histogram</source>
-        <translation>Histogramă</translation>
-    </message>
-    <message>
-        <source>[H] %1%</source>
-        <comment>H: highlight clipping</comment>
-        <translation>[L] %1%</translation>
-    </message>
-</context>
-<context>
     <name>HistoryPanel</name>
     <message>
         <source>History</source>
@@ -1477,6 +1740,32 @@
     </message>
 </context>
 <context>
+    <name>LeftInspector</name>
+    <message>
+        <source>Analyzing...</source>
+        <translation>Se analizează...</translation>
+    </message>
+    <message>
+        <source>Extracting dynamic range...</source>
+        <translation>Se extrage gama dinamică...</translation>
+    </message>
+    <message>
+        <source>Suggested scene</source>
+        <translation>Scenă sugerată</translation>
+    </message>
+</context>
+<context>
+    <name>LooksTab</name>
+    <message>
+        <source>LUT</source>
+        <translation>LUT</translation>
+    </message>
+    <message>
+        <source>Presets</source>
+        <translation>Presetări</translation>
+    </message>
+</context>
+<context>
     <name>LutSelector</name>
     <message>
         <source>Load 3D LUT</source>
@@ -1598,22 +1887,6 @@
         <translation>Mod decupare: dezactivat</translation>
     </message>
     <message>
-        <source>Analyzing...</source>
-        <translation>Se analizează...</translation>
-    </message>
-    <message>
-        <source>Extracting dynamic range...</source>
-        <translation>Se extrage gama dinamică...</translation>
-    </message>
-    <message>
-        <source>Opened %1</source>
-        <translation>Deschis %1</translation>
-    </message>
-    <message>
-        <source>Scanning folder %1</source>
-        <translation>Se scanează dosarul %1</translation>
-    </message>
-    <message>
         <source>Contrast</source>
         <translation>Contrast</translation>
     </message>
@@ -1638,28 +1911,8 @@
         <translation>Negre</translation>
     </message>
     <message>
-        <source>Curve Highlights</source>
-        <translation>Curbă: lumini</translation>
-    </message>
-    <message>
-        <source>Curve Lights (Upper Mids)</source>
-        <translation>Curbă: tonuri deschise (medii superioare)</translation>
-    </message>
-    <message>
-        <source>Curve Darks (Lower Mids)</source>
-        <translation>Curbă: tonuri închise (medii inferioare)</translation>
-    </message>
-    <message>
-        <source>Curve Shadows</source>
-        <translation>Curbă: umbre</translation>
-    </message>
-    <message>
         <source>Texture</source>
         <translation>Textură</translation>
-    </message>
-    <message>
-        <source>Suggested scene</source>
-        <translation>Scenă sugerată</translation>
     </message>
     <message>
         <source>Clarity (Midtone Contrast)</source>
@@ -1682,28 +1935,8 @@
         <translation>Clarificare</translation>
     </message>
     <message>
-        <source>Noise Reduction (Luma)</source>
-        <translation>Reducerea zgomotului (luminanță)</translation>
-    </message>
-    <message>
-        <source>Noise Reduction (Color)</source>
-        <translation>Reducerea zgomotului (culoare)</translation>
-    </message>
-    <message>
         <source>Vignette</source>
         <translation>Vignetare</translation>
-    </message>
-    <message>
-        <source>Defringe (Chromatic Aberration)</source>
-        <translation>Eliminarea franjurilor (aberație cromatică)</translation>
-    </message>
-    <message>
-        <source>Lens Distortion Correction</source>
-        <translation>Corecția distorsiunii obiectivului</translation>
-    </message>
-    <message>
-        <source>Open a photo first</source>
-        <translation>Deschideți mai întâi o fotografie</translation>
     </message>
     <message>
         <source>Version %1</source>
@@ -1830,34 +2063,6 @@
         <translation>Scanarea dosarului nu a răspuns.</translation>
     </message>
     <message>
-        <source>Soft proof: %1</source>
-        <translation>Probă pe ecran: %1</translation>
-    </message>
-    <message>
-        <source>Soft proof off</source>
-        <translation>Probă pe ecran oprită</translation>
-    </message>
-    <message>
-        <source>Rating: ★</source>
-        <translation>Evaluare: ★</translation>
-    </message>
-    <message>
-        <source>Rating: ★★</source>
-        <translation>Evaluare: ★★</translation>
-    </message>
-    <message>
-        <source>Rating: ★★★</source>
-        <translation>Evaluare: ★★★</translation>
-    </message>
-    <message>
-        <source>Rating: ★★★★</source>
-        <translation>Evaluare: ★★★★</translation>
-    </message>
-    <message>
-        <source>Rating: ★★★★★</source>
-        <translation>Evaluare: ★★★★★</translation>
-    </message>
-    <message>
         <source>Flag cleared</source>
         <translation>Marcaj eliminat</translation>
     </message>
@@ -1878,60 +2083,12 @@
         <translation>Respinsă</translation>
     </message>
     <message>
-        <source>Adjust</source>
-        <translation>Ajustează</translation>
-    </message>
-    <message>
-        <source>Masks</source>
-        <translation>Măști</translation>
-    </message>
-    <message>
-        <source>Looks</source>
-        <translation>Stiluri</translation>
-    </message>
-    <message>
-        <source>AI</source>
-        <translation>IA</translation>
-    </message>
-    <message>
-        <source>Read the photo&apos;s .xmp sidecar written by another editor</source>
-        <translation>Citește fișierul .xmp scris de alt editor</translation>
-    </message>
-    <message>
-        <source>Write the edit, rating and label to an .xmp sidecar for other editors</source>
-        <translation>Scrie editarea, nota și eticheta într-un fișier .xmp pentru alte editoare</translation>
-    </message>
-    <message>
         <source>Profile</source>
         <translation>Profil</translation>
     </message>
     <message>
-        <source>Color Chrome Effect</source>
-        <translation>Efect Color Chrome</translation>
-    </message>
-    <message>
-        <source>Color Chrome FX Blue</source>
-        <translation>Color Chrome FX Albastru</translation>
-    </message>
-    <message>
         <source>White balance</source>
         <translation>Balansul de alb</translation>
-    </message>
-    <message>
-        <source>Temperature</source>
-        <translation>Temperatură</translation>
-    </message>
-    <message>
-        <source>Tint</source>
-        <translation>Nuanță</translation>
-    </message>
-    <message>
-        <source>Tone</source>
-        <translation>Ton</translation>
-    </message>
-    <message>
-        <source>Presence</source>
-        <translation>Prezență</translation>
     </message>
     <message>
         <source>Tone curve</source>
@@ -1954,28 +2111,8 @@
         <translation>Transformare</translation>
     </message>
     <message>
-        <source>Vertical</source>
-        <translation>Vertical</translation>
-    </message>
-    <message>
-        <source>Horizontal</source>
-        <translation>Orizontal</translation>
-    </message>
-    <message>
-        <source>Scale</source>
-        <translation>Scară</translation>
-    </message>
-    <message>
-        <source>Vertical straightens converging lines, such as buildings photographed from below. Crop afterwards to remove the empty edges.</source>
-        <translation>Vertical îndreaptă liniile convergente, cum ar fi clădirile fotografiate de jos. Decupați apoi pentru a elimina marginile goale.</translation>
-    </message>
-    <message>
         <source>Grain</source>
         <translation>Granulație</translation>
-    </message>
-    <message>
-        <source>Colour management</source>
-        <translation>Gestionarea culorii</translation>
     </message>
     <message>
         <source>Heal and clone</source>
@@ -1992,34 +2129,6 @@
     <message>
         <source>LUT</source>
         <translation>LUT</translation>
-    </message>
-    <message>
-        <source>Edit assistant</source>
-        <translation>Asistent de editare</translation>
-    </message>
-    <message>
-        <source>Assistant edit applied</source>
-        <translation>Editarea asistentului a fost aplicată</translation>
-    </message>
-    <message>
-        <source>Copy</source>
-        <translation>Copiază</translation>
-    </message>
-    <message>
-        <source>Paste</source>
-        <translation>Lipește</translation>
-    </message>
-    <message>
-        <source>Reset</source>
-        <translation>Resetează</translation>
-    </message>
-    <message>
-        <source>Import XMP</source>
-        <translation>Importă XMP</translation>
-    </message>
-    <message>
-        <source>Write XMP</source>
-        <translation>Scrie XMP</translation>
     </message>
     <message>
         <source>Opening %1</source>
@@ -2104,6 +2213,17 @@
     <message>
         <source>no answer from the engine</source>
         <translation>niciun răspuns de la motor</translation>
+    </message>
+</context>
+<context>
+    <name>MasksTab</name>
+    <message>
+        <source>Heal and clone</source>
+        <translation>Corectare și clonare</translation>
+    </message>
+    <message>
+        <source>Local adjustments</source>
+        <translation>Ajustări locale</translation>
     </message>
 </context>
 <context>
@@ -2298,6 +2418,53 @@
     </message>
 </context>
 <context>
+    <name>RightInspector</name>
+    <message>
+        <source>AI</source>
+        <translation>IA</translation>
+    </message>
+    <message>
+        <source>Adjust</source>
+        <translation>Ajustează</translation>
+    </message>
+    <message>
+        <source>Copy</source>
+        <translation>Copiază</translation>
+    </message>
+    <message>
+        <source>Import XMP</source>
+        <translation>Importă XMP</translation>
+    </message>
+    <message>
+        <source>Looks</source>
+        <translation>Stiluri</translation>
+    </message>
+    <message>
+        <source>Masks</source>
+        <translation>Măști</translation>
+    </message>
+    <message>
+        <source>Paste</source>
+        <translation>Lipește</translation>
+    </message>
+    <message>
+        <source>Read the photo&apos;s .xmp sidecar written by another editor</source>
+        <translation>Citește fișierul .xmp scris de alt editor</translation>
+    </message>
+    <message>
+        <source>Reset</source>
+        <translation>Resetează</translation>
+    </message>
+    <message>
+        <source>Write XMP</source>
+        <translation>Scrie XMP</translation>
+    </message>
+    <message>
+        <source>Write the edit, rating and label to an .xmp sidecar for other editors</source>
+        <translation>Scrie editarea, nota și eticheta într-un fișier .xmp pentru alte editoare</translation>
+    </message>
+</context>
+<context>
     <name>ScopesView</name>
     <message>
         <source>HIST</source>
@@ -2352,6 +2519,57 @@
     <message>
         <source>SKIN</source>
         <translation>PIELE</translation>
+    </message>
+</context>
+<context>
+    <name>ShortcutRouter</name>
+    <message>
+        <source>Crop mode: off</source>
+        <translation>Mod decupare: dezactivat</translation>
+    </message>
+    <message>
+        <source>Crop mode: on (C)</source>
+        <translation>Mod decupare: activat (C)</translation>
+    </message>
+    <message>
+        <source>Flag cleared</source>
+        <translation>Marcaj eliminat</translation>
+    </message>
+    <message>
+        <source>Open a photo first</source>
+        <translation>Deschideți mai întâi o fotografie</translation>
+    </message>
+    <message>
+        <source>Rating cleared</source>
+        <translation>Evaluare ștearsă</translation>
+    </message>
+    <message>
+        <source>Rating: ★</source>
+        <translation>Evaluare: ★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★</source>
+        <translation>Evaluare: ★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★</source>
+        <translation>Evaluare: ★★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★★</source>
+        <translation>Evaluare: ★★★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★★★</source>
+        <translation>Evaluare: ★★★★★</translation>
+    </message>
+    <message>
+        <source>Soft proof off</source>
+        <translation>Probă pe ecran oprită</translation>
+    </message>
+    <message>
+        <source>Soft proof: %1</source>
+        <translation>Probă pe ecran: %1</translation>
     </message>
 </context>
 <context>
@@ -2741,93 +2959,6 @@
     <message>
         <source>Drop Shadow</source>
         <translation>Umbră</translation>
-    </message>
-</context>
-<context>
-    <name>CloudDialog</name>
-    <message>
-        <source>Add an account</source>
-        <translation>Adaugă un cont</translation>
-    </message>
-    <message>
-        <source>Browse</source>
-        <translation>Răsfoiește</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation>Anulează</translation>
-    </message>
-    <message>
-        <source>Client ID</source>
-        <translation>ID client</translation>
-    </message>
-    <message>
-        <source>Client secret</source>
-        <translation>Secret client</translation>
-    </message>
-    <message>
-        <source>Close</source>
-        <translation>Închide</translation>
-    </message>
-    <message>
-        <source>Cloud accounts</source>
-        <translation>Conturi în cloud</translation>
-    </message>
-    <message>
-        <source>Confirm</source>
-        <translation>Confirmă</translation>
-    </message>
-    <message>
-        <source>Connected</source>
-        <translation>Conectate</translation>
-    </message>
-    <message>
-        <source>Disconnect</source>
-        <translation>Deconectează</translation>
-    </message>
-    <message>
-        <source>Disconnecting removes the account's keys and downloaded copies from this computer. Files in the account stay as they are.</source>
-        <translation>Deconectarea șterge de pe acest computer cheile contului și copiile descărcate. Fișierele din cont rămân neschimbate.</translation>
-    </message>
-    <message>
-        <source>Enter this code on the GitHub page that opened in your browser:</source>
-        <translation>Introduceți acest cod pe pagina GitHub deschisă în browser:</translation>
-    </message>
-    <message>
-        <source>Finish signing in in your browser. This window updates when you are done.</source>
-        <translation>Finalizați conectarea în browser. Fereastra se actualizează după aceea.</translation>
-    </message>
-    <message>
-        <source>Install it with: sudo pacman -S %1</source>
-        <translation>Instalare: sudo pacman -S %1</translation>
-    </message>
-    <message>
-        <source>Needs %1</source>
-        <translation>Necesită %1</translation>
-    </message>
-    <message>
-        <source>No account connected yet.</source>
-        <translation>Niciun cont conectat încă.</translation>
-    </message>
-    <message>
-        <source>Open the page again</source>
-        <translation>Deschide din nou pagina</translation>
-    </message>
-    <message>
-        <source>Own Google client ID (optional)</source>
-        <translation>ID client Google propriu (opțional)</translation>
-    </message>
-    <message>
-        <source>Signing in to %1</source>
-        <translation>Conectare la %1</translation>
-    </message>
-    <message>
-        <source>The shared client rclone uses for Google Drive is being retired. With a client ID of your own from the Google Cloud Console, Google Drive keeps working. It is used the next time you connect Google Drive.</source>
-        <translation>Clientul comun pe care rclone îl folosește pentru Google Drive este retras. Cu un ID client propriu din Google Cloud Console, Google Drive continuă să funcționeze. Va fi folosit la următoarea conectare a Google Drive.</translation>
-    </message>
-    <message>
-        <source>You sign in on the service's own page in your browser. OmaStudio keeps the access keys in the system keyring and creates a folder named %1 in each account for uploads.</source>
-        <translation>Vă conectați pe pagina serviciului, în browser. OmaStudio păstrează cheile de acces în portchei-ul sistemului și creează în fiecare cont un dosar numit %1 pentru încărcări.</translation>
     </message>
 </context>
 </TS>

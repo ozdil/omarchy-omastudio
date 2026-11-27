@@ -141,6 +141,173 @@
     </message>
 </context>
 <context>
+    <name>AdjustTab</name>
+    <message>
+        <source>Blacks</source>
+        <translation>Zwarte tinten</translation>
+    </message>
+    <message>
+        <source>Clarity (Midtone Contrast)</source>
+        <translation>Helderheid (middentooncontrast)</translation>
+    </message>
+    <message>
+        <source>Color Chrome Effect</source>
+        <translation>Color Chrome-effect</translation>
+    </message>
+    <message>
+        <source>Color Chrome FX Blue</source>
+        <translation>Color Chrome FX Blauw</translation>
+    </message>
+    <message>
+        <source>Colour grading</source>
+        <translation>Kleurcorrectie</translation>
+    </message>
+    <message>
+        <source>Colour management</source>
+        <translation>Kleurbeheer</translation>
+    </message>
+    <message>
+        <source>Colour mixer</source>
+        <translation>Kleurmixer</translation>
+    </message>
+    <message>
+        <source>Contrast</source>
+        <translation>Contrast</translation>
+    </message>
+    <message>
+        <source>Curve Darks (Lower Mids)</source>
+        <translation>Curve: donkere tonen (lage middentonen)</translation>
+    </message>
+    <message>
+        <source>Curve Highlights</source>
+        <translation>Curve: hoge lichten</translation>
+    </message>
+    <message>
+        <source>Curve Lights (Upper Mids)</source>
+        <translation>Curve: lichte tonen (hoge middentonen)</translation>
+    </message>
+    <message>
+        <source>Curve Shadows</source>
+        <translation>Curve: schaduwen</translation>
+    </message>
+    <message>
+        <source>Defringe (Chromatic Aberration)</source>
+        <translation>Randen verwijderen (chromatische aberratie)</translation>
+    </message>
+    <message>
+        <source>Dehaze</source>
+        <translation>Nevel verwijderen</translation>
+    </message>
+    <message>
+        <source>Detail and optics</source>
+        <translation>Detail en optiek</translation>
+    </message>
+    <message>
+        <source>Exposure</source>
+        <translation>Belichting</translation>
+    </message>
+    <message>
+        <source>Grain</source>
+        <translation>Korrel</translation>
+    </message>
+    <message>
+        <source>Highlights</source>
+        <translation>Hoge lichten</translation>
+    </message>
+    <message>
+        <source>Horizontal</source>
+        <translation>Horizontaal</translation>
+    </message>
+    <message>
+        <source>Lens Distortion Correction</source>
+        <translation>Correctie van objectiefvervorming</translation>
+    </message>
+    <message>
+        <source>Noise Reduction (Color)</source>
+        <translation>Ruisonderdrukking (kleur)</translation>
+    </message>
+    <message>
+        <source>Noise Reduction (Luma)</source>
+        <translation>Ruisonderdrukking (luminantie)</translation>
+    </message>
+    <message>
+        <source>Open a photo first</source>
+        <translation>Open eerst een foto</translation>
+    </message>
+    <message>
+        <source>Presence</source>
+        <translation>Presentie</translation>
+    </message>
+    <message>
+        <source>Profile</source>
+        <translation>Profiel</translation>
+    </message>
+    <message>
+        <source>Saturation</source>
+        <translation>Verzadiging</translation>
+    </message>
+    <message>
+        <source>Scale</source>
+        <translation>Schaal</translation>
+    </message>
+    <message>
+        <source>Shadows</source>
+        <translation>Schaduwen</translation>
+    </message>
+    <message>
+        <source>Sharpening</source>
+        <translation>Verscherping</translation>
+    </message>
+    <message>
+        <source>Temperature</source>
+        <translation>Temperatuur</translation>
+    </message>
+    <message>
+        <source>Texture</source>
+        <translation>Textuur</translation>
+    </message>
+    <message>
+        <source>Tint</source>
+        <translation>Tint</translation>
+    </message>
+    <message>
+        <source>Tone</source>
+        <translation>Toon</translation>
+    </message>
+    <message>
+        <source>Tone curve</source>
+        <translation>Tooncurve</translation>
+    </message>
+    <message>
+        <source>Transform</source>
+        <translation>Transformeren</translation>
+    </message>
+    <message>
+        <source>Vertical</source>
+        <translation>Verticaal</translation>
+    </message>
+    <message>
+        <source>Vertical straightens converging lines, such as buildings photographed from below. Crop afterwards to remove the empty edges.</source>
+        <translation>Verticaal zet convergerende lijnen recht, zoals gebouwen die van onderaf zijn gefotografeerd. Snijd daarna bij om de lege randen te verwijderen.</translation>
+    </message>
+    <message>
+        <source>Vibrance</source>
+        <translation>Levendigheid</translation>
+    </message>
+    <message>
+        <source>Vignette</source>
+        <translation>Vignettering</translation>
+    </message>
+    <message>
+        <source>White balance</source>
+        <translation>Witbalans</translation>
+    </message>
+    <message>
+        <source>Whites</source>
+        <translation>Witte tinten</translation>
+    </message>
+</context>
+<context>
     <name>AiAssistPanel</name>
     <message>
         <source>%1 (automatic)</source>
@@ -291,10 +458,123 @@
     </message>
 </context>
 <context>
+    <name>AiTab</name>
+    <message>
+        <source>Assistant edit applied</source>
+        <translation>Bewerking van de assistent toegepast</translation>
+    </message>
+    <message>
+        <source>Edit assistant</source>
+        <translation>Bewerkingsassistent</translation>
+    </message>
+</context>
+<context>
     <name>BoundedTextInput</name>
     <message>
         <source>Clipboard content exceeded byte limit or timed out.</source>
         <translation>De inhoud van het klembord was te groot of de tijd verstreek.</translation>
+    </message>
+</context>
+<context>
+    <name>CenterWorkspace</name>
+    <message>
+        <source>Opened %1</source>
+        <translation>%1 geopend</translation>
+    </message>
+    <message>
+        <source>Scanning folder %1</source>
+        <translation>Map %1 wordt gescand</translation>
+    </message>
+    <message>
+        <source>Soft proof: %1</source>
+        <translation>Softproof: %1</translation>
+    </message>
+</context>
+<context>
+    <name>CloudDialog</name>
+    <message>
+        <source>Add an account</source>
+        <translation>Account toevoegen</translation>
+    </message>
+    <message>
+        <source>Browse</source>
+        <translation>Bladeren</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Annuleren</translation>
+    </message>
+    <message>
+        <source>Client ID</source>
+        <translation>Client-ID</translation>
+    </message>
+    <message>
+        <source>Client secret</source>
+        <translation>Clientgeheim</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>Sluiten</translation>
+    </message>
+    <message>
+        <source>Cloud accounts</source>
+        <translation>Cloudaccounts</translation>
+    </message>
+    <message>
+        <source>Confirm</source>
+        <translation>Bevestigen</translation>
+    </message>
+    <message>
+        <source>Connected</source>
+        <translation>Verbonden</translation>
+    </message>
+    <message>
+        <source>Disconnect</source>
+        <translation>Ontkoppelen</translation>
+    </message>
+    <message>
+        <source>Disconnecting removes the account&apos;s keys and downloaded copies from this computer. Files in the account stay as they are.</source>
+        <translation>Ontkoppelen verwijdert de sleutels van het account en gedownloade kopieën van deze computer. Bestanden in het account blijven zoals ze zijn.</translation>
+    </message>
+    <message>
+        <source>Enter this code on the GitHub page that opened in your browser:</source>
+        <translation>Voer deze code in op de GitHub-pagina die in je browser is geopend:</translation>
+    </message>
+    <message>
+        <source>Finish signing in in your browser. This window updates when you are done.</source>
+        <translation>Rond het inloggen af in je browser. Dit venster wordt daarna bijgewerkt.</translation>
+    </message>
+    <message>
+        <source>Install it with: sudo pacman -S %1</source>
+        <translation>Installeer met: sudo pacman -S %1</translation>
+    </message>
+    <message>
+        <source>Needs %1</source>
+        <translation>Vereist %1</translation>
+    </message>
+    <message>
+        <source>No account connected yet.</source>
+        <translation>Nog geen account verbonden.</translation>
+    </message>
+    <message>
+        <source>Open the page again</source>
+        <translation>Pagina opnieuw openen</translation>
+    </message>
+    <message>
+        <source>Own Google client ID (optional)</source>
+        <translation>Eigen Google-client-ID (optioneel)</translation>
+    </message>
+    <message>
+        <source>Signing in to %1</source>
+        <translation>Inloggen bij %1</translation>
+    </message>
+    <message>
+        <source>The shared client rclone uses for Google Drive is being retired. With a client ID of your own from the Google Cloud Console, Google Drive keeps working. It is used the next time you connect Google Drive.</source>
+        <translation>De gedeelde client die rclone voor Google Drive gebruikt, wordt uitgefaseerd. Met een eigen client-ID uit de Google Cloud Console blijft Google Drive werken. Deze wordt gebruikt wanneer je Google Drive opnieuw verbindt.</translation>
+    </message>
+    <message>
+        <source>You sign in on the service&apos;s own page in your browser. OmaStudio keeps the access keys in the system keyring and creates a folder named %1 in each account for uploads.</source>
+        <translation>Je logt in op de eigen pagina van de dienst, in je browser. OmaStudio bewaart de toegangssleutels in de sleutelbos van het systeem en maakt in elk account een map %1 voor uploads.</translation>
     </message>
 </context>
 <context>
@@ -945,7 +1225,7 @@
     </message>
     <message>
         <source>No folders or photos here.</source>
-        <translation>Geen mappen of foto's hier.</translation>
+        <translation>Geen mappen of foto&apos;s hier.</translation>
     </message>
 </context>
 <context>
@@ -1090,23 +1370,6 @@
     <message>
         <source>Version %1</source>
         <translation>Versie %1</translation>
-    </message>
-</context>
-<context>
-    <name>HistogramView</name>
-    <message>
-        <source>[S] %1%</source>
-        <comment>S: shadow clipping</comment>
-        <translation>[S] %1%</translation>
-    </message>
-    <message>
-        <source>Histogram</source>
-        <translation>Histogram</translation>
-    </message>
-    <message>
-        <source>[H] %1%</source>
-        <comment>H: highlight clipping</comment>
-        <translation>[H] %1%</translation>
     </message>
 </context>
 <context>
@@ -1474,6 +1737,32 @@
     </message>
 </context>
 <context>
+    <name>LeftInspector</name>
+    <message>
+        <source>Analyzing...</source>
+        <translation>Analyseren...</translation>
+    </message>
+    <message>
+        <source>Extracting dynamic range...</source>
+        <translation>Dynamisch bereik wordt bepaald...</translation>
+    </message>
+    <message>
+        <source>Suggested scene</source>
+        <translation>Voorgestelde scène</translation>
+    </message>
+</context>
+<context>
+    <name>LooksTab</name>
+    <message>
+        <source>LUT</source>
+        <translation>LUT</translation>
+    </message>
+    <message>
+        <source>Presets</source>
+        <translation>Voorinstellingen</translation>
+    </message>
+</context>
+<context>
     <name>LutSelector</name>
     <message>
         <source>Load 3D LUT</source>
@@ -1594,22 +1883,6 @@
         <translation>Uitsnijmodus: uit</translation>
     </message>
     <message>
-        <source>Analyzing...</source>
-        <translation>Analyseren...</translation>
-    </message>
-    <message>
-        <source>Extracting dynamic range...</source>
-        <translation>Dynamisch bereik wordt bepaald...</translation>
-    </message>
-    <message>
-        <source>Opened %1</source>
-        <translation>%1 geopend</translation>
-    </message>
-    <message>
-        <source>Scanning folder %1</source>
-        <translation>Map %1 wordt gescand</translation>
-    </message>
-    <message>
         <source>Contrast</source>
         <translation>Contrast</translation>
     </message>
@@ -1634,28 +1907,8 @@
         <translation>Zwarte tinten</translation>
     </message>
     <message>
-        <source>Curve Highlights</source>
-        <translation>Curve: hoge lichten</translation>
-    </message>
-    <message>
-        <source>Curve Lights (Upper Mids)</source>
-        <translation>Curve: lichte tonen (hoge middentonen)</translation>
-    </message>
-    <message>
-        <source>Curve Darks (Lower Mids)</source>
-        <translation>Curve: donkere tonen (lage middentonen)</translation>
-    </message>
-    <message>
-        <source>Curve Shadows</source>
-        <translation>Curve: schaduwen</translation>
-    </message>
-    <message>
         <source>Texture</source>
         <translation>Textuur</translation>
-    </message>
-    <message>
-        <source>Suggested scene</source>
-        <translation>Voorgestelde scène</translation>
     </message>
     <message>
         <source>Clarity (Midtone Contrast)</source>
@@ -1678,28 +1931,8 @@
         <translation>Verscherping</translation>
     </message>
     <message>
-        <source>Noise Reduction (Luma)</source>
-        <translation>Ruisonderdrukking (luminantie)</translation>
-    </message>
-    <message>
-        <source>Noise Reduction (Color)</source>
-        <translation>Ruisonderdrukking (kleur)</translation>
-    </message>
-    <message>
         <source>Vignette</source>
         <translation>Vignettering</translation>
-    </message>
-    <message>
-        <source>Defringe (Chromatic Aberration)</source>
-        <translation>Randen verwijderen (chromatische aberratie)</translation>
-    </message>
-    <message>
-        <source>Lens Distortion Correction</source>
-        <translation>Correctie van objectiefvervorming</translation>
-    </message>
-    <message>
-        <source>Open a photo first</source>
-        <translation>Open eerst een foto</translation>
     </message>
     <message>
         <source>Version %1</source>
@@ -1826,34 +2059,6 @@
         <translation>De mapscan reageerde niet.</translation>
     </message>
     <message>
-        <source>Soft proof: %1</source>
-        <translation>Softproof: %1</translation>
-    </message>
-    <message>
-        <source>Soft proof off</source>
-        <translation>Softproof uit</translation>
-    </message>
-    <message>
-        <source>Rating: ★</source>
-        <translation>Beoordeling: ★</translation>
-    </message>
-    <message>
-        <source>Rating: ★★</source>
-        <translation>Beoordeling: ★★</translation>
-    </message>
-    <message>
-        <source>Rating: ★★★</source>
-        <translation>Beoordeling: ★★★</translation>
-    </message>
-    <message>
-        <source>Rating: ★★★★</source>
-        <translation>Beoordeling: ★★★★</translation>
-    </message>
-    <message>
-        <source>Rating: ★★★★★</source>
-        <translation>Beoordeling: ★★★★★</translation>
-    </message>
-    <message>
         <source>Flag cleared</source>
         <translation>Markering verwijderd</translation>
     </message>
@@ -1874,60 +2079,12 @@
         <translation>Afgewezen</translation>
     </message>
     <message>
-        <source>Adjust</source>
-        <translation>Aanpassen</translation>
-    </message>
-    <message>
-        <source>Masks</source>
-        <translation>Maskers</translation>
-    </message>
-    <message>
-        <source>Looks</source>
-        <translation>Stijlen</translation>
-    </message>
-    <message>
-        <source>AI</source>
-        <translation>AI</translation>
-    </message>
-    <message>
-        <source>Read the photo&apos;s .xmp sidecar written by another editor</source>
-        <translation>Het .xmp-bestand van een andere editor lezen</translation>
-    </message>
-    <message>
-        <source>Write the edit, rating and label to an .xmp sidecar for other editors</source>
-        <translation>Bewerking, waardering en label naar een .xmp-bestand schrijven voor andere editors</translation>
-    </message>
-    <message>
         <source>Profile</source>
         <translation>Profiel</translation>
     </message>
     <message>
-        <source>Color Chrome Effect</source>
-        <translation>Color Chrome-effect</translation>
-    </message>
-    <message>
-        <source>Color Chrome FX Blue</source>
-        <translation>Color Chrome FX Blauw</translation>
-    </message>
-    <message>
         <source>White balance</source>
         <translation>Witbalans</translation>
-    </message>
-    <message>
-        <source>Temperature</source>
-        <translation>Temperatuur</translation>
-    </message>
-    <message>
-        <source>Tint</source>
-        <translation>Tint</translation>
-    </message>
-    <message>
-        <source>Tone</source>
-        <translation>Toon</translation>
-    </message>
-    <message>
-        <source>Presence</source>
-        <translation>Presentie</translation>
     </message>
     <message>
         <source>Tone curve</source>
@@ -1950,28 +2107,8 @@
         <translation>Transformeren</translation>
     </message>
     <message>
-        <source>Vertical</source>
-        <translation>Verticaal</translation>
-    </message>
-    <message>
-        <source>Horizontal</source>
-        <translation>Horizontaal</translation>
-    </message>
-    <message>
-        <source>Scale</source>
-        <translation>Schaal</translation>
-    </message>
-    <message>
-        <source>Vertical straightens converging lines, such as buildings photographed from below. Crop afterwards to remove the empty edges.</source>
-        <translation>Verticaal zet convergerende lijnen recht, zoals gebouwen die van onderaf zijn gefotografeerd. Snijd daarna bij om de lege randen te verwijderen.</translation>
-    </message>
-    <message>
         <source>Grain</source>
         <translation>Korrel</translation>
-    </message>
-    <message>
-        <source>Colour management</source>
-        <translation>Kleurbeheer</translation>
     </message>
     <message>
         <source>Heal and clone</source>
@@ -1988,34 +2125,6 @@
     <message>
         <source>LUT</source>
         <translation>LUT</translation>
-    </message>
-    <message>
-        <source>Edit assistant</source>
-        <translation>Bewerkingsassistent</translation>
-    </message>
-    <message>
-        <source>Assistant edit applied</source>
-        <translation>Bewerking van de assistent toegepast</translation>
-    </message>
-    <message>
-        <source>Copy</source>
-        <translation>Kopiëren</translation>
-    </message>
-    <message>
-        <source>Paste</source>
-        <translation>Plakken</translation>
-    </message>
-    <message>
-        <source>Reset</source>
-        <translation>Herstellen</translation>
-    </message>
-    <message>
-        <source>Import XMP</source>
-        <translation>XMP importeren</translation>
-    </message>
-    <message>
-        <source>Write XMP</source>
-        <translation>XMP schrijven</translation>
     </message>
     <message>
         <source>Opening %1</source>
@@ -2072,7 +2181,7 @@
         <source>Downloading %n photo(s)…</source>
         <translation>
             <numerusform>%n foto downloaden…</numerusform>
-            <numerusform>%n foto's downloaden…</numerusform>
+            <numerusform>%n foto&apos;s downloaden…</numerusform>
         </translation>
     </message>
     <message>
@@ -2097,6 +2206,17 @@
     <message>
         <source>no answer from the engine</source>
         <translation>geen antwoord van de engine</translation>
+    </message>
+</context>
+<context>
+    <name>MasksTab</name>
+    <message>
+        <source>Heal and clone</source>
+        <translation>Herstellen en klonen</translation>
+    </message>
+    <message>
+        <source>Local adjustments</source>
+        <translation>Lokale aanpassingen</translation>
     </message>
 </context>
 <context>
@@ -2291,6 +2411,53 @@
     </message>
 </context>
 <context>
+    <name>RightInspector</name>
+    <message>
+        <source>AI</source>
+        <translation>AI</translation>
+    </message>
+    <message>
+        <source>Adjust</source>
+        <translation>Aanpassen</translation>
+    </message>
+    <message>
+        <source>Copy</source>
+        <translation>Kopiëren</translation>
+    </message>
+    <message>
+        <source>Import XMP</source>
+        <translation>XMP importeren</translation>
+    </message>
+    <message>
+        <source>Looks</source>
+        <translation>Stijlen</translation>
+    </message>
+    <message>
+        <source>Masks</source>
+        <translation>Maskers</translation>
+    </message>
+    <message>
+        <source>Paste</source>
+        <translation>Plakken</translation>
+    </message>
+    <message>
+        <source>Read the photo&apos;s .xmp sidecar written by another editor</source>
+        <translation>Het .xmp-bestand van een andere editor lezen</translation>
+    </message>
+    <message>
+        <source>Reset</source>
+        <translation>Herstellen</translation>
+    </message>
+    <message>
+        <source>Write XMP</source>
+        <translation>XMP schrijven</translation>
+    </message>
+    <message>
+        <source>Write the edit, rating and label to an .xmp sidecar for other editors</source>
+        <translation>Bewerking, waardering en label naar een .xmp-bestand schrijven voor andere editors</translation>
+    </message>
+</context>
+<context>
     <name>ScopesView</name>
     <message>
         <source>HIST</source>
@@ -2345,6 +2512,57 @@
     <message>
         <source>SKIN</source>
         <translation>HUID</translation>
+    </message>
+</context>
+<context>
+    <name>ShortcutRouter</name>
+    <message>
+        <source>Crop mode: off</source>
+        <translation>Uitsnijmodus: uit</translation>
+    </message>
+    <message>
+        <source>Crop mode: on (C)</source>
+        <translation>Uitsnijmodus: aan (C)</translation>
+    </message>
+    <message>
+        <source>Flag cleared</source>
+        <translation>Markering verwijderd</translation>
+    </message>
+    <message>
+        <source>Open a photo first</source>
+        <translation>Open eerst een foto</translation>
+    </message>
+    <message>
+        <source>Rating cleared</source>
+        <translation>Waardering gewist</translation>
+    </message>
+    <message>
+        <source>Rating: ★</source>
+        <translation>Beoordeling: ★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★</source>
+        <translation>Beoordeling: ★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★</source>
+        <translation>Beoordeling: ★★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★★</source>
+        <translation>Beoordeling: ★★★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★★★</source>
+        <translation>Beoordeling: ★★★★★</translation>
+    </message>
+    <message>
+        <source>Soft proof off</source>
+        <translation>Softproof uit</translation>
+    </message>
+    <message>
+        <source>Soft proof: %1</source>
+        <translation>Softproof: %1</translation>
     </message>
 </context>
 <context>
@@ -2733,93 +2951,6 @@
     <message>
         <source>Drop Shadow</source>
         <translation>Slagschaduw</translation>
-    </message>
-</context>
-<context>
-    <name>CloudDialog</name>
-    <message>
-        <source>Add an account</source>
-        <translation>Account toevoegen</translation>
-    </message>
-    <message>
-        <source>Browse</source>
-        <translation>Bladeren</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation>Annuleren</translation>
-    </message>
-    <message>
-        <source>Client ID</source>
-        <translation>Client-ID</translation>
-    </message>
-    <message>
-        <source>Client secret</source>
-        <translation>Clientgeheim</translation>
-    </message>
-    <message>
-        <source>Close</source>
-        <translation>Sluiten</translation>
-    </message>
-    <message>
-        <source>Cloud accounts</source>
-        <translation>Cloudaccounts</translation>
-    </message>
-    <message>
-        <source>Confirm</source>
-        <translation>Bevestigen</translation>
-    </message>
-    <message>
-        <source>Connected</source>
-        <translation>Verbonden</translation>
-    </message>
-    <message>
-        <source>Disconnect</source>
-        <translation>Ontkoppelen</translation>
-    </message>
-    <message>
-        <source>Disconnecting removes the account's keys and downloaded copies from this computer. Files in the account stay as they are.</source>
-        <translation>Ontkoppelen verwijdert de sleutels van het account en gedownloade kopieën van deze computer. Bestanden in het account blijven zoals ze zijn.</translation>
-    </message>
-    <message>
-        <source>Enter this code on the GitHub page that opened in your browser:</source>
-        <translation>Voer deze code in op de GitHub-pagina die in je browser is geopend:</translation>
-    </message>
-    <message>
-        <source>Finish signing in in your browser. This window updates when you are done.</source>
-        <translation>Rond het inloggen af in je browser. Dit venster wordt daarna bijgewerkt.</translation>
-    </message>
-    <message>
-        <source>Install it with: sudo pacman -S %1</source>
-        <translation>Installeer met: sudo pacman -S %1</translation>
-    </message>
-    <message>
-        <source>Needs %1</source>
-        <translation>Vereist %1</translation>
-    </message>
-    <message>
-        <source>No account connected yet.</source>
-        <translation>Nog geen account verbonden.</translation>
-    </message>
-    <message>
-        <source>Open the page again</source>
-        <translation>Pagina opnieuw openen</translation>
-    </message>
-    <message>
-        <source>Own Google client ID (optional)</source>
-        <translation>Eigen Google-client-ID (optioneel)</translation>
-    </message>
-    <message>
-        <source>Signing in to %1</source>
-        <translation>Inloggen bij %1</translation>
-    </message>
-    <message>
-        <source>The shared client rclone uses for Google Drive is being retired. With a client ID of your own from the Google Cloud Console, Google Drive keeps working. It is used the next time you connect Google Drive.</source>
-        <translation>De gedeelde client die rclone voor Google Drive gebruikt, wordt uitgefaseerd. Met een eigen client-ID uit de Google Cloud Console blijft Google Drive werken. Deze wordt gebruikt wanneer je Google Drive opnieuw verbindt.</translation>
-    </message>
-    <message>
-        <source>You sign in on the service's own page in your browser. OmaStudio keeps the access keys in the system keyring and creates a folder named %1 in each account for uploads.</source>
-        <translation>Je logt in op de eigen pagina van de dienst, in je browser. OmaStudio bewaart de toegangssleutels in de sleutelbos van het systeem en maakt in elk account een map %1 voor uploads.</translation>
     </message>
 </context>
 </TS>

@@ -28,7 +28,16 @@ Rectangle {
     property real greenInB: 0.0
     property real blueInB: 1.0
 
-    signal mixerChanged()
+    signal mixerChanged(var patch)
+
+    function resetMixer() {
+        root.mixerChanged({
+            "monochrome": false,
+            "redInR": 1.0, "greenInR": 0.0, "blueInR": 0.0,
+            "redInG": 0.0, "greenInG": 1.0, "blueInG": 0.0,
+            "redInB": 0.0, "greenInB": 0.0, "blueInB": 1.0
+        });
+    }
 
     ColumnLayout {
         id: mainCol
@@ -42,6 +51,7 @@ Rectangle {
             spacing: 6
 
             Text {
+                id: headerTitle
                 visible: !root.embedded
                 text: qsTr("Channel mixer")
                 textFormat: Text.PlainText
@@ -55,10 +65,10 @@ Rectangle {
 
             CustomSwitch {
                 checked: root.mixerEnabled
+                accessibleName: headerTitle.text
                 activeColor: Theme.accentCyan
                 onToggled: function(isChecked) {
-                    root.mixerEnabled = isChecked;
-                    root.mixerChanged();
+                    root.mixerChanged({ "mixerEnabled": isChecked });
                 }
             }
 
@@ -86,19 +96,11 @@ Rectangle {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
                     hoverEnabled: true
-                    onClicked: {
-                        root.monochrome = false;
-                        root.redInR = 1.0;
-                        root.greenInR = 0.0;
-                        root.blueInR = 0.0;
-                        root.redInG = 0.0;
-                        root.greenInG = 1.0;
-                        root.blueInG = 0.0;
-                        root.redInB = 0.0;
-                        root.greenInB = 0.0;
-                        root.blueInB = 1.0;
-                        root.mixerChanged();
-                    }
+                    onClicked: root.resetMixer()
+                }
+                KeyFocus {
+                    name: resetMixerText.text
+                    onActivated: root.resetMixer()
                 }
             }
         }
@@ -110,6 +112,7 @@ Rectangle {
             visible: root.mixerEnabled
 
             Text {
+                id: monoLabel
                 text: qsTr("Monochrome Mixing")
                 textFormat: Text.PlainText
                 font.family: Theme.fontFamily
@@ -120,17 +123,21 @@ Rectangle {
 
             CustomSwitch {
                 checked: root.monochrome
+                accessibleName: monoLabel.text
                 activeColor: Theme.accentCyan
                 onToggled: function(isChecked) {
-                    root.monochrome = isChecked;
                     // The monochrome mix uses the red row; untouched, that would be the
                     // red channel alone, so start from luminance weights instead
                     if (isChecked && root.redInR === 1.0 && root.greenInR === 0.0 && root.blueInR === 0.0) {
-                        root.redInR = 0.21;
-                        root.greenInR = 0.72;
-                        root.blueInR = 0.07;
+                        root.mixerChanged({
+                            "monochrome": true,
+                            "redInR": 0.21,
+                            "greenInR": 0.72,
+                            "blueInR": 0.07
+                        });
+                    } else {
+                        root.mixerChanged({ "monochrome": isChecked });
                     }
-                    root.mixerChanged();
                 }
             }
         }
@@ -161,7 +168,7 @@ Rectangle {
                 stepSize: 0.02
                 decimals: 2
                 accentColor: Theme.accentRed
-                onSliderMoved: function(v) { root.redInR = v; root.mixerChanged(); }
+                onSliderMoved: function(v) { root.mixerChanged({ "redInR": v }); }
             }
 
             SliderGroup {
@@ -173,7 +180,7 @@ Rectangle {
                 stepSize: 0.02
                 decimals: 2
                 accentColor: Theme.accentGreen
-                onSliderMoved: function(v) { root.greenInR = v; root.mixerChanged(); }
+                onSliderMoved: function(v) { root.mixerChanged({ "greenInR": v }); }
             }
 
             SliderGroup {
@@ -185,7 +192,7 @@ Rectangle {
                 stepSize: 0.02
                 decimals: 2
                 accentColor: Theme.accentBlue
-                onSliderMoved: function(v) { root.blueInR = v; root.mixerChanged(); }
+                onSliderMoved: function(v) { root.mixerChanged({ "blueInR": v }); }
             }
 
             // GREEN OUTPUT CHANNEL (Hidden in monochrome)
@@ -214,7 +221,7 @@ Rectangle {
                     stepSize: 0.02
                     decimals: 2
                     accentColor: Theme.accentRed
-                    onSliderMoved: function(v) { root.redInG = v; root.mixerChanged(); }
+                    onSliderMoved: function(v) { root.mixerChanged({ "redInG": v }); }
                 }
 
                 SliderGroup {
@@ -226,7 +233,7 @@ Rectangle {
                     stepSize: 0.02
                     decimals: 2
                     accentColor: Theme.accentGreen
-                    onSliderMoved: function(v) { root.greenInG = v; root.mixerChanged(); }
+                    onSliderMoved: function(v) { root.mixerChanged({ "greenInG": v }); }
                 }
 
                 SliderGroup {
@@ -238,7 +245,7 @@ Rectangle {
                     stepSize: 0.02
                     decimals: 2
                     accentColor: Theme.accentBlue
-                    onSliderMoved: function(v) { root.blueInG = v; root.mixerChanged(); }
+                    onSliderMoved: function(v) { root.mixerChanged({ "blueInG": v }); }
                 }
             }
 
@@ -268,7 +275,7 @@ Rectangle {
                     stepSize: 0.02
                     decimals: 2
                     accentColor: Theme.accentRed
-                    onSliderMoved: function(v) { root.redInB = v; root.mixerChanged(); }
+                    onSliderMoved: function(v) { root.mixerChanged({ "redInB": v }); }
                 }
 
                 SliderGroup {
@@ -280,7 +287,7 @@ Rectangle {
                     stepSize: 0.02
                     decimals: 2
                     accentColor: Theme.accentGreen
-                    onSliderMoved: function(v) { root.greenInB = v; root.mixerChanged(); }
+                    onSliderMoved: function(v) { root.mixerChanged({ "greenInB": v }); }
                 }
 
                 SliderGroup {
@@ -292,7 +299,7 @@ Rectangle {
                     stepSize: 0.02
                     decimals: 2
                     accentColor: Theme.accentBlue
-                    onSliderMoved: function(v) { root.blueInB = v; root.mixerChanged(); }
+                    onSliderMoved: function(v) { root.mixerChanged({ "blueInB": v }); }
                 }
             }
         }

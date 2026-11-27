@@ -61,6 +61,13 @@ ColumnLayout {
                     root.resetPreset()
                 }
             }
+            KeyFocus {
+                name: label33.text
+                onActivated: {
+                    root.activePreset = "";
+                    root.resetPreset();
+                }
+            }
         }
     }
 
@@ -87,6 +94,7 @@ ColumnLayout {
             }
 
             Text {
+                id: autoLabel
                 text: qsTr("Auto")
                 textFormat: Text.PlainText
                 font.family: Theme.fontFamily
@@ -115,6 +123,10 @@ ColumnLayout {
                 root.triggerAiAuto()
             }
         }
+        KeyFocus {
+            name: autoLabel.text
+            onActivated: root.triggerAiAuto()
+        }
     }
 
     // Grid of visual film simulations (Clean Omabeats style)
@@ -136,6 +148,7 @@ ColumnLayout {
         Repeater {
             model: parent.presets
             delegate: Rectangle {
+                required property var modelData
                 Layout.fillWidth: true
                 implicitHeight: Theme.sp(34)
                 radius: Theme.radiusSm
@@ -185,6 +198,16 @@ ColumnLayout {
                     onClicked: {
                         root.activePreset = modelData.name
                         root.applyPreset(modelData.name)
+                    }
+                }
+                KeyFocus {
+                    name: modelData.label
+                    description: modelData.sub
+                    checkable: true
+                    checked: root.activePreset === modelData.name
+                    onActivated: {
+                        root.activePreset = modelData.name;
+                        root.applyPreset(modelData.name);
                     }
                 }
             }

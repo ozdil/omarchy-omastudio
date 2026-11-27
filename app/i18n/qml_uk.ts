@@ -141,6 +141,173 @@
     </message>
 </context>
 <context>
+    <name>AdjustTab</name>
+    <message>
+        <source>Blacks</source>
+        <translation>Чорні</translation>
+    </message>
+    <message>
+        <source>Clarity (Midtone Contrast)</source>
+        <translation>Чіткість (контраст середніх тонів)</translation>
+    </message>
+    <message>
+        <source>Color Chrome Effect</source>
+        <translation>Ефект Color Chrome</translation>
+    </message>
+    <message>
+        <source>Color Chrome FX Blue</source>
+        <translation>Color Chrome FX Синій</translation>
+    </message>
+    <message>
+        <source>Colour grading</source>
+        <translation>Кольорокорекція</translation>
+    </message>
+    <message>
+        <source>Colour management</source>
+        <translation>Керування кольором</translation>
+    </message>
+    <message>
+        <source>Colour mixer</source>
+        <translation>Мікшер кольорів</translation>
+    </message>
+    <message>
+        <source>Contrast</source>
+        <translation>Контраст</translation>
+    </message>
+    <message>
+        <source>Curve Darks (Lower Mids)</source>
+        <translation>Крива: темні (нижні середні)</translation>
+    </message>
+    <message>
+        <source>Curve Highlights</source>
+        <translation>Крива: світла</translation>
+    </message>
+    <message>
+        <source>Curve Lights (Upper Mids)</source>
+        <translation>Крива: світлі (верхні середні)</translation>
+    </message>
+    <message>
+        <source>Curve Shadows</source>
+        <translation>Крива: тіні</translation>
+    </message>
+    <message>
+        <source>Defringe (Chromatic Aberration)</source>
+        <translation>Усунення облямівки (хроматична аберація)</translation>
+    </message>
+    <message>
+        <source>Dehaze</source>
+        <translation>Усунення серпанку</translation>
+    </message>
+    <message>
+        <source>Detail and optics</source>
+        <translation>Деталізація та оптика</translation>
+    </message>
+    <message>
+        <source>Exposure</source>
+        <translation>Експозиція</translation>
+    </message>
+    <message>
+        <source>Grain</source>
+        <translation>Зерно</translation>
+    </message>
+    <message>
+        <source>Highlights</source>
+        <translation>Світла</translation>
+    </message>
+    <message>
+        <source>Horizontal</source>
+        <translation>По горизонталі</translation>
+    </message>
+    <message>
+        <source>Lens Distortion Correction</source>
+        <translation>Корекція дисторсії об&apos;єктива</translation>
+    </message>
+    <message>
+        <source>Noise Reduction (Color)</source>
+        <translation>Шумозаглушення (колір)</translation>
+    </message>
+    <message>
+        <source>Noise Reduction (Luma)</source>
+        <translation>Шумозаглушення (яскравість)</translation>
+    </message>
+    <message>
+        <source>Open a photo first</source>
+        <translation>Спершу відкрийте фото</translation>
+    </message>
+    <message>
+        <source>Presence</source>
+        <translation>Присутність</translation>
+    </message>
+    <message>
+        <source>Profile</source>
+        <translation>Профіль</translation>
+    </message>
+    <message>
+        <source>Saturation</source>
+        <translation>Насиченість</translation>
+    </message>
+    <message>
+        <source>Scale</source>
+        <translation>Масштаб</translation>
+    </message>
+    <message>
+        <source>Shadows</source>
+        <translation>Тіні</translation>
+    </message>
+    <message>
+        <source>Sharpening</source>
+        <translation>Різкість</translation>
+    </message>
+    <message>
+        <source>Temperature</source>
+        <translation>Температура</translation>
+    </message>
+    <message>
+        <source>Texture</source>
+        <translation>Текстура</translation>
+    </message>
+    <message>
+        <source>Tint</source>
+        <translation>Відтінок</translation>
+    </message>
+    <message>
+        <source>Tone</source>
+        <translation>Тон</translation>
+    </message>
+    <message>
+        <source>Tone curve</source>
+        <translation>Тонова крива</translation>
+    </message>
+    <message>
+        <source>Transform</source>
+        <translation>Трансформація</translation>
+    </message>
+    <message>
+        <source>Vertical</source>
+        <translation>По вертикалі</translation>
+    </message>
+    <message>
+        <source>Vertical straightens converging lines, such as buildings photographed from below. Crop afterwards to remove the empty edges.</source>
+        <translation>Вертикаль випрямляє збіжні лінії, наприклад у будівель, знятих знизу. Потім обріжте порожні краї.</translation>
+    </message>
+    <message>
+        <source>Vibrance</source>
+        <translation>Соковитість</translation>
+    </message>
+    <message>
+        <source>Vignette</source>
+        <translation>Віньєтка</translation>
+    </message>
+    <message>
+        <source>White balance</source>
+        <translation>Баланс білого</translation>
+    </message>
+    <message>
+        <source>Whites</source>
+        <translation>Білі</translation>
+    </message>
+</context>
+<context>
     <name>AiAssistPanel</name>
     <message>
         <source>%1 (automatic)</source>
@@ -291,10 +458,123 @@
     </message>
 </context>
 <context>
+    <name>AiTab</name>
+    <message>
+        <source>Assistant edit applied</source>
+        <translation>Правку асистента застосовано</translation>
+    </message>
+    <message>
+        <source>Edit assistant</source>
+        <translation>Асистент редагування</translation>
+    </message>
+</context>
+<context>
     <name>BoundedTextInput</name>
     <message>
         <source>Clipboard content exceeded byte limit or timed out.</source>
         <translation>Вміст буфера обміну перевищив ліміт байтів або сплив час очікування.</translation>
+    </message>
+</context>
+<context>
+    <name>CenterWorkspace</name>
+    <message>
+        <source>Opened %1</source>
+        <translation>Відкрито: %1</translation>
+    </message>
+    <message>
+        <source>Scanning folder %1</source>
+        <translation>Сканування теки %1</translation>
+    </message>
+    <message>
+        <source>Soft proof: %1</source>
+        <translation>Кольоропроба: %1</translation>
+    </message>
+</context>
+<context>
+    <name>CloudDialog</name>
+    <message>
+        <source>Add an account</source>
+        <translation>Додати обліковий запис</translation>
+    </message>
+    <message>
+        <source>Browse</source>
+        <translation>Огляд</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Скасувати</translation>
+    </message>
+    <message>
+        <source>Client ID</source>
+        <translation>ID клієнта</translation>
+    </message>
+    <message>
+        <source>Client secret</source>
+        <translation>Секрет клієнта</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>Закрити</translation>
+    </message>
+    <message>
+        <source>Cloud accounts</source>
+        <translation>Хмарні облікові записи</translation>
+    </message>
+    <message>
+        <source>Confirm</source>
+        <translation>Підтвердити</translation>
+    </message>
+    <message>
+        <source>Connected</source>
+        <translation>Підключені</translation>
+    </message>
+    <message>
+        <source>Disconnect</source>
+        <translation>Відключити</translation>
+    </message>
+    <message>
+        <source>Disconnecting removes the account&apos;s keys and downloaded copies from this computer. Files in the account stay as they are.</source>
+        <translation>Під час відключення з цього комп&apos;ютера видаляються ключі облікового запису та завантажені копії. Файли в обліковому записі залишаються без змін.</translation>
+    </message>
+    <message>
+        <source>Enter this code on the GitHub page that opened in your browser:</source>
+        <translation>Введіть цей код на сторінці GitHub, що відкрилася в браузері:</translation>
+    </message>
+    <message>
+        <source>Finish signing in in your browser. This window updates when you are done.</source>
+        <translation>Завершіть вхід у браузері. Вікно оновиться, коли ви закінчите.</translation>
+    </message>
+    <message>
+        <source>Install it with: sudo pacman -S %1</source>
+        <translation>Встановлення: sudo pacman -S %1</translation>
+    </message>
+    <message>
+        <source>Needs %1</source>
+        <translation>Потрібно %1</translation>
+    </message>
+    <message>
+        <source>No account connected yet.</source>
+        <translation>Ще немає підключених облікових записів.</translation>
+    </message>
+    <message>
+        <source>Open the page again</source>
+        <translation>Відкрити сторінку знову</translation>
+    </message>
+    <message>
+        <source>Own Google client ID (optional)</source>
+        <translation>Власний ID клієнта Google (необов&apos;язково)</translation>
+    </message>
+    <message>
+        <source>Signing in to %1</source>
+        <translation>Вхід у %1</translation>
+    </message>
+    <message>
+        <source>The shared client rclone uses for Google Drive is being retired. With a client ID of your own from the Google Cloud Console, Google Drive keeps working. It is used the next time you connect Google Drive.</source>
+        <translation>Спільний клієнт, який rclone використовує для Google Drive, виводиться з ужитку. З власним ID клієнта з Google Cloud Console Google Drive працюватиме й далі. Його буде використано під час наступного підключення Google Drive.</translation>
+    </message>
+    <message>
+        <source>You sign in on the service&apos;s own page in your browser. OmaStudio keeps the access keys in the system keyring and creates a folder named %1 in each account for uploads.</source>
+        <translation>Вхід виконується на сторінці самого сервісу в браузері. OmaStudio зберігає ключі доступу в системній в&apos;язці ключів і створює в кожному обліковому записі теку %1 для завантажень.</translation>
     </message>
 </context>
 <context>
@@ -704,7 +984,7 @@
     </message>
     <message>
         <source>This computer only</source>
-        <translation>Лише цей комп'ютер</translation>
+        <translation>Лише цей комп&apos;ютер</translation>
     </message>
     <message>
         <source>Upload to</source>
@@ -1096,23 +1376,6 @@
     </message>
 </context>
 <context>
-    <name>HistogramView</name>
-    <message>
-        <source>[S] %1%</source>
-        <comment>S: shadow clipping</comment>
-        <translation>[Т] %1%</translation>
-    </message>
-    <message>
-        <source>Histogram</source>
-        <translation>Гістограма</translation>
-    </message>
-    <message>
-        <source>[H] %1%</source>
-        <comment>H: highlight clipping</comment>
-        <translation>[С] %1%</translation>
-    </message>
-</context>
-<context>
     <name>HistoryPanel</name>
     <message>
         <source>History</source>
@@ -1477,6 +1740,32 @@
     </message>
 </context>
 <context>
+    <name>LeftInspector</name>
+    <message>
+        <source>Analyzing...</source>
+        <translation>Аналіз...</translation>
+    </message>
+    <message>
+        <source>Extracting dynamic range...</source>
+        <translation>Визначення динамічного діапазону...</translation>
+    </message>
+    <message>
+        <source>Suggested scene</source>
+        <translation>Імовірна сцена</translation>
+    </message>
+</context>
+<context>
+    <name>LooksTab</name>
+    <message>
+        <source>LUT</source>
+        <translation>LUT</translation>
+    </message>
+    <message>
+        <source>Presets</source>
+        <translation>Пресети</translation>
+    </message>
+</context>
+<context>
     <name>LutSelector</name>
     <message>
         <source>Load 3D LUT</source>
@@ -1598,22 +1887,6 @@
         <translation>Режим кадрування: вимк.</translation>
     </message>
     <message>
-        <source>Analyzing...</source>
-        <translation>Аналіз...</translation>
-    </message>
-    <message>
-        <source>Extracting dynamic range...</source>
-        <translation>Визначення динамічного діапазону...</translation>
-    </message>
-    <message>
-        <source>Opened %1</source>
-        <translation>Відкрито: %1</translation>
-    </message>
-    <message>
-        <source>Scanning folder %1</source>
-        <translation>Сканування теки %1</translation>
-    </message>
-    <message>
         <source>Contrast</source>
         <translation>Контраст</translation>
     </message>
@@ -1638,28 +1911,8 @@
         <translation>Чорні</translation>
     </message>
     <message>
-        <source>Curve Highlights</source>
-        <translation>Крива: світла</translation>
-    </message>
-    <message>
-        <source>Curve Lights (Upper Mids)</source>
-        <translation>Крива: світлі (верхні середні)</translation>
-    </message>
-    <message>
-        <source>Curve Darks (Lower Mids)</source>
-        <translation>Крива: темні (нижні середні)</translation>
-    </message>
-    <message>
-        <source>Curve Shadows</source>
-        <translation>Крива: тіні</translation>
-    </message>
-    <message>
         <source>Texture</source>
         <translation>Текстура</translation>
-    </message>
-    <message>
-        <source>Suggested scene</source>
-        <translation>Імовірна сцена</translation>
     </message>
     <message>
         <source>Clarity (Midtone Contrast)</source>
@@ -1682,28 +1935,8 @@
         <translation>Різкість</translation>
     </message>
     <message>
-        <source>Noise Reduction (Luma)</source>
-        <translation>Шумозаглушення (яскравість)</translation>
-    </message>
-    <message>
-        <source>Noise Reduction (Color)</source>
-        <translation>Шумозаглушення (колір)</translation>
-    </message>
-    <message>
         <source>Vignette</source>
         <translation>Віньєтка</translation>
-    </message>
-    <message>
-        <source>Defringe (Chromatic Aberration)</source>
-        <translation>Усунення облямівки (хроматична аберація)</translation>
-    </message>
-    <message>
-        <source>Lens Distortion Correction</source>
-        <translation>Корекція дисторсії об&apos;єктива</translation>
-    </message>
-    <message>
-        <source>Open a photo first</source>
-        <translation>Спершу відкрийте фото</translation>
     </message>
     <message>
         <source>Version %1</source>
@@ -1830,34 +2063,6 @@
         <translation>Сканування теки не відповіло.</translation>
     </message>
     <message>
-        <source>Soft proof: %1</source>
-        <translation>Кольоропроба: %1</translation>
-    </message>
-    <message>
-        <source>Soft proof off</source>
-        <translation>Кольоропробу вимкнено</translation>
-    </message>
-    <message>
-        <source>Rating: ★</source>
-        <translation>Оцінка: ★</translation>
-    </message>
-    <message>
-        <source>Rating: ★★</source>
-        <translation>Оцінка: ★★</translation>
-    </message>
-    <message>
-        <source>Rating: ★★★</source>
-        <translation>Оцінка: ★★★</translation>
-    </message>
-    <message>
-        <source>Rating: ★★★★</source>
-        <translation>Оцінка: ★★★★</translation>
-    </message>
-    <message>
-        <source>Rating: ★★★★★</source>
-        <translation>Оцінка: ★★★★★</translation>
-    </message>
-    <message>
         <source>Flag cleared</source>
         <translation>Позначку знято</translation>
     </message>
@@ -1878,60 +2083,12 @@
         <translation>Відхилено</translation>
     </message>
     <message>
-        <source>Adjust</source>
-        <translation>Налаштування</translation>
-    </message>
-    <message>
-        <source>Masks</source>
-        <translation>Маски</translation>
-    </message>
-    <message>
-        <source>Looks</source>
-        <translation>Стилі</translation>
-    </message>
-    <message>
-        <source>AI</source>
-        <translation>ШІ</translation>
-    </message>
-    <message>
-        <source>Read the photo&apos;s .xmp sidecar written by another editor</source>
-        <translation>Прочитати файл .xmp, записаний іншим редактором</translation>
-    </message>
-    <message>
-        <source>Write the edit, rating and label to an .xmp sidecar for other editors</source>
-        <translation>Записати редагування, оцінку й мітку у файл .xmp для інших редакторів</translation>
-    </message>
-    <message>
         <source>Profile</source>
         <translation>Профіль</translation>
     </message>
     <message>
-        <source>Color Chrome Effect</source>
-        <translation>Ефект Color Chrome</translation>
-    </message>
-    <message>
-        <source>Color Chrome FX Blue</source>
-        <translation>Color Chrome FX Синій</translation>
-    </message>
-    <message>
         <source>White balance</source>
         <translation>Баланс білого</translation>
-    </message>
-    <message>
-        <source>Temperature</source>
-        <translation>Температура</translation>
-    </message>
-    <message>
-        <source>Tint</source>
-        <translation>Відтінок</translation>
-    </message>
-    <message>
-        <source>Tone</source>
-        <translation>Тон</translation>
-    </message>
-    <message>
-        <source>Presence</source>
-        <translation>Присутність</translation>
     </message>
     <message>
         <source>Tone curve</source>
@@ -1954,28 +2111,8 @@
         <translation>Трансформація</translation>
     </message>
     <message>
-        <source>Vertical</source>
-        <translation>По вертикалі</translation>
-    </message>
-    <message>
-        <source>Horizontal</source>
-        <translation>По горизонталі</translation>
-    </message>
-    <message>
-        <source>Scale</source>
-        <translation>Масштаб</translation>
-    </message>
-    <message>
-        <source>Vertical straightens converging lines, such as buildings photographed from below. Crop afterwards to remove the empty edges.</source>
-        <translation>Вертикаль випрямляє збіжні лінії, наприклад у будівель, знятих знизу. Потім обріжте порожні краї.</translation>
-    </message>
-    <message>
         <source>Grain</source>
         <translation>Зерно</translation>
-    </message>
-    <message>
-        <source>Colour management</source>
-        <translation>Керування кольором</translation>
     </message>
     <message>
         <source>Heal and clone</source>
@@ -1992,34 +2129,6 @@
     <message>
         <source>LUT</source>
         <translation>LUT</translation>
-    </message>
-    <message>
-        <source>Edit assistant</source>
-        <translation>Асистент редагування</translation>
-    </message>
-    <message>
-        <source>Assistant edit applied</source>
-        <translation>Правку асистента застосовано</translation>
-    </message>
-    <message>
-        <source>Copy</source>
-        <translation>Копіювати</translation>
-    </message>
-    <message>
-        <source>Paste</source>
-        <translation>Вставити</translation>
-    </message>
-    <message>
-        <source>Reset</source>
-        <translation>Скинути</translation>
-    </message>
-    <message>
-        <source>Import XMP</source>
-        <translation>Імпорт XMP</translation>
-    </message>
-    <message>
-        <source>Write XMP</source>
-        <translation>Запис XMP</translation>
     </message>
     <message>
         <source>Opening %1</source>
@@ -2104,6 +2213,17 @@
     <message>
         <source>no answer from the engine</source>
         <translation>рушій не відповів</translation>
+    </message>
+</context>
+<context>
+    <name>MasksTab</name>
+    <message>
+        <source>Heal and clone</source>
+        <translation>Відновлення і клонування</translation>
+    </message>
+    <message>
+        <source>Local adjustments</source>
+        <translation>Локальні корекції</translation>
     </message>
 </context>
 <context>
@@ -2298,6 +2418,53 @@
     </message>
 </context>
 <context>
+    <name>RightInspector</name>
+    <message>
+        <source>AI</source>
+        <translation>ШІ</translation>
+    </message>
+    <message>
+        <source>Adjust</source>
+        <translation>Налаштування</translation>
+    </message>
+    <message>
+        <source>Copy</source>
+        <translation>Копіювати</translation>
+    </message>
+    <message>
+        <source>Import XMP</source>
+        <translation>Імпорт XMP</translation>
+    </message>
+    <message>
+        <source>Looks</source>
+        <translation>Стилі</translation>
+    </message>
+    <message>
+        <source>Masks</source>
+        <translation>Маски</translation>
+    </message>
+    <message>
+        <source>Paste</source>
+        <translation>Вставити</translation>
+    </message>
+    <message>
+        <source>Read the photo&apos;s .xmp sidecar written by another editor</source>
+        <translation>Прочитати файл .xmp, записаний іншим редактором</translation>
+    </message>
+    <message>
+        <source>Reset</source>
+        <translation>Скинути</translation>
+    </message>
+    <message>
+        <source>Write XMP</source>
+        <translation>Запис XMP</translation>
+    </message>
+    <message>
+        <source>Write the edit, rating and label to an .xmp sidecar for other editors</source>
+        <translation>Записати редагування, оцінку й мітку у файл .xmp для інших редакторів</translation>
+    </message>
+</context>
+<context>
     <name>ScopesView</name>
     <message>
         <source>HIST</source>
@@ -2352,6 +2519,57 @@
     <message>
         <source>SKIN</source>
         <translation>ШКІРА</translation>
+    </message>
+</context>
+<context>
+    <name>ShortcutRouter</name>
+    <message>
+        <source>Crop mode: off</source>
+        <translation>Режим кадрування: вимк.</translation>
+    </message>
+    <message>
+        <source>Crop mode: on (C)</source>
+        <translation>Режим кадрування: увімк. (C)</translation>
+    </message>
+    <message>
+        <source>Flag cleared</source>
+        <translation>Позначку знято</translation>
+    </message>
+    <message>
+        <source>Open a photo first</source>
+        <translation>Спершу відкрийте фото</translation>
+    </message>
+    <message>
+        <source>Rating cleared</source>
+        <translation>Оцінку знято</translation>
+    </message>
+    <message>
+        <source>Rating: ★</source>
+        <translation>Оцінка: ★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★</source>
+        <translation>Оцінка: ★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★</source>
+        <translation>Оцінка: ★★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★★</source>
+        <translation>Оцінка: ★★★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★★★</source>
+        <translation>Оцінка: ★★★★★</translation>
+    </message>
+    <message>
+        <source>Soft proof off</source>
+        <translation>Кольоропробу вимкнено</translation>
+    </message>
+    <message>
+        <source>Soft proof: %1</source>
+        <translation>Кольоропроба: %1</translation>
     </message>
 </context>
 <context>
@@ -2741,93 +2959,6 @@
     <message>
         <source>Drop Shadow</source>
         <translation>Тінь</translation>
-    </message>
-</context>
-<context>
-    <name>CloudDialog</name>
-    <message>
-        <source>Add an account</source>
-        <translation>Додати обліковий запис</translation>
-    </message>
-    <message>
-        <source>Browse</source>
-        <translation>Огляд</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation>Скасувати</translation>
-    </message>
-    <message>
-        <source>Client ID</source>
-        <translation>ID клієнта</translation>
-    </message>
-    <message>
-        <source>Client secret</source>
-        <translation>Секрет клієнта</translation>
-    </message>
-    <message>
-        <source>Close</source>
-        <translation>Закрити</translation>
-    </message>
-    <message>
-        <source>Cloud accounts</source>
-        <translation>Хмарні облікові записи</translation>
-    </message>
-    <message>
-        <source>Confirm</source>
-        <translation>Підтвердити</translation>
-    </message>
-    <message>
-        <source>Connected</source>
-        <translation>Підключені</translation>
-    </message>
-    <message>
-        <source>Disconnect</source>
-        <translation>Відключити</translation>
-    </message>
-    <message>
-        <source>Disconnecting removes the account's keys and downloaded copies from this computer. Files in the account stay as they are.</source>
-        <translation>Під час відключення з цього комп'ютера видаляються ключі облікового запису та завантажені копії. Файли в обліковому записі залишаються без змін.</translation>
-    </message>
-    <message>
-        <source>Enter this code on the GitHub page that opened in your browser:</source>
-        <translation>Введіть цей код на сторінці GitHub, що відкрилася в браузері:</translation>
-    </message>
-    <message>
-        <source>Finish signing in in your browser. This window updates when you are done.</source>
-        <translation>Завершіть вхід у браузері. Вікно оновиться, коли ви закінчите.</translation>
-    </message>
-    <message>
-        <source>Install it with: sudo pacman -S %1</source>
-        <translation>Встановлення: sudo pacman -S %1</translation>
-    </message>
-    <message>
-        <source>Needs %1</source>
-        <translation>Потрібно %1</translation>
-    </message>
-    <message>
-        <source>No account connected yet.</source>
-        <translation>Ще немає підключених облікових записів.</translation>
-    </message>
-    <message>
-        <source>Open the page again</source>
-        <translation>Відкрити сторінку знову</translation>
-    </message>
-    <message>
-        <source>Own Google client ID (optional)</source>
-        <translation>Власний ID клієнта Google (необов'язково)</translation>
-    </message>
-    <message>
-        <source>Signing in to %1</source>
-        <translation>Вхід у %1</translation>
-    </message>
-    <message>
-        <source>The shared client rclone uses for Google Drive is being retired. With a client ID of your own from the Google Cloud Console, Google Drive keeps working. It is used the next time you connect Google Drive.</source>
-        <translation>Спільний клієнт, який rclone використовує для Google Drive, виводиться з ужитку. З власним ID клієнта з Google Cloud Console Google Drive працюватиме й далі. Його буде використано під час наступного підключення Google Drive.</translation>
-    </message>
-    <message>
-        <source>You sign in on the service's own page in your browser. OmaStudio keeps the access keys in the system keyring and creates a folder named %1 in each account for uploads.</source>
-        <translation>Вхід виконується на сторінці самого сервісу в браузері. OmaStudio зберігає ключі доступу в системній в'язці ключів і створює в кожному обліковому записі теку %1 для завантажень.</translation>
     </message>
 </context>
 </TS>

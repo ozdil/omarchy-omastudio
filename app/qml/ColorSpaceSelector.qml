@@ -77,6 +77,7 @@ Rectangle {
                 Layout.preferredWidth: 36
                 Layout.preferredHeight: Theme.sp(20)
                 checked: row.checked
+                accessibleName: row.title
                 onToggled: function(isChecked) { row.toggled(isChecked); }
             }
         }
@@ -105,7 +106,6 @@ Rectangle {
             description: qsTr("Brings colours pushed outside the gamut back in smoothly instead of clipping them.")
             checked: root.gamutCompression
             onToggled: function(isChecked) {
-                root.gamutCompression = isChecked;
                 root.gamutCompressionToggled(isChecked);
             }
         }
@@ -115,7 +115,6 @@ Rectangle {
             description: qsTr("Filmic highlight roll-off, a fitted approximation of the ACES output transform.")
             checked: root.acesTonemap
             onToggled: function(isChecked) {
-                root.acesTonemap = isChecked;
                 root.acesTonemapToggled(isChecked);
             }
         }

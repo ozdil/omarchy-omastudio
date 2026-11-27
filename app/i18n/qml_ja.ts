@@ -141,6 +141,173 @@
     </message>
 </context>
 <context>
+    <name>AdjustTab</name>
+    <message>
+        <source>Blacks</source>
+        <translation>黒レベル</translation>
+    </message>
+    <message>
+        <source>Clarity (Midtone Contrast)</source>
+        <translation>明瞭度（中間調のコントラスト）</translation>
+    </message>
+    <message>
+        <source>Color Chrome Effect</source>
+        <translation>カラークローム・エフェクト</translation>
+    </message>
+    <message>
+        <source>Color Chrome FX Blue</source>
+        <translation>カラークローム・ブルー</translation>
+    </message>
+    <message>
+        <source>Colour grading</source>
+        <translation>カラーグレーディング</translation>
+    </message>
+    <message>
+        <source>Colour management</source>
+        <translation>カラーマネジメント</translation>
+    </message>
+    <message>
+        <source>Colour mixer</source>
+        <translation>カラーミキサー</translation>
+    </message>
+    <message>
+        <source>Contrast</source>
+        <translation>コントラスト</translation>
+    </message>
+    <message>
+        <source>Curve Darks (Lower Mids)</source>
+        <translation>カーブ: ダーク（下側の中間調）</translation>
+    </message>
+    <message>
+        <source>Curve Highlights</source>
+        <translation>カーブ: ハイライト</translation>
+    </message>
+    <message>
+        <source>Curve Lights (Upper Mids)</source>
+        <translation>カーブ: ライト（上側の中間調）</translation>
+    </message>
+    <message>
+        <source>Curve Shadows</source>
+        <translation>カーブ: シャドウ</translation>
+    </message>
+    <message>
+        <source>Defringe (Chromatic Aberration)</source>
+        <translation>フリンジ除去（色収差）</translation>
+    </message>
+    <message>
+        <source>Dehaze</source>
+        <translation>かすみの除去</translation>
+    </message>
+    <message>
+        <source>Detail and optics</source>
+        <translation>ディテールと光学</translation>
+    </message>
+    <message>
+        <source>Exposure</source>
+        <translation>露光量</translation>
+    </message>
+    <message>
+        <source>Grain</source>
+        <translation>粒状感</translation>
+    </message>
+    <message>
+        <source>Highlights</source>
+        <translation>ハイライト</translation>
+    </message>
+    <message>
+        <source>Horizontal</source>
+        <translation>水平方向</translation>
+    </message>
+    <message>
+        <source>Lens Distortion Correction</source>
+        <translation>レンズの歪曲補正</translation>
+    </message>
+    <message>
+        <source>Noise Reduction (Color)</source>
+        <translation>ノイズ低減（カラー）</translation>
+    </message>
+    <message>
+        <source>Noise Reduction (Luma)</source>
+        <translation>ノイズ低減（輝度）</translation>
+    </message>
+    <message>
+        <source>Open a photo first</source>
+        <translation>先に写真を開いてください</translation>
+    </message>
+    <message>
+        <source>Presence</source>
+        <translation>外観</translation>
+    </message>
+    <message>
+        <source>Profile</source>
+        <translation>プロファイル</translation>
+    </message>
+    <message>
+        <source>Saturation</source>
+        <translation>彩度</translation>
+    </message>
+    <message>
+        <source>Scale</source>
+        <translation>拡大・縮小</translation>
+    </message>
+    <message>
+        <source>Shadows</source>
+        <translation>シャドウ</translation>
+    </message>
+    <message>
+        <source>Sharpening</source>
+        <translation>シャープ</translation>
+    </message>
+    <message>
+        <source>Temperature</source>
+        <translation>色温度</translation>
+    </message>
+    <message>
+        <source>Texture</source>
+        <translation>テクスチャ</translation>
+    </message>
+    <message>
+        <source>Tint</source>
+        <translation>色かぶり補正</translation>
+    </message>
+    <message>
+        <source>Tone</source>
+        <translation>トーン</translation>
+    </message>
+    <message>
+        <source>Tone curve</source>
+        <translation>トーンカーブ</translation>
+    </message>
+    <message>
+        <source>Transform</source>
+        <translation>変形</translation>
+    </message>
+    <message>
+        <source>Vertical</source>
+        <translation>垂直方向</translation>
+    </message>
+    <message>
+        <source>Vertical straightens converging lines, such as buildings photographed from below. Crop afterwards to remove the empty edges.</source>
+        <translation>垂直方向は、下から撮影した建物などの収束する線をまっすぐにします。その後、切り抜きで空白の端を取り除きます。</translation>
+    </message>
+    <message>
+        <source>Vibrance</source>
+        <translation>自然な彩度</translation>
+    </message>
+    <message>
+        <source>Vignette</source>
+        <translation>周辺光量</translation>
+    </message>
+    <message>
+        <source>White balance</source>
+        <translation>ホワイトバランス</translation>
+    </message>
+    <message>
+        <source>Whites</source>
+        <translation>白レベル</translation>
+    </message>
+</context>
+<context>
     <name>AiAssistPanel</name>
     <message>
         <source>%1 (automatic)</source>
@@ -291,10 +458,123 @@
     </message>
 </context>
 <context>
+    <name>AiTab</name>
+    <message>
+        <source>Assistant edit applied</source>
+        <translation>アシスタントの編集を適用しました</translation>
+    </message>
+    <message>
+        <source>Edit assistant</source>
+        <translation>編集アシスタント</translation>
+    </message>
+</context>
+<context>
     <name>BoundedTextInput</name>
     <message>
         <source>Clipboard content exceeded byte limit or timed out.</source>
         <translation>クリップボードの内容がバイト上限を超えたか、タイムアウトしました。</translation>
+    </message>
+</context>
+<context>
+    <name>CenterWorkspace</name>
+    <message>
+        <source>Opened %1</source>
+        <translation>%1 を開きました</translation>
+    </message>
+    <message>
+        <source>Scanning folder %1</source>
+        <translation>フォルダ %1 をスキャン中</translation>
+    </message>
+    <message>
+        <source>Soft proof: %1</source>
+        <translation>ソフトプルーフ: %1</translation>
+    </message>
+</context>
+<context>
+    <name>CloudDialog</name>
+    <message>
+        <source>Add an account</source>
+        <translation>アカウントを追加</translation>
+    </message>
+    <message>
+        <source>Browse</source>
+        <translation>参照</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>キャンセル</translation>
+    </message>
+    <message>
+        <source>Client ID</source>
+        <translation>クライアント ID</translation>
+    </message>
+    <message>
+        <source>Client secret</source>
+        <translation>クライアントシークレット</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>閉じる</translation>
+    </message>
+    <message>
+        <source>Cloud accounts</source>
+        <translation>クラウドアカウント</translation>
+    </message>
+    <message>
+        <source>Confirm</source>
+        <translation>確認</translation>
+    </message>
+    <message>
+        <source>Connected</source>
+        <translation>接続済み</translation>
+    </message>
+    <message>
+        <source>Disconnect</source>
+        <translation>接続を解除</translation>
+    </message>
+    <message>
+        <source>Disconnecting removes the account&apos;s keys and downloaded copies from this computer. Files in the account stay as they are.</source>
+        <translation>接続を解除すると、アカウントのキーとダウンロードしたコピーがこのコンピューターから削除されます。アカウント内のファイルはそのまま残ります。</translation>
+    </message>
+    <message>
+        <source>Enter this code on the GitHub page that opened in your browser:</source>
+        <translation>ブラウザーで開いた GitHub のページにこのコードを入力してください:</translation>
+    </message>
+    <message>
+        <source>Finish signing in in your browser. This window updates when you are done.</source>
+        <translation>ブラウザーでサインインを完了してください。完了するとこのウィンドウが更新されます。</translation>
+    </message>
+    <message>
+        <source>Install it with: sudo pacman -S %1</source>
+        <translation>インストール: sudo pacman -S %1</translation>
+    </message>
+    <message>
+        <source>Needs %1</source>
+        <translation>%1 が必要</translation>
+    </message>
+    <message>
+        <source>No account connected yet.</source>
+        <translation>接続済みのアカウントはまだありません。</translation>
+    </message>
+    <message>
+        <source>Open the page again</source>
+        <translation>ページをもう一度開く</translation>
+    </message>
+    <message>
+        <source>Own Google client ID (optional)</source>
+        <translation>独自の Google クライアント ID(任意)</translation>
+    </message>
+    <message>
+        <source>Signing in to %1</source>
+        <translation>%1 にサインイン中</translation>
+    </message>
+    <message>
+        <source>The shared client rclone uses for Google Drive is being retired. With a client ID of your own from the Google Cloud Console, Google Drive keeps working. It is used the next time you connect Google Drive.</source>
+        <translation>rclone が Google Drive に使う共有クライアントは廃止されます。Google Cloud Console で取得した独自のクライアント ID があれば Google Drive は引き続き使えます。次に Google Drive を接続するときに使われます。</translation>
+    </message>
+    <message>
+        <source>You sign in on the service&apos;s own page in your browser. OmaStudio keeps the access keys in the system keyring and creates a folder named %1 in each account for uploads.</source>
+        <translation>サインインはブラウザーでサービス自身のページから行います。OmaStudio はアクセスキーをシステムのキーリングに保存し、アップロード用に各アカウントに %1 というフォルダーを作成します。</translation>
     </message>
 </context>
 <context>
@@ -1090,23 +1370,6 @@
     </message>
 </context>
 <context>
-    <name>HistogramView</name>
-    <message>
-        <source>[S] %1%</source>
-        <comment>S: shadow clipping</comment>
-        <translation>[暗] %1%</translation>
-    </message>
-    <message>
-        <source>Histogram</source>
-        <translation>ヒストグラム</translation>
-    </message>
-    <message>
-        <source>[H] %1%</source>
-        <comment>H: highlight clipping</comment>
-        <translation>[明] %1%</translation>
-    </message>
-</context>
-<context>
     <name>HistoryPanel</name>
     <message>
         <source>History</source>
@@ -1471,6 +1734,32 @@
     </message>
 </context>
 <context>
+    <name>LeftInspector</name>
+    <message>
+        <source>Analyzing...</source>
+        <translation>分析中...</translation>
+    </message>
+    <message>
+        <source>Extracting dynamic range...</source>
+        <translation>ダイナミックレンジを抽出中...</translation>
+    </message>
+    <message>
+        <source>Suggested scene</source>
+        <translation>推定シーン</translation>
+    </message>
+</context>
+<context>
+    <name>LooksTab</name>
+    <message>
+        <source>LUT</source>
+        <translation>LUT</translation>
+    </message>
+    <message>
+        <source>Presets</source>
+        <translation>プリセット</translation>
+    </message>
+</context>
+<context>
     <name>LutSelector</name>
     <message>
         <source>Load 3D LUT</source>
@@ -1590,22 +1879,6 @@
         <translation>切り抜きモード: オフ</translation>
     </message>
     <message>
-        <source>Analyzing...</source>
-        <translation>分析中...</translation>
-    </message>
-    <message>
-        <source>Extracting dynamic range...</source>
-        <translation>ダイナミックレンジを抽出中...</translation>
-    </message>
-    <message>
-        <source>Opened %1</source>
-        <translation>%1 を開きました</translation>
-    </message>
-    <message>
-        <source>Scanning folder %1</source>
-        <translation>フォルダ %1 をスキャン中</translation>
-    </message>
-    <message>
         <source>Contrast</source>
         <translation>コントラスト</translation>
     </message>
@@ -1630,28 +1903,8 @@
         <translation>黒レベル</translation>
     </message>
     <message>
-        <source>Curve Highlights</source>
-        <translation>カーブ: ハイライト</translation>
-    </message>
-    <message>
-        <source>Curve Lights (Upper Mids)</source>
-        <translation>カーブ: ライト（上側の中間調）</translation>
-    </message>
-    <message>
-        <source>Curve Darks (Lower Mids)</source>
-        <translation>カーブ: ダーク（下側の中間調）</translation>
-    </message>
-    <message>
-        <source>Curve Shadows</source>
-        <translation>カーブ: シャドウ</translation>
-    </message>
-    <message>
         <source>Texture</source>
         <translation>テクスチャ</translation>
-    </message>
-    <message>
-        <source>Suggested scene</source>
-        <translation>推定シーン</translation>
     </message>
     <message>
         <source>Clarity (Midtone Contrast)</source>
@@ -1674,28 +1927,8 @@
         <translation>シャープ</translation>
     </message>
     <message>
-        <source>Noise Reduction (Luma)</source>
-        <translation>ノイズ低減（輝度）</translation>
-    </message>
-    <message>
-        <source>Noise Reduction (Color)</source>
-        <translation>ノイズ低減（カラー）</translation>
-    </message>
-    <message>
         <source>Vignette</source>
         <translation>周辺光量</translation>
-    </message>
-    <message>
-        <source>Defringe (Chromatic Aberration)</source>
-        <translation>フリンジ除去（色収差）</translation>
-    </message>
-    <message>
-        <source>Lens Distortion Correction</source>
-        <translation>レンズの歪曲補正</translation>
-    </message>
-    <message>
-        <source>Open a photo first</source>
-        <translation>先に写真を開いてください</translation>
     </message>
     <message>
         <source>Version %1</source>
@@ -1822,34 +2055,6 @@
         <translation>フォルダーのスキャンが応答しませんでした。</translation>
     </message>
     <message>
-        <source>Soft proof: %1</source>
-        <translation>ソフトプルーフ: %1</translation>
-    </message>
-    <message>
-        <source>Soft proof off</source>
-        <translation>ソフトプルーフ オフ</translation>
-    </message>
-    <message>
-        <source>Rating: ★</source>
-        <translation>レーティング: ★</translation>
-    </message>
-    <message>
-        <source>Rating: ★★</source>
-        <translation>レーティング: ★★</translation>
-    </message>
-    <message>
-        <source>Rating: ★★★</source>
-        <translation>レーティング: ★★★</translation>
-    </message>
-    <message>
-        <source>Rating: ★★★★</source>
-        <translation>レーティング: ★★★★</translation>
-    </message>
-    <message>
-        <source>Rating: ★★★★★</source>
-        <translation>レーティング: ★★★★★</translation>
-    </message>
-    <message>
         <source>Flag cleared</source>
         <translation>フラグを解除しました</translation>
     </message>
@@ -1870,60 +2075,12 @@
         <translation>不採用</translation>
     </message>
     <message>
-        <source>Adjust</source>
-        <translation>調整</translation>
-    </message>
-    <message>
-        <source>Masks</source>
-        <translation>マスク</translation>
-    </message>
-    <message>
-        <source>Looks</source>
-        <translation>ルック</translation>
-    </message>
-    <message>
-        <source>AI</source>
-        <translation>AI 機能</translation>
-    </message>
-    <message>
-        <source>Read the photo&apos;s .xmp sidecar written by another editor</source>
-        <translation>他の編集ソフトが書いた .xmp ファイルを読み込む</translation>
-    </message>
-    <message>
-        <source>Write the edit, rating and label to an .xmp sidecar for other editors</source>
-        <translation>編集内容・レーティング・ラベルを他の編集ソフト用の .xmp ファイルに書き出す</translation>
-    </message>
-    <message>
         <source>Profile</source>
         <translation>プロファイル</translation>
     </message>
     <message>
-        <source>Color Chrome Effect</source>
-        <translation>カラークローム・エフェクト</translation>
-    </message>
-    <message>
-        <source>Color Chrome FX Blue</source>
-        <translation>カラークローム・ブルー</translation>
-    </message>
-    <message>
         <source>White balance</source>
         <translation>ホワイトバランス</translation>
-    </message>
-    <message>
-        <source>Temperature</source>
-        <translation>色温度</translation>
-    </message>
-    <message>
-        <source>Tint</source>
-        <translation>色かぶり補正</translation>
-    </message>
-    <message>
-        <source>Tone</source>
-        <translation>トーン</translation>
-    </message>
-    <message>
-        <source>Presence</source>
-        <translation>外観</translation>
     </message>
     <message>
         <source>Tone curve</source>
@@ -1946,28 +2103,8 @@
         <translation>変形</translation>
     </message>
     <message>
-        <source>Vertical</source>
-        <translation>垂直方向</translation>
-    </message>
-    <message>
-        <source>Horizontal</source>
-        <translation>水平方向</translation>
-    </message>
-    <message>
-        <source>Scale</source>
-        <translation>拡大・縮小</translation>
-    </message>
-    <message>
-        <source>Vertical straightens converging lines, such as buildings photographed from below. Crop afterwards to remove the empty edges.</source>
-        <translation>垂直方向は、下から撮影した建物などの収束する線をまっすぐにします。その後、切り抜きで空白の端を取り除きます。</translation>
-    </message>
-    <message>
         <source>Grain</source>
         <translation>粒状感</translation>
-    </message>
-    <message>
-        <source>Colour management</source>
-        <translation>カラーマネジメント</translation>
     </message>
     <message>
         <source>Heal and clone</source>
@@ -1984,34 +2121,6 @@
     <message>
         <source>LUT</source>
         <translation>LUT</translation>
-    </message>
-    <message>
-        <source>Edit assistant</source>
-        <translation>編集アシスタント</translation>
-    </message>
-    <message>
-        <source>Assistant edit applied</source>
-        <translation>アシスタントの編集を適用しました</translation>
-    </message>
-    <message>
-        <source>Copy</source>
-        <translation>コピー</translation>
-    </message>
-    <message>
-        <source>Paste</source>
-        <translation>貼り付け</translation>
-    </message>
-    <message>
-        <source>Reset</source>
-        <translation>リセット</translation>
-    </message>
-    <message>
-        <source>Import XMP</source>
-        <translation>XMP を読み込む</translation>
-    </message>
-    <message>
-        <source>Write XMP</source>
-        <translation>XMP を書き込む</translation>
     </message>
     <message>
         <source>Opening %1</source>
@@ -2090,6 +2199,17 @@
     <message>
         <source>no answer from the engine</source>
         <translation>エンジンから応答がありません</translation>
+    </message>
+</context>
+<context>
+    <name>MasksTab</name>
+    <message>
+        <source>Heal and clone</source>
+        <translation>修復とコピー</translation>
+    </message>
+    <message>
+        <source>Local adjustments</source>
+        <translation>部分補正</translation>
     </message>
 </context>
 <context>
@@ -2284,6 +2404,53 @@
     </message>
 </context>
 <context>
+    <name>RightInspector</name>
+    <message>
+        <source>AI</source>
+        <translation>AI 機能</translation>
+    </message>
+    <message>
+        <source>Adjust</source>
+        <translation>調整</translation>
+    </message>
+    <message>
+        <source>Copy</source>
+        <translation>コピー</translation>
+    </message>
+    <message>
+        <source>Import XMP</source>
+        <translation>XMP を読み込む</translation>
+    </message>
+    <message>
+        <source>Looks</source>
+        <translation>ルック</translation>
+    </message>
+    <message>
+        <source>Masks</source>
+        <translation>マスク</translation>
+    </message>
+    <message>
+        <source>Paste</source>
+        <translation>貼り付け</translation>
+    </message>
+    <message>
+        <source>Read the photo&apos;s .xmp sidecar written by another editor</source>
+        <translation>他の編集ソフトが書いた .xmp ファイルを読み込む</translation>
+    </message>
+    <message>
+        <source>Reset</source>
+        <translation>リセット</translation>
+    </message>
+    <message>
+        <source>Write XMP</source>
+        <translation>XMP を書き込む</translation>
+    </message>
+    <message>
+        <source>Write the edit, rating and label to an .xmp sidecar for other editors</source>
+        <translation>編集内容・レーティング・ラベルを他の編集ソフト用の .xmp ファイルに書き出す</translation>
+    </message>
+</context>
+<context>
     <name>ScopesView</name>
     <message>
         <source>HIST</source>
@@ -2338,6 +2505,57 @@
     <message>
         <source>SKIN</source>
         <translation>肌</translation>
+    </message>
+</context>
+<context>
+    <name>ShortcutRouter</name>
+    <message>
+        <source>Crop mode: off</source>
+        <translation>切り抜きモード: オフ</translation>
+    </message>
+    <message>
+        <source>Crop mode: on (C)</source>
+        <translation>切り抜きモード: オン（C）</translation>
+    </message>
+    <message>
+        <source>Flag cleared</source>
+        <translation>フラグを解除しました</translation>
+    </message>
+    <message>
+        <source>Open a photo first</source>
+        <translation>先に写真を開いてください</translation>
+    </message>
+    <message>
+        <source>Rating cleared</source>
+        <translation>レーティングを解除しました</translation>
+    </message>
+    <message>
+        <source>Rating: ★</source>
+        <translation>レーティング: ★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★</source>
+        <translation>レーティング: ★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★</source>
+        <translation>レーティング: ★★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★★</source>
+        <translation>レーティング: ★★★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★★★</source>
+        <translation>レーティング: ★★★★★</translation>
+    </message>
+    <message>
+        <source>Soft proof off</source>
+        <translation>ソフトプルーフ オフ</translation>
+    </message>
+    <message>
+        <source>Soft proof: %1</source>
+        <translation>ソフトプルーフ: %1</translation>
     </message>
 </context>
 <context>
@@ -2725,93 +2943,6 @@
     <message>
         <source>Drop Shadow</source>
         <translation>ドロップシャドウ</translation>
-    </message>
-</context>
-<context>
-    <name>CloudDialog</name>
-    <message>
-        <source>Add an account</source>
-        <translation>アカウントを追加</translation>
-    </message>
-    <message>
-        <source>Browse</source>
-        <translation>参照</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation>キャンセル</translation>
-    </message>
-    <message>
-        <source>Client ID</source>
-        <translation>クライアント ID</translation>
-    </message>
-    <message>
-        <source>Client secret</source>
-        <translation>クライアントシークレット</translation>
-    </message>
-    <message>
-        <source>Close</source>
-        <translation>閉じる</translation>
-    </message>
-    <message>
-        <source>Cloud accounts</source>
-        <translation>クラウドアカウント</translation>
-    </message>
-    <message>
-        <source>Confirm</source>
-        <translation>確認</translation>
-    </message>
-    <message>
-        <source>Connected</source>
-        <translation>接続済み</translation>
-    </message>
-    <message>
-        <source>Disconnect</source>
-        <translation>接続を解除</translation>
-    </message>
-    <message>
-        <source>Disconnecting removes the account's keys and downloaded copies from this computer. Files in the account stay as they are.</source>
-        <translation>接続を解除すると、アカウントのキーとダウンロードしたコピーがこのコンピューターから削除されます。アカウント内のファイルはそのまま残ります。</translation>
-    </message>
-    <message>
-        <source>Enter this code on the GitHub page that opened in your browser:</source>
-        <translation>ブラウザーで開いた GitHub のページにこのコードを入力してください:</translation>
-    </message>
-    <message>
-        <source>Finish signing in in your browser. This window updates when you are done.</source>
-        <translation>ブラウザーでサインインを完了してください。完了するとこのウィンドウが更新されます。</translation>
-    </message>
-    <message>
-        <source>Install it with: sudo pacman -S %1</source>
-        <translation>インストール: sudo pacman -S %1</translation>
-    </message>
-    <message>
-        <source>Needs %1</source>
-        <translation>%1 が必要</translation>
-    </message>
-    <message>
-        <source>No account connected yet.</source>
-        <translation>接続済みのアカウントはまだありません。</translation>
-    </message>
-    <message>
-        <source>Open the page again</source>
-        <translation>ページをもう一度開く</translation>
-    </message>
-    <message>
-        <source>Own Google client ID (optional)</source>
-        <translation>独自の Google クライアント ID(任意)</translation>
-    </message>
-    <message>
-        <source>Signing in to %1</source>
-        <translation>%1 にサインイン中</translation>
-    </message>
-    <message>
-        <source>The shared client rclone uses for Google Drive is being retired. With a client ID of your own from the Google Cloud Console, Google Drive keeps working. It is used the next time you connect Google Drive.</source>
-        <translation>rclone が Google Drive に使う共有クライアントは廃止されます。Google Cloud Console で取得した独自のクライアント ID があれば Google Drive は引き続き使えます。次に Google Drive を接続するときに使われます。</translation>
-    </message>
-    <message>
-        <source>You sign in on the service's own page in your browser. OmaStudio keeps the access keys in the system keyring and creates a folder named %1 in each account for uploads.</source>
-        <translation>サインインはブラウザーでサービス自身のページから行います。OmaStudio はアクセスキーをシステムのキーリングに保存し、アップロード用に各アカウントに %1 というフォルダーを作成します。</translation>
     </message>
 </context>
 </TS>
