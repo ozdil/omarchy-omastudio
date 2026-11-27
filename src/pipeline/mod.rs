@@ -165,7 +165,7 @@ pub fn process_buffer(
     let scale = frame_scale(w, h);
 
     // PASSES 2 and 3: presence, detail and defringe
-    neighbourhood_passes(&mut f32_buf, w, h, recipe, scale);
+    neighbourhood_passes(&mut f32_buf, w, h, recipe, scale, true);
 
     // PASS 4: Photochemical Silver-Halide Film Grain
     if recipe.grain_amount > 0.001 {
@@ -235,7 +235,7 @@ pub fn set_interactive(on: bool) {
     INTERACTIVE.store(on, std::sync::atomic::Ordering::Relaxed);
 }
 
-fn interactive() -> bool {
+pub(crate) fn interactive() -> bool {
     INTERACTIVE.load(std::sync::atomic::Ordering::Relaxed)
 }
 
@@ -425,25 +425,49 @@ pub fn process_buffer_16_to_8_ex(
     // frame).
     let gain = [wb_r * exp_factor, wb_g * exp_factor, wb_b * exp_factor];
     let scale = frame_scale(w, h);
+    let mut gpu_failed = false;
     // The whole preview runs on the GPU when there is one worth using, and only the
     // 8-bit frame and the scope counts come back
-    if let Some((mut output, hist)) = crate::gpu::local::run_display(input, w, h, ch, recipe, &ops.gpu_inputs(gain, transfer), scale) {
-        prof.mark("gpu_display");
-        clipping_overlay(&mut output, ch, highlight_mask, shadow_mask);
-        prof.mark("overlay");
-        prof.finish(w, h);
-        return (output, hist);
+    match crate::gpu::local::run_display_checked(input, w, h, ch, recipe, &ops.gpu_inputs(gain, transfer), scale) {
+        crate::gpu::StageOutcome::Done((mut output, hist)) => {
+            prof.mark("gpu_display");
+            clipping_overlay(&mut output, ch, highlight_mask, shadow_mask);
+            prof.mark("overlay");
+            prof.finish(w, h);
+            return (output, hist);
+        }
+        crate::gpu::StageOutcome::Failed => {
+            gpu_failed = true;
+        }
+        crate::gpu::StageOutcome::Skipped => {}
     }
     // The point stage's result can stay on the GPU for the masks, presence and
     // detail, which makes the GPU worth it for interactive previews too
-    let chained = crate::gpu::local::run_chained(input, w, ch, 0, h, recipe, &ops.gpu_inputs(gain, transfer), scale, (0, 0, w, h));
-    let local_done = chained.is_some();
+    let (local_done, chained) = if gpu_failed {
+        (false, None)
+    } else {
+        match crate::gpu::local::run_chained_checked(input, w, ch, 0, h, recipe, &ops.gpu_inputs(gain, transfer), scale, (0, 0, w, h)) {
+            crate::gpu::StageOutcome::Done(buf) => (true, Some(buf)),
+            crate::gpu::StageOutcome::Failed => {
+                gpu_failed = true;
+                (false, None)
+            }
+            crate::gpu::StageOutcome::Skipped => (false, None),
+        }
+    };
     let gpu = if local_done {
         chained
-    } else if interactive() {
+    } else if gpu_failed || interactive() {
         None
     } else {
-        crate::gpu::point_ops::run(input, w, ch, 0, h, recipe, &ops.gpu_inputs(gain, transfer))
+        match crate::gpu::point_ops::run_checked(input, w, ch, 0, h, recipe, &ops.gpu_inputs(gain, transfer)) {
+            crate::gpu::StageOutcome::Done(buf) => Some(buf),
+            crate::gpu::StageOutcome::Failed => {
+                gpu_failed = true;
+                None
+            }
+            crate::gpu::StageOutcome::Skipped => None,
+        }
     };
     let on_gpu = gpu.is_some();
     // Intermediate float buffer for multi-stage 16-bit precision processing
@@ -525,7 +549,7 @@ pub fn process_buffer_16_to_8_ex(
     // PASSES 2 and 3: presence (texture, clarity, dehaze, midtone detail), detail
     // (sharpness, luma and chroma noise reduction) and defringe
     if !local_done {
-        neighbourhood_passes(&mut f32_buf, w, h, recipe, scale);
+        neighbourhood_passes(&mut f32_buf, w, h, recipe, scale, !gpu_failed);
     }
 
     prof.mark("presence_detail");
@@ -649,9 +673,10 @@ fn clipping_overlay(output: &mut [u8], ch: usize, highlight_mask: bool, shadow_m
 }
 
 /// Presence, detail and defringe on a `w` x `h` RGB buffer: on the GPU when one pays
-/// off (see [`crate::gpu::local`]), otherwise on the CPU, with the same result.
-fn neighbourhood_passes(buf: &mut [f32], w: usize, h: usize, recipe: &Recipe, scale: f32) {
-    if crate::gpu::local::run(buf, w, h, recipe, scale) {
+/// off (see [`crate::gpu::local`]) and `allow_gpu` is true, otherwise on the CPU, with
+/// the same result.
+fn neighbourhood_passes(buf: &mut [f32], w: usize, h: usize, recipe: &Recipe, scale: f32, allow_gpu: bool) {
+    if allow_gpu && crate::gpu::local::run(buf, w, h, recipe, scale) {
         return;
     }
     presence::apply_presence_scaled(buf, w, h, recipe.clarity, recipe.texture, recipe.dehaze, recipe.midtone_detail, scale);
@@ -726,11 +751,12 @@ fn process_16_to_16_banded(
     // With lens distortion the remap can read rows of any band, so the bands are
     // collected first and the remap, defringe and vignette run on the whole frame
     let mut pre = if lens.is_some() { vec![0u16; num_pixels * 3] } else { Vec::new() };
+    let mut gpu_failed = false;
 
     for y0 in (0..h).step_by(band_rows) {
         let y1 = (y0 + band_rows).min(h);
         let (by0, by1) = (y0.saturating_sub(halo), (y1 + halo).min(h));
-        let band = process_band(input, w, ch, by0, by1, Window::whole(w, h), recipe, &stage);
+        let band = process_band(input, w, ch, by0, by1, Window::whole(w, h), recipe, &stage, &mut gpu_failed);
         let inner = &band[(y0 - by0) * w * 3..(y1 - by0) * w * 3];
 
         if lens.is_some() {
@@ -931,7 +957,8 @@ pub fn render_region_8(
     transfer: Transfer,
 ) -> Vec<u8> {
     let stage = PointStage::new(recipe, transfer);
-    let buf = process_band(input, w, 3, 0, h, window, recipe, &stage);
+    let mut gpu_failed = false;
+    let buf = process_band(input, w, 3, 0, h, window, recipe, &stage, &mut gpu_failed);
     let lens = detail::Geometry::new(window.frame_w, window.frame_h, recipe);
     let (ox, oy, ow, oh) = out;
     let (fw, fh) = (window.frame_w as f32, window.frame_h as f32);
@@ -1013,13 +1040,37 @@ fn process_band(
     window: Window,
     recipe: &Recipe,
     stage: &PointStage,
+    gpu_failed: &mut bool,
 ) -> Vec<f32> {
     let rows = y1 - y0;
     let scale = frame_scale(window.frame_w, window.frame_h);
     let frame = (window.x0, window.y0 + y0, window.frame_w, window.frame_h);
-    let chained = crate::gpu::local::run_chained(input, w, ch, y0, y1, recipe, &stage.gpu_inputs(), scale, frame);
-    let local_done = chained.is_some();
-    let gpu = if local_done { chained } else { crate::gpu::point_ops::run(input, w, ch, y0, y1, recipe, &stage.gpu_inputs()) };
+    let (local_done, chained) = if *gpu_failed {
+        (false, None)
+    } else {
+        match crate::gpu::local::run_chained_checked(input, w, ch, y0, y1, recipe, &stage.gpu_inputs(), scale, frame) {
+            crate::gpu::StageOutcome::Done(buf) => (true, Some(buf)),
+            crate::gpu::StageOutcome::Failed => {
+                *gpu_failed = true;
+                (false, None)
+            }
+            crate::gpu::StageOutcome::Skipped => (false, None),
+        }
+    };
+    let gpu = if local_done {
+        chained
+    } else if *gpu_failed {
+        None
+    } else {
+        match crate::gpu::point_ops::run_checked(input, w, ch, y0, y1, recipe, &stage.gpu_inputs()) {
+            crate::gpu::StageOutcome::Done(buf) => Some(buf),
+            crate::gpu::StageOutcome::Failed => {
+                *gpu_failed = true;
+                None
+            }
+            crate::gpu::StageOutcome::Skipped => None,
+        }
+    };
     let on_gpu = gpu.is_some();
     let mut buf = gpu.unwrap_or_else(|| vec![0.0f32; rows * w * 3]);
 
@@ -1053,7 +1104,7 @@ fn process_band(
     }
 
     if !local_done {
-        neighbourhood_passes(&mut buf, w, rows, recipe, scale);
+        neighbourhood_passes(&mut buf, w, rows, recipe, scale, !*gpu_failed);
     }
     if recipe.grain_amount > 0.001 {
         film_grain::apply_film_grain_window(
