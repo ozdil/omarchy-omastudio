@@ -403,6 +403,7 @@ fn test_daemon_detail_rejects_extreme_or_invalid_regions_and_renders_valid_ppm()
 
     writeln!(stdin, r#"{{"cmd": "exit"}}"#).unwrap();
     stdin.flush().unwrap();
-    assert!(child.wait().unwrap().success());
+    let status = child.wait().unwrap();
+    assert!(status.success(), "daemon exited with {status:?}");
     let _ = std::fs::remove_dir_all(&dir);
 }
