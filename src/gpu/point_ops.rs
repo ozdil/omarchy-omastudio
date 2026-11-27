@@ -40,6 +40,7 @@ const SLOTS: &[(&str, u32)] = &[
     ("ROWS", 1),
     ("CHANNELS", 1),
     ("SRC_SHIFT", 1),
+    ("SRC_BASE", 1),
     ("K", 3),
     ("POWER", 1),
     ("SLOPE", 1),
@@ -229,15 +230,14 @@ fn pack(recipe: &Recipe, inputs: &PointInputs) -> (Params, Vec<f32>) {
     p.f("HSL_SAT", &r.hsl_sat);
     p.f("HSL_LUM", &r.hsl_lum);
 
-    let mut put_lut = |p: &mut Params, name: &str, lut: &Lut3D| {
+    let put_lut = |p: &mut Params, name: &str, lut: &Lut3D| {
         let at = slot(name);
         p.0[at] = lut.size as u32;
-        p.0[at + 1] = tables.len() as u32;
+        p.0[at + 1] = 0;
         for i in 0..3 {
             p.0[at + 2 + i] = lut.domain_min[i].to_bits();
             p.0[at + 5 + i] = lut.domain_max[i].to_bits();
         }
-        tables.extend(lut.table.iter().flatten());
     };
     p.b("LOOK_LUT_ON", inputs.look_lut.is_some());
     p.f("LOOK_INTENSITY", &[r.lut_intensity]);
@@ -258,14 +258,147 @@ fn pack(recipe: &Recipe, inputs: &PointInputs) -> (Params, Vec<f32>) {
     (p, tables)
 }
 
+/// Converts an IEEE-754 f32 to IEEE-754 binary16 (`Rgba16Float` texel component)
+/// with round-to-nearest-even and safe finite clamping.
+fn f32_to_f16(v: f32) -> u16 {
+    let bits = v.to_bits();
+    let sign = ((bits >> 16) & 0x8000) as u16;
+    let exp = ((bits >> 23) & 0xff) as i32;
+    let mant = bits & 0x007f_ffff;
+    if exp == 255 {
+        return if mant != 0 { 0 } else { sign | 0x7bff };
+    }
+    let half_exp = exp - 127 + 15;
+    if half_exp >= 31 {
+        return sign | 0x7bff;
+    }
+    if half_exp <= 0 {
+        if half_exp < -10 {
+            return sign;
+        }
+        let full = mant | 0x0080_0000;
+        let shift = (14 - half_exp) as u32;
+        let m = full >> shift;
+        let round_bit = (full >> (shift - 1)) & 1;
+        let sticky = (full & ((1u32 << (shift - 1)) - 1)) != 0;
+        let inc = u32::from(round_bit != 0 && (sticky || (m & 1) != 0));
+        return sign | ((m + inc) as u16);
+    }
+    let half_mant = mant >> 13;
+    let round_bit = (mant >> 12) & 1;
+    let sticky = (mant & 0x0fff) != 0;
+    let inc = u32::from(round_bit != 0 && (sticky || (half_mant & 1) != 0));
+    let rounded = (((half_exp as u32) << 10) | half_mant) + inc;
+    if (rounded >> 10) >= 31 {
+        sign | 0x7bff
+    } else {
+        sign | (rounded as u16)
+    }
+}
+
+fn lut_key(lut: Option<&Lut3D>) -> u64 {
+    let Some(l) = lut else {
+        return 0;
+    };
+    let mut h = 0xcbf2_9ce4_8422_2325u64;
+    let mix = |mut h: u64, bytes: &[u8]| {
+        for &b in bytes {
+            h ^= b as u64;
+            h = h.wrapping_mul(0x1000_0000_01b3);
+        }
+        h
+    };
+    h = mix(h, &(l.size as u64).to_le_bytes());
+    h = mix(h, &(l.table.len() as u64).to_le_bytes());
+    let stride = (l.table.len() / 64).max(1);
+    let mut i = 0usize;
+    while i < l.table.len() {
+        for c in l.table[i] {
+            h = mix(h, &c.to_bits().to_le_bytes());
+        }
+        i += stride;
+    }
+    if let Some(last) = l.table.last() {
+        for c in last {
+            h = mix(h, &c.to_bits().to_le_bytes());
+        }
+    }
+    if h == 0 { 1 } else { h }
+}
+
+struct CachedLut3D {
+    key: u64,
+    bytes: u64,
+    _tex: wgpu::Texture,
+    view: wgpu::TextureView,
+}
+
+impl CachedLut3D {
+    fn upload(device: &wgpu::Device, queue: &wgpu::Queue, label: &str, lut: Option<&Lut3D>, key: u64) -> Self {
+        let (n, raw_texels): (u32, Vec<[f32; 3]>) = match lut {
+            Some(l) if l.size >= 2 && l.table.len() >= l.size * l.size * l.size => (l.size as u32, l.table.clone()),
+            _ => (1, vec![[0.0, 0.0, 0.0]]),
+        };
+        let tex = device.create_texture(&wgpu::TextureDescriptor {
+            label: Some(label),
+            size: wgpu::Extent3d { width: n, height: n, depth_or_array_layers: n },
+            mip_level_count: 1,
+            sample_count: 1,
+            dimension: wgpu::TextureDimension::D3,
+            format: wgpu::TextureFormat::Rgba16Float,
+            usage: wgpu::TextureUsages::TEXTURE_BINDING | wgpu::TextureUsages::COPY_DST,
+            view_formats: &[],
+        });
+        // Pad each row to COPY_BYTES_PER_ROW_ALIGNMENT (256 B) for queue.write_texture.
+        let unpadded_row = (n as usize) * 8;
+        let padded_row = unpadded_row.next_multiple_of(wgpu::COPY_BYTES_PER_ROW_ALIGNMENT as usize);
+        let mut data = vec![0u8; padded_row * (n as usize) * (n as usize)];
+        let one_f16 = f32_to_f16(1.0).to_le_bytes();
+        let nu = n as usize;
+        for z in 0..nu {
+            for y in 0..nu {
+                let row_off = (z * nu + y) * padded_row;
+                let src_base = (z * nu + y) * nu;
+                for x in 0..nu {
+                    let px = raw_texels[src_base + x];
+                    let off = row_off + x * 8;
+                    data[off..off + 2].copy_from_slice(&f32_to_f16(px[0]).to_le_bytes());
+                    data[off + 2..off + 4].copy_from_slice(&f32_to_f16(px[1]).to_le_bytes());
+                    data[off + 4..off + 6].copy_from_slice(&f32_to_f16(px[2]).to_le_bytes());
+                    data[off + 6..off + 8].copy_from_slice(&one_f16);
+                }
+            }
+        }
+        queue.write_texture(
+            wgpu::TexelCopyTextureInfo {
+                texture: &tex,
+                mip_level: 0,
+                origin: wgpu::Origin3d::ZERO,
+                aspect: wgpu::TextureAspect::All,
+            },
+            &data,
+            wgpu::TexelCopyBufferLayout {
+                offset: 0,
+                bytes_per_row: Some(padded_row as u32),
+                rows_per_image: Some(n),
+            },
+            wgpu::Extent3d { width: n, height: n, depth_or_array_layers: n },
+        );
+        let view = tex.create_view(&wgpu::TextureViewDescriptor::default());
+        let bytes = (n as u64).saturating_pow(3).saturating_mul(8);
+        Self { key, bytes, _tex: tex, view }
+    }
+}
+
 pub struct Pipeline {
     layout: wgpu::BindGroupLayout,
+    lut_sampler: wgpu::Sampler,
     pipeline: wgpu::ComputePipeline,
     /// Buffers kept between calls; previews call this on every edit.
     buffers: std::sync::Mutex<Option<Buffers>>,
 }
 
-/// Device buffers for one band and the tables, with their bind group.
+/// Device buffers for one band, curve tables, cached 3D LUT textures, and bind groups.
 struct Buffers {
     params_size: u64,
     src_size: u64,
@@ -276,13 +409,55 @@ struct Buffers {
     src: wgpu::Buffer,
     tables: wgpu::Buffer,
     out: wgpu::Buffer,
-    /// Two, so one band is read back while the next one is computed.
-    staging: [wgpu::Buffer; 2],
+    /// Allocated lazily only when reading back to host (`sink.is_none()`), so chained
+    /// 4K previews keep LUT textures and resident bind groups cached well under VRAM cap.
+    staging: Option<[wgpu::Buffer; 2]>,
+    look_lut: CachedLut3D,
+    film_lut: CachedLut3D,
     bind: wgpu::BindGroup,
+    /// Cached bind group pointing binding 1 at `Gpu::preview_src` (keyed by `PreviewSource::id`).
+    resident_bind: Option<(u64, wgpu::BindGroup)>,
+}
+
+fn create_bind_group(
+    device: &wgpu::Device,
+    layout: &wgpu::BindGroupLayout,
+    sampler: &wgpu::Sampler,
+    params: &wgpu::Buffer,
+    src: &wgpu::Buffer,
+    tables: &wgpu::Buffer,
+    out: &wgpu::Buffer,
+    look_view: &wgpu::TextureView,
+    film_view: &wgpu::TextureView,
+    label: &str,
+) -> wgpu::BindGroup {
+    device.create_bind_group(&wgpu::BindGroupDescriptor {
+        label: Some(label),
+        layout,
+        entries: &[
+            wgpu::BindGroupEntry { binding: 0, resource: params.as_entire_binding() },
+            wgpu::BindGroupEntry { binding: 1, resource: src.as_entire_binding() },
+            wgpu::BindGroupEntry { binding: 2, resource: tables.as_entire_binding() },
+            wgpu::BindGroupEntry { binding: 3, resource: out.as_entire_binding() },
+            wgpu::BindGroupEntry { binding: 4, resource: wgpu::BindingResource::Sampler(sampler) },
+            wgpu::BindGroupEntry { binding: 5, resource: wgpu::BindingResource::TextureView(look_view) },
+            wgpu::BindGroupEntry { binding: 6, resource: wgpu::BindingResource::TextureView(film_view) },
+        ],
+    })
 }
 
 impl Buffers {
-    fn new(device: &wgpu::Device, layout: &wgpu::BindGroupLayout, params: u64, src: u64, out: u64, tables: u64) -> Self {
+    #[allow(clippy::too_many_arguments)]
+    fn new(
+        device: &wgpu::Device,
+        queue: &wgpu::Queue,
+        layout: &wgpu::BindGroupLayout,
+        sampler: &wgpu::Sampler,
+        params: u64,
+        src: u64,
+        out: u64,
+        tables: u64,
+    ) -> Self {
         let buffer = |label: &str, size: u64, usage: wgpu::BufferUsages| {
             device.create_buffer(&wgpu::BufferDescriptor { label: Some(label), size: size.max(4).next_multiple_of(4), usage, mapped_at_creation: false })
         };
@@ -291,17 +466,20 @@ impl Buffers {
         let src_buf = buffer("src", src, storage);
         let table_buf = buffer("tables", tables, storage);
         let out_buf = buffer("out", out, wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_SRC);
-        let readback = wgpu::BufferUsages::MAP_READ | wgpu::BufferUsages::COPY_DST;
-        let staging = [buffer("staging0", out, readback), buffer("staging1", out, readback)];
-        let bind = device.create_bind_group(&wgpu::BindGroupDescriptor {
-            label: Some("point_ops"),
+        let look_lut = CachedLut3D::upload(device, queue, "look lut 3d", None, 0);
+        let film_lut = CachedLut3D::upload(device, queue, "film lut 3d", None, 0);
+        let bind = create_bind_group(
+            device,
             layout,
-            entries: &[&params_buf, &src_buf, &table_buf, &out_buf]
-                .iter()
-                .enumerate()
-                .map(|(i, b)| wgpu::BindGroupEntry { binding: i as u32, resource: b.as_entire_binding() })
-                .collect::<Vec<_>>(),
-        });
+            sampler,
+            &params_buf,
+            &src_buf,
+            &table_buf,
+            &out_buf,
+            &look_lut.view,
+            &film_lut.view,
+            "point_ops",
+        );
         Self {
             params_size: params,
             src_size: src,
@@ -312,9 +490,95 @@ impl Buffers {
             src: src_buf,
             tables: table_buf,
             out: out_buf,
-            staging,
+            staging: None,
+            look_lut,
+            film_lut,
             bind,
+            resident_bind: None,
         }
+    }
+
+    fn ensure_staging(&mut self, device: &wgpu::Device) {
+        if self.staging.is_none() {
+            let size = self.out_size.max(4).next_multiple_of(4);
+            let readback = wgpu::BufferUsages::MAP_READ | wgpu::BufferUsages::COPY_DST;
+            let s0 = device.create_buffer(&wgpu::BufferDescriptor {
+                label: Some("staging0"),
+                size,
+                usage: readback,
+                mapped_at_creation: false,
+            });
+            let s1 = device.create_buffer(&wgpu::BufferDescriptor {
+                label: Some("staging1"),
+                size,
+                usage: readback,
+                mapped_at_creation: false,
+            });
+            self.staging = Some([s0, s1]);
+        }
+    }
+
+    fn sync_luts(
+        &mut self,
+        device: &wgpu::Device,
+        queue: &wgpu::Queue,
+        layout: &wgpu::BindGroupLayout,
+        sampler: &wgpu::Sampler,
+        look: Option<&Lut3D>,
+        film: Option<&Lut3D>,
+    ) {
+        let look_k = lut_key(look);
+        let film_k = lut_key(film);
+        let mut changed = false;
+        if self.look_lut.key != look_k {
+            self.look_lut = CachedLut3D::upload(device, queue, "look lut 3d", look, look_k);
+            changed = true;
+        }
+        if self.film_lut.key != film_k {
+            self.film_lut = CachedLut3D::upload(device, queue, "film lut 3d", film, film_k);
+            changed = true;
+        }
+        if changed {
+            self.bind = create_bind_group(
+                device,
+                layout,
+                sampler,
+                &self.params,
+                &self.src,
+                &self.tables,
+                &self.out,
+                &self.look_lut.view,
+                &self.film_lut.view,
+                "point_ops",
+            );
+            self.resident_bind = None;
+        }
+    }
+
+    fn bind_for_resident(
+        &mut self,
+        device: &wgpu::Device,
+        layout: &wgpu::BindGroupLayout,
+        sampler: &wgpu::Sampler,
+        resident: &super::PreviewSource,
+    ) -> &wgpu::BindGroup {
+        let hit = self.resident_bind.as_ref().is_some_and(|(id, _)| *id == resident.id);
+        if !hit {
+            let bg = create_bind_group(
+                device,
+                layout,
+                sampler,
+                &self.params,
+                &resident.buffer,
+                &self.tables,
+                &self.out,
+                &self.look_lut.view,
+                &self.film_lut.view,
+                "point_ops resident",
+            );
+            self.resident_bind = Some((resident.id, bg));
+        }
+        &self.resident_bind.as_ref().expect("resident bind group").1
     }
 
     fn fits(&self, src: u64, out: u64, tables: u64) -> bool {
@@ -322,15 +586,19 @@ impl Buffers {
     }
 
     fn total_bytes(&self) -> u64 {
+        let staging_bytes = self.staging.as_ref().map_or(0, |_| self.out_size.saturating_mul(2));
         self.params_size
             .saturating_add(self.src_size)
             .saturating_add(self.table_size)
-            .saturating_add(self.out_size.saturating_mul(3))
+            .saturating_add(self.out_size)
+            .saturating_add(staging_bytes)
+            .saturating_add(self.look_lut.bytes)
+            .saturating_add(self.film_lut.bytes)
     }
 }
 
 impl Pipeline {
-    fn new(device: &wgpu::Device) -> Self {
+    fn new(device: &wgpu::Device, cache: Option<&wgpu::PipelineCache>) -> Self {
         let module = device.create_shader_module(wgpu::ShaderModuleDescriptor {
             label: Some("point_ops"),
             source: wgpu::ShaderSource::Wgsl(shader_source().into()),
@@ -345,9 +613,42 @@ impl Pipeline {
             },
             count: None,
         };
+        let tex3d = |binding: u32| wgpu::BindGroupLayoutEntry {
+            binding,
+            visibility: wgpu::ShaderStages::COMPUTE,
+            ty: wgpu::BindingType::Texture {
+                sample_type: wgpu::TextureSampleType::Float { filterable: true },
+                view_dimension: wgpu::TextureViewDimension::D3,
+                multisampled: false,
+            },
+            count: None,
+        };
         let layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
             label: Some("point_ops"),
-            entries: &[storage(0, true), storage(1, true), storage(2, true), storage(3, false)],
+            entries: &[
+                storage(0, true),
+                storage(1, true),
+                storage(2, true),
+                storage(3, false),
+                wgpu::BindGroupLayoutEntry {
+                    binding: 4,
+                    visibility: wgpu::ShaderStages::COMPUTE,
+                    ty: wgpu::BindingType::Sampler(wgpu::SamplerBindingType::Filtering),
+                    count: None,
+                },
+                tex3d(5),
+                tex3d(6),
+            ],
+        });
+        let lut_sampler = device.create_sampler(&wgpu::SamplerDescriptor {
+            label: Some("point_ops lut sampler"),
+            address_mode_u: wgpu::AddressMode::ClampToEdge,
+            address_mode_v: wgpu::AddressMode::ClampToEdge,
+            address_mode_w: wgpu::AddressMode::ClampToEdge,
+            mag_filter: wgpu::FilterMode::Linear,
+            min_filter: wgpu::FilterMode::Linear,
+            mipmap_filter: wgpu::MipmapFilterMode::Nearest,
+            ..Default::default()
         });
         let pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
             label: Some("point_ops"),
@@ -360,9 +661,9 @@ impl Pipeline {
             module: &module,
             entry_point: Some("point_pass"),
             compilation_options: Default::default(),
-            cache: None,
+            cache,
         });
-        Self { layout, pipeline, buffers: std::sync::Mutex::new(None) }
+        Self { layout, lut_sampler, pipeline, buffers: std::sync::Mutex::new(None) }
     }
 }
 
@@ -377,10 +678,13 @@ fn pipeline(gpu: &Gpu) -> Result<&Pipeline, String> {
     gpu.point_ops
         .get_or_init(|| {
             let scope = gpu.device.push_error_scope(wgpu::ErrorFilter::Validation);
-            let p = Pipeline::new(&gpu.device);
+            let p = Pipeline::new(&gpu.device, gpu.pipeline_cache.as_ref());
             match pollster::block_on(scope.pop()) {
                 Some(e) => Err(format!("shader: {e}")),
-                None => Ok(p),
+                None => {
+                    gpu.persist_pipeline_cache();
+                    Ok(p)
+                }
             }
         })
         .as_ref()
@@ -441,7 +745,7 @@ fn run_on(
     inputs: &PointInputs,
     max_rows: usize,
 ) -> Result<Vec<f32>, String> {
-    let _job = gpu.jobs.lock().map_err(|_| "GPU lock poisoned")?;
+    let _job = gpu.lock_job(crate::pipeline::interactive());
     run_bands(gpu, input, w, ch, y0, y1, recipe, inputs, max_rows, None)
 }
 
@@ -492,9 +796,20 @@ fn run_bands(
 
     let device = &gpu.device;
     let timeout = gpu.poll_timeout(crate::pipeline::interactive());
+    // Reuse a GPU-resident full-frame source buffer when an interactive preview key is
+    // active, avoiding ~59 MB PCIe pixel re-uploads on every slider tick.
+    let resident = super::current_preview_source_key().and_then(|key| {
+        let frame_h = input.len() / (w * ch);
+        if frame_h >= y1 {
+            gpu.get_or_upload_preview_source(key, input, w, frame_h, ch, limit)
+        } else {
+            None
+        }
+    });
     // One spare sample in front for bands that start on an odd sample, one behind for
     // an odd count
-    let (src_size, out_size, table_size) = (((rows * w * ch + 2) * 2) as u64, (rows * w * 12) as u64, (tables.len() * 4) as u64);
+    let src_size = if resident.is_some() { 4u64 } else { ((rows * w * ch + 2) * 2) as u64 };
+    let (out_size, table_size) = ((rows * w * 12) as u64, (tables.len() * 4) as u64);
     let mut cache = pipeline.buffers.lock().map_err(|_| "GPU buffer lock poisoned")?;
     if cache
         .as_ref()
@@ -503,6 +818,7 @@ fn run_bands(
         *cache = None;
     }
 
+    let film_lut = inputs.film_lut.filter(|_| inputs.film_sim != FilmSimulation::None);
     let scope = device.push_error_scope(wgpu::ErrorFilter::Validation);
     let oom = device.push_error_scope(wgpu::ErrorFilter::OutOfMemory);
     let body = (|| -> Result<Vec<f32>, String> {
@@ -512,14 +828,28 @@ fn run_bands(
             *cache = None;
             *cache = Some(Buffers::new(
                 device,
+                &gpu.queue,
                 &pipeline.layout,
+                &pipeline.lut_sampler,
                 (params.0.len() * 4) as u64,
                 src_size.max(s),
                 out_size.max(o),
                 table_size.max(t),
             ));
         }
+        let bufs = cache.as_mut().expect("buffers");
+        bufs.sync_luts(device, &gpu.queue, &pipeline.layout, &pipeline.lut_sampler, inputs.look_lut, film_lut);
+        if let Some(ref res) = resident {
+            let _ = bufs.bind_for_resident(device, &pipeline.layout, &pipeline.lut_sampler, res);
+        }
+        if sink.is_none() {
+            bufs.ensure_staging(device);
+        }
         let bufs = cache.as_ref().expect("buffers");
+        let active_bind = match resident {
+            Some(_) => &bufs.resident_bind.as_ref().expect("resident bind").1,
+            None => &bufs.bind,
+        };
         gpu.queue.write_buffer(&bufs.tables, 0, as_bytes(&tables));
 
         let mut result = if sink.is_some() { Vec::new() } else { vec![0.0f32; (y1 - y0) * w * 3] };
@@ -544,21 +874,28 @@ fn run_bands(
         for (i, by0) in (y0..y1).step_by(rows).enumerate() {
             let by1 = (by0 + rows).min(y1);
             let (s0, s1) = (by0 * w * ch, by1 * w * ch);
-            // Whole words: start on an even sample, the shader skips the spare one
-            let shift = s0 & 1;
-            let samples = &input[s0 - shift..s1];
-            let even = samples.len() & !1;
 
             params.u("WIDTH", w as u32);
             params.u("ROWS", (by1 - by0) as u32);
             params.u("CHANNELS", ch as u32);
-            params.u("SRC_SHIFT", shift as u32);
-            // Queue writes land before the next submission and after the earlier ones,
-            // so the band in flight keeps its own parameters and samples
-            gpu.queue.write_buffer(&bufs.params, 0, as_bytes(&params.0));
-            gpu.queue.write_buffer(&bufs.src, 0, as_bytes(&samples[..even]));
-            if even < samples.len() {
-                gpu.queue.write_buffer(&bufs.src, (even * 2) as u64, as_bytes(&[samples[even] as u32]));
+            if resident.is_some() {
+                params.u("SRC_SHIFT", 0);
+                params.u("SRC_BASE", s0 as u32);
+                gpu.queue.write_buffer(&bufs.params, 0, as_bytes(&params.0));
+            } else {
+                // Whole words: start on an even sample, the shader skips the spare one
+                let shift = s0 & 1;
+                let samples = &input[s0 - shift..s1];
+                let even = samples.len() & !1;
+                params.u("SRC_SHIFT", shift as u32);
+                params.u("SRC_BASE", 0);
+                // Queue writes land before the next submission and after the earlier ones,
+                // so the band in flight keeps its own parameters and samples
+                gpu.queue.write_buffer(&bufs.params, 0, as_bytes(&params.0));
+                gpu.queue.write_buffer(&bufs.src, 0, as_bytes(&samples[..even]));
+                if even < samples.len() {
+                    gpu.queue.write_buffer(&bufs.src, (even * 2) as u64, as_bytes(&[samples[even] as u32]));
+                }
             }
 
             let k = i % 2;
@@ -566,7 +903,7 @@ fn run_bands(
             {
                 let mut pass = enc.begin_compute_pass(&wgpu::ComputePassDescriptor { label: None, timestamp_writes: None });
                 pass.set_pipeline(&pipeline.pipeline);
-                pass.set_bind_group(0, &bufs.bind, &[]);
+                pass.set_bind_group(0, active_bind, &[]);
                 pass.dispatch_workgroups((w as u32).div_ceil(WG), ((by1 - by0) as u32).div_ceil(WG), 1);
             }
             let out_len = ((by1 - by0) * w * 12) as u64;
@@ -575,21 +912,22 @@ fn run_bands(
                 gpu.queue.submit([enc.finish()]);
                 continue;
             }
-            enc.copy_buffer_to_buffer(&bufs.out, 0, &bufs.staging[k], 0, out_len);
+            let staging = &bufs.staging.as_ref().expect("staging")[k];
+            enc.copy_buffer_to_buffer(&bufs.out, 0, staging, 0, out_len);
             let idx = gpu.queue.submit([enc.finish()]);
 
             let (tx, rx) = mpsc::channel();
-            bufs.staging[k].map_async(wgpu::MapMode::Read, 0..out_len, move |r| {
+            staging.map_async(wgpu::MapMode::Read, 0..out_len, move |r| {
                 let _ = tx.send(r);
             });
-            let next_guard = super::StagingGuard::new(&bufs.staging[k]);
+            let next_guard = super::StagingGuard::new(staging);
             // Read the previous band back while this one runs; if it fails, `next_guard`
-            // drops automatically and unmaps `bufs.staging[k]`.
+            // drops automatically and unmaps `staging`.
             if let Some(p) = pending.take() {
                 collect(p, &mut result)?;
             }
             pending = Some(InFlight {
-                buf: &bufs.staging[k],
+                buf: staging,
                 guard: next_guard,
                 by0,
                 by1,
@@ -795,5 +1133,104 @@ mod tests {
                 assert!(worst < 0.05, "{name} ch={ch}: worst difference {worst}");
             }
         }
+    }
+
+    fn f16_to_f32(bits: u16) -> f32 {
+        let sign = ((bits >> 15) as u32) << 31;
+        let exp = (bits >> 10) & 0x1f;
+        let mant = (bits & 0x03ff) as u32;
+        if exp == 0 {
+            if mant == 0 {
+                return f32::from_bits(sign);
+            }
+            let mut m = mant;
+            let mut e = -14i32;
+            while (m & 0x0400) == 0 {
+                m <<= 1;
+                e -= 1;
+            }
+            let f_exp = ((e + 127) as u32) << 23;
+            let f_mant = (m & 0x03ff) << 13;
+            return f32::from_bits(sign | f_exp | f_mant);
+        }
+        if exp == 31 {
+            return f32::from_bits(sign | (0xff << 23) | (mant << 13));
+        }
+        let f_exp = ((exp as u32) + 112) << 23;
+        f32::from_bits(sign | f_exp | (mant << 13))
+    }
+
+    #[test]
+    fn f32_to_f16_roundtrip_accuracy() {
+        assert_eq!(f32_to_f16(0.0), 0x0000);
+        assert_eq!(f32_to_f16(-0.0), 0x8000);
+        assert_eq!(f32_to_f16(1.0), 0x3c00);
+        assert_eq!(f32_to_f16(-1.0), 0xbc00);
+        assert_eq!(f32_to_f16(0.5), 0x3800);
+        // LUT range [0, 1] stays well within f16 half-ULP (<= 5e-4).
+        for step in 0..=1024 {
+            let v = step as f32 / 1024.0;
+            let decoded = f16_to_f32(f32_to_f16(v));
+            assert!((decoded - v).abs() <= 5e-4, "v={v} decoded={decoded}");
+        }
+        // Extreme values clamp cleanly to finite max f16 (65504.0), never NaN/Inf.
+        assert_eq!(f32_to_f16(100_000.0), 0x7bff);
+        assert_eq!(f32_to_f16(-100_000.0), 0xfbff);
+        assert_eq!(f32_to_f16(f32::NAN), 0x0000);
+        // Subnormal values round accurately without panicking.
+        let sub = f16_to_f32(f32_to_f16(1e-5));
+        assert!((sub - 1e-5).abs() < 1e-6);
+    }
+
+    #[test]
+    fn resident_preview_source_matches_direct_and_invalidates_on_key_change() {
+        let _test_lock = super::super::TEST_GPU_LOCK.lock().unwrap_or_else(|e| e.into_inner());
+        let Some(gpu) = super::super::acquire() else {
+            eprintln!("no GPU, skipped");
+            return;
+        };
+        gpu.clear_preview_source();
+        let (w, h, ch) = (129usize, 77usize, 3usize);
+        let input = frame(w, h, ch);
+        let transfer = Transfer::bt709();
+
+        let r1 = Recipe { exposure: 0.25, contrast: 15.0, lut_name: Some("Kodak 2383".into()), lut_intensity: 0.75, ..Recipe::default() };
+        let r2 = Recipe { exposure: -0.35, saturation: 20.0, film_simulation: "fuji_classic_chrome".into(), ..Recipe::default() };
+
+        let run_case = |recipe: &Recipe, buf: &[u16]| {
+            let ops = PointOps::new(recipe);
+            let (wr, wg, wb) = white_balance::kelvin_to_rgb_multipliers(recipe.wb_temperature, recipe.wb_tint);
+            let e = 2.0f32.powf(recipe.exposure + recipe.baseline_exposure);
+            let inputs = ops.gpu_inputs([wr * e, wg * e, wb * e], transfer);
+            run_on(&gpu, buf, w, ch, 0, h, recipe, &inputs, 19).expect("GPU point stage")
+        };
+
+        let direct1 = run_case(&r1, &input);
+        let direct2 = run_case(&r2, &input);
+
+        let key1 = super::super::preview_source_key(1, &r1.retouch, w, h, ch);
+        let res1 = super::super::with_preview_source_key(key1, || run_case(&r1, &input));
+        assert_eq!(res1, direct1, "resident preview pass 1 must match direct upload");
+        let id1 = gpu.preview_src.lock().unwrap().as_ref().expect("resident cached").id;
+
+        // Second tick with same photo key + different recipe must reuse the exact same VRAM buffer.
+        let res2 = super::super::with_preview_source_key(key1, || run_case(&r2, &input));
+        assert_eq!(res2, direct2, "resident preview pass 2 must match direct upload");
+        let id2 = gpu.preview_src.lock().unwrap().as_ref().expect("resident still cached").id;
+        assert_eq!(id1, id2, "same photo key should reuse GPU-resident buffer without re-uploading");
+
+        // Changing photo key (new photo load) must replace the resident buffer.
+        let key2 = super::super::preview_source_key(2, &r1.retouch, w, h, ch);
+        let mut input2 = input.clone();
+        for s in &mut input2 {
+            *s = s.saturating_add(4000);
+        }
+        let direct_new = run_case(&r1, &input2);
+        let res_new = super::super::with_preview_source_key(key2, || run_case(&r1, &input2));
+        assert_eq!(res_new, direct_new, "invalidated resident buffer must match new photo");
+        let id3 = gpu.preview_src.lock().unwrap().as_ref().expect("new resident cached").id;
+        assert_ne!(id2, id3, "new photo key must invalidate and replace GPU-resident buffer");
+
+        gpu.clear_preview_source();
     }
 }

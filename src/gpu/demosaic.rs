@@ -21,10 +21,118 @@ const MAX_BAND_ROWS: usize = 512;
 pub struct Pipelines {
     layout: wgpu::BindGroupLayout,
     stages: [wgpu::ComputePipeline; 5],
+    buffers: std::sync::Mutex<Option<DemosaicBuffers>>,
+}
+
+struct DemosaicBuffers {
+    mosaic_size: u64,
+    phases_size: u64,
+    green_size: u64,
+    cand_size: u64,
+    homo_size: u64,
+    sel_size: u64,
+    out_size: u64,
+    last_used: std::time::Instant,
+    params: wgpu::Buffer,
+    mosaic: wgpu::Buffer,
+    phases: wgpu::Buffer,
+    _green: wgpu::Buffer,
+    _cand: wgpu::Buffer,
+    _homo: wgpu::Buffer,
+    _sel: wgpu::Buffer,
+    out: wgpu::Buffer,
+    staging: [wgpu::Buffer; 2],
+    bind: wgpu::BindGroup,
+}
+
+impl DemosaicBuffers {
+    #[allow(clippy::too_many_arguments)]
+    fn new(
+        device: &wgpu::Device,
+        layout: &wgpu::BindGroupLayout,
+        mosaic_size: u64,
+        phases_size: u64,
+        green_size: u64,
+        cand_size: u64,
+        homo_size: u64,
+        sel_size: u64,
+        out_size: u64,
+    ) -> Self {
+        let buffer = |label: &str, size: u64, usage: wgpu::BufferUsages| {
+            device.create_buffer(&wgpu::BufferDescriptor {
+                label: Some(label),
+                size: size.max(4).next_multiple_of(4),
+                usage,
+                mapped_at_creation: false,
+            })
+        };
+        let storage = wgpu::BufferUsages::STORAGE;
+        let params = buffer("demosaic params", 96, wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST);
+        let mosaic = buffer("demosaic mosaic", mosaic_size, storage | wgpu::BufferUsages::COPY_DST);
+        let phases = buffer("demosaic phases", phases_size, storage | wgpu::BufferUsages::COPY_DST);
+        let green = buffer("demosaic green", green_size, storage);
+        let cand = buffer("demosaic cand", cand_size, storage);
+        let homo = buffer("demosaic homo", homo_size, storage);
+        let sel = buffer("demosaic sel", sel_size, storage);
+        let out = buffer("demosaic out", out_size, storage | wgpu::BufferUsages::COPY_SRC);
+        let readback = wgpu::BufferUsages::MAP_READ | wgpu::BufferUsages::COPY_DST;
+        let staging = [buffer("demosaic staging0", out_size, readback), buffer("demosaic staging1", out_size, readback)];
+        let bind = device.create_bind_group(&wgpu::BindGroupDescriptor {
+            label: Some("demosaic"),
+            layout,
+            entries: &[&params, &mosaic, &phases, &green, &cand, &homo, &sel, &out]
+                .iter()
+                .enumerate()
+                .map(|(i, b)| wgpu::BindGroupEntry { binding: i as u32, resource: b.as_entire_binding() })
+                .collect::<Vec<_>>(),
+        });
+        Self {
+            mosaic_size,
+            phases_size,
+            green_size,
+            cand_size,
+            homo_size,
+            sel_size,
+            out_size,
+            last_used: std::time::Instant::now(),
+            params,
+            mosaic,
+            phases,
+            _green: green,
+            _cand: cand,
+            _homo: homo,
+            _sel: sel,
+            out,
+            staging,
+            bind,
+        }
+    }
+
+    #[allow(clippy::too_many_arguments)]
+    fn fits(&self, mosaic: u64, phases: u64, green: u64, cand: u64, homo: u64, sel: u64, out: u64) -> bool {
+        self.mosaic_size >= mosaic
+            && self.phases_size >= phases
+            && self.green_size >= green
+            && self.cand_size >= cand
+            && self.homo_size >= homo
+            && self.sel_size >= sel
+            && self.out_size >= out
+    }
+
+    fn total_bytes(&self) -> u64 {
+        96u64
+            .saturating_add(self.mosaic_size)
+            .saturating_add(self.phases_size)
+            .saturating_add(self.green_size)
+            .saturating_add(self.cand_size)
+            .saturating_add(self.homo_size)
+            .saturating_add(self.sel_size)
+            .saturating_add(self.out_size.saturating_mul(3))
+    }
 }
 
 impl Pipelines {
-    fn new(device: &wgpu::Device) -> Self {
+    fn new(device: &wgpu::Device, cache: Option<&wgpu::PipelineCache>) -> Self {
         let module = device.create_shader_module(wgpu::ShaderModuleDescriptor {
             label: Some("demosaic"),
             source: wgpu::ShaderSource::Wgsl(include_str!("demosaic.wgsl").into()),
@@ -60,11 +168,11 @@ impl Pipelines {
                 module: &module,
                 entry_point: Some(entry),
                 compilation_options: Default::default(),
-                cache: None,
+                cache,
             })
         };
         let stages = ["green_pass", "cand_pass", "homo_pass", "select_pass", "median_pass"].map(stage);
-        Self { layout, stages }
+        Self { layout, stages, buffers: std::sync::Mutex::new(None) }
     }
 }
 
@@ -126,6 +234,16 @@ impl Band {
     }
 }
 
+struct InFlight<'a> {
+    buf: &'a wgpu::Buffer,
+    guard: super::StagingGuard<'a>,
+    out_y0: usize,
+    out_y1: usize,
+    len: u64,
+    idx: wgpu::SubmissionIndex,
+    rx: mpsc::Receiver<Result<(), wgpu::BufferAsyncError>>,
+}
+
 fn run(gpu: &Gpu, m: &Mosaic, matrix: [[f32; 3]; 3], max_rows: usize) -> Result<Vec<u16>, String> {
     let (w, h) = (m.width, m.height);
     if w < 6 || h < 6 || m.data.len() < w * h {
@@ -140,15 +258,23 @@ fn run(gpu: &Gpu, m: &Mosaic, matrix: [[f32; 3]; 3], max_rows: usize) -> Result<
                 gpu.info.name, gpu.limits.max_storage_buffers_per_shader_stage
             ));
         }
+        if gpu.limits.max_compute_workgroup_storage_size < 16_384 {
+            return Err(format!(
+                "{}: demosaic needs at least 16384 bytes of workgroup storage (has {})",
+                gpu.info.name, gpu.limits.max_compute_workgroup_storage_size
+            ));
+        }
         let scope = gpu.device.push_error_scope(wgpu::ErrorFilter::Validation);
-        let p = Pipelines::new(&gpu.device);
+        let p = Pipelines::new(&gpu.device, gpu.pipeline_cache.as_ref());
         match pollster::block_on(scope.pop()) {
             Some(e) => Err(format!("shader: {e}")),
-            None => Ok(p),
+            None => {
+                gpu.persist_pipeline_cache();
+                Ok(p)
+            }
         }
     });
     let pipelines = pipelines.as_ref().map_err(|e| e.clone())?;
-    let _job = gpu.jobs.lock().map_err(|_| "GPU lock poisoned")?;
 
     // Band height from the largest buffer: 4 candidates x RGB x f32 per pixel
     let limit = gpu.limits.max_storage_buffer_binding_size.min(gpu.limits.max_buffer_size).min(MAX_BUFFER);
@@ -160,82 +286,150 @@ fn run(gpu: &Gpu, m: &Mosaic, matrix: [[f32; 3]; 3], max_rows: usize) -> Result<
     let rows = rows.min(max_rows).min(h);
     let ext_rows = rows + 2 * BORDER;
     let mosaic_rows = ext_rows + 2 * TAP_REACH;
+    let row_words = (w * 3).div_ceil(2);
+    let row_bytes = row_words * 4;
+
+    let mosaic_size = (mosaic_rows * w * 4) as u64;
+    let phases_size = (table.len() * 4) as u64;
+    let green_size = (ext_rows * w * 16) as u64;
+    let cand_size = (ext_rows * w * 48) as u64;
+    let homo_size = (ext_rows * w * 4) as u64;
+    let sel_size = ((rows + 2) * w * 12) as u64;
+    let out_size = (rows * row_bytes) as u64;
 
     let device = &gpu.device;
     let timeout = gpu.poll_timeout(false);
-    let scope = device.push_error_scope(wgpu::ErrorFilter::Validation);
-    let oom = device.push_error_scope(wgpu::ErrorFilter::OutOfMemory);
-    let body = (|| -> Result<Vec<u16>, String> {
-        let buffer = |label: &str, size: usize, usage: wgpu::BufferUsages| {
-            device.create_buffer(&wgpu::BufferDescriptor { label: Some(label), size: size.max(4) as u64, usage, mapped_at_creation: false })
-        };
-        let storage = wgpu::BufferUsages::STORAGE;
-        let params = buffer("params", 96, wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST);
-        let mosaic = buffer("mosaic", mosaic_rows * w * 4, storage | wgpu::BufferUsages::COPY_DST);
-        let phases = buffer("phases", table.len() * 4, storage | wgpu::BufferUsages::COPY_DST);
-        let green = buffer("green", ext_rows * w * 16, storage);
-        let cand = buffer("cand", ext_rows * w * 48, storage);
-        let homo = buffer("homo", ext_rows * w * 4, storage);
-        let sel = buffer("sel", (rows + 2) * w * 12, storage);
-        let out = buffer("out", rows * w * 12, storage | wgpu::BufferUsages::COPY_SRC);
-        let staging = buffer("staging", rows * w * 12, wgpu::BufferUsages::MAP_READ | wgpu::BufferUsages::COPY_DST);
-        gpu.queue.write_buffer(&phases, 0, as_bytes(&table));
-        let bind = device.create_bind_group(&wgpu::BindGroupDescriptor {
-            label: Some("demosaic"),
-            layout: &pipelines.layout,
-            entries: &[&params, &mosaic, &phases, &green, &cand, &homo, &sel, &out]
-                .iter()
-                .enumerate()
-                .map(|(i, b)| wgpu::BindGroupEntry { binding: i as u32, resource: b.as_entire_binding() })
-                .collect::<Vec<_>>(),
-        });
+    let mut result = vec![0u16; w * h * 3];
+    let groups = |n: usize| (n as u32).div_ceil(WG);
+    let mut next_y0 = 0usize;
 
-        let mut result = vec![0u16; w * h * 3];
-        let groups = |n: usize| (n as u32).div_ceil(WG);
-        for y0 in (0..h).step_by(rows) {
-            let band = Band::new(y0, rows, h);
-            gpu.queue.write_buffer(&params, 0, as_bytes(&band.params(w, h, period, &matrix)));
-            gpu.queue.write_buffer(&mosaic, 0, as_bytes(&m.data[band.mosaic_y0 * w..band.mosaic_y1 * w]));
-            let mut enc = device.create_command_encoder(&wgpu::CommandEncoderDescriptor { label: Some("demosaic") });
-            let ext = band.ext_y1 - band.ext_y0;
-            let dispatch = [ext, ext, ext, band.sel_y1 - band.sel_y0, band.out_y1 - band.out_y0];
-            for (stage, rows) in pipelines.stages.iter().zip(dispatch) {
-                // A pass per stage: each reads what the previous one wrote
-                let mut pass = enc.begin_compute_pass(&wgpu::ComputePassDescriptor { label: None, timestamp_writes: None });
-                pass.set_pipeline(stage);
-                pass.set_bind_group(0, &bind, &[]);
-                pass.dispatch_workgroups(groups(w), groups(rows), 1);
-            }
-            let out_len = ((band.out_y1 - band.out_y0) * w * 12) as u64;
-            enc.copy_buffer_to_buffer(&out, 0, &staging, 0, out_len);
-            let idx = gpu.queue.submit([enc.finish()]);
-
-            let (tx, rx) = mpsc::channel();
-            staging.map_async(wgpu::MapMode::Read, 0..out_len, move |r| {
-                let _ = tx.send(r);
-            });
-            let mut guard = super::StagingGuard::new(&staging);
-            gpu.wait_submission(Some(idx), timeout)?;
-            match rx.recv().map_err(|e| e.to_string())? {
-                Ok(()) => {}
-                Err(e) => {
-                    guard.disarm();
-                    return Err(e.to_string());
-                }
-            }
-            {
-                let view = staging.get_mapped_range(0..out_len).map_err(|e| e.to_string())?;
-                let dst = &mut result[band.out_y0 * w * 3..band.out_y1 * w * 3];
-                for (d, s) in dst.iter_mut().zip(view.as_chunks::<4>().0) {
-                    *d = u32::from_le_bytes(*s) as u16;
-                }
-            }
-            guard.unmap_now();
+    while next_y0 < h {
+        let _job = gpu.lock_job(false);
+        let mut cache = pipelines.buffers.lock().map_err(|_| "GPU demosaic buffer lock poisoned")?;
+        if cache
+            .as_ref()
+            .is_some_and(|b| b.total_bytes() > super::PREVIEW_VRAM_CAP && b.last_used.elapsed() >= super::OVERSIZED_IDLE_EVICT)
+        {
+            *cache = None;
         }
-        Ok(result)
-    })();
-    super::drain_scopes(oom, scope)?;
-    body
+        let scope = device.push_error_scope(wgpu::ErrorFilter::Validation);
+        let oom = device.push_error_scope(wgpu::ErrorFilter::OutOfMemory);
+        let seg = (|| -> Result<usize, String> {
+            if !cache.as_ref().is_some_and(|b| b.fits(mosaic_size, phases_size, green_size, cand_size, homo_size, sel_size, out_size)) {
+                let (mo, ph, gr, ca, ho, se, ou) = cache.as_ref().map_or((0, 0, 0, 0, 0, 0, 0), |b| {
+                    (b.mosaic_size, b.phases_size, b.green_size, b.cand_size, b.homo_size, b.sel_size, b.out_size)
+                });
+                *cache = None;
+                *cache = Some(DemosaicBuffers::new(
+                    device,
+                    &pipelines.layout,
+                    mosaic_size.max(mo),
+                    phases_size.max(ph),
+                    green_size.max(gr),
+                    cand_size.max(ca),
+                    homo_size.max(ho),
+                    sel_size.max(se),
+                    out_size.max(ou),
+                ));
+            }
+            let bufs = cache.as_ref().expect("demosaic buffers");
+            gpu.queue.write_buffer(&bufs.phases, 0, as_bytes(&table));
+
+            let collect = |mut p: InFlight<'_>, result: &mut [u16]| -> Result<(), String> {
+                gpu.wait_submission(Some(p.idx), timeout)?;
+                match p.rx.recv().map_err(|e| e.to_string())? {
+                    Ok(()) => {}
+                    Err(e) => {
+                        p.guard.disarm();
+                        return Err(e.to_string());
+                    }
+                }
+                {
+                    let view = p.buf.get_mapped_range(0..p.len).map_err(|e| e.to_string())?;
+                    for ry in 0..(p.out_y1 - p.out_y0) {
+                        let src_row = &view[ry * row_bytes..ry * row_bytes + w * 6];
+                        let dst_row = &mut result[(p.out_y0 + ry) * w * 3..(p.out_y0 + ry + 1) * w * 3];
+                        for (d, s) in dst_row.iter_mut().zip(src_row.as_chunks::<2>().0) {
+                            *d = u16::from_le_bytes(*s);
+                        }
+                    }
+                }
+                p.guard.unmap_now();
+                Ok(())
+            };
+
+            let mut pending: Option<InFlight<'_>> = None;
+            let mut y0 = next_y0;
+            let mut band_i = 0usize;
+            while y0 < h {
+                // Yield between bands when an interactive preview is waiting for the GPU.
+                if band_i > 0 && gpu.has_interactive_waiter() {
+                    break;
+                }
+                let band = Band::new(y0, rows, h);
+                gpu.queue.write_buffer(&bufs.params, 0, as_bytes(&band.params(w, h, period, &matrix)));
+                gpu.queue.write_buffer(&bufs.mosaic, 0, as_bytes(&m.data[band.mosaic_y0 * w..band.mosaic_y1 * w]));
+                let mut enc = device.create_command_encoder(&wgpu::CommandEncoderDescriptor { label: Some("demosaic") });
+                let ext = band.ext_y1 - band.ext_y0;
+                let dispatch = [
+                    (groups(w), groups(ext)),
+                    (groups(w), groups(ext)),
+                    (groups(w), groups(ext)),
+                    (groups(w), groups(band.sel_y1 - band.sel_y0)),
+                    (groups(w.div_ceil(2)), groups(band.out_y1 - band.out_y0)),
+                ];
+                for (stage, (gx, gy)) in pipelines.stages.iter().zip(dispatch) {
+                    // A pass per stage: each reads what the previous one wrote
+                    let mut pass = enc.begin_compute_pass(&wgpu::ComputePassDescriptor { label: None, timestamp_writes: None });
+                    pass.set_pipeline(stage);
+                    pass.set_bind_group(0, &bufs.bind, &[]);
+                    pass.dispatch_workgroups(gx, gy, 1);
+                }
+                let k = band_i % 2;
+                let out_len = ((band.out_y1 - band.out_y0) * row_bytes) as u64;
+                enc.copy_buffer_to_buffer(&bufs.out, 0, &bufs.staging[k], 0, out_len);
+                let idx = gpu.queue.submit([enc.finish()]);
+
+                let (tx, rx) = mpsc::channel();
+                bufs.staging[k].map_async(wgpu::MapMode::Read, 0..out_len, move |r| {
+                    let _ = tx.send(r);
+                });
+                let next_guard = super::StagingGuard::new(&bufs.staging[k]);
+                if let Some(p) = pending.take() {
+                    collect(p, &mut result)?;
+                }
+                pending = Some(InFlight {
+                    buf: &bufs.staging[k],
+                    guard: next_guard,
+                    out_y0: band.out_y0,
+                    out_y1: band.out_y1,
+                    len: out_len,
+                    idx,
+                    rx,
+                });
+                y0 = band.out_y1;
+                band_i += 1;
+            }
+            if let Some(p) = pending.take() {
+                collect(p, &mut result)?;
+            }
+            Ok(y0)
+        })();
+
+        let scope_res = super::drain_scopes(oom, scope);
+        if scope_res.is_err() || seg.is_err() {
+            *cache = None;
+        }
+        scope_res?;
+        next_y0 = seg?;
+        if let Some(b) = cache.as_mut() {
+            b.last_used = std::time::Instant::now();
+        }
+        if next_y0 >= h && cache.as_ref().is_some_and(|b| b.total_bytes() > super::PREVIEW_VRAM_CAP) {
+            *cache = None;
+        }
+    }
+    Ok(result)
 }
 
 #[cfg(test)]

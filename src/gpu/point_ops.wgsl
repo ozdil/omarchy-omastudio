@@ -11,10 +11,14 @@
 @group(0) @binding(0) var<storage, read> params: array<u32>;
 // 16-bit input samples, two per word, little-endian
 @group(0) @binding(1) var<storage, read> src: array<u32>;
-// Curve tables (4 x CURVE_SIZE) followed by the look and film LUTs
+// Curve tables (4 x CURVE_SIZE)
 @group(0) @binding(2) var<storage, read> tables: array<f32>;
 // Interleaved RGB f32 output for the band
 @group(0) @binding(3) var<storage, read_write> dst: array<f32>;
+// Hardware trilinearly-filtered 3D LUTs (Rgba16Float)
+@group(0) @binding(4) var lut_sampler: sampler;
+@group(0) @binding(5) var look_lut_tex: texture_3d<f32>;
+@group(0) @binding(6) var film_lut_tex: texture_3d<f32>;
 
 const PI: f32 = 3.14159265358979;
 const CURVE_SIZE: u32 = 1024u;
@@ -364,45 +368,21 @@ fn hsl_mixer(c: vec3<f32>) -> vec3<f32> {
     return oklab_to_encoded(vec3<f32>(nl, nc * cos(rad), nc * sin(rad)));
 }
 
-// --- 3D LUTs (pipeline::lut::Lut3D::sample) ------------------------------------------
+// --- 3D LUTs (pipeline::lut::Lut3D::sample via hardware 3D texture filtering) --------
 
-// A LUT's parameters start at `p`: size, table offset (in floats), domain min[3], max[3]
-fn lut_entry(off: u32, i: u32) -> vec3<f32> {
-    let k = off + i * 3u;
-    return vec3<f32>(tables[k], tables[k + 1u], tables[k + 2u]);
-}
-
-fn lut_sample(p: u32, c: vec3<f32>) -> vec3<f32> {
-    let n = pu(p);
-    let off = pu(p + 1u);
+// A LUT's parameters start at `p`: size, reserved, domain min[3], max[3]
+fn lut_sample(tex: texture_3d<f32>, p: u32, c: vec3<f32>) -> vec3<f32> {
+    let n = f32(pu(p));
     let dmin = vec3<f32>(pf(p + 2u), pf(p + 3u), pf(p + 4u));
     let dmax = vec3<f32>(pf(p + 5u), pf(p + 6u), pf(p + 7u));
     let norm = clamp((c - dmin) / (dmax - dmin), vec3<f32>(0.0), vec3<f32>(1.0));
-    let pos = norm * f32(n - 1u);
-    let i0 = min(vec3<u32>(floor(pos)), vec3<u32>(n - 1u));
-    let i1 = min(i0 + vec3<u32>(1u), vec3<u32>(n - 1u));
-    let f = pos - vec3<f32>(i0);
-    let nn = n * n;
-    let c000 = lut_entry(off, i0.z * nn + i0.y * n + i0.x);
-    let c100 = lut_entry(off, i0.z * nn + i0.y * n + i1.x);
-    let c010 = lut_entry(off, i0.z * nn + i1.y * n + i0.x);
-    let c110 = lut_entry(off, i0.z * nn + i1.y * n + i1.x);
-    let c001 = lut_entry(off, i1.z * nn + i0.y * n + i0.x);
-    let c101 = lut_entry(off, i1.z * nn + i0.y * n + i1.x);
-    let c011 = lut_entry(off, i1.z * nn + i1.y * n + i0.x);
-    let c111 = lut_entry(off, i1.z * nn + i1.y * n + i1.x);
-    let c00 = c000 * (1.0 - f.x) + c100 * f.x;
-    let c10 = c010 * (1.0 - f.x) + c110 * f.x;
-    let c01 = c001 * (1.0 - f.x) + c101 * f.x;
-    let c11 = c011 * (1.0 - f.x) + c111 * f.x;
-    let c0 = c00 * (1.0 - f.y) + c10 * f.y;
-    let c1 = c01 * (1.0 - f.y) + c11 * f.y;
-    return c0 * (1.0 - f.z) + c1 * f.z;
+    let uvw = (norm * (n - 1.0) + vec3<f32>(0.5)) / n;
+    return textureSampleLevel(tex, lut_sampler, uvw, 0.0).rgb;
 }
 
-fn lut_apply(p: u32, c: vec3<f32>, intensity: f32) -> vec3<f32> {
+fn lut_apply(tex: texture_3d<f32>, p: u32, c: vec3<f32>, intensity: f32) -> vec3<f32> {
     if (intensity <= 0.001) { return c; }
-    let l = lut_sample(p, c);
+    let l = lut_sample(tex, p, c);
     if (intensity >= 0.999) { return l; }
     return c * (1.0 - intensity) + l * intensity;
 }
@@ -555,7 +535,7 @@ fn film(c: vec3<f32>) -> vec3<f32> {
     let sim = pu(P_FILM_SIM);
     if (sim == 0u) { return c; }
     let intensity = pf(P_FILM_INTENSITY);
-    if (on(P_FILM_LUT_ON)) { return lut_apply(P_FILM_LUT, c, intensity); }
+    if (on(P_FILM_LUT_ON)) { return lut_apply(film_lut_tex, P_FILM_LUT, c, intensity); }
     if (intensity <= 0.001) { return c; }
     let t = film_eval(sim, c);
     if (intensity >= 0.999) { return t; }
@@ -610,7 +590,7 @@ fn point_pass(@builtin(global_invocation_id) id: vec3<u32>) {
     let w = pu(P_WIDTH);
     if (id.x >= w || id.y >= pu(P_ROWS)) { return; }
     let px = id.y * w + id.x;
-    let s = px * pu(P_CHANNELS) + pu(P_SRC_SHIFT);
+    let s = pu(P_SRC_BASE) + px * pu(P_CHANNELS) + pu(P_SRC_SHIFT);
 
     // Scene-linear stage: white balance and exposure on linear light, then the
     // buffer's display curve
@@ -630,7 +610,7 @@ fn point_pass(@builtin(global_invocation_id) id: vec3<u32>) {
     c = skin_tone(c);
     c = color_wheels(c);
     c = hsl_mixer(c);
-    if (on(P_LOOK_LUT_ON)) { c = lut_apply(P_LOOK_LUT, c, pf(P_LOOK_INTENSITY)); }
+    if (on(P_LOOK_LUT_ON)) { c = lut_apply(look_lut_tex, P_LOOK_LUT, c, pf(P_LOOK_INTENSITY)); }
     c = film(c);
     if (on(P_CHROME_ON)) { c = color_chrome(c); }
     if (on(P_ACES_ON)) { c = gamut_compression_encoded(c); }

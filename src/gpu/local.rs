@@ -23,6 +23,12 @@ const MAX_STRIP_BINDING: u64 = 256 << 20;
 const MIN_INNER_ROWS: usize = 32;
 /// Pixels each blur thread slides over; must match CHUNK in the shader.
 const CHUNK: u32 = 32;
+/// Maximum box-blur radius using shared-memory tiled blur kernels (`blur_h_tiled` / `blur_v_tiled`).
+const TILED_BLUR_MAX_R: u32 = 64;
+/// Minimum workgroup storage required to fuse `hist_main` + `hist_wf` + `hist_par` into `hist_all` (33,800 B).
+const COMBINED_HIST_WG_STORAGE: u32 = 34_816;
+/// Precomputed luma multiplication table size in uniform memory (768 f32 = 3072 B).
+const LUMA_TERMS_BYTES: u64 = 768 * 4;
 /// Parameter words per step (40 x u32 = 160 bytes, matching `struct Params` in local.wgsl).
 const PARAMS_WORDS: usize = 40;
 /// Size of one step's parameters in the uniform buffer.
@@ -34,6 +40,8 @@ const ENTRIES: &[&str] = &[
     "luma_init",
     "blur_h",
     "blur_v",
+    "blur_h_tiled",
+    "blur_v_tiled",
     "accum",
     "dark",
     "presence_apply",
@@ -50,6 +58,109 @@ const ENTRIES: &[&str] = &[
     "hist_wf",
     "hist_par",
 ];
+
+/// Sentinel entry index dispatched to `Pipeline::hist_all` when the adapter exposes
+/// at least `COMBINED_HIST_WG_STORAGE` bytes of workgroup storage.
+const HIST_ALL_ENTRY: usize = ENTRIES.len();
+
+/// Optional single-pass scope kernel combining `hist_main`, `hist_wf`, and `hist_par`
+/// (`8450 * 4 = 33,800 B` workgroup storage), reading each `px8` pixel once instead of 3x.
+const HIST_ALL_WGSL: &str = r#"
+struct Params {
+    w: u32,
+    h: u32,
+    src: u32,
+    dst: u32,
+    r: u32,
+    mode: u32,
+    flags: u32,
+    pad: u32,
+    f0: f32,
+    f1: f32,
+    f2: f32,
+    f3: f32,
+    f4: f32,
+    f5: f32,
+    f6: f32,
+    f7: f32,
+    g: array<vec4<f32>, 4>,
+    strip0: vec4<u32>,
+    strip1: vec4<u32>,
+};
+
+@group(0) @binding(0) var<uniform> p: Params;
+@group(0) @binding(3) var<storage, read_write> px8: array<u32>;
+@group(0) @binding(5) var<storage, read_write> hist: array<atomic<u32>>;
+@group(0) @binding(7) var<uniform> luma_terms: array<vec4<f32>, 192>;
+
+const HIST_GROUPS: u32 = 256u;
+
+fn luma_term(idx: u32) -> f32 {
+    return luma_terms[idx >> 2u][idx & 3u];
+}
+
+fn luma8(v: u32) -> u32 {
+    let r = luma_term(v & 255u);
+    let g = luma_term(256u + ((v >> 8u) & 255u));
+    let b = luma_term(512u + ((v >> 16u) & 255u));
+    return min(u32((r + g) + b), 255u);
+}
+
+var<workgroup> h_all: array<atomic<u32>, 8450>;
+
+@compute @workgroup_size(256, 1, 1)
+fn hist_all(@builtin(local_invocation_index) li: u32, @builtin(workgroup_id) wg: vec3<u32>) {
+    for (var k = li; k < 8450u; k += 256u) {
+        atomicStore(&h_all[k], 0u);
+    }
+    workgroupBarrier();
+    let n = p.w * p.h;
+    for (var i = wg.x * 256u + li; i < n; i += 256u * HIST_GROUPS) {
+        let v = px8[i];
+        let r = v & 255u;
+        let g = (v >> 8u) & 255u;
+        let b = (v >> 16u) & 255u;
+        let luma = luma8(v);
+        atomicAdd(&h_all[r], 1u);
+        atomicAdd(&h_all[256u + g], 1u);
+        atomicAdd(&h_all[512u + b], 1u);
+        atomicAdd(&h_all[768u + luma], 1u);
+        if (r >= 254u || g >= 254u || b >= 254u) {
+            atomicAdd(&h_all[1025u], 1u);
+        } else if (r <= 1u && g <= 1u && b <= 1u) {
+            atomicAdd(&h_all[1024u], 1u);
+        }
+        let rf = f32(r) / 255.0;
+        let gf = f32(g) / 255.0;
+        let bf = f32(b) / 255.0;
+        let cb = -0.1146 * rf - 0.3854 * gf + 0.5000 * bf;
+        let cr = 0.5000 * rf - 0.4542 * gf - 0.0458 * bf;
+        let u = u32(clamp((cb + 0.5) * 47.0, 0.0, 47.0));
+        let vv = u32(clamp(47.0 - (cr + 0.5) * 47.0, 0.0, 47.0));
+        atomicAdd(&h_all[1026u + vv * 48u + u], 1u);
+
+        let x = i % p.w;
+        let wx = min((x * 64u) / p.w, 63u);
+        let wy = 31u - (luma * 31u) / 255u;
+        atomicAdd(&h_all[3330u + wy * 64u + wx], 1u);
+
+        let col = min((x * 32u) / p.w, 31u);
+        let rr = 31u - (r * 31u) / 255u;
+        let gr = 31u - (g * 31u) / 255u;
+        let br = 31u - (b * 31u) / 255u;
+        atomicAdd(&h_all[5378u + rr * 32u + col], 1u);
+        atomicAdd(&h_all[5378u + 1024u + gr * 32u + col], 1u);
+        atomicAdd(&h_all[5378u + 2048u + br * 32u + col], 1u);
+    }
+    workgroupBarrier();
+    for (var k = li; k < 8450u; k += 256u) {
+        let c = atomicLoad(&h_all[k]);
+        if (c > 0u) {
+            atomicAdd(&hist[k], c);
+        }
+    }
+}
+"#;
 
 /// A step's parameter words, zero after `head`.
 fn words(head: &[u32]) -> [u32; PARAMS_WORDS] {
@@ -271,11 +382,17 @@ fn plan(w: usize, h: usize, frame_w: usize, frame_h: usize, recipe: &Recipe, sca
         groups,
     };
     let pixels = |name: &str, mode: u32, flags: u32, f: [f32; 4]| step(name, 0, 0, 0, mode, flags, f, px);
-    // fast_separable_blur's radius, clamped against full frame dimensions, through scratch plane 4
+    // fast_separable_blur's radius, clamped against full frame dimensions, through scratch plane 4.
+    // Radii <= 64 run on shared-memory tiled kernels; larger radii keep the sliding-window fallback.
     let blur = |steps: &mut Vec<Step>, src: u32, dst: u32, radius: usize| {
         let r = radius.min(frame_w / 2).min(frame_h / 2).max(1) as u32;
-        steps.push(step("blur_h", src, 4, r, 0, 0, [0.0; 4], (wu.div_ceil(CHUNK).div_ceil(64), hu)));
-        steps.push(step("blur_v", 4, dst, r, 0, 0, [0.0; 4], (wu.div_ceil(64), hu.div_ceil(CHUNK))));
+        if r <= TILED_BLUR_MAX_R {
+            steps.push(step("blur_h_tiled", src, 4, r, 0, 0, [0.0; 4], (wu.div_ceil(256), hu)));
+            steps.push(step("blur_v_tiled", 4, dst, r, 0, 0, [0.0; 4], (wu.div_ceil(16), hu.div_ceil(64))));
+        } else {
+            steps.push(step("blur_h", src, 4, r, 0, 0, [0.0; 4], (wu.div_ceil(CHUNK).div_ceil(64), hu)));
+            steps.push(step("blur_v", 4, dst, r, 0, 0, [0.0; 4], (wu.div_ceil(64), hu.div_ceil(CHUNK))));
+        }
     };
 
     // Presence
@@ -438,6 +555,7 @@ fn display_steps_for_strip(
     recipe: &Recipe,
     scale: f32,
     geometry: Option<&crate::pipeline::detail::Geometry>,
+    combine_scopes: bool,
 ) -> Vec<Step> {
     let wu = frame_w as u32;
     let strip_h = strip.sy1 - strip.sy0;
@@ -515,8 +633,12 @@ fn display_steps_for_strip(
         let params = words(&[wu, valid_hu, gx * 256]);
         steps.push(Step { entry: entry("pack3"), params, groups: (gx, groups.div_ceil(gx)) });
     }
-    for name in ["hist_main", "hist_wf", "hist_par"] {
-        steps.push(Step { entry: entry(name), params: words(&[wu, valid_hu]), groups: (HIST_GROUPS, 1) });
+    if combine_scopes {
+        steps.push(Step { entry: HIST_ALL_ENTRY, params: words(&[wu, valid_hu]), groups: (HIST_GROUPS, 1) });
+    } else {
+        for name in ["hist_main", "hist_wf", "hist_par"] {
+            steps.push(Step { entry: entry(name), params: words(&[wu, valid_hu]), groups: (HIST_GROUPS, 1) });
+        }
     }
     steps
 }
@@ -524,8 +646,15 @@ fn display_steps_for_strip(
 pub struct Pipeline {
     layout: wgpu::BindGroupLayout,
     pipelines: Vec<wgpu::ComputePipeline>,
+    hist_all: Option<wgpu::ComputePipeline>,
     /// Kept between calls; previews call this on every edit.
     buffers: std::sync::Mutex<Option<Buffers>>,
+}
+
+struct TimestampQueries {
+    query_set: wgpu::QuerySet,
+    resolve: wgpu::Buffer,
+    staging: wgpu::Buffer,
 }
 
 /// Core compute buffers shared by both `Out::F32` (48 B/px including lazy `staging_f32`)
@@ -539,12 +668,16 @@ struct ComputeBuffers {
     rgb: wgpu::Buffer,
     planes: wgpu::Buffer,
     layers: wgpu::Buffer,
+    /// Constant 768-float luma lookup table in uniform memory (uploaded once per pool allocation).
+    luma_terms: wgpu::Buffer,
     /// Minimal 4-byte placeholders bound to display slots when `Out::F32` runs alone.
     _dummy_px8: wgpu::Buffer,
     _dummy_out8: wgpu::Buffer,
     _dummy_hist: wgpu::Buffer,
     /// Allocated lazily only for `Out::F32` readbacks (`rgb_size`, 12 B/px).
     staging_f32: Option<wgpu::Buffer>,
+    /// Optional GPU pass timestamp queries when `Features::TIMESTAMP_QUERY` is available.
+    timestamps: Option<TimestampQueries>,
     bind_compute: wgpu::BindGroup,
 }
 
@@ -576,6 +709,7 @@ fn create_buf(device: &wgpu::Device, label: &str, size: u64, usage: wgpu::Buffer
     })
 }
 
+#[allow(clippy::too_many_arguments)]
 fn create_bind_group(
     device: &wgpu::Device,
     layout: &wgpu::BindGroupLayout,
@@ -587,6 +721,7 @@ fn create_bind_group(
     out8: &wgpu::Buffer,
     hist: &wgpu::Buffer,
     layers: &wgpu::Buffer,
+    luma_terms: &wgpu::Buffer,
 ) -> wgpu::BindGroup {
     device.create_bind_group(&wgpu::BindGroupDescriptor {
         label: Some(label),
@@ -606,19 +741,37 @@ fn create_bind_group(
             wgpu::BindGroupEntry { binding: 4, resource: out8.as_entire_binding() },
             wgpu::BindGroupEntry { binding: 5, resource: hist.as_entire_binding() },
             wgpu::BindGroupEntry { binding: 6, resource: layers.as_entire_binding() },
+            wgpu::BindGroupEntry { binding: 7, resource: luma_terms.as_entire_binding() },
         ],
     })
 }
 
 impl ComputeBuffers {
-    fn new(device: &wgpu::Device, layout: &wgpu::BindGroupLayout, params_size: u64, rgb_size: u64, plane_size: u64, layers_size: u64) -> Self {
+    fn new(gpu: &Gpu, layout: &wgpu::BindGroupLayout, params_size: u64, rgb_size: u64, plane_size: u64, layers_size: u64) -> Self {
+        let device = &gpu.device;
         let params = create_buf(device, "local params", params_size, wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST);
         let rgb = create_buf(device, "local rgb", rgb_size, wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST | wgpu::BufferUsages::COPY_SRC);
         let planes = create_buf(device, "local planes", plane_size * PLANES, wgpu::BufferUsages::STORAGE);
         let layers = create_buf(device, "local layers", layers_size, wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST);
+        let luma_terms = create_buf(device, "local luma terms", LUMA_TERMS_BYTES, wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST);
+        let terms: Vec<f32> = [0.2126f32, 0.7152, 0.0722]
+            .iter()
+            .flat_map(|k| (0..256).map(move |v| k * v as f32))
+            .collect();
+        gpu.queue.write_buffer(&luma_terms, 0, as_bytes(&terms));
+
         let dummy_px8 = create_buf(device, "local dummy px8", 4, wgpu::BufferUsages::STORAGE);
         let dummy_out8 = create_buf(device, "local dummy out8", 4, wgpu::BufferUsages::STORAGE);
         let dummy_hist = create_buf(device, "local dummy hist", 4, wgpu::BufferUsages::STORAGE);
+        let timestamps = gpu.features.contains(wgpu::Features::TIMESTAMP_QUERY).then(|| TimestampQueries {
+            query_set: device.create_query_set(&wgpu::QuerySetDescriptor {
+                label: Some("local timestamps"),
+                ty: wgpu::QueryType::Timestamp,
+                count: 2,
+            }),
+            resolve: create_buf(device, "local ts resolve", 16, wgpu::BufferUsages::QUERY_RESOLVE | wgpu::BufferUsages::COPY_SRC),
+            staging: create_buf(device, "local ts staging", 16, wgpu::BufferUsages::MAP_READ | wgpu::BufferUsages::COPY_DST),
+        });
         let bind_compute = create_bind_group(
             device,
             layout,
@@ -630,6 +783,7 @@ impl ComputeBuffers {
             &dummy_out8,
             &dummy_hist,
             &layers,
+            &luma_terms,
         );
         Self {
             rgb_size,
@@ -640,10 +794,12 @@ impl ComputeBuffers {
             rgb,
             planes,
             layers,
+            luma_terms,
             _dummy_px8: dummy_px8,
             _dummy_out8: dummy_out8,
             _dummy_hist: dummy_hist,
             staging_f32: None,
+            timestamps,
             bind_compute,
         }
     }
@@ -665,6 +821,7 @@ impl ComputeBuffers {
             .saturating_add(self.rgb_size)
             .saturating_add(self.plane_size.saturating_mul(PLANES))
             .saturating_add(self.layers_size)
+            .saturating_add(LUMA_TERMS_BYTES)
             .saturating_add(staging)
     }
 }
@@ -675,8 +832,7 @@ impl DisplayBuffers {
         let out8_bytes = pixel_cap.saturating_mul(3).next_multiple_of(4);
         let px8 = create_buf(device, "local px8", px8_bytes, wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_SRC);
         let out8 = create_buf(device, "local out8", out8_bytes, wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_SRC);
-        // The counts, then the luma terms (see LUMA_TERMS in the shader)
-        let hist_size = ((crate::pipeline::histogram::SCOPE_WORDS + 768) * 4) as u64;
+        let hist_size = (crate::pipeline::histogram::SCOPE_WORDS * 4) as u64;
         let hist = create_buf(device, "local hist", hist_size, wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_SRC | wgpu::BufferUsages::COPY_DST);
         let staging_hist = create_buf(device, "local staging hist", hist_size, wgpu::BufferUsages::MAP_READ | wgpu::BufferUsages::COPY_DST);
         // Sized for at most 4 bytes/pixel (RGBA8), never 12 bytes/pixel (RGB f32)
@@ -692,6 +848,7 @@ impl DisplayBuffers {
             &out8,
             &hist,
             &compute.layers,
+            &compute.luma_terms,
         );
         Self { pixel_cap, hist_size, px8, out8, hist, staging_hist, staging_display, bind_display }
     }
@@ -707,9 +864,9 @@ impl DisplayBuffers {
 }
 
 impl Buffers {
-    fn new(device: &wgpu::Device, layout: &wgpu::BindGroupLayout, params_size: u64, rgb_size: u64, plane_size: u64, layers_size: u64) -> Self {
+    fn new(gpu: &Gpu, layout: &wgpu::BindGroupLayout, params_size: u64, rgb_size: u64, plane_size: u64, layers_size: u64) -> Self {
         Self {
-            compute: ComputeBuffers::new(device, layout, params_size, rgb_size, plane_size, layers_size),
+            compute: ComputeBuffers::new(gpu, layout, params_size, rgb_size, plane_size, layers_size),
             display: None,
             last_used: std::time::Instant::now(),
         }
@@ -723,7 +880,7 @@ impl Buffers {
 }
 
 impl Pipeline {
-    fn new(device: &wgpu::Device) -> Self {
+    fn new(device: &wgpu::Device, cache: Option<&wgpu::PipelineCache>, combine_scopes: bool) -> Self {
         let module = device.create_shader_module(wgpu::ShaderModuleDescriptor {
             label: Some("local"),
             source: wgpu::ShaderSource::Wgsl(include_str!("local.wgsl").into()),
@@ -766,6 +923,16 @@ impl Pipeline {
                     },
                     count: None,
                 },
+                wgpu::BindGroupLayoutEntry {
+                    binding: 7,
+                    visibility: wgpu::ShaderStages::COMPUTE,
+                    ty: wgpu::BindingType::Buffer {
+                        ty: wgpu::BufferBindingType::Uniform,
+                        has_dynamic_offset: false,
+                        min_binding_size: wgpu::BufferSize::new(LUMA_TERMS_BYTES),
+                    },
+                    count: None,
+                },
             ],
         });
         let pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
@@ -782,11 +949,25 @@ impl Pipeline {
                     module: &module,
                     entry_point: Some(name),
                     compilation_options: Default::default(),
-                    cache: None,
+                    cache,
                 })
             })
             .collect();
-        Self { layout, pipelines, buffers: std::sync::Mutex::new(None) }
+        let hist_all = combine_scopes.then(|| {
+            let hist_module = device.create_shader_module(wgpu::ShaderModuleDescriptor {
+                label: Some("local hist_all"),
+                source: wgpu::ShaderSource::Wgsl(HIST_ALL_WGSL.into()),
+            });
+            device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
+                label: Some("hist_all"),
+                layout: Some(&pipeline_layout),
+                module: &hist_module,
+                entry_point: Some("hist_all"),
+                compilation_options: Default::default(),
+                cache,
+            })
+        });
+        Self { layout, pipelines, hist_all, buffers: std::sync::Mutex::new(None) }
     }
 }
 
@@ -812,11 +993,15 @@ fn pipeline(gpu: &Gpu) -> Result<&Pipeline, String> {
                     gpu.info.name, gpu.limits.max_compute_workgroup_storage_size
                 ));
             }
+            let combine_scopes = gpu.limits.max_compute_workgroup_storage_size >= COMBINED_HIST_WG_STORAGE;
             let scope = gpu.device.push_error_scope(wgpu::ErrorFilter::Validation);
-            let p = Pipeline::new(&gpu.device);
+            let p = Pipeline::new(&gpu.device, gpu.pipeline_cache.as_ref(), combine_scopes);
             match pollster::block_on(scope.pop()) {
                 Some(e) => Err(format!("shader: {e}")),
-                None => Ok(p),
+                None => {
+                    gpu.persist_pipeline_cache();
+                    Ok(p)
+                }
             }
         })
         .as_ref()
@@ -871,7 +1056,7 @@ fn run_on_with_limit(
     let limit = limit.min(gpu_strip_limit(gpu));
     let (halo, max_blur_r) = effective_halo_and_blur(recipe, scale, w, h);
     let strip_plan = compute_strip_plan(w, h, halo, max_blur_r, limit, gpu.limits.max_compute_workgroups_per_dimension)?;
-    let _job = gpu.jobs.lock().map_err(|_| "GPU lock poisoned")?;
+    let _job = gpu.lock_job(crate::pipeline::interactive());
     if strip_plan.is_single_band() {
         let bands = vec![BandJob {
             strip_h: h,
@@ -1007,7 +1192,7 @@ fn chained_on_with_limit(
     let limit = limit.min(gpu_strip_limit(gpu));
     let (halo, max_blur_r) = effective_halo_and_blur(recipe, scale, w, h);
     let strip_plan = compute_strip_plan(w, h, halo, max_blur_r, limit, gpu.limits.max_compute_workgroups_per_dimension)?;
-    let _job = gpu.jobs.lock().map_err(|_| "GPU lock poisoned")?;
+    let _job = gpu.lock_job(crate::pipeline::interactive());
     let mut out = vec![0.0f32; w * h * 3];
     let bands = if strip_plan.is_single_band() {
         let mut steps = Vec::with_capacity(probe.len() + usize::from(has_layers));
@@ -1105,6 +1290,24 @@ pub fn run_display(
     }
 }
 
+/// Runs the full display pipeline on `gpu` for the one-time integrated-GPU micro-benchmark.
+pub(super) fn display_on_for_bench(
+    gpu: &Gpu,
+    input: &[u16],
+    w: usize,
+    h: usize,
+    ch: usize,
+    recipe: &Recipe,
+    transfer: crate::pipeline::transfer::Transfer,
+) -> Result<(), String> {
+    let ops = crate::pipeline::PointOps::new(recipe);
+    let (wr, wg, wb) = crate::pipeline::white_balance::kelvin_to_rgb_multipliers(recipe.wb_temperature, recipe.wb_tint);
+    let e = 2.0f32.powf(recipe.exposure + recipe.baseline_exposure);
+    let inputs = ops.gpu_inputs([wr * e, wg * e, wb * e], transfer);
+    let scale = crate::pipeline::frame_scale(w, h);
+    display_on(gpu, input, w, h, ch, recipe, &inputs, scale).map(|_| ())
+}
+
 #[allow(clippy::too_many_arguments)]
 fn display_on(
     gpu: &Gpu,
@@ -1131,6 +1334,22 @@ fn display_on_with_limit(
     scale: f32,
     limit: u64,
 ) -> Result<(Vec<u8>, crate::pipeline::histogram::HistogramData), String> {
+    display_on_with_options(gpu, input, w, h, ch, recipe, inputs, scale, limit, None)
+}
+
+#[allow(clippy::too_many_arguments)]
+fn display_on_with_options(
+    gpu: &Gpu,
+    input: &[u16],
+    w: usize,
+    h: usize,
+    ch: usize,
+    recipe: &Recipe,
+    inputs: &super::point_ops::PointInputs,
+    scale: f32,
+    limit: u64,
+    combine_scopes_override: Option<bool>,
+) -> Result<(Vec<u8>, crate::pipeline::histogram::HistogramData), String> {
     if w == 0 || h == 0 || !(3..=4).contains(&ch) || input.len() < w * h * ch {
         return Err("unsupported buffer".to_string());
     }
@@ -1143,6 +1362,8 @@ fn display_on_with_limit(
     let strip_plan = compute_strip_plan(w, h, halo, max_blur_r, limit, gpu.limits.max_compute_workgroups_per_dimension)?;
     let geometry = crate::pipeline::detail::Geometry::new(w, h, recipe);
     let strips = build_display_strips(w, h, strip_plan, halo, geometry.as_ref())?;
+    let combine_scopes = combine_scopes_override
+        .unwrap_or(gpu.limits.max_compute_workgroup_storage_size >= COMBINED_HIST_WG_STORAGE);
     let mut bands = Vec::with_capacity(strips.len());
     for strip in strips {
         let strip_h = strip.sy1 - strip.sy0;
@@ -1151,7 +1372,7 @@ fn display_on_with_limit(
             steps.push(layer_dispatch(w, strip_h, (0, strip.sy0, w, h)));
         }
         steps.extend(plan(w, strip_h, w, h, recipe, scale));
-        steps.extend(display_steps_for_strip(w, h, &strip, ch, recipe, scale, geometry.as_ref()));
+        steps.extend(display_steps_for_strip(w, h, &strip, ch, recipe, scale, geometry.as_ref(), combine_scopes));
         bands.push(BandJob {
             strip_h,
             valid_y0: strip.out_y0.saturating_sub(strip.sy0),
@@ -1168,7 +1389,7 @@ fn display_on_with_limit(
             },
         });
     }
-    let _job = gpu.jobs.lock().map_err(|_| "GPU lock poisoned")?;
+    let _job = gpu.lock_job(true);
     let (mut pixels, mut words) = (Vec::new(), Vec::new());
     execute_bands(
         gpu,
@@ -1247,14 +1468,20 @@ fn execute_bands(
     let mut peak_valid_rows = 0usize;
     let mut total_valid_rows = 0usize;
     let mut peak_steps = 0usize;
+    let mut needs_hist_all = false;
     for b in &bands {
         let valid_rows = b.out_y1.saturating_sub(b.out_y0);
         peak_strip_rows = peak_strip_rows.max(b.strip_h).max(valid_rows);
         peak_valid_rows = peak_valid_rows.max(valid_rows);
         total_valid_rows = total_valid_rows.saturating_add(valid_rows);
         peak_steps = peak_steps.max(b.steps.len());
-        if b.steps.iter().any(|s| s.groups.0 > max_groups || s.groups.1 > max_groups) {
-            return Err(format!("{w}x{} needs more workgroups than the GPU allows", b.strip_h));
+        for s in &b.steps {
+            if s.entry == HIST_ALL_ENTRY {
+                needs_hist_all = true;
+            }
+            if s.groups.0 > max_groups || s.groups.1 > max_groups {
+                return Err(format!("{w}x{} needs more workgroups than the GPU allows", b.strip_h));
+            }
         }
     }
     let peak_pixels_u64 = (w * peak_strip_rows) as u64;
@@ -1268,6 +1495,9 @@ fn execute_bands(
         return Err("the masks exceed the GPU's buffer limits".to_string());
     }
     let pipeline = pipeline(gpu)?;
+    if needs_hist_all && pipeline.hist_all.is_none() {
+        return Err("combined histogram pipeline unavailable on this adapter".to_string());
+    }
 
     let stride = PARAMS_SIZE.next_multiple_of(gpu.limits.min_uniform_buffer_offset_alignment as u64);
     let params_size = stride * peak_steps as u64;
@@ -1293,7 +1523,7 @@ fn execute_bands(
             });
             *cache = None;
             *cache = Some(Buffers::new(
-                device,
+                gpu,
                 &pipeline.layout,
                 params_size.max(p).max(stride * 64),
                 rgb_size.max(r),
@@ -1333,14 +1563,10 @@ fn execute_bands(
         if let Out::Display { ch, pixels, .. } = &mut out {
             pixels.clear();
             pixels.reserve(total_valid_rows * w * *ch);
-            let disp = bufs.display.as_ref().expect("display buffers");
-            let terms: Vec<f32> = [0.2126f32, 0.7152, 0.0722]
-                .iter()
-                .flat_map(|k| (0..256).map(move |v| k * v as f32))
-                .collect();
-            gpu.queue.write_buffer(&disp.hist, hist_len, as_bytes(&terms));
         }
 
+        let profile = super::profiling_enabled();
+        let ts_active = profile.then_some(bufs.compute.timestamps.as_ref()).flatten();
         let mut params_bytes = vec![0u8; params_size as usize];
         let band_count = bands.len();
         for (band_idx, band) in bands.into_iter().enumerate() {
@@ -1396,12 +1622,29 @@ fn execute_bands(
                 enc.clear_buffer(hist_buf, 0, Some(hist_len));
             }
             {
-                let mut pass = enc.begin_compute_pass(&wgpu::ComputePassDescriptor { label: Some("local"), timestamp_writes: None });
+                let timestamp_writes = ts_active.map(|ts| wgpu::ComputePassTimestampWrites {
+                    query_set: &ts.query_set,
+                    beginning_of_pass_write_index: Some(0),
+                    end_of_pass_write_index: Some(1),
+                });
+                let mut pass = enc.begin_compute_pass(&wgpu::ComputePassDescriptor {
+                    label: Some("local"),
+                    timestamp_writes,
+                });
                 for (i, s) in band.steps.iter().enumerate() {
-                    pass.set_pipeline(&pipeline.pipelines[s.entry]);
+                    let step_pipeline = if s.entry == HIST_ALL_ENTRY {
+                        pipeline.hist_all.as_ref().expect("hist_all pipeline")
+                    } else {
+                        &pipeline.pipelines[s.entry]
+                    };
+                    pass.set_pipeline(step_pipeline);
                     pass.set_bind_group(0, bind, &[(i as u64 * stride) as u32]);
                     pass.dispatch_workgroups(s.groups.0, s.groups.1, 1);
                 }
+            }
+            if let Some(ts) = ts_active {
+                enc.resolve_query_set(&ts.query_set, 0..2, &ts.resolve, 0);
+                enc.copy_buffer_to_buffer(&ts.resolve, 0, &ts.staging, 0, 16);
             }
             enc.copy_buffer_to_buffer(read_buf, src_offset, staging_buf, 0, read_len);
             let read_hist = if is_last { disp_hist } else { None };
@@ -1423,12 +1666,20 @@ fn execute_bands(
                 let rx_hist = map(staging_hist, hist_len);
                 (staging_hist, rx_hist, super::StagingGuard::new(staging_hist))
             });
+            let mut ts_state = ts_active.map(|ts| {
+                let rx_ts = map(&ts.staging, 16);
+                (&ts.staging, rx_ts, super::StagingGuard::new(&ts.staging))
+            });
 
             gpu.wait_submission(Some(idx), timeout)?;
 
             let main_map = rx.recv().map_err(|e| e.to_string())?;
             let hist_map = match hist_state.as_ref() {
                 Some((_, rx_hist, _)) => Some(rx_hist.recv().map_err(|e| e.to_string())?),
+                None => None,
+            };
+            let ts_map = match ts_state.as_ref() {
+                Some((_, rx_ts, _)) => Some(rx_ts.recv().map_err(|e| e.to_string())?),
                 None => None,
             };
             if main_map.is_err() {
@@ -1439,8 +1690,16 @@ fn execute_bands(
             {
                 hg.disarm();
             }
+            if ts_map.as_ref().is_some_and(Result::is_err)
+                && let Some((_, _, ref mut tg)) = ts_state
+            {
+                tg.disarm();
+            }
             main_map.map_err(|e| e.to_string())?;
             if let Some(res) = hist_map {
+                res.map_err(|e| e.to_string())?;
+            }
+            if let Some(res) = ts_map {
                 res.map_err(|e| e.to_string())?;
             }
 
@@ -1461,10 +1720,28 @@ fn execute_bands(
                         }
                     }
                 }
+                if let Some((ts_staging, _, _)) = ts_state.as_ref() {
+                    let ts_view = ts_staging.get_mapped_range(0..16).map_err(|e| e.to_string())?;
+                    if let (Ok(b0), Ok(b1)) = (ts_view[0..8].try_into(), ts_view[8..16].try_into()) {
+                        let t0 = u64::from_le_bytes(b0);
+                        let t1 = u64::from_le_bytes(b1);
+                        let period_ns = gpu.queue.get_timestamp_period() as f64;
+                        if period_ns.is_finite() && period_ns > 0.0 && t1 >= t0 {
+                            let ms = ((t1 - t0) as f64) * period_ns / 1_000_000.0;
+                            super::record_gpu_pass_ms(ms);
+                            if std::env::var_os("OMASTUDIO_PROFILE").is_some() {
+                                eprintln!("omastudio: GPU local pass band {band_idx}: {ms:.3} ms");
+                            }
+                        }
+                    }
+                }
             }
             staging_guard.unmap_now();
             if let Some((_, _, hg)) = hist_state {
                 hg.unmap_now();
+            }
+            if let Some((_, _, tg)) = ts_state {
+                tg.unmap_now();
             }
         }
         Ok(())
@@ -1748,13 +2025,13 @@ mod tests {
 
         // 1. F32 compute-only path must not allocate DisplayBuffers.
         {
-            let _job = gpu.jobs.lock().unwrap();
+            let _job = gpu.lock_job(true);
             *p.buffers.lock().unwrap() = None;
         }
         let mut buf = frame(w, h);
         run_on(&gpu, &mut buf, w, h, &recipe, 1.0).expect("F32 local stage");
         {
-            let _job = gpu.jobs.lock().unwrap();
+            let _job = gpu.lock_job(true);
             let cache = p.buffers.lock().unwrap();
             let bufs = cache.as_ref().expect("F32 buffers cached");
             assert!(bufs.display.is_none(), "F32 path should not allocate DisplayBuffers");
@@ -1763,7 +2040,7 @@ mod tests {
 
         // 2. Display path must allocate 4 B/px staging_display without staging_f32.
         {
-            let _job = gpu.jobs.lock().unwrap();
+            let _job = gpu.lock_job(true);
             *p.buffers.lock().unwrap() = None;
         }
         let input = vec![32768u16; w * h * 3];
@@ -1773,7 +2050,7 @@ mod tests {
         let _ = display_on(&gpu, &input, w, h, 3, &recipe, &ops.gpu_inputs([wr, wg, wb], transfer), 1.0)
             .expect("Display local stage");
         {
-            let _job = gpu.jobs.lock().unwrap();
+            let _job = gpu.lock_job(true);
             let cache = p.buffers.lock().unwrap();
             let bufs = cache.as_ref().expect("Display buffers cached");
             assert!(bufs.compute.staging_f32.is_none(), "Display path should not allocate staging_f32");
@@ -1783,7 +2060,7 @@ mod tests {
 
         // 3. Any error during execute_bands() must clear the buffer cache cleanly so subsequent jobs succeed.
         {
-            let _job = gpu.jobs.lock().unwrap();
+            let _job = gpu.lock_job(true);
             let steps = plan(w, h, w, h, &recipe, 1.0);
             let mut out = vec![0.0f32; w * h * 3];
             let err = execute_bands(
@@ -2216,6 +2493,111 @@ mod tests {
                     assert_eq!(cpu_hist.parade_r, hist.parade_r, "banded {name} ch={ch}: parade");
                 }
             }
+        }
+    }
+
+    #[test]
+    fn tiled_and_fallback_blur_both_match_cpu() {
+        let _test_lock = super::super::TEST_GPU_LOCK.lock().unwrap_or_else(|e| e.into_inner());
+        let Some(gpu) = super::super::acquire() else {
+            eprintln!("no GPU, skipped");
+            return;
+        };
+        let (w, h) = (160usize, 160usize);
+        let input = frame(w, h);
+        let clarity = Recipe { clarity: 35.0, sharpness: 0.0, denoise_col: 0.0, denoise_lum: 0.0, ..Recipe::default() };
+
+        // scale = 1.0 => clarity radius 16 <= 64 => tiled shared-memory blur kernels.
+        let steps_tiled = plan(w, h, w, h, &clarity, 1.0);
+        assert!(steps_tiled.iter().any(|s| s.entry == entry("blur_h_tiled")));
+        assert!(steps_tiled.iter().any(|s| s.entry == entry("blur_v_tiled")));
+        assert!(!steps_tiled.iter().any(|s| s.entry == entry("blur_h")));
+
+        // scale = 5.0 => clarity radius 80 (clamped to min(80, 160/2)=80 > 64) => sliding-window fallback.
+        let steps_fallback = plan(w, h, w, h, &clarity, 5.0);
+        assert!(steps_fallback.iter().any(|s| s.entry == entry("blur_h")));
+        assert!(steps_fallback.iter().any(|s| s.entry == entry("blur_v")));
+
+        for (label, scale) in [("tiled_r16", 1.0f32), ("fallback_r80", 5.0f32)] {
+            let mut cpu = input.clone();
+            presence::apply_presence_scaled(&mut cpu, w, h, clarity.clarity, 0.0, 0.0, 0.0, scale);
+            let mut got = input.clone();
+            run_on(&gpu, &mut got, w, h, &clarity, scale).expect(label);
+            let worst = cpu.iter().zip(&got).map(|(a, b)| (a - b).abs()).fold(0.0f32, f32::max);
+            eprintln!("{label}: worst diff vs CPU = {worst}");
+            assert!(worst < 1e-3, "{label}: worst diff {worst}");
+        }
+    }
+
+    #[test]
+    fn combined_hist_all_matches_separate_scope_passes_and_timestamps() {
+        use crate::pipeline::transfer::Transfer;
+        use crate::pipeline::{PointOps, white_balance};
+        let _test_lock = super::super::TEST_GPU_LOCK.lock().unwrap_or_else(|e| e.into_inner());
+        let Some(gpu) = super::super::acquire() else {
+            eprintln!("no GPU, skipped");
+            return;
+        };
+        let (w, h) = (151usize, 93usize);
+        let input: Vec<u16> = (0..w * h * 3)
+            .map(|i| {
+                let (px, c) = (i / 3, i % 3);
+                let (x, y) = (px % w, px / w);
+                let n = ((x as u32).wrapping_mul(2_654_435_761) ^ (y as u32).wrapping_mul(40_503) ^ c as u32) % 4000;
+                ((x * 40_000 / w + y * 20_000 / h) as u32 + n + c as u32 * 1500) as u16
+            })
+            .collect();
+        let recipe = Recipe { exposure: 0.2, clarity: 20.0, sharpness: 25.0, vignette: -15.0, ..Recipe::default() };
+        let transfer = Transfer::bt709();
+        let ops = PointOps::new(&recipe);
+        let (wr, wg, wb) = white_balance::kelvin_to_rgb_multipliers(recipe.wb_temperature, recipe.wb_tint);
+        let e = 2.0f32.powf(recipe.exposure + recipe.baseline_exposure);
+        let inputs = ops.gpu_inputs([wr * e, wg * e, wb * e], transfer);
+        let scale = crate::pipeline::frame_scale(w, h);
+
+        let p = pipeline(&gpu).expect("local pipeline");
+        super::super::set_bench_profiling(true);
+        let _ = super::super::take_last_gpu_pass_ms();
+        let (px_sep, hist_sep) = display_on_with_options(&gpu, &input, w, h, 3, &recipe, &inputs, scale, gpu_strip_limit(&gpu), Some(false))
+            .expect("separate scope passes");
+        let ts_ms = super::super::take_last_gpu_pass_ms();
+        super::super::set_bench_profiling(false);
+        if gpu.features.contains(wgpu::Features::TIMESTAMP_QUERY) {
+            let ms = ts_ms.expect("TIMESTAMP_QUERY enabled should record gpu_pass_ms");
+            assert!(ms.is_finite() && ms >= 0.0, "invalid GPU timestamp duration {ms}");
+        }
+
+        if p.hist_all.is_some() {
+            let (px_comb, hist_comb) = display_on_with_options(&gpu, &input, w, h, 3, &recipe, &inputs, scale, gpu_strip_limit(&gpu), Some(true))
+                .expect("combined hist_all pass");
+            assert_eq!(px_comb, px_sep, "combined hist_all pixels must match separate passes");
+            assert_eq!(hist_comb.red, hist_sep.red);
+            assert_eq!(hist_comb.green, hist_sep.green);
+            assert_eq!(hist_comb.blue, hist_sep.blue);
+            assert_eq!(hist_comb.luma, hist_sep.luma);
+            assert_eq!(hist_comb.waveform_luma, hist_sep.waveform_luma);
+            assert_eq!(hist_comb.parade_r, hist_sep.parade_r);
+            assert_eq!(hist_comb.parade_g, hist_sep.parade_g);
+            assert_eq!(hist_comb.parade_b, hist_sep.parade_b);
+            assert_eq!(hist_comb.vectorscope, hist_sep.vectorscope);
+            assert_eq!(hist_comb.highlight_clipping_percent, hist_sep.highlight_clipping_percent);
+            assert_eq!(hist_comb.shadow_clipping_percent, hist_sep.shadow_clipping_percent);
+        } else {
+            // Even when the adapter's workgroup storage limit is below 34 KiB (e.g. 32 KiB lavapipe),
+            // compile HIST_ALL_WGSL through Naga so CI catches any WGSL syntax or type regressions.
+            let scope = gpu.device.push_error_scope(wgpu::ErrorFilter::Validation);
+            let _ = gpu.device.create_shader_module(wgpu::ShaderModuleDescriptor {
+                label: Some("hist_all syntax check"),
+                source: wgpu::ShaderSource::Wgsl(HIST_ALL_WGSL.into()),
+            });
+            assert!(
+                pollster::block_on(scope.pop()).is_none(),
+                "HIST_ALL_WGSL failed WGSL validation"
+            );
+            eprintln!(
+                "adapter max_compute_workgroup_storage_size={} < {}; hist_all module validated, dispatch skipped",
+                gpu.limits.max_compute_workgroup_storage_size, COMBINED_HIST_WG_STORAGE
+            );
         }
     }
 }
