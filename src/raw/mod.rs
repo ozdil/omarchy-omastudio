@@ -439,14 +439,17 @@ impl RawImage {
                     return Err("Failed to extract metadata from RAW file".to_string());
                 }
 
+                // SAFETY: libraw_shim.c zero-initializes cmeta and populates make/model/lens via snprintf.
                 let make = unsafe { CStr::from_ptr(cmeta.make.as_ptr()) }
                     .to_string_lossy()
                     .trim()
                     .to_string();
+                // SAFETY: cmeta.model is NUL-terminated by snprintf in omaraw_get_metadata.
                 let model = unsafe { CStr::from_ptr(cmeta.model.as_ptr()) }
                     .to_string_lossy()
                     .trim()
                     .to_string();
+                // SAFETY: cmeta.lens is NUL-terminated by snprintf in omaraw_get_metadata.
                 let lens = unsafe { CStr::from_ptr(cmeta.lens.as_ptr()) }
                     .to_string_lossy()
                     .trim()
@@ -475,7 +478,7 @@ impl RawImage {
         let dest = dest_path.as_ref();
         if let Some(parent) = dest.parent() {
             crate::security::ensure_secure_dir(parent)
-                .map_err(|e| format!("Failed to ensure thumbnail directory: {}", e))?;
+                .map_err(|e| format!("Failed to secure thumbnail directory: {}", e))?;
         }
 
         match &self.backend {
@@ -500,15 +503,27 @@ impl RawImage {
                 Ok(())
             }
             RawBackend::LibRaw(handle) => {
-                let c_dest = CString::new(dest.to_string_lossy().as_bytes())
-                    .map_err(|e| format!("Invalid destination path: {}", e))?;
-
-                // SAFETY: handle is valid, c_dest is valid C string
-                let ret = unsafe { omaraw_extract_thumb_file(*handle, c_dest.as_ptr()) };
-                if ret != 0 {
-                    return Err(format!("Failed to extract embedded thumbnail: code {}", ret));
+                struct LibRawMemGuard(*mut u8);
+                impl Drop for LibRawMemGuard {
+                    fn drop(&mut self) {
+                        if !self.0.is_null() {
+                            // SAFETY: pointer was returned by omaraw_extract_thumb_mem (malloc'd in C shim).
+                            unsafe { omaraw_free_image(self.0) };
+                        }
+                    }
                 }
 
+                let mut out_size: usize = 0;
+                // SAFETY: handle is a valid open LibRaw handle owned by self; out_size is a valid stack pointer.
+                let ptr = unsafe { omaraw_extract_thumb_mem(*handle, &mut out_size) };
+                let _guard = LibRawMemGuard(ptr);
+                if ptr.is_null() || out_size == 0 {
+                    return Err("Failed to extract embedded thumbnail".to_string());
+                }
+                // SAFETY: ptr is non-null and owns out_size valid bytes until _guard drops.
+                let bytes = unsafe { std::slice::from_raw_parts(ptr, out_size) };
+                crate::security::atomic_write_secure(dest, bytes)
+                    .map_err(|e| format!("Failed to securely save embedded thumbnail: {}", e))?;
                 Ok(())
             }
         }
@@ -634,7 +649,7 @@ impl RawImage {
                 let mut out_w = 0;
                 let mut out_h = 0;
                 let mut out_colors = 0;
-                let mut out_size = 0;
+                let mut out_size: usize = 0;
 
                 // 16-bit decodes are linear light; the pipeline applies the space's curve after
                 // white balance and exposure. 8-bit decodes keep LibRaw's encoded output.
@@ -661,17 +676,22 @@ impl RawImage {
                     )
                 };
 
-                if ptr.is_null() || out_size <= 0 {
+                if ptr.is_null() {
                     return Err("Failed to process RAW image".to_string());
+                }
+                if out_size == 0 || out_w <= 0 || out_h <= 0 || out_colors <= 0 {
+                    // SAFETY: ptr is non-null and was allocated by omaraw_process_image via malloc.
+                    unsafe { omaraw_free_image(ptr) };
+                    return Err("Failed to process RAW image: invalid dimensions".to_string());
                 }
 
                 let buf = ProcessedBuffer {
                     storage: BufferStorage::LibRaw(ptr),
-                    width: out_w.max(0) as u32,
-                    height: out_h.max(0) as u32,
-                    channels: out_colors.max(0) as u32,
+                    width: out_w as u32,
+                    height: out_h as u32,
+                    channels: out_colors as u32,
                     bits_per_sample: if bps == 16 { 16 } else { 8 },
-                    data_size: out_size.max(0) as usize,
+                    data_size: out_size,
                     transfer: space.transfer(),
                 };
 

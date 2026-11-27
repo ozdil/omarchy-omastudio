@@ -74,7 +74,8 @@ impl PhaseOneInfo {
             let w = |i: usize| u32::from_le_bytes([e[i], e[i + 1], e[i + 2], e[i + 3]]);
             let (tag, length, data) = (w(0), w(8), w(12));
             let mut text = || -> Option<String> {
-                if length == 0 || length > 256 || BASE + data as u64 + length as u64 > len {
+                let end = BASE.checked_add(data as u64)?.checked_add(length as u64)?;
+                if length == 0 || length > 256 || end > len {
                     return None;
                 }
                 let mut b = vec![0u8; length as usize];
@@ -107,7 +108,11 @@ impl PhaseOneInfo {
                 _ => {}
             }
         }
-        if width > 0 && height > 0 && left + width <= info.raw_width && top + height <= info.raw_height {
+        if width > 0
+            && height > 0
+            && left.checked_add(width).is_some_and(|e| e <= info.raw_width)
+            && top.checked_add(height).is_some_and(|e| e <= info.raw_height)
+        {
             info.crop = Some(super::Rect { x: left, y: top, width, height });
         }
         Some(info)
@@ -183,5 +188,25 @@ mod tests {
         std::fs::write(&p, b"II*\0\x08\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0").unwrap();
         assert!(PhaseOneInfo::read(&p).is_none());
         std::fs::remove_file(&p).ok();
+    }
+
+    #[test]
+    fn rejects_overflowing_iiq_crop() {
+        let bytes = iiq(
+            &[
+                (0x0108, 4, 1000),
+                (0x0109, 4, 1000),
+                (0x010a, 4, u32::MAX),
+                (0x010b, 4, 0),
+                (0x010c, 4, 10),
+                (0x010d, 4, 10),
+            ],
+            &[(0x0301, "IQ4 150MP")],
+        );
+        let p = std::env::temp_dir().join(format!("omastudio-iiq-ovf-{}.iiq", std::process::id()));
+        std::fs::write(&p, bytes).unwrap();
+        let info = PhaseOneInfo::read(&p).unwrap();
+        std::fs::remove_file(&p).ok();
+        assert_eq!(info.crop, None, "wrapping crop addition must be rejected");
     }
 }

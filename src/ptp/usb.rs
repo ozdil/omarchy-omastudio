@@ -4,12 +4,20 @@
 use super::{Error, Result, Transport};
 use nusb::transfer::{Buffer, Bulk, In, Interrupt, Out};
 use nusb::{Endpoint, Interface, MaybeFuture};
-use std::time::Duration;
+use std::time::{Duration, Instant};
 
 /// USB interface class of still-image (PTP) devices.
 const STILL_IMAGE_CLASS: u8 = 6;
 /// Size of each bulk IN request; a multiple of every max packet size.
 const CHUNK: usize = 1024 * 1024;
+/// Cap initial allocation for an untrusted PTP length header before bytes actually arrive.
+const MAX_INITIAL_RESERVE: usize = 1024 * 1024;
+/// Maximum consecutive zero-length packets skipped while awaiting the next container header.
+const MAX_HEADER_ZLPS: usize = 8;
+
+fn remaining_before(deadline: Instant) -> Result<Duration> {
+    deadline.checked_duration_since(Instant::now()).filter(|d| !d.is_zero()).ok_or(Error::Timeout)
+}
 
 /// A camera found on the bus.
 #[derive(Debug, Clone, serde::Serialize)]
@@ -113,15 +121,17 @@ impl Transport for UsbTransport {
     fn send(&mut self, container: &[u8], timeout: Duration) -> Result<()> {
         // nusb splits large buffers into packets itself; a short last packet ends the
         // transfer, an exact multiple needs a zero-length packet.
-        let mps = self.bulk_out.max_packet_size();
+        let deadline = Instant::now() + timeout;
+        let mps = self.bulk_out.max_packet_size().max(1);
         let mut parts: Vec<&[u8]> = container.chunks(CHUNK * 16).collect();
         if container.len().is_multiple_of(mps) {
             parts.push(&[]);
         }
         for part in parts {
+            let rem = remaining_before(deadline)?;
             let mut buf = Buffer::new(part.len());
             buf.extend_from_slice(part);
-            let c = self.bulk_out.transfer_blocking(buf, timeout);
+            let c = self.bulk_out.transfer_blocking(buf, rem);
             match c.status {
                 Ok(()) => {}
                 Err(nusb::transfer::TransferError::Cancelled) => return Err(Error::Timeout),
@@ -132,18 +142,38 @@ impl Transport for UsbTransport {
     }
 
     fn receive(&mut self, timeout: Duration) -> Result<Vec<u8>> {
+        let deadline = Instant::now() + timeout;
         let mut data = std::mem::take(&mut self.pending);
+        let mut header_zlps = 0usize;
         while data.len() < 4 {
-            // Zero-length packets that end the previous container are skipped here
-            data.extend(self.read_chunk(timeout)?);
+            // Zero-length packets that end the previous container are skipped here, bounded
+            // so a misbehaving device cannot spin forever.
+            let chunk = self.read_chunk(remaining_before(deadline)?)?;
+            if chunk.is_empty() {
+                header_zlps += 1;
+                if header_zlps > MAX_HEADER_ZLPS {
+                    return Err(Error::Protocol("too many zero-length packets awaiting PTP header".into()));
+                }
+                continue;
+            }
+            header_zlps = 0;
+            data.extend(chunk);
         }
         let len = u32::from_le_bytes([data[0], data[1], data[2], data[3]]) as usize;
         if !(12..=super::MAX_DATA).contains(&len) {
             return Err(Error::Protocol(format!("container length {}", len)));
         }
-        data.reserve(len.saturating_sub(data.len()));
+        data.reserve(len.saturating_sub(data.len()).min(MAX_INITIAL_RESERVE));
         while data.len() < len {
-            data.extend(self.read_chunk(timeout)?);
+            let chunk = self.read_chunk(remaining_before(deadline)?)?;
+            if chunk.is_empty() {
+                return Err(Error::Protocol(format!(
+                    "unexpected zero-length packet inside PTP container ({} of {} bytes)",
+                    data.len(),
+                    len
+                )));
+            }
+            data.extend(chunk);
         }
         self.pending = data.split_off(len);
         Ok(data)

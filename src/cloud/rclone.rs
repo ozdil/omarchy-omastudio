@@ -25,7 +25,7 @@ const TRANSFER_TIMEOUT: Duration = Duration::from_secs(60 * 60);
 /// Time the user has to finish signing in
 const SIGN_IN_TIMEOUT: Duration = Duration::from_secs(10 * 60);
 const QUICK_TIMEOUT: Duration = Duration::from_secs(60);
-const MAX_QUESTIONS: usize = 24;
+const MAX_QUESTIONS: usize = 48;
 
 fn config_path() -> PathBuf {
     config_dir().join("rclone.conf")
@@ -38,7 +38,8 @@ fn password_command() -> String {
 /// `rclone <args> --config ... --password-command ...`
 fn rclone(args: &[&str]) -> std::process::Command {
     let mut cmd = tool("rclone");
-    cmd.args(args)
+    cmd.env_remove("RCLONE_RESULT")
+        .args(args)
         .arg("--config")
         .arg(config_path())
         .arg("--password-command")
@@ -129,14 +130,24 @@ struct Question {
 }
 
 /// The answer OmaStudio gives to one of rclone's configuration questions.
+#[cfg(test)]
 fn answer(option: &Value) -> Result<String, String> {
+    answer_for_client(option, &OAuthClient::default())
+}
+
+fn answer_for_client(option: &Value, client: &OAuthClient) -> Result<String, String> {
     let name = option.get("Name").and_then(Value::as_str).unwrap_or_default();
     match name {
         // Sign in through the browser on this machine
         "config_is_local" => return Ok("true".into()),
         // rclone's shared Google client is being retired; it is used only when no own
         // client ID was given
-        "config_shared_client_id" => return Ok("true".into()),
+        "config_shared_client_id" => {
+            return Ok(if client.client_id.is_empty() { "true" } else { "false" }.into());
+        }
+        // Skip advanced config questions when driving `--all`
+        "config_fs_advanced" => return Ok("false".into()),
+        "client_id" if !client.client_id.is_empty() => return Ok(client.client_id.clone()),
         _ => {}
     }
     let default = option
@@ -171,6 +182,36 @@ fn sign_in_url(line: &str) -> Option<String> {
     url.contains("/auth").then_some(url)
 }
 
+/// Builds the `rclone config create` arguments. OAuth `client_secret` is never placed in argv;
+/// when present, `--all` instructs rclone to prompt for `client_secret` so it can be answered
+/// via the `RCLONE_RESULT` environment variable and persisted in the encrypted config.
+fn build_create_args(id: &str, kind: &str, options: &[(&str, &str)], client: &OAuthClient) -> Vec<String> {
+    let mut args: Vec<String> = vec!["config".into(), "create".into(), id.into(), kind.into()];
+    args.extend(options.iter().map(|(k, v)| format!("{k}={v}")));
+    if !client.client_id.is_empty() {
+        args.push(format!("client_id={}", client.client_id));
+    }
+    args.push("--non-interactive".into());
+    if !client.client_secret.is_empty() {
+        args.push("--all".into());
+    }
+    args
+}
+
+/// Builds one `rclone config update --continue` step. Answers to `client_secret` travel in
+/// `RCLONE_RESULT` instead of `--result <secret>` so secrets never appear in `/proc/<pid>/cmdline`.
+fn build_update_command(id: &str, state: &str, option: &Value, client: &OAuthClient) -> Result<std::process::Command, String> {
+    let name = option.get("Name").and_then(Value::as_str).unwrap_or_default();
+    let mut cmd = rclone(&["config", "update", id, "--continue", "--non-interactive", "--state", state]);
+    if name == "client_secret" && !client.client_secret.is_empty() {
+        cmd.env("RCLONE_RESULT", &client.client_secret);
+    } else {
+        let reply = answer_for_client(option, client)?;
+        cmd.args(["--result", &reply]);
+    }
+    Ok(cmd)
+}
+
 /// Creates remote `id`, signs in and creates the upload folder. Returns the user's
 /// e-mail or login when the service reports it.
 pub fn connect(
@@ -201,13 +242,7 @@ fn sign_in(
     client: &OAuthClient,
     progress: &mut dyn FnMut(ConnectEvent),
 ) -> Result<(), String> {
-    let mut args: Vec<String> = vec!["config".into(), "create".into(), id.into(), kind.into()];
-    args.extend(options.iter().map(|(k, v)| format!("{k}={v}")));
-    if !client.client_id.is_empty() {
-        args.push(format!("client_id={}", client.client_id));
-        args.push(format!("client_secret={}", client.client_secret));
-    }
-    args.push("--non-interactive".into());
+    let args = build_create_args(id, kind, options, client);
     let mut reported = false;
     let mut on_line = |line: &str| {
         if !reported && let Some(url) = sign_in_url(line) {
@@ -229,12 +264,8 @@ fn sign_in(
         if q.state.is_empty() {
             return Ok(());
         }
-        let reply = answer(q.option.as_ref().unwrap_or(&Value::Null))?;
-        let mut cmd = rclone(&["config", "update", id, "--continue", "--non-interactive", "--state", &q.state, "--result", &reply]);
-        if !client.client_secret.is_empty() {
-            // Passwords are passed again on every step
-            cmd.arg(format!("client_secret={}", client.client_secret));
-        }
+        let option = q.option.as_ref().unwrap_or(&Value::Null);
+        let cmd = build_update_command(id, &q.state, option, client)?;
         step = run_streaming(cmd, SIGN_IN_TIMEOUT, &mut on_line)?;
     }
     Err("Sign-in failed: too many setup questions".into())
@@ -352,5 +383,29 @@ mod tests {
         let a = random_key().unwrap();
         assert_eq!(a.len(), 64);
         assert_ne!(a, random_key().unwrap());
+    }
+
+    #[test]
+    fn client_secret_travels_via_env_never_argv() {
+        let client = OAuthClient {
+            client_id: "my-client-id".into(),
+            client_secret: "super-secret-oauth-value".into(),
+        };
+        let create_args = build_create_args("google-drive-1", "drive", &[("scope", "drive")], &client);
+        assert!(create_args.iter().all(|a| !a.contains("super-secret-oauth-value")));
+        assert!(create_args.iter().all(|a| !a.starts_with("client_secret=")));
+        assert!(create_args.iter().any(|a| a == "--all"));
+        assert!(create_args.iter().any(|a| a == "client_id=my-client-id"));
+
+        let secret_opt = serde_json::json!({"Name": "client_secret", "DefaultStr": "", "Required": false});
+        let cmd = build_update_command("google-drive-1", "*all-set,1,false", &secret_opt, &client).unwrap();
+        assert!(cmd.get_args().all(|a| !a.to_string_lossy().contains("super-secret-oauth-value")));
+        assert!(cmd.get_args().all(|a| a != "--result"));
+        assert!(cmd.get_envs().any(|(k, v)| k == "RCLONE_RESULT" && v == Some(std::ffi::OsStr::new("super-secret-oauth-value"))));
+
+        let adv_opt = serde_json::json!({"Name": "config_fs_advanced", "DefaultStr": "false"});
+        let adv_cmd = build_update_command("google-drive-1", "*all-advanced,10,false", &adv_opt, &client).unwrap();
+        assert!(adv_cmd.get_args().any(|a| a == "--result"));
+        assert!(!adv_cmd.get_envs().any(|(k, v)| k == "RCLONE_RESULT" && v.is_some()));
     }
 }

@@ -37,9 +37,18 @@ Fits into Omarchy 4.5: OmaStudio now follows the Omarchy shell's own theme token
 - Pressing **F6** / **Shift+F6** or **Escape** no longer throws a focus-chain error on `MainWindow`.
 - Solid-accent primary buttons in the AI Assistant, Cloud and Fujifilm panels (and the red Confirm button) now use contrasting text instead of drawing the accent colour on itself.
 - Typing in text fields no longer triggers single-key or edit shortcuts (`C`, `S`, `L`, `Y`, `0–5`, `X`, `P`, `U`, `E`, `Tab`, `Ctrl+Z`/`Y`/`S`/`R`).
+- Subprocess execution (`run_bounded_command_with_stdin` and cloud streaming) now multiplexes non-blocking stdin, stdout, and stderr in a single `poll()` loop under an immediate `ProcessGroupGuard`, eliminating >64 KiB stdin deadlocks, >1 MiB stderr stalls, and PID-reuse kill races.
+- `SecureDir` resolves trusted existing system/XDG base prefixes (supporting immutable Linux `/home -> /var/home` and symlinked XDG roots) while preserving strict `O_NOFOLLOW` and ownership verification inside application subtrees.
+- Recipe sidecar read/write limits are aligned at 16 MiB (matching the catalog) with explicit error reporting instead of silent resets on >1 MiB brush-mask recipes.
+- Recipes for `render`, `xmp export`, `ai edit`, and MCP engine tools are passed via `--recipe -` over stdin to avoid Linux's 128 KiB single-argument limit.
 
 ### Security
 - Updated `rustix` from `1.1.5` to `1.1.6` to address `RUSTSEC-2026-0486` (`GHSA-jh2m-fhpj-3vr7`), and updated yanked `lcms2` (`6.2.0` → `6.3.0`) and `lcms2-sys` (`4.0.7` → `4.2.0`).
+- Hardened the LibRaw C shim and FFI boundary against integer overflow and signed truncation (`size_t` output sizes, `uint64_t` margin/pitch/black-pattern checks, Rust `checked_mul`/`try_from`, RAII buffer cleanup, and memory-backed atomic thumbnail writes instead of `fopen("wb")`); `build.rs` now links LibRaw dynamically from `pkg-config`.
+- Removed OAuth `client_secret` from command-line arguments: `cloud connect` requires `--client-secret-stdin`, `CloudDialog` masks and clears the secret input, and `rclone` receives `client_secret` via `RCLONE_RESULT` instead of argv.
+- Escaped backslashes and quotes and rejected CR/LF/NUL in curl `-K -` header configs (`JevClient` and AI providers) and tightened API key validation.
+- Bounded MCP engine child processes with isolated process groups, monotonic timeouts, and output caps; hardened PTP USB transfers (single deadline, 1 MiB reserve cap, ZLP loop guards), medium-format crop math (`checked_add`), and ONNX segmentation tensor/config dimension validation.
+- Hardened desktop IPC and config storage: advisory `flock` single-owner lock on `ipc.lock`, socket write timeouts, ownership-gated `ipc::cleanup()`, allowlisted `.png` validation for IPC `screenshot`, removal of unused `Host::env()`, and `O_NOFOLLOW` + atomic `0600` writes for UI state and language settings.
 
 ## [3.2.1] - 2026-11-04
 

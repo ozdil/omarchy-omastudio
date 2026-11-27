@@ -17,11 +17,8 @@
 mod github;
 mod rclone;
 
-use std::io::{BufRead, BufReader, Read};
 use std::path::{Path, PathBuf};
 use std::process::{Command, Stdio};
-use std::sync::Arc;
-use std::sync::atomic::{AtomicBool, Ordering};
 use std::time::Duration;
 
 use serde::{Deserialize, Serialize};
@@ -356,50 +353,13 @@ pub(crate) fn run(cmd: Command, timeout: Duration) -> Result<(i32, String, Strin
 
 /// Runs a helper whose stderr is read line by line while it works (sign-in steps).
 pub(crate) fn run_streaming(
-    mut cmd: Command,
+    cmd: Command,
     timeout: Duration,
     on_line: &mut dyn FnMut(&str),
 ) -> Result<(i32, String, String), String> {
-    cmd.stdout(Stdio::piped()).stderr(Stdio::piped());
-    let mut child = cmd.spawn().map_err(|e| e.to_string())?;
-    let pid = child.id() as i32;
-    let done = Arc::new(AtomicBool::new(false));
-    let watchdog = {
-        let done = done.clone();
-        std::thread::spawn(move || {
-            let step = Duration::from_millis(200);
-            let mut waited = Duration::ZERO;
-            while !done.load(Ordering::Relaxed) {
-                if waited >= timeout {
-                    // SAFETY: the child leads its own process group (secure_command)
-                    unsafe { libc::kill(-pid, libc::SIGKILL) };
-                    return;
-                }
-                std::thread::sleep(step);
-                waited += step;
-            }
-        })
-    };
-    let stdout = child.stdout.take().expect("piped stdout");
-    let reader = std::thread::spawn(move || {
-        let mut out = Vec::new();
-        let _ = stdout.take(security::MAX_COMMAND_OUTPUT_BYTES as u64).read_to_end(&mut out);
-        String::from_utf8_lossy(&out).into_owned()
-    });
-    let mut err = String::new();
-    let mut lines = BufReader::new(child.stderr.take().expect("piped stderr")).take(security::MAX_COMMAND_OUTPUT_BYTES as u64);
-    let mut line = String::new();
-    while lines.read_line(&mut line).unwrap_or(0) > 0 {
-        on_line(line.trim_end());
-        err.push_str(&line);
-        line.clear();
-    }
-    let status = child.wait().map_err(|e| e.to_string());
-    done.store(true, Ordering::Relaxed);
-    let _ = watchdog.join();
-    let out = reader.join().unwrap_or_default();
-    let code = status?.code().unwrap_or(-1);
-    Ok((code, out, err))
+    let (code, out, err) =
+        security::run_bounded_command_streaming(cmd, timeout, on_line).map_err(|e| e.to_string())?;
+    Ok((code, String::from_utf8_lossy(&out).into_owned(), String::from_utf8_lossy(&err).into_owned()))
 }
 
 /// The last meaningful line of a helper's error output, for messages.

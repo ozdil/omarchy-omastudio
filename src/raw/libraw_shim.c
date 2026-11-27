@@ -1,5 +1,8 @@
 #include "libraw_shim.h"
 #include <libraw/libraw.h>
+#include <limits.h>
+#include <stddef.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -63,40 +66,51 @@ int omaraw_get_metadata(void *handle, OmaRawMetadata *meta) {
     return 0;
 }
 
-int omaraw_extract_thumb_file(void *handle, const char *dest_path) {
-    if (!handle || !dest_path) return -1;
+unsigned char* omaraw_extract_thumb_mem(void *handle, size_t *out_size) {
+    if (out_size) *out_size = 0;
+    if (!handle || !out_size) return NULL;
     libraw_data_t *lr = (libraw_data_t*)handle;
 
     int idx = largest_thumb_index(lr);
     int ret = idx >= 0 ? libraw_unpack_thumb_ex(lr, idx) : LIBRAW_UNSPECIFIED_ERROR;
     if (ret != LIBRAW_SUCCESS) ret = libraw_unpack_thumb(lr);
     if (ret != LIBRAW_SUCCESS) {
-        return ret;
+        return NULL;
     }
 
     int err = 0;
     libraw_processed_image_t *thumb = libraw_dcraw_make_mem_thumb(lr, &err);
-    if (!thumb || err != 0) {
-        return -2;
+    if (!thumb || err != 0 || thumb->data_size == 0) {
+        if (thumb) libraw_dcraw_clear_mem(thumb);
+        return NULL;
     }
 
-    FILE *fp = fopen(dest_path, "wb");
-    if (!fp) {
-        libraw_dcraw_clear_mem(thumb);
-        return -3;
-    }
-
+    size_t data_size = (size_t)thumb->data_size;
+    unsigned char *buf = NULL;
     if (thumb->type == LIBRAW_IMAGE_JPEG) {
-        fwrite(thumb->data, 1, thumb->data_size, fp);
+        buf = (unsigned char*)malloc(data_size);
+        if (buf) {
+            memcpy(buf, thumb->data, data_size);
+            *out_size = data_size;
+        }
     } else if (thumb->type == LIBRAW_IMAGE_BITMAP) {
-        // Write standard PPM header for bitmap thumb
-        fprintf(fp, "P6\n%d %d\n255\n", thumb->width, thumb->height);
-        fwrite(thumb->data, 1, thumb->data_size, fp);
+        if (thumb->width > 0 && thumb->height > 0) {
+            char header[64];
+            int hlen = snprintf(header, sizeof(header), "P6\n%u %u\n255\n", (unsigned)thumb->width, (unsigned)thumb->height);
+            if (hlen > 0 && (size_t)hlen < sizeof(header) && SIZE_MAX - (size_t)hlen >= data_size) {
+                size_t total = (size_t)hlen + data_size;
+                buf = (unsigned char*)malloc(total);
+                if (buf) {
+                    memcpy(buf, header, (size_t)hlen);
+                    memcpy(buf + (size_t)hlen, thumb->data, data_size);
+                    *out_size = total;
+                }
+            }
+        }
     }
 
-    fclose(fp);
     libraw_dcraw_clear_mem(thumb);
-    return 0;
+    return buf;
 }
 
 int omaraw_set_output_space(void *handle, int output_color, double gamma_power, double gamma_slope) {
@@ -109,7 +123,11 @@ int omaraw_set_output_space(void *handle, int output_color, double gamma_power, 
     return 0;
 }
 
-unsigned char* omaraw_process_image(void *handle, int half_size, int quality, int bps, int *out_w, int *out_h, int *out_colors, int *out_size) {
+unsigned char* omaraw_process_image(void *handle, int half_size, int quality, int bps, int *out_w, int *out_h, int *out_colors, size_t *out_size) {
+    if (out_w) *out_w = 0;
+    if (out_h) *out_h = 0;
+    if (out_colors) *out_colors = 0;
+    if (out_size) *out_size = 0;
     if (!handle) return NULL;
     libraw_data_t *lr = (libraw_data_t*)handle;
 
@@ -139,23 +157,24 @@ unsigned char* omaraw_process_image(void *handle, int half_size, int quality, in
 
     int err = 0;
     libraw_processed_image_t *img = libraw_dcraw_make_mem_image(lr, &err);
-    if (!img || err != 0) {
+    if (!img || err != 0 || img->data_size == 0 || img->width == 0 || img->height == 0 || img->colors == 0) {
+        if (img) libraw_dcraw_clear_mem(img);
         return NULL;
     }
 
-    if (out_w) *out_w = img->width;
-    if (out_h) *out_h = img->height;
-    if (out_colors) *out_colors = img->colors;
-    if (out_size) *out_size = img->data_size;
-
+    size_t data_size = (size_t)img->data_size;
     // Allocate continuous buffer to return to Rust with fail-closed safety
-    unsigned char *buf = (unsigned char*)malloc(img->data_size);
+    unsigned char *buf = (unsigned char*)malloc(data_size);
     if (!buf) {
         libraw_dcraw_clear_mem(img);
         return NULL;
     }
 
-    memcpy(buf, img->data, img->data_size);
+    memcpy(buf, img->data, data_size);
+    if (out_w) *out_w = (int)img->width;
+    if (out_h) *out_h = (int)img->height;
+    if (out_colors) *out_colors = (int)img->colors;
+    if (out_size) *out_size = data_size;
     libraw_dcraw_clear_mem(img);
     return buf;
 }
@@ -176,7 +195,7 @@ static const unsigned short* phase_one_cfa(libraw_data_t *lr, OmaRawCfaInfo *inf
     lr->params.half_size = 0;
     if (libraw_raw2image(lr) != LIBRAW_SUCCESS || !lr->image) return NULL;
     int w = lr->sizes.iwidth, h = lr->sizes.iheight;
-    if (w != lr->sizes.width || h != lr->sizes.height) return NULL;
+    if (w <= 0 || h <= 0 || w != lr->sizes.width || h != lr->sizes.height) return NULL;
 
     unsigned short (*img)[4] = lr->image;
     unsigned short *plane = (unsigned short*)lr->image;
@@ -184,7 +203,7 @@ static const unsigned short* phase_one_cfa(libraw_data_t *lr, OmaRawCfaInfo *inf
     // a pixel that is still to be read.
     for (int row = 0; row < h; row++)
         for (int col = 0; col < w; col++) {
-            size_t i = (size_t)row * w + col;
+            size_t i = (size_t)row * (size_t)w + (size_t)col;
             plane[i] = img[i][libraw_COLOR(lr, row, col)];
         }
 
@@ -204,21 +223,34 @@ static const unsigned short* phase_one_cfa(libraw_data_t *lr, OmaRawCfaInfo *inf
 // the layout is not one the developer can read safely.
 static int fill_info(libraw_data_t *lr, OmaRawCfaInfo *info) {
     memset(info, 0, sizeof(OmaRawCfaInfo));
-    info->raw_width = lr->sizes.raw_width;
-    info->raw_height = lr->sizes.raw_height;
-    info->raw_pitch = (int)(lr->sizes.raw_pitch / 2);
-    info->top_margin = lr->sizes.top_margin;
-    info->left_margin = lr->sizes.left_margin;
-    info->width = lr->sizes.width;
-    info->height = lr->sizes.height;
+
+    uint64_t raw_w = (uint64_t)lr->sizes.raw_width;
+    uint64_t raw_h = (uint64_t)lr->sizes.raw_height;
+    uint64_t vis_w = (uint64_t)lr->sizes.width;
+    uint64_t vis_h = (uint64_t)lr->sizes.height;
+    uint64_t top = (uint64_t)lr->sizes.top_margin;
+    uint64_t left = (uint64_t)lr->sizes.left_margin;
+    uint64_t pitch = (uint64_t)(lr->sizes.raw_pitch / 2);
+
+    if (raw_w == 0 || raw_h == 0 || vis_w == 0 || vis_h == 0) return 0;
+    if (raw_w > (uint64_t)INT_MAX || raw_h > (uint64_t)INT_MAX) return 0;
+    if (vis_w > (uint64_t)INT_MAX || vis_h > (uint64_t)INT_MAX) return 0;
+    if (top > (uint64_t)INT_MAX || left > (uint64_t)INT_MAX || pitch > (uint64_t)INT_MAX) return 0;
+    if (pitch < raw_w) return 0;
+    if (top + vis_h > raw_h) return 0;
+    if (left + vis_w > raw_w) return 0;
+
+    info->raw_width = (int)raw_w;
+    info->raw_height = (int)raw_h;
+    info->raw_pitch = (int)pitch;
+    info->top_margin = (int)top;
+    info->left_margin = (int)left;
+    info->width = (int)vis_w;
+    info->height = (int)vis_h;
     info->filters = lr->idata.filters;
     memcpy(info->xtrans, lr->idata.xtrans, sizeof(info->xtrans));
     info->colors = lr->idata.colors;
     info->flip = lr->sizes.flip;
-
-    if (info->raw_pitch < info->raw_width) return 0;
-    if (info->top_margin + info->height > info->raw_height) return 0;
-    if (info->left_margin + info->width > info->raw_width) return 0;
 
     for (int c = 0; c < 4; c++) {
         info->black[c] = (float)(lr->color.black + lr->color.cblack[c]);
@@ -227,10 +259,11 @@ static int fill_info(libraw_data_t *lr, OmaRawCfaInfo *info) {
     }
     unsigned ph = lr->color.cblack[4], pw = lr->color.cblack[5];
     if (ph && pw) {
-        if (ph * pw > 36) return 0;
+        if (ph > 36 || pw > 36 || (uint64_t)ph * (uint64_t)pw > 36) return 0;
+        unsigned count = ph * pw;
         info->black_pattern_h = (int)ph;
         info->black_pattern_w = (int)pw;
-        for (unsigned i = 0; i < ph * pw; i++) info->black_pattern[i] = (float)lr->color.cblack[6 + i];
+        for (unsigned i = 0; i < count; i++) info->black_pattern[i] = (float)lr->color.cblack[6 + i];
     }
     info->white = (float)lr->color.maximum;
     memcpy(info->rgb_cam, lr->color.rgb_cam, sizeof(info->rgb_cam));
@@ -282,8 +315,9 @@ const unsigned short* omaraw_unpack_linear(void *handle, OmaRawCfaInfo *info, in
     if (!plane) return NULL;
 
     // raw_pitch is in bytes; one pixel holds n samples
-    info->raw_pitch = (int)(lr->sizes.raw_pitch / (2 * n));
-    if (info->raw_pitch < info->raw_width) return NULL;
+    uint64_t linear_pitch = (uint64_t)lr->sizes.raw_pitch / (uint64_t)(2 * n);
+    if (linear_pitch > (uint64_t)INT_MAX || linear_pitch < (uint64_t)info->raw_width) return NULL;
+    info->raw_pitch = (int)linear_pitch;
     *stride = n;
     return plane;
 }

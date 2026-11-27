@@ -81,6 +81,17 @@ fn read_stdin_line(limit: u64) -> Result<String, String> {
     String::from_utf8(buf).map(|s| s.trim_end().to_string()).map_err(|_| "not valid UTF-8".to_string())
 }
 
+/// Parses a `--recipe` value: `"-"` reads one JSON line from stdin (avoiding Linux's 128 KiB
+/// single-argv ceiling on recipes with brush strokes); anything else is parsed inline.
+fn read_recipe_arg(arg: &str) -> Result<Recipe, String> {
+    let text = if arg == "-" {
+        read_stdin_line(16 << 20).map_err(|e| format!("Cannot read the recipe from stdin: {e}"))?
+    } else {
+        arg.to_string()
+    };
+    serde_json::from_str::<Recipe>(&text).map_err(|e| format!("Invalid recipe: {e}"))
+}
+
 fn print_json<T: Serialize>(resp: &ResponseWrapper<T>) {
     if let Ok(json) = serde_json::to_string(resp) {
         print_line(&json);
@@ -499,10 +510,10 @@ fn main() {
                 match args[idx].as_str() {
                     "--recipe" if idx + 1 < args.len() => {
                         // As with export: a broken recipe must not render without its edits
-                        match serde_json::from_str::<Recipe>(&args[idx + 1]) {
+                        match read_recipe_arg(&args[idx + 1]) {
                             Ok(r) => recipe = r,
                             Err(e) => {
-                                print_json::<()>(&ResponseWrapper::err(format!("Invalid recipe: {e}")));
+                                print_json::<()>(&ResponseWrapper::err(e));
                                 return;
                             }
                         }
@@ -574,22 +585,11 @@ fn main() {
                     // `--recipe -` reads the recipe as one line from stdin: a recipe with
                     // long brush strokes is larger than a single argument may be (128 KiB)
                     "--recipe" if idx + 1 < args.len() => {
-                        let text = if args[idx + 1] == "-" {
-                            match read_stdin_line(16 << 20) {
-                                Ok(t) => t,
-                                Err(e) => {
-                                    print_json::<()>(&ResponseWrapper::err(format!("Cannot read the recipe from stdin: {e}")));
-                                    return;
-                                }
-                            }
-                        } else {
-                            args[idx + 1].clone()
-                        };
                         // A broken recipe must not export the photo without its edits
-                        match serde_json::from_str::<Recipe>(&text) {
+                        match read_recipe_arg(&args[idx + 1]) {
                             Ok(r) => recipe = r,
                             Err(e) => {
-                                print_json::<()>(&ResponseWrapper::err(format!("Invalid recipe: {e}")));
+                                print_json::<()>(&ResponseWrapper::err(e));
                                 return;
                             }
                         }
@@ -1363,12 +1363,15 @@ fn run_fuji_camera(args: &[String]) {
 /// prints its sign-in steps as JSON lines (`{"event": ...}`) before the result.
 fn run_cloud(args: &[String]) {
     let flag = |name: &str| args.iter().position(|a| a == name).and_then(|i| args.get(i + 1)).cloned();
+    let has = |name: &str| args.iter().any(|a| a == name);
     let positional: Vec<&String> = {
         let mut out = Vec::new();
         let mut skip = false;
         for a in args.iter().skip(1) {
             if skip {
                 skip = false;
+            } else if a == "--client-secret-stdin" {
+                // Boolean flag: takes no value argument
             } else if a.starts_with("--") {
                 skip = true;
             } else {
@@ -1382,9 +1385,17 @@ fn run_cloud(args: &[String]) {
         Some("status") | None => serde_json::to_value(cloud::status()).map_err(|e| e.to_string()),
         Some("connect") => {
             let service = arg(0, "connect <service>")?;
+            if has("--client-secret") {
+                return Err("Passing --client-secret on the command line is disallowed; use --client-secret-stdin and supply the secret on stdin".into());
+            }
+            let client_secret = if has("--client-secret-stdin") {
+                read_stdin_line(4096).map_err(|e| format!("Cannot read client secret from stdin: {e}"))?
+            } else {
+                String::new()
+            };
             let client = cloud::OAuthClient {
                 client_id: flag("--client-id").unwrap_or_default(),
-                client_secret: flag("--client-secret").unwrap_or_default(),
+                client_secret,
             };
             let account = cloud::connect(service, &client, &mut |event| {
                 if let Ok(line) = serde_json::to_string(&event) {
@@ -1470,7 +1481,7 @@ fn run_xmp(args: &[String]) {
             Some("export") => {
                 let given = flag("--recipe");
                 let recipe: Recipe = match &given {
-                    Some(j) => serde_json::from_str(j).map_err(|e| format!("Invalid recipe: {e}"))?,
+                    Some(j) => read_recipe_arg(j)?,
                     None => Recipe::load_initial(path),
                 };
                 let item = Catalog::load().get(photo).cloned();
@@ -1548,7 +1559,7 @@ fn ai_mask(photo: &str, kind: &str, model: Option<String>) -> Result<serde_json:
 }
 
 /// `ai providers | local | key <provider> [--delete] | use <provider> [model] [--endpoint URL] |
-/// edit <photo> [--prompt P] [--recipe JSON] [--provider X] [--model M]`.
+/// edit <photo> [--prompt P] [--recipe JSON|-] [--provider X] [--model M]`.
 fn run_ai(args: &[String]) {
     use ai::provider;
     let flag = |name: &str| args.iter().position(|a| a == name).and_then(|i| args.get(i + 1)).cloned();
@@ -1575,7 +1586,7 @@ fn run_ai(args: &[String]) {
         }),
         Some("edit") => match args.get(1) {
             Some(photo) => ai_edit(photo, flag("--prompt").as_deref().unwrap_or(""), flag("--recipe"), flag("--provider"), flag("--model")),
-            None => Err("Usage: ai edit <photo> [--prompt P] [--recipe JSON]".to_string()),
+            None => Err("Usage: ai edit <photo> [--prompt P] [--recipe JSON|-]".to_string()),
         },
         Some(other) => Err(format!("Unknown ai command: {other}")),
     };
@@ -1589,7 +1600,7 @@ fn run_ai(args: &[String]) {
 fn ai_edit(photo: &str, prompt: &str, recipe: Option<String>, provider: Option<String>, model: Option<String>) -> Result<serde_json::Value, String> {
     use ai::{assistant, provider as prov};
     let current: Recipe = match recipe {
-        Some(r) => serde_json::from_str(&r).map_err(|e| format!("Invalid recipe: {e}"))?,
+        Some(r) => read_recipe_arg(&r)?,
         None => Recipe::default(),
     };
     let target = prov::resolve(provider.as_deref(), model.as_deref())?;

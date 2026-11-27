@@ -103,26 +103,38 @@ impl HasselbladInfo {
             .map(|m| m.trim_start_matches("Hasselblad ").to_string())
             .unwrap_or_default();
 
+        let f64_to_u32 = |v: f64| -> Option<u32> {
+            (v.is_finite() && v >= 0.0 && v <= u32::MAX as f64).then_some(v as u32)
+        };
+        let i64_to_u32 = |v: i64| -> Option<u32> { u32::try_from(v).ok() };
+
         let raw = dirs.raw_ifd();
         let rget = |tag: u16| raw.and_then(|r| r.get(&tag));
-        let raw_width = rget(0x0100).and_then(Value::int).unwrap_or(0).max(0) as u32;
-        let raw_height = rget(0x0101).and_then(Value::int).unwrap_or(0).max(0) as u32;
+        let raw_width = rget(0x0100).and_then(Value::int).and_then(i64_to_u32).unwrap_or(0);
+        let raw_height = rget(0x0101).and_then(Value::int).and_then(i64_to_u32).unwrap_or(0);
 
         let crop = match (rget(0xc61f).map(Value::floats), rget(0xc620).map(Value::floats)) {
             (Some(o), Some(s)) if o.len() == 2 && s.len() == 2 => Some(Rect {
-                x: o[0] as u32,
-                y: o[1] as u32,
-                width: s[0] as u32,
-                height: s[1] as u32,
+                x: f64_to_u32(o[0])?,
+                y: f64_to_u32(o[1])?,
+                width: f64_to_u32(s[0])?,
+                height: f64_to_u32(s[1])?,
             }),
-            _ => mn.get(&MN_CROP).map(Value::ints).filter(|v| v.len() == 5).map(|v| Rect {
-                x: v[1] as u32,
-                y: v[2] as u32,
-                width: v[3] as u32,
-                height: v[4] as u32,
+            _ => mn.get(&MN_CROP).map(Value::ints).filter(|v| v.len() == 5).and_then(|v| {
+                Some(Rect {
+                    x: i64_to_u32(v[1])?,
+                    y: i64_to_u32(v[2])?,
+                    width: i64_to_u32(v[3])?,
+                    height: i64_to_u32(v[4])?,
+                })
             }),
         }
-        .filter(|r| r.width > 0 && r.height > 0 && r.x + r.width <= raw_width && r.y + r.height <= raw_height);
+        .filter(|r| {
+            r.width > 0
+                && r.height > 0
+                && r.x.checked_add(r.width).is_some_and(|e| e <= raw_width)
+                && r.y.checked_add(r.height).is_some_and(|e| e <= raw_height)
+        });
 
         // MaskedAreas: top, left, bottom, right per rectangle
         let masked_areas = rget(0xc68e)
@@ -131,8 +143,12 @@ impl HasselbladInfo {
             .as_chunks::<4>()
             .0
             .iter()
-            .filter(|a| a[2] > a[0] && a[3] > a[1])
-            .map(|a| Rect { x: a[1] as u32, y: a[0] as u32, width: (a[3] - a[1]) as u32, height: (a[2] - a[0]) as u32 })
+            .filter_map(|a| {
+                let (top, left, bottom, right) = (i64_to_u32(a[0])?, i64_to_u32(a[1])?, i64_to_u32(a[2])?, i64_to_u32(a[3])?);
+                let width = right.checked_sub(left).filter(|&w| w > 0)?;
+                let height = bottom.checked_sub(top).filter(|&h| h > 0)?;
+                Some(Rect { x: left, y: top, width, height })
+            })
             .collect();
 
         let floats = |v: Option<&Value>| v.map(Value::floats).unwrap_or_default();
@@ -232,5 +248,25 @@ mod tests {
         assert_eq!(info.black_level, Some(4096.0));
         assert_eq!(info.as_shot_neutral, Some([0.38, 1.0, 0.63]));
         assert_eq!(info.to_recipe().film_simulation, "hasselblad_hncs");
+    }
+
+    #[test]
+    fn rejects_overflowing_crop_coordinates() {
+        let text = |s: &str| s.bytes().chain(std::iter::once(0)).map(u32::from).collect::<Vec<_>>();
+        let bytes = crate::medium_format::tiff::tests::tiff(&[
+            (0x0100, 4, vec![1000]),
+            (0x0101, 4, vec![1000]),
+            (0x0106, 3, vec![32803]),
+            (0x010f, 2, text("Hasselblad")),
+            (0x0110, 2, text("Hasselblad X2D 100C")),
+            // x = u32::MAX, width = 10 -> wrapping u32::MAX + 10 == 9 <= 1000 must be rejected
+            (0xc61f, 4, vec![u32::MAX, 0]),
+            (0xc620, 4, vec![10, 10]),
+        ]);
+        let p = std::env::temp_dir().join(format!("omastudio-x2d-ovf-{}.3fr", std::process::id()));
+        std::fs::write(&p, bytes).unwrap();
+        let info = HasselbladInfo::read(&p).unwrap();
+        std::fs::remove_file(&p).ok();
+        assert_eq!(info.crop, None, "wrapping crop addition must be rejected");
     }
 }

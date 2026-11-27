@@ -223,13 +223,17 @@ fn call_tool(name: &str, args: &Value) -> Option<Result<Vec<Value>, String>> {
         "export_photo" => (|| {
             let path = required(args, "path")?;
             let mut cli = vec!["export".to_string(), path.to_string()];
-            if let Some(r) = recipe_arg(args)? {
-                cli.extend(["--recipe".into(), r]);
+            let recipe_line = recipe_arg(args)?.map(|mut r| {
+                r.push('\n');
+                r
+            });
+            if recipe_line.is_some() {
+                cli.extend(["--recipe".into(), "-".into()]);
             }
             if let Some(o) = args.get("options").filter(|o| o.is_object()) {
                 cli.extend(["--options".into(), o.to_string()]);
             }
-            engine(&cli).map(text)
+            engine_with_stdin(&cli, recipe_line.as_deref().map(str::as_bytes), ENGINE_LONG_TIMEOUT).map(text)
         })(),
         "scan_folder" => required(args, "dir").and_then(|d| engine(&["scan", d])).map(text),
         "catalog_query" => {
@@ -279,7 +283,7 @@ fn call_tool(name: &str, args: &Value) -> Option<Result<Vec<Value>, String>> {
             if let Some(out) = str_arg(args, "out") {
                 cli.extend(["--out".into(), out.into()]);
             }
-            engine(&cli).map(text)
+            engine_with_stdin(&cli, None, ENGINE_LONG_TIMEOUT).map(text)
         })(),
         "fuji_camera" => match str_arg(args, "action") {
             Some(a @ ("list" | "info" | "presets")) => engine(&["fuji-camera", a]).map(text),
@@ -308,13 +312,17 @@ fn call_tool(name: &str, args: &Value) -> Option<Result<Vec<Value>, String>> {
         "write_xmp" => (|| {
             let path = required(args, "path")?;
             let mut cli = vec!["xmp".to_string(), "export".into(), path.into()];
-            if let Some(r) = recipe_arg(args)? {
-                cli.extend(["--recipe".into(), r]);
+            let recipe_line = recipe_arg(args)?.map(|mut r| {
+                r.push('\n');
+                r
+            });
+            if recipe_line.is_some() {
+                cli.extend(["--recipe".into(), "-".into()]);
             }
             if args.get("force").and_then(Value::as_bool) == Some(true) {
                 cli.push("--force".into());
             }
-            engine(&cli).map(text)
+            engine_with_stdin(&cli, recipe_line.as_deref().map(str::as_bytes), ENGINE_TIMEOUT).map(text)
         })(),
         "gpu_status" => engine(&["gpu"]).map(text),
         "npu_status" => engine(&["npu"]).map(text),
@@ -353,19 +361,28 @@ fn call_tool(name: &str, args: &Value) -> Option<Result<Vec<Value>, String>> {
     Some(result)
 }
 
+const ENGINE_TIMEOUT: Duration = Duration::from_secs(120);
+const ENGINE_LONG_TIMEOUT: Duration = Duration::from_secs(300);
+
 /// Runs this binary's command line and returns the `data` of its JSON answer.
 fn engine<S: AsRef<str>>(args: &[S]) -> Result<String, String> {
+    engine_with_stdin(args, None, ENGINE_TIMEOUT)
+}
+
+fn engine_with_stdin<S: AsRef<str>>(args: &[S], stdin_data: Option<&[u8]>, timeout: Duration) -> Result<String, String> {
     let exe = std::env::current_exe().map_err(|e| format!("Cannot find omastudio-engine: {e}"))?;
-    let output = Command::new(exe)
-        .args(args.iter().map(AsRef::as_ref))
-        .stdin(Stdio::null())
-        .stderr(Stdio::null())
-        .output()
+    let mut cmd = Command::new(exe);
+    std::os::unix::process::CommandExt::process_group(&mut cmd, 0);
+    cmd.args(args.iter().map(AsRef::as_ref));
+    if stdin_data.is_none() {
+        cmd.stdin(Stdio::null());
+    }
+    let (exit_code, stdout_bytes, _stderr_bytes) = security::run_bounded_command_with_stdin(cmd, timeout, stdin_data)
         .map_err(|e| format!("Cannot run omastudio-engine: {e}"))?;
-    let stdout = String::from_utf8_lossy(&output.stdout);
+    let stdout = String::from_utf8_lossy(&stdout_bytes);
     let answer: Value = serde_json::from_str(stdout.trim()).map_err(|_| {
         let first = stdout.lines().next().unwrap_or("").trim();
-        if first.is_empty() { format!("omastudio-engine exited with {}", output.status) } else { first.to_string() }
+        if first.is_empty() { format!("omastudio-engine exited with code {exit_code}") } else { first.to_string() }
     })?;
     if answer.get("success").and_then(Value::as_bool) == Some(false) {
         return Err(answer.get("error").and_then(Value::as_str).unwrap_or("Command failed").to_string());
@@ -379,10 +396,14 @@ fn render_preview(args: &Value) -> Result<Vec<Value>, String> {
     let out = security::get_secure_preview_dir().join(format!("omastudio_mcp_{}.ppm", std::process::id()));
     let out_str = out.to_string_lossy().into_owned();
     let mut cli = vec!["render".to_string(), path.into(), "--out".into(), out_str];
-    if let Some(r) = recipe_arg(args)? {
-        cli.extend(["--recipe".into(), r]);
+    let recipe_line = recipe_arg(args)?.map(|mut r| {
+        r.push('\n');
+        r
+    });
+    if recipe_line.is_some() {
+        cli.extend(["--recipe".into(), "-".into()]);
     }
-    let result = engine(&cli);
+    let result = engine_with_stdin(&cli, recipe_line.as_deref().map(str::as_bytes), ENGINE_TIMEOUT);
     let image = result.as_ref().ok().map(|_| image_content(&out));
     let _ = std::fs::remove_file(&out);
     let summary = result?;
@@ -428,7 +449,7 @@ fn base64(bytes: &[u8]) -> String {
 fn socket_path() -> PathBuf {
     let runtime = std::env::var_os("XDG_RUNTIME_DIR")
         .map(PathBuf::from)
-        .unwrap_or_else(|| PathBuf::from(format!("/run/user/{}", unsafe { libc::getuid() })));
+        .unwrap_or_else(|| PathBuf::from(format!("/run/user/{}", security::current_uid())));
     runtime.join("omastudio").join("ipc.sock")
 }
 
@@ -437,6 +458,7 @@ fn window(method: &str, args: Vec<Value>) -> Result<String, String> {
     let mut stream = UnixStream::connect(socket_path())
         .map_err(|_| "The OmaStudio window is not running. Start it with `omastudio`.".to_string())?;
     stream.set_read_timeout(Some(WINDOW_TIMEOUT)).map_err(|e| e.to_string())?;
+    stream.set_write_timeout(Some(Duration::from_secs(2))).map_err(|e| e.to_string())?;
     let request = json!({ "method": method, "args": args });
     stream.write_all(format!("{request}\n").as_bytes()).map_err(|e| e.to_string())?;
     let mut reply = String::new();

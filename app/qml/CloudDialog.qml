@@ -121,6 +121,39 @@ Rectangle {
         }
     }
 
+    component SecretField: Rectangle {
+        id: secretField
+        property alias text: secretInput.text
+        property string placeholderText: ""
+        Layout.fillWidth: true
+        implicitHeight: Theme.px(28)
+        radius: Theme.radiusSm
+        color: Theme.bgCard
+        border.color: secretInput.activeFocus ? Theme.accent : Theme.controlBorder("normal")
+        TextInput {
+            id: secretInput
+            anchors.fill: parent
+            anchors.leftMargin: Theme.px(8)
+            anchors.rightMargin: Theme.px(8)
+            verticalAlignment: TextInput.AlignVCenter
+            echoMode: TextInput.Password
+            maximumLength: 256
+            clip: true
+            font.family: Theme.fontFamily
+            font.pixelSize: Theme.px(11)
+            color: Theme.textMain
+            Text {
+                anchors.verticalCenter: parent.verticalCenter
+                visible: secretInput.text.length === 0 && !secretInput.activeFocus
+                text: secretField.placeholderText
+                textFormat: Text.PlainText
+                font.family: Theme.fontFamily
+                font.pixelSize: Theme.px(11)
+                color: Theme.textDim
+            }
+        }
+    }
+
     Flickable {
         id: flick
         anchors.fill: parent
@@ -382,9 +415,11 @@ Rectangle {
                             cursorShape: Qt.PointingHandCursor
                             onClicked: {
                                 var google = modelData.id === "google-drive";
+                                var secret = google ? googleSecret.text.trim() : "";
+                                if (google) googleSecret.text = "";
                                 root.connectRequested(modelData.id,
                                                       google ? googleId.text.trim() : "",
-                                                      google ? googleSecret.text.trim() : "");
+                                                      secret);
                             }
                         }
                         ToolTip.visible: provMouse.containsMouse && !available
@@ -428,7 +463,7 @@ Rectangle {
                     id: googleId
                     placeholderText: qsTr("Client ID")
                 }
-                Field {
+                SecretField {
                     id: googleSecret
                     placeholderText: qsTr("Client secret")
                 }
