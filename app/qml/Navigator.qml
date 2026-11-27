@@ -93,6 +93,7 @@ Rectangle {
                     id: miniImg0
                     anchors.fill: parent
                     fillMode: Image.PreserveAspectFit
+                    sourceSize: Qt.size(360, 270)
                     asynchronous: true
                     cache: false
                     smooth: true
@@ -113,6 +114,7 @@ Rectangle {
                     id: miniImg1
                     anchors.fill: parent
                     fillMode: Image.PreserveAspectFit
+                    sourceSize: Qt.size(360, 270)
                     asynchronous: true
                     cache: false
                     smooth: true
@@ -165,17 +167,20 @@ Rectangle {
                         anchors.fill: parent
                         anchors.margins: -8
                         cursorShape: Qt.SizeAllCursor
-                        drag.target: viewFinder
-                        drag.axis: Drag.XAndYAxis
-                        drag.minimumX: viewFinder.px
-                        drag.maximumX: viewFinder.px + viewFinder.pw - viewFinder.width
-                        drag.minimumY: viewFinder.py
-                        drag.maximumY: viewFinder.py + viewFinder.ph - viewFinder.height
+                        property real grabOffsetX: 0
+                        property real grabOffsetY: 0
 
-                        onPositionChanged: {
-                            if (drag.active) {
-                                var centerX = (viewFinder.x + viewFinder.width / 2) - viewFinder.px;
-                                var centerY = (viewFinder.y + viewFinder.height / 2) - viewFinder.py;
+                        onPressed: function(mouse) {
+                            var pt = dragArea.mapToItem(miniImage, mouse.x, mouse.y);
+                            grabOffsetX = pt.x - (viewFinder.x + viewFinder.width / 2);
+                            grabOffsetY = pt.y - (viewFinder.y + viewFinder.height / 2);
+                        }
+
+                        onPositionChanged: function(mouse) {
+                            if (pressed && viewFinder.pw > 0 && viewFinder.ph > 0) {
+                                var pt = dragArea.mapToItem(miniImage, mouse.x, mouse.y);
+                                var centerX = (pt.x - grabOffsetX) - viewFinder.px;
+                                var centerY = (pt.y - grabOffsetY) - viewFinder.py;
                                 var targetX = Math.max(0.0, Math.min(1.0, centerX / viewFinder.pw));
                                 var targetY = Math.max(0.0, Math.min(1.0, centerY / viewFinder.ph));
                                 root.panRequested(targetX, targetY);

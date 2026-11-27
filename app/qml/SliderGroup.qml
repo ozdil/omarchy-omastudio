@@ -78,7 +78,7 @@ ColumnLayout {
                     text: Theme.iconRotateLeft
                     font.family: Theme.iconFont
                     font.pixelSize: Theme.px(9)
-                    color: sliderResetMouse.containsMouse ? Theme.bgBase : root.accentColor
+                    color: sliderResetMouse.containsMouse ? Theme.onColor(root.accentColor) : root.accentColor
                 }
 
                 MouseArea {

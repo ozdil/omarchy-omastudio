@@ -105,7 +105,6 @@ Rectangle {
                         ToolTip.delay: 500
                         ToolTip.text: qsTr("Clipped shadows. Click to show them on the photo.")
                         onClicked: {
-                            root.showClippingShadows = !root.showClippingShadows;
                             root.toggleShadowMask();
                         }
                     }
@@ -137,7 +136,6 @@ Rectangle {
                         ToolTip.delay: 500
                         ToolTip.text: qsTr("Clipped highlights. Click to show them on the photo.")
                         onClicked: {
-                            root.showClippingHighlights = !root.showClippingHighlights;
                             root.toggleHighlightMask();
                         }
                     }
@@ -258,21 +256,33 @@ Rectangle {
                         ctx.fillText(ireLabels[k] + "%", 2, gy - 2);
                     }
 
-                    // Plot waveform column bins
+                    // Plot waveform column bins batched by 8 quantized alpha buckets (zero per-cell string allocations)
                     var colW = w / 64.0;
                     var rowH = (h - 10) / 32.0;
+                    var buckets = [[], [], [], [], [], [], [], []];
 
                     for (var r = 0; r < 32; r++) {
                         var py = h - 5 - (r + 1) * rowH;
                         for (var c = 0; c < 64; c++) {
                             var intensity = wf[r * 64 + c];
                             if (intensity > 2) {
-                                var alpha = intensity / 255.0;
-                                ctx.fillStyle = "rgba(125, 207, 255, " + (alpha * 0.85).toFixed(3) + ")";
-                                ctx.fillRect(c * colW, py, colW, rowH + 0.5);
+                                var b = Math.min(7, (intensity * 8) >> 8);
+                                buckets[b].push(c * colW, py);
                             }
                         }
                     }
+                    ctx.fillStyle = "#7dcfff";
+                    for (var bi = 0; bi < 8; bi++) {
+                        var pts = buckets[bi];
+                        if (pts.length === 0) continue;
+                        ctx.globalAlpha = ((bi + 0.5) / 8.0) * 0.85;
+                        ctx.beginPath();
+                        for (var pi = 0; pi < pts.length; pi += 2) {
+                            ctx.rect(pts[pi], pts[pi + 1], colW, rowH + 0.5);
+                        }
+                        ctx.fill();
+                    }
+                    ctx.globalAlpha = 1.0;
                 }
 
                 // 3. DaVinci RGB Parade (Red, Green, Blue side-by-side)
@@ -300,23 +310,35 @@ Rectangle {
                     ctx.fillStyle = "#9ece6a"; ctx.fillText(qsTr("GREEN"), channelW * 1.5, 9);
                     ctx.fillStyle = "#7aa2f7"; ctx.fillText(qsTr("BLUE"), channelW * 2.5, 9);
 
-                    function renderChannelData(data, offsetX, baseCol) {
+                    function renderChannelData(data, offsetX, baseHex) {
+                        var chBuckets = [[], [], [], [], [], [], [], []];
                         for (var r = 0; r < 32; r++) {
                             var py = h - 3 - (r + 1) * rowH;
                             for (var c = 0; c < 32; c++) {
                                 var val = data[r * 32 + c];
                                 if (val > 2) {
-                                    var alpha = (val / 255.0) * 0.8;
-                                    ctx.fillStyle = baseCol.replace("ALPHA", alpha.toFixed(3));
-                                    ctx.fillRect(offsetX + c * colW, py, colW, rowH + 0.5);
+                                    var b = Math.min(7, (val * 8) >> 8);
+                                    chBuckets[b].push(offsetX + c * colW, py);
                                 }
                             }
                         }
+                        ctx.fillStyle = baseHex;
+                        for (var bi = 0; bi < 8; bi++) {
+                            var pts = chBuckets[bi];
+                            if (pts.length === 0) continue;
+                            ctx.globalAlpha = ((bi + 0.5) / 8.0) * 0.8;
+                            ctx.beginPath();
+                            for (var pi = 0; pi < pts.length; pi += 2) {
+                                ctx.rect(pts[pi], pts[pi + 1], colW, rowH + 0.5);
+                            }
+                            ctx.fill();
+                        }
+                        ctx.globalAlpha = 1.0;
                     }
 
-                    renderChannelData(pr, 0, "rgba(247, 118, 142, ALPHA)");
-                    renderChannelData(pg, channelW, "rgba(158, 206, 106, ALPHA)");
-                    renderChannelData(pb, channelW * 2, "rgba(122, 162, 247, ALPHA)");
+                    renderChannelData(pr, 0, "#f7768e");
+                    renderChannelData(pg, channelW, "#9ece6a");
+                    renderChannelData(pb, channelW * 2, "#7aa2f7");
                 }
 
                 // 4. DaVinci Vectorscope with Skin Tone Line (I-Bar)
@@ -385,22 +407,33 @@ Rectangle {
                         ctx.fillText(tg.name, pt.x + 4, pt.y + 2);
                     }
 
-                    // Plot vectorscope UV / CbCr pixel points
+                    // Plot vectorscope UV / CbCr pixel points batched by alpha bucket
                     var stepU = (maxRadius * 2) / 48.0;
                     var stepV = (maxRadius * 2) / 48.0;
+                    var vecBuckets = [[], [], [], [], [], [], [], []];
 
                     for (var v = 0; v < 48; v++) {
                         var py = cy - maxRadius + v * stepV;
                         for (var u = 0; u < 48; u++) {
                             var val = vec[v * 48 + u];
                             if (val > 4) {
-                                var alpha = (val / 255.0) * 0.9;
-                                ctx.fillStyle = "rgba(158, 206, 106, " + alpha.toFixed(3) + ")";
-                                var px = cx - maxRadius + u * stepU;
-                                ctx.fillRect(px, py, 2.5, 2.5);
+                                var b = Math.min(7, (val * 8) >> 8);
+                                vecBuckets[b].push(cx - maxRadius + u * stepU, py);
                             }
                         }
                     }
+                    ctx.fillStyle = "#9ece6a";
+                    for (var bi = 0; bi < 8; bi++) {
+                        var pts = vecBuckets[bi];
+                        if (pts.length === 0) continue;
+                        ctx.globalAlpha = ((bi + 0.5) / 8.0) * 0.9;
+                        ctx.beginPath();
+                        for (var pi = 0; pi < pts.length; pi += 2) {
+                            ctx.rect(pts[pi], pts[pi + 1], 2.5, 2.5);
+                        }
+                        ctx.fill();
+                    }
+                    ctx.globalAlpha = 1.0;
                 }
             }
         }

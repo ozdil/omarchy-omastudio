@@ -10,6 +10,7 @@ use std::io::{BufRead, BufReader, Read, Write};
 use std::os::unix::process::CommandExt;
 use std::pin::Pin;
 use std::process::{Child, ChildStdin, Command, Stdio};
+use std::sync::mpsc::{self, SyncSender, TrySendError};
 use std::sync::{Arc, Mutex};
 use std::time::{Duration, Instant};
 
@@ -51,7 +52,8 @@ pub mod qobject {
 
         fn set_running(self: Pin<&mut HostProcess>, running: bool);
 
-        /// Writes `text` to the process's standard input (needs `stdinEnabled`).
+        /// Enqueues `text` for asynchronous delivery to the process's standard input
+        /// (needs `stdinEnabled`) without blocking the Qt GUI thread.
         #[qinvokable]
         fn write(self: Pin<&mut HostProcess>, text: &QString) -> bool;
 
@@ -65,6 +67,37 @@ pub mod qobject {
 }
 
 const DEFAULT_MAX_OUTPUT: i32 = 64 << 20;
+const STDIN_QUEUE_CAPACITY: usize = 64;
+
+/// Non-blocking handle to a dedicated stdin writer thread so `HostProcess::write`
+/// never stalls the Qt GUI thread when a child's pipe buffer is full.
+/// Dropping the handle closes the channel; the writer flushes queued chunks and
+/// then drops `ChildStdin` to deliver clean EOF.
+struct StdinWriter {
+    tx: SyncSender<Vec<u8>>,
+}
+
+impl StdinWriter {
+    fn spawn(mut stdin: ChildStdin) -> Self {
+        let (tx, rx) = mpsc::sync_channel::<Vec<u8>>(STDIN_QUEUE_CAPACITY);
+        std::thread::spawn(move || {
+            while let Ok(chunk) = rx.recv() {
+                if stdin.write_all(&chunk).and_then(|_| stdin.flush()).is_err() {
+                    break;
+                }
+            }
+            drop(stdin);
+        });
+        Self { tx }
+    }
+
+    fn try_write(&self, data: Vec<u8>) -> bool {
+        match self.tx.try_send(data) {
+            Ok(()) => true,
+            Err(TrySendError::Full(_)) | Err(TrySendError::Disconnected(_)) => false,
+        }
+    }
+}
 
 pub struct HostProcessRust {
     command: QStringList,
@@ -75,7 +108,7 @@ pub struct HostProcessRust {
     /// Bumped on every start and stop, so callbacks of an older run are ignored.
     generation: u64,
     child: Arc<Mutex<Option<Child>>>,
-    stdin: Option<ChildStdin>,
+    stdin: Option<StdinWriter>,
 }
 
 impl Default for HostProcessRust {
@@ -167,10 +200,10 @@ impl qobject::HostProcess {
     }
 
     pub fn write(mut self: Pin<&mut Self>, text: &QString) -> bool {
-        let Some(stdin) = self.as_mut().rust_mut().get_mut().stdin.as_mut() else {
+        let Some(stdin) = self.as_mut().rust_mut().get_mut().stdin.as_ref() else {
             return false;
         };
-        stdin.write_all(String::from(text).as_bytes()).and_then(|_| stdin.flush()).is_ok()
+        stdin.try_write(String::from(text).into_bytes())
     }
 
     pub fn graceful_stop(mut self: Pin<&mut Self>, timeout_ms: i32) {
@@ -227,7 +260,7 @@ impl qobject::HostProcess {
         {
             let rust = self.as_mut().rust_mut().get_mut();
             rust.generation += 1;
-            rust.stdin = child.stdin.take();
+            rust.stdin = child.stdin.take().map(StdinWriter::spawn);
             // A new slot per run: a reader thread of an earlier run keeps its own
             rust.child = Arc::new(Mutex::new(Some(child)));
         }
@@ -367,5 +400,56 @@ mod tests {
             std::thread::sleep(Duration::from_millis(10));
         }
         assert!(!alive, "grandchild process {grandchild} survived process-group reap");
+    }
+
+    #[test]
+    fn async_stdin_writer_flushes_queued_bytes_before_eof_on_drop() {
+        let out = std::env::temp_dir().join(format!("omastudio-async-stdin-{}", std::process::id()));
+        let _ = std::fs::remove_file(&out);
+        let mut cmd = Command::new("/bin/sh");
+        cmd.process_group(0)
+            .args(["-c", "sleep 0.05; cat > \"$1\"", "sh"])
+            .arg(&out)
+            .stdin(Stdio::piped())
+            .stdout(Stdio::null())
+            .stderr(Stdio::null());
+        let mut child = cmd.spawn().expect("spawn async stdin helper");
+        let writer = StdinWriter::spawn(child.stdin.take().expect("piped stdin"));
+        assert!(writer.try_write(b"line1\n".to_vec()));
+        assert!(writer.try_write(b"line2\n".to_vec()));
+        drop(writer);
+        reap_process_group(&mut child, Duration::from_secs(2));
+        let written = std::fs::read_to_string(&out).expect("child flushed async stdin");
+        let _ = std::fs::remove_file(&out);
+        assert_eq!(written, "line1\nline2\n");
+    }
+
+    #[test]
+    fn async_stdin_writer_does_not_block_caller_when_pipe_is_full() {
+        let mut cmd = Command::new("/bin/sh");
+        cmd.process_group(0)
+            .args(["-c", "sleep 10"])
+            .stdin(Stdio::piped())
+            .stdout(Stdio::null())
+            .stderr(Stdio::null());
+        let mut child = cmd.spawn().expect("spawn sleeper");
+        let writer = StdinWriter::spawn(child.stdin.take().expect("piped stdin"));
+
+        // Pushing >1 MiB into a child that never reads must return immediately (non-blocking)
+        // and reject cleanly once the bounded queue fills instead of stalling the caller.
+        let started = Instant::now();
+        let mut rejected = false;
+        let chunk = vec![b'a'; 64 * 1024];
+        for _ in 0..200 {
+            if !writer.try_write(chunk.clone()) {
+                rejected = true;
+                break;
+            }
+        }
+        assert!(started.elapsed() < Duration::from_millis(500), "try_write blocked caller");
+        assert!(rejected, "bounded queue must report full instead of blocking");
+
+        drop(writer);
+        reap_process_group(&mut child, Duration::ZERO);
     }
 }

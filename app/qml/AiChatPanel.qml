@@ -216,7 +216,7 @@ Rectangle {
                     font.family: Theme.fontFamily
                     font.pixelSize: Theme.px(10)
                     font.weight: Font.Bold
-                    color: Theme.bgBase
+                    color: Theme.onColor(sendMouse.containsMouse ? Theme.accentHover : Theme.accent)
                 }
                 MouseArea {
                     id: sendMouse

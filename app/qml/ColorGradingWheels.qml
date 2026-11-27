@@ -31,16 +31,23 @@ ColumnLayout {
 
     signal gradingChanged()
 
-    // Restore wheel -> panel bindings that interactive edits replaced with plain values
+    // Restore wheel -> panel bindings for both tabbed and 4-wheel grid views
     function rebindWheels() {
-        liftWheel.rgbOffset = Qt.binding(function() { return root.liftRgb; });
-        liftWheel.lumaOffset = Qt.binding(function() { return root.liftLuma; });
-        gammaWheel.rgbOffset = Qt.binding(function() { return root.gammaRgb; });
-        gammaWheel.lumaOffset = Qt.binding(function() { return root.gammaLuma; });
-        gainWheel.rgbOffset = Qt.binding(function() { return root.gainRgb; });
-        gainWheel.lumaOffset = Qt.binding(function() { return root.gainLuma; });
-        offsetWheel.rgbOffset = Qt.binding(function() { return root.offsetRgb; });
-        offsetWheel.lumaOffset = Qt.binding(function() { return root.offsetLuma; });
+        var pairs = [
+            [liftWheel, liftWheelGrid, function() { return root.liftRgb; }, function() { return root.liftLuma; }],
+            [gammaWheel, gammaWheelGrid, function() { return root.gammaRgb; }, function() { return root.gammaLuma; }],
+            [gainWheel, gainWheelGrid, function() { return root.gainRgb; }, function() { return root.gainLuma; }],
+            [offsetWheel, offsetWheelGrid, function() { return root.offsetRgb; }, function() { return root.offsetLuma; }]
+        ];
+        for (var i = 0; i < pairs.length; i++) {
+            var tabW = pairs[i][0], gridW = pairs[i][1], rgbFn = pairs[i][2], lumaFn = pairs[i][3];
+            tabW.rgbOffset = Qt.binding(rgbFn);
+            tabW.lumaOffset = Qt.binding(lumaFn);
+            gridW.rgbOffset = Qt.binding(rgbFn);
+            gridW.lumaOffset = Qt.binding(lumaFn);
+            tabW.syncPuckFromRgb();
+            gridW.syncPuckFromRgb();
+        }
     }
 
     function resetAllWheels() {
@@ -55,10 +62,7 @@ ColumnLayout {
         colorBoost = 0.0;
         midtoneDetail = 0.0;
         contrastPivot = 0.435;
-        liftWheel.resetWheel();
-        gammaWheel.resetWheel();
-        gainWheel.resetWheel();
-        offsetWheel.resetWheel();
+        rebindWheels();
         root.gradingChanged();
     }
 
@@ -276,6 +280,7 @@ ColumnLayout {
                 anchors.fill: parent
                 anchors.margins: 6
                 ColorWheel {
+                    id: liftWheelGrid
                     anchors.fill: parent
                     title: qsTr("Lift")
                     rgbOffset: root.liftRgb
@@ -301,6 +306,7 @@ ColumnLayout {
                 anchors.fill: parent
                 anchors.margins: 6
                 ColorWheel {
+                    id: gammaWheelGrid
                     anchors.fill: parent
                     title: qsTr("Gamma")
                     rgbOffset: root.gammaRgb
@@ -326,6 +332,7 @@ ColumnLayout {
                 anchors.fill: parent
                 anchors.margins: 6
                 ColorWheel {
+                    id: gainWheelGrid
                     anchors.fill: parent
                     title: qsTr("Gain")
                     rgbOffset: root.gainRgb
@@ -351,6 +358,7 @@ ColumnLayout {
                 anchors.fill: parent
                 anchors.margins: 6
                 ColorWheel {
+                    id: offsetWheelGrid
                     anchors.fill: parent
                     title: qsTr("Offset")
                     rgbOffset: root.offsetRgb

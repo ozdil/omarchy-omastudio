@@ -142,7 +142,7 @@ Window {
                 return "OK";
             case "applyRecipe":
                 if (str(a[0]).length === 0) return "Error: empty recipe json";
-                mainWin.applyRecipeObject(typeof a[0] === "object" ? a[0] : JSON.parse(a[0]));
+                mainWin.patchRecipe(typeof a[0] === "object" ? a[0] : JSON.parse(a[0]));
                 return "OK";
             case "optimizeSocial":
                 if (str(a[0]).length === 0) return "Error: empty platform code";

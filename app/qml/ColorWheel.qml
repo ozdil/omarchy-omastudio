@@ -14,7 +14,7 @@ ColumnLayout {
 
     signal wheelChanged(var rgb, real luma)
 
-    // Convert (Hue, Sat) to RGB offset
+    // Convert (Hue, Sat) to RGB offset without breaking external bindings
     function setFromPolar(normRadius, angleRad) {
         var sat = Math.max(0.0, Math.min(1.0, normRadius));
         var h = angleRad * (180.0 / Math.PI);
@@ -32,23 +32,23 @@ ColumnLayout {
         else { r = c; g = 0; b = x; }
 
         // Shift so center is 0.0 (neutral)
-        root.rgbOffset = [
+        var nextRgb = [
             (r - 0.5 * sat) * 2.0,
             (g - 0.5 * sat) * 2.0,
             (b - 0.5 * sat) * 2.0
         ];
-        root.wheelChanged(root.rgbOffset, root.lumaOffset);
+        root.wheelChanged(nextRgb, root.lumaOffset);
     }
 
     function syncPuckFromRgb() {
-        if (wheelMouse.pressed) return;
+        if (wheelMouse.pressed || wheelContainer.width <= 0 || wheelContainer.height <= 0) return;
         var r = root.rgbOffset && root.rgbOffset.length >= 3 ? root.rgbOffset[0] : 0.0;
         var g = root.rgbOffset && root.rgbOffset.length >= 3 ? root.rgbOffset[1] : 0.0;
         var b = root.rgbOffset && root.rgbOffset.length >= 3 ? root.rgbOffset[2] : 0.0;
 
         var cx = wheelContainer.width / 2;
         var cy = wheelContainer.height / 2;
-        var maxR = wheelContainer.width / 2 - 6;
+        var maxR = Math.max(1, wheelContainer.width / 2 - 6);
 
         var xVec = r - 0.5 * g - 0.5 * b;
         var yVec = (Math.sqrt(3) / 2.0) * (g - b);
@@ -58,22 +58,23 @@ ColumnLayout {
             puck.x = cx - puck.width / 2;
             puck.y = cy - puck.height / 2;
         } else {
-            var angle = Math.atan2(-yVec, xVec);
-            var normDist = Math.min(1.0, mag);
+            // Forward map uses +angleRad clockwise in Qt screen coords (+y down),
+            // and pure primaries have mag == 2 * sat, so invert with atan2(+yVec, xVec) and mag / 2.
+            var angle = Math.atan2(yVec, xVec);
+            var normDist = Math.min(1.0, mag / 2.0);
             puck.x = cx + Math.cos(angle) * (normDist * maxR) - puck.width / 2;
             puck.y = cy + Math.sin(angle) * (normDist * maxR) - puck.height / 2;
         }
     }
 
     onRgbOffsetChanged: syncPuckFromRgb()
+    onVisibleChanged: if (visible) syncPuckFromRgb()
+    Component.onCompleted: syncPuckFromRgb()
 
     function resetWheel() {
-        root.rgbOffset = [0.0, 0.0, 0.0];
-        root.lumaOffset = 0.0;
-        lumaSlider.value = 0.0;
         puck.x = wheelContainer.width / 2 - puck.width / 2;
         puck.y = wheelContainer.height / 2 - puck.height / 2;
-        root.wheelChanged(root.rgbOffset, root.lumaOffset);
+        root.wheelChanged([0.0, 0.0, 0.0], 0.0);
     }
 
     // Title and Values Header
@@ -120,6 +121,8 @@ ColumnLayout {
         Layout.alignment: Qt.AlignHCenter
         implicitWidth: 120
         implicitHeight: 120
+        onWidthChanged: root.syncPuckFromRgb()
+        onHeightChanged: root.syncPuckFromRgb()
 
         Canvas {
             id: wheelDisc
@@ -290,8 +293,7 @@ ColumnLayout {
             }
 
             onMoved: {
-                root.lumaOffset = lumaSlider.value;
-                root.wheelChanged(root.rgbOffset, root.lumaOffset);
+                root.wheelChanged(root.rgbOffset, lumaSlider.value);
             }
         }
 

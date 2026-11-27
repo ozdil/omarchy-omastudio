@@ -218,7 +218,7 @@ Rectangle {
                         text: Theme.iconExport
                         font.family: Theme.iconFont
                         font.pixelSize: Theme.px(10)
-                        color: Theme.bgBase
+                        color: Theme.onAccent
                     }
                     Text {
                         font.family: Theme.fontFamily
@@ -226,7 +226,7 @@ Rectangle {
                         textFormat: Text.PlainText
                         font.pixelSize: Theme.px(9)
                         font.weight: Font.Bold
-                        color: Theme.bgBase
+                        color: Theme.onAccent
                     }
                 }
 
@@ -386,6 +386,7 @@ Rectangle {
                                 anchors.fill: parent
                                 fillMode: Image.PreserveAspectCrop
                                 source: (modelData.thumbnail && modelData.thumbnail !== "") ? ("file://" + modelData.thumbnail) : ""
+                                sourceSize: Qt.size(180, 140)
                                 asynchronous: true
                                 cache: true
                                 visible: modelData.thumbnail && modelData.thumbnail !== ""
@@ -464,7 +465,7 @@ Rectangle {
                                         textFormat: Text.PlainText
                                         font.pixelSize: Theme.px(8)
                                         font.weight: Font.Bold
-                                        color: Theme.bgBase
+                                        color: Theme.onColor(Theme.accentGreen)
                                     }
                                 }
 

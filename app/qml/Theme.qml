@@ -124,8 +124,8 @@ QtObject {
         var s = String(v === undefined || v === null ? "" : v).trim();
         if (s === "") return fallback;
         var first = s.split(/\s+/)[0];
-        var hex = first.match(/^#([0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})$/);
-        if (hex) return first;
+        var hex = first.match(/^#([0-9A-Fa-f]{6})([0-9A-Fa-f]{2})?$/);
+        if (hex) return hex[2] ? ("#" + hex[2] + hex[1]) : ("#" + hex[1]);
         var hypr = first.match(/^rgba?\(([0-9A-Fa-f]{6})([0-9A-Fa-f]{2})?\)$/);
         if (hypr) return "#" + (hypr[2] || "") + hypr[1];
         var ref = first.match(/^([A-Za-z0-9_-]+)\.([A-Za-z0-9_-]+)$/);
@@ -330,6 +330,8 @@ QtObject {
         root.accentOrange = dict["orange"] || dict["color9"] || dict["color1"] || "#ff9e64";
         root.accentCyan = dict["bright_cyan"] || dict["cyan"] || dict["color6"] || dict["color14"] || "#7dcfff";
         root.urgent = dict["red"] || dict["color1"] || "#f7768e";
+        root.accentRed = dict["bright_red"] || dict["red"] || dict["color1"] || dict["color9"] || root.urgent;
+        root.accentBlue = dict["bright_blue"] || dict["blue"] || dict["color4"] || dict["color12"] || acc;
         root.accentYellow = dict["bright_yellow"] || dict["yellow"] || dict["color3"] || dict["color11"] || "#e0af68";
         root.ensureContrast();
     }
