@@ -1,6 +1,8 @@
 #ifndef OMARAW_LIBRAW_SHIM_H
 #define OMARAW_LIBRAW_SHIM_H
 
+#include <stddef.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -57,11 +59,13 @@ const unsigned short* omaraw_unpack_linear(void *handle, OmaRawCfaInfo *info, in
 int omaraw_camera_count(void);
 const char* omaraw_camera_name(int index);
 int omaraw_get_metadata(void *handle, OmaRawMetadata *meta);
-int omaraw_extract_thumb_file(void *handle, const char *dest_path);
+/* Extracts the largest embedded thumbnail into a malloc'd buffer (JPEG or P6 PPM),
+   returning NULL on error; caller must release with omaraw_free_image(). */
+unsigned char* omaraw_extract_thumb_mem(void *handle, size_t *out_size);
 /* output_color: LibRaw -o value (1 sRGB, 2 Adobe, 4 ProPhoto, 7 DCI-P3 D65, 8 Rec.2020);
    gamma_power / gamma_slope map to params.gamm[0] / gamm[1]. Call before processing. */
 int omaraw_set_output_space(void *handle, int output_color, double gamma_power, double gamma_slope);
-unsigned char* omaraw_process_image(void *handle, int half_size, int quality, int bps, int *out_w, int *out_h, int *out_colors, int *out_size);
+unsigned char* omaraw_process_image(void *handle, int half_size, int quality, int bps, int *out_w, int *out_h, int *out_colors, size_t *out_size);
 void omaraw_free_image(unsigned char *ptr);
 void omaraw_close(void *handle);
 

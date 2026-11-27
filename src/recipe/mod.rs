@@ -482,6 +482,9 @@ impl Recipe {
         r
     }
 
+    /// Maximum serialized sidecar size (16 MiB, aligned with Catalog::load_from).
+    pub const MAX_SIDECAR_BYTES: usize = 16 * 1024 * 1024;
+
     pub fn save_sidecar<P: AsRef<Path>>(&self, raw_path: P) -> io::Result<PathBuf> {
         let path = raw_path.as_ref();
         let sidecar_path = path.with_extension(format!(
@@ -491,6 +494,16 @@ impl Recipe {
 
         let json = serde_json::to_vec_pretty(self)
             .map_err(|e| io::Error::new(io::ErrorKind::InvalidData, e))?;
+        if json.len() > Self::MAX_SIDECAR_BYTES {
+            return Err(io::Error::new(
+                io::ErrorKind::InvalidData,
+                format!(
+                    "Sidecar recipe size {} exceeds maximum allowed limit {} bytes",
+                    json.len(),
+                    Self::MAX_SIDECAR_BYTES
+                ),
+            ));
+        }
 
         crate::security::atomic_write_user(&sidecar_path, &json)?;
         Ok(sidecar_path)
@@ -509,21 +522,21 @@ impl Recipe {
     pub fn load_sidecar<P: AsRef<Path>>(raw_path: P) -> Option<Self> {
         let path = raw_path.as_ref();
         let ext = path.extension().and_then(|s| s.to_str()).unwrap_or("raw");
-        
-        // Check primary .omastudio sidecar first
-        let studio_sidecar = path.with_extension(format!("{}.omastudio", ext));
-        if let Ok(data) = crate::security::read_secure_file(&studio_sidecar, 1024 * 1024)
-            && let Ok(recipe) = serde_json::from_slice(&data)
-        {
-            return Some(recipe);
-        }
 
-        // Fallback to legacy .omaraw sidecar
-        let legacy_sidecar = path.with_extension(format!("{}.omaraw", ext));
-        if let Ok(data) = crate::security::read_secure_file(&legacy_sidecar, 1024 * 1024)
-            && let Ok(recipe) = serde_json::from_slice(&data)
-        {
-            return Some(recipe);
+        for suffix in ["omastudio", "omaraw"] {
+            let sidecar = path.with_extension(format!("{ext}.{suffix}"));
+            match crate::security::read_secure_file(&sidecar, Self::MAX_SIDECAR_BYTES) {
+                Ok(data) => match serde_json::from_slice(&data) {
+                    Ok(recipe) => return Some(recipe),
+                    Err(e) => {
+                        eprintln!("omastudio-engine: failed to parse sidecar {}: {e}", sidecar.display());
+                    }
+                },
+                Err(e) if e.kind() == io::ErrorKind::NotFound => {}
+                Err(e) => {
+                    eprintln!("omastudio-engine: failed to read sidecar {}: {e}", sidecar.display());
+                }
+            }
         }
         None
     }

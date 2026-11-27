@@ -162,8 +162,11 @@ impl JevClient {
     }
 
     /// Validates that an API key is non-empty and contains only safe printable ASCII characters
+    /// (excluding quotes and backslashes that could affect config formatting).
     pub fn is_valid_api_key(key: &str) -> bool {
-        !key.is_empty() && key.chars().all(|c| c.is_ascii_graphic())
+        !key.is_empty()
+            && key.len() <= 512
+            && key.chars().all(|c| c.is_ascii_graphic() && c != '"' && c != '\\')
     }
 
     /// Queries the Jev System 1 model with structured state and typed questions
@@ -267,7 +270,11 @@ impl JevClient {
             .arg("--")
             .arg(&self.config.endpoint);
 
-        let curl_config = format!("header = \"Authorization: Bearer {}\"\n", self.config.api_key);
+        let escaped_header = crate::security::escape_curl_config_value(&format!(
+            "Authorization: Bearer {}",
+            self.config.api_key
+        ))?;
+        let curl_config = format!("header = \"{escaped_header}\"\n");
         let timeout = Duration::from_secs(effective_timeout + 2);
         let (exit_code, stdout, stderr) = run_bounded_command_with_stdin(cmd, timeout, Some(curl_config.as_bytes()))
             .map_err(|e| format!("Jev command execution failed: {}", e))?;

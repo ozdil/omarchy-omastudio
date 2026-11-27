@@ -29,14 +29,27 @@ impl CfaFrame {
     /// `raw` must point to at least `raw_pitch * raw_height` values that stay valid
     /// for the duration of the call.
     pub unsafe fn from_libraw(raw: *const u16, info: &COmaRawCfaInfo) -> Option<Self> {
-        let (width, height) = (info.width.max(0) as usize, info.height.max(0) as usize);
-        let pitch = info.raw_pitch.max(0) as usize;
-        let (top, left) = (info.top_margin.max(0) as usize, info.left_margin.max(0) as usize);
-        if raw.is_null() || width < 6 || height < 6 || top + height > info.raw_height as usize || left + width > pitch {
+        let width = usize::try_from(info.width).ok()?;
+        let height = usize::try_from(info.height).ok()?;
+        let raw_height = usize::try_from(info.raw_height).ok()?;
+        let pitch = usize::try_from(info.raw_pitch).ok()?;
+        let top = usize::try_from(info.top_margin).ok()?;
+        let left = usize::try_from(info.left_margin).ok()?;
+        let ph = usize::try_from(info.black_pattern_h).ok()?;
+        let pw = usize::try_from(info.black_pattern_w).ok()?;
+        let top_end = top.checked_add(height)?;
+        let left_end = left.checked_add(width)?;
+        let plane_len = pitch.checked_mul(raw_height)?;
+        let data_len = width.checked_mul(height)?;
+        if raw.is_null() || width < 6 || height < 6 || top_end > raw_height || left_end > pitch {
             return None;
         }
-        // SAFETY: the caller guarantees raw_pitch * raw_height readable values
-        let plane = unsafe { std::slice::from_raw_parts(raw, pitch * info.raw_height as usize) };
+        if ph > 0 && pw > 0 && !ph.checked_mul(pw).is_some_and(|n| n <= info.black_pattern.len()) {
+            return None;
+        }
+        // SAFETY: the caller guarantees raw_pitch * raw_height readable values, and all
+        // dimensions and plane_len have been verified non-negative and overflow-free above.
+        let plane = unsafe { std::slice::from_raw_parts(raw, plane_len) };
 
         let pattern = if info.filters == 9 {
             let mut xt = [[0u8; 6]; 6];
@@ -72,16 +85,15 @@ impl CfaFrame {
 
         // LibRaw's adjust_maximum_thr (0.75): when the brightest photosite is close to the
         // nominal white level, it is the real clipping point. Same rule, same brightness.
-        let data_max = (top..top + height)
+        let data_max = (top..top_end)
             .into_par_iter()
-            .map(|y| plane[y * pitch + left..y * pitch + left + width].iter().copied().max().unwrap_or(0))
+            .map(|y| plane[y * pitch + left..y * pitch + left_end].iter().copied().max().unwrap_or(0))
             .max()
             .unwrap_or(0) as f32;
         let white = if data_max > 0.75 * info.white && data_max < info.white { data_max } else { info.white };
-        let (ph, pw) = (info.black_pattern_h.max(0) as usize, info.black_pattern_w.max(0) as usize);
-        let mut data = vec![0f32; width * height];
+        let mut data = vec![0f32; data_len];
         data.par_chunks_mut(width).enumerate().for_each(|(y, row)| {
-            let src = &plane[(y + top) * pitch + left..(y + top) * pitch + left + width];
+            let src = &plane[(y + top) * pitch + left..(y + top) * pitch + left_end];
             for (x, out) in row.iter_mut().enumerate() {
                 let c = pattern.color(y, x);
                 let mut black = info.black[c];
@@ -155,17 +167,30 @@ impl LinearFrame {
     /// `raw` must point to at least `raw_pitch * raw_height * stride` values that stay
     /// valid for the duration of the call.
     pub unsafe fn from_libraw(raw: *const u16, info: &COmaRawCfaInfo, stride: usize) -> Option<Self> {
-        let (width, height) = (info.width.max(0) as usize, info.height.max(0) as usize);
-        let pitch = info.raw_pitch.max(0) as usize;
-        let (top, left) = (info.top_margin.max(0) as usize, info.left_margin.max(0) as usize);
+        let width = usize::try_from(info.width).ok()?;
+        let height = usize::try_from(info.height).ok()?;
+        let raw_height = usize::try_from(info.raw_height).ok()?;
+        let pitch = usize::try_from(info.raw_pitch).ok()?;
+        let top = usize::try_from(info.top_margin).ok()?;
+        let left = usize::try_from(info.left_margin).ok()?;
+        let ph = usize::try_from(info.black_pattern_h).ok()?;
+        let pw = usize::try_from(info.black_pattern_w).ok()?;
+        let top_end = top.checked_add(height)?;
+        let left_end = left.checked_add(width)?;
+        let plane_len = pitch.checked_mul(raw_height)?.checked_mul(stride)?;
         if raw.is_null() || !matches!(stride, 1 | 3 | 4) || width < 2 || height < 2
-            || top + height > info.raw_height as usize || left + width > pitch
+            || top_end > raw_height || left_end > pitch
         {
             return None;
         }
-        // SAFETY: the caller guarantees raw_pitch * raw_height * stride readable values
-        let plane = unsafe { std::slice::from_raw_parts(raw, pitch * info.raw_height as usize * stride) };
+        if ph > 0 && pw > 0 && !ph.checked_mul(pw).is_some_and(|n| n <= info.black_pattern.len()) {
+            return None;
+        }
         let channels = if stride == 1 { 1 } else { 3 };
+        let data_len = width.checked_mul(height)?.checked_mul(channels)?;
+        // SAFETY: the caller guarantees raw_pitch * raw_height * stride readable values,
+        // and all dimensions and plane_len have been verified non-negative and overflow-free.
+        let plane = unsafe { std::slice::from_raw_parts(raw, plane_len) };
 
         // Monochrome has no white balance; colour uses the as-shot balance normalised so
         // the weakest channel is 1, as for mosaic sensors
@@ -184,8 +209,7 @@ impl LinearFrame {
         if white <= 0.0 {
             return None;
         }
-        let (ph, pw) = (info.black_pattern_h.max(0) as usize, info.black_pattern_w.max(0) as usize);
-        let mut data = vec![0f32; width * height * channels];
+        let mut data = vec![0f32; data_len];
         data.par_chunks_mut(width * channels).enumerate().for_each(|(y, row)| {
             let base = ((y + top) * pitch + left) * stride;
             for x in 0..width {
@@ -459,5 +483,36 @@ mod tests {
                 }
             }
         }
+    }
+
+    #[test]
+    fn from_libraw_rejects_invalid_dimensions_and_black_pattern_overflow() {
+        let plane = [1000u16; 64];
+
+        let mut bad_neg = linear_info(6, 6);
+        bad_neg.filters = 0x9494_9494;
+        bad_neg.raw_height = -1;
+        // SAFETY: from_libraw validates info bounds before dereferencing plane.
+        assert!(unsafe { CfaFrame::from_libraw(plane.as_ptr(), &bad_neg) }.is_none());
+        // SAFETY: from_libraw validates info bounds before dereferencing plane.
+        assert!(unsafe { LinearFrame::from_libraw(plane.as_ptr(), &bad_neg, 1) }.is_none());
+
+        let mut bad_pat = linear_info(6, 6);
+        bad_pat.filters = 0x9494_9494;
+        bad_pat.black_pattern_h = 7;
+        bad_pat.black_pattern_w = 7;
+        // SAFETY: from_libraw rejects ph * pw > 36 before indexing black_pattern.
+        assert!(unsafe { CfaFrame::from_libraw(plane.as_ptr(), &bad_pat) }.is_none());
+        // SAFETY: from_libraw rejects ph * pw > 36 before indexing black_pattern.
+        assert!(unsafe { LinearFrame::from_libraw(plane.as_ptr(), &bad_pat, 1) }.is_none());
+
+        let mut wrap_pat = linear_info(6, 6);
+        wrap_pat.filters = 0x9494_9494;
+        wrap_pat.black_pattern_h = 65536;
+        wrap_pat.black_pattern_w = 65536;
+        // SAFETY: from_libraw rejects huge ph/pw before dereferencing plane.
+        assert!(unsafe { CfaFrame::from_libraw(plane.as_ptr(), &wrap_pat) }.is_none());
+        // SAFETY: from_libraw rejects huge ph/pw before dereferencing plane.
+        assert!(unsafe { LinearFrame::from_libraw(plane.as_ptr(), &wrap_pat, 1) }.is_none());
     }
 }

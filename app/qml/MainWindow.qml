@@ -1213,7 +1213,8 @@ Rectangle {
     function writeXmp(force) {
         if (root.activePhotoPath === "" || xmpProc.running) return "Error: no photo open or busy";
         xmpProc.action = "export";
-        var cmd = [root.resolveEnginePath(), "xmp", "export", root.activePhotoPath, "--recipe", JSON.stringify(root.buildRecipeObject())];
+        xmpProc.recipeJson = JSON.stringify(root.buildRecipeObject());
+        var cmd = [root.resolveEnginePath(), "xmp", "export", root.activePhotoPath, "--recipe", "-"];
         if (force) cmd.push("--force");
         xmpProc.command = cmd;
         xmpProc.running = true;
@@ -1222,7 +1223,15 @@ Rectangle {
 
     Process {
         id: xmpProc
+        stdinEnabled: true
         property string action: ""
+        property string recipeJson: ""
+        onStarted: {
+            if (xmpProc.action === "export") {
+                xmpProc.write(xmpProc.recipeJson + "\n");
+                xmpProc.recipeJson = "";
+            }
+        }
         onFinished: function(exitCode, output) {
             var resp;
             try { resp = JSON.parse(String(output || "")); } catch (e) { resp = { "success": false, "error": qsTr("No answer from the engine") }; }
@@ -2072,8 +2081,16 @@ Rectangle {
     Process {
         id: cloudConnectProc
         splitLines: true
+        stdinEnabled: true
         property string provider: ""
         property bool succeeded: false
+        property string pendingSecret: ""
+        onStarted: {
+            if (cloudConnectProc.pendingSecret !== "") {
+                cloudConnectProc.write(cloudConnectProc.pendingSecret + "\n");
+                cloudConnectProc.pendingSecret = "";
+            }
+        }
         onLineRead: function(line) {
             try {
                 var msg = JSON.parse(line);
@@ -3809,7 +3826,14 @@ Rectangle {
                 cloudDialog.deviceCode = "";
                 cloudDialog.connectingLabel = label;
                 var cmd = [root.resolveEnginePath(), "cloud", "connect", provider];
-                if (clientId !== "") cmd = cmd.concat(["--client-id", clientId, "--client-secret", clientSecret]);
+                cloudConnectProc.pendingSecret = "";
+                if (clientId !== "") {
+                    cmd = cmd.concat(["--client-id", clientId]);
+                    if (clientSecret !== "") {
+                        cmd.push("--client-secret-stdin");
+                        cloudConnectProc.pendingSecret = clientSecret;
+                    }
+                }
                 cloudConnectProc.provider = provider;
                 cloudConnectProc.succeeded = false;
                 cloudConnectProc.command = cmd;

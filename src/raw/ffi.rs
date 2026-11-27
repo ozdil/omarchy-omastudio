@@ -42,8 +42,9 @@ pub struct COmaRawCfaInfo {
     pub rgb_cam: [[c_float; 4]; 3],
 }
 
+// SAFETY: declarations match src/raw/libraw_shim.h compiled into static lib omaraw_shim;
+// LibRaw linking is emitted dynamically by build.rs via pkg-config.
 #[link(name = "omaraw_shim", kind = "static")]
-#[link(name = "raw_r")]
 unsafe extern "C" {
     pub fn omaraw_open(path: *const c_char, errcode: *mut c_int) -> *mut c_void;
     pub fn omaraw_unpack_cfa(handle: *mut c_void, info: *mut COmaRawCfaInfo) -> *const u16;
@@ -51,7 +52,7 @@ unsafe extern "C" {
     pub fn omaraw_camera_count() -> c_int;
     pub fn omaraw_camera_name(index: c_int) -> *const c_char;
     pub fn omaraw_get_metadata(handle: *mut c_void, meta: *mut COmaRawMetadata) -> c_int;
-    pub fn omaraw_extract_thumb_file(handle: *mut c_void, dest_path: *const c_char) -> c_int;
+    pub fn omaraw_extract_thumb_mem(handle: *mut c_void, out_size: *mut usize) -> *mut c_uchar;
     pub fn omaraw_set_output_space(
         handle: *mut c_void,
         output_color: c_int,
@@ -66,7 +67,7 @@ unsafe extern "C" {
         out_w: *mut c_int,
         out_h: *mut c_int,
         out_colors: *mut c_int,
-        out_size: *mut c_int,
+        out_size: *mut usize,
     ) -> *mut c_uchar;
     pub fn omaraw_free_image(ptr: *mut c_uchar);
     pub fn omaraw_close(handle: *mut c_void);

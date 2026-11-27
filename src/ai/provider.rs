@@ -108,13 +108,15 @@ pub fn api_key(p: &Provider) -> Option<String> {
 }
 
 fn valid_key(key: &str) -> bool {
-    !key.is_empty() && key.len() <= 512 && key.chars().all(|c| c.is_ascii_graphic())
+    !key.is_empty()
+        && key.len() <= 512
+        && key.chars().all(|c| c.is_ascii_graphic() && c != '"' && c != '\\')
 }
 
 pub fn store_key(p: &Provider, key: &str) -> Result<(), String> {
     let key = key.trim();
     if !valid_key(key) {
-        return Err("The key is empty or contains spaces or control characters".to_string());
+        return Err("The key is empty or contains spaces, quotes, backslashes, or control characters".to_string());
     }
     let mut cmd = secret_tool();
     let label = format!("OmaStudio {} API key", p.name);
@@ -156,7 +158,11 @@ fn curl(url: &str, headers: &[String], body: Option<&std::path::Path>, timeout: 
         cmd.args(["-X", "POST", "--data-binary"]).arg(format!("@{}", body.display()));
     }
     cmd.args(["--", url]);
-    let config: String = headers.iter().map(|h| format!("header = \"{}\"\n", h.replace('"', "\\\""))).collect();
+    let mut config = String::new();
+    for h in headers {
+        let escaped = security::escape_curl_config_value(h)?;
+        config.push_str(&format!("header = \"{escaped}\"\n"));
+    }
     let (code, out, err) = run_bounded_command_with_stdin(cmd, timeout + Duration::from_secs(5), Some(config.as_bytes()))
         .map_err(|e| format!("Cannot run curl: {e}"))?;
     if code != 0 {

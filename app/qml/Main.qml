@@ -83,8 +83,10 @@ Window {
         function take(id, path) {
             if (callId >= 0) return "Error: a screenshot is already being taken";
             if (!win.visible) return "Error: window not visible";
+            var safePath = Host.validateScreenshotPath(path);
+            if (safePath === "") return "Error: screenshot path must be a .png inside an allowed folder";
             callId = id;
-            out = path;
+            out = safePath;
             if (!win.contentItem.grabToImage(function(r) { shot.finish(id, r); })) {
                 callId = -1;
                 return "Error: window not visible";

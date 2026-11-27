@@ -262,8 +262,8 @@ fn test_preview_dir_ownership_and_atomic_write() {
     assert!(preview_dir.exists(), "Preview directory must exist");
     let meta = fs::symlink_metadata(&preview_dir).expect("Preview dir metadata");
     assert!(!meta.file_type().is_symlink(), "Preview dir must not be a symlink");
-    let current_uid = unsafe { libc::getuid() };
-    assert_eq!(std::os::unix::fs::MetadataExt::uid(&meta), current_uid, "Preview dir must be owned by current user");
+    let current = current_uid();
+    assert_eq!(std::os::unix::fs::MetadataExt::uid(&meta), current, "Preview dir must be owned by current user");
 
     let test_ppm = preview_dir.join("test_secure_preview.ppm");
     let dummy_ppm = b"P6\n2 2\n255\n\xff\x00\x00\x00\xff\x00\x00\x00\xff\xff\xff\xff";
@@ -340,3 +340,75 @@ fn test_secure_command_memory_limit_enforcement() {
     assert_eq!(code, 0);
 }
 
+#[test]
+fn test_bounded_command_large_stdin_multiplexing_no_deadlock() {
+    // 256 KiB exceeds the 64 KiB Linux pipe buffer, so a synchronous stdin write
+    // before reading stdout would deadlock against `cat`.
+    let payload = vec![b'A'; 256 * 1024];
+    let cmd = secure_command("cat");
+    let (code, stdout, stderr) = run_bounded_command_with_stdin(cmd, Duration::from_secs(5), Some(&payload))
+        .expect("large stdin echo must complete without deadlock");
+    assert_eq!(code, 0);
+    assert_eq!(stdout.len(), payload.len());
+    assert!(stderr.is_empty());
+}
+
+#[test]
+fn test_bounded_command_streaming_drains_large_stderr_without_deadlock() {
+    // Emit >1.2 MiB to stderr (exceeding MAX_COMMAND_OUTPUT_BYTES) and ensure the
+    // streaming runner drains all bytes without stalling child exit.
+    let mut cmd = secure_command("sh");
+    cmd.args(["-c", "i=0; while [ $i -lt 20000 ]; do printf 'line-%05d-01234567890123456789012345678901234567890123456789\\n' $i >&2; i=$((i+1)); done; printf 'done'"]);
+    let mut seen_lines = 0usize;
+    let (code, stdout, stderr) = run_bounded_command_streaming(cmd, Duration::from_secs(10), &mut |_| {
+        seen_lines += 1;
+    })
+    .expect("streaming command with >1 MiB stderr must complete cleanly");
+    assert_eq!(code, 0);
+    assert_eq!(stdout, b"done");
+    assert_eq!(seen_lines, 20000);
+    assert!(stderr.len() <= MAX_COMMAND_OUTPUT_BYTES);
+}
+
+#[test]
+fn test_escape_curl_config_value_and_api_key_validation() {
+    assert_eq!(escape_curl_config_value("Authorization: Bearer abc\\def\"ghi").unwrap(), r#"Authorization: Bearer abc\\def\"ghi"#);
+    assert_eq!(escape_curl_config_value("trailing\\").unwrap(), r#"trailing\\"#);
+    assert!(escape_curl_config_value("bad\nheader").is_err());
+    assert!(escape_curl_config_value("bad\rheader").is_err());
+    assert!(escape_curl_config_value("bad\0header").is_err());
+
+    use omastudio_engine::ai::jev::JevClient;
+    assert!(JevClient::is_valid_api_key("sk-valid-key_123.456"));
+    assert!(!JevClient::is_valid_api_key("bad\"quote"));
+    assert!(!JevClient::is_valid_api_key("bad\\slash"));
+    assert!(!JevClient::is_valid_api_key(""));
+}
+
+#[test]
+fn test_sidecar_supports_multi_megabyte_recipes() {
+    let dir = PathBuf::from(format!("/tmp/omaraw_test_large_sidecar_{}", std::process::id()));
+    let _ = fs::remove_dir_all(&dir);
+    fs::create_dir_all(&dir).unwrap();
+    let raw = dir.join("DSCF0001.RAF");
+    fs::write(&raw, b"dummy").unwrap();
+
+    // Create a recipe whose serialized JSON exceeds the old 1 MiB limit (~1.5 MiB)
+    let recipe = Recipe {
+        preset_name: Some("x".repeat(1_500_000)),
+        ..Default::default()
+    };
+    let sidecar = recipe.save_sidecar(&raw).expect("1.5 MiB sidecar must save");
+    let loaded = Recipe::load_sidecar(&raw).expect("1.5 MiB sidecar must load");
+    assert_eq!(loaded.preset_name, recipe.preset_name);
+    assert!(sidecar.exists());
+
+    // Sidecars exceeding MAX_SIDECAR_BYTES (16 MiB) must fail explicitly on save
+    let huge = Recipe {
+        preset_name: Some("x".repeat(Recipe::MAX_SIDECAR_BYTES + 1024)),
+        ..Default::default()
+    };
+    assert!(huge.save_sidecar(&raw).is_err());
+
+    let _ = fs::remove_dir_all(&dir);
+}

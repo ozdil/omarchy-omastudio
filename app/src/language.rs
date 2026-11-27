@@ -38,12 +38,7 @@ pub fn omarchy_file() -> Option<PathBuf> {
 /// code from `omarchy language list` ("tr", "pt-BR", "zh-TW", "no").
 pub fn omarchy() -> Option<String> {
     let path = omarchy_file()?;
-    let ok = std::fs::metadata(&path).is_ok_and(|m| m.is_file() && m.len() <= MAX_BYTES);
-    if !ok {
-        return None;
-    }
-    let mut text = String::new();
-    std::fs::File::open(&path).and_then(|f| f.take(MAX_BYTES).read_to_string(&mut text)).ok()?;
+    let text = read_regular_bounded(&path, MAX_BYTES)?;
     omarchy_code(&text)
 }
 
@@ -57,15 +52,9 @@ fn omarchy_code(text: &str) -> Option<String> {
 /// The language the user picked in the application ("" when it follows the system).
 pub fn stored() -> String {
     let Some(path) = config_file() else { return String::new() };
-    // A regular file of a few bytes; symlinks are not followed
-    let ok = std::fs::symlink_metadata(&path).is_ok_and(|m| m.file_type().is_file() && m.len() <= MAX_BYTES);
-    if !ok {
-        return String::new();
-    }
-    let mut text = String::new();
-    let read = std::fs::File::open(&path).and_then(|f| f.take(MAX_BYTES).read_to_string(&mut text));
-    match read {
-        Ok(_) => best_match(text.trim()).unwrap_or_default(),
+    // Regular file of a few bytes; symlinks are rejected via O_NOFOLLOW
+    match crate::host::read_private_file_bounded(&path, MAX_BYTES) {
+        Ok(text) => best_match(text.trim()).unwrap_or_default(),
         Err(_) => String::new(),
     }
 }
@@ -82,12 +71,7 @@ pub fn store(code: &str) -> std::io::Result<()> {
             _ => Ok(()),
         };
     }
-    let Some(dir) = path.parent() else { return Ok(()) };
-    std::fs::create_dir_all(dir)?;
-    let tmp = dir.join(".language.tmp");
-    let _ = std::fs::remove_file(&tmp);
-    std::fs::write(&tmp, format!("{code}\n"))?;
-    std::fs::rename(&tmp, &path)
+    crate::host::write_private_file_atomic(&path, format!("{code}\n").as_bytes())
 }
 
 /// The system language: Omarchy's own language setting, which the desktop applies at
@@ -120,13 +104,21 @@ fn from_list(value: &str) -> Option<String> {
     value.split(':').find_map(best_match)
 }
 
-/// `KEY=value` lines as written by localectl; LANGUAGE, LC_MESSAGES, then LANG.
-fn read_locale_conf(path: &std::path::Path) -> Option<String> {
-    let ok = std::fs::metadata(path).is_ok_and(|m| m.is_file() && m.len() <= 4096);
-    if !ok {
+/// Opens `path`, verifies the open descriptor is a regular file, and reads at most `max_bytes`.
+fn read_regular_bounded(path: &std::path::Path, max_bytes: u64) -> Option<String> {
+    let file = std::fs::File::open(path).ok()?;
+    let meta = file.metadata().ok()?;
+    if !meta.file_type().is_file() {
         return None;
     }
-    let text = std::fs::read_to_string(path).ok()?;
+    let mut text = String::new();
+    file.take(max_bytes + 1).read_to_string(&mut text).ok()?;
+    (text.len() as u64 <= max_bytes).then_some(text)
+}
+
+/// `KEY=value` lines as written by localectl; LANGUAGE, LC_MESSAGES, then LANG.
+fn read_locale_conf(path: &std::path::Path) -> Option<String> {
+    let text = read_regular_bounded(path, 4096)?;
     locale_from_conf(&text)
 }
 
