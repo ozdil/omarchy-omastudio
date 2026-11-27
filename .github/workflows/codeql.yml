@@ -22,14 +22,14 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@1fc58d04a4d4374f921bdac573c3811c240f9c26 # v4.39.2
+        uses: github/codeql-action/init@915412ff23e8b7659517e607487dbeae018f2934 # v4.39.5
         with:
           # The Rust engine, application, workflows, and Python tools are analysed from source
           languages: actions, rust, python
           build-mode: none
 
       - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@1fc58d04a4d4374f921bdac573c3811c240f9c26 # v4.39.2
+        uses: github/codeql-action/analyze@915412ff23e8b7659517e607487dbeae018f2934 # v4.39.5
 
   analyze-c:
     name: CodeQL C Shim Scan (libraw_shim.c)
@@ -42,7 +42,7 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y --no-install-recommends libraw-dev pkg-config clang
 
       - name: Initialize CodeQL (C/C++)
-        uses: github/codeql-action/init@1fc58d04a4d4374f921bdac573c3811c240f9c26 # v4.39.2
+        uses: github/codeql-action/init@915412ff23e8b7659517e607487dbeae018f2934 # v4.39.5
         with:
           languages: c-cpp
           build-mode: manual
@@ -53,4 +53,4 @@ jobs:
           clang -c -I src/raw src/raw/libraw_shim.c -o /tmp/libraw_shim.o $(pkg-config --cflags libraw_r)
 
       - name: Perform CodeQL Analysis (C/C++)
-        uses: github/codeql-action/analyze@1fc58d04a4d4374f921bdac573c3811c240f9c26 # v4.39.2
+        uses: github/codeql-action/analyze@915412ff23e8b7659517e607487dbeae018f2934 # v4.39.5
