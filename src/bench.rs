@@ -17,6 +17,8 @@ pub struct BenchRow {
     pub interactive: bool,
     pub median_ms: f64,
     pub min_ms: f64,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub gpu_pass_ms: Option<f64>,
 }
 
 #[derive(Serialize)]
@@ -101,6 +103,10 @@ fn ms(d: Duration) -> f64 {
     (d.as_secs_f64() * 1e5).round() / 100.0
 }
 
+fn round_ms(val: f64) -> f64 {
+    (val * 100.0).round() / 100.0
+}
+
 pub fn run(photo: Option<&str>, runs: usize) -> Result<BenchReport, String> {
     let runs = runs.clamp(1, 50);
     let (source, buf, w, h, ch, transfer, decode_ms) = match photo {
@@ -118,23 +124,50 @@ pub fn run(photo: Option<&str>, runs: usize) -> Result<BenchReport, String> {
         }
     };
 
+    omastudio_engine::gpu::set_bench_profiling(true);
     let mut rows = Vec::new();
     for interactive in [true, false] {
         pipeline::set_interactive(interactive);
         for (stage, recipe) in stages() {
-            // One warm-up run fills the film simulation and LUT caches
-            let _ = pipeline::process_buffer_16_to_8_ex(&buf, w, h, ch, &recipe, transfer, false, false);
-            let mut times: Vec<Duration> = (0..runs)
-                .map(|_| {
-                    let t = Instant::now();
+            let preview_key = omastudio_engine::gpu::preview_source_key(
+                1,
+                &recipe.retouch,
+                w as usize,
+                h as usize,
+                ch as usize,
+            );
+            // One warm-up run fills the film simulation, LUT, and GPU-resident source caches
+            omastudio_engine::gpu::with_preview_source_key(preview_key, || {
+                let _ = pipeline::process_buffer_16_to_8_ex(&buf, w, h, ch, &recipe, transfer, false, false);
+            });
+            let _ = omastudio_engine::gpu::take_last_gpu_pass_ms();
+
+            let mut times: Vec<Duration> = Vec::with_capacity(runs);
+            let mut gpu_times: Vec<f64> = Vec::with_capacity(runs);
+            for _ in 0..runs {
+                let _ = omastudio_engine::gpu::take_last_gpu_pass_ms();
+                let t = Instant::now();
+                omastudio_engine::gpu::with_preview_source_key(preview_key, || {
                     let _ = pipeline::process_buffer_16_to_8_ex(&buf, w, h, ch, &recipe, transfer, false, false);
-                    t.elapsed()
-                })
-                .collect();
+                });
+                times.push(t.elapsed());
+                if let Some(gpu_ms) = omastudio_engine::gpu::take_last_gpu_pass_ms() {
+                    gpu_times.push(gpu_ms);
+                }
+            }
             times.sort();
-            rows.push(BenchRow { stage, interactive, median_ms: ms(times[times.len() / 2]), min_ms: ms(times[0]) });
+            gpu_times.sort_by(f64::total_cmp);
+            let gpu_pass_ms = (!gpu_times.is_empty()).then(|| round_ms(gpu_times[gpu_times.len() / 2]));
+            rows.push(BenchRow {
+                stage,
+                interactive,
+                median_ms: ms(times[times.len() / 2]),
+                min_ms: ms(times[0]),
+                gpu_pass_ms,
+            });
         }
     }
+    omastudio_engine::gpu::set_bench_profiling(false);
     pipeline::set_interactive(false);
 
     Ok(BenchReport {

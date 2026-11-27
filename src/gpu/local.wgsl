@@ -44,6 +44,9 @@ struct Params {
 @group(0) @binding(5) var<storage, read_write> hist: array<atomic<u32>>;
 // The adjustment layers, packed by gpu::layers::pack
 @group(0) @binding(6) var<storage, read> lay: array<f32>;
+// Precomputed 0.2126*r, 0.7152*g, 0.0722*b terms (768 floats = 192 vec4<f32>, 3072 B)
+// in uniform memory so luma8 avoids global atomicLoads while preserving 0-ULP CPU parity.
+@group(0) @binding(7) var<uniform> luma_terms: array<vec4<f32>, 192>;
 
 const CHUNK: u32 = 32u;
 
@@ -75,7 +78,7 @@ fn luma_init(@builtin(global_invocation_id) id: vec3<u32>) {
 }
 
 // Box blur along rows, clamped at the edges: each thread slides a window over CHUNK
-// pixels of one row (presence::fast_separable_blur, horizontal pass)
+// pixels of one row (presence::fast_separable_blur, horizontal pass; used for r > 64)
 @compute @workgroup_size(64, 1, 1)
 fn blur_h(@builtin(global_invocation_id) id: vec3<u32>) {
     let y = id.y;
@@ -100,7 +103,7 @@ fn blur_h(@builtin(global_invocation_id) id: vec3<u32>) {
     }
 }
 
-// The vertical pass: each thread slides down CHUNK rows of one column
+// The vertical pass: each thread slides down CHUNK rows of one column (used for r > 64)
 @compute @workgroup_size(64, 1, 1)
 fn blur_v(@builtin(global_invocation_id) id: vec3<u32>) {
     let x = id.x;
@@ -122,6 +125,80 @@ fn blur_v(@builtin(global_invocation_id) id: vec3<u32>) {
         pl[db + y * p.w] = sum * inv;
         let yi = i32(y);
         sum += pl[sb + u32(min(yi + r + 1, last)) * p.w] - pl[sb + u32(max(yi - r, 0)) * p.w];
+    }
+}
+
+// Shared-memory horizontal box blur for r <= 64: 256 pixels + 2*64 halo = 384 floats (1.5 KiB)
+var<workgroup> h_tile: array<f32, 384>;
+
+@compute @workgroup_size(256, 1, 1)
+fn blur_h_tiled(
+    @builtin(local_invocation_index) li: u32,
+    @builtin(workgroup_id) wg: vec3<u32>,
+) {
+    let y = wg.y;
+    let x_base = wg.x * 256u;
+    let r = i32(p.r);
+    let last = i32(p.w) - 1;
+    let sb = plane(p.src) + y * p.w;
+    let span = 256u + 2u * p.r;
+    if (y < p.h) {
+        for (var idx = li; idx < span; idx += 256u) {
+            let sx = clamp(i32(x_base) + i32(idx) - r, 0, last);
+            h_tile[idx] = pl[sb + u32(sx)];
+        }
+    }
+    workgroupBarrier();
+    let x = x_base + li;
+    if (y >= p.h || x >= p.w) {
+        return;
+    }
+    var sum = 0.0;
+    let end = li + 2u * p.r;
+    for (var k = li; k <= end; k++) {
+        sum += h_tile[k];
+    }
+    pl[plane(p.dst) + y * p.w + x] = sum / f32(2 * r + 1);
+}
+
+// Shared-memory vertical box blur for r <= 64: 16 coalesced columns x (64 + 2*64) rows = 3072 floats (12 KiB)
+var<workgroup> v_tile: array<f32, 3072>;
+
+@compute @workgroup_size(16, 16, 1)
+fn blur_v_tiled(
+    @builtin(local_invocation_id) lid: vec3<u32>,
+    @builtin(workgroup_id) wg: vec3<u32>,
+) {
+    let gx = wg.x * 16u + lid.x;
+    let y_base = wg.y * 64u;
+    let r = i32(p.r);
+    let last = i32(p.h) - 1;
+    let total_rows = 64u + 2u * p.r;
+    let sb = plane(p.src);
+    if (gx < p.w) {
+        for (var row = lid.y; row < total_rows; row += 16u) {
+            let gy = clamp(i32(y_base) + i32(row) - r, 0, last);
+            v_tile[row * 16u + lid.x] = pl[sb + u32(gy) * p.w + gx];
+        }
+    }
+    workgroupBarrier();
+    let y0 = y_base + lid.y * 4u;
+    if (gx >= p.w || y0 >= p.h) {
+        return;
+    }
+    let db = plane(p.dst);
+    let inv = 1.0 / f32(2 * r + 1);
+    let row0 = lid.y * 4u;
+    var sum = 0.0;
+    for (var k = 0u; k <= 2u * p.r; k++) {
+        sum += v_tile[(row0 + k) * 16u + lid.x];
+    }
+    let y1 = min(y0 + 4u, p.h);
+    for (var j = 0u; y0 + j < y1; j++) {
+        pl[db + (y0 + j) * p.w + gx] = sum * inv;
+        if (y0 + j + 1u < y1) {
+            sum += v_tile[(row0 + j + 2u * p.r + 1u) * 16u + lid.x] - v_tile[(row0 + j) * 16u + lid.x];
+        }
     }
 }
 
@@ -698,15 +775,17 @@ fn pack3(@builtin(global_invocation_id) id: vec3<u32>) {
 // Histogram workgroups; each walks the frame with this stride. Must match HIST_GROUPS
 const HIST_GROUPS: u32 = 256u;
 
-// The CPU's 0.2126 * r, 0.7152 * g and 0.0722 * b for every level, after the counts:
-// with only additions left, the GPU can't fuse a multiply into them, so the luma
-// level (truncated) comes out exactly as on the CPU
-const LUMA_TERMS: u32 = 8450u;
+// The CPU's 0.2126 * r, 0.7152 * g and 0.0722 * b for every level, held in uniform
+// memory (binding 7): with only additions left, the GPU can't fuse a multiply into
+// them, so the luma level (truncated) comes out exactly as on the CPU without global atomics.
+fn luma_term(idx: u32) -> f32 {
+    return luma_terms[idx >> 2u][idx & 3u];
+}
 
 fn luma8(v: u32) -> u32 {
-    let r = bitcast<f32>(atomicLoad(&hist[LUMA_TERMS + (v & 255u)]));
-    let g = bitcast<f32>(atomicLoad(&hist[LUMA_TERMS + 256u + ((v >> 8u) & 255u)]));
-    let b = bitcast<f32>(atomicLoad(&hist[LUMA_TERMS + 512u + ((v >> 16u) & 255u)]));
+    let r = luma_term(v & 255u);
+    let g = luma_term(256u + ((v >> 8u) & 255u));
+    let b = luma_term(512u + ((v >> 16u) & 255u));
     return min(u32((r + g) + b), 255u);
 }
 

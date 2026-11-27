@@ -210,8 +210,44 @@ fn chroma_dist(a: vec3<f32>, b: vec3<f32>) -> f32 {
     return u * u + v * v;
 }
 
+// 4 directions x 18x18 pixels x 3 floats = 3888 floats = 15,552 B (< 16 KiB workgroup storage).
+var<workgroup> tile_ycc: array<f32, 3888>;
+
+fn tile_at(d: u32, ty: u32, tx: u32) -> vec3<f32> {
+    let base = ((d * 324u) + ty * 18u + tx) * 3u;
+    return vec3<f32>(tile_ycc[base], tile_ycc[base + 1u], tile_ycc[base + 2u]);
+}
+
 @compute @workgroup_size(16, 16)
-fn homo_pass(@builtin(global_invocation_id) id: vec3<u32>) {
+fn homo_pass(
+    @builtin(global_invocation_id) id: vec3<u32>,
+    @builtin(local_invocation_id) lid: vec3<u32>,
+    @builtin(workgroup_id) wg: vec3<u32>,
+) {
+    // Cooperatively load the 18x18 tile (16x16 core + 1-pixel halo) for all 4 directions
+    // before the barrier; early returns stay strictly after workgroupBarrier() for
+    // uniform control flow.
+    let li = lid.y * 16u + lid.x;
+    let x_base = i32(wg.x * 16u) - 1;
+    let y_base = i32(P.ext_y0 + wg.y * 16u) - 1;
+    for (var idx = li; idx < 324u; idx += 256u) {
+        let ty = idx / 18u;
+        let tx = idx % 18u;
+        let gy = y_base + i32(ty);
+        let gx = x_base + i32(tx);
+        if (gx >= 0 && gx < i32(P.width) && gy >= i32(P.ext_y0) && gy < i32(P.ext_y1)) {
+            let ei = ext_index(gy, gx);
+            for (var d = 0u; d < 4u; d++) {
+                let q = ycc(ei, d);
+                let base = ((d * 324u) + idx) * 3u;
+                tile_ycc[base] = q.x;
+                tile_ycc[base + 1u] = q.y;
+                tile_ycc[base + 2u] = q.z;
+            }
+        }
+    }
+    workgroupBarrier();
+
     let x = i32(id.x);
     let y = i32(P.ext_y0 + id.y);
     if (id.x >= P.width || u32(y) >= P.ext_y1) { return; }
@@ -221,15 +257,15 @@ fn homo_pass(@builtin(global_invocation_id) id: vec3<u32>) {
         homo[i] = 0u;
         return;
     }
+    let tx = lid.x + 1u;
+    let ty = lid.y + 1u;
     var el = BIG;
     var ec = BIG;
     for (var d = 0u; d < 4u; d++) {
         let dv = dir(i32(d));
-        let a = ext_index(y + dv.x, x + dv.y);
-        let bb = ext_index(y - dv.x, x - dv.y);
-        let c = ycc(i, d);
-        let pa = ycc(a, d);
-        let pb = ycc(bb, d);
+        let c = tile_at(d, ty, tx);
+        let pa = tile_at(d, u32(i32(ty) + dv.x), u32(i32(tx) + dv.y));
+        let pb = tile_at(d, u32(i32(ty) - dv.x), u32(i32(tx) - dv.y));
         let dl = max(abs(c.x - pa.x), abs(c.x - pb.x));
         let dc = max(chroma_dist(c, pa), chroma_dist(c, pb));
         el = min(el, dl);
@@ -241,11 +277,11 @@ fn homo_pass(@builtin(global_invocation_id) id: vec3<u32>) {
     ec = ec * (1.0 + HOMO_SLACK_REL) + HOMO_SLACK_C;
     var packed = 0u;
     for (var d = 0u; d < 4u; d++) {
-        let c = ycc(i, d);
+        let c = tile_at(d, ty, tx);
         var count = 0u;
         for (var dy = -1; dy <= 1; dy++) {
             for (var dx = -1; dx <= 1; dx++) {
-                let q = ycc(ext_index(y + dy, x + dx), d);
+                let q = tile_at(d, u32(i32(ty) + dy), u32(i32(tx) + dx));
                 if (abs(c.x - q.x) <= el && chroma_dist(c, q) <= ec) { count += 1u; }
             }
         }
@@ -313,11 +349,7 @@ fn median9(v: array<f32, 9>) -> f32 {
     return p[4];
 }
 
-@compute @workgroup_size(16, 16)
-fn median_pass(@builtin(global_invocation_id) id: vec3<u32>) {
-    let x = i32(id.x);
-    let y = i32(P.out_y0 + id.y);
-    if (id.x >= P.width || u32(y) >= P.out_y1) { return; }
+fn median_pixel(y: i32, x: i32) -> vec3<u32> {
     var px = sel_at(y, x);
     if (P.width >= 3u && P.height >= 3u && y > 0 && y + 1 < i32(P.height) && x > 0 && x + 1 < i32(P.width)) {
         let g = px.y;
@@ -330,10 +362,32 @@ fn median_pass(@builtin(global_invocation_id) id: vec3<u32>) {
             px[c] = max(g + median9(v), 0.0);
         }
     }
-    let o = ((u32(y) - P.out_y0) * P.width + u32(x)) * 3u;
     var m = array<vec3<f32>, 3>(P.m0.xyz, P.m1.xyz, P.m2.xyz);
+    var res = vec3<u32>(0u);
     for (var r = 0u; r < 3u; r++) {
         let v = m[r].x * px.x + m[r].y * px.y + m[r].z * px.z;
-        outbuf[o + r] = u32(round(clamp(v, 0.0, 1.0) * 65535.0));
+        res[r] = u32(round(clamp(v, 0.0, 1.0) * 65535.0));
+    }
+    return res;
+}
+
+// Emits two adjacent pixels packed as 3 u32 words (6 B/px) so each thread owns
+// disjoint output words with half the PCIe readback traffic of 12 B/px.
+@compute @workgroup_size(16, 16)
+fn median_pass(@builtin(global_invocation_id) id: vec3<u32>) {
+    let x0 = id.x * 2u;
+    let y = i32(P.out_y0 + id.y);
+    if (x0 >= P.width || u32(y) >= P.out_y1) { return; }
+    let p0 = median_pixel(y, i32(x0));
+    let row_words = (P.width * 3u + 1u) >> 1u;
+    let w0 = (u32(y) - P.out_y0) * row_words + id.x * 3u;
+    outbuf[w0] = p0.x | (p0.y << 16u);
+    let x1 = x0 + 1u;
+    if (x1 < P.width) {
+        let p1 = median_pixel(y, i32(x1));
+        outbuf[w0 + 1u] = p0.z | (p1.x << 16u);
+        outbuf[w0 + 2u] = p1.y | (p1.z << 16u);
+    } else {
+        outbuf[w0 + 1u] = p0.z;
     }
 }

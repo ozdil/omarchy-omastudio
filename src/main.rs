@@ -221,6 +221,8 @@ struct DaemonCache {
     /// `full` with the recipe's heal and clone spots applied, for the spots it was
     /// made with, so panning the detail view does not redo them
     full_retouched: Option<(Arc<FullFrame>, Vec<pipeline::retouch::RetouchSpot>, Arc<FullFrame>)>,
+    /// Monotonic generation incremented on every photo load for GPU-resident preview caching.
+    preview_gen: u64,
     detail_ping_pong: usize,
 }
 
@@ -1870,6 +1872,7 @@ fn run_daemon() {
         ping_pong: 0,
         full: None,
         full_retouched: None,
+        preview_gen: 0,
         detail_ping_pong: 0,
     }));
 
@@ -1948,7 +1951,7 @@ fn run_daemon() {
             "reference" => {
                 // The other side of the compare view: the open photo with another recipe
                 // (a snapshot, a version, or the defaults for "before")
-                let (buffer, width, height, channels, transfer, baseline, photo_path) = {
+                let (buffer, width, height, channels, transfer, baseline, preview_gen, photo_path) = {
                     let c = cache.lock().unwrap_or_else(|e| e.into_inner());
                     match c.raw_buffer_16.as_ref() {
                         Some(b) => (
@@ -1958,6 +1961,7 @@ fn run_daemon() {
                             c.channels,
                             c.transfer,
                             c.baseline_exposure,
+                            c.preview_gen,
                             c.current_path.clone(),
                         ),
                         None => {
@@ -1970,7 +1974,16 @@ fn run_daemon() {
                     }
                 };
                 let recipe = Recipe { baseline_exposure: baseline, ..cmd_obj.recipe.unwrap_or_default() };
-                let (mut rgb, _) = process_buffer_16_to_8_ex(&buffer, width, height, channels, &recipe, transfer, false, false);
+                let preview_key = gpu::preview_source_key(
+                    preview_gen,
+                    &recipe.retouch,
+                    width as usize,
+                    height as usize,
+                    channels as usize,
+                );
+                let (mut rgb, _) = gpu::with_preview_source_key(preview_key, || {
+                    process_buffer_16_to_8_ex(&buffer, width, height, channels, &recipe, transfer, false, false)
+                });
                 let proof_error = apply_proof(&mut rgb, cmd_obj.proof.as_ref());
                 let slot = REFERENCE_SLOT.fetch_add(1, std::sync::atomic::Ordering::Relaxed) % 2;
                 let dest = security::get_secure_preview_dir().join(format!("omastudio_reference_{}.ppm", slot));
@@ -2039,10 +2052,10 @@ fn run_daemon() {
                                 let u16_vec = Arc::new(u16_full);
                                 let u16_slice = &u16_vec[..];
                                 let transfer = prev.transfer;
-                                let u8_vec: Vec<u8> = u16_slice
-                                    .iter()
-                                    .map(|&x| (transfer.encode(x as f32 / 65535.0).clamp(0.0, 1.0) * 255.0).round() as u8)
+                                let lut: Vec<u8> = (0u32..=65535)
+                                    .map(|x| (transfer.encode(x as f32 / 65535.0).clamp(0.0, 1.0) * 255.0).round() as u8)
                                     .collect();
+                                let u8_vec: Vec<u8> = u16_slice.par_iter().map(|&x| lut[x as usize]).collect();
                                 let u8_arc = Arc::new(u8_vec);
 
                                 let mut c = cache.lock().unwrap_or_else(|e| e.into_inner());
@@ -2057,6 +2070,7 @@ fn run_daemon() {
                                 c.metadata = Some(meta.clone());
                                 c.full = None;
                                 c.full_retouched = None;
+                                c.preview_gen = c.preview_gen.wrapping_add(1).max(1);
                                 drop(c);
                                 spawn_full_decode(Arc::clone(&cache), p.clone());
                                 // Keep ping_pong running across loads: resetting it made the first
@@ -2108,6 +2122,7 @@ fn run_daemon() {
                 let height = c.height;
                 let channels = c.channels;
                 let transfer = c.transfer;
+                let preview_gen = c.preview_gen;
                 let recipe = Recipe { baseline_exposure: c.baseline_exposure, ..cmd_obj.recipe.unwrap_or_default() };
                 let split = cmd_obj.split.unwrap_or(0.0);
 
@@ -2138,31 +2153,40 @@ fn run_daemon() {
 
                 let highlight_mask = cmd_obj.highlight_mask.unwrap_or(false);
                 let shadow_mask = cmd_obj.shadow_mask.unwrap_or(false);
+                let preview_key = gpu::preview_source_key(
+                    preview_gen,
+                    &recipe.retouch,
+                    width as usize,
+                    height as usize,
+                    channels as usize,
+                );
 
-                let (mut final_buf, hist) = if split > 0.001 {
-                    process_split_comparison_16_to_8_ex(
-                        buffer,
-                        width,
-                        height,
-                        channels,
-                        &recipe,
-                        transfer,
-                        split,
-                        highlight_mask,
-                        shadow_mask,
-                    )
-                } else {
-                    process_buffer_16_to_8_ex(
-                        buffer,
-                        width,
-                        height,
-                        channels,
-                        &recipe,
-                        transfer,
-                        highlight_mask,
-                        shadow_mask,
-                    )
-                };
+                let (mut final_buf, hist) = gpu::with_preview_source_key(preview_key, || {
+                    if split > 0.001 {
+                        process_split_comparison_16_to_8_ex(
+                            buffer,
+                            width,
+                            height,
+                            channels,
+                            &recipe,
+                            transfer,
+                            split,
+                            highlight_mask,
+                            shadow_mask,
+                        )
+                    } else {
+                        process_buffer_16_to_8_ex(
+                            buffer,
+                            width,
+                            height,
+                            channels,
+                            &recipe,
+                            transfer,
+                            highlight_mask,
+                            shadow_mask,
+                        )
+                    }
+                });
 
                 let proof_error = apply_proof(&mut final_buf, cmd_obj.proof.as_ref());
                 if cmd_obj.focus_peaking == Some(true) {
