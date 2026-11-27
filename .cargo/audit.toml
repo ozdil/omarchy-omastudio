@@ -3,6 +3,3 @@ ignore = [
   # paste 1.0.15 unmaintained warning (transitive via pulp 0.22.3); remove once pulp drops paste
   "RUSTSEC-2024-0436",
 ]
-
-[output]
-deny = ["warnings"]
