@@ -34,6 +34,14 @@ Rectangle {
     property bool showExportModal: false
     property bool showAboutModal: false
     property bool showCloudModal: false
+    readonly property bool anyModalOpen: root.showExportModal || root.showAboutModal || root.showCloudModal
+    readonly property bool textInputFocused: {
+        var win = root.Window.window;
+        var item = win ? win.activeFocusItem : null;
+        return item !== null && item !== undefined
+            && (item instanceof TextInput || item instanceof TextEdit);
+    }
+    property bool _shuttingDown: false
     // Cloud accounts (`omastudio-engine cloud status`), the one open in the filmstrip
     // and the folder inside it
     property var cloudAccounts: []
@@ -1489,30 +1497,37 @@ Rectangle {
     // Keyboard Shortcuts (Lightroom & Studio Standards)
     Shortcut {
         sequence: "Ctrl+Z"
+        enabled: !root.textInputFocused
         onActivated: root.undo()
     }
     Shortcut {
         sequences: ["Ctrl+Shift+Z", "Ctrl+Y"]
+        enabled: !root.textInputFocused
         onActivated: root.redo()
     }
     Shortcut {
         sequence: "Ctrl+S"
+        enabled: !root.textInputFocused
         onActivated: root.saveSidecar()
     }
     Shortcut {
         sequence: "Ctrl+Shift+C"
+        enabled: !root.textInputFocused
         onActivated: root.copyRecipe()
     }
     Shortcut {
         sequence: "Ctrl+Shift+V"
+        enabled: !root.textInputFocused
         onActivated: root.pasteRecipe()
     }
     Shortcut {
         sequence: "Ctrl+R"
+        enabled: !root.textInputFocused
         onActivated: root.resetRecipe()
     }
     Shortcut {
         sequence: "C"
+        enabled: !root.textInputFocused && !root.anyModalOpen
         onActivated: {
             viewport.isCropMode = !viewport.isCropMode;
             root.showToast(viewport.isCropMode ? qsTr("Crop mode: on (C)") : qsTr("Crop mode: off"), Theme.accentYellow);
@@ -1520,6 +1535,7 @@ Rectangle {
     }
     Shortcut {
         sequence: "S"
+        enabled: !root.textInputFocused && !root.anyModalOpen
         onActivated: {
             root.softProof = !root.softProof;
             root.showToast(root.softProof ? qsTr("Soft proof: %1").arg(root.proofProfileName()) : qsTr("Soft proof off"), Theme.accentYellow);
@@ -1527,18 +1543,22 @@ Rectangle {
     }
     Shortcut {
         sequence: "L"
+        enabled: !root.textInputFocused && !root.anyModalOpen
         onActivated: viewport.loupeActive = !viewport.loupeActive
     }
     Shortcut {
         sequence: "Shift+F"
+        enabled: !root.textInputFocused && !root.anyModalOpen
         onActivated: root.focusPeaking = !root.focusPeaking
     }
     Shortcut {
         sequence: "Shift+C"
+        enabled: !root.textInputFocused && !root.anyModalOpen
         onActivated: root.compareMode = !root.compareMode
     }
     Shortcut {
         sequence: "Y"
+        enabled: !root.textInputFocused && !root.anyModalOpen
         onActivated: {
             root.isSplitView = !root.isSplitView;
             root.requestRender();
@@ -1566,7 +1586,12 @@ Rectangle {
             if (root.showAboutModal) root.showAboutModal = false;
             else if (root.showExportModal) root.showExportModal = false;
             else if (viewport.isCropMode) viewport.isCropMode = false;
-            else if (root.activeFocusItem && root.activeFocusItem !== root.contentItem) root.contentItem.forceActiveFocus();
+            else {
+                var win = root.Window.window;
+                if (win && win.activeFocusItem && win.activeFocusItem !== win.contentItem) {
+                    win.contentItem.forceActiveFocus();
+                }
+            }
         }
     }
 
@@ -1574,42 +1599,52 @@ Rectangle {
     // Lightroom Studio Culling & Ergonomics (1-5 Stars, Flags, Cinematic View)
     Shortcut {
         sequence: "1"
+        enabled: !root.textInputFocused && !root.anyModalOpen
         onActivated: { root.photoRating = 1; root.showToast(qsTr("Rating: ★"), Theme.accentYellow); root.saveSidecar(true); }
     }
     Shortcut {
         sequence: "2"
+        enabled: !root.textInputFocused && !root.anyModalOpen
         onActivated: { root.photoRating = 2; root.showToast(qsTr("Rating: ★★"), Theme.accentYellow); root.saveSidecar(true); }
     }
     Shortcut {
         sequence: "3"
+        enabled: !root.textInputFocused && !root.anyModalOpen
         onActivated: { root.photoRating = 3; root.showToast(qsTr("Rating: ★★★"), Theme.accentYellow); root.saveSidecar(true); }
     }
     Shortcut {
         sequence: "4"
+        enabled: !root.textInputFocused && !root.anyModalOpen
         onActivated: { root.photoRating = 4; root.showToast(qsTr("Rating: ★★★★"), Theme.accentYellow); root.saveSidecar(true); }
     }
     Shortcut {
         sequence: "5"
+        enabled: !root.textInputFocused && !root.anyModalOpen
         onActivated: { root.photoRating = 5; root.showToast(qsTr("Rating: ★★★★★"), Theme.accentYellow); root.saveSidecar(true); }
     }
     Shortcut {
         sequence: "0"
+        enabled: !root.textInputFocused && !root.anyModalOpen
         onActivated: { root.photoRating = 0; root.showToast(qsTr("Rating cleared"), Theme.textDim); root.saveSidecar(true); }
     }
     Shortcut {
         sequence: "X"
+        enabled: !root.textInputFocused && !root.anyModalOpen
         onActivated: { root.photoFlag = (root.photoFlag === "reject" ? "none" : "reject"); root.showToast(root.flagMessage(root.photoFlag), Theme.highlightClip); root.saveSidecar(true); }
     }
     Shortcut {
         sequence: "P"
+        enabled: !root.textInputFocused && !root.anyModalOpen
         onActivated: { root.photoFlag = (root.photoFlag === "pick" ? "none" : "pick"); root.showToast(root.flagMessage(root.photoFlag), Theme.accentGreen); root.saveSidecar(true); }
     }
     Shortcut {
         sequence: "U"
+        enabled: !root.textInputFocused && !root.anyModalOpen
         onActivated: { root.photoFlag = "none"; root.showToast(qsTr("Flag cleared"), Theme.textDim); root.saveSidecar(true); }
     }
     Shortcut {
         sequence: "E"
+        enabled: !root.textInputFocused && !root.anyModalOpen
         onActivated: {
             if (root.activePhotoPath === "" && !root.showExportModal) {
                 root.showToast(qsTr("Open a photo first"), Theme.textDim);
@@ -1668,13 +1703,17 @@ Rectangle {
         onActivated: root.moveControlFocus(false)
     }
     function moveControlFocus(forward) {
-        var from = root.activeFocusItem || root.contentItem;
+        var win = root.Window.window;
+        if (!win) return;
+        var from = win.activeFocusItem || win.contentItem;
+        if (!from) return;
         var next = from.nextItemInFocusChain(forward);
         if (next) next.forceActiveFocus(forward ? Qt.TabFocusReason : Qt.BacktabFocusReason);
     }
 
     Shortcut {
         sequence: "Tab"
+        enabled: !root.textInputFocused && !root.anyModalOpen
         onActivated: {
             var anyOpen = root.showLeftPanel || root.showRightPanel || root.showFilmstrip;
             root.showLeftPanel = !anyOpen;
@@ -1715,14 +1754,10 @@ Rectangle {
         root.uiStateLoaded = true;
     }
 
-    function saveUiStateSoon() {
-        if (root.uiStateLoaded) uiStateTimer.restart();
-    }
-
-    Timer {
-        id: uiStateTimer
-        interval: 600
-        onTriggered: Host.saveUiState(JSON.stringify({
+    function saveUiStateNow() {
+        if (!root.uiStateLoaded) return;
+        uiStateTimer.stop();
+        Host.saveUiState(JSON.stringify({
             "showLeftPanel": root.showLeftPanel,
             "showRightPanel": root.showRightPanel,
             "showFilmstrip": root.showFilmstrip,
@@ -1733,7 +1768,17 @@ Rectangle {
             "proofProfile": root.proofProfile,
             "proofIntent": root.proofIntent,
             "gamutWarning": root.gamutWarning
-        }))
+        }));
+    }
+
+    function saveUiStateSoon() {
+        if (root.uiStateLoaded) uiStateTimer.restart();
+    }
+
+    Timer {
+        id: uiStateTimer
+        interval: 600
+        onTriggered: root.saveUiStateNow()
     }
 
     onShowLeftPanelChanged: saveUiStateSoon()
@@ -3828,17 +3873,22 @@ Rectangle {
         }
     }
 
-    Component.onDestruction: {
+    function shutdown() {
+        if (root._shuttingDown) return;
+        root._shuttingDown = true;
+        if (uiStateTimer.running) root.saveUiStateNow();
         root.autosave();
         if (daemonProc.running) {
             daemonProc.write(JSON.stringify({ cmd: "exit" }) + "\n");
-            daemonProc.running = false;
+            daemonProc.gracefulStop(2000);
         }
         if (exportProc.running) exportProc.running = false;
         if (listProc.running) listProc.running = false;
         if (cloudConnectProc.running) cloudConnectProc.running = false;
         if (cloudFetchProc.running) cloudFetchProc.running = false;
     }
+
+    Component.onDestruction: root.shutdown()
 
     AiChatPanel {
         id: aiChat

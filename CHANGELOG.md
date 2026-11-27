@@ -33,6 +33,10 @@ Fits into Omarchy 4.5: OmaStudio now follows the Omarchy shell's own theme token
 - The language menu's text no longer stays at a fixed size when the font size changes.
 - The `omastudio` launcher now preserves engine, preview, proxy/TLS, and GPU/Qt6/ML driver environment variables (`OMASTUDIO_GPU_STAGES`, `OMASTUDIO_GPU_DEVICE`, `OMASTUDIO_GPU_TIMEOUT_MS`, `OMASTUDIO_PREVIEW_MODE`, `OMASTUDIO_NPU`, `ORT_DYLIB_PATH`, `WGPU_*`, `QSG_RHI_*`, `AMD_VULKAN_ICD`, `RADV_PERFTEST`, `CUDA_VISIBLE_DEVICES`, `HIP_VISIBLE_DEVICES`, `ROCR_VISIBLE_DEVICES`, `ONEAPI_DEVICE_SELECTOR`, and others), routes `omastudio bench` to the engine CLI, and finds `SKILL.md` and `omarchy-plugin` in tarball (`../share/omastudio`) layouts.
 - `omastudio-status` now finds `omastudio-engine` in packaged (`/usr/bin`) and sibling tarball layouts instead of reporting `OFFLINE`, and `omastudio-dashboard` routes IPC toggle through the sanitized `omastudio` launcher.
+- Closing the window now flushes pending UI state and lets the engine daemon finish pending sidecar writes via graceful shutdown (and isolated process-group reaping) instead of terminating it immediately with `SIGKILL`.
+- Pressing **F6** / **Shift+F6** or **Escape** no longer throws a focus-chain error on `MainWindow`.
+- Solid-accent primary buttons in the AI Assistant, Cloud and Fujifilm panels (and the red Confirm button) now use contrasting text instead of drawing the accent colour on itself.
+- Typing in text fields no longer triggers single-key or edit shortcuts (`C`, `S`, `L`, `Y`, `0–5`, `X`, `P`, `U`, `E`, `Tab`, `Ctrl+Z`/`Y`/`S`/`R`).
 
 ### Security
 - Updated `rustix` from `1.1.5` to `1.1.6` to address `RUSTSEC-2026-0486` (`GHSA-jh2m-fhpj-3vr7`), and updated yanked `lcms2` (`6.2.0` → `6.3.0`) and `lcms2-sys` (`4.0.7` → `4.2.0`).

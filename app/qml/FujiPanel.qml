@@ -155,7 +155,7 @@ Rectangle {
             font.family: Theme.fontFamily
             font.pixelSize: Theme.px(9)
             font.weight: Font.Bold
-            color: btn.filled ? Theme.selectedText : (btn.enabled ? Theme.textMain : Theme.textDim)
+            color: btn.filled ? Theme.onAccent : (btn.enabled ? Theme.textMain : Theme.textDim)
         }
 
         MouseArea {
