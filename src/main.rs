@@ -1874,6 +1874,7 @@ fn run_daemon() {
     }));
 
     let (export_tx, export_worker) = spawn_export_worker();
+    let mut warm_up_worker: Option<std::thread::JoinHandle<()>> = None;
 
     let stdin = io::stdin();
     let mut stdin_lock = stdin.lock();
@@ -1995,14 +1996,14 @@ fn run_daemon() {
             }
             "load" => {
                 // Compile the GPU shaders while the first photo is decoded, so the
-                // first export doesn't wait ~2 s for them
-                static WARM_UP: std::sync::Once = std::sync::Once::new();
-                WARM_UP.call_once(|| {
-                    std::thread::spawn(|| {
+                // first export doesn't wait ~2 s for them. Joined on daemon exit so
+                // Vulkan/Mesa ICD teardown never races with a live warm-up thread.
+                if warm_up_worker.is_none() {
+                    warm_up_worker = Some(std::thread::spawn(|| {
                         gpu::point_ops::warm_up();
                         gpu::local::warm_up();
-                    });
-                });
+                    }));
+                }
                 let p = match cmd_obj.path {
                     Some(ref path) => path,
                     None => {
@@ -2572,4 +2573,7 @@ fn run_daemon() {
 
     drop(export_tx);
     let _ = export_worker.join();
+    if let Some(worker) = warm_up_worker {
+        let _ = worker.join();
+    }
 }

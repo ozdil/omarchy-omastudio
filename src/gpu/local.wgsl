@@ -27,6 +27,11 @@ struct Params {
     f7: f32,
     // The geometry kernel's inverse homography and lens terms (Geometry::gpu_terms)
     g: array<vec4<f32>, 4>,
+    // Strip coordinates for halo-aware row striping:
+    // strip0 = (frame_w, frame_h, strip_y0, valid_y0_or_src_h)
+    // strip1 = (valid_y1, out_y0, 0, 0)
+    strip0: vec4<u32>,
+    strip1: vec4<u32>,
 };
 
 @group(0) @binding(0) var<uniform> p: Params;
@@ -347,6 +352,14 @@ fn finish(@builtin(global_invocation_id) id: vec3<u32>) {
     if (i >= p.w * p.h) {
         return;
     }
+    let frame_w = select(p.w, p.strip0.x, p.strip0.x > 0u);
+    let frame_h = select(p.h, p.strip0.y, p.strip0.y > 0u);
+    let strip_y0 = p.strip0.z;
+    let valid_y0 = p.strip0.w;
+    let valid_y1 = select(p.h, p.strip1.x, p.strip1.x > 0u);
+    if (p.mode == 0u && (id.y < valid_y0 || id.y >= valid_y1)) {
+        return;
+    }
     // Mode 2 reads the geometry kernel's result from the planes
     var r = rgb[i * 3u];
     var g = rgb[i * 3u + 1u];
@@ -357,7 +370,7 @@ fn finish(@builtin(global_invocation_id) id: vec3<u32>) {
         b = pl[i * 3u + 2u];
     }
     let x = id.x;
-    let y = id.y;
+    let y = strip_y0 + id.y;
     if ((p.flags & 1u) != 0u) {
         let sample_y = u32(f32(y) / p.f1);
         let fine_y = u32(f32(y) / p.f2);
@@ -384,8 +397,8 @@ fn finish(@builtin(global_invocation_id) id: vec3<u32>) {
         return;
     }
     if ((p.flags & 2u) != 0u) {
-        let cx = f32(p.w) / 2.0;
-        let cy = f32(p.h) / 2.0;
+        let cx = f32(frame_w) / 2.0;
+        let cy = f32(frame_h) / 2.0;
         let max_dist = sqrt(cx * cx + cy * cy);
         let dx = f32(x) - cx;
         let dy = f32(y) - cy;
@@ -400,7 +413,8 @@ fn finish(@builtin(global_invocation_id) id: vec3<u32>) {
     let r8 = u32(clamp(r, 0.0, 1.0) * 255.0);
     let g8 = u32(clamp(g, 0.0, 1.0) * 255.0);
     let b8 = u32(clamp(b, 0.0, 1.0) * 255.0);
-    px8[i] = r8 | (g8 << 8u) | (b8 << 16u);
+    let out_y = select(id.y, id.y - valid_y0, p.mode == 0u);
+    px8[out_y * p.w + id.x] = r8 | (g8 << 8u) | (b8 << 16u);
 }
 
 // --- Adjustment layers (pipeline::layers::apply_layers_pixel) -----------------------
@@ -606,10 +620,15 @@ fn geometry(@builtin(global_invocation_id) id: vec3<u32>) {
     if (i >= p.w * p.h) {
         return;
     }
+    let frame_w = select(p.w, p.strip0.x, p.strip0.x > 0u);
+    let frame_h = select(p.h, p.strip0.y, p.strip0.y > 0u);
+    let strip_y0 = p.strip0.z;
+    let src_h = select(p.h, p.strip0.w, p.strip0.w > 0u);
+    let out_y0 = p.strip1.y;
     let cx = p.g[2].z;
     let cy = p.g[2].w;
     var x = f32(id.x);
-    var y = f32(id.y);
+    var y = f32(out_y0 + id.y);
     var inside = true;
     if ((p.flags & 1u) != 0u) {
         let dx = x - cx;
@@ -634,19 +653,22 @@ fn geometry(@builtin(global_invocation_id) id: vec3<u32>) {
         y = cy + dy * factor;
     }
     var res = vec3<f32>(0.0, 0.0, 0.0);
-    if (inside && p.w > 0u && p.h > 0u && x >= 0.0 && x <= f32(p.w - 1u) && y >= 0.0 && y <= f32(p.h - 1u)) {
-        let x0 = u32(floor(x));
-        let y0 = u32(floor(y));
-        let x1 = min(x0 + 1u, p.w - 1u);
-        let y1 = min(y0 + 1u, p.h - 1u);
-        let fx = x - f32(x0);
-        let fy = y - f32(y0);
-        let a = y0 * p.w;
-        let c = y1 * p.w;
-        for (var k = 0u; k < 3u; k++) {
-            let top = rgb[(a + x0) * 3u + k] * (1.0 - fx) + rgb[(a + x1) * 3u + k] * fx;
-            let bottom = rgb[(c + x0) * 3u + k] * (1.0 - fx) + rgb[(c + x1) * 3u + k] * fx;
-            res[k] = top * (1.0 - fy) + bottom * fy;
+    if (inside && frame_w > 0u && frame_h > 0u && src_h > 0u && x >= 0.0 && x <= f32(frame_w - 1u) && y >= 0.0 && y <= f32(frame_h - 1u)) {
+        let ly = y - f32(strip_y0);
+        if (ly >= 0.0 && ly <= f32(src_h - 1u)) {
+            let x0 = u32(floor(x));
+            let y0 = u32(floor(ly));
+            let x1 = min(x0 + 1u, p.w - 1u);
+            let y1 = min(y0 + 1u, src_h - 1u);
+            let fx = x - f32(x0);
+            let fy = ly - f32(y0);
+            let a = y0 * p.w;
+            let c = y1 * p.w;
+            for (var k = 0u; k < 3u; k++) {
+                let top = rgb[(a + x0) * 3u + k] * (1.0 - fx) + rgb[(a + x1) * 3u + k] * fx;
+                let bottom = rgb[(c + x0) * 3u + k] * (1.0 - fx) + rgb[(c + x1) * 3u + k] * fx;
+                res[k] = top * (1.0 - fy) + bottom * fy;
+            }
         }
     }
     pl[i * 3u] = res.x;
