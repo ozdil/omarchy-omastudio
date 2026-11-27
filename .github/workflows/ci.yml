@@ -12,31 +12,64 @@ jobs:
   # Arch Linux container so CI uses the same LibRaw, Qt and Rust packages as Omarchy.
   # rustup installs the toolchain pinned in rust-toolchain.toml.
   test:
+    name: Build, Unit/Integration Tests & GPU Parity (x86_64)
     runs-on: ubuntu-latest
     container: archlinux:latest
     steps:
-      - name: Install build dependencies
-        run: pacman -Syu --noconfirm --needed base-devel clang git lcms2 libraw mold pkgconf qt6-base qt6-declarative qt6-tools python rustup
+      - name: Install build, Qt, and Mesa lavapipe dependencies
+        run: >
+          pacman -Syu --noconfirm --needed
+          base-devel clang git lcms2 libraw mold pkgconf
+          qt6-base qt6-declarative qt6-tools python rustup
+          vulkan-icd-loader vulkan-swrast
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Install pinned Rust toolchain
         run: rustup toolchain install
-      - name: Build
+      - name: Build workspace
         run: cargo build --locked --workspace --all-targets
-      - name: Test
+      - name: Run CPU tests
         run: cargo test --locked --workspace
+      - name: Run WGSL / GPU parity tests via Mesa lavapipe
+        env:
+          OMASTUDIO_GPU: "software"
+          OMASTUDIO_GPU_STAGES: "on"
+        run: |
+          LVP_ICD=""
+          for f in /usr/share/vulkan/icd.d/lvp_icd.json "/usr/share/vulkan/icd.d/lvp_icd.$(uname -m).json"; do
+            [ -f "$f" ] && LVP_ICD="$f" && break
+          done
+          test -n "$LVP_ICD"
+          OMASTUDIO_GPU=software VK_DRIVER_FILES="$LVP_ICD" target/debug/omastudio-engine gpu \
+            | python3 -c 'import json,sys; d=json.load(sys.stdin); assert d.get("success") is True and (d.get("data") or {}).get("enabled") is True, d'
+          VK_DRIVER_FILES="$LVP_ICD" cargo test --locked --workspace -- --nocapture gpu::
       - name: Check translations
         run: python3 tools/i18n/check.py
       - name: Check version consistency
         run: python3 tools/release/check-version.py
 
-  clippy:
+  lint:
+    name: Clippy, QMLlint, ShellCheck & Cargo Audit
     runs-on: ubuntu-latest
     container: archlinux:latest
     steps:
-      - name: Install build dependencies
-        run: pacman -Syu --noconfirm --needed base-devel clang git lcms2 libraw mold pkgconf qt6-base qt6-declarative qt6-tools python rustup
+      - name: Install lint, audit & build dependencies
+        run: >
+          pacman -Syu --noconfirm --needed
+          base-devel cargo-audit clang git lcms2 libraw mold pkgconf
+          qt6-base qt6-declarative qt6-tools shellcheck rustup
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Install pinned Rust toolchain
         run: rustup toolchain install
+      # Note: Whole-repo `cargo fmt --all -- --check` is deferred to a dedicated
+      # formatting pass with `.git-blame-ignore-revs` (94 pre-existing unformatted files).
       - name: Clippy
         run: cargo clippy --locked --workspace --all-targets -- -D warnings
+      - name: RustSec Cargo Audit
+        run: cargo audit --deny warnings
+      - name: QMLlint
+        run: |
+          QMLLINT="$(command -v /usr/lib/qt6/bin/qmllint || command -v qmllint6 || command -v qmllint)"
+          "$QMLLINT" -I app/qml app/qml/*.qml
+          "$QMLLINT" --ignore-settings --import=info --missing-type=info --unresolved-type=info --unqualified=info --missing-property=info omarchy-plugin/Panel.qml
+      - name: ShellCheck
+        run: shellcheck -x -S warning omastudio omastudio-status omastudio-dashboard tools/fuji-usb/capture.sh tools/i18n/update.sh
