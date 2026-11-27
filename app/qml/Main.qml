@@ -47,6 +47,9 @@ Window {
     // Loads the translation for the stored or system language
     Component.onCompleted: I18n.apply()
 
+    // Flush UI state and let the engine daemon finish pending sidecar writes before closing
+    onClosing: mainWin.shutdown()
+
     function present() {
         win.show();
         win.raise();

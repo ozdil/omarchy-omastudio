@@ -89,7 +89,7 @@ Rectangle {
             font.family: Theme.fontFamily
             font.pixelSize: Theme.px(11)
             font.weight: btn.filled ? Font.DemiBold : Font.Normal
-            color: btn.filled ? Theme.selectedText : Theme.textMain
+            color: btn.filled ? Theme.onColor(btn.fill) : Theme.textMain
         }
         MouseArea {
             id: btnMouse

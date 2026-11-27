@@ -7,9 +7,11 @@
 //! than that over a session); a process that exceeds it is killed.
 
 use std::io::{BufRead, BufReader, Read, Write};
+use std::os::unix::process::CommandExt;
 use std::pin::Pin;
 use std::process::{Child, ChildStdin, Command, Stdio};
 use std::sync::{Arc, Mutex};
+use std::time::{Duration, Instant};
 
 use cxx_qt::{CxxQtType, Threading};
 use cxx_qt_lib::{QList, QString, QStringList};
@@ -52,6 +54,11 @@ pub mod qobject {
         /// Writes `text` to the process's standard input (needs `stdinEnabled`).
         #[qinvokable]
         fn write(self: Pin<&mut HostProcess>, text: &QString) -> bool;
+
+        /// Closes stdin so the child can flush pending work and exit cleanly within
+        /// `timeout_ms`, escalating to SIGTERM then SIGKILL on its process group.
+        #[qinvokable]
+        fn graceful_stop(self: Pin<&mut HostProcess>, timeout_ms: i32);
     }
 
     impl cxx_qt::Threading for HostProcess {}
@@ -88,16 +95,58 @@ impl Default for HostProcessRust {
 
 impl Drop for HostProcessRust {
     fn drop(&mut self) {
-        kill(&self.child);
+        self.stdin = None;
+        terminate(&self.child, Duration::ZERO);
     }
 }
 
-fn kill(child: &Mutex<Option<Child>>) {
-    if let Ok(mut guard) = child.lock()
-        && let Some(c) = guard.as_mut()
-    {
-        let _ = c.kill();
+fn terminate(child: &Mutex<Option<Child>>, wait_for_exit: Duration) {
+    let taken = child.lock().ok().and_then(|mut guard| guard.take());
+    if let Some(mut c) = taken {
+        reap_process_group(&mut c, wait_for_exit);
     }
+}
+
+/// Waits up to `wait_for_exit` for `child` to exit cleanly on its own (e.g. after stdin EOF),
+/// then terminates its entire process group (`SIGTERM` -> grace -> `SIGKILL`) and reaps it.
+fn reap_process_group(child: &mut Child, wait_for_exit: Duration) {
+    if matches!(child.try_wait(), Ok(Some(_))) {
+        return;
+    }
+    if !wait_for_exit.is_zero() {
+        let deadline = Instant::now() + wait_for_exit;
+        while Instant::now() < deadline {
+            if matches!(child.try_wait(), Ok(Some(_))) {
+                return;
+            }
+            let remaining = deadline.saturating_duration_since(Instant::now());
+            std::thread::sleep(Duration::from_millis(10).min(remaining));
+        }
+    }
+    let pid = child.id() as libc::pid_t;
+    if pid > 0 {
+        // SAFETY: `child` was spawned with `process_group(0)` and has not been reaped yet,
+        // so `pid` still identifies its own process group.
+        unsafe { libc::kill(-pid, libc::SIGTERM) };
+        let grace = if wait_for_exit.is_zero() {
+            Duration::from_millis(10)
+        } else {
+            Duration::from_millis(200)
+        };
+        let term_deadline = Instant::now() + grace;
+        while Instant::now() < term_deadline {
+            if matches!(child.try_wait(), Ok(Some(_))) {
+                return;
+            }
+            let remaining = term_deadline.saturating_duration_since(Instant::now());
+            std::thread::sleep(Duration::from_millis(5).min(remaining));
+        }
+        // SAFETY: `child` has still not been reaped, so `-pid` still targets its process group.
+        unsafe { libc::kill(-pid, libc::SIGKILL) };
+    } else {
+        let _ = child.kill();
+    }
+    let _ = child.wait();
 }
 
 enum Event {
@@ -124,6 +173,18 @@ impl qobject::HostProcess {
         stdin.write_all(String::from(text).as_bytes()).and_then(|_| stdin.flush()).is_ok()
     }
 
+    pub fn graceful_stop(mut self: Pin<&mut Self>, timeout_ms: i32) {
+        let wait = Duration::from_millis(timeout_ms.clamp(0, 10_000) as u64);
+        let child = {
+            let rust = self.as_mut().rust_mut().get_mut();
+            rust.generation += 1;
+            rust.stdin = None;
+            rust.child.clone()
+        };
+        terminate(&child, wait);
+        self.set_state(false);
+    }
+
     fn set_state(mut self: Pin<&mut Self>, running: bool) {
         if self.running != running {
             self.as_mut().rust_mut().get_mut().running = running;
@@ -132,10 +193,13 @@ impl qobject::HostProcess {
     }
 
     fn stop(mut self: Pin<&mut Self>) {
-        let rust = self.as_mut().rust_mut().get_mut();
-        rust.generation += 1;
-        rust.stdin = None;
-        kill(&rust.child);
+        let child = {
+            let rust = self.as_mut().rust_mut().get_mut();
+            rust.generation += 1;
+            rust.stdin = None;
+            rust.child.clone()
+        };
+        terminate(&child, Duration::ZERO);
         self.set_state(false);
     }
 
@@ -146,6 +210,7 @@ impl qobject::HostProcess {
             return;
         };
         let mut cmd = Command::new(program);
+        cmd.process_group(0);
         cmd.args(rest).stdout(Stdio::piped()).stderr(Stdio::inherit());
         cmd.stdin(if self.stdin_enabled { Stdio::piped() } else { Stdio::null() });
         let mut child = match cmd.spawn() {
@@ -217,7 +282,7 @@ impl qobject::HostProcess {
                 overflow = output.len() > limit;
             }
             if overflow {
-                kill(&child);
+                terminate(&child, Duration::ZERO);
                 output.clear();
             }
             let status = child.lock().ok().and_then(|mut g| g.take()).and_then(|mut c| c.wait().ok());
@@ -228,5 +293,79 @@ impl qobject::HostProcess {
             };
             deliver(Event::Finished(code, String::from_utf8_lossy(&output).into_owned()));
         });
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn graceful_reap_lets_child_flush_on_stdin_eof() {
+        let out = std::env::temp_dir().join(format!("omastudio-proc-flush-{}", std::process::id()));
+        let _ = std::fs::remove_file(&out);
+        let mut cmd = Command::new("/bin/sh");
+        cmd.process_group(0)
+            .args(["-c", "sleep 0.05; cat > \"$1\"", "sh"])
+            .arg(&out)
+            .stdin(Stdio::piped())
+            .stdout(Stdio::null())
+            .stderr(Stdio::null());
+        let mut child = cmd.spawn().expect("spawn flush helper");
+        {
+            let mut stdin = child.stdin.take().expect("piped stdin");
+            stdin.write_all(b"autosave_ok\n").expect("write stdin");
+            stdin.flush().expect("flush stdin");
+        }
+        reap_process_group(&mut child, Duration::from_secs(2));
+        let written = std::fs::read_to_string(&out).expect("child flushed output before exit");
+        let _ = std::fs::remove_file(&out);
+        assert_eq!(written, "autosave_ok\n");
+    }
+
+    fn is_process_alive(pid: libc::pid_t) -> bool {
+        // SAFETY: signal 0 checks process existence without delivering a signal.
+        if unsafe { libc::kill(pid, 0) } != 0 {
+            return false;
+        }
+        // In minimal containers where PID 1 does not reap reparented orphans, a
+        // SIGKILLed grandchild remains a zombie (State: Z) even though it is dead.
+        let Ok(stat) = std::fs::read_to_string(format!("/proc/{pid}/stat")) else {
+            return false;
+        };
+        let Some(rest) = stat.rsplit_once(')').map(|(_, s)| s.trim_start()) else {
+            return false;
+        };
+        !matches!(rest.as_bytes().first(), Some(b'Z' | b'X' | b'x'))
+    }
+
+    #[test]
+    fn process_group_reap_kills_sigterm_ignoring_descendants() {
+        let mut cmd = Command::new("/bin/sh");
+        cmd.process_group(0)
+            .args(["-c", "trap '' TERM; sleep 30 & echo $!; wait"])
+            .stdin(Stdio::null())
+            .stdout(Stdio::piped())
+            .stderr(Stdio::null());
+        let mut child = cmd.spawn().expect("spawn group helper");
+        let mut line = String::new();
+        let mut reader = BufReader::new(child.stdout.take().expect("piped stdout"));
+        reader.read_line(&mut line).expect("read grandchild pid");
+        let grandchild: libc::pid_t = line.trim().parse().expect("valid grandchild pid");
+
+        let started = Instant::now();
+        reap_process_group(&mut child, Duration::ZERO);
+        assert!(started.elapsed() < Duration::from_secs(1), "reap took too long");
+
+        // Give the kernel a brief moment to finish tearing down the killed grandchild
+        let mut alive = true;
+        for _ in 0..50 {
+            if !is_process_alive(grandchild) {
+                alive = false;
+                break;
+            }
+            std::thread::sleep(Duration::from_millis(10));
+        }
+        assert!(!alive, "grandchild process {grandchild} survived process-group reap");
     }
 }

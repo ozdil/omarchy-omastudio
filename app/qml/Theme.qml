@@ -43,7 +43,8 @@ QtObject {
 
     // Text and icons drawn on the accent colour: whichever of white and near-black
     // contrasts more (WCAG), so a mid blue such as Catppuccin Latte's gets white text
-    readonly property color onAccent: contrast(accent, "#ffffff") >= contrast(accent, "#0b0c10") ? "#ffffff" : "#0b0c10"
+    readonly property color onAccent: onColor(accent)
+    function onColor(bg) { return contrast(bg, "#ffffff") >= contrast(bg, "#0b0c10") ? "#ffffff" : "#0b0c10"; }
 
     // Corners follow Hyprland's decoration:rounding (Omarchy: square)
     property int rounding: 6

@@ -68,6 +68,26 @@ TextEdit {
         }
     }
 
+    Keys.onShortcutOverride: (event) => {
+        if (control.readOnly || event.key === Qt.Key_Escape) return;
+        var ctrl = (event.modifiers & Qt.ControlModifier) !== 0;
+        var alt = (event.modifiers & Qt.AltModifier) !== 0;
+        var meta = (event.modifiers & Qt.MetaModifier) !== 0;
+        if (!ctrl && !alt && !meta && (event.text.length > 0
+            || event.key === Qt.Key_Backspace || event.key === Qt.Key_Delete
+            || event.key === Qt.Key_Left || event.key === Qt.Key_Right
+            || event.key === Qt.Key_Up || event.key === Qt.Key_Down
+            || event.key === Qt.Key_Home || event.key === Qt.Key_End)) {
+            event.accepted = true;
+            return;
+        }
+        if (event.matches(StandardKey.Undo) || event.matches(StandardKey.Redo)
+            || event.matches(StandardKey.Copy) || event.matches(StandardKey.Cut)
+            || event.matches(StandardKey.Paste) || event.matches(StandardKey.SelectAll)) {
+            event.accepted = true;
+        }
+    }
+
     Keys.onPressed: (event) => {
         if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
             if (!control.multiline) {
