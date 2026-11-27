@@ -9,7 +9,7 @@
 //! The contents API used here handles files up to 100 MB (GitHub's own limit).
 
 use std::os::unix::fs::OpenOptionsExt;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use std::time::Duration;
 
 use serde::Deserialize;
@@ -150,36 +150,71 @@ pub fn list(path: &str) -> Result<Vec<Entry>, String> {
         .collect())
 }
 
+static GH_PARTIAL_SEQ: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(0);
+
+fn meta_sidecar_path(local: &Path) -> PathBuf {
+    let mut name = local.as_os_str().to_owned();
+    name.push(".meta");
+    PathBuf::from(name)
+}
+
+fn unique_partial_path(local: &Path) -> PathBuf {
+    let seq = GH_PARTIAL_SEQ.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+    let mut name = local.as_os_str().to_owned();
+    name.push(format!(".{}.{}.partial", std::process::id(), seq));
+    PathBuf::from(name)
+}
+
 pub fn fetch(path: &str, local: &Path) -> Result<(), String> {
     require_gh()?;
     if path.split('/').count() < 3 {
         return Err(format!("Not a file: {path}"));
     }
     let endpoint = contents_endpoint(path)?;
-    let (code, out, err) = run(gh(&["api", &endpoint, "--jq", ".size"]), QUICK_TIMEOUT)?;
+    let (code, out, err) = run(gh(&["api", &endpoint]), QUICK_TIMEOUT)?;
     if code != 0 {
         return Err(format!("Cannot open the file: {}", last_error(&err, "gh failed")));
     }
-    let size: u64 = out.trim().parse().map_err(|_| format!("{path} is not a file"))?;
+    let meta_json: serde_json::Value = serde_json::from_str(&out).map_err(|_| format!("{path} is not a file"))?;
+    let size = meta_json
+        .get("size")
+        .and_then(|v| v.as_u64())
+        .ok_or_else(|| format!("{path} is not a file"))?;
+    let sha = meta_json
+        .get("sha")
+        .and_then(|v| v.as_str())
+        .unwrap_or("")
+        .to_string();
     if size > MAX_FILE_BYTES {
         return Err(format!("{path} is larger than 100 MB"));
     }
-    if std::fs::symlink_metadata(local).is_ok_and(|m| m.is_file() && m.len() == size) {
+    let expected_meta = format!("{size}\n{sha}");
+    let meta_path = meta_sidecar_path(local);
+    if std::fs::symlink_metadata(local).is_ok_and(|m| m.is_file() && m.len() == size)
+        && security::read_secure_file(&meta_path, 4096)
+            .ok()
+            .and_then(|b| String::from_utf8(b).ok())
+            .as_deref()
+            == Some(expected_meta.as_str())
+    {
         return Ok(());
     }
-    let partial = local.with_extension("partial");
+    let partial = unique_partial_path(local);
     let mut file = std::fs::OpenOptions::new()
         .write(true)
-        .create(true)
-        .truncate(true)
-        .custom_flags(libc::O_NOFOLLOW)
+        .create_new(true)
+        .custom_flags(libc::O_NOFOLLOW | libc::O_CLOEXEC)
         .mode(0o600)
         .open(&partial)
         .map_err(|e| format!("Cannot write {}: {e}", partial.display()))?;
     let cmd = gh(&["api", "-H", "Accept: application/vnd.github.raw", &endpoint]);
     let written = security::run_bounded_command_stream_to_file(cmd, &mut file, TRANSFER_TIMEOUT, MAX_FILE_BYTES as usize + 1);
     match written {
-        Ok(n) if n as u64 == size => std::fs::rename(&partial, local).map_err(|e| format!("Download failed: {e}")),
+        Ok(n) if n as u64 == size => {
+            std::fs::rename(&partial, local).map_err(|e| format!("Download failed: {e}"))?;
+            let _ = security::atomic_write_secure(&meta_path, expected_meta.as_bytes());
+            Ok(())
+        }
         Ok(_) => {
             let _ = std::fs::remove_file(&partial);
             Err("Download failed: the file arrived incomplete".into())

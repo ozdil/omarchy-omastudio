@@ -634,7 +634,7 @@ fn geometry(@builtin(global_invocation_id) id: vec3<u32>) {
         y = cy + dy * factor;
     }
     var res = vec3<f32>(0.0, 0.0, 0.0);
-    if (inside && x >= 0.0 && x < f32(p.w - 1u) && y >= 0.0 && y < f32(p.h - 1u)) {
+    if (inside && p.w > 0u && p.h > 0u && x >= 0.0 && x <= f32(p.w - 1u) && y >= 0.0 && y <= f32(p.h - 1u)) {
         let x0 = u32(floor(x));
         let y0 = u32(floor(y));
         let x1 = min(x0 + 1u, p.w - 1u);

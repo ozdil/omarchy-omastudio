@@ -255,29 +255,107 @@ fn load_bitmap(path: &str) -> Option<Arc<MaskBitmap>> {
     Some(Arc::new(MaskBitmap { width: img.width() as usize, height: img.height() as usize, data: img.into_raw() }))
 }
 
-/// Mask images, loaded once per process (mask files are never rewritten: a new mask
-/// gets a new name); a per-thread slot avoids the lock per pixel.
+const MASK_CACHE_MAX_BYTES: usize = 128 << 20;
+const MASK_CACHE_MAX_ENTRIES: usize = 256;
+
+struct MaskCacheEntry {
+    bitmap: Option<Arc<MaskBitmap>>,
+    bytes: usize,
+    last_used: u64,
+}
+
+#[derive(Default)]
+struct MaskCache {
+    entries: HashMap<String, MaskCacheEntry>,
+    total_bytes: usize,
+    clock: u64,
+}
+
+impl MaskCache {
+    fn get(&mut self, path: &str) -> Option<Option<Arc<MaskBitmap>>> {
+        let entry = self.entries.get_mut(path)?;
+        self.clock = self.clock.wrapping_add(1);
+        entry.last_used = self.clock;
+        Some(entry.bitmap.clone())
+    }
+
+    fn insert(&mut self, path: String, bitmap: Option<Arc<MaskBitmap>>) {
+        let bytes = bitmap.as_ref().map(|b| b.data.len()).unwrap_or(0);
+        if bytes > MASK_CACHE_MAX_BYTES {
+            // Too large for cache budget: still returned to caller, not pinned globally.
+            return;
+        }
+        if let Some(old) = self.entries.remove(&path) {
+            self.total_bytes = self.total_bytes.saturating_sub(old.bytes);
+        }
+        self.clock = self.clock.wrapping_add(1);
+        let ts = self.clock;
+        self.entries.insert(path.clone(), MaskCacheEntry { bitmap, bytes, last_used: ts });
+        self.total_bytes = self.total_bytes.saturating_add(bytes);
+
+        while self.total_bytes > MASK_CACHE_MAX_BYTES || self.entries.len() > MASK_CACHE_MAX_ENTRIES {
+            let victim = self
+                .entries
+                .iter()
+                .filter(|(k, _)| k.as_str() != path.as_str())
+                .min_by_key(|(_, v)| v.last_used)
+                .map(|(k, _)| k.clone());
+            let Some(victim_key) = victim else {
+                break;
+            };
+            if let Some(removed) = self.entries.remove(&victim_key) {
+                self.total_bytes = self.total_bytes.saturating_sub(removed.bytes);
+            }
+        }
+    }
+}
+
+enum ThreadCachedMask {
+    Present(std::sync::Weak<MaskBitmap>),
+    Missing,
+}
+
+/// Mask images cached in a 128 MiB byte-budgeted LRU (mask files are never rewritten:
+/// a new mask gets a new name); a per-thread Weak slot avoids the lock per pixel
+/// without retaining evicted bitmaps across worker threads.
 fn bitmap(path: &str) -> Option<Arc<MaskBitmap>> {
     thread_local! {
-        static LAST: RefCell<Option<(String, Option<Arc<MaskBitmap>>)>> = const { RefCell::new(None) };
+        static LAST: RefCell<Option<(String, ThreadCachedMask)>> = const { RefCell::new(None) };
     }
     LAST.with(|last| {
-        if let Some((p, m)) = last.borrow().as_ref()
+        if let Some((p, entry)) = last.borrow().as_ref()
             && p == path
         {
-            return m.clone();
+            match entry {
+                ThreadCachedMask::Present(w) => {
+                    if let Some(arc) = w.upgrade() {
+                        return Some(arc);
+                    }
+                }
+                ThreadCachedMask::Missing => return None,
+            }
         }
-        static CACHE: OnceLock<Mutex<HashMap<String, Option<Arc<MaskBitmap>>>>> = OnceLock::new();
-        let loaded = CACHE
-            .get_or_init(Default::default)
-            .lock()
-            .map(|mut c| c.entry(path.to_string()).or_insert_with(|| load_bitmap(path)).clone())
-            .unwrap_or(None);
-        *last.borrow_mut() = Some((path.to_string(), loaded.clone()));
+        static CACHE: OnceLock<Mutex<MaskCache>> = OnceLock::new();
+        let cache = CACHE.get_or_init(Default::default);
+        let cached = cache.lock().unwrap_or_else(|e| e.into_inner()).get(path);
+        let loaded = match cached {
+            Some(hit) => hit,
+            None => {
+                // Perform disk read + PNG decode outside the global lock.
+                let fresh = load_bitmap(path);
+                let mut guard = cache.lock().unwrap_or_else(|e| e.into_inner());
+                guard.insert(path.to_string(), fresh.clone());
+                fresh
+            }
+        };
+        let tls_entry = match &loaded {
+            Some(arc) => ThreadCachedMask::Present(Arc::downgrade(arc)),
+            None => ThreadCachedMask::Missing,
+        };
+        *last.borrow_mut() = Some((path.to_string(), tls_entry));
         loaded
     })
 }
-
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 #[serde(default)]
@@ -298,7 +376,6 @@ pub struct AdjustmentLayer {
     pub shadows: f32,    // -100.0 to +100.0
     pub whites: f32,     // -100.0 to +100.0
     pub blacks: f32,     // -100.0 to +100.0
-    pub clarity: f32,    // -100.0 to +100.0
     pub saturation: f32, // -100.0 to +100.0
     pub tint_r: f32,     // -1.0 to 1.0
     pub tint_g: f32,     // -1.0 to 1.0
@@ -326,7 +403,6 @@ impl Default for AdjustmentLayer {
             shadows: 0.0,
             whites: 0.0,
             blacks: 0.0,
-            clarity: 0.0,
             saturation: 0.0,
             tint_r: 0.0,
             tint_g: 0.0,
@@ -474,9 +550,7 @@ static DISPLAY: std::sync::LazyLock<crate::pipeline::transfer::Transfer> =
 /// Middle grey (18 % reflectance) on the display-encoded scale the layers work on.
 const MID_GREY: f32 = 0.41;
 
-/// Applies active adjustment layers to a display-encoded RGB pixel (0.0..1.0). The
-/// clarity field is not applied (it needs the neighbourhood, which this per-pixel
-/// stage has not got) and is not offered in the interface.
+/// Applies active adjustment layers to a display-encoded RGB pixel (0.0..1.0).
 #[inline]
 pub fn apply_layers_pixel(
     mut r: f32,
@@ -715,5 +789,28 @@ mod tests {
 
         assert_eq!(w_shadow, 0.0);
         assert!((w_highlight - 1.0).abs() < 1e-3);
+    }
+
+    #[test]
+    fn mask_cache_enforces_byte_budget_lru_and_drops_weak_refs() {
+        let mut cache = MaskCache::default();
+        let big1 = Arc::new(MaskBitmap { width: 1, height: 70 << 20, data: vec![1u8; 70 << 20] });
+        let big2 = Arc::new(MaskBitmap { width: 1, height: 70 << 20, data: vec![2u8; 70 << 20] });
+        let weak1 = Arc::downgrade(&big1);
+        cache.insert("mask1.png".into(), Some(big1));
+        assert!(cache.total_bytes <= MASK_CACHE_MAX_BYTES);
+        cache.insert("mask2.png".into(), Some(big2));
+        assert!(cache.total_bytes <= MASK_CACHE_MAX_BYTES);
+        assert!(cache.get("mask1.png").is_none(), "LRU entry should be evicted once budget exceeds 128 MiB");
+        assert!(weak1.upgrade().is_none(), "evicted bitmap must be released without strong retention");
+        assert!(cache.get("mask2.png").is_some());
+    }
+
+    #[test]
+    fn legacy_layer_json_with_clarity_deserializes_cleanly() {
+        let legacy = r#"{"id":"l1","name":"Sky","enabled":true,"invert":false,"opacity":0.8,"exposure":0.5,"clarity":25.0}"#;
+        let layer: AdjustmentLayer = serde_json::from_str(legacy).expect("legacy clarity field should be ignored");
+        assert_eq!(layer.id, "l1");
+        assert_eq!(layer.exposure, 0.5);
     }
 }

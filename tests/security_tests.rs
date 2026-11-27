@@ -412,3 +412,62 @@ fn test_sidecar_supports_multi_megabyte_recipes() {
 
     let _ = fs::remove_dir_all(&dir);
 }
+
+#[test]
+fn test_atomic_write_user_uses_umask_respecting_0644_while_secure_uses_0600() {
+    let dir = PathBuf::from(format!("/tmp/omaraw_test_user_mode_{}", std::process::id()));
+    let _ = fs::remove_dir_all(&dir);
+    fs::create_dir_all(&dir).unwrap();
+
+    let user_file = dir.join("sidecar.omastudio");
+    omastudio_engine::security::atomic_write_user(&user_file, b"{}").expect("atomic_write_user");
+    let mode = fs::symlink_metadata(&user_file).unwrap().permissions().mode() & 0o777;
+    assert_eq!(mode & 0o022, 0, "user file must never be group/world writable");
+    assert_eq!(mode & 0o600, 0o600, "owner must have rw");
+
+    if let Ok(status) = fs::read_to_string("/proc/self/status")
+        && let Some(line) = status.lines().find(|l| l.starts_with("Umask:"))
+        && let Ok(mask) = u32::from_str_radix(line.trim_start_matches("Umask:").trim(), 8)
+    {
+        assert_eq!(mode, 0o644 & !mask, "atomic_write_user must respect process umask over 0644");
+    }
+
+    let _ = fs::remove_dir_all(&dir);
+}
+
+#[test]
+fn test_stream_to_file_drains_large_stderr_and_enforces_stdout_cap() {
+    let dir = PathBuf::from(format!("/tmp/omaraw_test_stream_poll_{}", std::process::id()));
+    let _ = fs::remove_dir_all(&dir);
+    fs::create_dir_all(&dir).unwrap();
+
+    let out_path = dir.join("stream.bin");
+    let mut out_file = fs::File::create(&out_path).unwrap();
+    let mut cmd = secure_command("sh");
+    cmd.args(["-c", "i=0; while [ $i -lt 5000 ]; do printf 'err-%05d-012345678901234567890123456789\\n' $i >&2; i=$((i+1)); done; printf 'ok-stream'"]);
+    let written = omastudio_engine::security::run_bounded_command_stream_to_file(
+        cmd,
+        &mut out_file,
+        Duration::from_secs(10),
+        1024,
+    )
+    .expect("poll-based stream_to_file must drain stderr and succeed");
+    assert_eq!(written, 9);
+    assert_eq!(fs::read(&out_path).unwrap(), b"ok-stream");
+
+    // Verify stdout byte limit is strictly enforced
+    let out_path2 = dir.join("stream_cap.bin");
+    let mut out_file2 = fs::File::create(&out_path2).unwrap();
+    let mut cmd2 = secure_command("sh");
+    cmd2.args(["-c", "dd if=/dev/zero bs=1024 count=8 2>/dev/null"]);
+    let err = omastudio_engine::security::run_bounded_command_stream_to_file(
+        cmd2,
+        &mut out_file2,
+        Duration::from_secs(5),
+        1024,
+    )
+    .expect_err("exceeding max_bytes must fail");
+    assert_eq!(err.kind(), std::io::ErrorKind::OutOfMemory);
+
+    let _ = fs::remove_dir_all(&dir);
+}

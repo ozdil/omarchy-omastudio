@@ -98,13 +98,20 @@ pub type Result<T> = std::result::Result<T, Error>;
 
 /// Largest message accepted from the camera (previews are sent in many messages).
 const MAX_MESSAGE: usize = 64 * 1024 * 1024;
+/// Initial preallocation ceiling for untrusted v1 fragment headers.
+const MAX_INITIAL_CAPACITY: usize = 64 * 1024;
+/// Maximum consecutive 0-byte USB reads allowed before failing a receive.
+const MAX_EMPTY_READS: usize = 8;
 /// v1: payload bytes in the first fragment and in each following one.
 const V1_FIRST: usize = 246;
 const V1_NEXT: usize = 250;
 
 /// v2 frame: [signal u16 LE][src][dst][len u8][payload]; len 0 means a big-endian u16
 /// length follows at offset 5 and the payload starts at 7.
-pub fn encode_v2(m: &Message) -> Vec<u8> {
+pub fn encode_v2(m: &Message) -> Result<Vec<u8>> {
+    if m.payload.len() > u16::MAX as usize {
+        return Err(Error::Frame(format!("v2 payload exceeds u16::MAX ({} bytes)", m.payload.len())));
+    }
     let mut out = Vec::with_capacity(m.payload.len() + 7);
     out.extend_from_slice(&m.signal.to_le_bytes());
     out.extend_from_slice(&[m.src, m.dst]);
@@ -112,10 +119,10 @@ pub fn encode_v2(m: &Message) -> Vec<u8> {
         out.push(m.payload.len() as u8);
     } else {
         out.push(0);
-        out.extend_from_slice(&(m.payload.len().min(u16::MAX as usize) as u16).to_be_bytes());
+        out.extend_from_slice(&(m.payload.len() as u16).to_be_bytes());
     }
     out.extend_from_slice(&m.payload);
-    out
+    Ok(out)
 }
 
 /// Decodes one v2 frame from the front of `buf`; returns it and the bytes it used.
@@ -188,14 +195,19 @@ impl Reassembler {
             if total > MAX_MESSAGE {
                 return Err(Error::Frame(format!("message of {} bytes", total)));
             }
-            let mut payload = Vec::with_capacity(total);
+            let mut payload = Vec::with_capacity(total.min(MAX_INITIAL_CAPACITY));
             payload.extend_from_slice(&f[14..]);
             let m = Message { signal: u16::from_le_bytes([f[0], f[1]]), src: f[2], dst: f[3], payload };
             self.current = Some((m, id, 1, total));
         } else {
             match self.current.as_mut() {
                 Some((m, cid, next, _)) if *cid == id && *next == index && m.signal == u16::from_le_bytes([f[0], f[1]]) => {
-                    m.payload.extend_from_slice(&f[10..]);
+                    let chunk = &f[10..];
+                    if m.payload.len().saturating_add(chunk.len()) > MAX_MESSAGE {
+                        self.current = None;
+                        return Err(Error::Frame("reassembled message exceeded maximum size".into()));
+                    }
+                    m.payload.extend_from_slice(chunk);
                     *next += 1;
                 }
                 _ => {
@@ -305,18 +317,28 @@ impl Camera {
         buf.extend_from_slice(bytes);
         let c = self.bulk_out.transfer_blocking(buf, timeout);
         match c.status {
-            Ok(()) => Ok(()),
+            Ok(()) if c.actual_len == bytes.len() => Ok(()),
+            Ok(()) => Err(Error::Usb(format!(
+                "short USB write: {} of {} bytes",
+                c.actual_len,
+                bytes.len()
+            ))),
             Err(nusb::transfer::TransferError::Cancelled) => Err(Error::Timeout),
             Err(e) => Err(Error::Usb(e.to_string())),
         }
     }
 
-    fn read(&mut self, timeout: Duration) -> Result<()> {
+    fn read(&mut self, timeout: Duration) -> Result<usize> {
         let c = self.bulk_in.transfer_blocking(Buffer::new(64 * 1024), timeout);
         match c.status {
             Ok(()) => {
-                self.pending.extend_from_slice(&c.buffer[..c.actual_len.min(c.buffer.len())]);
-                Ok(())
+                let n = c.actual_len.min(c.buffer.len());
+                if self.pending.len().saturating_add(n) > MAX_MESSAGE {
+                    self.pending.clear();
+                    return Err(Error::Frame("pending USB buffer exceeded maximum message size".into()));
+                }
+                self.pending.extend_from_slice(&c.buffer[..n]);
+                Ok(n)
             }
             Err(nusb::transfer::TransferError::Cancelled) => Err(Error::Timeout),
             Err(e) => Err(Error::Usb(e.to_string())),
@@ -327,7 +349,10 @@ impl Camera {
         let m = Message { signal, src: Node::NetHost as u8, dst: route(signal) as u8, payload: payload.to_vec() };
         let timeout = Duration::from_secs(5);
         match self.protocol {
-            Protocol::V2 => self.write(&encode_v2(&m), timeout),
+            Protocol::V2 => {
+                let frame = encode_v2(&m)?;
+                self.write(&frame, timeout)
+            }
             Protocol::V1 => {
                 self.msg_id = self.msg_id.wrapping_add(1);
                 for f in encode_v1(&m, self.msg_id) {
@@ -341,6 +366,7 @@ impl Camera {
     /// Next message from the camera.
     pub fn receive(&mut self, timeout: Duration) -> Result<Message> {
         let deadline = Instant::now() + timeout;
+        let mut empty_reads = 0usize;
         loop {
             match self.protocol {
                 Protocol::V2 => {
@@ -363,7 +389,14 @@ impl Camera {
             if left.is_zero() {
                 return Err(Error::Timeout);
             }
-            self.read(left)?;
+            if self.read(left)? == 0 {
+                empty_reads += 1;
+                if empty_reads > MAX_EMPTY_READS {
+                    return Err(Error::Frame("too many empty USB reads awaiting Hasselblad frame".into()));
+                }
+            } else {
+                empty_reads = 0;
+            }
         }
     }
 
@@ -372,7 +405,11 @@ impl Camera {
         self.send(signal, payload)?;
         let deadline = Instant::now() + Duration::from_secs(10);
         loop {
-            let m = self.receive(deadline.saturating_duration_since(Instant::now()))?;
+            let rem = deadline
+                .checked_duration_since(Instant::now())
+                .filter(|d| !d.is_zero())
+                .ok_or(Error::Timeout)?;
+            let m = self.receive(rem)?;
             if m.signal == response {
                 return Ok(m.payload);
             }
@@ -404,7 +441,11 @@ impl Camera {
         status(self.request(signal::DO_EXPOSURE_REQ, &[0], signal::DO_EXPOSURE_RESP)?)?;
         let deadline = Instant::now() + Duration::from_secs(120);
         loop {
-            if self.receive(deadline.saturating_duration_since(Instant::now()))?.signal == signal::EXPOSURE_DONE_EVENT {
+            let rem = deadline
+                .checked_duration_since(Instant::now())
+                .filter(|d| !d.is_zero())
+                .ok_or(Error::Timeout)?;
+            if self.receive(rem)?.signal == signal::EXPOSURE_DONE_EVENT {
                 return Ok(());
             }
         }
@@ -417,7 +458,8 @@ fn word(b: Vec<u8>) -> Result<u32> {
 
 fn status(b: Vec<u8>) -> Result<()> {
     match b.first() {
-        Some(0) | None => Ok(()),
+        Some(0) => Ok(()),
+        None => Err(Error::Frame("empty status response".into())),
         Some(c) => Err(Error::Frame(format!("camera refused the request (status {})", c))),
     }
 }
@@ -434,7 +476,7 @@ mod tests {
     fn v2_short_and_long_frames_round_trip() {
         for n in [1, 4, 255, 256, 4000] {
             let m = msg(signal::SET_ISO_REQ, n);
-            let mut bytes = encode_v2(&m);
+            let mut bytes = encode_v2(&m).unwrap();
             if n < 256 {
                 assert_eq!(bytes[4] as usize, n);
             } else {
@@ -446,7 +488,9 @@ mod tests {
             assert_eq!(used, bytes.len() - 2);
             assert!(decode_v2(&bytes[..used - 1]).unwrap().is_none());
         }
-        assert_eq!(&encode_v2(&msg(0x02ef, 4))[..5], &[0xef, 0x02, 4, 1, 4]);
+        assert_eq!(&encode_v2(&msg(0x02ef, 4)).unwrap()[..5], &[0xef, 0x02, 4, 1, 4]);
+        assert!(encode_v2(&msg(signal::SET_ISO_REQ, u16::MAX as usize + 1)).is_err());
+        assert!(status(Vec::new()).is_err());
     }
 
     #[test]

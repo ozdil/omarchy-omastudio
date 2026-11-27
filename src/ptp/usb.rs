@@ -65,7 +65,7 @@ impl UsbTransport {
             .wait()
             .map_err(|e| Error::Usb(e.to_string()))?
             .filter(|d| vendor.is_none_or(|v| d.vendor_id() == v) && product.is_none_or(|p| d.product_id() == p))
-            .find(|d| d.interfaces().any(|i| i.class() == STILL_IMAGE_CLASS))
+            .find(|d| d.class() == STILL_IMAGE_CLASS || d.interfaces().any(|i| i.class() == STILL_IMAGE_CLASS))
             .ok_or_else(|| Error::Usb("No camera in PTP/USB mode found. Set the camera's USB mode to \"USB RAW CONV./BACKUP RESTORE\" or tethering and connect it.".into()))?;
         let device = info.open().wait().map_err(|e| permission_hint(e.to_string()))?;
         let config = device.active_configuration().map_err(|e| Error::Usb(e.to_string()))?;
@@ -133,7 +133,14 @@ impl Transport for UsbTransport {
             buf.extend_from_slice(part);
             let c = self.bulk_out.transfer_blocking(buf, rem);
             match c.status {
-                Ok(()) => {}
+                Ok(()) if c.actual_len == part.len() => {}
+                Ok(()) => {
+                    return Err(Error::Usb(format!(
+                        "short USB write: {} of {} bytes",
+                        c.actual_len,
+                        part.len()
+                    )));
+                }
                 Err(nusb::transfer::TransferError::Cancelled) => return Err(Error::Timeout),
                 Err(e) => return Err(Error::Usb(e.to_string())),
             }

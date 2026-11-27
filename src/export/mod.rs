@@ -163,8 +163,8 @@ pub fn export_photo<P: AsRef<Path>>(
             dyn_img = dyn_img.resize(max_dim, max_dim, image::imageops::FilterType::Lanczos3);
         }
     } else if options.scale_percent < 100 && options.scale_percent > 0 {
-        let new_w = (cur_w * options.scale_percent) / 100;
-        let new_h = (cur_h * options.scale_percent) / 100;
+        let new_w = ((cur_w as u64 * options.scale_percent as u64) / 100).max(1) as u32;
+        let new_h = ((cur_h as u64 * options.scale_percent as u64) / 100).max(1) as u32;
         dyn_img = dyn_img.resize_exact(new_w, new_h, image::imageops::FilterType::Lanczos3);
     }
 
@@ -237,6 +237,7 @@ pub fn export_photo<P: AsRef<Path>>(
     match fmt.as_str() {
         "jxl" => {
             let tmp = TempPng::write(&expanded_dir, stem, &dyn_img, icc_bytes)?;
+            let stage = StagedOutput::new(&final_dest, ext);
             // cjxl carries the PNG's iCCP profile and bit depth into the JXL file;
             // distance 0 is mathematically lossless
             let distance = if quality >= 100 { "0".to_string() } else { ((100 - quality) as f32 / 10.0).to_string() };
@@ -244,11 +245,13 @@ pub fn export_photo<P: AsRef<Path>>(
             // The ISOBMFF container lets exiftool add the camera's Exif box below; a bare
             // codestream cannot carry metadata
             cmd.arg("-d").arg(&distance).arg("-e").arg("7").arg("--container=1")
-                .arg("--").arg(&tmp.0).arg(&final_dest);
+                .arg("--").arg(&tmp.0).arg(stage.stage_path());
             run_encoder(cmd, "cjxl", 120)?;
+            stage.commit()?;
         }
         "avif" => {
             let tmp = TempPng::write(&expanded_dir, stem, &dyn_img, icc_bytes)?;
+            let stage = StagedOutput::new(&final_dest, ext);
             let mut cmd = secure_command("avifenc");
             cmd.arg("-s").arg("4").arg("-d").arg(depth.to_string());
             if quality >= 100 {
@@ -256,27 +259,26 @@ pub fn export_photo<P: AsRef<Path>>(
             } else {
                 cmd.arg("-q").arg(quality.to_string());
             }
-            cmd.arg("--").arg(&tmp.0).arg(&final_dest);
+            cmd.arg("--").arg(&tmp.0).arg(stage.stage_path());
             // A missing avifenc falls through to ffmpeg, not abort the export
             if run_encoder(cmd, "avifenc", 120).is_err() {
+                let _ = fs::remove_file(stage.stage_path());
                 let mut f_cmd = secure_command("ffmpeg");
-                let crf = (35 - (quality * 20 / 100)).to_string();
-                f_cmd.arg("-y")
-                    .arg("-i").arg(&tmp.0)
-                    .arg("-c:v").arg("libsvtav1")
-                    .arg("-crf").arg(&crf)
-                    .arg("--")
-                    .arg(&final_dest);
+                for arg in build_ffmpeg_avif_args(&tmp.0, stage.stage_path(), depth, quality) {
+                    f_cmd.arg(arg);
+                }
                 let ff_ok = run_bounded_command(f_cmd, Duration::from_secs(60))
                     .map(|(code, _, _)| code == 0)
                     .unwrap_or(false);
-                if !ff_ok || !final_dest.exists() {
+                if !ff_ok || !stage.stage_path().exists() {
                     return Err("AVIF export failed: neither avifenc nor ffmpeg (libsvtav1) succeeded".to_string());
                 }
             }
+            stage.commit()?;
         }
         "heic" => {
             let tmp = TempPng::write(&expanded_dir, stem, &dyn_img, icc_bytes)?;
+            let stage = StagedOutput::new(&final_dest, ext);
             // heif-enc (libheif) with x265; the PNG's ICC profile is carried over
             let mut cmd = secure_command("heif-enc");
             if quality >= 100 {
@@ -284,8 +286,9 @@ pub fn export_photo<P: AsRef<Path>>(
             } else {
                 cmd.arg("-q").arg(quality.to_string());
             }
-            cmd.arg("-b").arg(depth.to_string()).arg("-o").arg(&final_dest).arg("--").arg(&tmp.0);
+            cmd.arg("-b").arg(depth.to_string()).arg("-o").arg(stage.stage_path()).arg("--").arg(&tmp.0);
             run_encoder(cmd, "heif-enc", 180)?;
+            stage.commit()?;
         }
         "webp" => {
             // Lossy WebP comes from cwebp (libwebp-utils), which keeps the ICC profile.
@@ -293,12 +296,14 @@ pub fn export_photo<P: AsRef<Path>>(
             // falling back to lossless would silently write files many times larger.
             if quality < 100 {
                 let tmp = TempPng::write(&expanded_dir, stem, &dyn_img, icc_bytes)?;
+                let stage = StagedOutput::new(&final_dest, ext);
                 let mut cmd = secure_command("cwebp");
                 cmd.arg("-q").arg(quality.to_string()).arg("-m").arg("6").arg("-metadata").arg("icc")
-                    .arg("-o").arg(&final_dest).arg("--").arg(&tmp.0);
+                    .arg("-o").arg(stage.stage_path()).arg("--").arg(&tmp.0);
                 run_encoder(cmd, "cwebp", 120).map_err(|e| {
                     format!("{}. Install libwebp-utils, or export at quality 100 for lossless WebP.", e)
                 })?;
+                stage.commit()?;
             } else {
                 let mut buf = Vec::new();
                 let mut encoder = image::codecs::webp::WebPEncoder::new_lossless(&mut buf);
@@ -382,7 +387,7 @@ pub fn export_photo<P: AsRef<Path>>(
 
         if options.preserve_exif {
             exif_cmd.arg("-TagsFromFile")
-                .arg(raw_path.as_ref())
+                .arg(safe_exiftool_path(raw_path.as_ref()))
                 .arg("-all:all")
                 .arg("-unsafe")
                 // Pixels are already rotated by the decoder; copying the source Orientation
@@ -407,10 +412,24 @@ pub fn export_photo<P: AsRef<Path>>(
                 .arg(format!("-Copyright={}", artist));
         }
 
-        exif_cmd.arg("--").arg(&final_dest);
+        exif_cmd.arg("--").arg(safe_exiftool_path(&final_dest));
 
-        // Run exiftool with bounded timeout (safe failover if format doesn't support tags)
-        let _ = run_bounded_command(exif_cmd, Duration::from_secs(20));
+        // Run exiftool with bounded timeout; surface failures as stderr warnings without
+        // aborting an otherwise valid export.
+        match run_bounded_command(exif_cmd, Duration::from_secs(20)) {
+            Ok((0, _, _)) => {}
+            Ok((code, _, stderr)) => {
+                eprintln!(
+                    "Warning: exiftool exited with status {} for {}: {}",
+                    code,
+                    final_dest.display(),
+                    String::from_utf8_lossy(&stderr).trim()
+                );
+            }
+            Err(e) => {
+                eprintln!("Warning: exiftool failed for {}: {}", final_dest.display(), e);
+            }
+        }
         prof.mark("exiftool");
     }
 
@@ -511,13 +530,16 @@ pub fn effective_bit_depth(format: &str, requested: u8) -> u8 {
     if allowed.contains(&requested) { requested } else { best }
 }
 
+static EXPORT_TEMP_SEQ: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(0);
+
 /// A PNG handed to an external encoder; removed when dropped.
 struct TempPng(PathBuf);
 
 impl TempPng {
     fn write(dir: &Path, stem: &str, img: &DynamicImage, icc: Option<&[u8]>) -> Result<Self, String> {
         let nanos = SystemTime::now().duration_since(UNIX_EPOCH).unwrap_or_default().as_nanos();
-        let path = dir.join(format!(".tmp_{}_{}_{}.png", stem, std::process::id(), nanos));
+        let seq = EXPORT_TEMP_SEQ.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+        let path = dir.join(format!(".tmp_{}_{}_{}_{}.png", stem, std::process::id(), seq, nanos));
         let png = encode_png(img, icc)?;
         crate::security::atomic_write_user(&path, &png)
             .map_err(|e| format!("Failed to save temporary PNG: {}", e))?;
@@ -529,6 +551,90 @@ impl Drop for TempPng {
     fn drop(&mut self) {
         let _ = fs::remove_file(&self.0);
     }
+}
+
+/// RAII sibling staging path for external encoders (cjxl, avifenc, ffmpeg, heif-enc, cwebp).
+/// Preserves the target extension so format-inferring encoders work, and atomically renames
+/// into `dest` only on `commit()`. Drops unlink the incomplete stage file on any error.
+struct StagedOutput {
+    stage: PathBuf,
+    dest: PathBuf,
+    committed: bool,
+}
+
+impl StagedOutput {
+    fn new(dest: &Path, ext: &str) -> Self {
+        let dir = dest.parent().unwrap_or_else(|| Path::new("."));
+        let nanos = SystemTime::now().duration_since(UNIX_EPOCH).unwrap_or_default().as_nanos();
+        let seq = EXPORT_TEMP_SEQ.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+        let stage = dir.join(format!(".tmp_export_{}_{}_{}.{}", std::process::id(), seq, nanos, ext));
+        Self { stage, dest: dest.to_path_buf(), committed: false }
+    }
+
+    fn stage_path(&self) -> &Path {
+        &self.stage
+    }
+
+    fn commit(mut self) -> Result<(), String> {
+        let meta = fs::symlink_metadata(&self.stage)
+            .map_err(|e| format!("Encoder did not produce staged output: {}", e))?;
+        if meta.file_type().is_symlink() || meta.len() == 0 {
+            return Err("Encoder produced invalid or empty staged output".to_string());
+        }
+        fs::rename(&self.stage, &self.dest)
+            .map_err(|e| format!("Failed to finalize export {}: {}", self.dest.display(), e))?;
+        self.committed = true;
+        Ok(())
+    }
+}
+
+impl Drop for StagedOutput {
+    fn drop(&mut self) {
+        if !self.committed {
+            let _ = fs::remove_file(&self.stage);
+        }
+    }
+}
+
+/// Builds FFmpeg AVIF encoding arguments without `--` (unsupported by FFmpeg), using the
+/// `file:` protocol to guard leading `-` or protocol-like filenames, selecting 10-bit pixel
+/// format for >8-bit depths, and enabling lossless mode at quality 100.
+fn build_ffmpeg_avif_args(input: &Path, output: &Path, depth: u8, quality: u32) -> Vec<String> {
+    let pix_fmt = if depth > 8 { "yuv420p10le" } else { "yuv420p" };
+    let mut args = vec![
+        "-y".to_string(),
+        "-i".to_string(),
+        format!("file:{}", input.display()),
+        "-c:v".to_string(),
+        "libsvtav1".to_string(),
+        "-pix_fmt".to_string(),
+        pix_fmt.to_string(),
+    ];
+    if quality >= 100 {
+        args.push("-crf".to_string());
+        args.push("0".to_string());
+        args.push("-svtav1-params".to_string());
+        args.push("lossless=1".to_string());
+    } else {
+        let crf = (35u32.saturating_sub(quality * 20 / 100)).to_string();
+        args.push("-crf".to_string());
+        args.push(crf);
+    }
+    args.push("-f".to_string());
+    args.push("avif".to_string());
+    args.push(format!("file:{}", output.display()));
+    args
+}
+
+/// Guards relative paths starting with `-` or `@` before handing them to `exiftool`.
+fn safe_exiftool_path(p: &Path) -> std::ffi::OsString {
+    if p.is_relative()
+        && let Some(text) = p.to_str()
+        && (text.starts_with('-') || text.starts_with('@'))
+    {
+        return PathBuf::from(".").join(p).into_os_string();
+    }
+    p.as_os_str().to_os_string()
 }
 
 /// Runs an external encoder; a missing tool or a non-zero exit is an error.
@@ -793,5 +899,54 @@ mod tests {
     fn acescg_resolves_without_a_file() {
         assert!(matches!(ExportProfile::resolve("ACEScg").unwrap(), ExportProfile::AcesCg));
         assert!(!ExportProfile::AcesCg.icc_bytes().unwrap().is_empty());
+    }
+
+    #[test]
+    fn ffmpeg_avif_args_omit_double_dash_and_honor_depth_and_lossless() {
+        let inp = Path::new("/tmp/-in.png");
+        let out = Path::new("/tmp/-out.avif");
+        let lossy10 = build_ffmpeg_avif_args(inp, out, 12, 85);
+        assert!(!lossy10.iter().any(|a| a == "--"), "ffmpeg rejects -- separator");
+        assert!(lossy10.contains(&"file:/tmp/-in.png".to_string()));
+        assert!(lossy10.contains(&"file:/tmp/-out.avif".to_string()));
+        assert!(lossy10.contains(&"yuv420p10le".to_string()));
+        assert!(lossy10.contains(&"avif".to_string()));
+
+        let lossless8 = build_ffmpeg_avif_args(inp, out, 8, 100);
+        assert!(lossless8.contains(&"yuv420p".to_string()));
+        assert!(lossless8.contains(&"lossless=1".to_string()));
+    }
+
+    #[test]
+    fn exiftool_path_guards_leading_dash_and_at() {
+        assert_eq!(safe_exiftool_path(Path::new("-photo.raf")), "./-photo.raf");
+        assert_eq!(safe_exiftool_path(Path::new("@list.raf")), "./@list.raf");
+        assert_eq!(safe_exiftool_path(Path::new("/abs/-photo.raf")), "/abs/-photo.raf");
+        assert_eq!(safe_exiftool_path(Path::new("normal.raf")), "normal.raf");
+    }
+
+    #[test]
+    fn staged_output_commits_atomically_and_cleans_up_on_drop() {
+        let dir = std::env::temp_dir().join(format!("omastudio_stage_test_{}", std::process::id()));
+        let _ = fs::remove_dir_all(&dir);
+        fs::create_dir_all(&dir).unwrap();
+        let dest = dir.join("out.jxl");
+
+        // Dropped without commit leaves no stage file and does not create dest
+        let abandoned_stage = {
+            let s = StagedOutput::new(&dest, "jxl");
+            fs::write(s.stage_path(), b"partial").unwrap();
+            s.stage_path().to_path_buf()
+        };
+        assert!(!abandoned_stage.exists());
+        assert!(!dest.exists());
+
+        // Committed stage atomically appears at dest
+        let s = StagedOutput::new(&dest, "jxl");
+        fs::write(s.stage_path(), b"complete-jxl").unwrap();
+        s.commit().unwrap();
+        assert_eq!(fs::read(&dest).unwrap(), b"complete-jxl");
+
+        let _ = fs::remove_dir_all(&dir);
     }
 }

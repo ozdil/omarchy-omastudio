@@ -79,9 +79,15 @@ fn camera_match(raw: &RawImage, path: &Path, recipe: &CameraRecipe, full: bool) 
         .map_err(|e| format!("Cannot decode the camera JPEG: {e}"))?
         .to_rgb8();
     let (jw, jh) = jpeg.dimensions();
+    if jw == 0 || jh == 0 {
+        return Err("Camera JPEG has zero dimensions".into());
+    }
     let buf = if full { raw.process_full_16(3)? } else { raw.process_preview_16(true)? };
     if buf.channels != 3 {
         return Err("Unexpected channel count".into());
+    }
+    if buf.width == 0 || buf.height == 0 {
+        return Err("RAW development has zero dimensions".into());
     }
     let mut r = recipe.to_recipe();
     let (baseline, why) = super::baseline::explain(raw, Some(&buf));
@@ -111,6 +117,9 @@ fn camera_match(raw: &RawImage, path: &Path, recipe: &CameraRecipe, full: bool) 
 /// Compares a development with the camera JPEG on a coarse grid, ignoring clipped areas.
 fn measure(dev: &[u8], w: u32, h: u32, jpeg: &image::RgbImage) -> Option<Match> {
     let (jw, jh) = jpeg.dimensions();
+    if w == 0 || h == 0 || jw == 0 || jh == 0 {
+        return None;
+    }
     let (dw, dh) = ((jw / 8).max(16), (jh / 8).max(16));
     let a = super::calibrate::reduce(dev, w, h, dw, dh);
     let b = super::calibrate::reduce(jpeg.as_raw(), jw, jh, dw, dh);
@@ -178,16 +187,9 @@ pub fn check(path: &Path, full: bool) -> FileReport {
     rep
 }
 
-/// Checks each file; a failure in one file is reported and does not stop the others.
+/// Checks each file; per-file errors are recorded in [`FileReport::problems`] without
+/// stopping the remaining files (release builds use `panic = "abort"`, so error handling
+/// relies on `Result` paths rather than `catch_unwind`).
 pub fn check_all(paths: &[std::path::PathBuf], full: bool) -> Vec<FileReport> {
-    paths
-        .iter()
-        .map(|p| {
-            std::panic::catch_unwind(|| check(p, full)).unwrap_or_else(|_| FileReport {
-                file: p.display().to_string(),
-                problems: vec!["The engine crashed on this file".into()],
-                ..FileReport::default()
-            })
-        })
-        .collect()
+    paths.iter().map(|p| check(p, full)).collect()
 }

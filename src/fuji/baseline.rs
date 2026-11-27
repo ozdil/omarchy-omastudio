@@ -23,11 +23,47 @@ type Key = (PathBuf, u64, Option<SystemTime>);
 /// Baseline exposure in EV, and why it could not be measured if it could not.
 type Measured = (f32, Option<String>);
 
+/// Maximum cached baseline measurements kept in memory.
+const MAX_MEMO_ENTRIES: usize = 256;
+
+#[derive(Default)]
+struct MemoCache {
+    entries: HashMap<Key, (Measured, u64)>,
+    clock: u64,
+}
+
+impl MemoCache {
+    fn get(&mut self, k: &Key) -> Option<Measured> {
+        let entry = self.entries.get_mut(k)?;
+        self.clock = self.clock.wrapping_add(1);
+        entry.1 = self.clock;
+        Some(entry.0.clone())
+    }
+
+    fn insert(&mut self, k: Key, val: Measured) {
+        self.clock = self.clock.wrapping_add(1);
+        let ts = self.clock;
+        self.entries.insert(k.clone(), (val, ts));
+        while self.entries.len() > MAX_MEMO_ENTRIES {
+            let victim = self
+                .entries
+                .iter()
+                .filter(|(ek, _)| *ek != &k)
+                .min_by_key(|(_, (_, last))| *last)
+                .map(|(ek, _)| ek.clone());
+            let Some(vk) = victim else {
+                break;
+            };
+            self.entries.remove(&vk);
+        }
+    }
+}
+
 /// Results per file, so the preview, the full-resolution frame and the export of one
 /// photo share exactly the same value.
-fn memo() -> &'static Mutex<HashMap<Key, Measured>> {
-    static MEMO: OnceLock<Mutex<HashMap<Key, Measured>>> = OnceLock::new();
-    MEMO.get_or_init(|| Mutex::new(HashMap::new()))
+fn memo() -> &'static Mutex<MemoCache> {
+    static MEMO: OnceLock<Mutex<MemoCache>> = OnceLock::new();
+    MEMO.get_or_init(|| Mutex::new(MemoCache::default()))
 }
 
 fn key(path: &Path) -> Key {
@@ -46,6 +82,20 @@ pub fn exposure(raw: &RawImage, decoded: Option<&ProcessedBuffer>) -> f32 {
     explain(raw, decoded).0
 }
 
+/// Baseline exposure measured against a neutral recipe (without user calibrated LUTs
+/// or DR200/DR400 exposure offsets), used during film-simulation calibration to avoid
+/// feedback loops.
+pub fn exposure_for_calibration(raw: &RawImage, decoded: &ProcessedBuffer) -> f32 {
+    if std::env::var("OMASTUDIO_BASELINE_EXPOSURE").is_ok_and(|v| v == "off") {
+        return 0.0;
+    }
+    let path = raw.path();
+    if !raw.get_metadata().is_ok_and(|m| m.make.to_ascii_lowercase().starts_with("fujifilm")) {
+        return 0.0;
+    }
+    measure_inner(path, decoded, true).unwrap_or(0.0)
+}
+
 /// [`exposure`], with the reason when it could not be measured.
 pub fn explain(raw: &RawImage, decoded: Option<&ProcessedBuffer>) -> Measured {
     if std::env::var("OMASTUDIO_BASELINE_EXPOSURE").is_ok_and(|v| v == "off") {
@@ -56,8 +106,8 @@ pub fn explain(raw: &RawImage, decoded: Option<&ProcessedBuffer>) -> Measured {
         return (0.0, None);
     }
     let k = key(path);
-    if let Some(found) = memo().lock().unwrap().get(&k) {
-        return found.clone();
+    if let Some(found) = memo().lock().unwrap_or_else(|e| e.into_inner()).get(&k) {
+        return found;
     }
     // Without a development at hand, a separate handle decodes a half-size one so the
     // caller's handle stays untouched for its own decode
@@ -72,20 +122,27 @@ pub fn explain(raw: &RawImage, decoded: Option<&ProcessedBuffer>) -> Measured {
             Err(e) => return (0.0, Some(e)),
         },
     };
-    let result = match measure(path, buf) {
+    let result = match measure_inner(path, buf, false) {
         Ok(ev) => (ev, None),
         Err(e) => (0.0, Some(e)),
     };
-    memo().lock().unwrap().insert(k, result.clone());
+    memo().lock().unwrap_or_else(|e| e.into_inner()).insert(k, result.clone());
     result
 }
 
-fn measure(path: &Path, buf: &ProcessedBuffer) -> Result<f32, String> {
-    let target = camera_median(path).ok_or("no readable camera JPEG")?;
+fn measure_inner(path: &Path, buf: &ProcessedBuffer, neutral_for_calibration: bool) -> Result<f32, String> {
+    // Suspend user-calibrated film LUTs so baseline measurement stays deterministic
+    // and never forms a feedback loop across calibration runs.
+    let _suspend_luts = pipeline::film_sim::suspend_calibrated_luts();
+    let target = camera_median(path, buf.width, buf.height).ok_or("no readable camera JPEG")?;
     if !(0.02..=0.95).contains(&target) {
         return Err(format!("camera JPEG median {target:.3} is out of range"));
     }
-    let mut recipe = CameraRecipe::read(path).ok_or("no camera recipe")?.to_recipe();
+    let mut recipe = if neutral_for_calibration {
+        crate::recipe::Recipe::default()
+    } else {
+        CameraRecipe::read(path).ok_or("no camera recipe")?.to_recipe()
+    };
     recipe.sharpness = 0.0;
     recipe.grain_amount = 0.0;
     recipe.denoise_lum = 0.0;
@@ -113,11 +170,23 @@ fn measure(path: &Path, buf: &ProcessedBuffer) -> Result<f32, String> {
     Ok(0.5 * (lo + hi))
 }
 
-/// Median brightness of the camera JPEG, from its EXIF thumbnail when it has one.
-fn camera_median(path: &Path) -> Option<f32> {
+fn aspect_matches(tw: u32, th: u32, rw: u32, rh: u32) -> bool {
+    if tw == 0 || th == 0 || rw == 0 || rh == 0 {
+        return false;
+    }
+    let ra = rw as f32 / rh as f32;
+    let ta = tw as f32 / th as f32;
+    let tr = th as f32 / tw as f32;
+    (ra - ta).abs() <= 0.02 || (ra - tr).abs() <= 0.02
+}
+
+/// Median brightness of the camera JPEG, using its EXIF thumbnail only when its aspect
+/// ratio matches the RAW frame (skipping letterboxed 4:3 thumbnails on 16:9 / 1:1 crops).
+fn camera_median(path: &Path, raw_w: u32, raw_h: u32) -> Option<f32> {
     let jpeg = makernote::embedded_jpeg(path).ok()?;
     let img = exif_thumbnail(&jpeg)
         .and_then(|t| image::load_from_memory_with_format(t, image::ImageFormat::Jpeg).ok())
+        .filter(|t| aspect_matches(t.width(), t.height(), raw_w, raw_h))
         .or_else(|| image::load_from_memory_with_format(&jpeg, image::ImageFormat::Jpeg).ok())?
         .to_rgb8();
     if std::env::var_os("OMASTUDIO_BASELINE_DEBUG").is_some() {

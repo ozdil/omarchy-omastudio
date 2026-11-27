@@ -19,7 +19,7 @@ os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 os.environ.setdefault("QT_QUICK_BACKEND", "software")
 os.environ.setdefault("QT_QUICK_CONTROLS_STYLE", "Basic")
 
-from PySide6.QtCore import Property, QObject, QTimer, Signal, Slot  # noqa: E402
+from PySide6.QtCore import Property, QObject, QTimer, QUrl, Signal, Slot  # noqa: E402
 from PySide6.QtGui import QGuiApplication  # noqa: E402
 from PySide6.QtQml import QQmlApplicationEngine, QmlElement, QmlSingleton  # noqa: E402
 from PySide6.QtQuick import QQuickWindow  # noqa: E402
@@ -28,7 +28,7 @@ ROOT = Path(__file__).resolve().parents[2]
 QML_IMPORT_NAME = "OmaStudio.Host"
 QML_IMPORT_MAJOR_VERSION = 1
 LANGS = sorted(p.stem.removeprefix("qml_") for p in (ROOT / "app" / "i18n").glob("qml_*.ts"))
-STATE = {"lang": "en"}
+STATE = {"lang": "en", "ui_state": ""}
 
 
 @QmlElement
@@ -37,6 +37,7 @@ class Host(QObject):
     ipcCall = Signal(int, str, str)
     uiLanguageChanged = Signal()
     languageChoiceChanged = Signal()
+    systemLanguageChanged = Signal()
 
     @Property(str, constant=True)
     def openPath(self):
@@ -62,21 +63,34 @@ class Host(QObject):
     def languageChoice(self):
         return STATE["lang"]
 
-    @Property(str, constant=True)
+    @Property(str, notify=systemLanguageChanged)
     def systemLanguage(self):
         return "en"
+
+    @Property(str, constant=True)
+    def omarchyLanguageFile(self):
+        return ""
 
     @Property(str, constant=True)
     def availableLanguages(self):
         return ",".join(LANGS)
 
-    @Slot(str, result=str)
-    def env(self, name):
-        return os.environ.get(name, "")
-
     @Slot(int, str)
     def ipcReply(self, _id, _text):
         pass
+
+    @Slot(str, result=str)
+    def validateScreenshotPath(self, path):
+        return path if path.endswith(".png") else ""
+
+    @Slot(QUrl, result=str)
+    def localPath(self, url):
+        return url.toLocalFile() if url.isLocalFile() else ""
+
+    @Slot(str, result=QUrl)
+    def folderUrl(self, path):
+        p = Path(path).expanduser()
+        return QUrl.fromLocalFile(str(p)) if p.is_dir() else QUrl()
 
     @Slot(str, result=bool)
     def setUiLanguage(self, code):
@@ -84,6 +98,28 @@ class Host(QObject):
         self.uiLanguageChanged.emit()
         self.languageChoiceChanged.emit()
         return True
+
+    @Slot()
+    def refreshSystemLanguage(self):
+        pass
+
+    @Slot(result=str)
+    def uiState(self):
+        return STATE["ui_state"]
+
+    @Slot(str)
+    def saveUiState(self, text):
+        STATE["ui_state"] = text
+
+
+@QmlElement
+class HyprlandEvents(QObject):
+    connectedChanged = Signal()
+    configReloaded = Signal()
+
+    @Property(bool, notify=connectedChanged)
+    def connected(self):
+        return False
 
 
 @QmlElement
@@ -116,6 +152,9 @@ class Process(QObject):
             # The engine daemon stays up; other commands finish at once
             if "daemon" not in self._command:
                 QTimer.singleShot(0, self._finish)
+        elif not v and self._running:
+            self._running = False
+            self.runningChanged.emit()
 
     def _finish(self):
         self._running = False
@@ -130,6 +169,12 @@ class Process(QObject):
     @Slot(str, result=bool)
     def write(self, _text):
         return True
+
+    @Slot(int)
+    def gracefulStop(self, _timeout_ms):
+        if self._running:
+            self._running = False
+            self.runningChanged.emit()
 
 
 @QmlElement
@@ -173,38 +218,58 @@ def main():
     out.mkdir(parents=True, exist_ok=True)
     langs = sys.argv[2:] or LANGS
     lrelease = os.environ.get("LRELEASE") or shutil.which("pyside6-lrelease") or shutil.which("lrelease")
-
-    tmp = Path(tempfile.mkdtemp())
-    qml = tmp / "qml"
-    shutil.copytree(ROOT / "app" / "qml", qml)
-    (qml / "i18n").mkdir()
-    for ts in (ROOT / "app" / "i18n").glob("qml_*.ts"):
-        subprocess.run([lrelease, "-silent", "-nounfinished", "-removeidentical", str(ts),
-                        "-qm", str(qml / "i18n" / (ts.stem + ".qm"))], check=True)
-
-    app = QGuiApplication(sys.argv)
-    # Start in the first language so messages shown during startup are translated too
-    STATE["lang"] = langs[0]
-    engine = QQmlApplicationEngine()
-    engine.load(str(qml / "Main.qml"))
-    if not engine.rootObjects():
+    if not lrelease:
+        print(
+            "Error: lrelease not found. Install qt6-tools or PySide6 (or set LRELEASE).",
+            file=sys.stderr,
+        )
         return 1
-    win = engine.rootObjects()[0]
-    pending = list(langs)
 
-    def shoot():
-        if not pending:
-            app.quit()
-            return
-        code = pending.pop(0)
-        STATE["lang"] = code
-        engine.setUiLanguage(code)
-        # Let bindings and layouts settle before grabbing
-        QTimer.singleShot(400, lambda: (QQuickWindow.grabWindow(win).save(str(out / f"{code}.png")), shoot()))
+    with tempfile.TemporaryDirectory(prefix="omastudio_i18n_preview_") as tmp_dir:
+        tmp = Path(tmp_dir)
+        qml = tmp / "qml"
+        shutil.copytree(ROOT / "app" / "qml", qml)
+        (qml / "i18n").mkdir()
+        for ts in (ROOT / "app" / "i18n").glob("qml_*.ts"):
+            subprocess.run(
+                [
+                    lrelease,
+                    "-silent",
+                    "-nounfinished",
+                    "-removeidentical",
+                    str(ts),
+                    "-qm",
+                    str(qml / "i18n" / (ts.stem + ".qm")),
+                ],
+                check=True,
+            )
 
-    QTimer.singleShot(500, shoot)
-    app.exec()
-    shutil.rmtree(tmp, ignore_errors=True)
+        app = QGuiApplication(sys.argv)
+        # Start in the first language so messages shown during startup are translated too
+        STATE["lang"] = langs[0]
+        engine = QQmlApplicationEngine()
+        engine.load(str(qml / "Main.qml"))
+        if not engine.rootObjects():
+            return 1
+        win = engine.rootObjects()[0]
+        pending = list(langs)
+
+        def shoot():
+            if not pending:
+                app.quit()
+                return
+            code = pending.pop(0)
+            STATE["lang"] = code
+            engine.setUiLanguage(code)
+            # Let bindings and layouts settle before grabbing
+            QTimer.singleShot(
+                400,
+                lambda: (QQuickWindow.grabWindow(win).save(str(out / f"{code}.png")), shoot()),
+            )
+
+        QTimer.singleShot(500, shoot)
+        app.exec()
+
     print(f"wrote {len(langs)} screenshot(s) to {out}")
     return 0
 

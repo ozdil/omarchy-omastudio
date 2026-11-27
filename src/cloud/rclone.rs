@@ -67,7 +67,11 @@ fn prepare_config() -> Result<(), String> {
     lookup.arg("lookup").args(KEY_ATTRS);
     let (code, out, _) = run(lookup, QUICK_TIMEOUT)?;
     let has_key = code == 0 && !out.trim().is_empty();
-    let mut existing = std::fs::read_to_string(&path).unwrap_or_default();
+    let mut existing = match security::read_secure_file(&path, 1 << 20) {
+        Ok(bytes) => String::from_utf8_lossy(&bytes).into_owned(),
+        Err(e) if e.kind() == std::io::ErrorKind::NotFound => String::new(),
+        Err(e) => return Err(format!("Cannot safely read {}: {e}", path.display())),
+    };
     let encrypted = existing.contains("RCLONE_ENCRYPT_V0:");
     if encrypted && !has_key {
         let in_use = super::load_accounts()?
@@ -303,6 +307,36 @@ struct Item {
     size: i64,
     #[serde(default)]
     is_dir: bool,
+    #[serde(default)]
+    mod_time: String,
+}
+
+static RCLONE_PARTIAL_SEQ: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(0);
+
+fn meta_sidecar_path(local: &Path) -> PathBuf {
+    let mut name = local.as_os_str().to_owned();
+    name.push(".meta");
+    PathBuf::from(name)
+}
+
+fn unique_partial_path(local: &Path) -> PathBuf {
+    let seq = RCLONE_PARTIAL_SEQ.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+    let mut name = local.as_os_str().to_owned();
+    name.push(format!(".{}.{}.partial", std::process::id(), seq));
+    PathBuf::from(name)
+}
+
+struct PartialCleanupGuard {
+    path: PathBuf,
+    active: bool,
+}
+
+impl Drop for PartialCleanupGuard {
+    fn drop(&mut self) {
+        if self.active {
+            let _ = std::fs::remove_file(&self.path);
+        }
+    }
 }
 
 pub fn list(id: &str, path: &str) -> Result<Vec<Entry>, String> {
@@ -337,14 +371,28 @@ pub fn fetch(id: &str, path: &str, local: &Path) -> Result<(), String> {
     if size > MAX_TRANSFER_BYTES {
         return Err(format!("{path} is larger than {} GB", MAX_TRANSFER_BYTES >> 30));
     }
-    if std::fs::symlink_metadata(local).is_ok_and(|m| m.is_file() && m.len() == size) {
+    let expected_meta = format!("{size}\n{}", item.mod_time);
+    let meta_path = meta_sidecar_path(local);
+    if std::fs::symlink_metadata(local).is_ok_and(|m| m.is_file() && m.len() == size)
+        && security::read_secure_file(&meta_path, 4096)
+            .ok()
+            .and_then(|b| String::from_utf8(b).ok())
+            .as_deref()
+            == Some(expected_meta.as_str())
+    {
         return Ok(());
     }
-    let (code, _, err) = run(rclone(&["copyto", &remote, &local.to_string_lossy()]), TRANSFER_TIMEOUT)?;
+    let partial = unique_partial_path(local);
+    let mut guard = PartialCleanupGuard { path: partial.clone(), active: true };
+    let (code, _, err) = run(rclone(&["copyto", &remote, &partial.to_string_lossy()]), TRANSFER_TIMEOUT)?;
     if code != 0 {
         return Err(format!("Download failed: {}", last_error(&err, "rclone failed")));
     }
-    security::verify_safe_file(local).map_err(|e| format!("Download failed: {e}"))
+    security::verify_safe_file(&partial).map_err(|e| format!("Download failed: {e}"))?;
+    std::fs::rename(&partial, local).map_err(|e| format!("Download failed: {e}"))?;
+    guard.active = false;
+    let _ = security::atomic_write_secure(&meta_path, expected_meta.as_bytes());
+    Ok(())
 }
 
 pub fn upload(id: &str, file: &Path, target: &str) -> Result<(), String> {

@@ -651,7 +651,7 @@ pub const REFERENCE_EDGE: f32 = 3840.0;
 
 /// Visual clipping overlay: red for highlights (any channel >= 254), blue for shadows
 /// (every channel <= 1).
-fn clipping_overlay(output: &mut [u8], ch: usize, highlight_mask: bool, shadow_mask: bool) {
+pub fn clipping_overlay(output: &mut [u8], ch: usize, highlight_mask: bool, shadow_mask: bool) {
     if highlight_mask || shadow_mask {
         output
             .par_chunks_mut(ch)
@@ -808,11 +808,14 @@ fn process_16_to_16_banded(
 /// [`PRE_DISTORTION_SCALE`]) resampled through `lens`, with vignette and 16-bit
 /// quantization, as RGB.
 fn remap_16_cpu(pre: &[u16], w: usize, h: usize, lens: &detail::Geometry, recipe: &Recipe) -> Vec<u16> {
+    if w == 0 || h == 0 {
+        return Vec::new();
+    }
     let mut output = vec![0u16; w * h * 3];
     output.par_chunks_mut(w * 3).enumerate().for_each(|(y, row)| {
         for x in 0..w {
             let (sx, sy) = lens.source(x as f32, y as f32);
-            let px = if sx >= 0.0 && sx < (w - 1) as f32 && sy >= 0.0 && sy < (h - 1) as f32 {
+            let px = if sx >= 0.0 && sx <= (w - 1) as f32 && sy >= 0.0 && sy <= (h - 1) as f32 {
                 let (x0, y0) = (sx.floor() as usize, sy.floor() as usize);
                 let (x1, y1) = ((x0 + 1).min(w - 1), (y0 + 1).min(h - 1));
                 let (fx, fy) = (sx - x0 as f32, sy - y0 as f32);
@@ -956,11 +959,14 @@ pub fn render_region_8(
     recipe: &Recipe,
     transfer: Transfer,
 ) -> Vec<u8> {
+    let (ox, oy, ow, oh) = out;
+    if w == 0 || h == 0 || ow == 0 || oh == 0 || window.frame_w == 0 || window.frame_h == 0 {
+        return vec![0u8; ow * oh * 3];
+    }
     let stage = PointStage::new(recipe, transfer);
     let mut gpu_failed = false;
     let buf = process_band(input, w, 3, 0, h, window, recipe, &stage, &mut gpu_failed);
     let lens = detail::Geometry::new(window.frame_w, window.frame_h, recipe);
-    let (ox, oy, ow, oh) = out;
     let (fw, fh) = (window.frame_w as f32, window.frame_h as f32);
     let mut output = vec![0u8; ow * oh * 3];
     output.par_chunks_mut(ow * 3).enumerate().for_each(|(j, row)| {
@@ -971,7 +977,7 @@ pub fn render_region_8(
                 Some(l) => l.source(gx as f32, gy as f32),
                 None => (gx as f32, gy as f32),
             };
-            let px = if sx >= 0.0 && sx < fw - 1.0 && sy >= 0.0 && sy < fh - 1.0 {
+            let px = if sx >= 0.0 && sx <= fw - 1.0 && sy >= 0.0 && sy <= fh - 1.0 {
                 // Source position inside this buffer; clamped at its edges
                 let lx = (sx - window.x0 as f32).clamp(0.0, (w - 1) as f32);
                 let ly = (sy - window.y0 as f32).clamp(0.0, (h - 1) as f32);
@@ -1195,6 +1201,13 @@ pub fn process_split_comparison_16_to_8_ex(
     let w = width as usize;
     let split_x = ((width as f32) * split_ratio.clamp(0.0, 1.0)) as usize;
 
+    let base_exp = 2.0f32.powf(recipe.baseline_exposure);
+    // The source is linear light; BEFORE gets the same baseline exposure and display
+    // curve the AFTER path applies, so a neutral recipe looks identical on both halves.
+    let before_lut: Vec<u8> = (0u32..=65535u32)
+        .map(|v| (transfer.encode((v as f32 / 65535.0) * base_exp).clamp(0.0, 1.0) * 255.0) as u8)
+        .collect();
+
     let mut output = vec![0u8; (width as usize) * (height as usize) * ch];
     output
         .par_chunks_mut(w * ch)
@@ -1203,17 +1216,13 @@ pub fn process_split_comparison_16_to_8_ex(
             let orig_row = &input[y * w * ch..(y + 1) * w * ch];
             let proc_row = &processed[y * w * ch..(y + 1) * w * ch];
 
-            // The source is linear light; BEFORE gets the same single display curve the
-            // AFTER path applies, so a neutral recipe looks the same on both halves.
-            let to_8bit = |val16: u16| -> u8 { (transfer.encode(val16 as f32 / 65535.0).clamp(0.0, 1.0) * 255.0) as u8 };
-
             for x in 0..w {
                 let px = x * ch;
                 if x < split_x {
-                    // BEFORE (original decoded RAW, same encoding as the AFTER half)
-                    row[px] = to_8bit(orig_row[px]);
-                    row[px + 1] = to_8bit(orig_row[px + 1]);
-                    row[px + 2] = to_8bit(orig_row[px + 2]);
+                    // BEFORE (original decoded RAW, same baseline & encoding as AFTER)
+                    row[px] = before_lut[orig_row[px] as usize];
+                    row[px + 1] = before_lut[orig_row[px + 1] as usize];
+                    row[px + 2] = before_lut[orig_row[px + 2] as usize];
                     if ch == 4 {
                         row[px + 3] = (orig_row[px + 3] >> 8) as u8;
                     }
@@ -1355,5 +1364,82 @@ mod tests {
         // stage crushes to zero, stay a few levels apart
         assert!(mean < 0.25, "mean difference {mean}");
         assert!(worst < 6.0, "max difference {worst}");
+    }
+
+    #[test]
+    fn bilinear_samplers_preserve_right_and_bottom_edges() {
+        let (w, h) = (16usize, 12usize);
+        let input = vec![32768u16; w * h * 3];
+        let recipe = Recipe::default();
+        let t = Transfer::bt709();
+
+        let rendered = render_region_8(&input, w, h, Window::whole(w, h), (0, 0, w, h), &recipe, t);
+        let center_px = &rendered[(6 * w + 8) * 3..(6 * w + 8) * 3 + 3];
+        let right_edge_px = &rendered[(6 * w + (w - 1)) * 3..(6 * w + (w - 1)) * 3 + 3];
+        let bottom_edge_px = &rendered[((h - 1) * w + 8) * 3..((h - 1) * w + 8) * 3 + 3];
+        let corner_px = &rendered[((h - 1) * w + (w - 1)) * 3..((h - 1) * w + (w - 1)) * 3 + 3];
+        assert!(center_px[0] > 100, "center pixel should be bright, got {:?}", center_px);
+        assert_eq!(right_edge_px, center_px, "right edge must match interior");
+        assert_eq!(bottom_edge_px, center_px, "bottom edge must match interior");
+        assert_eq!(corner_px, center_px, "bottom-right corner must match interior");
+
+        let geom_recipe = Recipe { lens_distortion: 10.0, ..Recipe::default() };
+        let geom = detail::Geometry::new(w, h, &geom_recipe).expect("geometry active");
+        let flat_f32 = vec![0.5f32; w * h * 3];
+        let warped_f32 = detail::apply_geometry(&flat_f32, w, h, 3, &geom);
+        for y in 0..h {
+            let (sx, sy) = geom.source((w - 1) as f32, y as f32);
+            if sx >= 0.0 && sx <= (w - 1) as f32 && sy >= 0.0 && sy <= (h - 1) as f32 {
+                assert!(
+                    (warped_f32[(y * w + (w - 1)) * 3] - 0.5).abs() < 1e-4,
+                    "apply_geometry right edge at y={y} must not be black"
+                );
+            }
+        }
+        let flat_pre = vec![(0.5 * PRE_DISTORTION_SCALE) as u16; w * h * 3];
+        let remapped = remap_16_cpu(&flat_pre, w, h, &geom, &geom_recipe);
+        for x in 0..w {
+            let (sx, sy) = geom.source(x as f32, (h - 1) as f32);
+            if sx >= 0.0 && sx <= (w - 1) as f32 && sy >= 0.0 && sy <= (h - 1) as f32 {
+                assert!(
+                    remapped[((h - 1) * w + x) * 3] > 30000,
+                    "remap_16_cpu bottom edge at x={x} must not be black"
+                );
+            }
+        }
+    }
+
+    #[test]
+    fn split_comparison_before_matches_neutral_after_with_baseline_exposure() {
+        let (w, h) = (32u32, 16u32);
+        let input = vec![16384u16; (w * h * 3) as usize];
+        let recipe = Recipe {
+            baseline_exposure: 1.0,
+            sharpness: 0.0,
+            denoise_col: 0.0,
+            denoise_lum: 0.0,
+            ..Recipe::default()
+        };
+        let (split, _) = process_split_comparison_16_to_8_ex(
+            &input,
+            w,
+            h,
+            3,
+            &recipe,
+            Transfer::bt709(),
+            0.5,
+            false,
+            false,
+        );
+        let before_px = &split[(8 * w as usize + 4) * 3..(8 * w as usize + 4) * 3 + 3];
+        let after_px = &split[(8 * w as usize + 24) * 3..(8 * w as usize + 24) * 3 + 3];
+        for c in 0..3 {
+            assert!(
+                before_px[c].abs_diff(after_px[c]) <= 1,
+                "BEFORE ({:?}) and neutral AFTER ({:?}) must match when baseline_exposure != 0",
+                before_px,
+                after_px
+            );
+        }
     }
 }
