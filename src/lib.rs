@@ -2,17 +2,18 @@
 
 pub mod ai;
 pub mod cloud;
-pub mod dag;
 pub mod export;
 pub mod fuji;
 pub mod gpu;
+pub mod hash;
 pub mod icc;
 pub mod medium_format;
 pub mod ml;
+pub mod paths;
 pub mod pipeline;
 pub mod ptp;
 pub mod raw;
 pub mod recipe;
-pub mod hash;
 pub mod security;
+pub mod util;
 pub mod xmp;

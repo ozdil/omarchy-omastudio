@@ -4,7 +4,6 @@ use crate::recipe::Recipe;
 use crate::security::{run_bounded_command_with_stdin, secure_command, SecureDir};
 use serde::{Deserialize, Serialize};
 use std::io::Read;
-use std::path::PathBuf;
 use std::time::Duration;
 
 /// Configuration for TypeSafe AI Jev Decision Engine
@@ -121,15 +120,7 @@ impl JevClient {
         // 1. Try reading $XDG_CONFIG_HOME/omastudio/ai.json (or ~/.config/omastudio/ai.json)
         // with strict bounds (max 64 KiB, 0600 mode, UID check)
         const MAX_CONFIG_BYTES: usize = 64 * 1024;
-        let config_dir = std::env::var("XDG_CONFIG_HOME")
-            .ok()
-            .map(|s| PathBuf::from(s.trim()))
-            .filter(|p| p.is_absolute())
-            .map(|p| p.join("omastudio"))
-            .unwrap_or_else(|| {
-                let home = std::env::var("HOME").unwrap_or_else(|_| ".".to_string());
-                PathBuf::from(&home).join(".config/omastudio")
-            });
+        let config_dir = crate::paths::app_config_dir();
 
         if let Ok(sec_dir) = SecureDir::open_or_create_hierarchy(&config_dir)
             && let Ok(c_name) = std::ffi::CString::new("ai.json")

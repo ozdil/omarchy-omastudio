@@ -472,8 +472,7 @@ impl FilmSimulation {
 /// Folder of film simulation LUTs calibrated from the user's own photos
 /// (`omastudio-engine fuji-calibrate`), named `<simulation id>.cube`.
 pub fn calibrated_lut_dir() -> PathBuf {
-    let home = std::env::var("HOME").unwrap_or_else(|_| ".".to_string());
-    PathBuf::from(home).join(".local/share/omastudio/film-luts")
+    crate::paths::app_data_dir().join("film-luts")
 }
 
 type LutCache = HashMap<&'static str, (Option<SystemTime>, Option<Arc<Lut3D>>)>;

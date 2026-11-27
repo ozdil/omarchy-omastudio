@@ -1165,8 +1165,118 @@ pub fn verify_secure_open_file(file: &fs::File, max_bytes: usize) -> io::Result<
     Ok(size as u64)
 }
 
+/// Sequence counter ensuring unique temporary file/directory names even under
+/// concurrent threads in the same process.
+static TEMP_GUARD_SEQ: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(0);
+
+/// RAII temporary file created exclusively (`O_CREAT | O_EXCL | O_NOFOLLOW | O_CLOEXEC`)
+/// and automatically unlinked on drop unless persisted via [`TempFileGuard::persist`].
+pub struct TempFileGuard {
+    path: std::path::PathBuf,
+    armed: bool,
+}
+
+impl TempFileGuard {
+    /// Creates a new uniquely named temporary file in `dir` with the requested Unix `mode`
+    /// (`0o600` for private files, `0o644` for user-shareable files before atomic rename).
+    pub fn create_in_dir(
+        dir: &Path,
+        prefix: &str,
+        suffix: &str,
+        mode: u32,
+    ) -> io::Result<(Self, fs::File)> {
+        use std::os::unix::fs::OpenOptionsExt;
+        let pid = std::process::id();
+        for _ in 0..32 {
+            let seq = TEMP_GUARD_SEQ.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+            let name = format!(".{prefix}-{pid}-{seq}{suffix}");
+            let path = dir.join(name);
+            match fs::OpenOptions::new()
+                .write(true)
+                .create_new(true)
+                .mode(mode)
+                .custom_flags(libc::O_NOFOLLOW | libc::O_CLOEXEC)
+                .open(&path)
+            {
+                Ok(file) => return Ok((Self { path, armed: true }, file)),
+                Err(e) if e.kind() == io::ErrorKind::AlreadyExists => continue,
+                Err(e) => return Err(e),
+            }
+        }
+        Err(io::Error::new(
+            io::ErrorKind::AlreadyExists,
+            "Failed to allocate a unique temporary file after 32 attempts",
+        ))
+    }
+
+    /// Creates a private (`0600`) temporary file inside `dir` (verifying/creating `dir`
+    /// with `ensure_secure_dir`), writes `content` to it, and returns the RAII guard.
+    pub fn write_private(dir: &Path, prefix: &str, suffix: &str, content: &[u8]) -> io::Result<Self> {
+        ensure_secure_dir(dir)?;
+        let (guard, mut file) = Self::create_in_dir(dir, prefix, suffix, 0o600)?;
+        file.write_all(content)?;
+        file.flush()?;
+        Ok(guard)
+    }
+
+    pub fn path(&self) -> &Path {
+        &self.path
+    }
+
+    /// Atomically renames this temporary file onto `dest` and disarms automatic removal.
+    pub fn persist(mut self, dest: &Path) -> io::Result<()> {
+        fs::rename(&self.path, dest)?;
+        self.armed = false;
+        Ok(())
+    }
+}
+
+impl Drop for TempFileGuard {
+    fn drop(&mut self) {
+        if self.armed {
+            let _ = fs::remove_file(&self.path);
+        }
+    }
+}
+
+/// RAII private (`0700`) temporary directory that removes itself recursively on drop.
+pub struct TempDirGuard {
+    path: std::path::PathBuf,
+}
+
+impl TempDirGuard {
+    pub fn create_private(parent: &Path, prefix: &str) -> io::Result<Self> {
+        use std::os::unix::fs::DirBuilderExt;
+        ensure_secure_dir(parent)?;
+        let pid = std::process::id();
+        for _ in 0..32 {
+            let seq = TEMP_GUARD_SEQ.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+            let path = parent.join(format!("{prefix}_{pid}_{seq}"));
+            match fs::DirBuilder::new().mode(0o700).create(&path) {
+                Ok(()) => return Ok(Self { path }),
+                Err(e) if e.kind() == io::ErrorKind::AlreadyExists => continue,
+                Err(e) => return Err(e),
+            }
+        }
+        Err(io::Error::new(
+            io::ErrorKind::AlreadyExists,
+            "Failed to allocate a unique temporary directory after 32 attempts",
+        ))
+    }
+
+    pub fn path(&self) -> &Path {
+        &self.path
+    }
+}
+
+impl Drop for TempDirGuard {
+    fn drop(&mut self) {
+        let _ = fs::remove_dir_all(&self.path);
+    }
+}
+
 /// Returns a secure user preview directory with strict 0700 permissions and UID ownership verification.
-/// Prefers /dev/shm/omastudio-<uid> if safe, falling back to ~/.cache/omastudio.
+/// Prefers /dev/shm/omastudio-<uid> if safe, falling back to `$XDG_CACHE_HOME/omastudio`.
 pub fn get_secure_preview_dir() -> std::path::PathBuf {
     use std::os::unix::fs::MetadataExt;
     let uid = current_uid();
@@ -1180,8 +1290,7 @@ pub fn get_secure_preview_dir() -> std::path::PathBuf {
             return user_shm;
         }
     }
-    let home = std::env::var("HOME").unwrap_or_else(|_| ".".to_string());
-    let cache_dir = std::path::PathBuf::from(home).join(".cache/omastudio");
+    let cache_dir = crate::paths::app_cache_dir();
     let _ = ensure_secure_dir(&cache_dir);
     cache_dir
 }
@@ -1222,5 +1331,42 @@ mod tests {
 
         let _ = fs::remove_dir_all(&base);
     }
+
+    #[test]
+    fn temp_file_guard_unlinks_on_drop_and_persists_atomically() {
+        use std::os::unix::fs::PermissionsExt;
+        let base = std::path::PathBuf::from(format!("/tmp/omastudio_temp_guard_{}", std::process::id()));
+        let _ = fs::remove_dir_all(&base);
+        fs::create_dir_all(&base).unwrap();
+
+        let ephemeral_path = {
+            let guard = TempFileGuard::write_private(&base, "ephemeral", ".json", b"{\"ok\":true}").unwrap();
+            let p = guard.path().to_path_buf();
+            assert!(p.exists());
+            let mode = fs::metadata(&p).unwrap().permissions().mode() & 0o777;
+            assert_eq!(mode, 0o600);
+            p
+        };
+        assert!(!ephemeral_path.exists(), "TempFileGuard must unlink file on drop");
+
+        let dest = base.join("final.dat");
+        let (guard, mut f) = TempFileGuard::create_in_dir(&base, "persist", ".tmp", 0o644).unwrap();
+        let tmp_path = guard.path().to_path_buf();
+        f.write_all(b"payload").unwrap();
+        drop(f);
+        guard.persist(&dest).unwrap();
+        assert!(!tmp_path.exists());
+        assert_eq!(fs::read(&dest).unwrap(), b"payload");
+
+        let dir_path = {
+            let d = TempDirGuard::create_private(&base, "work").unwrap();
+            fs::write(d.path().join("inner.txt"), b"x").unwrap();
+            d.path().to_path_buf()
+        };
+        assert!(!dir_path.exists(), "TempDirGuard must clean up directory on drop");
+
+        let _ = fs::remove_dir_all(&base);
+    }
 }
+
 

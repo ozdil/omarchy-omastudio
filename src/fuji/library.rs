@@ -11,8 +11,7 @@ const MAX_TEXT: usize = 256 * 1024;
 const MAX_ENTRIES: usize = 500;
 
 pub fn dir() -> PathBuf {
-    let home = std::env::var("HOME").unwrap_or_else(|_| ".".to_string());
-    PathBuf::from(home).join(".local/share/omastudio/fuji-recipes")
+    crate::paths::app_data_dir().join("fuji-recipes")
 }
 
 fn extension(path: &Path) -> String {

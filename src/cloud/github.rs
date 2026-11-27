@@ -247,35 +247,25 @@ pub fn upload(file: &Path, target: &str) -> Result<(), String> {
     if let Some(sha) = sha {
         body["sha"] = sha.into();
     }
-    let request = file_beside_cache("upload.json");
-    security::atomic_write_secure(&request, body.to_string().as_bytes()).map_err(|e| e.to_string())?;
-    let result = run(gh(&["api", "-X", "PUT", &endpoint, "--input", &request.to_string_lossy(), "--silent"]), TRANSFER_TIMEOUT);
-    let _ = std::fs::remove_file(&request);
-    let (code, _, err) = result?;
+    let request = security::TempFileGuard::write_private(
+        &super::cache_dir(),
+        "upload",
+        ".json",
+        body.to_string().as_bytes(),
+    )
+    .map_err(|e| e.to_string())?;
+    let (code, _, err) = run(
+        gh(&["api", "-X", "PUT", &endpoint, "--input", &request.path().to_string_lossy(), "--silent"]),
+        TRANSFER_TIMEOUT,
+    )?;
     if code != 0 {
         return Err(format!("Upload failed: {}", last_error(&err, "gh failed")));
     }
     Ok(())
 }
 
-fn file_beside_cache(name: &str) -> std::path::PathBuf {
-    super::cache_dir().join(format!(".{}-{name}", std::process::id()))
-}
-
 fn base64(data: &[u8]) -> String {
-    const ALPHABET: &[u8; 64] = b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-    let mut out = String::with_capacity(data.len().div_ceil(3) * 4);
-    for chunk in data.chunks(3) {
-        let n = (u32::from(chunk[0]) << 16) | (u32::from(*chunk.get(1).unwrap_or(&0)) << 8) | u32::from(*chunk.get(2).unwrap_or(&0));
-        for i in 0..4 {
-            if i <= chunk.len() {
-                out.push(ALPHABET[(n >> (18 - 6 * i)) as usize & 63] as char);
-            } else {
-                out.push('=');
-            }
-        }
-    }
-    out
+    crate::util::base64::encode(data)
 }
 
 #[cfg(test)]

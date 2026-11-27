@@ -19,11 +19,7 @@ const SUPPORTED: &[(&str, &str)] = &[("claude", "claude"), ("codex", "codex")];
 const TIMEOUT: Duration = Duration::from_secs(300);
 
 fn config_dir() -> PathBuf {
-    std::env::var_os("XDG_CONFIG_HOME")
-        .map(PathBuf::from)
-        .unwrap_or_else(|| {
-            PathBuf::from(std::env::var("HOME").unwrap_or_else(|_| ".".into())).join(".config")
-        })
+    crate::paths::xdg_config_dir()
 }
 
 /// The agent Omarchy uses by default, if one is set.
@@ -81,8 +77,6 @@ const CLAUDE_ARGS: &[&str] = &[
     "4",
 ];
 
-static AGENT_DIR_SEQ: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(0);
-
 /// Environment variables forwarded to headless AI agents (`claude`, `codex`) so keychain,
 /// API key auth, XDG paths, custom CAs, and proxies work without exposing loader variables.
 const AGENT_PASSTHROUGH_ENV: &[&str] = &[
@@ -117,14 +111,6 @@ fn apply_agent_env(cmd: &mut std::process::Command) {
     }
 }
 
-struct TempDirGuard(PathBuf);
-
-impl Drop for TempDirGuard {
-    fn drop(&mut self) {
-        let _ = std::fs::remove_dir_all(&self.0);
-    }
-}
-
 /// Shows the agent the photo and returns the JSON object it answers with.
 pub fn ask_json(system: &str, jpeg: &[u8], text: &str, schema: &Value) -> Result<Value, String> {
     let Some((agent, program)) = available() else {
@@ -137,15 +123,9 @@ pub fn ask_json(system: &str, jpeg: &[u8], text: &str, schema: &Value) -> Result
             }
         });
     };
-    let seq = AGENT_DIR_SEQ.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
-    let dir = security::get_secure_preview_dir().join(format!(
-        "omastudio_agent_{}_{}",
-        std::process::id(),
-        seq
-    ));
-    std::fs::create_dir_all(&dir).map_err(|e| e.to_string())?;
-    let _guard = TempDirGuard(dir.clone());
-    run(&agent, &program, &dir, system, jpeg, text, schema)
+    let guard = security::TempDirGuard::create_private(&security::get_secure_preview_dir(), "omastudio_agent")
+        .map_err(|e| e.to_string())?;
+    run(&agent, &program, guard.path(), system, jpeg, text, schema)
 }
 
 fn run(

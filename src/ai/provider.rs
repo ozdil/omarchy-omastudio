@@ -63,10 +63,7 @@ pub struct Choice {
 }
 
 fn choice_path() -> PathBuf {
-    let config = std::env::var_os("XDG_CONFIG_HOME")
-        .map(PathBuf::from)
-        .unwrap_or_else(|| PathBuf::from(std::env::var("HOME").unwrap_or_else(|_| ".".into())).join(".config"));
-    config.join("omastudio/ai-provider.json")
+    crate::paths::app_config_dir().join("ai-provider.json")
 }
 
 pub fn load_choice() -> Choice {
@@ -309,16 +306,6 @@ pub fn resolve(provider: Option<&str>, model: Option<&str>) -> Result<Target, St
     Ok(Target { provider: p, model, endpoint, key })
 }
 
-static AI_REQ_SEQ: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(0);
-
-struct TempFileGuard(PathBuf);
-
-impl Drop for TempFileGuard {
-    fn drop(&mut self) {
-        let _ = std::fs::remove_file(&self.0);
-    }
-}
-
 fn should_fallback_openai_schema(status: Option<u16>) -> bool {
     matches!(status, Some(400 | 422))
 }
@@ -382,13 +369,15 @@ pub fn ask_json(target: &Target, system: &str, jpeg: &[u8], text: &str, schema: 
     }
 
     // The body holds the image: too large for an argument, so it goes through a private temp file
-    let seq = AI_REQ_SEQ.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
-    let file = security::get_secure_preview_dir().join(format!("omastudio_ai_{}_{}.json", std::process::id(), seq));
-    let _guard = TempFileGuard(file.clone());
     let timeout = Duration::from_secs(if target.provider.local { 600 } else { 180 });
-
-    security::atomic_write_secure(&file, body.to_string().as_bytes()).map_err(|e| e.to_string())?;
-    let answer = match curl_with_status(&target.endpoint, &headers, Some(&file), timeout) {
+    let mut guard = security::TempFileGuard::write_private(
+        &security::get_secure_preview_dir(),
+        "omastudio_ai",
+        ".json",
+        body.to_string().as_bytes(),
+    )
+    .map_err(|e| e.to_string())?;
+    let answer = match curl_with_status(&target.endpoint, &headers, Some(guard.path()), timeout) {
         Ok((_, v)) => v,
         Err((status, first_err))
             if target.provider.wire == Wire::OpenAi && should_fallback_openai_schema(status) =>
@@ -396,8 +385,14 @@ pub fn ask_json(target: &Target, system: &str, jpeg: &[u8], text: &str, schema: 
             // Some OpenAI-compatible servers (Ollama, LM Studio, OpenRouter models) reject
             // strict `json_schema`; fall back once to `json_object`.
             downgrade_openai_response_format(&mut body);
-            security::atomic_write_secure(&file, body.to_string().as_bytes()).map_err(|e| e.to_string())?;
-            curl_with_status(&target.endpoint, &headers, Some(&file), timeout)
+            guard = security::TempFileGuard::write_private(
+                &security::get_secure_preview_dir(),
+                "omastudio_ai",
+                ".json",
+                body.to_string().as_bytes(),
+            )
+            .map_err(|e| e.to_string())?;
+            curl_with_status(&target.endpoint, &headers, Some(guard.path()), timeout)
                 .map(|(_, v)| v)
                 .map_err(|(_, _)| first_err)?
         }
@@ -430,19 +425,7 @@ pub(super) fn parse_json_object(text: &str) -> Option<Value> {
 }
 
 pub fn base64(bytes: &[u8]) -> String {
-    const TABLE: &[u8; 64] = b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-    let mut out = String::with_capacity(bytes.len().div_ceil(3) * 4);
-    for chunk in bytes.chunks(3) {
-        let n = (chunk[0] as u32) << 16 | (*chunk.get(1).unwrap_or(&0) as u32) << 8 | *chunk.get(2).unwrap_or(&0) as u32;
-        for i in 0..4 {
-            if i <= chunk.len() {
-                out.push(TABLE[(n >> (18 - 6 * i) & 63) as usize] as char);
-            } else {
-                out.push('=');
-            }
-        }
-    }
-    out
+    crate::util::base64::encode(bytes)
 }
 
 #[cfg(test)]

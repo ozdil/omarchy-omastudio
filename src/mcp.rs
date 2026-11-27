@@ -14,8 +14,8 @@ use std::time::Duration;
 
 use serde_json::{json, Value};
 
-use crate::recipe::Recipe;
-use crate::security;
+use omastudio_engine::recipe::Recipe;
+use omastudio_engine::security;
 
 const PROTOCOL_VERSIONS: &[&str] = &["2025-11-25", "2025-06-18", "2025-03-26", "2024-11-05"];
 const MAX_LINE: u64 = 4 << 20;
@@ -174,7 +174,7 @@ fn tools() -> Vec<Value> {
         tool("read_xmp", "Reads the XMP sidecar of a photo (Lightroom, Capture One, darktable) as an OmaStudio recipe with rating and label.", schema(json!({ "path": path }), &["path"]), true),
         tool("write_xmp", "Writes the photo's OmaStudio edit, rating and label as an XMP sidecar for other editors. An XMP from another application is only replaced with force.",
             schema(json!({ "path": path, "recipe": recipe, "force": { "type": "boolean" } }), &["path"]), false),
-        tool("gpu_status", "The GPU OmaStudio uses for demosaicing, or why it falls back to the CPU.", schema(json!({}), &[]), true),
+        tool("gpu_status", "The GPU OmaStudio uses for compute stages (demosaic, point ops, local filters), or why it falls back to the CPU.", schema(json!({}), &[]), true),
         tool("npu_status", "Local AI models: whether ONNX Runtime is installed, its accelerators (NPU, GPU, CPU) and the installed models.", schema(json!({}), &[]), true),
         tool("ai_mask", "Adds a local adjustment layer masked by a local AI model (subject or sky) to the open photo.",
             schema(json!({ "kind": { "type": "string", "enum": ["subject", "sky"] } }), &["kind"]), false),
@@ -431,26 +431,11 @@ fn image_content(path: &Path) -> Result<Value, String> {
 }
 
 fn base64(bytes: &[u8]) -> String {
-    const TABLE: &[u8; 64] = b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-    let mut out = String::with_capacity(bytes.len().div_ceil(3) * 4);
-    for chunk in bytes.chunks(3) {
-        let n = (chunk[0] as u32) << 16 | (*chunk.get(1).unwrap_or(&0) as u32) << 8 | *chunk.get(2).unwrap_or(&0) as u32;
-        for i in 0..4 {
-            if i <= chunk.len() {
-                out.push(TABLE[(n >> (18 - 6 * i) & 63) as usize] as char);
-            } else {
-                out.push('=');
-            }
-        }
-    }
-    out
+    omastudio_engine::util::base64::encode(bytes)
 }
 
 fn socket_path() -> PathBuf {
-    let runtime = std::env::var_os("XDG_RUNTIME_DIR")
-        .map(PathBuf::from)
-        .unwrap_or_else(|| PathBuf::from(format!("/run/user/{}", security::current_uid())));
-    runtime.join("omastudio").join("ipc.sock")
+    omastudio_engine::paths::app_runtime_dir().join("ipc.sock")
 }
 
 /// Calls a method of the running window (same protocol as `omastudio ipc`).

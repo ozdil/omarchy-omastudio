@@ -19,7 +19,7 @@ jobs:
       - name: Install build, Qt, and Mesa lavapipe dependencies
         run: >
           pacman -Syu --noconfirm --needed
-          base-devel clang git lcms2 libraw mold pkgconf
+          base-devel clang git lcms2 libraw mold pkgconf sqlite
           qt6-base qt6-declarative qt6-tools python rustup
           vulkan-icd-loader vulkan-swrast
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -55,7 +55,7 @@ jobs:
       - name: Install lint, audit & build dependencies
         run: >
           pacman -Syu --noconfirm --needed
-          base-devel cargo-audit clang git lcms2 libraw mold pkgconf
+          base-devel cargo-audit clang git lcms2 libraw mold pkgconf sqlite
           qt6-base qt6-declarative qt6-tools shellcheck rustup
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Install pinned Rust toolchain

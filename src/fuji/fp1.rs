@@ -5,6 +5,10 @@
 //! (`<FilmSimulation>Classic</FilmSimulation>`, `<GrainEffect>STRONG</GrainEffect>`...).
 //! Value spellings follow profiles saved by X RAW Studio 1.x.
 
+use std::collections::HashMap;
+use quick_xml::events::Event;
+use quick_xml::{Reader, XmlVersion};
+
 use super::{CameraRecipe, FilmSim, GrainSize, Strength};
 
 /// Profiles are a few KiB; anything larger is not one.
@@ -56,31 +60,22 @@ const WHITE_BALANCES: &[(&str, &str)] = &[
     ("Temperature", "Kelvin"),
 ];
 
-/// Text of the first `<name>...</name>` element; "" for `<name/>` or a missing one.
-fn element<'a>(xml: &'a str, name: &str) -> &'a str {
-    let open = format!("<{}>", name);
-    let Some(start) = xml.find(&open).map(|i| i + open.len()) else { return "" };
-    let close = format!("</{}>", name);
-    xml[start..].find(&close).map(|end| xml[start..start + end].trim()).unwrap_or("")
-}
-
-/// Value of `attr="..."` inside the first `<tag ...>` start tag.
-fn attribute(xml: &str, tag: &str, attr: &str) -> String {
-    let Some(start) = xml.find(&format!("<{} ", tag)) else { return String::new() };
-    let head = &xml[start..start + xml[start..].find('>').unwrap_or(0)];
-    let key = format!("{}=\"", attr);
-    head.find(&key)
-        .and_then(|i| head[i + key.len()..].split('"').next())
-        .map(unescape)
-        .unwrap_or_default()
-}
-
-fn unescape(s: &str) -> String {
-    s.replace("&lt;", "<").replace("&gt;", ">").replace("&quot;", "\"").replace("&apos;", "'").replace("&amp;", "&")
-}
-
-fn escape(s: &str) -> String {
-    s.replace('&', "&amp;").replace('<', "&lt;").replace('>', "&gt;").replace('"', "&quot;")
+/// Escapes XML 1.0 text/attribute characters and strips illegal control characters.
+fn escape_xml(s: &str) -> String {
+    let mut out = String::with_capacity(s.len());
+    for c in s.chars() {
+        match c {
+            '&' => out.push_str("&amp;"),
+            '<' => out.push_str("&lt;"),
+            '>' => out.push_str("&gt;"),
+            '"' => out.push_str("&quot;"),
+            '\'' => out.push_str("&apos;"),
+            '\t' | '\n' | '\r' => out.push(c),
+            '\u{0000}'..='\u{001F}' | '\u{FFFE}' | '\u{FFFF}' => {}
+            _ => out.push(c),
+        }
+    }
+    out
 }
 
 fn strength(v: &str) -> Strength {
@@ -126,22 +121,143 @@ fn int(v: &str) -> i32 {
     v.trim_start_matches('+').parse::<f32>().map(|f| f as i32).unwrap_or(0)
 }
 
+struct ParsedFp1 {
+    has_conversion_profile: bool,
+    has_property_group: bool,
+    device: String,
+    label: String,
+    fields: HashMap<String, String>,
+}
+
+fn parse_fp1_xml(xml: &str) -> Result<ParsedFp1, String> {
+    let mut reader = Reader::from_str(xml);
+    reader.config_mut().check_end_names = false;
+
+    let mut parsed = ParsedFp1 {
+        has_conversion_profile: false,
+        has_property_group: false,
+        device: String::new(),
+        label: String::new(),
+        fields: HashMap::new(),
+    };
+    let mut in_first_group = false;
+    let mut group_done = false;
+    let mut current_field: Option<String> = None;
+    let mut text_buf = String::new();
+
+    loop {
+        match reader.read_event() {
+            Ok(Event::Start(e)) => {
+                let name = e.name().as_ref().to_string();
+                if name == "ConversionProfile" {
+                    parsed.has_conversion_profile = true;
+                } else if name == "PropertyGroup" && !group_done {
+                    parsed.has_property_group = true;
+                    in_first_group = true;
+                    for attr in e.attributes().with_checks(false).flatten() {
+                        let k = attr.key.as_ref();
+                        if let Ok(v) = attr.normalized_value(XmlVersion::Implicit1_0) {
+                            match k {
+                                "device" => parsed.device = v.into_owned(),
+                                "label" => parsed.label = v.into_owned(),
+                                _ => {}
+                            }
+                        }
+                    }
+                } else if in_first_group {
+                    current_field = Some(name);
+                    text_buf.clear();
+                }
+            }
+            Ok(Event::Empty(e)) => {
+                let name = e.name().as_ref().to_string();
+                if name == "ConversionProfile" {
+                    parsed.has_conversion_profile = true;
+                } else if name == "PropertyGroup" && !group_done {
+                    parsed.has_property_group = true;
+                    group_done = true;
+                    for attr in e.attributes().with_checks(false).flatten() {
+                        let k = attr.key.as_ref();
+                        if let Ok(v) = attr.normalized_value(XmlVersion::Implicit1_0) {
+                            match k {
+                                "device" => parsed.device = v.into_owned(),
+                                "label" => parsed.label = v.into_owned(),
+                                _ => {}
+                            }
+                        }
+                    }
+                } else if in_first_group {
+                    parsed.fields.entry(name).or_default();
+                }
+            }
+            Ok(Event::Text(e)) => {
+                if current_field.is_some() {
+                    text_buf.push_str(&e.xml_content(XmlVersion::Implicit1_0));
+                }
+            }
+            Ok(Event::CData(e)) => {
+                if current_field.is_some() {
+                    text_buf.push_str(&e.xml_content(XmlVersion::Implicit1_0));
+                }
+            }
+            Ok(Event::GeneralRef(e)) => {
+                if current_field.is_some() {
+                    if let Ok(Some(ch)) = e.resolve_char_ref() {
+                        text_buf.push(ch);
+                    } else {
+                        match e.as_ref() {
+                            "amp" => text_buf.push('&'),
+                            "lt" => text_buf.push('<'),
+                            "gt" => text_buf.push('>'),
+                            "quot" => text_buf.push('"'),
+                            "apos" => text_buf.push('\''),
+                            other => {
+                                text_buf.push('&');
+                                text_buf.push_str(other);
+                                text_buf.push(';');
+                            }
+                        }
+                    }
+                }
+            }
+            Ok(Event::End(e)) => {
+                let qname = e.name();
+                if qname.as_ref() == "PropertyGroup" && in_first_group {
+                    in_first_group = false;
+                    group_done = true;
+                    current_field = None;
+                } else if let Some(field) = current_field.take() {
+                    parsed.fields.entry(field).or_insert_with(|| text_buf.trim().to_string());
+                    text_buf.clear();
+                }
+            }
+            Ok(Event::Eof) => break,
+            Err(e) => return Err(format!("Invalid XML in conversion profile: {e}")),
+            _ => {}
+        }
+    }
+    Ok(parsed)
+}
+
 /// Parses an FP1/FP2/FP3 profile.
 pub fn parse(xml: &str) -> Result<Profile, String> {
     if xml.len() > MAX_SIZE {
         return Err("Profile is too large".to_string());
     }
-    if !xml.contains("<ConversionProfile") || !xml.contains("<PropertyGroup") {
+    let parsed = parse_fp1_xml(xml)?;
+    if !parsed.has_conversion_profile || !parsed.has_property_group {
         return Err("Not an X RAW Studio conversion profile".to_string());
     }
-    let sim_name = element(xml, "FilmSimulation");
+    let field = |name: &str| parsed.fields.get(name).map(String::as_str).unwrap_or("");
+
+    let sim_name = field("FilmSimulation");
     let film_simulation = FILM_SIMS
         .iter()
         .find(|(n, _)| n.eq_ignore_ascii_case(sim_name))
         .map(|&(_, s)| s)
         .ok_or_else(|| format!("Unknown film simulation \"{}\"", sim_name))?;
 
-    let wb = element(xml, "WhiteBalance");
+    let wb = field("WhiteBalance");
     let white_balance = WHITE_BALANCES
         .iter()
         .find(|(n, _)| n.eq_ignore_ascii_case(wb))
@@ -150,44 +266,44 @@ pub fn parse(xml: &str) -> Result<Profile, String> {
         .unwrap_or("As Shot")
         .to_string();
     let color_temperature = (white_balance == "Kelvin")
-        .then(|| element(xml, "WBColorTemp").trim_end_matches('K').parse::<u32>().ok())
+        .then(|| field("WBColorTemp").trim_end_matches('K').parse::<u32>().ok())
         .flatten()
         .filter(|&k| k > 0);
 
-    let dr = element(xml, "DynamicRange").trim_start_matches("DR");
+    let dr = field("DynamicRange").trim_start_matches("DR");
     let dynamic_range_auto = dr.eq_ignore_ascii_case("auto") || dr == "0";
     let dynamic_range = dr.parse::<u32>().ok().filter(|v| [100, 200, 400].contains(v));
 
-    let device = attribute(xml, "PropertyGroup", "device");
+    let device = parsed.device;
     let recipe = CameraRecipe {
         camera: device.clone(),
         film_simulation,
         film_simulation_name: film_simulation.display_name().to_string(),
-        grain: strength(element(xml, "GrainEffect")),
-        grain_size: if element(xml, "GrainEffectSize").eq_ignore_ascii_case("LARGE") {
+        grain: strength(field("GrainEffect")),
+        grain_size: if field("GrainEffectSize").eq_ignore_ascii_case("LARGE") {
             GrainSize::Large
         } else {
             GrainSize::Small
         },
-        color_chrome: strength(element(xml, "ChromeEffect")),
-        color_chrome_fx_blue: strength(element(xml, "ColorChromeBlue")),
+        color_chrome: strength(field("ChromeEffect")),
+        color_chrome_fx_blue: strength(field("ColorChromeBlue")),
         white_balance,
         color_temperature,
-        wb_shift: (int(element(xml, "WBShiftR")), int(element(xml, "WBShiftB"))),
+        wb_shift: (int(field("WBShiftR")), int(field("WBShiftB"))),
         dynamic_range,
         dynamic_range_auto,
         d_range_priority: None,
-        highlight: element(xml, "HighlightTone").parse().unwrap_or(0.0),
-        shadow: element(xml, "ShadowTone").parse().unwrap_or(0.0),
-        color: int(element(xml, "Color")),
-        sharpness: int(element(xml, "Sharpness")),
-        noise_reduction: int(element(xml, "NoisReduction")),
-        clarity: int(element(xml, "Clarity")),
-        mono_warm_cool: int(element(xml, "BlackImageTone")),
-        mono_magenta_green: int(element(xml, "MonochromaticColor_RG")),
-        exposure_bias: parse_ev(element(xml, "ExposureBias")),
+        highlight: field("HighlightTone").parse().unwrap_or(0.0),
+        shadow: field("ShadowTone").parse().unwrap_or(0.0),
+        color: int(field("Color")),
+        sharpness: int(field("Sharpness")),
+        noise_reduction: int(field("NoisReduction")),
+        clarity: int(field("Clarity")),
+        mono_warm_cool: int(field("BlackImageTone")),
+        mono_magenta_green: int(field("MonochromaticColor_RG")),
+        exposure_bias: parse_ev(field("ExposureBias")),
     };
-    Ok(Profile { label: attribute(xml, "PropertyGroup", "label"), device, recipe })
+    Ok(Profile { label: parsed.label, device, recipe })
 }
 
 /// Writes a profile in the layout X RAW Studio saves.
@@ -201,7 +317,7 @@ pub fn write(profile: &Profile) -> String {
         let v = (v * 2.0).round() / 2.0;
         if v.fract() == 0.0 { format!("{}", v as i32) } else { format!("{:.1}", v) }
     };
-    let device = escape(&profile.device);
+    let device = escape_xml(&profile.device);
     let fields: Vec<(&str, String)> = vec![
         ("SerialNumber", String::new()),
         ("TetherRAWConditonCode", String::new()),
@@ -246,13 +362,13 @@ pub fn write(profile: &Profile) -> String {
         "    <PropertyGroup device=\"{}\" version=\"{}_0100\" label=\"{}\">\n",
         device,
         device,
-        escape(&profile.label)
+        escape_xml(&profile.label)
     );
     for (name, value) in fields {
         if value.is_empty() {
             out += &format!("        <{}/>\n", name);
         } else {
-            out += &format!("        <{0}>{1}</{0}>\n", name, value);
+            out += &format!("        <{0}>{1}</{0}>\n", name, escape_xml(&value));
         }
     }
     out += "    </PropertyGroup>\n</ConversionProfile>\n";
@@ -323,5 +439,26 @@ mod tests {
     fn rejects_other_xml() {
         assert!(parse("<html></html>").is_err());
         assert!(parse(&PORTRA.replace("Classic", "Kodachrome")).is_err());
+    }
+
+    #[test]
+    fn handles_comments_single_quotes_cdata_and_numeric_entities() {
+        let xml = r#"<?xml version="1.0" encoding="utf-8"?>
+<ConversionProfile application="XRFC">
+    <!-- <PropertyGroup device="WRONG" label="commented"/> -->
+    <PropertyGroup device='GFX 100S' label='Warm &#38; &#x22;Soft&#x22;'>
+        <!-- <FilmSimulation>Velvia</FilmSimulation> -->
+        <FilmSimulation><![CDATA[ClassicNEGA]]></FilmSimulation>
+        <WhiteBalance>Temperature</WhiteBalance>
+        <WBColorTemp>5400K</WBColorTemp>
+        <DynamicRange>DR200</DynamicRange>
+    </PropertyGroup>
+</ConversionProfile>"#;
+        let p = parse(xml).unwrap();
+        assert_eq!(p.device, "GFX 100S");
+        assert_eq!(p.label, "Warm & \"Soft\"");
+        assert_eq!(p.recipe.film_simulation, FilmSim::ClassicNeg);
+        assert_eq!(p.recipe.color_temperature, Some(5400));
+        assert_eq!(p.recipe.dynamic_range, Some(200));
     }
 }

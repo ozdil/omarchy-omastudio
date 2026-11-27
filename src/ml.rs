@@ -34,13 +34,7 @@ fn has<E: ExecutionProvider>() -> bool {
 }
 
 fn cache_subdir(name: &str) -> Option<PathBuf> {
-    let base = match std::env::var("XDG_CACHE_HOME") {
-        Ok(v) if Path::new(v.trim()).is_absolute() => PathBuf::from(v.trim()).join("omastudio"),
-        _ => PathBuf::from(std::env::var("HOME").unwrap_or_else(|_| ".".into()))
-            .join(".cache")
-            .join("omastudio"),
-    };
-    let dir = base.join(name);
+    let dir = crate::paths::app_cache_dir().join(name);
     crate::security::ensure_secure_dir(&dir).ok()?;
     Some(dir)
 }
@@ -288,8 +282,7 @@ pub struct Status {
 }
 
 pub fn models_dir() -> PathBuf {
-    let home = std::env::var("HOME").unwrap_or_else(|_| ".".into());
-    PathBuf::from(home).join(".local/share/omastudio/models")
+    crate::paths::app_data_dir().join("models")
 }
 
 pub fn status() -> Status {

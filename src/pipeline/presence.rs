@@ -1,112 +1,81 @@
 use rayon::prelude::*;
 
-/// Fast O(1) separable horizontal and vertical box blur on single-channel f32 buffers
+/// Fast O(1) separable horizontal and vertical box blur on single-channel f32 buffers.
 pub fn fast_separable_blur(
     input: &[f32],
     width: usize,
     height: usize,
     radius: usize,
 ) -> Vec<f32> {
-    if radius == 0 || width == 0 || height == 0 {
+    if radius == 0 || width == 0 || height == 0 || input.len() < width * height {
         return input.to_vec();
     }
 
     let r = radius.min(width / 2).min(height / 2).max(1);
     let mut temp = vec![0.0f32; width * height];
     let mut output = vec![0.0f32; width * height];
+    let win_size = (2 * r + 1) as f32;
+    let inv_win = 1.0 / win_size;
 
     // 1. Horizontal Pass (Parallelized over rows with Rayon)
-    temp.par_chunks_mut(width)
+    temp.par_chunks_exact_mut(width)
         .enumerate()
         .for_each(|(y, out_row)| {
             let in_row = &input[y * width..(y + 1) * width];
-            let in_ptr = in_row.as_ptr();
-            let out_ptr = out_row.as_mut_ptr();
-            let mut sum = 0.0f32;
-
-            // Initialize window
+            let mut sum = in_row[0] * (r as f32);
             for x in 0..=r {
-                sum += unsafe { *in_ptr.add(x.min(width - 1)) };
+                sum += in_row[x.min(width - 1)];
             }
-            sum += unsafe { *in_ptr } * (r as f32);
 
-            let win_size = (2 * r + 1) as f32;
-            let inv_win = 1.0 / win_size;
-
-            for x in 0..width {
+            for (x, dst) in out_row.iter_mut().enumerate() {
                 let left = x.saturating_sub(r);
                 let right = (x + r + 1).min(width - 1);
-                unsafe {
-                    *out_ptr.add(x) = sum * inv_win;
-                    sum += *in_ptr.add(right) - *in_ptr.add(left);
-                }
+                *dst = sum * inv_win;
+                sum += in_row[right] - in_row[left];
             }
         });
 
-    // 2. Vertical Pass (Parallelized over column chunks with Rayon for cache-friendly O(1) rolling sum)
-    let win_size_v = (2 * r + 1) as f32;
-    let inv_win_v = 1.0 / win_size_v;
-
+    // 2. Vertical Pass (Parallelized over disjoint row bands for safe, contiguous SIMD writes)
     let num_threads = rayon::current_num_threads().max(1);
-    let chunk_size = width.div_ceil(num_threads).max(16);
-    let col_chunks: Vec<(usize, usize)> = (0..width)
-        .step_by(chunk_size)
-        .map(|start_x| (start_x, (start_x + chunk_size).min(width)))
-        .collect();
-
-    #[derive(Copy, Clone)]
-    struct SendSyncPtr(*mut f32);
-    unsafe impl Send for SendSyncPtr {}
-    unsafe impl Sync for SendSyncPtr {}
-
-    impl SendSyncPtr {
-        #[inline(always)]
-        unsafe fn add(self, offset: usize) -> *mut f32 {
-            unsafe { self.0.add(offset) }
-        }
-    }
-
-    let out_ptr = SendSyncPtr(output.as_mut_ptr());
+    let band_rows = height.div_ceil(num_threads).max(16);
     let temp_slice = temp.as_slice();
+    let max_y = (height - 1) as isize;
 
-    col_chunks.into_par_iter().for_each(move |(start_x, end_x)| {
-        let chunk_w = end_x - start_x;
-        let mut col_sums = vec![0.0f32; chunk_w];
+    output
+        .par_chunks_mut(band_rows * width)
+        .enumerate()
+        .for_each(|(band_idx, band_out)| {
+            let y_start = band_idx * band_rows;
+            let mut col_sums = vec![0.0f32; width];
 
-        // Initialize window for this band of columns
-        for dy in 0..=r {
-            let row_idx = dy.min(height - 1);
-            let row = &temp_slice[row_idx * width + start_x..row_idx * width + end_x];
-            for (i, &val) in row.iter().enumerate() {
-                col_sums[i] += val;
+            // Initialize the vertical window centered at y_start with clamped borders.
+            for d in -(r as isize)..=(r as isize) {
+                let ry = (y_start as isize + d).clamp(0, max_y) as usize;
+                let src_row = &temp_slice[ry * width..(ry + 1) * width];
+                for (acc, &val) in col_sums.iter_mut().zip(src_row.iter()) {
+                    *acc += val;
+                }
             }
-        }
-        let top_row = &temp_slice[start_x..end_x];
-        let r_f32 = r as f32;
-        for (i, &val) in top_row.iter().enumerate() {
-            col_sums[i] += val * r_f32;
-        }
 
-        // Rolling sum down the columns
-        for y in 0..height {
-            let top_y = y.saturating_sub(r);
-            let bot_y = (y + r + 1).min(height - 1);
-            let top_offset = top_y * width + start_x;
-            let bot_offset = bot_y * width + start_x;
-            let row_offset = y * width + start_x;
+            // Rolling sum down the rows owned by this band.
+            for (local_y, out_row) in band_out.chunks_exact_mut(width).enumerate() {
+                let y = y_start + local_y;
+                let top_y = y.saturating_sub(r);
+                let bot_y = (y + r + 1).min(height - 1);
+                let top_row = &temp_slice[top_y * width..(top_y + 1) * width];
+                let bot_row = &temp_slice[bot_y * width..(bot_y + 1) * width];
 
-            unsafe {
-                let out = out_ptr.add(row_offset);
-
-                for (i, sum) in col_sums.iter_mut().enumerate() {
-                    *out.add(i) = *sum * inv_win_v;
-                    let bot_val = *temp_slice.get_unchecked(bot_offset + i);
-                    let top_val = *temp_slice.get_unchecked(top_offset + i);
+                for (((dst, sum), &bot_val), &top_val) in out_row
+                    .iter_mut()
+                    .zip(col_sums.iter_mut())
+                    .zip(bot_row.iter())
+                    .zip(top_row.iter())
+                {
+                    *dst = *sum * inv_win;
                     *sum += bot_val - top_val;
                 }
             }
-        }
-    });
+        });
 
     output
 }
@@ -291,3 +260,55 @@ pub fn apply_presence_scaled(
             rgb[2] = b;
         });
 }
+
+#[cfg(test)]
+mod tests {
+    use super::fast_separable_blur;
+
+    fn naive_separable_blur(input: &[f32], width: usize, height: usize, radius: usize) -> Vec<f32> {
+        let r = radius.min(width / 2).min(height / 2).max(1);
+        let win = (2 * r + 1) as f32;
+        let mut horiz = vec![0.0f32; width * height];
+        for y in 0..height {
+            for x in 0..width {
+                let mut s = 0.0f32;
+                for dx in -(r as isize)..=(r as isize) {
+                    let sx = (x as isize + dx).clamp(0, (width - 1) as isize) as usize;
+                    s += input[y * width + sx];
+                }
+                horiz[y * width + x] = s / win;
+            }
+        }
+        let mut out = vec![0.0f32; width * height];
+        for y in 0..height {
+            for x in 0..width {
+                let mut s = 0.0f32;
+                for dy in -(r as isize)..=(r as isize) {
+                    let sy = (y as isize + dy).clamp(0, (height - 1) as isize) as usize;
+                    s += horiz[sy * width + x];
+                }
+                out[y * width + x] = s / win;
+            }
+        }
+        out
+    }
+
+    #[test]
+    fn safe_separable_blur_matches_naive_across_multi_band_sizes() {
+        for &(w, h, r) in &[(17, 13, 3), (64, 97, 5), (113, 145, 16)] {
+            let input: Vec<f32> = (0..w * h)
+                .map(|i| (((i * 37 + 13) % 251) as f32) / 250.0)
+                .collect();
+            let got = fast_separable_blur(&input, w, h, r);
+            let expected = naive_separable_blur(&input, w, h, r);
+            assert_eq!(got.len(), expected.len());
+            for (idx, (a, b)) in got.iter().zip(expected.iter()).enumerate() {
+                assert!(
+                    (a - b).abs() < 1e-4,
+                    "blur mismatch at {idx} for {w}x{h} r={r}: got {a}, expected {b}"
+                );
+            }
+        }
+    }
+}
+
