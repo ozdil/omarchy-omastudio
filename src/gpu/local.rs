@@ -14,12 +14,19 @@ use crate::recipe::Recipe;
 
 /// Planes of w*h floats the kernels work in (see the shader).
 const PLANES: u64 = 6;
-/// Largest buffer, whatever the device allows.
-const MAX_BUFFER: u64 = 1 << 30;
+/// Cap on a single storage buffer binding for the local stage (256 MiB). Desktop
+/// Vulkan adapters with >= 256 MiB bindings process 4K previews (3840x2560, planes =
+/// 225 MiB) in one band with zero overhead, while 50-150 MP frames automatically
+/// stripe into halo-overlapped row bands that also fit on 128 MiB adapters.
+const MAX_STRIP_BINDING: u64 = 256 << 20;
+/// Minimum non-halo output rows per band when row-striping.
+const MIN_INNER_ROWS: usize = 32;
 /// Pixels each blur thread slides over; must match CHUNK in the shader.
 const CHUNK: u32 = 32;
+/// Parameter words per step (40 x u32 = 160 bytes, matching `struct Params` in local.wgsl).
+const PARAMS_WORDS: usize = 40;
 /// Size of one step's parameters in the uniform buffer.
-const PARAMS_SIZE: u64 = 128;
+const PARAMS_SIZE: u64 = (PARAMS_WORDS * 4) as u64;
 /// Histogram workgroups; must match HIST_GROUPS in the shader.
 const HIST_GROUPS: u32 = 256;
 
@@ -45,8 +52,8 @@ const ENTRIES: &[&str] = &[
 ];
 
 /// A step's parameter words, zero after `head`.
-fn words(head: &[u32]) -> [u32; 32] {
-    let mut p = [0u32; 32];
+fn words(head: &[u32]) -> [u32; PARAMS_WORDS] {
+    let mut p = [0u32; PARAMS_WORDS];
     p[..head.len()].copy_from_slice(head);
     p
 }
@@ -58,13 +65,203 @@ fn entry(name: &str) -> usize {
 /// One dispatch: its kernel, parameters and workgroup counts.
 struct Step {
     entry: usize,
-    params: [u32; 32],
+    params: [u32; PARAMS_WORDS],
     groups: (u32, u32),
 }
 
-/// The dispatches for `recipe` on a `w` x `h` frame, in the CPU's order. Empty when
-/// none of the three passes has anything to do.
-fn plan(w: usize, h: usize, recipe: &Recipe, scale: f32) -> Vec<Step> {
+/// Tight per-recipe vertical halo (in rows) required around a horizontal strip so the
+/// active neighbourhood passes (presence, detail, defringe) produce identical interior
+/// pixels to a whole-frame run. Returns `0` when no neighbourhood pass is active.
+pub fn required_halo(recipe: &Recipe, scale: f32) -> usize {
+    let mut presence_r = 0usize;
+    let (clarity, texture, dehaze, md) = (recipe.clarity, recipe.texture, recipe.dehaze, recipe.midtone_detail);
+    let any = clarity.abs() >= 0.01 || texture.abs() >= 0.01 || dehaze.abs() >= 0.01 || md.abs() >= 0.01;
+    let modules = texture.abs() >= 0.5 || clarity.abs() >= 0.5 || dehaze.abs() >= 0.5 || md.abs() >= 0.5;
+    if any && modules {
+        if texture.abs() >= 0.5 {
+            presence_r = presence_r.max(scaled_radius(6, scale));
+        }
+        if clarity.abs() >= 0.5 {
+            presence_r = presence_r.max(scaled_radius(16, scale));
+        }
+        if md.abs() >= 0.5 {
+            presence_r = presence_r.max(scaled_radius(9, scale));
+        }
+        if dehaze.abs() >= 0.5 {
+            presence_r = presence_r.max(scaled_radius(12, scale));
+        }
+    }
+
+    let mut detail_r = 0usize;
+    let (sharpness, dn_lum, dn_col) = (recipe.sharpness, recipe.denoise_lum, recipe.denoise_col);
+    if sharpness > 0.1 || dn_lum > 0.1 || dn_col > 0.1 {
+        if dn_col > 0.5 {
+            let base = if dn_col > 40.0 { 2 } else { 1 };
+            detail_r = detail_r.max(scaled_radius(base, scale));
+        }
+        if dn_lum > 0.5 || sharpness > 0.5 {
+            detail_r = detail_r.max(1);
+        }
+    }
+
+    let defringe_r = if recipe.defringe > 0.01 {
+        1 + scaled_radius(2, scale)
+    } else {
+        0
+    };
+
+    let total = presence_r + detail_r + defringe_r;
+    if total == 0 { 0 } else { total + 2 }
+}
+
+/// Frame-clamped `(halo, max_blur_radius)` matching the exact blur radii dispatched by [`plan`].
+fn effective_halo_and_blur(recipe: &Recipe, scale: f32, frame_w: usize, frame_h: usize) -> (usize, usize) {
+    let clamp_r = |base: usize| scaled_radius(base, scale).min(frame_w / 2).min(frame_h / 2).max(1);
+    let mut max_blur = 0usize;
+    let mut presence_r = 0usize;
+    let (clarity, texture, dehaze, md) = (recipe.clarity, recipe.texture, recipe.dehaze, recipe.midtone_detail);
+    let any = clarity.abs() >= 0.01 || texture.abs() >= 0.01 || dehaze.abs() >= 0.01 || md.abs() >= 0.01;
+    let modules = texture.abs() >= 0.5 || clarity.abs() >= 0.5 || dehaze.abs() >= 0.5 || md.abs() >= 0.5;
+    if any && modules {
+        if texture.abs() >= 0.5 {
+            let r = clamp_r(6);
+            presence_r = presence_r.max(r);
+            max_blur = max_blur.max(r);
+        }
+        if clarity.abs() >= 0.5 {
+            let r = clamp_r(16);
+            presence_r = presence_r.max(r);
+            max_blur = max_blur.max(r);
+        }
+        if md.abs() >= 0.5 {
+            let r = clamp_r(9);
+            presence_r = presence_r.max(r);
+            max_blur = max_blur.max(r);
+        }
+        if dehaze.abs() >= 0.5 {
+            let r = clamp_r(12);
+            presence_r = presence_r.max(r);
+            max_blur = max_blur.max(r);
+        }
+    }
+
+    let mut detail_r = 0usize;
+    let (sharpness, dn_lum, dn_col) = (recipe.sharpness, recipe.denoise_lum, recipe.denoise_col);
+    if (sharpness > 0.1 || dn_lum > 0.1 || dn_col > 0.1) && frame_w >= 3 && frame_h >= 3 {
+        if dn_col > 0.5 {
+            let r = clamp_r(if dn_col > 40.0 { 2 } else { 1 });
+            detail_r = detail_r.max(r);
+            max_blur = max_blur.max(r);
+        }
+        if dn_lum > 0.5 || sharpness > 0.5 {
+            detail_r = detail_r.max(1);
+        }
+    }
+
+    let defringe_r = if recipe.defringe > 0.01 && frame_w >= 3 && frame_h >= 3 {
+        let r = clamp_r(2);
+        max_blur = max_blur.max(r);
+        1 + r
+    } else {
+        0
+    };
+
+    let total = presence_r + detail_r + defringe_r;
+    let halo = if total == 0 { 0 } else { total + 2 };
+    (halo, max_blur)
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+struct StripPlan {
+    max_strip_rows: usize,
+    halo: usize,
+    inner_rows: usize,
+    bands: usize,
+    band_rows: usize,
+}
+
+impl StripPlan {
+    fn is_single_band(&self) -> bool {
+        self.bands <= 1
+    }
+}
+
+fn gpu_strip_limit(gpu: &Gpu) -> u64 {
+    gpu.limits
+        .max_storage_buffer_binding_size
+        .min(gpu.limits.max_buffer_size)
+        .min(MAX_STRIP_BINDING)
+}
+
+fn compute_strip_plan(
+    w: usize,
+    h: usize,
+    halo: usize,
+    max_blur_r: usize,
+    limit_bytes: u64,
+    max_groups: u32,
+) -> Result<StripPlan, String> {
+    if w == 0 || h == 0 {
+        return Err("empty frame".to_string());
+    }
+    let wu = u32::try_from(w).map_err(|_| format!("{w}x{h} exceeds GPU dimensions"))?;
+    if wu.div_ceil(16) > max_groups || wu.div_ceil(64) > max_groups || wu.div_ceil(CHUNK).div_ceil(64) > max_groups {
+        return Err(format!("{w}x{h} needs more horizontal workgroups than the GPU allows"));
+    }
+    let row_bytes_planes = (w as u64)
+        .checked_mul(4 * PLANES)
+        .ok_or_else(|| format!("{w}x{h} overflows GPU buffer size"))?;
+    let limit = limit_bytes.min(u32::MAX as u64);
+    let max_rows_by_mem = (limit / row_bytes_planes) as usize;
+    // blur_h dispatches one workgroup row per strip row (groups.1 == strip_h),
+    // so max_strip_rows must not exceed max_groups.
+    let max_strip_rows = max_rows_by_mem.min(max_groups as usize);
+    if max_strip_rows >= h {
+        return Ok(StripPlan {
+            max_strip_rows: h,
+            halo: 0,
+            inner_rows: h,
+            bands: 1,
+            band_rows: h,
+        });
+    }
+    let min_for_halo = halo.saturating_mul(2).saturating_add(MIN_INNER_ROWS);
+    let min_for_blur = max_blur_r.saturating_mul(2).saturating_add(1);
+    if max_strip_rows < min_for_halo || max_strip_rows < min_for_blur {
+        return Err(format!(
+            "{w}x{h} exceeds the GPU's strip limits (max_strip_rows={max_strip_rows}, halo={halo}, blur_r={max_blur_r})"
+        ));
+    }
+    let inner_rows = max_strip_rows - halo * 2;
+    let bands = h.div_ceil(inner_rows).max(1);
+    let band_rows = h.div_ceil(bands).max(1);
+    Ok(StripPlan {
+        max_strip_rows,
+        halo,
+        inner_rows,
+        bands,
+        band_rows,
+    })
+}
+
+/// Recommended interior row count per band for banded 16-bit exports so each outer
+/// band fits inside a single GPU strip on the active adapter (including 128 MiB
+/// binding adapters on 100-150 MP frames). Returns `None` when no GPU is used.
+pub fn recommended_band_rows(w: usize, h: usize, recipe: &Recipe, scale: f32) -> Option<usize> {
+    let gpu = super::acquire().filter(|g| super::stages_worthwhile(g))?;
+    let (halo, max_blur_r) = effective_halo_and_blur(recipe, scale, w, h);
+    let limit = gpu_strip_limit(&gpu);
+    let max_groups = gpu.limits.max_compute_workgroups_per_dimension;
+    compute_strip_plan(w, h, halo, max_blur_r, limit, max_groups)
+        .ok()
+        .map(|p| p.inner_rows)
+}
+
+/// The dispatches for `recipe` on a `w` x `h` strip belonging to a `frame_w` x
+/// `frame_h` frame, in the CPU's order. Empty when none of the three passes has
+/// anything to do. Blur radii clamp against the full frame dimensions so multi-band
+/// strips match single-band and CPU results.
+fn plan(w: usize, h: usize, frame_w: usize, frame_h: usize, recipe: &Recipe, scale: f32) -> Vec<Step> {
     let (wu, hu) = (w as u32, h as u32);
     let px = (wu.div_ceil(16), hu.div_ceil(16));
     let mut steps = Vec::new();
@@ -74,9 +271,9 @@ fn plan(w: usize, h: usize, recipe: &Recipe, scale: f32) -> Vec<Step> {
         groups,
     };
     let pixels = |name: &str, mode: u32, flags: u32, f: [f32; 4]| step(name, 0, 0, 0, mode, flags, f, px);
-    // fast_separable_blur's radius, clamped the same way, through the scratch plane 4
+    // fast_separable_blur's radius, clamped against full frame dimensions, through scratch plane 4
     let blur = |steps: &mut Vec<Step>, src: u32, dst: u32, radius: usize| {
-        let r = radius.min(w / 2).min(h / 2).max(1) as u32;
+        let r = radius.min(frame_w / 2).min(frame_h / 2).max(1) as u32;
         steps.push(step("blur_h", src, 4, r, 0, 0, [0.0; 4], (wu.div_ceil(CHUNK).div_ceil(64), hu)));
         steps.push(step("blur_v", 4, dst, r, 0, 0, [0.0; 4], (wu.div_ceil(64), hu.div_ceil(CHUNK))));
     };
@@ -111,7 +308,7 @@ fn plan(w: usize, h: usize, recipe: &Recipe, scale: f32) -> Vec<Step> {
 
     // Detail
     let (sharpness, dn_lum, dn_col) = (recipe.sharpness, recipe.denoise_lum, recipe.denoise_col);
-    if (sharpness > 0.1 || dn_lum > 0.1 || dn_col > 0.1) && w >= 3 && h >= 3 {
+    if (sharpness > 0.1 || dn_lum > 0.1 || dn_col > 0.1) && frame_w >= 3 && frame_h >= 3 {
         steps.push(pixels("detail_extract", 0, 0, [0.0; 4]));
         let chroma = dn_col > 0.5;
         if chroma {
@@ -125,7 +322,7 @@ fn plan(w: usize, h: usize, recipe: &Recipe, scale: f32) -> Vec<Step> {
     }
 
     // Defringe
-    if recipe.defringe > 0.01 && w >= 3 && h >= 3 {
+    if recipe.defringe > 0.01 && frame_w >= 3 && frame_h >= 3 {
         steps.push(pixels("luma_init", 0, 0, [0.0; 4]));
         steps.push(pixels("gradient", 0, 0, [0.0; 4]));
         blur(&mut steps, 1, 2, scaled_radius(2, scale));
@@ -142,19 +339,113 @@ fn layer_step(w: usize, h: usize, frame: (usize, usize, usize, usize), recipe: &
         return Ok(None);
     }
     let lay = super::layers::pack(&recipe.layers).ok_or("masks too large for the GPU")?;
+    Ok(Some((lay, layer_dispatch(w, h, frame))))
+}
+
+fn layer_dispatch(w: usize, h: usize, frame: (usize, usize, usize, usize)) -> Step {
     let (inv_w, inv_h) = (1.0 / (frame.2 as f32).max(1.0), 1.0 / (frame.3 as f32).max(1.0));
     let (wu, hu) = (w as u32, h as u32);
     let params = words(&[wu, hu, 0, 0, frame.0 as u32, frame.1 as u32, 0, 0, inv_w.to_bits(), inv_h.to_bits()]);
-    Ok(Some((lay, Step { entry: entry("layers"), params, groups: (wu.div_ceil(16), hu.div_ceil(16)) })))
+    Step { entry: entry("layers"), params, groups: (wu.div_ceil(16), hu.div_ceil(16)) }
 }
 
-/// The display tail after `plan`'s steps: grain, lens distortion and perspective,
-/// vignette and 8-bit quantization into px8, packing to 3 bytes per pixel when `ch`
-/// is 3, and the histogram and scopes. It mirrors process_buffer_16_to_8_ex's passes
-/// 4 to 6.
-fn display_steps(w: usize, h: usize, ch: usize, recipe: &Recipe, scale: f32) -> Vec<Step> {
-    let (wu, hu) = (w as u32, h as u32);
-    let px = (wu.div_ceil(16), hu.div_ceil(16));
+struct DisplayStrip {
+    out_y0: usize,
+    out_y1: usize,
+    sy0: usize,
+    sy1: usize,
+}
+
+fn build_display_strips(
+    w: usize,
+    h: usize,
+    strip_plan: StripPlan,
+    halo: usize,
+    geometry: Option<&crate::pipeline::detail::Geometry>,
+) -> Result<Vec<DisplayStrip>, String> {
+    if strip_plan.is_single_band() {
+        return Ok(vec![DisplayStrip { out_y0: 0, out_y1: h, sy0: 0, sy1: h }]);
+    }
+    let mut band_rows = strip_plan.band_rows;
+    loop {
+        let mut strips = Vec::with_capacity(h.div_ceil(band_rows));
+        let mut fits = true;
+        let mut worst_src_h = 0usize;
+        for out_y0 in (0..h).step_by(band_rows) {
+            let out_y1 = (out_y0 + band_rows).min(h);
+            let (sy0, sy1) = match geometry {
+                None => (out_y0.saturating_sub(halo), (out_y1 + halo).min(h)),
+                Some(geom) => {
+                    let mut y_min = f32::INFINITY;
+                    let mut y_max = f32::NEG_INFINITY;
+                    let steps = 32usize;
+                    let wf = w.saturating_sub(1) as f32;
+                    let top = out_y0 as f32;
+                    let bot = (out_y1 - 1) as f32;
+                    for k in 0..=steps {
+                        let t = k as f32 / steps as f32;
+                        let ex = t * wf;
+                        let ey = top + t * (bot - top);
+                        for (x, y) in [(ex, top), (ex, bot), (0.0, ey), (wf, ey)] {
+                            let (_, sy) = geom.source(x, y);
+                            if sy.is_finite() {
+                                y_min = y_min.min(sy);
+                                y_max = y_max.max(sy);
+                            }
+                        }
+                    }
+                    if !y_min.is_finite() || !y_max.is_finite() || y_max < 0.0 || y_min > (h - 1) as f32 {
+                        (0, 1)
+                    } else {
+                        let pad = (halo + 2) as f32;
+                        let sy0 = (y_min - pad).floor().clamp(0.0, (h - 1) as f32) as usize;
+                        let sy1 = (y_max + pad).ceil().clamp((sy0 + 1) as f32, h as f32) as usize;
+                        (sy0, sy1)
+                    }
+                }
+            };
+            let src_h = sy1 - sy0;
+            worst_src_h = worst_src_h.max(src_h);
+            if src_h > strip_plan.max_strip_rows {
+                fits = false;
+                break;
+            }
+            strips.push(DisplayStrip { out_y0, out_y1, sy0, sy1 });
+        }
+        if fits {
+            return Ok(strips);
+        }
+        if geometry.is_none() || band_rows <= 16 {
+            return Err(format!(
+                "{w}x{h} geometry band needs {worst_src_h} source rows (GPU strip limit {})",
+                strip_plan.max_strip_rows
+            ));
+        }
+        band_rows = (band_rows / 2).max(16);
+    }
+}
+
+/// The display tail after `plan`'s steps for one strip: grain, lens distortion and
+/// perspective, vignette and 8-bit quantization into compact `px8[0..valid_rows*w]`,
+/// packing to 3 bytes per pixel when `ch` is 3, and accumulating the histogram and
+/// scopes. Mirrors `process_buffer_16_to_8_ex`'s passes 4 to 6.
+#[allow(clippy::too_many_arguments)]
+fn display_steps_for_strip(
+    frame_w: usize,
+    frame_h: usize,
+    strip: &DisplayStrip,
+    ch: usize,
+    recipe: &Recipe,
+    scale: f32,
+    geometry: Option<&crate::pipeline::detail::Geometry>,
+) -> Vec<Step> {
+    let wu = frame_w as u32;
+    let strip_h = strip.sy1 - strip.sy0;
+    let valid_rows = strip.out_y1 - strip.out_y0;
+    let strip_hu = strip_h as u32;
+    let valid_hu = valid_rows as u32;
+    let px_strip = (wu.div_ceil(16), strip_hu.div_ceil(16));
+    let px_valid = (wu.div_ceil(16), valid_hu.div_ceil(16));
     let mut steps = Vec::new();
     let grain = recipe.grain_amount > 0.001;
     let vignette = recipe.vignette.abs() >= 0.01;
@@ -165,37 +456,67 @@ fn display_steps(w: usize, h: usize, ch: usize, recipe: &Recipe, scale: f32) -> 
         recipe.grain_roughness / 100.0,
         recipe.vignette,
     ];
-    let finish = |mode: u32, flags: u32| {
-        let mut params = words(&[wu, hu, 0, 0, 0, mode, flags]);
+    let finish = |h_u32: u32, mode: u32, flags: u32, strip0: [u32; 4], strip1: [u32; 4], groups: (u32, u32)| {
+        let mut params = words(&[wu, h_u32, 0, 0, 0, mode, flags]);
         for (k, v) in f.iter().enumerate() {
             params[8 + k] = v.to_bits();
         }
-        Step { entry: entry("finish"), params, groups: px }
+        params[32..36].copy_from_slice(&strip0);
+        params[36..40].copy_from_slice(&strip1);
+        Step { entry: entry("finish"), params, groups }
     };
-    match crate::pipeline::detail::Geometry::new(w, h, recipe) {
+    match geometry {
         Some(geometry) => {
-            // Grain in place, the resampled frame into the planes, then the vignette
+            // Grain in place across the source strip, resample output band into planes,
+            // then apply vignette and 8-bit quantization into compact px8.
             if grain {
-                steps.push(finish(1, 1));
+                steps.push(finish(
+                    strip_hu,
+                    1,
+                    1,
+                    [frame_w as u32, frame_h as u32, strip.sy0 as u32, 0],
+                    [strip_hu, strip.out_y0 as u32, 0, 0],
+                    px_strip,
+                ));
             }
             let (terms, perspective, lens) = geometry.gpu_terms();
-            let mut params = words(&[wu, hu, 0, 0, 0, 0, perspective as u32 | (lens as u32) << 1]);
+            let mut params = words(&[wu, valid_hu, 0, 0, 0, 0, perspective as u32 | (lens as u32) << 1]);
             for (k, v) in terms.iter().enumerate() {
                 params[16 + k] = v.to_bits();
             }
-            steps.push(Step { entry: entry("geometry"), params, groups: px });
-            steps.push(finish(2, (vignette as u32) << 1));
+            params[32..36].copy_from_slice(&[frame_w as u32, frame_h as u32, strip.sy0 as u32, strip_hu]);
+            params[36..40].copy_from_slice(&[valid_hu, strip.out_y0 as u32, 0, 0]);
+            steps.push(Step { entry: entry("geometry"), params, groups: px_valid });
+            steps.push(finish(
+                valid_hu,
+                2,
+                (vignette as u32) << 1,
+                [frame_w as u32, frame_h as u32, strip.out_y0 as u32, 0],
+                [valid_hu, strip.out_y0 as u32, 0, 0],
+                px_valid,
+            ));
         }
-        None => steps.push(finish(0, grain as u32 | (vignette as u32) << 1)),
+        None => {
+            let valid_y0 = (strip.out_y0 - strip.sy0) as u32;
+            let valid_y1 = (strip.out_y1 - strip.sy0) as u32;
+            steps.push(finish(
+                strip_hu,
+                0,
+                grain as u32 | (vignette as u32) << 1,
+                [frame_w as u32, frame_h as u32, strip.sy0 as u32, valid_y0],
+                [valid_y1, strip.out_y0 as u32, 0, 0],
+                px_strip,
+            ));
+        }
     }
     if ch == 3 {
-        let groups = ((w * h * 3).div_ceil(4) as u32).div_ceil(256);
+        let groups = ((frame_w * valid_rows * 3).div_ceil(4) as u32).div_ceil(256);
         let gx = groups.min(32768);
-        let params = words(&[wu, hu, gx * 256]);
+        let params = words(&[wu, valid_hu, gx * 256]);
         steps.push(Step { entry: entry("pack3"), params, groups: (gx, groups.div_ceil(gx)) });
     }
     for name in ["hist_main", "hist_wf", "hist_par"] {
-        steps.push(Step { entry: entry(name), params: words(&[wu, hu]), groups: (HIST_GROUPS, 1) });
+        steps.push(Step { entry: entry(name), params: words(&[wu, valid_hu]), groups: (HIST_GROUPS, 1) });
     }
     steps
 }
@@ -528,15 +849,62 @@ pub fn run(buf: &mut [f32], w: usize, h: usize, recipe: &Recipe, scale: f32) -> 
 }
 
 fn run_on(gpu: &Gpu, buf: &mut [f32], w: usize, h: usize, recipe: &Recipe, scale: f32) -> Result<(), String> {
+    run_on_with_limit(gpu, buf, w, h, recipe, scale, gpu_strip_limit(gpu))
+}
+
+fn run_on_with_limit(
+    gpu: &Gpu,
+    buf: &mut [f32],
+    w: usize,
+    h: usize,
+    recipe: &Recipe,
+    scale: f32,
+    limit: u64,
+) -> Result<(), String> {
     if w == 0 || h == 0 || buf.len() < w * h * 3 {
         return Err("unsupported buffer".to_string());
     }
-    let steps = plan(w, h, recipe, scale);
-    if steps.is_empty() {
+    let probe = plan(w, h, w, h, recipe, scale);
+    if probe.is_empty() {
         return Ok(());
     }
+    let limit = limit.min(gpu_strip_limit(gpu));
+    let (halo, max_blur_r) = effective_halo_and_blur(recipe, scale, w, h);
+    let strip_plan = compute_strip_plan(w, h, halo, max_blur_r, limit, gpu.limits.max_compute_workgroups_per_dimension)?;
     let _job = gpu.jobs.lock().map_err(|_| "GPU lock poisoned")?;
-    execute(gpu, w, h, &steps, &[], Out::F32(&mut buf[..w * h * 3]), None::<fn(&wgpu::Buffer) -> Result<(), String>>)
+    if strip_plan.is_single_band() {
+        let bands = vec![BandJob {
+            strip_h: h,
+            valid_y0: 0,
+            out_y0: 0,
+            out_y1: h,
+            steps: probe,
+            src: BandSrc::InPlaceF32,
+        }];
+        return execute_bands(gpu, w, bands, &[], Out::F32(&mut buf[..w * h * 3]), limit);
+    }
+    // Multi-band path keeps `buf` untouched until every band succeeds, preserving
+    // the fallback contract on mid-frame GPU failure.
+    let src_frame = &buf[..w * h * 3];
+    let mut bands = Vec::with_capacity(strip_plan.bands);
+    for out_y0 in (0..h).step_by(strip_plan.band_rows) {
+        let out_y1 = (out_y0 + strip_plan.band_rows).min(h);
+        let sy0 = out_y0.saturating_sub(strip_plan.halo);
+        let sy1 = (out_y1 + strip_plan.halo).min(h);
+        let strip_h = sy1 - sy0;
+        bands.push(BandJob {
+            strip_h,
+            valid_y0: out_y0 - sy0,
+            out_y0,
+            out_y1,
+            steps: plan(w, strip_h, w, h, recipe, scale),
+            src: BandSrc::HostF32(&src_frame[sy0 * w * 3..sy1 * w * 3]),
+        });
+    }
+    let mut dst = vec![0.0f32; w * h * 3];
+    execute_bands(gpu, w, bands, &[], Out::F32(&mut dst), limit)?;
+    buf[..w * h * 3].copy_from_slice(&dst);
+    Ok(())
 }
 
 /// Chained point + layers + presence/detail stage returning [`super::StageOutcome`] so
@@ -607,29 +975,85 @@ fn chained_on(
     scale: f32,
     frame: (usize, usize, usize, usize),
 ) -> Result<Option<Vec<f32>>, String> {
+    chained_on_with_limit(gpu, input, w, ch, y0, y1, recipe, inputs, scale, frame, gpu_strip_limit(gpu))
+}
+
+#[allow(clippy::too_many_arguments)]
+fn chained_on_with_limit(
+    gpu: &Gpu,
+    input: &[u16],
+    w: usize,
+    ch: usize,
+    y0: usize,
+    y1: usize,
+    recipe: &Recipe,
+    inputs: &super::point_ops::PointInputs,
+    scale: f32,
+    frame: (usize, usize, usize, usize),
+    limit: u64,
+) -> Result<Option<Vec<f32>>, String> {
     let h = y1.saturating_sub(y0);
     if w == 0 || h == 0 || !(3..=4).contains(&ch) || input.len() < y1 * w * ch {
         return Err("unsupported buffer".to_string());
     }
-    let (lay, mut steps) = match layer_step(w, h, frame, recipe)? {
-        Some((lay, step)) => (lay, vec![step]),
-        None => (Vec::new(), Vec::new()),
+    let (lay, has_layers) = match layer_step(w, h, frame, recipe)? {
+        Some((lay, _)) => (lay, true),
+        None => (Vec::new(), false),
     };
-    steps.extend(plan(w, h, recipe, scale));
-    if steps.is_empty() {
+    let probe = plan(w, h, w, h, recipe, scale);
+    if !has_layers && probe.is_empty() {
         return Ok(None);
     }
+    let limit = limit.min(gpu_strip_limit(gpu));
+    let (halo, max_blur_r) = effective_halo_and_blur(recipe, scale, w, h);
+    let strip_plan = compute_strip_plan(w, h, halo, max_blur_r, limit, gpu.limits.max_compute_workgroups_per_dimension)?;
     let _job = gpu.jobs.lock().map_err(|_| "GPU lock poisoned")?;
     let mut out = vec![0.0f32; w * h * 3];
-    execute(
-        gpu,
-        w,
-        h,
-        &steps,
-        &lay,
-        Out::F32(&mut out),
-        Some(|rgb: &wgpu::Buffer| super::point_ops::run_into(gpu, input, w, ch, y0, y1, recipe, inputs, rgb)),
-    )?;
+    let bands = if strip_plan.is_single_band() {
+        let mut steps = Vec::with_capacity(probe.len() + usize::from(has_layers));
+        if has_layers {
+            steps.push(layer_dispatch(w, h, frame));
+        }
+        steps.extend(probe);
+        vec![BandJob {
+            strip_h: h,
+            valid_y0: 0,
+            out_y0: 0,
+            out_y1: h,
+            steps,
+            src: BandSrc::PointOps { input, ch, sy0: y0, sy1: y1, recipe, inputs },
+        }]
+    } else {
+        let mut bands = Vec::with_capacity(strip_plan.bands);
+        for out_y0 in (0..h).step_by(strip_plan.band_rows) {
+            let out_y1 = (out_y0 + strip_plan.band_rows).min(h);
+            let sy0 = out_y0.saturating_sub(strip_plan.halo);
+            let sy1 = (out_y1 + strip_plan.halo).min(h);
+            let strip_h = sy1 - sy0;
+            let mut steps = Vec::new();
+            if has_layers {
+                steps.push(layer_dispatch(w, strip_h, (frame.0, frame.1 + sy0, frame.2, frame.3)));
+            }
+            steps.extend(plan(w, strip_h, w, h, recipe, scale));
+            bands.push(BandJob {
+                strip_h,
+                valid_y0: out_y0 - sy0,
+                out_y0,
+                out_y1,
+                steps,
+                src: BandSrc::PointOps {
+                    input,
+                    ch,
+                    sy0: y0 + sy0,
+                    sy1: y0 + sy1,
+                    recipe,
+                    inputs,
+                },
+            });
+        }
+        bands
+    };
+    execute_bands(gpu, w, bands, &lay, Out::F32(&mut out), limit)?;
     Ok(Some(out))
 }
 
@@ -692,25 +1116,67 @@ fn display_on(
     inputs: &super::point_ops::PointInputs,
     scale: f32,
 ) -> Result<(Vec<u8>, crate::pipeline::histogram::HistogramData), String> {
+    display_on_with_limit(gpu, input, w, h, ch, recipe, inputs, scale, gpu_strip_limit(gpu))
+}
+
+#[allow(clippy::too_many_arguments)]
+fn display_on_with_limit(
+    gpu: &Gpu,
+    input: &[u16],
+    w: usize,
+    h: usize,
+    ch: usize,
+    recipe: &Recipe,
+    inputs: &super::point_ops::PointInputs,
+    scale: f32,
+    limit: u64,
+) -> Result<(Vec<u8>, crate::pipeline::histogram::HistogramData), String> {
     if w == 0 || h == 0 || !(3..=4).contains(&ch) || input.len() < w * h * ch {
         return Err("unsupported buffer".to_string());
     }
-    let (lay, mut steps) = match layer_step(w, h, (0, 0, w, h), recipe)? {
-        Some((lay, step)) => (lay, vec![step]),
-        None => (Vec::new(), Vec::new()),
+    let (lay, has_layers) = match layer_step(w, h, (0, 0, w, h), recipe)? {
+        Some((lay, _)) => (lay, true),
+        None => (Vec::new(), false),
     };
-    steps.extend(plan(w, h, recipe, scale));
-    steps.extend(display_steps(w, h, ch, recipe, scale));
+    let limit = limit.min(gpu_strip_limit(gpu));
+    let (halo, max_blur_r) = effective_halo_and_blur(recipe, scale, w, h);
+    let strip_plan = compute_strip_plan(w, h, halo, max_blur_r, limit, gpu.limits.max_compute_workgroups_per_dimension)?;
+    let geometry = crate::pipeline::detail::Geometry::new(w, h, recipe);
+    let strips = build_display_strips(w, h, strip_plan, halo, geometry.as_ref())?;
+    let mut bands = Vec::with_capacity(strips.len());
+    for strip in strips {
+        let strip_h = strip.sy1 - strip.sy0;
+        let mut steps = Vec::new();
+        if has_layers {
+            steps.push(layer_dispatch(w, strip_h, (0, strip.sy0, w, h)));
+        }
+        steps.extend(plan(w, strip_h, w, h, recipe, scale));
+        steps.extend(display_steps_for_strip(w, h, &strip, ch, recipe, scale, geometry.as_ref()));
+        bands.push(BandJob {
+            strip_h,
+            valid_y0: strip.out_y0.saturating_sub(strip.sy0),
+            out_y0: strip.out_y0,
+            out_y1: strip.out_y1,
+            steps,
+            src: BandSrc::PointOps {
+                input,
+                ch,
+                sy0: strip.sy0,
+                sy1: strip.sy1,
+                recipe,
+                inputs,
+            },
+        });
+    }
     let _job = gpu.jobs.lock().map_err(|_| "GPU lock poisoned")?;
     let (mut pixels, mut words) = (Vec::new(), Vec::new());
-    execute(
+    execute_bands(
         gpu,
         w,
-        h,
-        &steps,
+        bands,
         &lay,
         Out::Display { ch, pixels: &mut pixels, words: &mut words },
-        Some(|rgb: &wgpu::Buffer| super::point_ops::run_into(gpu, input, w, ch, 0, h, recipe, inputs, rgb)),
+        limit,
     )?;
     if ch == 4 {
         for (px, src) in pixels.as_chunks_mut::<4>().0.iter_mut().zip(input.as_chunks::<4>().0) {
@@ -721,50 +1187,90 @@ fn display_on(
     Ok((pixels, hist))
 }
 
-/// Where [`execute`] puts its result.
+/// Where [`execute_bands`] puts its result.
 enum Out<'a> {
-    /// RGB f32, which is also uploaded when there is no `fill`.
+    /// RGB f32, which is also uploaded when a single-band job uses [`BandSrc::InPlaceF32`].
     F32(&'a mut [f32]),
     /// The display tail's 8-bit pixels (`ch` bytes each, alpha left at 0) and the
-    /// histogram and scope words.
+    /// histogram and scope words accumulated across all bands.
     Display { ch: usize, pixels: &'a mut Vec<u8>, words: &'a mut Vec<u32> },
 }
 
-/// Fills the device RGB buffer with `fill` (or uploads the f32 output when there is
-/// none), runs `steps` on it and reads the result back into `out`. The caller holds
-/// the GPU's job lock.
-fn execute(
+#[cfg(test)]
+type CustomFill<'a> = Box<dyn FnOnce(&wgpu::Buffer) -> Result<(), String> + 'a>;
+
+enum BandSrc<'a> {
+    /// Single-band in-place upload from the output slice itself.
+    InPlaceF32,
+    /// Immutable host RGB f32 slice covering this strip's rows.
+    HostF32(&'a [f32]),
+    /// Fill `bufs.compute.rgb` directly on the GPU via `point_ops::run_into`.
+    PointOps {
+        input: &'a [u16],
+        ch: usize,
+        sy0: usize,
+        sy1: usize,
+        recipe: &'a Recipe,
+        inputs: &'a super::point_ops::PointInputs<'a>,
+    },
+    #[cfg(test)]
+    Custom(CustomFill<'a>),
+}
+
+struct BandJob<'a> {
+    strip_h: usize,
+    valid_y0: usize,
+    out_y0: usize,
+    out_y1: usize,
+    steps: Vec<Step>,
+    src: BandSrc<'a>,
+}
+
+/// Executes one or more row bands against the shared local buffer pool. Buffers are
+/// sized once to the peak strip height across all bands; for `Out::Display`, `hist`
+/// is cleared before band 0, accumulated across bands, and read back once after the
+/// final band. The caller holds the GPU's job lock.
+fn execute_bands(
     gpu: &Gpu,
     w: usize,
-    h: usize,
-    steps: &[Step],
+    bands: Vec<BandJob<'_>>,
     lay: &[f32],
     mut out: Out<'_>,
-    fill: Option<impl FnOnce(&wgpu::Buffer) -> Result<(), String>>,
+    limit: u64,
 ) -> Result<(), String> {
-    let limit = gpu.limits.max_storage_buffer_binding_size.min(gpu.limits.max_buffer_size).min(MAX_BUFFER);
-    let pixels_u64 = (w * h) as u64;
-    let (rgb_size, plane_size) = (pixels_u64 * 12, pixels_u64 * 4);
-    if rgb_size > limit || plane_size * PLANES > limit || plane_size * PLANES > u32::MAX as u64 {
-        return Err(format!("{w}x{h} exceeds the GPU's buffer limits"));
+    if bands.is_empty() {
+        return Ok(());
     }
+    let limit = limit.min(gpu_strip_limit(gpu));
     let max_groups = gpu.limits.max_compute_workgroups_per_dimension;
-    if steps.iter().any(|s| s.groups.0 > max_groups || s.groups.1 > max_groups) {
-        return Err(format!("{w}x{h} needs more workgroups than the GPU allows"));
+    let mut peak_strip_rows = 0usize;
+    let mut peak_valid_rows = 0usize;
+    let mut total_valid_rows = 0usize;
+    let mut peak_steps = 0usize;
+    for b in &bands {
+        let valid_rows = b.out_y1.saturating_sub(b.out_y0);
+        peak_strip_rows = peak_strip_rows.max(b.strip_h).max(valid_rows);
+        peak_valid_rows = peak_valid_rows.max(valid_rows);
+        total_valid_rows = total_valid_rows.saturating_add(valid_rows);
+        peak_steps = peak_steps.max(b.steps.len());
+        if b.steps.iter().any(|s| s.groups.0 > max_groups || s.groups.1 > max_groups) {
+            return Err(format!("{w}x{} needs more workgroups than the GPU allows", b.strip_h));
+        }
+    }
+    let peak_pixels_u64 = (w * peak_strip_rows) as u64;
+    let peak_valid_u64 = (w * peak_valid_rows) as u64;
+    let (rgb_size, plane_size) = (peak_pixels_u64 * 12, peak_pixels_u64 * 4);
+    if rgb_size > limit || plane_size * PLANES > limit || plane_size * PLANES > u32::MAX as u64 {
+        return Err(format!("{w}x{peak_strip_rows} exceeds the GPU's buffer limits"));
     }
     let layers_size = (lay.len() * 4) as u64;
-    if layers_size > limit {
+    if layers_size > gpu_strip_limit(gpu) {
         return Err("the masks exceed the GPU's buffer limits".to_string());
     }
     let pipeline = pipeline(gpu)?;
 
     let stride = PARAMS_SIZE.next_multiple_of(gpu.limits.min_uniform_buffer_offset_alignment as u64);
-    let mut params = vec![0u8; (stride * steps.len() as u64) as usize];
-    for (i, s) in steps.iter().enumerate() {
-        let at = i * stride as usize;
-        params[at..at + PARAMS_SIZE as usize].copy_from_slice(as_bytes(&s.params));
-    }
-    let params_size = params.len() as u64;
+    let params_size = stride * peak_steps as u64;
 
     let device = &gpu.device;
     let interactive = matches!(out, Out::Display { .. }) || crate::pipeline::interactive();
@@ -808,123 +1314,158 @@ fn execute(
             }
             Out::Display { .. } => {
                 if bufs.compute.staging_f32.is_some()
-                    && bufs.total_bytes().saturating_add(pixels_u64 * 11) > super::PREVIEW_VRAM_CAP
+                    && bufs.total_bytes().saturating_add(peak_valid_u64 * 11) > super::PREVIEW_VRAM_CAP
                 {
                     bufs.compute.staging_f32 = None;
                 }
-                if !bufs.display.as_ref().is_some_and(|d| d.pixel_cap >= pixels_u64) {
-                    let cap = bufs.display.as_ref().map_or(0, |d| d.pixel_cap).max(pixels_u64);
+                if !bufs.display.as_ref().is_some_and(|d| d.pixel_cap >= peak_valid_u64) {
+                    let cap = bufs.display.as_ref().map_or(0, |d| d.pixel_cap).max(peak_valid_u64);
                     bufs.display = None;
                     bufs.display = Some(DisplayBuffers::new(device, &pipeline.layout, &bufs.compute, cap));
                 }
             }
         }
         let bufs = cache.as_ref().expect("buffers");
-        match fill {
-            Some(f) => f(&bufs.compute.rgb)?,
-            None => match &out {
-                Out::F32(data) => gpu.queue.write_buffer(&bufs.compute.rgb, 0, as_bytes(&data[..w * h * 3])),
-                Out::Display { .. } => return Err("the display tail needs a fill".to_string()),
-            },
-        }
-        gpu.queue.write_buffer(&bufs.compute.params, 0, &params);
         if !lay.is_empty() {
             gpu.queue.write_buffer(&bufs.compute.layers, 0, as_bytes(lay));
         }
+        let hist_len = (crate::pipeline::histogram::SCOPE_WORDS * 4) as u64;
+        if let Out::Display { ch, pixels, .. } = &mut out {
+            pixels.clear();
+            pixels.reserve(total_valid_rows * w * *ch);
+            let disp = bufs.display.as_ref().expect("display buffers");
+            let terms: Vec<f32> = [0.2126f32, 0.7152, 0.0722]
+                .iter()
+                .flat_map(|k| (0..256).map(move |v| k * v as f32))
+                .collect();
+            gpu.queue.write_buffer(&disp.hist, hist_len, as_bytes(&terms));
+        }
 
-        // Bytes read back: RGB f32, or 8-bit pixels (whole words) plus the scope counts
-        let (bind, read_buf, staging_buf, read_len, hist_pair) = match &out {
-            Out::F32(_) => (
-                &bufs.compute.bind_compute,
-                &bufs.compute.rgb,
-                bufs.compute.staging_f32.as_ref().expect("staging_f32"),
-                rgb_size,
-                None,
-            ),
-            Out::Display { ch, .. } => {
-                let disp = bufs.display.as_ref().expect("display buffers");
-                let (src, len) = if *ch == 3 {
-                    (&disp.out8, ((w * h * 3).div_ceil(4) * 4) as u64)
-                } else {
-                    (&disp.px8, (w * h * 4) as u64)
-                };
-                let hist_len = (crate::pipeline::histogram::SCOPE_WORDS * 4) as u64;
-                let terms: Vec<f32> = [0.2126f32, 0.7152, 0.0722].iter().flat_map(|k| (0..256).map(move |v| k * v as f32)).collect();
-                gpu.queue.write_buffer(&disp.hist, hist_len, as_bytes(&terms));
-                (&disp.bind_display, src, &disp.staging_display, len, Some((&disp.hist, &disp.staging_hist, hist_len)))
+        let mut params_bytes = vec![0u8; params_size as usize];
+        let band_count = bands.len();
+        for (band_idx, band) in bands.into_iter().enumerate() {
+            let is_first = band_idx == 0;
+            let is_last = band_idx + 1 == band_count;
+            let valid_rows = band.out_y1 - band.out_y0;
+            match band.src {
+                BandSrc::InPlaceF32 => match &out {
+                    Out::F32(data) => gpu.queue.write_buffer(&bufs.compute.rgb, 0, as_bytes(&data[..w * band.strip_h * 3])),
+                    Out::Display { .. } => return Err("the display tail needs a fill".to_string()),
+                },
+                BandSrc::HostF32(slice) => gpu.queue.write_buffer(&bufs.compute.rgb, 0, as_bytes(slice)),
+                BandSrc::PointOps { input, ch, sy0, sy1, recipe, inputs } => {
+                    super::point_ops::run_into(gpu, input, w, ch, sy0, sy1, recipe, inputs, &bufs.compute.rgb)?;
+                }
+                #[cfg(test)]
+                BandSrc::Custom(f) => f(&bufs.compute.rgb)?,
             }
-        };
-
-        let mut enc = device.create_command_encoder(&wgpu::CommandEncoderDescriptor { label: Some("local") });
-        if let Some((hist_buf, _, hist_len)) = hist_pair {
-            enc.clear_buffer(hist_buf, 0, Some(hist_len));
-        }
-        {
-            let mut pass = enc.begin_compute_pass(&wgpu::ComputePassDescriptor { label: Some("local"), timestamp_writes: None });
-            for (i, s) in steps.iter().enumerate() {
-                pass.set_pipeline(&pipeline.pipelines[s.entry]);
-                pass.set_bind_group(0, bind, &[(i as u64 * stride) as u32]);
-                pass.dispatch_workgroups(s.groups.0, s.groups.1, 1);
+            let step_bytes = (stride * band.steps.len() as u64) as usize;
+            if step_bytes > 0 {
+                params_bytes[..step_bytes].fill(0);
+                for (i, s) in band.steps.iter().enumerate() {
+                    let at = i * stride as usize;
+                    params_bytes[at..at + PARAMS_SIZE as usize].copy_from_slice(as_bytes(&s.params));
+                }
+                gpu.queue.write_buffer(&bufs.compute.params, 0, &params_bytes[..step_bytes]);
             }
-        }
-        enc.copy_buffer_to_buffer(read_buf, 0, staging_buf, 0, read_len);
-        if let Some((hist_buf, staging_hist, hist_len)) = hist_pair {
-            enc.copy_buffer_to_buffer(hist_buf, 0, staging_hist, 0, hist_len);
-        }
-        let idx = gpu.queue.submit([enc.finish()]);
 
-        let map = |buf: &wgpu::Buffer, len: u64| {
-            let (tx, rx) = mpsc::channel();
-            buf.map_async(wgpu::MapMode::Read, 0..len, move |r| {
-                let _ = tx.send(r);
-            });
-            rx
-        };
-        let rx = map(staging_buf, read_len);
-        let mut staging_guard = super::StagingGuard::new(staging_buf);
-        let mut hist_state = hist_pair.map(|(_, staging_hist, hist_len)| {
-            let rx_hist = map(staging_hist, hist_len);
-            (staging_hist, hist_len, rx_hist, super::StagingGuard::new(staging_hist))
-        });
+            let (bind, read_buf, src_offset, staging_buf, read_len, disp_hist) = match &out {
+                Out::F32(_) => (
+                    &bufs.compute.bind_compute,
+                    &bufs.compute.rgb,
+                    (band.valid_y0 * w * 12) as u64,
+                    bufs.compute.staging_f32.as_ref().expect("staging_f32"),
+                    (valid_rows * w * 12) as u64,
+                    None,
+                ),
+                Out::Display { ch, .. } => {
+                    let disp = bufs.display.as_ref().expect("display buffers");
+                    let (src, len) = if *ch == 3 {
+                        (&disp.out8, ((w * valid_rows * 3).div_ceil(4) * 4) as u64)
+                    } else {
+                        (&disp.px8, (w * valid_rows * 4) as u64)
+                    };
+                    (&disp.bind_display, src, 0u64, &disp.staging_display, len, Some((&disp.hist, &disp.staging_hist)))
+                }
+            };
 
-        gpu.wait_submission(Some(idx), timeout)?;
-
-        let main_map = rx.recv().map_err(|e| e.to_string())?;
-        let hist_map = match hist_state.as_ref() {
-            Some((_, _, rx_hist, _)) => Some(rx_hist.recv().map_err(|e| e.to_string())?),
-            None => None,
-        };
-        if main_map.is_err() {
-            staging_guard.disarm();
-        }
-        if hist_map.as_ref().is_some_and(Result::is_err)
-            && let Some((_, _, _, ref mut hg)) = hist_state
-        {
-            hg.disarm();
-        }
-        main_map.map_err(|e| e.to_string())?;
-        if let Some(res) = hist_map {
-            res.map_err(|e| e.to_string())?;
-        }
-
-        // Scope mapped views strictly inside this block so they drop before unmap().
-        {
-            let view = staging_buf.get_mapped_range(0..read_len).map_err(|e| e.to_string())?;
-            match &mut out {
-                Out::F32(data) => super::point_ops::as_bytes_mut(&mut data[..w * h * 3]).copy_from_slice(&view),
-                Out::Display { ch, pixels, words } => {
-                    pixels.clear();
-                    pixels.extend_from_slice(&view[..w * h * *ch]);
-                    let (staging_hist, hist_len, _, _) = hist_state.as_ref().expect("hist state");
-                    let hist = staging_hist.get_mapped_range(0..*hist_len).map_err(|e| e.to_string())?;
-                    words.clear();
-                    words.extend(hist.as_chunks::<4>().0.iter().map(|b| u32::from_le_bytes(*b)));
+            let mut enc = device.create_command_encoder(&wgpu::CommandEncoderDescriptor { label: Some("local") });
+            if is_first
+                && let Some((hist_buf, _)) = disp_hist
+            {
+                enc.clear_buffer(hist_buf, 0, Some(hist_len));
+            }
+            {
+                let mut pass = enc.begin_compute_pass(&wgpu::ComputePassDescriptor { label: Some("local"), timestamp_writes: None });
+                for (i, s) in band.steps.iter().enumerate() {
+                    pass.set_pipeline(&pipeline.pipelines[s.entry]);
+                    pass.set_bind_group(0, bind, &[(i as u64 * stride) as u32]);
+                    pass.dispatch_workgroups(s.groups.0, s.groups.1, 1);
                 }
             }
-        }
-        staging_guard.unmap_now();
-        if let Some((_, _, _, hg)) = hist_state {
-            hg.unmap_now();
+            enc.copy_buffer_to_buffer(read_buf, src_offset, staging_buf, 0, read_len);
+            let read_hist = if is_last { disp_hist } else { None };
+            if let Some((hist_buf, staging_hist)) = read_hist {
+                enc.copy_buffer_to_buffer(hist_buf, 0, staging_hist, 0, hist_len);
+            }
+            let idx = gpu.queue.submit([enc.finish()]);
+
+            let map = |buf: &wgpu::Buffer, len: u64| {
+                let (tx, rx) = mpsc::channel();
+                buf.map_async(wgpu::MapMode::Read, 0..len, move |r| {
+                    let _ = tx.send(r);
+                });
+                rx
+            };
+            let rx = map(staging_buf, read_len);
+            let mut staging_guard = super::StagingGuard::new(staging_buf);
+            let mut hist_state = read_hist.map(|(_, staging_hist)| {
+                let rx_hist = map(staging_hist, hist_len);
+                (staging_hist, rx_hist, super::StagingGuard::new(staging_hist))
+            });
+
+            gpu.wait_submission(Some(idx), timeout)?;
+
+            let main_map = rx.recv().map_err(|e| e.to_string())?;
+            let hist_map = match hist_state.as_ref() {
+                Some((_, rx_hist, _)) => Some(rx_hist.recv().map_err(|e| e.to_string())?),
+                None => None,
+            };
+            if main_map.is_err() {
+                staging_guard.disarm();
+            }
+            if hist_map.as_ref().is_some_and(Result::is_err)
+                && let Some((_, _, ref mut hg)) = hist_state
+            {
+                hg.disarm();
+            }
+            main_map.map_err(|e| e.to_string())?;
+            if let Some(res) = hist_map {
+                res.map_err(|e| e.to_string())?;
+            }
+
+            // Scope mapped views strictly inside this block so they drop before unmap().
+            {
+                let view = staging_buf.get_mapped_range(0..read_len).map_err(|e| e.to_string())?;
+                match &mut out {
+                    Out::F32(data) => {
+                        super::point_ops::as_bytes_mut(&mut data[band.out_y0 * w * 3..band.out_y1 * w * 3])
+                            .copy_from_slice(&view);
+                    }
+                    Out::Display { ch, pixels, words } => {
+                        pixels.extend_from_slice(&view[..w * valid_rows * *ch]);
+                        if let Some((staging_hist, _, _)) = hist_state.as_ref() {
+                            let hist = staging_hist.get_mapped_range(0..hist_len).map_err(|e| e.to_string())?;
+                            words.clear();
+                            words.extend(hist.as_chunks::<4>().0.iter().map(|b| u32::from_le_bytes(*b)));
+                        }
+                    }
+                }
+            }
+            staging_guard.unmap_now();
+            if let Some((_, _, hg)) = hist_state {
+                hg.unmap_now();
+            }
         }
         Ok(())
     })();
@@ -1240,22 +1781,28 @@ mod tests {
             assert_eq!(disp.staging_display.size(), (w * h * 4) as u64, "Display staging must be 4 B/px, not 12 B/px");
         }
 
-        // 3. Any error during execute() must clear the buffer cache cleanly so subsequent jobs succeed.
+        // 3. Any error during execute_bands() must clear the buffer cache cleanly so subsequent jobs succeed.
         {
             let _job = gpu.jobs.lock().unwrap();
-            let steps = plan(w, h, &recipe, 1.0);
+            let steps = plan(w, h, w, h, &recipe, 1.0);
             let mut out = vec![0.0f32; w * h * 3];
-            let err = execute(
+            let err = execute_bands(
                 &gpu,
                 w,
-                h,
-                &steps,
+                vec![BandJob {
+                    strip_h: h,
+                    valid_y0: 0,
+                    out_y0: 0,
+                    out_y1: h,
+                    steps,
+                    src: BandSrc::Custom(Box::new(|_: &wgpu::Buffer| Err("injected fill error".to_string()))),
+                }],
                 &[],
                 Out::F32(&mut out),
-                Some(|_: &wgpu::Buffer| Err("injected fill error".to_string())),
+                gpu_strip_limit(&gpu),
             );
             assert!(err.is_err());
-            assert!(p.buffers.lock().unwrap().is_none(), "Failed execute() must invalidate buffer cache");
+            assert!(p.buffers.lock().unwrap().is_none(), "Failed execute_bands() must invalidate buffer cache");
         }
         let mut retry = frame(w, h);
         run_on(&gpu, &mut retry, w, h, &recipe, 1.0).expect("Subsequent local job must recover after error");
@@ -1366,6 +1913,309 @@ mod tests {
     #[test]
     fn neutral_recipe_has_no_steps() {
         let r = Recipe { sharpness: 0.0, denoise_col: 0.0, denoise_lum: 0.0, defringe: 0.0, ..Recipe::default() };
-        assert!(plan(400, 300, &r, 1.0).is_empty());
+        assert!(plan(400, 300, 400, 300, &r, 1.0).is_empty());
+    }
+
+    #[test]
+    fn required_halo_and_150mp_128mib_strip_plan() {
+        let neutral = Recipe { sharpness: 0.0, denoise_col: 0.0, denoise_lum: 0.0, defringe: 0.0, ..Recipe::default() };
+        assert_eq!(required_halo(&neutral, 1.0), 0);
+        assert_eq!(required_halo(&neutral, 3.7), 0);
+
+        let sharp_only = Recipe { sharpness: 40.0, denoise_col: 0.0, denoise_lum: 0.0, defringe: 0.0, ..Recipe::default() };
+        assert_eq!(required_halo(&sharp_only, 1.0), 3);
+        assert_eq!(required_halo(&sharp_only, 3.7), 3);
+
+        // 150 MP medium format (14204 x 10652) worst-case neighbourhood recipe on a 128 MiB binding adapter
+        let worst_recipe = Recipe {
+            clarity: 35.0,
+            texture: 25.0,
+            dehaze: 20.0,
+            midtone_detail: 15.0,
+            sharpness: 50.0,
+            denoise_lum: 30.0,
+            denoise_col: 60.0,
+            defringe: 45.0,
+            ..Recipe::default()
+        };
+        let (w150, h150) = (14_204usize, 10_652usize);
+        let scale150 = crate::pipeline::frame_scale(w150, h150);
+        let halo150 = required_halo(&worst_recipe, scale150);
+        assert_eq!(halo150, 76, "150 MP worst-case halo should be 76 rows");
+        let (eff_halo, max_blur) = effective_halo_and_blur(&worst_recipe, scale150, w150, h150);
+        assert_eq!(eff_halo, 76);
+        assert_eq!(max_blur, 59);
+
+        let plan_128 = compute_strip_plan(w150, h150, eff_halo, max_blur, 128 << 20, 65_535)
+            .expect("150 MP must fit on 128 MiB binding adapter");
+        assert!(!plan_128.is_single_band());
+        assert_eq!(plan_128.max_strip_rows, 393);
+        assert_eq!(plan_128.inner_rows, 241);
+        assert_eq!(plan_128.bands, 45);
+        assert!(plan_128.band_rows + 2 * eff_halo <= plan_128.max_strip_rows);
+        let peak_planes_bytes = (w150 as u64) * ((plan_128.band_rows + 2 * eff_halo) as u64) * 4 * PLANES;
+        assert!(peak_planes_bytes <= (128 << 20), "peak planes {peak_planes_bytes} exceeded 128 MiB");
+
+        // 4K (3840 x 2560): single-band fast path on >= 256 MiB adapters, automatic 2-band on 128 MiB adapters
+        let (w4k, h4k) = (3840usize, 2560usize);
+        let scale4k = crate::pipeline::frame_scale(w4k, h4k);
+        let (halo4k, blur4k) = effective_halo_and_blur(&worst_recipe, scale4k, w4k, h4k);
+        let plan_4k_256 = compute_strip_plan(w4k, h4k, halo4k, blur4k, 256 << 20, 65_535).expect("4K on 256 MiB");
+        assert!(plan_4k_256.is_single_band());
+        assert_eq!(plan_4k_256.band_rows, h4k);
+
+        let plan_4k_128 = compute_strip_plan(w4k, h4k, halo4k, blur4k, 128 << 20, 65_535).expect("4K on 128 MiB");
+        assert_eq!(plan_4k_128.bands, 2);
+    }
+
+    #[test]
+    fn banded_local_f32_matches_cpu_and_single_band() {
+        let _test_lock = super::super::TEST_GPU_LOCK.lock().unwrap_or_else(|e| e.into_inner());
+        let Some(gpu) = super::super::acquire() else {
+            eprintln!("no GPU, skipped");
+            return;
+        };
+        let (w, h) = (203usize, 140usize);
+        let input = frame(w, h);
+        let recipe = Recipe {
+            clarity: 25.0,
+            texture: 20.0,
+            dehaze: 15.0,
+            midtone_detail: -20.0,
+            sharpness: 40.0,
+            denoise_lum: 30.0,
+            denoise_col: 50.0,
+            defringe: 40.0,
+            ..Recipe::default()
+        };
+        let scale = 1.0;
+        let (halo, max_blur) = effective_halo_and_blur(&recipe, scale, w, h);
+        // Synthetic binding limit that allows max_strip_rows = 2*halo + 36 (< h), forcing >= 4 bands.
+        let synthetic_rows = halo * 2 + 36;
+        let synthetic_limit = (w as u64) * (synthetic_rows as u64) * 4 * PLANES;
+        let sp = compute_strip_plan(w, h, halo, max_blur, synthetic_limit, 65_535).expect("multi-band plan");
+        assert!(sp.bands >= 3, "expected >= 3 bands, got {}", sp.bands);
+
+        let mut cpu = input.clone();
+        presence::apply_presence_scaled(&mut cpu, w, h, recipe.clarity, recipe.texture, recipe.dehaze, recipe.midtone_detail, scale);
+        detail::apply_detail_scaled(&mut cpu, w, h, recipe.sharpness, recipe.denoise_lum, recipe.denoise_col, scale);
+        detail::apply_defringe_buffer(&mut cpu, w, h, recipe.defringe, scale);
+
+        let mut single = input.clone();
+        run_on(&gpu, &mut single, w, h, &recipe, scale).expect("single-band GPU");
+
+        let mut banded = input.clone();
+        run_on_with_limit(&gpu, &mut banded, w, h, &recipe, scale, synthetic_limit).expect("banded GPU");
+
+        let mut worst_vs_single = 0.0f32;
+        let mut off_vs_cpu = 0usize;
+        let mut worst_vs_cpu = 0.0f32;
+        for ((c, s), b) in cpu.iter().zip(&single).zip(&banded) {
+            worst_vs_single = worst_vs_single.max((s - b).abs());
+            let d = (c - b).abs();
+            if d.is_nan() || d > 1e-3 {
+                off_vs_cpu += 1;
+            }
+            worst_vs_cpu = if d.is_finite() { worst_vs_cpu.max(d) } else { f32::INFINITY };
+        }
+        eprintln!(
+            "banded_local_f32 ({} bands): worst_vs_single={worst_vs_single}, off_vs_cpu={off_vs_cpu}, worst_vs_cpu={worst_vs_cpu}",
+            sp.bands
+        );
+        assert!(worst_vs_single < 1e-3, "banded diverged from single-band GPU by {worst_vs_single}");
+        assert!(off_vs_cpu * 1000 < w * h * 3, "{off_vs_cpu} values differ from CPU (worst {worst_vs_cpu})");
+        assert!(worst_vs_cpu < 0.02, "worst CPU diff {worst_vs_cpu}");
+
+        // Impossibly tiny limit must fail cleanly without modifying `buf`.
+        let mut untouched = input.clone();
+        let tiny_limit = (w as u64) * 8 * 4 * PLANES;
+        assert!(run_on_with_limit(&gpu, &mut untouched, w, h, &recipe, scale, tiny_limit).is_err());
+        assert_eq!(untouched, input, "failed banded run must leave buffer unchanged");
+    }
+
+    #[test]
+    fn banded_chained_matches_cpu() {
+        use crate::pipeline::transfer::Transfer;
+        use crate::pipeline::{PointOps, white_balance};
+        let _test_lock = super::super::TEST_GPU_LOCK.lock().unwrap_or_else(|e| e.into_inner());
+        let Some(gpu) = super::super::acquire() else {
+            eprintln!("no GPU, skipped");
+            return;
+        };
+        let (w, h, ch) = (157usize, 140usize, 3usize);
+        let input: Vec<u16> = (0..w * h * ch)
+            .map(|i| {
+                let (px, c) = (i / ch, i % ch);
+                let (x, y) = (px % w, px / w);
+                let n = ((x as u32).wrapping_mul(2_654_435_761) ^ (y as u32).wrapping_mul(40_503) ^ c as u32) % 3000;
+                ((x * 30_000 / w + y * 20_000 / h) as u32 + n + c as u32 * 1500) as u16
+            })
+            .collect();
+        let recipe = Recipe {
+            exposure: 0.25,
+            contrast: 18.0,
+            shadows: 20.0,
+            clarity: 25.0,
+            texture: 20.0,
+            sharpness: 40.0,
+            denoise_col: 30.0,
+            defringe: 30.0,
+            film_simulation: "fuji_classic_chrome".into(),
+            layers: test_layers(),
+            ..Recipe::default()
+        };
+        let transfer = Transfer::bt709();
+        let ops = PointOps::new(&recipe);
+        let (wr, wg, wb) = white_balance::kelvin_to_rgb_multipliers(recipe.wb_temperature, recipe.wb_tint);
+        let e = 2.0f32.powf(recipe.exposure + recipe.baseline_exposure);
+        let k = [wr * e, wg * e, wb * e];
+        let (y0, y1) = (7, h);
+        let rows = y1 - y0;
+
+        let (halo, max_blur) = effective_halo_and_blur(&recipe, 1.0, w, rows);
+        let synthetic_limit = (w as u64) * ((halo * 2 + 36) as u64) * 4 * PLANES;
+        let sp = compute_strip_plan(w, rows, halo, max_blur, synthetic_limit, 65_535).expect("chained strip plan");
+        assert!(sp.bands >= 3, "expected >= 3 bands, got {}", sp.bands);
+
+        let single = chained_on(&gpu, &input, w, ch, y0, y1, &recipe, &ops.gpu_inputs(k, transfer), 1.0, (0, y0, w, h))
+            .expect("single-band chained")
+            .expect("work");
+        let banded = chained_on_with_limit(
+            &gpu,
+            &input,
+            w,
+            ch,
+            y0,
+            y1,
+            &recipe,
+            &ops.gpu_inputs(k, transfer),
+            1.0,
+            (0, y0, w, h),
+            synthetic_limit,
+        )
+        .expect("banded chained")
+        .expect("work");
+
+        let mut worst = 0.0f32;
+        for (a, b) in single.iter().zip(&banded) {
+            worst = worst.max((a - b).abs());
+        }
+        eprintln!("banded_chained ({} bands): worst diff vs single-band = {worst}", sp.bands);
+        assert!(worst < 1e-3, "banded chained diverged from single-band by {worst}");
+    }
+
+    #[test]
+    fn banded_display_matches_cpu_with_grain_vignette_geometry_and_scopes() {
+        use crate::pipeline::transfer::Transfer;
+        use crate::pipeline::{PointOps, white_balance};
+        let _test_lock = super::super::TEST_GPU_LOCK.lock().unwrap_or_else(|e| e.into_inner());
+        let Some(gpu) = super::super::acquire() else {
+            eprintln!("no GPU, skipped");
+            return;
+        };
+        let (w, h) = (163usize, 160usize);
+        let grain = Recipe {
+            exposure: 0.2,
+            clarity: 20.0,
+            sharpness: 30.0,
+            grain_amount: 35.0,
+            grain_size: 1.6,
+            grain_roughness: 60.0,
+            vignette: -30.0,
+            ..Recipe::default()
+        };
+        let geometry = Recipe {
+            lens_distortion: 25.0,
+            perspective_vertical: 18.0,
+            perspective_horizontal: -8.0,
+            ..grain.clone()
+        };
+        let barrel = Recipe { lens_distortion: -35.0, perspective_scale: 92.0, ..Recipe::default() };
+        let masks = Recipe { layers: test_layers(), ..grain.clone() };
+        let scale = crate::pipeline::frame_scale(w, h);
+        // Synthetic binding limit giving max_strip_rows = 72 (< 160), forcing 3+ bands across all cases.
+        let synthetic_limit = (w as u64) * 72 * 4 * PLANES;
+
+        for ch in [3usize, 4] {
+            let input: Vec<u16> = (0..w * h * ch)
+                .map(|i| {
+                    let (px, c) = (i / ch, i % ch);
+                    let (x, y) = (px % w, px / w);
+                    if c == 3 {
+                        return (x * 400 + y * 50) as u16;
+                    }
+                    let n = ((x as u32).wrapping_mul(2_654_435_761) ^ (y as u32).wrapping_mul(40_503) ^ c as u32) % 4000;
+                    ((x * 40_000 / w + y * 20_000 / h) as u32 + n + c as u32 * 1500) as u16
+                })
+                .collect();
+            for (name, recipe) in [
+                ("default", Recipe::default()),
+                ("grain_vignette", grain.clone()),
+                ("geometry", geometry.clone()),
+                ("barrel", barrel.clone()),
+                ("masks", masks.clone()),
+            ] {
+                let transfer = Transfer::bt709();
+                let (cpu, cpu_hist) = crate::pipeline::process_buffer_16_to_8_ex(
+                    &input,
+                    w as u32,
+                    h as u32,
+                    ch as u32,
+                    &recipe,
+                    transfer,
+                    false,
+                    false,
+                );
+                let ops = PointOps::new(&recipe);
+                let (wr, wg, wb) = white_balance::kelvin_to_rgb_multipliers(recipe.wb_temperature, recipe.wb_tint);
+                let e = 2.0f32.powf(recipe.exposure + recipe.baseline_exposure);
+                let (halo, max_blur) = effective_halo_and_blur(&recipe, scale, w, h);
+                let sp = compute_strip_plan(w, h, halo, max_blur, synthetic_limit, 65_535).expect("display strip plan");
+                assert!(sp.bands >= 3, "{name} ch={ch}: expected >= 3 bands, got {}", sp.bands);
+
+                let (got, hist) = display_on_with_limit(
+                    &gpu,
+                    &input,
+                    w,
+                    h,
+                    ch,
+                    &recipe,
+                    &ops.gpu_inputs([wr * e, wg * e, wb * e], transfer),
+                    scale,
+                    synthetic_limit,
+                )
+                .expect("banded GPU preview");
+                assert_eq!(got.len(), cpu.len());
+                let mut off_px = std::collections::HashSet::new();
+                let mut worst = 0u8;
+                for (i, (a, b)) in cpu.iter().zip(&got).enumerate() {
+                    let d = a.abs_diff(*b);
+                    worst = worst.max(d);
+                    if d > 0 {
+                        off_px.insert(i / ch);
+                    }
+                }
+                eprintln!(
+                    "banded_display {name} ch={ch} ({} bands): {} pixels differ (worst {worst})",
+                    sp.bands,
+                    off_px.len()
+                );
+                assert!(worst <= 1, "banded {name} ch={ch}: worst difference {worst}");
+                assert!(off_px.len() * 200 < w * h, "banded {name} ch={ch}: {} pixels differ", off_px.len());
+                let n = off_px.len() as i64;
+                for (a, b) in [(&cpu_hist.red, &hist.red), (&cpu_hist.green, &hist.green), (&cpu_hist.blue, &hist.blue), (&cpu_hist.luma, &hist.luma)] {
+                    let d: i64 = a.iter().zip(b.iter()).map(|(x, y)| (*x as i64 - *y as i64).abs()).sum();
+                    assert!(d <= 2 * n, "banded {name} ch={ch}: histogram differs by {d}");
+                }
+                assert!(
+                    (cpu_hist.highlight_clipping_percent - hist.highlight_clipping_percent).abs() * (w * h) as f32
+                        <= 100.0 * n as f32 + 1e-3
+                );
+                if n == 0 {
+                    assert_eq!(cpu_hist.waveform_luma, hist.waveform_luma, "banded {name} ch={ch}: waveform");
+                    assert_eq!(cpu_hist.parade_r, hist.parade_r, "banded {name} ch={ch}: parade");
+                }
+            }
+        }
     }
 }

@@ -740,10 +740,15 @@ fn process_16_to_16_banded(
 
     let stage = PointStage::new(recipe, transfer);
     let lens = detail::Geometry::new(w, h, recipe);
-    let halo = band_halo(frame_scale(w, h));
+    let scale = frame_scale(w, h);
+    let halo = crate::gpu::local::required_halo(recipe, scale);
+    let effective_max_rows = match crate::gpu::local::recommended_band_rows(w, h, recipe, scale) {
+        Some(gpu_rows) => max_band_rows.min(gpu_rows).max(1),
+        None => max_band_rows.max(1),
+    };
 
     // Bands of equal height, so the last one is never a sliver
-    let bands = h.div_ceil(max_band_rows).max(1);
+    let bands = h.div_ceil(effective_max_rows).max(1);
     let band_rows = h.div_ceil(bands).max(1);
 
     // Filled band by band, or at the end when the lens remap reads across bands
