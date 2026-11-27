@@ -31,12 +31,15 @@ for var in LD_PRELOAD LD_LIBRARY_PATH RUSTC_WRAPPER CARGO_BUILD_RUSTC_WRAPPER RU
 done
 
 DIR="$(cd "$(/usr/bin/dirname "$(/usr/bin/realpath "${BASH_SOURCE[0]}")")" && /usr/bin/pwd)"
-BIN="${HOME}/.local/bin/omastudio-engine"
 
-# Check standard install path first
-if [[ -x "${BIN}" ]]; then
-    exec "${BIN}" status
-fi
+# Check standard install paths first: sibling (tarball / /usr/bin), ~/.local/bin, /usr/bin
+for CANDIDATE in "${DIR}/omastudio-engine" "${HOME}/.local/bin/omastudio-engine" "/usr/bin/omastudio-engine"; do
+    if [[ -x "${CANDIDATE}" ]]; then
+        exec "${CANDIDATE}" status
+    fi
+done
+
+BIN="${HOME}/.local/bin/omastudio-engine"
 
 # Resolve trusted cargo binary
 CARGO_BIN=""
