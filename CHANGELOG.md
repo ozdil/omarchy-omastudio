@@ -33,7 +33,7 @@ Fits into Omarchy 4.5: OmaStudio now follows the Omarchy shell's own theme token
 - The language menu's text no longer stays at a fixed size when the font size changes.
 
 ### Security
-- Updated `rustix` from `1.1.5` to `1.1.6` to address `RUSTSEC-2026-0486` (`GHSA-jh2m-fhpj-3vr7`).
+- Updated `rustix` from `1.1.5` to `1.1.6` to address `RUSTSEC-2026-0486` (`GHSA-jh2m-fhpj-3vr7`), and updated yanked `lcms2` (`6.2.0` → `6.3.0`) and `lcms2-sys` (`4.0.7` → `4.2.0`).
 
 ## [3.2.1] - 2026-11-04
 
