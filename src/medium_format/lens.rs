@@ -129,16 +129,15 @@ fn interpolate<T: Copy>(items: &[(f32, T)], focal: f32, lerp: impl Fn(&T, &T, f3
 
 /// Folders Lensfun databases are read from, system first, user last (user wins).
 pub fn lensfun_dirs() -> Vec<PathBuf> {
-    let home = std::env::var("HOME").unwrap_or_else(|_| ".".into());
-    let mut dirs = vec![
+    let xdg_data = crate::paths::xdg_data_dir();
+    vec![
         PathBuf::from("/usr/share/lensfun/version_1"),
         PathBuf::from("/usr/share/lensfun"),
         PathBuf::from("/usr/local/share/lensfun/version_1"),
-        PathBuf::from(&home).join(".local/share/lensfun/updates/version_1"),
-        PathBuf::from(&home).join(".local/share/lensfun"),
-    ];
-    dirs.push(PathBuf::from(home).join(".local/share/omastudio/lenses"));
-    dirs
+        xdg_data.join("lensfun/updates/version_1"),
+        xdg_data.join("lensfun"),
+        crate::paths::app_data_dir().join("lenses"),
+    ]
 }
 
 /// All lens profiles in the Lensfun XML files found in `dirs`.
@@ -195,83 +194,195 @@ pub fn find_profile<'a>(profiles: &'a [LensProfile], lens: &str) -> Option<&'a L
         .map(|(p, _)| p)
 }
 
-fn attr(tag: &str, name: &str) -> Option<String> {
-    let pat = format!("{}=\"", name);
-    let start = tag.find(&format!(" {}", pat)).map(|i| i + 1 + pat.len())?;
-    let end = tag[start..].find('"')? + start;
-    Some(tag[start..end].to_string())
-}
-
-fn attr_f(tag: &str, name: &str) -> Option<f32> {
-    attr(tag, name)?.trim().parse().ok()
-}
-
-fn element_text(block: &str, name: &str) -> Option<String> {
-    // First <name> or <name lang="..."> without a lang attribute wins
-    let mut rest = block;
-    let mut first = None;
-    while let Some(i) = rest.find(&format!("<{}", name)) {
-        let after = &rest[i + 1 + name.len()..];
-        let close = after.find('>')?;
-        let tag = &after[..close];
-        let body = &after[close + 1..];
-        let end = body.find(&format!("</{}>", name))?;
-        let text = body[..end].trim().to_string();
-        if !tag.contains("lang=") {
-            return Some(text);
+fn collect_calibration_tag(tag_name: &str, e: &quick_xml::events::BytesStart<'_>, profile: &mut LensProfile) {
+    use quick_xml::XmlVersion;
+    let mut attrs: std::collections::HashMap<String, String> = std::collections::HashMap::new();
+    for attr in e.attributes().with_checks(false).flatten() {
+        let k = attr.key.as_ref().to_string();
+        if let Ok(v) = attr.normalized_value(XmlVersion::Implicit1_0) {
+            attrs.insert(k, v.into_owned());
         }
-        first.get_or_insert(text);
-        rest = &body[end..];
     }
-    first
+    let attr_f = |n: &str| attrs.get(n).and_then(|s| s.trim().parse::<f32>().ok());
+    let g = |n: &str| attr_f(n).unwrap_or(0.0);
+    let focal = g("focal");
+    let model = attrs.get("model").map(String::as_str).unwrap_or("");
+    match tag_name {
+        "distortion" => {
+            let d = match model {
+                "poly3" => Distortion::Poly3 { k1: g("k1") },
+                "poly5" => Distortion::Poly5 { k1: g("k1"), k2: g("k2") },
+                "ptlens" => Distortion::Ptlens { a: g("a"), b: g("b"), c: g("c") },
+                _ => return,
+            };
+            profile.distortion.push((focal, d));
+        }
+        "tca" => match model {
+            "linear" => profile.tca.push((
+                focal,
+                Tca {
+                    kr: attr_f("kr").unwrap_or(1.0),
+                    kb: attr_f("kb").unwrap_or(1.0),
+                },
+            )),
+            // poly3 at the edge of the frame, folded to a linear scale
+            "poly3" => {
+                let at1 = |v: &str, c: &str, b: &str| attr_f(v).unwrap_or(1.0) + g(c) + g(b);
+                profile.tca.push((
+                    focal,
+                    Tca {
+                        kr: at1("vr", "cr", "br"),
+                        kb: at1("vb", "cb", "bb"),
+                    },
+                ));
+            }
+            _ => {}
+        },
+        "vignetting" if model == "pa" => {
+            profile.vignetting.push((
+                focal,
+                g("aperture"),
+                attr_f("distance").unwrap_or(1000.0),
+                [g("k1"), g("k2"), g("k3")],
+            ));
+        }
+        _ => {}
+    }
 }
 
-/// Parses the `<lens>` entries of a Lensfun XML database.
+/// Parses the `<lens>` entries of a Lensfun XML database using `quick-xml`.
 pub fn parse_lensfun(xml: &str) -> Vec<LensProfile> {
-    let mut out = Vec::new();
-    let mut rest = xml;
-    while let Some(i) = rest.find("<lens>") {
-        let body = &rest[i + 6..];
-        let Some(end) = body.find("</lens>") else { break };
-        let block = &body[..end];
-        rest = &body[end..];
+    use quick_xml::events::Event;
+    use quick_xml::{Reader, XmlVersion};
 
-        let mut p = LensProfile {
-            maker: element_text(block, "maker").unwrap_or_default(),
-            model: element_text(block, "model").unwrap_or_default(),
-            crop_factor: element_text(block, "cropfactor").and_then(|c| c.parse().ok()).unwrap_or(1.0),
-            distortion: Vec::new(),
-            tca: Vec::new(),
-            vignetting: Vec::new(),
-        };
-        for tag in block.split('<').filter(|t| t.starts_with("distortion") || t.starts_with("tca") || t.starts_with("vignetting")) {
-            let focal = attr_f(tag, "focal").unwrap_or(0.0);
-            let model = attr(tag, "model").unwrap_or_default();
-            let g = |n: &str| attr_f(tag, n).unwrap_or(0.0);
-            if tag.starts_with("distortion") {
-                let d = match model.as_str() {
-                    "poly3" => Distortion::Poly3 { k1: g("k1") },
-                    "poly5" => Distortion::Poly5 { k1: g("k1"), k2: g("k2") },
-                    "ptlens" => Distortion::Ptlens { a: g("a"), b: g("b"), c: g("c") },
-                    _ => continue,
-                };
-                p.distortion.push((focal, d));
-            } else if tag.starts_with("tca") {
-                match model.as_str() {
-                    "linear" => p.tca.push((focal, Tca { kr: attr_f(tag, "kr").unwrap_or(1.0), kb: attr_f(tag, "kb").unwrap_or(1.0) })),
-                    // poly3 at the edge of the frame, folded to a linear scale
-                    "poly3" => {
-                        let at1 = |v: &str, c: &str, b: &str| attr_f(tag, v).unwrap_or(1.0) + g(c) + g(b);
-                        p.tca.push((focal, Tca { kr: at1("vr", "cr", "br"), kb: at1("vb", "cb", "bb") }))
+    let mut reader = Reader::from_str(xml);
+    reader.config_mut().check_end_names = false;
+
+    let mut out = Vec::new();
+    let mut current: Option<LensProfile> = None;
+    let mut maker_unlocalized = false;
+    let mut model_unlocalized = false;
+    let mut active_text_tag: Option<(String, bool)> = None;
+    let mut text_buf = String::new();
+
+    loop {
+        match reader.read_event() {
+            Ok(Event::Start(e)) => {
+                let name = e.name().as_ref().to_string();
+                if name == "lens" {
+                    current = Some(LensProfile {
+                        maker: String::new(),
+                        model: String::new(),
+                        crop_factor: 1.0,
+                        distortion: Vec::new(),
+                        tca: Vec::new(),
+                        vignetting: Vec::new(),
+                    });
+                    maker_unlocalized = false;
+                    model_unlocalized = false;
+                    active_text_tag = None;
+                } else if let Some(ref mut p) = current {
+                    match name.as_str() {
+                        "maker" | "model" | "cropfactor" => {
+                            let has_lang = e
+                                .attributes()
+                                .with_checks(false)
+                                .flatten()
+                                .any(|a| a.key.as_ref() == "lang");
+                            active_text_tag = Some((name, has_lang));
+                            text_buf.clear();
+                        }
+                        "distortion" | "tca" | "vignetting" => {
+                            collect_calibration_tag(&name, &e, p);
+                        }
+                        _ => {}
                     }
-                    _ => {}
                 }
-            } else if model == "pa" {
-                p.vignetting.push((focal, g("aperture"), attr_f(tag, "distance").unwrap_or(1000.0), [g("k1"), g("k2"), g("k3")]));
             }
-        }
-        if !p.model.is_empty() {
-            out.push(p);
+            Ok(Event::Empty(e)) => {
+                if let Some(ref mut p) = current {
+                    let name = e.name().as_ref().to_string();
+                    if matches!(name.as_str(), "distortion" | "tca" | "vignetting") {
+                        collect_calibration_tag(&name, &e, p);
+                    }
+                }
+            }
+            Ok(Event::Text(e)) => {
+                if active_text_tag.is_some() {
+                    text_buf.push_str(&e.xml_content(XmlVersion::Implicit1_0));
+                }
+            }
+            Ok(Event::CData(e)) => {
+                if active_text_tag.is_some() {
+                    text_buf.push_str(&e.xml_content(XmlVersion::Implicit1_0));
+                }
+            }
+            Ok(Event::GeneralRef(e)) => {
+                if active_text_tag.is_some() {
+                    if let Ok(Some(ch)) = e.resolve_char_ref() {
+                        text_buf.push(ch);
+                    } else {
+                        match e.as_ref() {
+                            "amp" => text_buf.push('&'),
+                            "lt" => text_buf.push('<'),
+                            "gt" => text_buf.push('>'),
+                            "quot" => text_buf.push('"'),
+                            "apos" => text_buf.push('\''),
+                            other => {
+                                text_buf.push('&');
+                                text_buf.push_str(other);
+                                text_buf.push(';');
+                            }
+                        }
+                    }
+                }
+            }
+            Ok(Event::End(e)) => {
+                let qname = e.name();
+                if qname.as_ref() == "lens" {
+                    if let Some(p) = current.take()
+                        && !p.model.is_empty()
+                    {
+                        out.push(p);
+                    }
+                    active_text_tag = None;
+                } else if let Some((tag, has_lang)) = active_text_tag.take() {
+                    if let Some(ref mut p) = current {
+                        let text = text_buf.trim().to_string();
+                        match tag.as_str() {
+                            "maker" => {
+                                if !has_lang && !maker_unlocalized {
+                                    p.maker = text;
+                                    maker_unlocalized = true;
+                                } else if p.maker.is_empty() {
+                                    p.maker = text;
+                                }
+                            }
+                            "model" => {
+                                if !has_lang && !model_unlocalized {
+                                    p.model = text;
+                                    model_unlocalized = true;
+                                } else if p.model.is_empty() {
+                                    p.model = text;
+                                }
+                            }
+                            "cropfactor" => {
+                                if let Ok(cf) = text.parse::<f32>()
+                                    && cf.is_finite()
+                                    && cf > 0.0
+                                {
+                                    p.crop_factor = cf;
+                                }
+                            }
+                            _ => {}
+                        }
+                    }
+                    text_buf.clear();
+                }
+            }
+            Ok(Event::Eof) => break,
+            Err(_) => break,
+            _ => {}
         }
     }
     out
@@ -715,5 +826,34 @@ mod tests {
         // Lensfun's poly3 leaves r = 1 in place and magnifies the centre, so the
         // corrected dot at r ≈ 0.53 lands where ru · (1.1 − 0.1 ru²) = 0.53: ~37 px out
         assert!((cx + 34..=cx + 38).contains(&peak), "peak at {}", peak);
+    }
+
+    #[test]
+    fn parse_lensfun_handles_comments_single_quotes_entities_and_lang() {
+        let xml = r#"<lensdatabase version="1">
+            <!-- <lens><model>Commented Lens</model></lens> -->
+            <lens>
+                <maker lang="de">Schneider-Kreuznach DE</maker>
+                <maker>Schneider &amp; Kreuznach</maker>
+                <model lang="fr">LS 80mm FR</model>
+                <model>LS 80mm f/2.8 &#38; Leaf</model>
+                <cropfactor>0.64</cropfactor>
+                <calibration>
+                    <!-- <distortion model="poly3" focal="80" k1="-0.99"/> -->
+                    <distortion model='poly3' focal='80' k1='-0.015'/>
+                    <tca model='linear' focal='80' kr='1.0004' kb='0.9997'/>
+                    <vignetting model='pa' focal='80' aperture='2.8' distance='1000' k1='-0.3' k2='0.05' k3='0.0'/>
+                </calibration>
+            </lens>
+        </lensdatabase>"#;
+        let profiles = parse_lensfun(xml);
+        assert_eq!(profiles.len(), 1);
+        let p = &profiles[0];
+        assert_eq!(p.maker, "Schneider & Kreuznach");
+        assert_eq!(p.model, "LS 80mm f/2.8 & Leaf");
+        assert!((p.crop_factor - 0.64).abs() < 1e-5);
+        assert_eq!(p.distortion, vec![(80.0, Distortion::Poly3 { k1: -0.015 })]);
+        assert_eq!(p.tca.len(), 1);
+        assert_eq!(p.vignetting.len(), 1);
     }
 }

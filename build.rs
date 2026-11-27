@@ -44,4 +44,16 @@ fn main() {
     if !has_stdcpp {
         println!("cargo:rustc-link-lib=stdc++");
     }
+
+    let sqlite = pkg_config::Config::new()
+        .atleast_version("3.35")
+        .cargo_metadata(false)
+        .probe("sqlite3")
+        .expect("sqlite3 development files required (package: sqlite / libsqlite3-dev)");
+    for dir in &sqlite.link_paths {
+        println!("cargo:rustc-link-search=native={}", dir.display());
+    }
+    for name in &sqlite.libs {
+        println!("cargo:rustc-link-lib={}", name);
+    }
 }

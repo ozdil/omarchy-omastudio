@@ -19,6 +19,7 @@ use cxx_qt_lib::{QList, QString, QStringList};
 
 #[cxx_qt::bridge]
 pub mod qobject {
+    // SAFETY: Qt C++ headers and types match cxx-qt-lib bindings for the lifetime of the Qt application.
     unsafe extern "C++" {
         include!("cxx-qt-lib/qstring.h");
         type QString = cxx_qt_lib::QString;

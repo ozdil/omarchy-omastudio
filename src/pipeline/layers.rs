@@ -216,8 +216,7 @@ fn oklab(r: f32, g: f32, b: f32) -> [f32; 3] {
 
 /// Where mask images live; a Bitmap path outside it is ignored.
 pub fn masks_dir() -> PathBuf {
-    let home = std::env::var("HOME").unwrap_or_else(|_| ".".into());
-    PathBuf::from(home).join(".local/share/omastudio/masks")
+    crate::paths::app_data_dir().join("masks")
 }
 
 pub struct MaskBitmap {

@@ -6,7 +6,7 @@ pkgdesc="The Complete Medium Format RAW Editor for Omarchy"
 arch=('x86_64')
 url="https://github.com/ozdil/omarchy-omastudio"
 license=('MIT')
-depends=('libraw>=0.22' 'lcms2' 'xdg-desktop-portal' 'qt6-base>=6.12' 'qt6-declarative>=6.12' 'qt6-wayland' 'qt6-svg' 'libjxl' 'libavif' 'libwebp-utils' 'libheif')
+depends=('libraw>=0.22' 'lcms2' 'sqlite' 'xdg-desktop-portal' 'qt6-base>=6.12' 'qt6-declarative>=6.12' 'qt6-wayland' 'qt6-svg' 'libjxl' 'libavif' 'libwebp-utils' 'libheif')
 optdepends=('quickshell: OmaStudio button in the Omarchy bar' 'wl-clipboard: bounded paste in text fields' 'vulkan-icd-loader: GPU demosaicing (with your GPU'"'"'s Vulkan driver)' 'perl-image-exiftool: preserve EXIF metadata on export' 'ffmpeg: AVIF export fallback' 'curl: AI edit assistant' 'libsecret: keep AI provider keys and cloud account keys in the keyring (secret-tool)' 'ollama: local AI models' 'onnxruntime: local AI masks on the NPU, GPU or CPU' 'onnxruntime-cuda: NVIDIA CUDA / TensorRT acceleration for local AI masks' 'onnxruntime-rocm: AMD ROCm / MIGraphX acceleration for local AI masks' 'rclone: Google Drive, OneDrive, Dropbox, Box, pCloud and Yandex Disk accounts' 'github-cli: GitHub account')
 makedepends=('rust' 'cargo' 'pkgconf' 'clang' 'qt6-tools')
 source=()

@@ -569,14 +569,7 @@ where
 }
 
 fn omastudio_cache_dir() -> PathBuf {
-    if let Ok(xdg) = std::env::var("XDG_CACHE_HOME") {
-        let p = PathBuf::from(xdg.trim());
-        if p.is_absolute() {
-            return p.join("omastudio");
-        }
-    }
-    let home = std::env::var("HOME").unwrap_or_else(|_| ".".to_string());
-    PathBuf::from(home).join(".cache").join("omastudio")
+    crate::paths::app_cache_dir()
 }
 
 fn fnv1a_update(mut h: u64, bytes: &[u8]) -> u64 {

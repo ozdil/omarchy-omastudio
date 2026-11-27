@@ -1,4 +1,6 @@
 #![allow(clippy::field_reassign_with_default)]
+mod sqlite;
+
 use crate::raw::RawMetadata;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
@@ -574,18 +576,60 @@ impl CatalogLock {
     }
 }
 
+fn backup_unreadable(path: &Path) -> io::Result<()> {
+    let secs = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .unwrap_or_default()
+        .as_secs();
+    let mut backup = path.as_os_str().to_owned();
+    backup.push(format!(".unreadable-{secs}"));
+    std::fs::rename(path, PathBuf::from(backup))?;
+    for suffix in ["-wal", "-shm"] {
+        let mut side = path.as_os_str().to_owned();
+        side.push(suffix);
+        let side_path = PathBuf::from(side);
+        if side_path.exists() {
+            let _ = std::fs::remove_file(side_path);
+        }
+    }
+    Ok(())
+}
+
 impl Catalog {
     pub fn default_catalog_path() -> PathBuf {
-        if let Ok(xdg) = std::env::var("XDG_DATA_HOME") {
-            let p = PathBuf::from(xdg.trim());
-            if p.is_absolute() {
-                return p.join("omastudio").join("catalog.json");
-            }
+        crate::paths::app_data_dir().join("catalog.db")
+    }
+
+    fn legacy_json_path(db_path: &Path) -> PathBuf {
+        db_path.with_extension("json")
+    }
+
+    fn migrated_backup_path(legacy_json: &Path) -> PathBuf {
+        let mut bak = legacy_json.as_os_str().to_owned();
+        bak.push(".migrated.bak");
+        PathBuf::from(bak)
+    }
+
+    /// Migrates a legacy `catalog.json` beside `db_path` into SQLite (WAL) once,
+    /// archiving the original file read-only as `catalog.json.migrated.bak`.
+    /// Returns `Ok(Some(items))` if migrated, `Ok(None)` if no migration was needed,
+    /// or `Err(())` if the legacy JSON file exists but could not be parsed.
+    fn migrate_legacy_json_if_needed(db_path: &Path) -> Result<Option<HashMap<String, CatalogItem>>, ()> {
+        let legacy = Self::legacy_json_path(db_path);
+        if db_path.exists() || !legacy.exists() {
+            return Ok(None);
         }
-        let home = std::env::var("HOME").unwrap_or_else(|_| ".".to_string());
-        PathBuf::from(&home)
-            .join(".local/share/omastudio")
-            .join("catalog.json")
+        let _lock = CatalogLock::acquire(db_path, true).map_err(|_| ())?;
+        if db_path.exists() || !legacy.exists() {
+            return Ok(None);
+        }
+        let bytes = crate::security::read_secure_file(&legacy, 16 * 1024 * 1024).map_err(|_| ())?;
+        let parsed = serde_json::from_slice::<Catalog>(&bytes).map_err(|_| ())?;
+        let db = sqlite::SqliteDb::open(db_path).map_err(|_| ())?;
+        db.replace_all(&parsed.items).map_err(|_| ())?;
+        let bak = Self::migrated_backup_path(&legacy);
+        let _ = std::fs::rename(&legacy, &bak);
+        Ok(Some(parsed.items))
     }
 
     /// Reads the catalogue. Entries are kept even when their file is missing: a photo
@@ -595,22 +639,94 @@ impl Catalog {
         Self::load_from(&Self::default_catalog_path())
     }
 
-    fn load_from(path: &Path) -> Self {
-        let _lock = if path.parent().is_some_and(|p| p.exists()) {
-            CatalogLock::acquire(path, false).ok()
+    fn load_from(db_path: &Path) -> Self {
+        if !db_path.exists() {
+            match Self::migrate_legacy_json_if_needed(db_path) {
+                Ok(Some(items)) => return Self { version: 2, items, unreadable: false },
+                Ok(None) => return Self { version: 2, items: HashMap::new(), unreadable: false },
+                Err(()) => return Self { version: 2, items: HashMap::new(), unreadable: true },
+            }
+        }
+        let _lock = if db_path.parent().is_some_and(|p| p.exists()) {
+            CatalogLock::acquire(db_path, false).ok()
         } else {
             None
         };
-        match crate::security::read_secure_file(path, 16 * 1024 * 1024) {
-            Ok(bytes) => match serde_json::from_slice::<Catalog>(&bytes) {
-                Ok(cat) => cat,
-                Err(_) => Self { version: 1, items: HashMap::new(), unreadable: true },
-            },
-            // A file that exists but cannot be read (too large, wrong owner) is not
-            // overwritten either
-            Err(e) if e.kind() != io::ErrorKind::NotFound => Self { version: 1, items: HashMap::new(), unreadable: true },
-            Err(_) => Self { version: 1, items: HashMap::new(), unreadable: false },
+        match sqlite::SqliteDb::open(db_path).and_then(|db| db.load_all()) {
+            Ok(items) => Self { version: 2, items, unreadable: false },
+            Err(_) => Self { version: 2, items: HashMap::new(), unreadable: true },
         }
+    }
+
+    /// Queries the SQLite WAL catalog directly using indexed SQL filters (`rating`,
+    /// `flag`, `film_sim`, camera/lens, ISO, text search) without loading the entire catalog.
+    pub fn query_indexed(filter: &CatalogFilter) -> io::Result<Vec<CatalogItem>> {
+        Self::query_indexed_at(&Self::default_catalog_path(), filter)
+    }
+
+    fn query_indexed_at(db_path: &Path, filter: &CatalogFilter) -> io::Result<Vec<CatalogItem>> {
+        if !db_path.exists() {
+            if Self::migrate_legacy_json_if_needed(db_path).is_err() {
+                return Err(io::Error::new(
+                    io::ErrorKind::InvalidData,
+                    "Legacy catalog.json could not be parsed",
+                ));
+            }
+            if !db_path.exists() {
+                return Ok(Vec::new());
+            }
+        }
+        let db = sqlite::SqliteDb::open(db_path)?;
+        db.query(filter)
+    }
+
+    /// Atomically upserts a single photo entry into the SQLite WAL catalog.
+    pub fn upsert_indexed(item: &CatalogItem) -> io::Result<()> {
+        Self::upsert_indexed_at(&Self::default_catalog_path(), item)
+    }
+
+    fn upsert_indexed_at(db_path: &Path, item: &CatalogItem) -> io::Result<()> {
+        if !db_path.exists() && Self::legacy_json_path(db_path).exists() {
+            let _ = Self::migrate_legacy_json_if_needed(db_path);
+        }
+        let db = sqlite::SqliteDb::open(db_path)?;
+        db.upsert_item(item)
+    }
+
+    /// Atomically updates culling metadata for a single photo row in SQLite WAL.
+    pub fn update_culling_indexed(
+        path: &str,
+        rating: Option<u8>,
+        flag: Option<&str>,
+        color_label: Option<&str>,
+    ) -> io::Result<bool> {
+        Self::update_culling_indexed_at(&Self::default_catalog_path(), path, rating, flag, color_label)
+    }
+
+    fn update_culling_indexed_at(
+        db_path: &Path,
+        path: &str,
+        rating: Option<u8>,
+        flag: Option<&str>,
+        color_label: Option<&str>,
+    ) -> io::Result<bool> {
+        if !db_path.exists() {
+            if Self::migrate_legacy_json_if_needed(db_path).is_err() {
+                return Err(io::Error::new(
+                    io::ErrorKind::InvalidData,
+                    "Legacy catalog.json could not be parsed",
+                ));
+            }
+            if !db_path.exists() {
+                return Ok(false);
+            }
+        }
+        let updated_at = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap_or_default()
+            .as_secs();
+        let db = sqlite::SqliteDb::open(db_path)?;
+        db.update_culling(path, rating, flag, color_label, updated_at)
     }
 
     /// The entries whose photo is on disk now.
@@ -619,23 +735,26 @@ impl Catalog {
     }
 
     /// Writes the catalogue. When the existing file could not be read, it is first
-    /// kept as `catalog.json.unreadable-<time>` so a newer or damaged catalogue is
-    /// never replaced by an empty one.
+    /// kept as `*.unreadable-<time>` so a newer or damaged catalogue is never
+    /// replaced by an empty one.
     pub fn save(&self) -> io::Result<()> {
         self.save_to(&Self::default_catalog_path())
     }
 
-    fn save_to(&self, path: &Path) -> io::Result<()> {
-        let _lock = CatalogLock::acquire(path, true)?;
-        if self.unreadable && path.exists() {
-            let secs = std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap_or_default().as_secs();
-            let mut backup = path.as_os_str().to_owned();
-            backup.push(format!(".unreadable-{secs}"));
-            std::fs::rename(path, PathBuf::from(backup))?;
+    fn save_to(&self, db_path: &Path) -> io::Result<()> {
+        let _lock = CatalogLock::acquire(db_path, true)?;
+        if self.unreadable {
+            if db_path.exists() {
+                backup_unreadable(db_path)?;
+            } else {
+                let legacy = Self::legacy_json_path(db_path);
+                if legacy.exists() {
+                    backup_unreadable(&legacy)?;
+                }
+            }
         }
-        let data = serde_json::to_vec_pretty(self)
-            .map_err(|e| io::Error::new(io::ErrorKind::InvalidData, e))?;
-        crate::security::atomic_write_secure(path, &data)
+        let db = sqlite::SqliteDb::open(db_path)?;
+        db.replace_all(&self.items)
     }
 
     pub fn upsert(&mut self, item: CatalogItem) {
@@ -746,55 +865,124 @@ mod catalog_tests {
             remote_path: None,
             thumbnail_path: String::new(),
             metadata: RawMetadata {
-                width: 0,
-                height: 0,
-                raw_width: 0,
-                raw_height: 0,
-                make: String::new(),
-                model: String::new(),
-                lens: String::new(),
-                iso: 0.0,
-                shutter: 0.0,
-                aperture: 0.0,
-                focal_length: 0.0,
-                timestamp: 0,
-                cam_mul: [1.0; 4],
+                width: 8256,
+                height: 6192,
+                raw_width: 8256,
+                raw_height: 6192,
+                make: "FUJIFILM".into(),
+                model: "GFX 50R".into(),
+                lens: "GF63mmF2.8 R WR".into(),
+                iso: 400.0,
+                shutter: 0.004,
+                aperture: 2.8,
+                focal_length: 63.0,
+                timestamp: 1_700_000_000,
+                cam_mul: [1.8, 1.0, 1.5, 1.0],
             },
             rating,
             color_label: String::new(),
             flag: "none".into(),
-            recipe: Recipe::default(),
-            updated_at: 0,
+            recipe: Recipe {
+                rating,
+                film_simulation: "fuji_classic_chrome".into(),
+                ..Recipe::default()
+            },
+            updated_at: 100,
         }
     }
 
-    /// Photos on an unmounted drive keep their ratings through a load and save.
+    /// Photos on an unmounted drive keep their ratings through a SQLite WAL load and save.
     #[test]
     fn missing_photos_keep_their_entries() {
         let dir = temp_dir("missing");
-        let path = dir.join("catalog.json");
-        let mut cat = Catalog { version: 1, ..Default::default() };
+        let path = dir.join("catalog.db");
+        let mut cat = Catalog { version: 2, ..Default::default() };
         cat.upsert(item("/run/media/offline/DSCF0001.RAF", 5));
         cat.save_to(&path).unwrap();
+
+        let db = sqlite::SqliteDb::open(&path).unwrap();
+        assert_eq!(db.journal_mode().unwrap().to_ascii_lowercase(), "wal");
+        drop(db);
 
         let back = Catalog::load_from(&path);
         assert!(back.items.contains_key("/run/media/offline/DSCF0001.RAF"));
         assert!(back.present_items().is_empty());
+        assert_eq!(back.items["/run/media/offline/DSCF0001.RAF"].recipe.film_simulation, "fuji_classic_chrome");
         back.save_to(&path).unwrap();
         assert_eq!(Catalog::load_from(&path).items["/run/media/offline/DSCF0001.RAF"].rating, 5);
         let _ = std::fs::remove_dir_all(&dir);
     }
 
-    /// A catalogue that cannot be parsed is set aside, not overwritten.
+    /// Legacy `catalog.json` migrates once into `catalog.db` and is preserved as `.migrated.bak`.
+    #[test]
+    fn legacy_json_migrates_once_to_sqlite_wal() {
+        let dir = temp_dir("migrate");
+        let legacy_json = dir.join("catalog.json");
+        let db_path = dir.join("catalog.db");
+
+        let mut legacy = Catalog { version: 1, ..Default::default() };
+        let mut first = item("/photos/DSCF1001.RAF", 4);
+        first.flag = "pick".into();
+        first.updated_at = 200;
+        legacy.upsert(first);
+        let mut second = item("/photos/X2D_0002.3FR", 2);
+        second.metadata.make = "Hasselblad".into();
+        second.metadata.model = "X2D 100C".into();
+        second.metadata.iso = 1600.0;
+        second.updated_at = 300;
+        legacy.upsert(second);
+        crate::security::atomic_write_secure(&legacy_json, &serde_json::to_vec(&legacy).unwrap()).unwrap();
+
+        let loaded = Catalog::load_from(&db_path);
+        assert!(!loaded.unreadable);
+        assert_eq!(loaded.items.len(), 2);
+        assert!(db_path.exists());
+        assert!(!legacy_json.exists());
+        assert!(dir.join("catalog.json.migrated.bak").exists());
+
+        // Indexed SQL query and single-row culling update work directly on the migrated DB.
+        let picks = Catalog::query_indexed_at(
+            &db_path,
+            &CatalogFilter {
+                min_rating: Some(4),
+                flag: Some("pick".into()),
+                ..Default::default()
+            },
+        )
+        .unwrap();
+        assert_eq!(picks.len(), 1);
+        assert_eq!(picks[0].path, "/photos/DSCF1001.RAF");
+
+        assert!(
+            Catalog::update_culling_indexed_at(&db_path, "/photos/X2D_0002.3FR", Some(5), Some("pick"), Some("red"))
+                .unwrap()
+        );
+        let high = Catalog::query_indexed_at(
+            &db_path,
+            &CatalogFilter {
+                min_rating: Some(5),
+                camera_make: Some("hassel".into()),
+                min_iso: Some(800.0),
+                ..Default::default()
+            },
+        )
+        .unwrap();
+        assert_eq!(high.len(), 1);
+        assert_eq!(high[0].color_label, "red");
+        let _ = std::fs::remove_dir_all(&dir);
+    }
+
+    /// A corrupt SQLite database or unreadable legacy JSON is set aside, not overwritten.
     #[test]
     fn unreadable_catalog_is_kept() {
         let dir = temp_dir("unreadable");
-        let path = dir.join("catalog.json");
-        std::fs::write(&path, b"{\"version\": 9, \"items\": {\"/a\": {\"future\": true}}}").unwrap();
-        let mut cat = Catalog::load_from(&path);
+        let legacy_path = dir.join("catalog.json");
+        let db_path = dir.join("catalog.db");
+        std::fs::write(&legacy_path, b"{\"version\": 9, \"items\": {\"/a\": {\"future\": true}}}").unwrap();
+        let mut cat = Catalog::load_from(&db_path);
         assert!(cat.unreadable && cat.items.is_empty());
         cat.upsert(item("/b", 1));
-        cat.save_to(&path).unwrap();
+        cat.save_to(&db_path).unwrap();
         let kept: Vec<_> = std::fs::read_dir(&dir)
             .unwrap()
             .filter_map(|e| e.ok())
@@ -802,6 +990,20 @@ mod catalog_tests {
             .collect();
         assert_eq!(kept.len(), 1);
         assert!(std::fs::read_to_string(kept[0].path()).unwrap().contains("future"));
+
+        // Corrupt SQLite file directly: must also be set aside on next save.
+        std::fs::write(&db_path, b"not a valid sqlite database header").unwrap();
+        let mut bad_db = Catalog::load_from(&db_path);
+        assert!(bad_db.unreadable && bad_db.items.is_empty());
+        bad_db.upsert(item("/c", 3));
+        bad_db.save_to(&db_path).unwrap();
+        let kept_db: Vec<_> = std::fs::read_dir(&dir)
+            .unwrap()
+            .filter_map(|e| e.ok())
+            .filter(|e| e.file_name().to_string_lossy().starts_with("catalog.db.unreadable-"))
+            .collect();
+        assert_eq!(kept_db.len(), 1);
+        assert_eq!(Catalog::load_from(&db_path).items["/c"].rating, 3);
         let _ = std::fs::remove_dir_all(&dir);
     }
 }

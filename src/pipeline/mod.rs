@@ -60,14 +60,7 @@ pub fn process_buffer(
         recipe.wb_tint,
     );
     let exp_factor = 2.0f32.powf(recipe.exposure + recipe.baseline_exposure);
-
-    // Resolve active 3D LUT if requested
-    let maybe_lut = resolve_recipe_lut(recipe);
-    let film_sim = film_sim::FilmSimulation::from_id(&recipe.film_simulation);
-    let film_lut = film_sim::calibrated_lut(film_sim);
-    let color_chrome = recipe.color_chrome > 0.0 || recipe.color_chrome_blue > 0.0;
-    let gamut_compress = recipe.gamut_compression_active();
-    let point_curves = curves::Curves::from_recipe(recipe);
+    let ops = PointOps::new(recipe);
 
     // Intermediate float buffer for multi-stage 16-bit precision processing
     let mut f32_buf = vec![0.0f32; num_pixels * 3];
@@ -87,47 +80,7 @@ pub fn process_buffer(
                 let g_norm = (in_row[px_in + 1] as f32 / 255.0) * wb_g;
                 let b_norm = (in_row[px_in + 2] as f32 / 255.0) * wb_b;
 
-                // 1. Tone & Dynamic range (Chroma-preserving, smooth highlight knee & shadow toe)
-                let (r1, g1, b1) = tone::apply_tone_pixel(r_norm, g_norm, b_norm, recipe, exp_factor);
-                let (r1, g1, b1) = point_curves.apply(r1, g1, b1);
-
-                // 2. DaVinci Resolve RGB Primary Matrix Mixer
-                let (r1_mix, g1_mix, b1_mix) = rgb_mixer::apply_rgb_mixer(r1, g1, b1, recipe);
-
-                // 3. Capture One Pro Style Skin Tone Uniformity Engine
-                let (r1_skin, g1_skin, b1_skin) = skin_tone::apply_skin_tone_uniformity(r1_mix, g1_mix, b1_mix, recipe);
-
-                // 4. DaVinci Resolve 3-Way Color Wheels
-                let (r2, g2, b2) = color_grading::apply_color_wheels(r1_skin, g1_skin, b1_skin, recipe);
-
-                // 5. 8-Band HSL Color Mixer (Perceptual Luminance Anchor)
-                let (r3, g3, b3) = color_grading::apply_hsl_mixer(r2, g2, b2, recipe);
-
-                // 6. DaVinci 3D LUT
-                let (r4, g4, b4) = if let Some(ref active_lut) = maybe_lut {
-                    lut::apply_lut_pixel(r3, g3, b3, active_lut, recipe.lut_intensity)
-                } else {
-                    (r3, g3, b3)
-                };
-
-                // 7. Authentic Film Simulations (Fujifilm X-Trans / GFX & Hasselblad HNCS / XPan)
-                let (r5, g5, b5) = if film_sim != film_sim::FilmSimulation::None {
-                    film_sim::apply(film_sim, film_lut.as_deref(), r4, g4, b4, recipe.film_sim_intensity)
-                } else {
-                    (r4, g4, b4)
-                };
-                let (r5, g5, b5) = if color_chrome {
-                    film_sim::apply_color_chrome(r5, g5, b5, recipe.color_chrome, recipe.color_chrome_blue)
-                } else {
-                    (r5, g5, b5)
-                };
-
-                // 8. ACES reference gamut compression
-                let (r6, g6, b6) = if gamut_compress {
-                    aces::apply_gamut_compression_encoded(r5, g5, b5)
-                } else {
-                    (r5, g5, b5)
-                };
+                let (r6, g6, b6) = ops.apply_with_exposure(r_norm, g_norm, b_norm, exp_factor);
 
                 row_f32[px_out] = r6;
                 row_f32[px_out + 1] = g6;
@@ -278,9 +231,17 @@ impl<'a> PointOps<'a> {
 
     #[inline]
     pub fn apply(&self, r: f32, g: f32, b: f32) -> (f32, f32, f32) {
+        self.apply_with_exposure(r, g, b, 1.0)
+    }
+
+    /// Evaluates the full 8-stage creative point pipeline with an optional inline exposure factor
+    /// (used by 8-bit `process_buffer`; linear 16-bit paths apply exposure prior to transfer encoding
+    /// and pass `exp_factor = 1.0` via [`Self::apply`]).
+    #[inline(always)]
+    pub fn apply_with_exposure(&self, r: f32, g: f32, b: f32, exp_factor: f32) -> (f32, f32, f32) {
         let recipe = self.recipe;
-        // 1. Tone & Dynamic range (exposure was already applied in linear light)
-        let (r, g, b) = tone::apply_tone_pixel(r, g, b, recipe, 1.0);
+        // 1. Tone & Dynamic range
+        let (r, g, b) = tone::apply_tone_pixel(r, g, b, recipe, exp_factor);
         let (r, g, b) = self.curves.apply(r, g, b);
         // 2. RGB primary mixer
         let (r, g, b) = rgb_mixer::apply_rgb_mixer(r, g, b, recipe);
@@ -849,81 +810,43 @@ fn finish_pixel(out: &mut [u16], (r, g, b): (f32, f32, f32), x: usize, y: usize,
     out[2] = (b.clamp(0.0, 1.0) * 65535.0 + 0.5) as u16;
 }
 
-/// Per-recipe state of the point operations (pass 1).
-struct PointStage {
+/// Per-recipe state of the point operations (pass 1) for linear 16-bit buffers.
+struct PointStage<'a> {
     wb: (f32, f32, f32),
     exp_factor: f32,
-    lut: Option<lut::Lut3D>,
-    film_sim: film_sim::FilmSimulation,
-    film_lut: Option<std::sync::Arc<lut::Lut3D>>,
-    color_chrome: bool,
-    gamut_compress: bool,
-    curves: curves::Curves,
     transfer: Transfer,
+    ops: PointOps<'a>,
 }
 
-impl PointStage {
-    fn new(recipe: &Recipe, transfer: Transfer) -> Self {
-        let film_sim = film_sim::FilmSimulation::from_id(&recipe.film_simulation);
+impl<'a> PointStage<'a> {
+    fn new(recipe: &'a Recipe, transfer: Transfer) -> Self {
         Self {
             wb: white_balance::kelvin_to_rgb_multipliers(recipe.wb_temperature, recipe.wb_tint),
             exp_factor: 2.0f32.powf(recipe.exposure + recipe.baseline_exposure),
-            lut: resolve_recipe_lut(recipe),
-            film_sim,
-            film_lut: film_sim::calibrated_lut(film_sim),
-            color_chrome: recipe.color_chrome > 0.0 || recipe.color_chrome_blue > 0.0,
-            gamut_compress: recipe.gamut_compression_active(),
-            curves: curves::Curves::from_recipe(recipe),
             transfer,
+            ops: PointOps::new(recipe),
         }
     }
 
     fn gpu_inputs(&self) -> crate::gpu::point_ops::PointInputs<'_> {
         let (r, g, b) = self.wb;
-        crate::gpu::point_ops::PointInputs {
-            gain: [r * self.exp_factor, g * self.exp_factor, b * self.exp_factor],
-            transfer: self.transfer,
-            curves: &self.curves,
-            look_lut: self.lut.as_ref(),
-            film_sim: self.film_sim,
-            film_lut: self.film_lut.as_deref(),
-            color_chrome: self.color_chrome,
-            gamut_compress: self.gamut_compress,
-        }
+        self.ops.gpu_inputs(
+            [r * self.exp_factor, g * self.exp_factor, b * self.exp_factor],
+            self.transfer,
+        )
     }
 
-    /// White balance, exposure, tone, mixer, skin, wheels, HSL, LUT, film simulation,
-    /// Color Chrome and gamut compression for one linear 16-bit pixel.
+    /// White balance, exposure, transfer encoding, and the unified 8-stage creative
+    /// point pipeline for one linear 16-bit pixel.
     #[inline(always)]
-    fn apply(&self, recipe: &Recipe, r: u16, g: u16, b: u16) -> (f32, f32, f32) {
+    fn apply(&self, r: u16, g: u16, b: u16) -> (f32, f32, f32) {
         let (wb_r, wb_g, wb_b) = self.wb;
         // Scene-linear stage: white balance and exposure act on linear light,
         // then the buffer's display curve is applied once for the creative stage.
         let r = self.transfer.encode((r as f32 / 65535.0) * wb_r * self.exp_factor);
         let g = self.transfer.encode((g as f32 / 65535.0) * wb_g * self.exp_factor);
         let b = self.transfer.encode((b as f32 / 65535.0) * wb_b * self.exp_factor);
-
-        let (r, g, b) = tone::apply_tone_pixel(r, g, b, recipe, 1.0);
-        let (r, g, b) = self.curves.apply(r, g, b);
-        let (r, g, b) = rgb_mixer::apply_rgb_mixer(r, g, b, recipe);
-        let (r, g, b) = skin_tone::apply_skin_tone_uniformity(r, g, b, recipe);
-        let (r, g, b) = color_grading::apply_color_wheels(r, g, b, recipe);
-        let (r, g, b) = color_grading::apply_hsl_mixer(r, g, b, recipe);
-        let (r, g, b) = match &self.lut {
-            Some(active_lut) => lut::apply_lut_pixel(r, g, b, active_lut, recipe.lut_intensity),
-            None => (r, g, b),
-        };
-        let (r, g, b) = if self.film_sim != film_sim::FilmSimulation::None {
-            film_sim::apply(self.film_sim, self.film_lut.as_deref(), r, g, b, recipe.film_sim_intensity)
-        } else {
-            (r, g, b)
-        };
-        let (r, g, b) = if self.color_chrome {
-            film_sim::apply_color_chrome(r, g, b, recipe.color_chrome, recipe.color_chrome_blue)
-        } else {
-            (r, g, b)
-        };
-        if self.gamut_compress { aces::apply_gamut_compression_encoded(r, g, b) } else { (r, g, b) }
+        self.ops.apply(r, g, b)
     }
 }
 
@@ -1050,7 +973,7 @@ fn process_band(
     y1: usize,
     window: Window,
     recipe: &Recipe,
-    stage: &PointStage,
+    stage: &PointStage<'_>,
     gpu_failed: &mut bool,
 ) -> Vec<f32> {
     let rows = y1 - y0;
@@ -1089,7 +1012,7 @@ fn process_band(
         let y = y0 + i;
         let in_row = &input[y * w * ch..(y + 1) * w * ch];
         for x in 0..w {
-            let (r, g, b) = stage.apply(recipe, in_row[x * ch], in_row[x * ch + 1], in_row[x * ch + 2]);
+            let (r, g, b) = stage.apply(in_row[x * ch], in_row[x * ch + 1], in_row[x * ch + 2]);
             row[x * 3] = r;
             row[x * 3 + 1] = g;
             row[x * 3 + 2] = b;

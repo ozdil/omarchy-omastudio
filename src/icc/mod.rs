@@ -21,10 +21,9 @@ pub struct IccProfileInfo {
 
 pub fn get_icc_directories() -> Vec<PathBuf> {
     let mut dirs = Vec::new();
-    let home = env::var("HOME").unwrap_or_else(|_| ".".to_string());
-    
+
     // User OmaStudio ICC folder
-    dirs.push(PathBuf::from(&home).join(".local/share/omastudio/icc"));
+    dirs.push(crate::paths::app_data_dir().join("icc"));
     // Project bundled assets (source checkout)
     dirs.push(PathBuf::from("assets/icc"));
     // Bundled assets of installed builds: <prefix>/share/omastudio/icc next to <prefix>/bin

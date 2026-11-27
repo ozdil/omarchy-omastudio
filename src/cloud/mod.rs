@@ -280,19 +280,12 @@ pub fn cached_path(account_id: &str, path: &str) -> Result<PathBuf, String> {
     Ok(local)
 }
 
-fn xdg_dir(var: &str, fallback: &str) -> PathBuf {
-    std::env::var_os(var)
-        .filter(|p| !p.is_empty())
-        .map(PathBuf::from)
-        .unwrap_or_else(|| PathBuf::from(std::env::var("HOME").unwrap_or_else(|_| ".".into())).join(fallback))
-}
-
 pub fn config_dir() -> PathBuf {
-    xdg_dir("XDG_CONFIG_HOME", ".config").join("omastudio/cloud")
+    crate::paths::app_config_dir().join("cloud")
 }
 
 pub fn cache_dir() -> PathBuf {
-    xdg_dir("XDG_CACHE_HOME", ".cache").join("omastudio/cloud")
+    crate::paths::app_cache_dir().join("cloud")
 }
 
 fn accounts_path() -> PathBuf {

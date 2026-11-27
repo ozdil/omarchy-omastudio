@@ -284,7 +284,9 @@ pub fn supported_cameras() -> Vec<String> {
     let n = unsafe { ffi::omaraw_camera_count() }.max(0);
     (0..n)
         .filter_map(|i| {
+            // SAFETY: omaraw_camera_name returns either null or a static NUL-terminated string owned by LibRaw.
             let p = unsafe { ffi::omaraw_camera_name(i) };
+            // SAFETY: checked non-null above; LibRaw camera name pointers remain valid for program lifetime.
             (!p.is_null()).then(|| unsafe { std::ffi::CStr::from_ptr(p) }.to_string_lossy().into_owned())
         })
         .collect()

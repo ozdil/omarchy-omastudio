@@ -5,7 +5,7 @@
 //! distortion and lateral chromatic aberration, FixVignetteRadial for vignetting.
 //! Other DNG readers apply them too; OmaStudio applies them when it opens the file.
 
-use std::fs::{File, OpenOptions};
+use std::fs::File;
 use std::io::{BufWriter, Read, Seek, SeekFrom, Write};
 use std::path::Path;
 
@@ -151,13 +151,10 @@ pub fn write_linear_rgb(path: &Path, rgb: &[u16], width: usize, height: usize, i
     }
 
     let dir = path.parent().filter(|p| !p.as_os_str().is_empty()).unwrap_or(Path::new("."));
-    let tmp = dir.join(format!(
-        ".{}.{}.tmp",
-        path.file_name().and_then(|n| n.to_str()).unwrap_or("pixelshift.dng"),
-        std::process::id()
-    ));
+    let prefix = path.file_name().and_then(|n| n.to_str()).unwrap_or("pixelshift.dng");
+    let (guard, file) = crate::security::TempFileGuard::create_in_dir(dir, prefix, ".tmp", 0o644)
+        .map_err(|e| format!("Cannot write {}: {}", path.display(), e))?;
     let write = || -> std::io::Result<()> {
-        let file = OpenOptions::new().write(true).create_new(true).open(&tmp)?;
         let mut out = BufWriter::with_capacity(1 << 20, file);
         out.write_all(b"II*\0")?;
         out.write_all(&8u32.to_le_bytes())?;
@@ -173,14 +170,10 @@ pub fn write_linear_rgb(path: &Path, rgb: &[u16], width: usize, height: usize, i
         }
         out.into_inner().map_err(|e| e.into_error())?.sync_all()
     };
-    if let Err(e) = write() {
-        let _ = std::fs::remove_file(&tmp);
-        return Err(format!("Cannot write {}: {}", path.display(), e));
-    }
-    std::fs::rename(&tmp, path).map_err(|e| {
-        let _ = std::fs::remove_file(&tmp);
-        format!("Cannot write {}: {}", path.display(), e)
-    })
+    write().map_err(|e| format!("Cannot write {}: {}", path.display(), e))?;
+    guard
+        .persist(path)
+        .map_err(|e| format!("Cannot write {}: {}", path.display(), e))
 }
 
 /// Least-squares fit of `y(r)` with the given powers of r, each sample weighted by
