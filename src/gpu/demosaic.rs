@@ -72,8 +72,8 @@ impl Pipelines {
 /// interleaved 16-bit RGB, or None when there is no usable GPU or the job failed
 /// (the caller then uses the CPU).
 pub fn demosaic(m: &Mosaic, matrix: [[f32; 3]; 3]) -> Option<Vec<u16>> {
-    let gpu = super::get()?;
-    match run(gpu, m, matrix, MAX_BAND_ROWS) {
+    let gpu = super::acquire()?;
+    match run(&gpu, m, matrix, MAX_BAND_ROWS) {
         Ok(v) => Some(v),
         Err(e) => {
             eprintln!("omastudio: GPU demosaic failed, using the CPU: {e}");
@@ -134,6 +134,12 @@ fn run(gpu: &Gpu, m: &Mosaic, matrix: [[f32; 3]; 3], max_rows: usize) -> Result<
     let (period, table) = gpu_tables(m.pattern).ok_or("CFA layout not supported on the GPU")?;
     debug_assert_eq!(table.len() % GPU_PHASE_STRIDE, 0);
     let pipelines = gpu.demosaic.get_or_init(|| {
+        if gpu.limits.max_storage_buffers_per_shader_stage < 7 {
+            return Err(format!(
+                "{}: demosaic needs at least 7 storage buffers per shader (has {})",
+                gpu.info.name, gpu.limits.max_storage_buffers_per_shader_stage
+            ));
+        }
         let scope = gpu.device.push_error_scope(wgpu::ErrorFilter::Validation);
         let p = Pipelines::new(&gpu.device);
         match pollster::block_on(scope.pop()) {
@@ -156,74 +162,80 @@ fn run(gpu: &Gpu, m: &Mosaic, matrix: [[f32; 3]; 3], max_rows: usize) -> Result<
     let mosaic_rows = ext_rows + 2 * TAP_REACH;
 
     let device = &gpu.device;
+    let timeout = gpu.poll_timeout(false);
     let scope = device.push_error_scope(wgpu::ErrorFilter::Validation);
     let oom = device.push_error_scope(wgpu::ErrorFilter::OutOfMemory);
-    let buffer = |label: &str, size: usize, usage: wgpu::BufferUsages| {
-        device.create_buffer(&wgpu::BufferDescriptor { label: Some(label), size: size.max(4) as u64, usage, mapped_at_creation: false })
-    };
-    let storage = wgpu::BufferUsages::STORAGE;
-    let params = buffer("params", 96, wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST);
-    let mosaic = buffer("mosaic", mosaic_rows * w * 4, storage | wgpu::BufferUsages::COPY_DST);
-    let phases = buffer("phases", table.len() * 4, storage | wgpu::BufferUsages::COPY_DST);
-    let green = buffer("green", ext_rows * w * 16, storage);
-    let cand = buffer("cand", ext_rows * w * 48, storage);
-    let homo = buffer("homo", ext_rows * w * 4, storage);
-    let sel = buffer("sel", (rows + 2) * w * 12, storage);
-    let out = buffer("out", rows * w * 12, storage | wgpu::BufferUsages::COPY_SRC);
-    let staging = buffer("staging", rows * w * 12, wgpu::BufferUsages::MAP_READ | wgpu::BufferUsages::COPY_DST);
-    gpu.queue.write_buffer(&phases, 0, as_bytes(&table));
-    let bind = device.create_bind_group(&wgpu::BindGroupDescriptor {
-        label: Some("demosaic"),
-        layout: &pipelines.layout,
-        entries: &[&params, &mosaic, &phases, &green, &cand, &homo, &sel, &out]
-            .iter()
-            .enumerate()
-            .map(|(i, b)| wgpu::BindGroupEntry { binding: i as u32, resource: b.as_entire_binding() })
-            .collect::<Vec<_>>(),
-    });
-
-    let mut result = vec![0u16; w * h * 3];
-    let groups = |n: usize| (n as u32).div_ceil(WG);
-    for y0 in (0..h).step_by(rows) {
-        let band = Band::new(y0, rows, h);
-        gpu.queue.write_buffer(&params, 0, as_bytes(&band.params(w, h, period, &matrix)));
-        gpu.queue.write_buffer(&mosaic, 0, as_bytes(&m.data[band.mosaic_y0 * w..band.mosaic_y1 * w]));
-        let mut enc = device.create_command_encoder(&wgpu::CommandEncoderDescriptor { label: Some("demosaic") });
-        let ext = band.ext_y1 - band.ext_y0;
-        let dispatch = [ext, ext, ext, band.sel_y1 - band.sel_y0, band.out_y1 - band.out_y0];
-        for (stage, rows) in pipelines.stages.iter().zip(dispatch) {
-            // A pass per stage: each reads what the previous one wrote
-            let mut pass = enc.begin_compute_pass(&wgpu::ComputePassDescriptor { label: None, timestamp_writes: None });
-            pass.set_pipeline(stage);
-            pass.set_bind_group(0, &bind, &[]);
-            pass.dispatch_workgroups(groups(w), groups(rows), 1);
-        }
-        let out_len = ((band.out_y1 - band.out_y0) * w * 12) as u64;
-        enc.copy_buffer_to_buffer(&out, 0, &staging, 0, out_len);
-        gpu.queue.submit([enc.finish()]);
-
-        let (tx, rx) = mpsc::channel();
-        staging.map_async(wgpu::MapMode::Read, 0..out_len, move |r| {
-            let _ = tx.send(r);
+    let body = (|| -> Result<Vec<u16>, String> {
+        let buffer = |label: &str, size: usize, usage: wgpu::BufferUsages| {
+            device.create_buffer(&wgpu::BufferDescriptor { label: Some(label), size: size.max(4) as u64, usage, mapped_at_creation: false })
+        };
+        let storage = wgpu::BufferUsages::STORAGE;
+        let params = buffer("params", 96, wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST);
+        let mosaic = buffer("mosaic", mosaic_rows * w * 4, storage | wgpu::BufferUsages::COPY_DST);
+        let phases = buffer("phases", table.len() * 4, storage | wgpu::BufferUsages::COPY_DST);
+        let green = buffer("green", ext_rows * w * 16, storage);
+        let cand = buffer("cand", ext_rows * w * 48, storage);
+        let homo = buffer("homo", ext_rows * w * 4, storage);
+        let sel = buffer("sel", (rows + 2) * w * 12, storage);
+        let out = buffer("out", rows * w * 12, storage | wgpu::BufferUsages::COPY_SRC);
+        let staging = buffer("staging", rows * w * 12, wgpu::BufferUsages::MAP_READ | wgpu::BufferUsages::COPY_DST);
+        gpu.queue.write_buffer(&phases, 0, as_bytes(&table));
+        let bind = device.create_bind_group(&wgpu::BindGroupDescriptor {
+            label: Some("demosaic"),
+            layout: &pipelines.layout,
+            entries: &[&params, &mosaic, &phases, &green, &cand, &homo, &sel, &out]
+                .iter()
+                .enumerate()
+                .map(|(i, b)| wgpu::BindGroupEntry { binding: i as u32, resource: b.as_entire_binding() })
+                .collect::<Vec<_>>(),
         });
-        device.poll(wgpu::PollType::wait_indefinitely()).map_err(|e| e.to_string())?;
-        rx.recv().map_err(|e| e.to_string())?.map_err(|e| e.to_string())?;
-        {
-            let view = staging.get_mapped_range(0..out_len).map_err(|e| e.to_string())?;
-            let dst = &mut result[band.out_y0 * w * 3..band.out_y1 * w * 3];
-            for (d, s) in dst.iter_mut().zip(view.as_chunks::<4>().0) {
-                *d = u32::from_le_bytes(*s) as u16;
+
+        let mut result = vec![0u16; w * h * 3];
+        let groups = |n: usize| (n as u32).div_ceil(WG);
+        for y0 in (0..h).step_by(rows) {
+            let band = Band::new(y0, rows, h);
+            gpu.queue.write_buffer(&params, 0, as_bytes(&band.params(w, h, period, &matrix)));
+            gpu.queue.write_buffer(&mosaic, 0, as_bytes(&m.data[band.mosaic_y0 * w..band.mosaic_y1 * w]));
+            let mut enc = device.create_command_encoder(&wgpu::CommandEncoderDescriptor { label: Some("demosaic") });
+            let ext = band.ext_y1 - band.ext_y0;
+            let dispatch = [ext, ext, ext, band.sel_y1 - band.sel_y0, band.out_y1 - band.out_y0];
+            for (stage, rows) in pipelines.stages.iter().zip(dispatch) {
+                // A pass per stage: each reads what the previous one wrote
+                let mut pass = enc.begin_compute_pass(&wgpu::ComputePassDescriptor { label: None, timestamp_writes: None });
+                pass.set_pipeline(stage);
+                pass.set_bind_group(0, &bind, &[]);
+                pass.dispatch_workgroups(groups(w), groups(rows), 1);
             }
+            let out_len = ((band.out_y1 - band.out_y0) * w * 12) as u64;
+            enc.copy_buffer_to_buffer(&out, 0, &staging, 0, out_len);
+            let idx = gpu.queue.submit([enc.finish()]);
+
+            let (tx, rx) = mpsc::channel();
+            staging.map_async(wgpu::MapMode::Read, 0..out_len, move |r| {
+                let _ = tx.send(r);
+            });
+            let mut guard = super::StagingGuard::new(&staging);
+            gpu.wait_submission(Some(idx), timeout)?;
+            match rx.recv().map_err(|e| e.to_string())? {
+                Ok(()) => {}
+                Err(e) => {
+                    guard.disarm();
+                    return Err(e.to_string());
+                }
+            }
+            {
+                let view = staging.get_mapped_range(0..out_len).map_err(|e| e.to_string())?;
+                let dst = &mut result[band.out_y0 * w * 3..band.out_y1 * w * 3];
+                for (d, s) in dst.iter_mut().zip(view.as_chunks::<4>().0) {
+                    *d = u32::from_le_bytes(*s) as u16;
+                }
+            }
+            guard.unmap_now();
         }
-        staging.unmap();
-    }
-    if let Some(e) = pollster::block_on(oom.pop()) {
-        return Err(format!("out of GPU memory: {e}"));
-    }
-    if let Some(e) = pollster::block_on(scope.pop()) {
-        return Err(e.to_string());
-    }
-    Ok(result)
+        Ok(result)
+    })();
+    super::drain_scopes(oom, scope)?;
+    body
 }
 
 #[cfg(test)]
@@ -260,10 +272,11 @@ mod tests {
     /// Runs only where a GPU (or, with OMASTUDIO_GPU=software, lavapipe) is available.
     #[test]
     fn gpu_matches_cpu() {
-        if super::super::get().is_none() {
+        let _test_lock = super::super::TEST_GPU_LOCK.lock().unwrap_or_else(|e| e.into_inner());
+        let Some(gpu_dev) = super::super::acquire() else {
             eprintln!("no GPU, skipped");
             return;
-        }
+        };
         let matrix = [[1.6, -0.4, -0.2], [-0.2, 1.4, -0.2], [0.0, -0.3, 1.3]];
         let to_u16 = |p: [f32; 3]| -> [u16; 3] {
             std::array::from_fn(|r| {
@@ -278,7 +291,7 @@ mod tests {
             let cpu = demosaic_map(&mosaic, to_u16);
             let gpu = demosaic(&mosaic, matrix).expect("GPU demosaic");
             // Bands much shorter than the image must stitch without seams
-            let banded = run(super::super::get().unwrap(), &mosaic, matrix, 37).expect("banded GPU demosaic");
+            let banded = run(&gpu_dev, &mosaic, matrix, 37).expect("banded GPU demosaic");
             assert_eq!(gpu, banded, "{pattern:?}: band seams");
             let diffs: Vec<u16> = cpu.iter().zip(&gpu).map(|(a, b)| a.abs_diff(*b)).collect();
             let off = diffs.iter().filter(|&&d| d > 2).count();

@@ -207,61 +207,197 @@ pub struct Pipeline {
     buffers: std::sync::Mutex<Option<Buffers>>,
 }
 
-struct Buffers {
+/// Core compute buffers shared by both `Out::F32` (48 B/px including lazy `staging_f32`)
+/// and `Out::Display` (47 B/px together with `DisplayBuffers`, without `staging_f32`).
+struct ComputeBuffers {
     rgb_size: u64,
     plane_size: u64,
     params_size: u64,
+    layers_size: u64,
     params: wgpu::Buffer,
     rgb: wgpu::Buffer,
-    staging: wgpu::Buffer,
+    planes: wgpu::Buffer,
+    layers: wgpu::Buffer,
+    /// Minimal 4-byte placeholders bound to display slots when `Out::F32` runs alone.
+    _dummy_px8: wgpu::Buffer,
+    _dummy_out8: wgpu::Buffer,
+    _dummy_hist: wgpu::Buffer,
+    /// Allocated lazily only for `Out::F32` readbacks (`rgb_size`, 12 B/px).
+    staging_f32: Option<wgpu::Buffer>,
+    bind_compute: wgpu::BindGroup,
+}
+
+/// Display-only buffers (`Out::Display`), keeping `staging_display` at 4 B/px (`w*h*4`)
+/// instead of 12 B/px and avoiding display allocations during `Out::F32` exports.
+struct DisplayBuffers {
+    pixel_cap: u64,
+    hist_size: u64,
     px8: wgpu::Buffer,
     out8: wgpu::Buffer,
     hist: wgpu::Buffer,
     staging_hist: wgpu::Buffer,
-    layers_size: u64,
-    layers: wgpu::Buffer,
-    bind: wgpu::BindGroup,
-    _planes: wgpu::Buffer,
+    staging_display: wgpu::Buffer,
+    bind_display: wgpu::BindGroup,
 }
 
-impl Buffers {
+struct Buffers {
+    compute: ComputeBuffers,
+    display: Option<DisplayBuffers>,
+    last_used: std::time::Instant,
+}
+
+fn create_buf(device: &wgpu::Device, label: &str, size: u64, usage: wgpu::BufferUsages) -> wgpu::Buffer {
+    device.create_buffer(&wgpu::BufferDescriptor {
+        label: Some(label),
+        size: size.max(4).next_multiple_of(4),
+        usage,
+        mapped_at_creation: false,
+    })
+}
+
+fn create_bind_group(
+    device: &wgpu::Device,
+    layout: &wgpu::BindGroupLayout,
+    label: &str,
+    params: &wgpu::Buffer,
+    rgb: &wgpu::Buffer,
+    planes: &wgpu::Buffer,
+    px8: &wgpu::Buffer,
+    out8: &wgpu::Buffer,
+    hist: &wgpu::Buffer,
+    layers: &wgpu::Buffer,
+) -> wgpu::BindGroup {
+    device.create_bind_group(&wgpu::BindGroupDescriptor {
+        label: Some(label),
+        layout,
+        entries: &[
+            wgpu::BindGroupEntry {
+                binding: 0,
+                resource: wgpu::BindingResource::Buffer(wgpu::BufferBinding {
+                    buffer: params,
+                    offset: 0,
+                    size: wgpu::BufferSize::new(PARAMS_SIZE),
+                }),
+            },
+            wgpu::BindGroupEntry { binding: 1, resource: rgb.as_entire_binding() },
+            wgpu::BindGroupEntry { binding: 2, resource: planes.as_entire_binding() },
+            wgpu::BindGroupEntry { binding: 3, resource: px8.as_entire_binding() },
+            wgpu::BindGroupEntry { binding: 4, resource: out8.as_entire_binding() },
+            wgpu::BindGroupEntry { binding: 5, resource: hist.as_entire_binding() },
+            wgpu::BindGroupEntry { binding: 6, resource: layers.as_entire_binding() },
+        ],
+    })
+}
+
+impl ComputeBuffers {
     fn new(device: &wgpu::Device, layout: &wgpu::BindGroupLayout, params_size: u64, rgb_size: u64, plane_size: u64, layers_size: u64) -> Self {
-        let buffer = |label: &str, size: u64, usage: wgpu::BufferUsages| {
-            device.create_buffer(&wgpu::BufferDescriptor { label: Some(label), size: size.max(4).next_multiple_of(4), usage, mapped_at_creation: false })
-        };
-        let params = buffer("local params", params_size, wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST);
-        let rgb = buffer("local rgb", rgb_size, wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST | wgpu::BufferUsages::COPY_SRC);
-        let planes = buffer("local planes", plane_size * PLANES, wgpu::BufferUsages::STORAGE);
-        let staging = buffer("local staging", rgb_size, wgpu::BufferUsages::MAP_READ | wgpu::BufferUsages::COPY_DST);
-        // rgb_size is 12 bytes per pixel: px8 needs 4, out8 3
-        let px8 = buffer("local px8", rgb_size / 3, wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_SRC);
-        let out8 = buffer("local out8", rgb_size / 4, wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_SRC);
-        // The counts, then the luma terms (see LUMA_TERMS in the shader)
-        let hist_size = ((crate::pipeline::histogram::SCOPE_WORDS + 768) * 4) as u64;
-        let hist = buffer("local hist", hist_size, wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_SRC | wgpu::BufferUsages::COPY_DST);
-        let staging_hist = buffer("local staging hist", hist_size, wgpu::BufferUsages::MAP_READ | wgpu::BufferUsages::COPY_DST);
-        let layers = buffer("local layers", layers_size, wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST);
-        let bind = device.create_bind_group(&wgpu::BindGroupDescriptor {
-            label: Some("local"),
+        let params = create_buf(device, "local params", params_size, wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST);
+        let rgb = create_buf(device, "local rgb", rgb_size, wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST | wgpu::BufferUsages::COPY_SRC);
+        let planes = create_buf(device, "local planes", plane_size * PLANES, wgpu::BufferUsages::STORAGE);
+        let layers = create_buf(device, "local layers", layers_size, wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST);
+        let dummy_px8 = create_buf(device, "local dummy px8", 4, wgpu::BufferUsages::STORAGE);
+        let dummy_out8 = create_buf(device, "local dummy out8", 4, wgpu::BufferUsages::STORAGE);
+        let dummy_hist = create_buf(device, "local dummy hist", 4, wgpu::BufferUsages::STORAGE);
+        let bind_compute = create_bind_group(
+            device,
             layout,
-            entries: &[
-                wgpu::BindGroupEntry {
-                    binding: 0,
-                    resource: wgpu::BindingResource::Buffer(wgpu::BufferBinding { buffer: &params, offset: 0, size: wgpu::BufferSize::new(PARAMS_SIZE) }),
-                },
-                wgpu::BindGroupEntry { binding: 1, resource: rgb.as_entire_binding() },
-                wgpu::BindGroupEntry { binding: 2, resource: planes.as_entire_binding() },
-                wgpu::BindGroupEntry { binding: 3, resource: px8.as_entire_binding() },
-                wgpu::BindGroupEntry { binding: 4, resource: out8.as_entire_binding() },
-                wgpu::BindGroupEntry { binding: 5, resource: hist.as_entire_binding() },
-                wgpu::BindGroupEntry { binding: 6, resource: layers.as_entire_binding() },
-            ],
-        });
-        Self { rgb_size, plane_size, params_size, params, rgb, staging, px8, out8, hist, staging_hist, layers_size, layers, bind, _planes: planes }
+            "local compute",
+            &params,
+            &rgb,
+            &planes,
+            &dummy_px8,
+            &dummy_out8,
+            &dummy_hist,
+            &layers,
+        );
+        Self {
+            rgb_size,
+            plane_size,
+            params_size,
+            layers_size,
+            params,
+            rgb,
+            planes,
+            layers,
+            _dummy_px8: dummy_px8,
+            _dummy_out8: dummy_out8,
+            _dummy_hist: dummy_hist,
+            staging_f32: None,
+            bind_compute,
+        }
     }
 
     fn fits(&self, params: u64, rgb: u64, plane: u64, layers: u64) -> bool {
         self.params_size >= params && self.rgb_size >= rgb && self.plane_size >= plane && self.layers_size >= layers
+    }
+
+    fn ensure_staging_f32(&mut self, device: &wgpu::Device) -> &wgpu::Buffer {
+        let size = self.rgb_size;
+        self.staging_f32.get_or_insert_with(|| {
+            create_buf(device, "local staging f32", size, wgpu::BufferUsages::MAP_READ | wgpu::BufferUsages::COPY_DST)
+        })
+    }
+
+    fn total_bytes(&self) -> u64 {
+        let staging = self.staging_f32.as_ref().map_or(0, |_| self.rgb_size);
+        self.params_size
+            .saturating_add(self.rgb_size)
+            .saturating_add(self.plane_size.saturating_mul(PLANES))
+            .saturating_add(self.layers_size)
+            .saturating_add(staging)
+    }
+}
+
+impl DisplayBuffers {
+    fn new(device: &wgpu::Device, layout: &wgpu::BindGroupLayout, compute: &ComputeBuffers, pixel_cap: u64) -> Self {
+        let px8_bytes = pixel_cap.saturating_mul(4);
+        let out8_bytes = pixel_cap.saturating_mul(3).next_multiple_of(4);
+        let px8 = create_buf(device, "local px8", px8_bytes, wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_SRC);
+        let out8 = create_buf(device, "local out8", out8_bytes, wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_SRC);
+        // The counts, then the luma terms (see LUMA_TERMS in the shader)
+        let hist_size = ((crate::pipeline::histogram::SCOPE_WORDS + 768) * 4) as u64;
+        let hist = create_buf(device, "local hist", hist_size, wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_SRC | wgpu::BufferUsages::COPY_DST);
+        let staging_hist = create_buf(device, "local staging hist", hist_size, wgpu::BufferUsages::MAP_READ | wgpu::BufferUsages::COPY_DST);
+        // Sized for at most 4 bytes/pixel (RGBA8), never 12 bytes/pixel (RGB f32)
+        let staging_display = create_buf(device, "local staging display", px8_bytes, wgpu::BufferUsages::MAP_READ | wgpu::BufferUsages::COPY_DST);
+        let bind_display = create_bind_group(
+            device,
+            layout,
+            "local display",
+            &compute.params,
+            &compute.rgb,
+            &compute.planes,
+            &px8,
+            &out8,
+            &hist,
+            &compute.layers,
+        );
+        Self { pixel_cap, hist_size, px8, out8, hist, staging_hist, staging_display, bind_display }
+    }
+
+    fn total_bytes(&self) -> u64 {
+        let px8_bytes = self.pixel_cap.saturating_mul(4);
+        let out8_bytes = self.pixel_cap.saturating_mul(3).next_multiple_of(4);
+        px8_bytes
+            .saturating_add(out8_bytes)
+            .saturating_add(px8_bytes)
+            .saturating_add(self.hist_size.saturating_mul(2))
+    }
+}
+
+impl Buffers {
+    fn new(device: &wgpu::Device, layout: &wgpu::BindGroupLayout, params_size: u64, rgb_size: u64, plane_size: u64, layers_size: u64) -> Self {
+        Self {
+            compute: ComputeBuffers::new(device, layout, params_size, rgb_size, plane_size, layers_size),
+            display: None,
+            last_used: std::time::Instant::now(),
+        }
+    }
+
+    fn total_bytes(&self) -> u64 {
+        self.compute
+            .total_bytes()
+            .saturating_add(self.display.as_ref().map_or(0, DisplayBuffers::total_bytes))
     }
 }
 
@@ -335,14 +471,26 @@ impl Pipeline {
 
 /// Opens the GPU and compiles the stage's shader ahead of the first use.
 pub fn warm_up() {
-    if let Some(gpu) = super::get().filter(|g| super::stages_worthwhile(g)) {
-        let _ = pipeline(gpu);
+    if let Some(gpu) = super::acquire().filter(|g| super::stages_worthwhile(g)) {
+        let _ = pipeline(&gpu);
     }
 }
 
 fn pipeline(gpu: &Gpu) -> Result<&Pipeline, String> {
     gpu.local
         .get_or_init(|| {
+            if gpu.limits.max_storage_buffers_per_shader_stage < 6 {
+                return Err(format!(
+                    "{}: local stage needs at least 6 storage buffers per shader (has {})",
+                    gpu.info.name, gpu.limits.max_storage_buffers_per_shader_stage
+                ));
+            }
+            if gpu.limits.max_compute_workgroup_storage_size < 16_384 {
+                return Err(format!(
+                    "{}: local stage needs at least 16384 bytes of workgroup storage (has {})",
+                    gpu.info.name, gpu.limits.max_compute_workgroup_storage_size
+                ));
+            }
             let scope = gpu.device.push_error_scope(wgpu::ErrorFilter::Validation);
             let p = Pipeline::new(&gpu.device);
             match pollster::block_on(scope.pop()) {
@@ -354,23 +502,29 @@ fn pipeline(gpu: &Gpu) -> Result<&Pipeline, String> {
         .map_err(|e| e.clone())
 }
 
+/// Runs presence, detail and defringe on `buf` in place, distinguishing intentional skips
+/// from runtime GPU failures for per-frame circuit breaking.
+pub fn run_checked(buf: &mut [f32], w: usize, h: usize, recipe: &Recipe, scale: f32) -> super::StageOutcome<()> {
+    if w * h < super::point_ops::MIN_PIXELS {
+        return super::StageOutcome::Skipped;
+    }
+    let Some(gpu) = super::acquire().filter(|g| super::stages_worthwhile(g)) else {
+        return super::StageOutcome::Skipped;
+    };
+    match run_on(&gpu, buf, w, h, recipe, scale) {
+        Ok(()) => super::StageOutcome::Done(()),
+        Err(e) => {
+            eprintln!("omastudio: GPU presence/detail stage failed, using the CPU: {e}");
+            super::StageOutcome::Failed
+        }
+    }
+}
+
 /// Runs presence, detail and defringe on `buf` (`w` x `h` interleaved RGB f32) in
 /// place, with neighbourhoods sized for a frame `scale` times the reference. Returns
 /// false when there is no usable GPU or the job failed; `buf` is then unchanged.
 pub fn run(buf: &mut [f32], w: usize, h: usize, recipe: &Recipe, scale: f32) -> bool {
-    if w * h < super::point_ops::MIN_PIXELS {
-        return false;
-    }
-    let Some(gpu) = super::get().filter(|g| super::stages_worthwhile(g)) else {
-        return false;
-    };
-    match run_on(gpu, buf, w, h, recipe, scale) {
-        Ok(()) => true,
-        Err(e) => {
-            eprintln!("omastudio: GPU presence/detail stage failed, using the CPU: {e}");
-            false
-        }
-    }
+    matches!(run_checked(buf, w, h, recipe, scale), super::StageOutcome::Done(()))
 }
 
 fn run_on(gpu: &Gpu, buf: &mut [f32], w: usize, h: usize, recipe: &Recipe, scale: f32) -> Result<(), String> {
@@ -383,6 +537,37 @@ fn run_on(gpu: &Gpu, buf: &mut [f32], w: usize, h: usize, recipe: &Recipe, scale
     }
     let _job = gpu.jobs.lock().map_err(|_| "GPU lock poisoned")?;
     execute(gpu, w, h, &steps, &[], Out::F32(&mut buf[..w * h * 3]), None::<fn(&wgpu::Buffer) -> Result<(), String>>)
+}
+
+/// Chained point + layers + presence/detail stage returning [`super::StageOutcome`] so
+/// callers can trip a per-frame circuit breaker only on actual GPU failures (not when
+/// the recipe simply has no local steps to chain).
+#[allow(clippy::too_many_arguments)]
+pub fn run_chained_checked(
+    input: &[u16],
+    w: usize,
+    ch: usize,
+    y0: usize,
+    y1: usize,
+    recipe: &Recipe,
+    inputs: &super::point_ops::PointInputs,
+    scale: f32,
+    frame: (usize, usize, usize, usize),
+) -> super::StageOutcome<Vec<f32>> {
+    if (y1 - y0) * w < super::point_ops::MIN_PIXELS {
+        return super::StageOutcome::Skipped;
+    }
+    let Some(gpu) = super::acquire().filter(|g| super::stages_worthwhile(g)) else {
+        return super::StageOutcome::Skipped;
+    };
+    match chained_on(&gpu, input, w, ch, y0, y1, recipe, inputs, scale, frame) {
+        Ok(Some(v)) => super::StageOutcome::Done(v),
+        Ok(None) => super::StageOutcome::Skipped,
+        Err(e) => {
+            eprintln!("omastudio: GPU point + presence/detail stages failed, using the CPU: {e}");
+            super::StageOutcome::Failed
+        }
+    }
 }
 
 /// Point stage, adjustment layers and this stage in one go for rows `y0..y1` of
@@ -403,16 +588,9 @@ pub fn run_chained(
     scale: f32,
     frame: (usize, usize, usize, usize),
 ) -> Option<Vec<f32>> {
-    if (y1 - y0) * w < super::point_ops::MIN_PIXELS {
-        return None;
-    }
-    let gpu = super::get().filter(|g| super::stages_worthwhile(g))?;
-    match chained_on(gpu, input, w, ch, y0, y1, recipe, inputs, scale, frame) {
-        Ok(v) => v,
-        Err(e) => {
-            eprintln!("omastudio: GPU point + presence/detail stages failed, using the CPU: {e}");
-            None
-        }
+    match run_chained_checked(input, w, ch, y0, y1, recipe, inputs, scale, frame) {
+        super::StageOutcome::Done(v) => Some(v),
+        super::StageOutcome::Skipped | super::StageOutcome::Failed => None,
     }
 }
 
@@ -443,8 +621,43 @@ fn chained_on(
     }
     let _job = gpu.jobs.lock().map_err(|_| "GPU lock poisoned")?;
     let mut out = vec![0.0f32; w * h * 3];
-    execute(gpu, w, h, &steps, &lay, Out::F32(&mut out), Some(|rgb: &wgpu::Buffer| super::point_ops::run_into(gpu, input, w, ch, y0, y1, recipe, inputs, rgb)))?;
+    execute(
+        gpu,
+        w,
+        h,
+        &steps,
+        &lay,
+        Out::F32(&mut out),
+        Some(|rgb: &wgpu::Buffer| super::point_ops::run_into(gpu, input, w, ch, y0, y1, recipe, inputs, rgb)),
+    )?;
     Ok(Some(out))
+}
+
+/// Whole 8-bit preview on the GPU, distinguishing intentional skips from runtime GPU
+/// failures so callers do not retry downstream GPU stages on the same failing frame.
+#[allow(clippy::too_many_arguments)]
+pub fn run_display_checked(
+    input: &[u16],
+    w: usize,
+    h: usize,
+    ch: usize,
+    recipe: &Recipe,
+    inputs: &super::point_ops::PointInputs,
+    scale: f32,
+) -> super::StageOutcome<(Vec<u8>, crate::pipeline::histogram::HistogramData)> {
+    if w * h < super::point_ops::MIN_PIXELS {
+        return super::StageOutcome::Skipped;
+    }
+    let Some(gpu) = super::acquire().filter(|g| super::stages_worthwhile(g)) else {
+        return super::StageOutcome::Skipped;
+    };
+    match display_on(&gpu, input, w, h, ch, recipe, inputs, scale) {
+        Ok(v) => super::StageOutcome::Done(v),
+        Err(e) => {
+            eprintln!("omastudio: GPU preview stages failed, using the CPU: {e}");
+            super::StageOutcome::Failed
+        }
+    }
 }
 
 /// The whole 8-bit preview on the GPU for a `w` x `h` frame: the point stage,
@@ -462,16 +675,9 @@ pub fn run_display(
     inputs: &super::point_ops::PointInputs,
     scale: f32,
 ) -> Option<(Vec<u8>, crate::pipeline::histogram::HistogramData)> {
-    if w * h < super::point_ops::MIN_PIXELS {
-        return None;
-    }
-    let gpu = super::get().filter(|g| super::stages_worthwhile(g))?;
-    match display_on(gpu, input, w, h, ch, recipe, inputs, scale) {
-        Ok(v) => Some(v),
-        Err(e) => {
-            eprintln!("omastudio: GPU preview stages failed, using the CPU: {e}");
-            None
-        }
+    match run_display_checked(input, w, h, ch, recipe, inputs, scale) {
+        super::StageOutcome::Done(v) => Some(v),
+        super::StageOutcome::Skipped | super::StageOutcome::Failed => None,
     }
 }
 
@@ -537,13 +743,18 @@ fn execute(
     fill: Option<impl FnOnce(&wgpu::Buffer) -> Result<(), String>>,
 ) -> Result<(), String> {
     let limit = gpu.limits.max_storage_buffer_binding_size.min(gpu.limits.max_buffer_size).min(MAX_BUFFER);
-    let (rgb_size, plane_size) = ((w * h * 12) as u64, (w * h * 4) as u64);
+    let pixels_u64 = (w * h) as u64;
+    let (rgb_size, plane_size) = (pixels_u64 * 12, pixels_u64 * 4);
     if rgb_size > limit || plane_size * PLANES > limit || plane_size * PLANES > u32::MAX as u64 {
         return Err(format!("{w}x{h} exceeds the GPU's buffer limits"));
     }
     let max_groups = gpu.limits.max_compute_workgroups_per_dimension;
     if steps.iter().any(|s| s.groups.0 > max_groups || s.groups.1 > max_groups) {
         return Err(format!("{w}x{h} needs more workgroups than the GPU allows"));
+    }
+    let layers_size = (lay.len() * 4) as u64;
+    if layers_size > limit {
+        return Err("the masks exceed the GPU's buffer limits".to_string());
     }
     let pipeline = pipeline(gpu)?;
 
@@ -553,69 +764,115 @@ fn execute(
         let at = i * stride as usize;
         params[at..at + PARAMS_SIZE as usize].copy_from_slice(as_bytes(&s.params));
     }
+    let params_size = params.len() as u64;
 
     let device = &gpu.device;
-    let scope = device.push_error_scope(wgpu::ErrorFilter::Validation);
-    let oom = device.push_error_scope(wgpu::ErrorFilter::OutOfMemory);
+    let interactive = matches!(out, Out::Display { .. }) || crate::pipeline::interactive();
+    let timeout = gpu.poll_timeout(interactive);
     let mut cache = pipeline.buffers.lock().map_err(|_| "GPU buffer lock poisoned")?;
-    let params_size = params.len() as u64;
-    let layers_size = (lay.len() * 4) as u64;
-    if layers_size > limit {
-        return Err("the masks exceed the GPU's buffer limits".to_string());
-    }
-    if !cache.as_ref().is_some_and(|b| b.fits(params_size, rgb_size, plane_size, layers_size)) {
-        // Grow to the largest request seen, so alternating sizes don't reallocate
-        let (p, r, l, m) = cache.as_ref().map_or((0, 0, 0, 0), |b| (b.params_size, b.rgb_size, b.plane_size, b.layers_size));
+    if cache
+        .as_ref()
+        .is_some_and(|b| b.total_bytes() > super::PREVIEW_VRAM_CAP && b.last_used.elapsed() >= super::OVERSIZED_IDLE_EVICT)
+    {
         *cache = None;
-        *cache = Some(Buffers::new(device, &pipeline.layout, params_size.max(p).max(stride * 64), rgb_size.max(r), plane_size.max(l), layers_size.max(m).max(256)));
-    }
-    let bufs = cache.as_ref().expect("buffers");
-    let filled = match fill {
-        Some(f) => f(&bufs.rgb),
-        None => match &out {
-            Out::F32(data) => {
-                gpu.queue.write_buffer(&bufs.rgb, 0, as_bytes(&data[..w * h * 3]));
-                Ok(())
-            }
-            Out::Display { .. } => Err("the display tail needs a fill".to_string()),
-        },
-    };
-    // Bytes read back: RGB f32, or 8-bit pixels (whole words) plus the scope counts
-    let (read_buf, read_len, hist_len) = match &out {
-        Out::F32(_) => (&bufs.rgb, rgb_size, 0),
-        Out::Display { ch: 3, .. } => (&bufs.out8, ((w * h * 3).div_ceil(4) * 4) as u64, (crate::pipeline::histogram::SCOPE_WORDS * 4) as u64),
-        Out::Display { .. } => (&bufs.px8, (w * h * 4) as u64, (crate::pipeline::histogram::SCOPE_WORDS * 4) as u64),
-    };
-    gpu.queue.write_buffer(&bufs.params, 0, &params);
-    if !lay.is_empty() {
-        gpu.queue.write_buffer(&bufs.layers, 0, as_bytes(lay));
-    }
-    if hist_len > 0 {
-        let terms: Vec<f32> = [0.2126f32, 0.7152, 0.0722].iter().flat_map(|k| (0..256).map(move |v| k * v as f32)).collect();
-        gpu.queue.write_buffer(&bufs.hist, hist_len, as_bytes(&terms));
     }
 
-    let mut idx = None;
-    if filled.is_ok() {
+    let scope = device.push_error_scope(wgpu::ErrorFilter::Validation);
+    let oom = device.push_error_scope(wgpu::ErrorFilter::OutOfMemory);
+    let body = (|| -> Result<(), String> {
+        if !cache.as_ref().is_some_and(|b| b.compute.fits(params_size, rgb_size, plane_size, layers_size)) {
+            // Grow to the largest request seen, so alternating sizes don't reallocate
+            let (p, r, l, m) = cache.as_ref().map_or((0, 0, 0, 0), |b| {
+                (b.compute.params_size, b.compute.rgb_size, b.compute.plane_size, b.compute.layers_size)
+            });
+            *cache = None;
+            *cache = Some(Buffers::new(
+                device,
+                &pipeline.layout,
+                params_size.max(p).max(stride * 64),
+                rgb_size.max(r),
+                plane_size.max(l),
+                layers_size.max(m).max(256),
+            ));
+        }
+        let bufs = cache.as_mut().expect("buffers");
+        match &out {
+            Out::F32(_) => {
+                // Drop unused display buffers when switching modes would cross the VRAM cap.
+                if bufs.display.is_some()
+                    && bufs.total_bytes().saturating_add(bufs.compute.rgb_size) > super::PREVIEW_VRAM_CAP
+                {
+                    bufs.display = None;
+                }
+                let _ = bufs.compute.ensure_staging_f32(device);
+            }
+            Out::Display { .. } => {
+                if bufs.compute.staging_f32.is_some()
+                    && bufs.total_bytes().saturating_add(pixels_u64 * 11) > super::PREVIEW_VRAM_CAP
+                {
+                    bufs.compute.staging_f32 = None;
+                }
+                if !bufs.display.as_ref().is_some_and(|d| d.pixel_cap >= pixels_u64) {
+                    let cap = bufs.display.as_ref().map_or(0, |d| d.pixel_cap).max(pixels_u64);
+                    bufs.display = None;
+                    bufs.display = Some(DisplayBuffers::new(device, &pipeline.layout, &bufs.compute, cap));
+                }
+            }
+        }
+        let bufs = cache.as_ref().expect("buffers");
+        match fill {
+            Some(f) => f(&bufs.compute.rgb)?,
+            None => match &out {
+                Out::F32(data) => gpu.queue.write_buffer(&bufs.compute.rgb, 0, as_bytes(&data[..w * h * 3])),
+                Out::Display { .. } => return Err("the display tail needs a fill".to_string()),
+            },
+        }
+        gpu.queue.write_buffer(&bufs.compute.params, 0, &params);
+        if !lay.is_empty() {
+            gpu.queue.write_buffer(&bufs.compute.layers, 0, as_bytes(lay));
+        }
+
+        // Bytes read back: RGB f32, or 8-bit pixels (whole words) plus the scope counts
+        let (bind, read_buf, staging_buf, read_len, hist_pair) = match &out {
+            Out::F32(_) => (
+                &bufs.compute.bind_compute,
+                &bufs.compute.rgb,
+                bufs.compute.staging_f32.as_ref().expect("staging_f32"),
+                rgb_size,
+                None,
+            ),
+            Out::Display { ch, .. } => {
+                let disp = bufs.display.as_ref().expect("display buffers");
+                let (src, len) = if *ch == 3 {
+                    (&disp.out8, ((w * h * 3).div_ceil(4) * 4) as u64)
+                } else {
+                    (&disp.px8, (w * h * 4) as u64)
+                };
+                let hist_len = (crate::pipeline::histogram::SCOPE_WORDS * 4) as u64;
+                let terms: Vec<f32> = [0.2126f32, 0.7152, 0.0722].iter().flat_map(|k| (0..256).map(move |v| k * v as f32)).collect();
+                gpu.queue.write_buffer(&disp.hist, hist_len, as_bytes(&terms));
+                (&disp.bind_display, src, &disp.staging_display, len, Some((&disp.hist, &disp.staging_hist, hist_len)))
+            }
+        };
+
         let mut enc = device.create_command_encoder(&wgpu::CommandEncoderDescriptor { label: Some("local") });
-        if hist_len > 0 {
-            enc.clear_buffer(&bufs.hist, 0, Some(hist_len));
+        if let Some((hist_buf, _, hist_len)) = hist_pair {
+            enc.clear_buffer(hist_buf, 0, Some(hist_len));
         }
         {
             let mut pass = enc.begin_compute_pass(&wgpu::ComputePassDescriptor { label: Some("local"), timestamp_writes: None });
             for (i, s) in steps.iter().enumerate() {
                 pass.set_pipeline(&pipeline.pipelines[s.entry]);
-                pass.set_bind_group(0, &bufs.bind, &[(i as u64 * stride) as u32]);
+                pass.set_bind_group(0, bind, &[(i as u64 * stride) as u32]);
                 pass.dispatch_workgroups(s.groups.0, s.groups.1, 1);
             }
         }
-        enc.copy_buffer_to_buffer(read_buf, 0, &bufs.staging, 0, read_len);
-        if hist_len > 0 {
-            enc.copy_buffer_to_buffer(&bufs.hist, 0, &bufs.staging_hist, 0, hist_len);
+        enc.copy_buffer_to_buffer(read_buf, 0, staging_buf, 0, read_len);
+        if let Some((hist_buf, staging_hist, hist_len)) = hist_pair {
+            enc.copy_buffer_to_buffer(hist_buf, 0, staging_hist, 0, hist_len);
         }
-        idx = Some(gpu.queue.submit([enc.finish()]));
-    }
-    let read = idx.map(|idx| {
+        let idx = gpu.queue.submit([enc.finish()]);
+
         let map = |buf: &wgpu::Buffer, len: u64| {
             let (tx, rx) = mpsc::channel();
             buf.map_async(wgpu::MapMode::Read, 0..len, move |r| {
@@ -623,46 +880,67 @@ fn execute(
             });
             rx
         };
-        let rx = map(&bufs.staging, read_len);
-        let rx_hist = (hist_len > 0).then(|| map(&bufs.staging_hist, hist_len));
-        device.poll(wgpu::PollType::Wait { submission_index: Some(idx), timeout: None }).map_err(|e| e.to_string())?;
-        rx.recv().map_err(|e| e.to_string())?.map_err(|e| e.to_string())?;
-        if let Some(rx) = rx_hist {
-            rx.recv().map_err(|e| e.to_string())?.map_err(|e| e.to_string())?;
+        let rx = map(staging_buf, read_len);
+        let mut staging_guard = super::StagingGuard::new(staging_buf);
+        let mut hist_state = hist_pair.map(|(_, staging_hist, hist_len)| {
+            let rx_hist = map(staging_hist, hist_len);
+            (staging_hist, hist_len, rx_hist, super::StagingGuard::new(staging_hist))
+        });
+
+        gpu.wait_submission(Some(idx), timeout)?;
+
+        let main_map = rx.recv().map_err(|e| e.to_string())?;
+        let hist_map = match hist_state.as_ref() {
+            Some((_, _, rx_hist, _)) => Some(rx_hist.recv().map_err(|e| e.to_string())?),
+            None => None,
+        };
+        if main_map.is_err() {
+            staging_guard.disarm();
         }
-        Ok::<(), String>(())
-    });
-    let oom_err = pollster::block_on(oom.pop());
-    let val_err = pollster::block_on(scope.pop());
-    if let Some(e) = oom_err {
-        *cache = None;
-        return Err(format!("out of GPU memory: {e}"));
-    }
-    if let Some(e) = val_err {
-        *cache = None;
-        return Err(e.to_string());
-    }
-    filled?;
-    read.expect("submitted")?;
-    let result = (|| {
-        let view = bufs.staging.get_mapped_range(0..read_len).map_err(|e| e.to_string())?;
-        match &mut out {
-            Out::F32(data) => super::point_ops::as_bytes_mut(&mut data[..w * h * 3]).copy_from_slice(&view),
-            Out::Display { ch, pixels, words } => {
-                pixels.clear();
-                pixels.extend_from_slice(&view[..w * h * *ch]);
-                let hist = bufs.staging_hist.get_mapped_range(0..hist_len).map_err(|e| e.to_string())?;
-                words.clear();
-                words.extend(hist.as_chunks::<4>().0.iter().map(|b| u32::from_le_bytes(*b)));
+        if hist_map.as_ref().is_some_and(Result::is_err)
+            && let Some((_, _, _, ref mut hg)) = hist_state
+        {
+            hg.disarm();
+        }
+        main_map.map_err(|e| e.to_string())?;
+        if let Some(res) = hist_map {
+            res.map_err(|e| e.to_string())?;
+        }
+
+        // Scope mapped views strictly inside this block so they drop before unmap().
+        {
+            let view = staging_buf.get_mapped_range(0..read_len).map_err(|e| e.to_string())?;
+            match &mut out {
+                Out::F32(data) => super::point_ops::as_bytes_mut(&mut data[..w * h * 3]).copy_from_slice(&view),
+                Out::Display { ch, pixels, words } => {
+                    pixels.clear();
+                    pixels.extend_from_slice(&view[..w * h * *ch]);
+                    let (staging_hist, hist_len, _, _) = hist_state.as_ref().expect("hist state");
+                    let hist = staging_hist.get_mapped_range(0..*hist_len).map_err(|e| e.to_string())?;
+                    words.clear();
+                    words.extend(hist.as_chunks::<4>().0.iter().map(|b| u32::from_le_bytes(*b)));
+                }
             }
         }
-        Ok::<(), String>(())
+        staging_guard.unmap_now();
+        if let Some((_, _, _, hg)) = hist_state {
+            hg.unmap_now();
+        }
+        Ok(())
     })();
-    bufs.staging.unmap();
-    if hist_len > 0 {
-        bufs.staging_hist.unmap();
+
+    let scope_res = super::drain_scopes(oom, scope);
+    if scope_res.is_err() || body.is_err() {
+        *cache = None;
+        scope_res?;
+        return body;
     }
-    result
+    if cache.as_ref().is_some_and(|b| b.total_bytes() > super::PREVIEW_VRAM_CAP) {
+        *cache = None;
+    } else if let Some(b) = cache.as_mut() {
+        b.last_used = std::time::Instant::now();
+    }
+    Ok(())
 }
 
 #[cfg(test)]
@@ -735,7 +1013,8 @@ mod tests {
     /// Runs only where a GPU (or, with OMASTUDIO_GPU=software, lavapipe) is available.
     #[test]
     fn gpu_matches_cpu() {
-        let Some(gpu) = super::super::get() else {
+        let _test_lock = super::super::TEST_GPU_LOCK.lock().unwrap_or_else(|e| e.into_inner());
+        let Some(gpu) = super::super::acquire() else {
             eprintln!("no GPU, skipped");
             return;
         };
@@ -747,7 +1026,7 @@ mod tests {
             detail::apply_detail_scaled(&mut cpu, w, h, recipe.sharpness, recipe.denoise_lum, recipe.denoise_col, scale);
             detail::apply_defringe_buffer(&mut cpu, w, h, recipe.defringe, scale);
             let mut got = input.clone();
-            run_on(gpu, &mut got, w, h, &recipe, scale).expect("GPU local stage");
+            run_on(&gpu, &mut got, w, h, &recipe, scale).expect("GPU local stage");
             let (mut off, mut worst) = (0usize, 0.0f32);
             for (a, b) in cpu.iter().zip(&got) {
                 let d = (a - b).abs();
@@ -768,7 +1047,8 @@ mod tests {
     fn chained_matches_cpu() {
         use crate::pipeline::transfer::Transfer;
         use crate::pipeline::{PointOps, white_balance};
-        let Some(gpu) = super::super::get() else {
+        let _test_lock = super::super::TEST_GPU_LOCK.lock().unwrap_or_else(|e| e.into_inner());
+        let Some(gpu) = super::super::acquire() else {
             eprintln!("no GPU, skipped");
             return;
         };
@@ -816,7 +1096,7 @@ mod tests {
         detail::apply_detail_scaled(&mut cpu, w, rows, recipe.sharpness, recipe.denoise_lum, recipe.denoise_col, 1.0);
         detail::apply_defringe_buffer(&mut cpu, w, rows, recipe.defringe, 1.0);
 
-        let got = chained_on(gpu, &input, w, ch, y0, y1, &recipe, &ops.gpu_inputs(k, transfer), 1.0, (0, y0, w, h))
+        let got = chained_on(&gpu, &input, w, ch, y0, y1, &recipe, &ops.gpu_inputs(k, transfer), 1.0, (0, y0, w, h))
             .expect("GPU chained stages")
             .expect("work to do");
         let (mut off, mut worst) = (0usize, 0.0f32);
@@ -838,7 +1118,8 @@ mod tests {
     fn display_matches_cpu() {
         use crate::pipeline::transfer::Transfer;
         use crate::pipeline::{PointOps, white_balance};
-        let Some(gpu) = super::super::get() else {
+        let _test_lock = super::super::TEST_GPU_LOCK.lock().unwrap_or_else(|e| e.into_inner());
+        let Some(gpu) = super::super::acquire() else {
             eprintln!("no GPU, skipped");
             return;
         };
@@ -875,7 +1156,7 @@ mod tests {
                 let (wr, wg, wb) = white_balance::kelvin_to_rgb_multipliers(recipe.wb_temperature, recipe.wb_tint);
                 let e = 2.0f32.powf(recipe.exposure + recipe.baseline_exposure);
                 let scale = crate::pipeline::frame_scale(w, h);
-                let (got, hist) = display_on(gpu, &input, w, h, ch, &recipe, &ops.gpu_inputs([wr * e, wg * e, wb * e], transfer), scale).expect("GPU preview");
+                let (got, hist) = display_on(&gpu, &input, w, h, ch, &recipe, &ops.gpu_inputs([wr * e, wg * e, wb * e], transfer), scale).expect("GPU preview");
                 assert_eq!(got.len(), cpu.len());
                 let mut off_px = std::collections::HashSet::new();
                 let mut worst = 0u8;
@@ -908,6 +1189,76 @@ mod tests {
                 assert!(moved * 20 <= cpu_hist.vectorscope.iter().filter(|&&c| c > 0).count().max(20), "{name} ch={ch}: {moved} vectorscope cells differ");
             }
         }
+    }
+
+    /// Runs only where a GPU (or, with OMASTUDIO_GPU=software, lavapipe) is available.
+    #[test]
+    fn buffer_pool_splits_compute_and_display_and_recovers_after_error() {
+        use crate::pipeline::transfer::Transfer;
+        use crate::pipeline::{PointOps, white_balance};
+        let _test_lock = super::super::TEST_GPU_LOCK.lock().unwrap_or_else(|e| e.into_inner());
+        let Some(gpu) = super::super::acquire() else {
+            eprintln!("no GPU, skipped");
+            return;
+        };
+        let p = pipeline(&gpu).expect("local pipeline");
+        let (w, h) = (64usize, 48usize);
+        let recipe = Recipe { clarity: 20.0, sharpness: 25.0, ..Recipe::default() };
+
+        // 1. F32 compute-only path must not allocate DisplayBuffers.
+        {
+            let _job = gpu.jobs.lock().unwrap();
+            *p.buffers.lock().unwrap() = None;
+        }
+        let mut buf = frame(w, h);
+        run_on(&gpu, &mut buf, w, h, &recipe, 1.0).expect("F32 local stage");
+        {
+            let _job = gpu.jobs.lock().unwrap();
+            let cache = p.buffers.lock().unwrap();
+            let bufs = cache.as_ref().expect("F32 buffers cached");
+            assert!(bufs.display.is_none(), "F32 path should not allocate DisplayBuffers");
+            assert!(bufs.compute.staging_f32.is_some(), "F32 path should allocate staging_f32");
+        }
+
+        // 2. Display path must allocate 4 B/px staging_display without staging_f32.
+        {
+            let _job = gpu.jobs.lock().unwrap();
+            *p.buffers.lock().unwrap() = None;
+        }
+        let input = vec![32768u16; w * h * 3];
+        let ops = PointOps::new(&recipe);
+        let (wr, wg, wb) = white_balance::kelvin_to_rgb_multipliers(recipe.wb_temperature, recipe.wb_tint);
+        let transfer = Transfer::bt709();
+        let _ = display_on(&gpu, &input, w, h, 3, &recipe, &ops.gpu_inputs([wr, wg, wb], transfer), 1.0)
+            .expect("Display local stage");
+        {
+            let _job = gpu.jobs.lock().unwrap();
+            let cache = p.buffers.lock().unwrap();
+            let bufs = cache.as_ref().expect("Display buffers cached");
+            assert!(bufs.compute.staging_f32.is_none(), "Display path should not allocate staging_f32");
+            let disp = bufs.display.as_ref().expect("DisplayBuffers allocated");
+            assert_eq!(disp.staging_display.size(), (w * h * 4) as u64, "Display staging must be 4 B/px, not 12 B/px");
+        }
+
+        // 3. Any error during execute() must clear the buffer cache cleanly so subsequent jobs succeed.
+        {
+            let _job = gpu.jobs.lock().unwrap();
+            let steps = plan(w, h, &recipe, 1.0);
+            let mut out = vec![0.0f32; w * h * 3];
+            let err = execute(
+                &gpu,
+                w,
+                h,
+                &steps,
+                &[],
+                Out::F32(&mut out),
+                Some(|_: &wgpu::Buffer| Err("injected fill error".to_string())),
+            );
+            assert!(err.is_err());
+            assert!(p.buffers.lock().unwrap().is_none(), "Failed execute() must invalidate buffer cache");
+        }
+        let mut retry = frame(w, h);
+        run_on(&gpu, &mut retry, w, h, &recipe, 1.0).expect("Subsequent local job must recover after error");
     }
 
     /// One layer of each kind of mask, with components and every adjustment.

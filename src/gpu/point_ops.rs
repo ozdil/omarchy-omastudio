@@ -267,9 +267,11 @@ pub struct Pipeline {
 
 /// Device buffers for one band and the tables, with their bind group.
 struct Buffers {
+    params_size: u64,
     src_size: u64,
     out_size: u64,
     table_size: u64,
+    last_used: std::time::Instant,
     params: wgpu::Buffer,
     src: wgpu::Buffer,
     tables: wgpu::Buffer,
@@ -285,7 +287,7 @@ impl Buffers {
             device.create_buffer(&wgpu::BufferDescriptor { label: Some(label), size: size.max(4).next_multiple_of(4), usage, mapped_at_creation: false })
         };
         let storage = wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST;
-        let params = buffer("params", params, storage);
+        let params_buf = buffer("params", params, storage);
         let src_buf = buffer("src", src, storage);
         let table_buf = buffer("tables", tables, storage);
         let out_buf = buffer("out", out, wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_SRC);
@@ -294,17 +296,36 @@ impl Buffers {
         let bind = device.create_bind_group(&wgpu::BindGroupDescriptor {
             label: Some("point_ops"),
             layout,
-            entries: &[&params, &src_buf, &table_buf, &out_buf]
+            entries: &[&params_buf, &src_buf, &table_buf, &out_buf]
                 .iter()
                 .enumerate()
                 .map(|(i, b)| wgpu::BindGroupEntry { binding: i as u32, resource: b.as_entire_binding() })
                 .collect::<Vec<_>>(),
         });
-        Self { src_size: src, out_size: out, table_size: tables, params, src: src_buf, tables: table_buf, out: out_buf, staging, bind }
+        Self {
+            params_size: params,
+            src_size: src,
+            out_size: out,
+            table_size: tables,
+            last_used: std::time::Instant::now(),
+            params: params_buf,
+            src: src_buf,
+            tables: table_buf,
+            out: out_buf,
+            staging,
+            bind,
+        }
     }
 
     fn fits(&self, src: u64, out: u64, tables: u64) -> bool {
         self.src_size >= src && self.out_size >= out && self.table_size >= tables
+    }
+
+    fn total_bytes(&self) -> u64 {
+        self.params_size
+            .saturating_add(self.src_size)
+            .saturating_add(self.table_size)
+            .saturating_add(self.out_size.saturating_mul(3))
     }
 }
 
@@ -347,8 +368,8 @@ impl Pipeline {
 
 /// Opens the GPU and compiles the stage's shader ahead of the first use.
 pub fn warm_up() {
-    if let Some(gpu) = super::get().filter(|g| super::stages_worthwhile(g)) {
-        let _ = pipeline(gpu);
+    if let Some(gpu) = super::acquire().filter(|g| super::stages_worthwhile(g)) {
+        let _ = pipeline(&gpu);
     }
 }
 
@@ -367,20 +388,41 @@ fn pipeline(gpu: &Gpu) -> Result<&Pipeline, String> {
 }
 
 /// Runs the stage on rows `y0..y1` of `input` (`w` pixels of `ch` 16-bit channels per
+/// row), distinguishing intentional skips from runtime GPU failures for per-frame
+/// circuit breaking.
+#[allow(clippy::too_many_arguments)]
+pub fn run_checked(
+    input: &[u16],
+    w: usize,
+    ch: usize,
+    y0: usize,
+    y1: usize,
+    recipe: &Recipe,
+    inputs: &PointInputs,
+) -> super::StageOutcome<Vec<f32>> {
+    if (y1 - y0) * w < MIN_PIXELS {
+        return super::StageOutcome::Skipped;
+    }
+    let Some(gpu) = super::acquire().filter(|g| super::stages_worthwhile(g)) else {
+        return super::StageOutcome::Skipped;
+    };
+    match run_on(&gpu, input, w, ch, y0, y1, recipe, inputs, MAX_BAND_ROWS) {
+        Ok(v) => super::StageOutcome::Done(v),
+        Err(e) => {
+            eprintln!("omastudio: GPU point stage failed, using the CPU: {e}");
+            super::StageOutcome::Failed
+        }
+    }
+}
+
+/// Runs the stage on rows `y0..y1` of `input` (`w` pixels of `ch` 16-bit channels per
 /// row) and returns interleaved RGB f32 for those rows, or None when there is no
 /// usable GPU or the job failed.
 #[allow(clippy::too_many_arguments)]
 pub fn run(input: &[u16], w: usize, ch: usize, y0: usize, y1: usize, recipe: &Recipe, inputs: &PointInputs) -> Option<Vec<f32>> {
-    if (y1 - y0) * w < MIN_PIXELS {
-        return None;
-    }
-    let gpu = super::get().filter(|g| super::stages_worthwhile(g))?;
-    match run_on(gpu, input, w, ch, y0, y1, recipe, inputs, MAX_BAND_ROWS) {
-        Ok(v) => Some(v),
-        Err(e) => {
-            eprintln!("omastudio: GPU point stage failed, using the CPU: {e}");
-            None
-        }
+    match run_checked(input, w, ch, y0, y1, recipe, inputs) {
+        super::StageOutcome::Done(v) => Some(v),
+        super::StageOutcome::Skipped | super::StageOutcome::Failed => None,
     }
 }
 
@@ -449,99 +491,143 @@ fn run_bands(
     let rows = rows.min(max_rows).min(y1 - y0).min(65535 * WG as usize);
 
     let device = &gpu.device;
-    let scope = device.push_error_scope(wgpu::ErrorFilter::Validation);
-    let oom = device.push_error_scope(wgpu::ErrorFilter::OutOfMemory);
+    let timeout = gpu.poll_timeout(crate::pipeline::interactive());
     // One spare sample in front for bands that start on an odd sample, one behind for
     // an odd count
     let (src_size, out_size, table_size) = (((rows * w * ch + 2) * 2) as u64, (rows * w * 12) as u64, (tables.len() * 4) as u64);
     let mut cache = pipeline.buffers.lock().map_err(|_| "GPU buffer lock poisoned")?;
-    if !cache.as_ref().is_some_and(|b| b.fits(src_size, out_size, table_size)) {
-        // Grow to the largest request seen, so alternating sizes don't reallocate
-        let (s, o, t) = cache.as_ref().map_or((0, 0, 0), |b| (b.src_size, b.out_size, b.table_size));
+    if cache
+        .as_ref()
+        .is_some_and(|b| b.total_bytes() > super::PREVIEW_VRAM_CAP && b.last_used.elapsed() >= super::OVERSIZED_IDLE_EVICT)
+    {
         *cache = None;
-        *cache = Some(Buffers::new(device, &pipeline.layout, (params.0.len() * 4) as u64, src_size.max(s), out_size.max(o), table_size.max(t)));
     }
-    let bufs = cache.as_ref().expect("buffers");
-    gpu.queue.write_buffer(&bufs.tables, 0, as_bytes(&tables));
 
-    let mut result = if sink.is_some() { Vec::new() } else { vec![0.0f32; (y1 - y0) * w * 3] };
-    let mut pending: Option<InFlight> = None;
-    let collect = |p: InFlight, result: &mut Vec<f32>| -> Result<(), String> {
-        let (k, by0, by1, idx, rx) = p;
-        device.poll(wgpu::PollType::Wait { submission_index: Some(idx), timeout: None }).map_err(|e| e.to_string())?;
-        rx.recv().map_err(|e| e.to_string())?.map_err(|e| e.to_string())?;
-        let len = ((by1 - by0) * w * 12) as u64;
-        {
-            let view = bufs.staging[k].get_mapped_range(0..len).map_err(|e| e.to_string())?;
-            let dst = &mut result[(by0 - y0) * w * 3..(by1 - y0) * w * 3];
-            as_bytes_mut(dst).copy_from_slice(&view);
+    let scope = device.push_error_scope(wgpu::ErrorFilter::Validation);
+    let oom = device.push_error_scope(wgpu::ErrorFilter::OutOfMemory);
+    let body = (|| -> Result<Vec<f32>, String> {
+        if !cache.as_ref().is_some_and(|b| b.fits(src_size, out_size, table_size)) {
+            // Grow to the largest request seen, so alternating sizes don't reallocate
+            let (s, o, t) = cache.as_ref().map_or((0, 0, 0), |b| (b.src_size, b.out_size, b.table_size));
+            *cache = None;
+            *cache = Some(Buffers::new(
+                device,
+                &pipeline.layout,
+                (params.0.len() * 4) as u64,
+                src_size.max(s),
+                out_size.max(o),
+                table_size.max(t),
+            ));
         }
-        bufs.staging[k].unmap();
-        Ok(())
-    };
-    for (i, by0) in (y0..y1).step_by(rows).enumerate() {
-        let by1 = (by0 + rows).min(y1);
-        let (s0, s1) = (by0 * w * ch, by1 * w * ch);
-        // Whole words: start on an even sample, the shader skips the spare one
-        let shift = s0 & 1;
-        let samples = &input[s0 - shift..s1];
-        let even = samples.len() & !1;
+        let bufs = cache.as_ref().expect("buffers");
+        gpu.queue.write_buffer(&bufs.tables, 0, as_bytes(&tables));
 
-        params.u("WIDTH", w as u32);
-        params.u("ROWS", (by1 - by0) as u32);
-        params.u("CHANNELS", ch as u32);
-        params.u("SRC_SHIFT", shift as u32);
-        // Queue writes land before the next submission and after the earlier ones,
-        // so the band in flight keeps its own parameters and samples
-        gpu.queue.write_buffer(&bufs.params, 0, as_bytes(&params.0));
-        gpu.queue.write_buffer(&bufs.src, 0, as_bytes(&samples[..even]));
-        if even < samples.len() {
-            gpu.queue.write_buffer(&bufs.src, (even * 2) as u64, as_bytes(&[samples[even] as u32]));
-        }
+        let mut result = if sink.is_some() { Vec::new() } else { vec![0.0f32; (y1 - y0) * w * 3] };
+        let mut pending: Option<InFlight<'_>> = None;
+        let collect = |mut p: InFlight<'_>, result: &mut Vec<f32>| -> Result<(), String> {
+            gpu.wait_submission(Some(p.idx), timeout)?;
+            match p.rx.recv().map_err(|e| e.to_string())? {
+                Ok(()) => {}
+                Err(e) => {
+                    p.guard.disarm();
+                    return Err(e.to_string());
+                }
+            }
+            {
+                let view = p.buf.get_mapped_range(0..p.len).map_err(|e| e.to_string())?;
+                let dst = &mut result[(p.by0 - y0) * w * 3..(p.by1 - y0) * w * 3];
+                as_bytes_mut(dst).copy_from_slice(&view);
+            }
+            p.guard.unmap_now();
+            Ok(())
+        };
+        for (i, by0) in (y0..y1).step_by(rows).enumerate() {
+            let by1 = (by0 + rows).min(y1);
+            let (s0, s1) = (by0 * w * ch, by1 * w * ch);
+            // Whole words: start on an even sample, the shader skips the spare one
+            let shift = s0 & 1;
+            let samples = &input[s0 - shift..s1];
+            let even = samples.len() & !1;
 
-        let k = i % 2;
-        let mut enc = device.create_command_encoder(&wgpu::CommandEncoderDescriptor { label: Some("point_ops") });
-        {
-            let mut pass = enc.begin_compute_pass(&wgpu::ComputePassDescriptor { label: None, timestamp_writes: None });
-            pass.set_pipeline(&pipeline.pipeline);
-            pass.set_bind_group(0, &bufs.bind, &[]);
-            pass.dispatch_workgroups((w as u32).div_ceil(WG), ((by1 - by0) as u32).div_ceil(WG), 1);
-        }
-        let out_len = ((by1 - by0) * w * 12) as u64;
-        if let Some(dst) = sink {
-            enc.copy_buffer_to_buffer(&bufs.out, 0, dst, ((by0 - y0) * w * 12) as u64, out_len);
-            gpu.queue.submit([enc.finish()]);
-            continue;
-        }
-        enc.copy_buffer_to_buffer(&bufs.out, 0, &bufs.staging[k], 0, out_len);
-        let idx = gpu.queue.submit([enc.finish()]);
+            params.u("WIDTH", w as u32);
+            params.u("ROWS", (by1 - by0) as u32);
+            params.u("CHANNELS", ch as u32);
+            params.u("SRC_SHIFT", shift as u32);
+            // Queue writes land before the next submission and after the earlier ones,
+            // so the band in flight keeps its own parameters and samples
+            gpu.queue.write_buffer(&bufs.params, 0, as_bytes(&params.0));
+            gpu.queue.write_buffer(&bufs.src, 0, as_bytes(&samples[..even]));
+            if even < samples.len() {
+                gpu.queue.write_buffer(&bufs.src, (even * 2) as u64, as_bytes(&[samples[even] as u32]));
+            }
 
-        let (tx, rx) = mpsc::channel();
-        bufs.staging[k].map_async(wgpu::MapMode::Read, 0..out_len, move |r| {
-            let _ = tx.send(r);
-        });
-        // Read the previous band back while this one runs
+            let k = i % 2;
+            let mut enc = device.create_command_encoder(&wgpu::CommandEncoderDescriptor { label: Some("point_ops") });
+            {
+                let mut pass = enc.begin_compute_pass(&wgpu::ComputePassDescriptor { label: None, timestamp_writes: None });
+                pass.set_pipeline(&pipeline.pipeline);
+                pass.set_bind_group(0, &bufs.bind, &[]);
+                pass.dispatch_workgroups((w as u32).div_ceil(WG), ((by1 - by0) as u32).div_ceil(WG), 1);
+            }
+            let out_len = ((by1 - by0) * w * 12) as u64;
+            if let Some(dst) = sink {
+                enc.copy_buffer_to_buffer(&bufs.out, 0, dst, ((by0 - y0) * w * 12) as u64, out_len);
+                gpu.queue.submit([enc.finish()]);
+                continue;
+            }
+            enc.copy_buffer_to_buffer(&bufs.out, 0, &bufs.staging[k], 0, out_len);
+            let idx = gpu.queue.submit([enc.finish()]);
+
+            let (tx, rx) = mpsc::channel();
+            bufs.staging[k].map_async(wgpu::MapMode::Read, 0..out_len, move |r| {
+                let _ = tx.send(r);
+            });
+            let next_guard = super::StagingGuard::new(&bufs.staging[k]);
+            // Read the previous band back while this one runs; if it fails, `next_guard`
+            // drops automatically and unmaps `bufs.staging[k]`.
+            if let Some(p) = pending.take() {
+                collect(p, &mut result)?;
+            }
+            pending = Some(InFlight {
+                buf: &bufs.staging[k],
+                guard: next_guard,
+                by0,
+                by1,
+                len: out_len,
+                idx,
+                rx,
+            });
+        }
         if let Some(p) = pending.take() {
             collect(p, &mut result)?;
         }
-        pending = Some((k, by0, by1, idx, rx));
-    }
-    if let Some(p) = pending.take() {
-        collect(p, &mut result)?;
-    }
-    if let Some(e) = pollster::block_on(oom.pop()) {
+        Ok(result)
+    })();
+
+    let scope_res = super::drain_scopes(oom, scope);
+    if scope_res.is_err() || body.is_err() {
         *cache = None;
-        return Err(format!("out of GPU memory: {e}"));
+        scope_res?;
+        return body;
     }
-    if let Some(e) = pollster::block_on(scope.pop()) {
+    if cache.as_ref().is_some_and(|b| b.total_bytes() > super::PREVIEW_VRAM_CAP) {
         *cache = None;
-        return Err(e.to_string());
+    } else if let Some(b) = cache.as_mut() {
+        b.last_used = std::time::Instant::now();
     }
-    Ok(result)
+    body
 }
 
-/// A band being read back: staging buffer, its rows, its submission and the map result.
-type InFlight = (usize, usize, usize, wgpu::SubmissionIndex, mpsc::Receiver<Result<(), wgpu::BufferAsyncError>>);
+/// A band being read back: staging buffer, RAII guard, its rows, submission, and map result.
+struct InFlight<'a> {
+    buf: &'a wgpu::Buffer,
+    guard: super::StagingGuard<'a>,
+    by0: usize,
+    by1: usize,
+    len: u64,
+    idx: wgpu::SubmissionIndex,
+    rx: mpsc::Receiver<Result<(), wgpu::BufferAsyncError>>,
+}
 
 /// The bytes of a slice of f32, for copying readback data straight into it.
 pub(super) fn as_bytes_mut(v: &mut [f32]) -> &mut [u8] {
@@ -667,7 +753,8 @@ mod tests {
     /// Runs only where a GPU (or, with OMASTUDIO_GPU=software, lavapipe) is available.
     #[test]
     fn gpu_matches_cpu() {
-        let Some(gpu) = super::super::get() else {
+        let _test_lock = super::super::TEST_GPU_LOCK.lock().unwrap_or_else(|e| e.into_inner());
+        let Some(gpu) = super::super::acquire() else {
             eprintln!("no GPU, skipped");
             return;
         };
@@ -681,7 +768,7 @@ mod tests {
                 let e = 2.0f32.powf(recipe.exposure + recipe.baseline_exposure);
                 let inputs = ops.gpu_inputs([wr * e, wg * e, wb * e], transfer);
                 // Bands of 13 rows, starting on odd samples with 3 channels
-                let got = run_on(gpu, &input, w, ch, 0, h, &recipe, &inputs, 13).expect("GPU point stage");
+                let got = run_on(&gpu, &input, w, ch, 0, h, &recipe, &inputs, 13).expect("GPU point stage");
                 let mut worst = 0.0f32;
                 let mut off = 0;
                 for i in 0..w * h {

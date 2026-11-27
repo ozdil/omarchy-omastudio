@@ -19,6 +19,7 @@ Fits into Omarchy 4.5: OmaStudio now follows the Omarchy shell's own theme token
 - `omastudio omarchy-plugin install|remove|status` puts the OmaStudio button into the Omarchy bar: it links the packaged widget into `~/.config/omarchy/plugins`, validates and enables it. The widget is now a real Omarchy 4.5 bar plugin (`BarWidget` and the shell's own `BarIconButton`), so its size, colours, tooltip and press feedback match the built-in widgets.
 - A desktop notification when an export or batch export finishes while OmaStudio is in the background, as an Omarchy notification card with an "Open folder" button (`notify-send` elsewhere).
 - `omastudio ipc resize <w> <h>` sets the window size, to check layouts at tiled sizes.
+- `OMASTUDIO_GPU_DEVICE` selects a specific GPU adapter by 0-based ranked index or case-insensitive name/vendor substring, and `OMASTUDIO_GPU_TIMEOUT_MS` configures bounded GPU submission poll timeouts (100–300,000 ms; defaults to 5 s interactive and 30 s batch/demosaic).
 
 ### Changed
 - Buttons, chips and toggles are drawn with the theme's `[controls]` tokens (normal, hover, focus, selected, pressed) from `shell.toml`, like the Omarchy shell: a faint fill and border, the accent in the selected label instead of a solid accent block. Menus, popups, tooltips, dialog frames and the backdrop behind dialogs use the `[menu]`, `[popups]`, `[tooltip]`, `[polkit]` tokens; Qt's own controls (scroll bars, sliders, tooltips) get the theme's palette.
@@ -41,6 +42,9 @@ Fits into Omarchy 4.5: OmaStudio now follows the Omarchy shell's own theme token
 - `SecureDir` resolves trusted existing system/XDG base prefixes (supporting immutable Linux `/home -> /var/home` and symlinked XDG roots) while preserving strict `O_NOFOLLOW` and ownership verification inside application subtrees.
 - Recipe sidecar read/write limits are aligned at 16 MiB (matching the catalog) with explicit error reporting instead of silent resets on >1 MiB brush-mask recipes.
 - Recipes for `render`, `xmp export`, `ai edit`, and MCP engine tools are passed via `--recipe -` over stdin to avoid Linux's 128 KiB single-argument limit.
+- GPU compute recovers transparently from driver resets and suspend/resume `DeviceLost` events (generation-tracked `RwLock<GpuSlot>` with `set_device_lost_callback` and exponential backoff) instead of staying permanently broken for the process lifetime; initial adapter storage-buffer gating is relaxed to `>= 4` (with per-stage checks for `local` and `demosaic`) and PCI vendor reporting adds VirtIO, Microsoft, Google, Imagination, and Moore Threads.
+- GPU demosaic, point-ops, and local compute stages now use bounded `PollType::Wait` timeouts, RAII `StagingGuard` unmapping, explicit LIFO error-scope draining, unconditional buffer-cache invalidation on failure, and a per-frame `gpu_failed` circuit breaker so a GPU timeout/OOM falls back to CPU cleanly without hanging, leaking mapped buffers, or triggering cascading retry storms.
+- Local GPU buffer caching splits `ComputeBuffers` (48 B/px with lazy F32 staging) from `DisplayBuffers` (47 B/px with 4 B/px display staging instead of 12 B/px) and evicts oversized allocations above 160 MiB after use.
 
 ### Security
 - Updated `rustix` from `1.1.5` to `1.1.6` to address `RUSTSEC-2026-0486` (`GHSA-jh2m-fhpj-3vr7`), and updated yanked `lcms2` (`6.2.0` → `6.3.0`) and `lcms2-sys` (`4.0.7` → `4.2.0`).
