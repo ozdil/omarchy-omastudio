@@ -141,6 +141,173 @@
     </message>
 </context>
 <context>
+    <name>AdjustTab</name>
+    <message>
+        <source>Blacks</source>
+        <translation>Vùng đen</translation>
+    </message>
+    <message>
+        <source>Clarity (Midtone Contrast)</source>
+        <translation>Độ rõ (tương phản tông trung tính)</translation>
+    </message>
+    <message>
+        <source>Color Chrome Effect</source>
+        <translation>Hiệu ứng Color Chrome</translation>
+    </message>
+    <message>
+        <source>Color Chrome FX Blue</source>
+        <translation>Color Chrome FX Xanh lam</translation>
+    </message>
+    <message>
+        <source>Colour grading</source>
+        <translation>Chỉnh màu</translation>
+    </message>
+    <message>
+        <source>Colour management</source>
+        <translation>Quản lý màu</translation>
+    </message>
+    <message>
+        <source>Colour mixer</source>
+        <translation>Bộ trộn màu</translation>
+    </message>
+    <message>
+        <source>Contrast</source>
+        <translation>Tương phản</translation>
+    </message>
+    <message>
+        <source>Curve Darks (Lower Mids)</source>
+        <translation>Đường cong tối (trung tính dưới)</translation>
+    </message>
+    <message>
+        <source>Curve Highlights</source>
+        <translation>Đường cong vùng sáng</translation>
+    </message>
+    <message>
+        <source>Curve Lights (Upper Mids)</source>
+        <translation>Đường cong sáng (trung tính trên)</translation>
+    </message>
+    <message>
+        <source>Curve Shadows</source>
+        <translation>Đường cong vùng tối</translation>
+    </message>
+    <message>
+        <source>Defringe (Chromatic Aberration)</source>
+        <translation>Khử viền màu (quang sai màu)</translation>
+    </message>
+    <message>
+        <source>Dehaze</source>
+        <translation>Khử sương mù</translation>
+    </message>
+    <message>
+        <source>Detail and optics</source>
+        <translation>Chi tiết và quang học</translation>
+    </message>
+    <message>
+        <source>Exposure</source>
+        <translation>Phơi sáng</translation>
+    </message>
+    <message>
+        <source>Grain</source>
+        <translation>Hạt</translation>
+    </message>
+    <message>
+        <source>Highlights</source>
+        <translation>Vùng sáng</translation>
+    </message>
+    <message>
+        <source>Horizontal</source>
+        <translation>Ngang</translation>
+    </message>
+    <message>
+        <source>Lens Distortion Correction</source>
+        <translation>Hiệu chỉnh méo ống kính</translation>
+    </message>
+    <message>
+        <source>Noise Reduction (Color)</source>
+        <translation>Giảm nhiễu (màu)</translation>
+    </message>
+    <message>
+        <source>Noise Reduction (Luma)</source>
+        <translation>Giảm nhiễu (độ chói)</translation>
+    </message>
+    <message>
+        <source>Open a photo first</source>
+        <translation>Hãy mở ảnh trước</translation>
+    </message>
+    <message>
+        <source>Presence</source>
+        <translation>Độ hiện diện</translation>
+    </message>
+    <message>
+        <source>Profile</source>
+        <translation>Hồ sơ</translation>
+    </message>
+    <message>
+        <source>Saturation</source>
+        <translation>Độ bão hòa</translation>
+    </message>
+    <message>
+        <source>Scale</source>
+        <translation>Tỷ lệ</translation>
+    </message>
+    <message>
+        <source>Shadows</source>
+        <translation>Vùng tối</translation>
+    </message>
+    <message>
+        <source>Sharpening</source>
+        <translation>Làm nét</translation>
+    </message>
+    <message>
+        <source>Temperature</source>
+        <translation>Nhiệt độ màu</translation>
+    </message>
+    <message>
+        <source>Texture</source>
+        <translation>Kết cấu</translation>
+    </message>
+    <message>
+        <source>Tint</source>
+        <translation>Sắc thái</translation>
+    </message>
+    <message>
+        <source>Tone</source>
+        <translation>Tông</translation>
+    </message>
+    <message>
+        <source>Tone curve</source>
+        <translation>Đường cong tông</translation>
+    </message>
+    <message>
+        <source>Transform</source>
+        <translation>Biến đổi</translation>
+    </message>
+    <message>
+        <source>Vertical</source>
+        <translation>Dọc</translation>
+    </message>
+    <message>
+        <source>Vertical straightens converging lines, such as buildings photographed from below. Crop afterwards to remove the empty edges.</source>
+        <translation>Dọc làm thẳng các đường hội tụ, như tòa nhà chụp từ dưới lên. Sau đó hãy cắt để bỏ các viền trống.</translation>
+    </message>
+    <message>
+        <source>Vibrance</source>
+        <translation>Độ rực</translation>
+    </message>
+    <message>
+        <source>Vignette</source>
+        <translation>Làm tối góc</translation>
+    </message>
+    <message>
+        <source>White balance</source>
+        <translation>Cân bằng trắng</translation>
+    </message>
+    <message>
+        <source>Whites</source>
+        <translation>Vùng trắng</translation>
+    </message>
+</context>
+<context>
     <name>AiAssistPanel</name>
     <message>
         <source>%1 (automatic)</source>
@@ -291,10 +458,123 @@
     </message>
 </context>
 <context>
+    <name>AiTab</name>
+    <message>
+        <source>Assistant edit applied</source>
+        <translation>Đã áp dụng chỉnh sửa của trợ lý</translation>
+    </message>
+    <message>
+        <source>Edit assistant</source>
+        <translation>Trợ lý chỉnh sửa</translation>
+    </message>
+</context>
+<context>
     <name>BoundedTextInput</name>
     <message>
         <source>Clipboard content exceeded byte limit or timed out.</source>
         <translation>Nội dung bảng nhớ tạm vượt quá giới hạn byte hoặc đã hết thời gian.</translation>
+    </message>
+</context>
+<context>
+    <name>CenterWorkspace</name>
+    <message>
+        <source>Opened %1</source>
+        <translation>Đã mở %1</translation>
+    </message>
+    <message>
+        <source>Scanning folder %1</source>
+        <translation>Đang quét thư mục %1</translation>
+    </message>
+    <message>
+        <source>Soft proof: %1</source>
+        <translation>Soft proof: %1</translation>
+    </message>
+</context>
+<context>
+    <name>CloudDialog</name>
+    <message>
+        <source>Add an account</source>
+        <translation>Thêm tài khoản</translation>
+    </message>
+    <message>
+        <source>Browse</source>
+        <translation>Duyệt</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Hủy</translation>
+    </message>
+    <message>
+        <source>Client ID</source>
+        <translation>ID ứng dụng khách</translation>
+    </message>
+    <message>
+        <source>Client secret</source>
+        <translation>Khóa bí mật ứng dụng khách</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>Đóng</translation>
+    </message>
+    <message>
+        <source>Cloud accounts</source>
+        <translation>Tài khoản đám mây</translation>
+    </message>
+    <message>
+        <source>Confirm</source>
+        <translation>Xác nhận</translation>
+    </message>
+    <message>
+        <source>Connected</source>
+        <translation>Đã kết nối</translation>
+    </message>
+    <message>
+        <source>Disconnect</source>
+        <translation>Ngắt kết nối</translation>
+    </message>
+    <message>
+        <source>Disconnecting removes the account&apos;s keys and downloaded copies from this computer. Files in the account stay as they are.</source>
+        <translation>Ngắt kết nối sẽ xóa khóa của tài khoản và các bản sao đã tải xuống khỏi máy tính này. Tệp trong tài khoản vẫn giữ nguyên.</translation>
+    </message>
+    <message>
+        <source>Enter this code on the GitHub page that opened in your browser:</source>
+        <translation>Nhập mã này trên trang GitHub vừa mở trong trình duyệt:</translation>
+    </message>
+    <message>
+        <source>Finish signing in in your browser. This window updates when you are done.</source>
+        <translation>Hoàn tất đăng nhập trong trình duyệt. Cửa sổ này sẽ cập nhật khi xong.</translation>
+    </message>
+    <message>
+        <source>Install it with: sudo pacman -S %1</source>
+        <translation>Cài đặt bằng: sudo pacman -S %1</translation>
+    </message>
+    <message>
+        <source>Needs %1</source>
+        <translation>Cần %1</translation>
+    </message>
+    <message>
+        <source>No account connected yet.</source>
+        <translation>Chưa có tài khoản nào được kết nối.</translation>
+    </message>
+    <message>
+        <source>Open the page again</source>
+        <translation>Mở lại trang</translation>
+    </message>
+    <message>
+        <source>Own Google client ID (optional)</source>
+        <translation>ID ứng dụng khách Google riêng (tùy chọn)</translation>
+    </message>
+    <message>
+        <source>Signing in to %1</source>
+        <translation>Đang đăng nhập vào %1</translation>
+    </message>
+    <message>
+        <source>The shared client rclone uses for Google Drive is being retired. With a client ID of your own from the Google Cloud Console, Google Drive keeps working. It is used the next time you connect Google Drive.</source>
+        <translation>Ứng dụng khách dùng chung mà rclone sử dụng cho Google Drive đang bị ngừng. Với ID ứng dụng khách riêng từ Google Cloud Console, Google Drive vẫn tiếp tục hoạt động. ID này được dùng vào lần kết nối Google Drive tiếp theo.</translation>
+    </message>
+    <message>
+        <source>You sign in on the service&apos;s own page in your browser. OmaStudio keeps the access keys in the system keyring and creates a folder named %1 in each account for uploads.</source>
+        <translation>Bạn đăng nhập trên chính trang của dịch vụ trong trình duyệt. OmaStudio giữ khóa truy cập trong chùm khóa của hệ thống và tạo trong mỗi tài khoản một thư mục tên %1 để tải lên.</translation>
     </message>
 </context>
 <context>
@@ -1090,23 +1370,6 @@
     </message>
 </context>
 <context>
-    <name>HistogramView</name>
-    <message>
-        <source>[S] %1%</source>
-        <comment>S: shadow clipping</comment>
-        <translation>[T] %1%</translation>
-    </message>
-    <message>
-        <source>Histogram</source>
-        <translation>Biểu đồ tần suất</translation>
-    </message>
-    <message>
-        <source>[H] %1%</source>
-        <comment>H: highlight clipping</comment>
-        <translation>[S] %1%</translation>
-    </message>
-</context>
-<context>
     <name>HistoryPanel</name>
     <message>
         <source>History</source>
@@ -1471,6 +1734,32 @@
     </message>
 </context>
 <context>
+    <name>LeftInspector</name>
+    <message>
+        <source>Analyzing...</source>
+        <translation>Đang phân tích...</translation>
+    </message>
+    <message>
+        <source>Extracting dynamic range...</source>
+        <translation>Đang trích xuất dải tương phản động...</translation>
+    </message>
+    <message>
+        <source>Suggested scene</source>
+        <translation>Cảnh được gợi ý</translation>
+    </message>
+</context>
+<context>
+    <name>LooksTab</name>
+    <message>
+        <source>LUT</source>
+        <translation>LUT</translation>
+    </message>
+    <message>
+        <source>Presets</source>
+        <translation>Cài đặt sẵn</translation>
+    </message>
+</context>
+<context>
     <name>LutSelector</name>
     <message>
         <source>Load 3D LUT</source>
@@ -1590,22 +1879,6 @@
         <translation>Chế độ cắt: tắt</translation>
     </message>
     <message>
-        <source>Analyzing...</source>
-        <translation>Đang phân tích...</translation>
-    </message>
-    <message>
-        <source>Extracting dynamic range...</source>
-        <translation>Đang trích xuất dải tương phản động...</translation>
-    </message>
-    <message>
-        <source>Opened %1</source>
-        <translation>Đã mở %1</translation>
-    </message>
-    <message>
-        <source>Scanning folder %1</source>
-        <translation>Đang quét thư mục %1</translation>
-    </message>
-    <message>
         <source>Contrast</source>
         <translation>Tương phản</translation>
     </message>
@@ -1630,28 +1903,8 @@
         <translation>Vùng đen</translation>
     </message>
     <message>
-        <source>Curve Highlights</source>
-        <translation>Đường cong vùng sáng</translation>
-    </message>
-    <message>
-        <source>Curve Lights (Upper Mids)</source>
-        <translation>Đường cong sáng (trung tính trên)</translation>
-    </message>
-    <message>
-        <source>Curve Darks (Lower Mids)</source>
-        <translation>Đường cong tối (trung tính dưới)</translation>
-    </message>
-    <message>
-        <source>Curve Shadows</source>
-        <translation>Đường cong vùng tối</translation>
-    </message>
-    <message>
         <source>Texture</source>
         <translation>Kết cấu</translation>
-    </message>
-    <message>
-        <source>Suggested scene</source>
-        <translation>Cảnh được gợi ý</translation>
     </message>
     <message>
         <source>Clarity (Midtone Contrast)</source>
@@ -1674,28 +1927,8 @@
         <translation>Làm nét</translation>
     </message>
     <message>
-        <source>Noise Reduction (Luma)</source>
-        <translation>Giảm nhiễu (độ chói)</translation>
-    </message>
-    <message>
-        <source>Noise Reduction (Color)</source>
-        <translation>Giảm nhiễu (màu)</translation>
-    </message>
-    <message>
         <source>Vignette</source>
         <translation>Làm tối góc</translation>
-    </message>
-    <message>
-        <source>Defringe (Chromatic Aberration)</source>
-        <translation>Khử viền màu (quang sai màu)</translation>
-    </message>
-    <message>
-        <source>Lens Distortion Correction</source>
-        <translation>Hiệu chỉnh méo ống kính</translation>
-    </message>
-    <message>
-        <source>Open a photo first</source>
-        <translation>Hãy mở ảnh trước</translation>
     </message>
     <message>
         <source>Version %1</source>
@@ -1822,34 +2055,6 @@
         <translation>Quét thư mục không phản hồi.</translation>
     </message>
     <message>
-        <source>Soft proof: %1</source>
-        <translation>Soft proof: %1</translation>
-    </message>
-    <message>
-        <source>Soft proof off</source>
-        <translation>Đã tắt soft proof</translation>
-    </message>
-    <message>
-        <source>Rating: ★</source>
-        <translation>Xếp hạng: ★</translation>
-    </message>
-    <message>
-        <source>Rating: ★★</source>
-        <translation>Xếp hạng: ★★</translation>
-    </message>
-    <message>
-        <source>Rating: ★★★</source>
-        <translation>Xếp hạng: ★★★</translation>
-    </message>
-    <message>
-        <source>Rating: ★★★★</source>
-        <translation>Xếp hạng: ★★★★</translation>
-    </message>
-    <message>
-        <source>Rating: ★★★★★</source>
-        <translation>Xếp hạng: ★★★★★</translation>
-    </message>
-    <message>
         <source>Flag cleared</source>
         <translation>Đã bỏ cờ</translation>
     </message>
@@ -1870,60 +2075,12 @@
         <translation>Đã loại</translation>
     </message>
     <message>
-        <source>Adjust</source>
-        <translation>Điều chỉnh</translation>
-    </message>
-    <message>
-        <source>Masks</source>
-        <translation>Mặt nạ</translation>
-    </message>
-    <message>
-        <source>Looks</source>
-        <translation>Phong cách</translation>
-    </message>
-    <message>
-        <source>AI</source>
-        <translation>AI</translation>
-    </message>
-    <message>
-        <source>Read the photo&apos;s .xmp sidecar written by another editor</source>
-        <translation>Đọc tệp .xmp do trình chỉnh sửa khác ghi</translation>
-    </message>
-    <message>
-        <source>Write the edit, rating and label to an .xmp sidecar for other editors</source>
-        <translation>Ghi chỉnh sửa, xếp hạng và nhãn vào tệp .xmp cho các trình chỉnh sửa khác</translation>
-    </message>
-    <message>
         <source>Profile</source>
         <translation>Hồ sơ</translation>
     </message>
     <message>
-        <source>Color Chrome Effect</source>
-        <translation>Hiệu ứng Color Chrome</translation>
-    </message>
-    <message>
-        <source>Color Chrome FX Blue</source>
-        <translation>Color Chrome FX Xanh lam</translation>
-    </message>
-    <message>
         <source>White balance</source>
         <translation>Cân bằng trắng</translation>
-    </message>
-    <message>
-        <source>Temperature</source>
-        <translation>Nhiệt độ màu</translation>
-    </message>
-    <message>
-        <source>Tint</source>
-        <translation>Sắc thái</translation>
-    </message>
-    <message>
-        <source>Tone</source>
-        <translation>Tông</translation>
-    </message>
-    <message>
-        <source>Presence</source>
-        <translation>Độ hiện diện</translation>
     </message>
     <message>
         <source>Tone curve</source>
@@ -1946,28 +2103,8 @@
         <translation>Biến đổi</translation>
     </message>
     <message>
-        <source>Vertical</source>
-        <translation>Dọc</translation>
-    </message>
-    <message>
-        <source>Horizontal</source>
-        <translation>Ngang</translation>
-    </message>
-    <message>
-        <source>Scale</source>
-        <translation>Tỷ lệ</translation>
-    </message>
-    <message>
-        <source>Vertical straightens converging lines, such as buildings photographed from below. Crop afterwards to remove the empty edges.</source>
-        <translation>Dọc làm thẳng các đường hội tụ, như tòa nhà chụp từ dưới lên. Sau đó hãy cắt để bỏ các viền trống.</translation>
-    </message>
-    <message>
         <source>Grain</source>
         <translation>Hạt</translation>
-    </message>
-    <message>
-        <source>Colour management</source>
-        <translation>Quản lý màu</translation>
     </message>
     <message>
         <source>Heal and clone</source>
@@ -1984,34 +2121,6 @@
     <message>
         <source>LUT</source>
         <translation>LUT</translation>
-    </message>
-    <message>
-        <source>Edit assistant</source>
-        <translation>Trợ lý chỉnh sửa</translation>
-    </message>
-    <message>
-        <source>Assistant edit applied</source>
-        <translation>Đã áp dụng chỉnh sửa của trợ lý</translation>
-    </message>
-    <message>
-        <source>Copy</source>
-        <translation>Sao chép</translation>
-    </message>
-    <message>
-        <source>Paste</source>
-        <translation>Dán</translation>
-    </message>
-    <message>
-        <source>Reset</source>
-        <translation>Đặt lại</translation>
-    </message>
-    <message>
-        <source>Import XMP</source>
-        <translation>Nhập XMP</translation>
-    </message>
-    <message>
-        <source>Write XMP</source>
-        <translation>Ghi XMP</translation>
     </message>
     <message>
         <source>Opening %1</source>
@@ -2090,6 +2199,17 @@
     <message>
         <source>no answer from the engine</source>
         <translation>không có phản hồi từ bộ máy</translation>
+    </message>
+</context>
+<context>
+    <name>MasksTab</name>
+    <message>
+        <source>Heal and clone</source>
+        <translation>Sửa và nhân bản</translation>
+    </message>
+    <message>
+        <source>Local adjustments</source>
+        <translation>Điều chỉnh cục bộ</translation>
     </message>
 </context>
 <context>
@@ -2284,6 +2404,53 @@
     </message>
 </context>
 <context>
+    <name>RightInspector</name>
+    <message>
+        <source>AI</source>
+        <translation>AI</translation>
+    </message>
+    <message>
+        <source>Adjust</source>
+        <translation>Điều chỉnh</translation>
+    </message>
+    <message>
+        <source>Copy</source>
+        <translation>Sao chép</translation>
+    </message>
+    <message>
+        <source>Import XMP</source>
+        <translation>Nhập XMP</translation>
+    </message>
+    <message>
+        <source>Looks</source>
+        <translation>Phong cách</translation>
+    </message>
+    <message>
+        <source>Masks</source>
+        <translation>Mặt nạ</translation>
+    </message>
+    <message>
+        <source>Paste</source>
+        <translation>Dán</translation>
+    </message>
+    <message>
+        <source>Read the photo&apos;s .xmp sidecar written by another editor</source>
+        <translation>Đọc tệp .xmp do trình chỉnh sửa khác ghi</translation>
+    </message>
+    <message>
+        <source>Reset</source>
+        <translation>Đặt lại</translation>
+    </message>
+    <message>
+        <source>Write XMP</source>
+        <translation>Ghi XMP</translation>
+    </message>
+    <message>
+        <source>Write the edit, rating and label to an .xmp sidecar for other editors</source>
+        <translation>Ghi chỉnh sửa, xếp hạng và nhãn vào tệp .xmp cho các trình chỉnh sửa khác</translation>
+    </message>
+</context>
+<context>
     <name>ScopesView</name>
     <message>
         <source>HIST</source>
@@ -2338,6 +2505,57 @@
     <message>
         <source>SKIN</source>
         <translation>DA</translation>
+    </message>
+</context>
+<context>
+    <name>ShortcutRouter</name>
+    <message>
+        <source>Crop mode: off</source>
+        <translation>Chế độ cắt: tắt</translation>
+    </message>
+    <message>
+        <source>Crop mode: on (C)</source>
+        <translation>Chế độ cắt: bật (C)</translation>
+    </message>
+    <message>
+        <source>Flag cleared</source>
+        <translation>Đã bỏ cờ</translation>
+    </message>
+    <message>
+        <source>Open a photo first</source>
+        <translation>Hãy mở ảnh trước</translation>
+    </message>
+    <message>
+        <source>Rating cleared</source>
+        <translation>Đã xóa xếp hạng</translation>
+    </message>
+    <message>
+        <source>Rating: ★</source>
+        <translation>Xếp hạng: ★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★</source>
+        <translation>Xếp hạng: ★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★</source>
+        <translation>Xếp hạng: ★★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★★</source>
+        <translation>Xếp hạng: ★★★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★★★</source>
+        <translation>Xếp hạng: ★★★★★</translation>
+    </message>
+    <message>
+        <source>Soft proof off</source>
+        <translation>Đã tắt soft proof</translation>
+    </message>
+    <message>
+        <source>Soft proof: %1</source>
+        <translation>Soft proof: %1</translation>
     </message>
 </context>
 <context>
@@ -2725,93 +2943,6 @@
     <message>
         <source>Drop Shadow</source>
         <translation>Đổ bóng</translation>
-    </message>
-</context>
-<context>
-    <name>CloudDialog</name>
-    <message>
-        <source>Add an account</source>
-        <translation>Thêm tài khoản</translation>
-    </message>
-    <message>
-        <source>Browse</source>
-        <translation>Duyệt</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation>Hủy</translation>
-    </message>
-    <message>
-        <source>Client ID</source>
-        <translation>ID ứng dụng khách</translation>
-    </message>
-    <message>
-        <source>Client secret</source>
-        <translation>Khóa bí mật ứng dụng khách</translation>
-    </message>
-    <message>
-        <source>Close</source>
-        <translation>Đóng</translation>
-    </message>
-    <message>
-        <source>Cloud accounts</source>
-        <translation>Tài khoản đám mây</translation>
-    </message>
-    <message>
-        <source>Confirm</source>
-        <translation>Xác nhận</translation>
-    </message>
-    <message>
-        <source>Connected</source>
-        <translation>Đã kết nối</translation>
-    </message>
-    <message>
-        <source>Disconnect</source>
-        <translation>Ngắt kết nối</translation>
-    </message>
-    <message>
-        <source>Disconnecting removes the account's keys and downloaded copies from this computer. Files in the account stay as they are.</source>
-        <translation>Ngắt kết nối sẽ xóa khóa của tài khoản và các bản sao đã tải xuống khỏi máy tính này. Tệp trong tài khoản vẫn giữ nguyên.</translation>
-    </message>
-    <message>
-        <source>Enter this code on the GitHub page that opened in your browser:</source>
-        <translation>Nhập mã này trên trang GitHub vừa mở trong trình duyệt:</translation>
-    </message>
-    <message>
-        <source>Finish signing in in your browser. This window updates when you are done.</source>
-        <translation>Hoàn tất đăng nhập trong trình duyệt. Cửa sổ này sẽ cập nhật khi xong.</translation>
-    </message>
-    <message>
-        <source>Install it with: sudo pacman -S %1</source>
-        <translation>Cài đặt bằng: sudo pacman -S %1</translation>
-    </message>
-    <message>
-        <source>Needs %1</source>
-        <translation>Cần %1</translation>
-    </message>
-    <message>
-        <source>No account connected yet.</source>
-        <translation>Chưa có tài khoản nào được kết nối.</translation>
-    </message>
-    <message>
-        <source>Open the page again</source>
-        <translation>Mở lại trang</translation>
-    </message>
-    <message>
-        <source>Own Google client ID (optional)</source>
-        <translation>ID ứng dụng khách Google riêng (tùy chọn)</translation>
-    </message>
-    <message>
-        <source>Signing in to %1</source>
-        <translation>Đang đăng nhập vào %1</translation>
-    </message>
-    <message>
-        <source>The shared client rclone uses for Google Drive is being retired. With a client ID of your own from the Google Cloud Console, Google Drive keeps working. It is used the next time you connect Google Drive.</source>
-        <translation>Ứng dụng khách dùng chung mà rclone sử dụng cho Google Drive đang bị ngừng. Với ID ứng dụng khách riêng từ Google Cloud Console, Google Drive vẫn tiếp tục hoạt động. ID này được dùng vào lần kết nối Google Drive tiếp theo.</translation>
-    </message>
-    <message>
-        <source>You sign in on the service's own page in your browser. OmaStudio keeps the access keys in the system keyring and creates a folder named %1 in each account for uploads.</source>
-        <translation>Bạn đăng nhập trên chính trang của dịch vụ trong trình duyệt. OmaStudio giữ khóa truy cập trong chùm khóa của hệ thống và tạo trong mỗi tài khoản một thư mục tên %1 để tải lên.</translation>
     </message>
 </context>
 </TS>

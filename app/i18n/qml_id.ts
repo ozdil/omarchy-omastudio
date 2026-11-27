@@ -141,6 +141,173 @@
     </message>
 </context>
 <context>
+    <name>AdjustTab</name>
+    <message>
+        <source>Blacks</source>
+        <translation>Hitam</translation>
+    </message>
+    <message>
+        <source>Clarity (Midtone Contrast)</source>
+        <translation>Kejernihan (kontras nada tengah)</translation>
+    </message>
+    <message>
+        <source>Color Chrome Effect</source>
+        <translation>Efek Color Chrome</translation>
+    </message>
+    <message>
+        <source>Color Chrome FX Blue</source>
+        <translation>Color Chrome FX Biru</translation>
+    </message>
+    <message>
+        <source>Colour grading</source>
+        <translation>Gradasi warna</translation>
+    </message>
+    <message>
+        <source>Colour management</source>
+        <translation>Manajemen warna</translation>
+    </message>
+    <message>
+        <source>Colour mixer</source>
+        <translation>Mixer warna</translation>
+    </message>
+    <message>
+        <source>Contrast</source>
+        <translation>Kontras</translation>
+    </message>
+    <message>
+        <source>Curve Darks (Lower Mids)</source>
+        <translation>Kurva gelap (nada tengah bawah)</translation>
+    </message>
+    <message>
+        <source>Curve Highlights</source>
+        <translation>Kurva sorotan</translation>
+    </message>
+    <message>
+        <source>Curve Lights (Upper Mids)</source>
+        <translation>Kurva terang (nada tengah atas)</translation>
+    </message>
+    <message>
+        <source>Curve Shadows</source>
+        <translation>Kurva bayangan</translation>
+    </message>
+    <message>
+        <source>Defringe (Chromatic Aberration)</source>
+        <translation>Hilangkan pinggiran warna (aberasi kromatik)</translation>
+    </message>
+    <message>
+        <source>Dehaze</source>
+        <translation>Hilangkan kabut</translation>
+    </message>
+    <message>
+        <source>Detail and optics</source>
+        <translation>Detail dan optik</translation>
+    </message>
+    <message>
+        <source>Exposure</source>
+        <translation>Eksposur</translation>
+    </message>
+    <message>
+        <source>Grain</source>
+        <translation>Butiran</translation>
+    </message>
+    <message>
+        <source>Highlights</source>
+        <translation>Sorotan</translation>
+    </message>
+    <message>
+        <source>Horizontal</source>
+        <translation>Horizontal</translation>
+    </message>
+    <message>
+        <source>Lens Distortion Correction</source>
+        <translation>Koreksi distorsi lensa</translation>
+    </message>
+    <message>
+        <source>Noise Reduction (Color)</source>
+        <translation>Pengurangan derau (warna)</translation>
+    </message>
+    <message>
+        <source>Noise Reduction (Luma)</source>
+        <translation>Pengurangan derau (luma)</translation>
+    </message>
+    <message>
+        <source>Open a photo first</source>
+        <translation>Buka foto terlebih dahulu</translation>
+    </message>
+    <message>
+        <source>Presence</source>
+        <translation>Kehadiran</translation>
+    </message>
+    <message>
+        <source>Profile</source>
+        <translation>Profil</translation>
+    </message>
+    <message>
+        <source>Saturation</source>
+        <translation>Saturasi</translation>
+    </message>
+    <message>
+        <source>Scale</source>
+        <translation>Skala</translation>
+    </message>
+    <message>
+        <source>Shadows</source>
+        <translation>Bayangan</translation>
+    </message>
+    <message>
+        <source>Sharpening</source>
+        <translation>Penajaman</translation>
+    </message>
+    <message>
+        <source>Temperature</source>
+        <translation>Suhu</translation>
+    </message>
+    <message>
+        <source>Texture</source>
+        <translation>Tekstur</translation>
+    </message>
+    <message>
+        <source>Tint</source>
+        <translation>Rona</translation>
+    </message>
+    <message>
+        <source>Tone</source>
+        <translation>Nada</translation>
+    </message>
+    <message>
+        <source>Tone curve</source>
+        <translation>Kurva nada</translation>
+    </message>
+    <message>
+        <source>Transform</source>
+        <translation>Transformasi</translation>
+    </message>
+    <message>
+        <source>Vertical</source>
+        <translation>Vertikal</translation>
+    </message>
+    <message>
+        <source>Vertical straightens converging lines, such as buildings photographed from below. Crop afterwards to remove the empty edges.</source>
+        <translation>Vertikal meluruskan garis yang menyempit, seperti gedung yang difoto dari bawah. Pangkas setelahnya untuk menghapus tepi kosong.</translation>
+    </message>
+    <message>
+        <source>Vibrance</source>
+        <translation>Vibransi</translation>
+    </message>
+    <message>
+        <source>Vignette</source>
+        <translation>Vinyet</translation>
+    </message>
+    <message>
+        <source>White balance</source>
+        <translation>Keseimbangan putih</translation>
+    </message>
+    <message>
+        <source>Whites</source>
+        <translation>Putih</translation>
+    </message>
+</context>
+<context>
     <name>AiAssistPanel</name>
     <message>
         <source>%1 (automatic)</source>
@@ -291,10 +458,123 @@
     </message>
 </context>
 <context>
+    <name>AiTab</name>
+    <message>
+        <source>Assistant edit applied</source>
+        <translation>Suntingan asisten diterapkan</translation>
+    </message>
+    <message>
+        <source>Edit assistant</source>
+        <translation>Asisten penyuntingan</translation>
+    </message>
+</context>
+<context>
     <name>BoundedTextInput</name>
     <message>
         <source>Clipboard content exceeded byte limit or timed out.</source>
         <translation>Isi papan klip melebihi batas byte atau waktu habis.</translation>
+    </message>
+</context>
+<context>
+    <name>CenterWorkspace</name>
+    <message>
+        <source>Opened %1</source>
+        <translation>Membuka %1</translation>
+    </message>
+    <message>
+        <source>Scanning folder %1</source>
+        <translation>Memindai folder %1</translation>
+    </message>
+    <message>
+        <source>Soft proof: %1</source>
+        <translation>Soft proof: %1</translation>
+    </message>
+</context>
+<context>
+    <name>CloudDialog</name>
+    <message>
+        <source>Add an account</source>
+        <translation>Tambah akun</translation>
+    </message>
+    <message>
+        <source>Browse</source>
+        <translation>Jelajahi</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Batal</translation>
+    </message>
+    <message>
+        <source>Client ID</source>
+        <translation>ID klien</translation>
+    </message>
+    <message>
+        <source>Client secret</source>
+        <translation>Rahasia klien</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>Tutup</translation>
+    </message>
+    <message>
+        <source>Cloud accounts</source>
+        <translation>Akun cloud</translation>
+    </message>
+    <message>
+        <source>Confirm</source>
+        <translation>Konfirmasi</translation>
+    </message>
+    <message>
+        <source>Connected</source>
+        <translation>Tersambung</translation>
+    </message>
+    <message>
+        <source>Disconnect</source>
+        <translation>Putuskan</translation>
+    </message>
+    <message>
+        <source>Disconnecting removes the account&apos;s keys and downloaded copies from this computer. Files in the account stay as they are.</source>
+        <translation>Memutuskan akun menghapus kunci akun dan salinan unduhan dari komputer ini. Berkas di akun tetap seperti semula.</translation>
+    </message>
+    <message>
+        <source>Enter this code on the GitHub page that opened in your browser:</source>
+        <translation>Masukkan kode ini di halaman GitHub yang terbuka di peramban:</translation>
+    </message>
+    <message>
+        <source>Finish signing in in your browser. This window updates when you are done.</source>
+        <translation>Selesaikan proses masuk di peramban. Jendela ini diperbarui setelah selesai.</translation>
+    </message>
+    <message>
+        <source>Install it with: sudo pacman -S %1</source>
+        <translation>Pasang dengan: sudo pacman -S %1</translation>
+    </message>
+    <message>
+        <source>Needs %1</source>
+        <translation>Memerlukan %1</translation>
+    </message>
+    <message>
+        <source>No account connected yet.</source>
+        <translation>Belum ada akun yang tersambung.</translation>
+    </message>
+    <message>
+        <source>Open the page again</source>
+        <translation>Buka halaman lagi</translation>
+    </message>
+    <message>
+        <source>Own Google client ID (optional)</source>
+        <translation>ID klien Google sendiri (opsional)</translation>
+    </message>
+    <message>
+        <source>Signing in to %1</source>
+        <translation>Masuk ke %1</translation>
+    </message>
+    <message>
+        <source>The shared client rclone uses for Google Drive is being retired. With a client ID of your own from the Google Cloud Console, Google Drive keeps working. It is used the next time you connect Google Drive.</source>
+        <translation>Klien bersama yang dipakai rclone untuk Google Drive akan dihentikan. Dengan ID klien sendiri dari Google Cloud Console, Google Drive tetap berfungsi. ID ini dipakai saat Anda menyambungkan Google Drive berikutnya.</translation>
+    </message>
+    <message>
+        <source>You sign in on the service&apos;s own page in your browser. OmaStudio keeps the access keys in the system keyring and creates a folder named %1 in each account for uploads.</source>
+        <translation>Anda masuk di halaman layanan itu sendiri, di peramban. OmaStudio menyimpan kunci akses di gantungan kunci sistem dan membuat folder bernama %1 di setiap akun untuk unggahan.</translation>
     </message>
 </context>
 <context>
@@ -1090,23 +1370,6 @@
     </message>
 </context>
 <context>
-    <name>HistogramView</name>
-    <message>
-        <source>[S] %1%</source>
-        <comment>S: shadow clipping</comment>
-        <translation>[B] %1%</translation>
-    </message>
-    <message>
-        <source>Histogram</source>
-        <translation>Histogram</translation>
-    </message>
-    <message>
-        <source>[H] %1%</source>
-        <comment>H: highlight clipping</comment>
-        <translation>[S] %1%</translation>
-    </message>
-</context>
-<context>
     <name>HistoryPanel</name>
     <message>
         <source>History</source>
@@ -1471,6 +1734,32 @@
     </message>
 </context>
 <context>
+    <name>LeftInspector</name>
+    <message>
+        <source>Analyzing...</source>
+        <translation>Menganalisis...</translation>
+    </message>
+    <message>
+        <source>Extracting dynamic range...</source>
+        <translation>Mengekstrak rentang dinamis...</translation>
+    </message>
+    <message>
+        <source>Suggested scene</source>
+        <translation>Adegan yang disarankan</translation>
+    </message>
+</context>
+<context>
+    <name>LooksTab</name>
+    <message>
+        <source>LUT</source>
+        <translation>LUT</translation>
+    </message>
+    <message>
+        <source>Presets</source>
+        <translation>Preset</translation>
+    </message>
+</context>
+<context>
     <name>LutSelector</name>
     <message>
         <source>Load 3D LUT</source>
@@ -1590,22 +1879,6 @@
         <translation>Mode pangkas: mati</translation>
     </message>
     <message>
-        <source>Analyzing...</source>
-        <translation>Menganalisis...</translation>
-    </message>
-    <message>
-        <source>Extracting dynamic range...</source>
-        <translation>Mengekstrak rentang dinamis...</translation>
-    </message>
-    <message>
-        <source>Opened %1</source>
-        <translation>Membuka %1</translation>
-    </message>
-    <message>
-        <source>Scanning folder %1</source>
-        <translation>Memindai folder %1</translation>
-    </message>
-    <message>
         <source>Contrast</source>
         <translation>Kontras</translation>
     </message>
@@ -1630,28 +1903,8 @@
         <translation>Hitam</translation>
     </message>
     <message>
-        <source>Curve Highlights</source>
-        <translation>Kurva sorotan</translation>
-    </message>
-    <message>
-        <source>Curve Lights (Upper Mids)</source>
-        <translation>Kurva terang (nada tengah atas)</translation>
-    </message>
-    <message>
-        <source>Curve Darks (Lower Mids)</source>
-        <translation>Kurva gelap (nada tengah bawah)</translation>
-    </message>
-    <message>
-        <source>Curve Shadows</source>
-        <translation>Kurva bayangan</translation>
-    </message>
-    <message>
         <source>Texture</source>
         <translation>Tekstur</translation>
-    </message>
-    <message>
-        <source>Suggested scene</source>
-        <translation>Adegan yang disarankan</translation>
     </message>
     <message>
         <source>Clarity (Midtone Contrast)</source>
@@ -1674,28 +1927,8 @@
         <translation>Penajaman</translation>
     </message>
     <message>
-        <source>Noise Reduction (Luma)</source>
-        <translation>Pengurangan derau (luma)</translation>
-    </message>
-    <message>
-        <source>Noise Reduction (Color)</source>
-        <translation>Pengurangan derau (warna)</translation>
-    </message>
-    <message>
         <source>Vignette</source>
         <translation>Vinyet</translation>
-    </message>
-    <message>
-        <source>Defringe (Chromatic Aberration)</source>
-        <translation>Hilangkan pinggiran warna (aberasi kromatik)</translation>
-    </message>
-    <message>
-        <source>Lens Distortion Correction</source>
-        <translation>Koreksi distorsi lensa</translation>
-    </message>
-    <message>
-        <source>Open a photo first</source>
-        <translation>Buka foto terlebih dahulu</translation>
     </message>
     <message>
         <source>Version %1</source>
@@ -1822,34 +2055,6 @@
         <translation>Pemindaian folder tidak merespons.</translation>
     </message>
     <message>
-        <source>Soft proof: %1</source>
-        <translation>Soft proof: %1</translation>
-    </message>
-    <message>
-        <source>Soft proof off</source>
-        <translation>Soft proof mati</translation>
-    </message>
-    <message>
-        <source>Rating: ★</source>
-        <translation>Peringkat: ★</translation>
-    </message>
-    <message>
-        <source>Rating: ★★</source>
-        <translation>Peringkat: ★★</translation>
-    </message>
-    <message>
-        <source>Rating: ★★★</source>
-        <translation>Peringkat: ★★★</translation>
-    </message>
-    <message>
-        <source>Rating: ★★★★</source>
-        <translation>Peringkat: ★★★★</translation>
-    </message>
-    <message>
-        <source>Rating: ★★★★★</source>
-        <translation>Peringkat: ★★★★★</translation>
-    </message>
-    <message>
         <source>Flag cleared</source>
         <translation>Tanda dihapus</translation>
     </message>
@@ -1870,60 +2075,12 @@
         <translation>Ditolak</translation>
     </message>
     <message>
-        <source>Adjust</source>
-        <translation>Sesuaikan</translation>
-    </message>
-    <message>
-        <source>Masks</source>
-        <translation>Masker</translation>
-    </message>
-    <message>
-        <source>Looks</source>
-        <translation>Gaya</translation>
-    </message>
-    <message>
-        <source>AI</source>
-        <translation>AI</translation>
-    </message>
-    <message>
-        <source>Read the photo&apos;s .xmp sidecar written by another editor</source>
-        <translation>Baca berkas .xmp yang ditulis editor lain</translation>
-    </message>
-    <message>
-        <source>Write the edit, rating and label to an .xmp sidecar for other editors</source>
-        <translation>Tulis suntingan, peringkat, dan label ke berkas .xmp untuk editor lain</translation>
-    </message>
-    <message>
         <source>Profile</source>
         <translation>Profil</translation>
     </message>
     <message>
-        <source>Color Chrome Effect</source>
-        <translation>Efek Color Chrome</translation>
-    </message>
-    <message>
-        <source>Color Chrome FX Blue</source>
-        <translation>Color Chrome FX Biru</translation>
-    </message>
-    <message>
         <source>White balance</source>
         <translation>Keseimbangan putih</translation>
-    </message>
-    <message>
-        <source>Temperature</source>
-        <translation>Suhu</translation>
-    </message>
-    <message>
-        <source>Tint</source>
-        <translation>Rona</translation>
-    </message>
-    <message>
-        <source>Tone</source>
-        <translation>Nada</translation>
-    </message>
-    <message>
-        <source>Presence</source>
-        <translation>Kehadiran</translation>
     </message>
     <message>
         <source>Tone curve</source>
@@ -1946,28 +2103,8 @@
         <translation>Transformasi</translation>
     </message>
     <message>
-        <source>Vertical</source>
-        <translation>Vertikal</translation>
-    </message>
-    <message>
-        <source>Horizontal</source>
-        <translation>Horizontal</translation>
-    </message>
-    <message>
-        <source>Scale</source>
-        <translation>Skala</translation>
-    </message>
-    <message>
-        <source>Vertical straightens converging lines, such as buildings photographed from below. Crop afterwards to remove the empty edges.</source>
-        <translation>Vertikal meluruskan garis yang menyempit, seperti gedung yang difoto dari bawah. Pangkas setelahnya untuk menghapus tepi kosong.</translation>
-    </message>
-    <message>
         <source>Grain</source>
         <translation>Butiran</translation>
-    </message>
-    <message>
-        <source>Colour management</source>
-        <translation>Manajemen warna</translation>
     </message>
     <message>
         <source>Heal and clone</source>
@@ -1984,34 +2121,6 @@
     <message>
         <source>LUT</source>
         <translation>LUT</translation>
-    </message>
-    <message>
-        <source>Edit assistant</source>
-        <translation>Asisten penyuntingan</translation>
-    </message>
-    <message>
-        <source>Assistant edit applied</source>
-        <translation>Suntingan asisten diterapkan</translation>
-    </message>
-    <message>
-        <source>Copy</source>
-        <translation>Salin</translation>
-    </message>
-    <message>
-        <source>Paste</source>
-        <translation>Tempel</translation>
-    </message>
-    <message>
-        <source>Reset</source>
-        <translation>Atur ulang</translation>
-    </message>
-    <message>
-        <source>Import XMP</source>
-        <translation>Impor XMP</translation>
-    </message>
-    <message>
-        <source>Write XMP</source>
-        <translation>Tulis XMP</translation>
     </message>
     <message>
         <source>Opening %1</source>
@@ -2090,6 +2199,17 @@
     <message>
         <source>no answer from the engine</source>
         <translation>tidak ada jawaban dari mesin</translation>
+    </message>
+</context>
+<context>
+    <name>MasksTab</name>
+    <message>
+        <source>Heal and clone</source>
+        <translation>Perbaiki dan kloning</translation>
+    </message>
+    <message>
+        <source>Local adjustments</source>
+        <translation>Penyesuaian lokal</translation>
     </message>
 </context>
 <context>
@@ -2284,6 +2404,53 @@
     </message>
 </context>
 <context>
+    <name>RightInspector</name>
+    <message>
+        <source>AI</source>
+        <translation>AI</translation>
+    </message>
+    <message>
+        <source>Adjust</source>
+        <translation>Sesuaikan</translation>
+    </message>
+    <message>
+        <source>Copy</source>
+        <translation>Salin</translation>
+    </message>
+    <message>
+        <source>Import XMP</source>
+        <translation>Impor XMP</translation>
+    </message>
+    <message>
+        <source>Looks</source>
+        <translation>Gaya</translation>
+    </message>
+    <message>
+        <source>Masks</source>
+        <translation>Masker</translation>
+    </message>
+    <message>
+        <source>Paste</source>
+        <translation>Tempel</translation>
+    </message>
+    <message>
+        <source>Read the photo&apos;s .xmp sidecar written by another editor</source>
+        <translation>Baca berkas .xmp yang ditulis editor lain</translation>
+    </message>
+    <message>
+        <source>Reset</source>
+        <translation>Atur ulang</translation>
+    </message>
+    <message>
+        <source>Write XMP</source>
+        <translation>Tulis XMP</translation>
+    </message>
+    <message>
+        <source>Write the edit, rating and label to an .xmp sidecar for other editors</source>
+        <translation>Tulis suntingan, peringkat, dan label ke berkas .xmp untuk editor lain</translation>
+    </message>
+</context>
+<context>
     <name>ScopesView</name>
     <message>
         <source>HIST</source>
@@ -2338,6 +2505,57 @@
     <message>
         <source>SKIN</source>
         <translation>KULIT</translation>
+    </message>
+</context>
+<context>
+    <name>ShortcutRouter</name>
+    <message>
+        <source>Crop mode: off</source>
+        <translation>Mode pangkas: mati</translation>
+    </message>
+    <message>
+        <source>Crop mode: on (C)</source>
+        <translation>Mode pangkas: aktif (C)</translation>
+    </message>
+    <message>
+        <source>Flag cleared</source>
+        <translation>Tanda dihapus</translation>
+    </message>
+    <message>
+        <source>Open a photo first</source>
+        <translation>Buka foto terlebih dahulu</translation>
+    </message>
+    <message>
+        <source>Rating cleared</source>
+        <translation>Peringkat dihapus</translation>
+    </message>
+    <message>
+        <source>Rating: ★</source>
+        <translation>Peringkat: ★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★</source>
+        <translation>Peringkat: ★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★</source>
+        <translation>Peringkat: ★★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★★</source>
+        <translation>Peringkat: ★★★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★★★</source>
+        <translation>Peringkat: ★★★★★</translation>
+    </message>
+    <message>
+        <source>Soft proof off</source>
+        <translation>Soft proof mati</translation>
+    </message>
+    <message>
+        <source>Soft proof: %1</source>
+        <translation>Soft proof: %1</translation>
     </message>
 </context>
 <context>
@@ -2725,93 +2943,6 @@
     <message>
         <source>Drop Shadow</source>
         <translation>Bayangan jatuh</translation>
-    </message>
-</context>
-<context>
-    <name>CloudDialog</name>
-    <message>
-        <source>Add an account</source>
-        <translation>Tambah akun</translation>
-    </message>
-    <message>
-        <source>Browse</source>
-        <translation>Jelajahi</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation>Batal</translation>
-    </message>
-    <message>
-        <source>Client ID</source>
-        <translation>ID klien</translation>
-    </message>
-    <message>
-        <source>Client secret</source>
-        <translation>Rahasia klien</translation>
-    </message>
-    <message>
-        <source>Close</source>
-        <translation>Tutup</translation>
-    </message>
-    <message>
-        <source>Cloud accounts</source>
-        <translation>Akun cloud</translation>
-    </message>
-    <message>
-        <source>Confirm</source>
-        <translation>Konfirmasi</translation>
-    </message>
-    <message>
-        <source>Connected</source>
-        <translation>Tersambung</translation>
-    </message>
-    <message>
-        <source>Disconnect</source>
-        <translation>Putuskan</translation>
-    </message>
-    <message>
-        <source>Disconnecting removes the account's keys and downloaded copies from this computer. Files in the account stay as they are.</source>
-        <translation>Memutuskan akun menghapus kunci akun dan salinan unduhan dari komputer ini. Berkas di akun tetap seperti semula.</translation>
-    </message>
-    <message>
-        <source>Enter this code on the GitHub page that opened in your browser:</source>
-        <translation>Masukkan kode ini di halaman GitHub yang terbuka di peramban:</translation>
-    </message>
-    <message>
-        <source>Finish signing in in your browser. This window updates when you are done.</source>
-        <translation>Selesaikan proses masuk di peramban. Jendela ini diperbarui setelah selesai.</translation>
-    </message>
-    <message>
-        <source>Install it with: sudo pacman -S %1</source>
-        <translation>Pasang dengan: sudo pacman -S %1</translation>
-    </message>
-    <message>
-        <source>Needs %1</source>
-        <translation>Memerlukan %1</translation>
-    </message>
-    <message>
-        <source>No account connected yet.</source>
-        <translation>Belum ada akun yang tersambung.</translation>
-    </message>
-    <message>
-        <source>Open the page again</source>
-        <translation>Buka halaman lagi</translation>
-    </message>
-    <message>
-        <source>Own Google client ID (optional)</source>
-        <translation>ID klien Google sendiri (opsional)</translation>
-    </message>
-    <message>
-        <source>Signing in to %1</source>
-        <translation>Masuk ke %1</translation>
-    </message>
-    <message>
-        <source>The shared client rclone uses for Google Drive is being retired. With a client ID of your own from the Google Cloud Console, Google Drive keeps working. It is used the next time you connect Google Drive.</source>
-        <translation>Klien bersama yang dipakai rclone untuk Google Drive akan dihentikan. Dengan ID klien sendiri dari Google Cloud Console, Google Drive tetap berfungsi. ID ini dipakai saat Anda menyambungkan Google Drive berikutnya.</translation>
-    </message>
-    <message>
-        <source>You sign in on the service's own page in your browser. OmaStudio keeps the access keys in the system keyring and creates a folder named %1 in each account for uploads.</source>
-        <translation>Anda masuk di halaman layanan itu sendiri, di peramban. OmaStudio menyimpan kunci akses di gantungan kunci sistem dan membuat folder bernama %1 di setiap akun untuk unggahan.</translation>
     </message>
 </context>
 </TS>

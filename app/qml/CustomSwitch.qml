@@ -11,6 +11,7 @@ Item {
     Layout.alignment: Qt.AlignVCenter
 
     property bool checked: false
+    property string accessibleName: ""
     property color activeColor: Theme.accent
     property color inactiveColor: Theme.border
     property color thumbColor: "#ffffff"
@@ -47,5 +48,12 @@ Item {
         onClicked: {
             root.toggled(!root.checked);
         }
+    }
+    KeyFocus {
+        name: root.accessibleName
+        role: Accessible.CheckBox
+        checkable: true
+        checked: root.checked
+        onActivated: root.toggled(!root.checked)
     }
 }

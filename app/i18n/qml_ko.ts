@@ -141,6 +141,173 @@
     </message>
 </context>
 <context>
+    <name>AdjustTab</name>
+    <message>
+        <source>Blacks</source>
+        <translation>검정 계열</translation>
+    </message>
+    <message>
+        <source>Clarity (Midtone Contrast)</source>
+        <translation>부분 대비 (중간톤 대비)</translation>
+    </message>
+    <message>
+        <source>Color Chrome Effect</source>
+        <translation>컬러 크롬 효과</translation>
+    </message>
+    <message>
+        <source>Color Chrome FX Blue</source>
+        <translation>컬러 크롬 FX 블루</translation>
+    </message>
+    <message>
+        <source>Colour grading</source>
+        <translation>색 보정</translation>
+    </message>
+    <message>
+        <source>Colour management</source>
+        <translation>색상 관리</translation>
+    </message>
+    <message>
+        <source>Colour mixer</source>
+        <translation>색상 혼합</translation>
+    </message>
+    <message>
+        <source>Contrast</source>
+        <translation>대비</translation>
+    </message>
+    <message>
+        <source>Curve Darks (Lower Mids)</source>
+        <translation>커브: 어두운 영역 (하위 중간톤)</translation>
+    </message>
+    <message>
+        <source>Curve Highlights</source>
+        <translation>커브: 하이라이트</translation>
+    </message>
+    <message>
+        <source>Curve Lights (Upper Mids)</source>
+        <translation>커브: 밝은 영역 (상위 중간톤)</translation>
+    </message>
+    <message>
+        <source>Curve Shadows</source>
+        <translation>커브: 섀도</translation>
+    </message>
+    <message>
+        <source>Defringe (Chromatic Aberration)</source>
+        <translation>프린지 제거 (색수차)</translation>
+    </message>
+    <message>
+        <source>Dehaze</source>
+        <translation>디헤이즈</translation>
+    </message>
+    <message>
+        <source>Detail and optics</source>
+        <translation>디테일 및 광학</translation>
+    </message>
+    <message>
+        <source>Exposure</source>
+        <translation>노출</translation>
+    </message>
+    <message>
+        <source>Grain</source>
+        <translation>그레인</translation>
+    </message>
+    <message>
+        <source>Highlights</source>
+        <translation>하이라이트</translation>
+    </message>
+    <message>
+        <source>Horizontal</source>
+        <translation>가로</translation>
+    </message>
+    <message>
+        <source>Lens Distortion Correction</source>
+        <translation>렌즈 왜곡 보정</translation>
+    </message>
+    <message>
+        <source>Noise Reduction (Color)</source>
+        <translation>노이즈 감소 (색상)</translation>
+    </message>
+    <message>
+        <source>Noise Reduction (Luma)</source>
+        <translation>노이즈 감소 (휘도)</translation>
+    </message>
+    <message>
+        <source>Open a photo first</source>
+        <translation>먼저 사진을 여세요</translation>
+    </message>
+    <message>
+        <source>Presence</source>
+        <translation>존재감</translation>
+    </message>
+    <message>
+        <source>Profile</source>
+        <translation>프로필</translation>
+    </message>
+    <message>
+        <source>Saturation</source>
+        <translation>채도</translation>
+    </message>
+    <message>
+        <source>Scale</source>
+        <translation>배율</translation>
+    </message>
+    <message>
+        <source>Shadows</source>
+        <translation>섀도</translation>
+    </message>
+    <message>
+        <source>Sharpening</source>
+        <translation>선명하게</translation>
+    </message>
+    <message>
+        <source>Temperature</source>
+        <translation>색온도</translation>
+    </message>
+    <message>
+        <source>Texture</source>
+        <translation>텍스처</translation>
+    </message>
+    <message>
+        <source>Tint</source>
+        <translation>색조</translation>
+    </message>
+    <message>
+        <source>Tone</source>
+        <translation>톤</translation>
+    </message>
+    <message>
+        <source>Tone curve</source>
+        <translation>톤 곡선</translation>
+    </message>
+    <message>
+        <source>Transform</source>
+        <translation>변형</translation>
+    </message>
+    <message>
+        <source>Vertical</source>
+        <translation>세로</translation>
+    </message>
+    <message>
+        <source>Vertical straightens converging lines, such as buildings photographed from below. Crop afterwards to remove the empty edges.</source>
+        <translation>세로는 아래에서 촬영한 건물처럼 모이는 선을 곧게 폅니다. 그다음 자르기로 빈 가장자리를 없애세요.</translation>
+    </message>
+    <message>
+        <source>Vibrance</source>
+        <translation>생동감</translation>
+    </message>
+    <message>
+        <source>Vignette</source>
+        <translation>비네팅</translation>
+    </message>
+    <message>
+        <source>White balance</source>
+        <translation>화이트 밸런스</translation>
+    </message>
+    <message>
+        <source>Whites</source>
+        <translation>흰색 계열</translation>
+    </message>
+</context>
+<context>
     <name>AiAssistPanel</name>
     <message>
         <source>%1 (automatic)</source>
@@ -291,10 +458,123 @@
     </message>
 </context>
 <context>
+    <name>AiTab</name>
+    <message>
+        <source>Assistant edit applied</source>
+        <translation>도우미 편집 적용됨</translation>
+    </message>
+    <message>
+        <source>Edit assistant</source>
+        <translation>편집 도우미</translation>
+    </message>
+</context>
+<context>
     <name>BoundedTextInput</name>
     <message>
         <source>Clipboard content exceeded byte limit or timed out.</source>
         <translation>클립보드 내용이 바이트 한도를 초과했거나 시간이 초과되었습니다.</translation>
+    </message>
+</context>
+<context>
+    <name>CenterWorkspace</name>
+    <message>
+        <source>Opened %1</source>
+        <translation>%1을(를) 열었습니다</translation>
+    </message>
+    <message>
+        <source>Scanning folder %1</source>
+        <translation>%1 폴더 검색 중</translation>
+    </message>
+    <message>
+        <source>Soft proof: %1</source>
+        <translation>소프트 프루프: %1</translation>
+    </message>
+</context>
+<context>
+    <name>CloudDialog</name>
+    <message>
+        <source>Add an account</source>
+        <translation>계정 추가</translation>
+    </message>
+    <message>
+        <source>Browse</source>
+        <translation>찾아보기</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>취소</translation>
+    </message>
+    <message>
+        <source>Client ID</source>
+        <translation>클라이언트 ID</translation>
+    </message>
+    <message>
+        <source>Client secret</source>
+        <translation>클라이언트 보안 비밀</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>닫기</translation>
+    </message>
+    <message>
+        <source>Cloud accounts</source>
+        <translation>클라우드 계정</translation>
+    </message>
+    <message>
+        <source>Confirm</source>
+        <translation>확인</translation>
+    </message>
+    <message>
+        <source>Connected</source>
+        <translation>연결됨</translation>
+    </message>
+    <message>
+        <source>Disconnect</source>
+        <translation>연결 해제</translation>
+    </message>
+    <message>
+        <source>Disconnecting removes the account&apos;s keys and downloaded copies from this computer. Files in the account stay as they are.</source>
+        <translation>연결을 해제하면 이 컴퓨터에서 계정 키와 다운로드한 사본이 삭제됩니다. 계정의 파일은 그대로 유지됩니다.</translation>
+    </message>
+    <message>
+        <source>Enter this code on the GitHub page that opened in your browser:</source>
+        <translation>브라우저에 열린 GitHub 페이지에 이 코드를 입력하세요:</translation>
+    </message>
+    <message>
+        <source>Finish signing in in your browser. This window updates when you are done.</source>
+        <translation>브라우저에서 로그인을 완료하세요. 완료되면 이 창이 업데이트됩니다.</translation>
+    </message>
+    <message>
+        <source>Install it with: sudo pacman -S %1</source>
+        <translation>설치: sudo pacman -S %1</translation>
+    </message>
+    <message>
+        <source>Needs %1</source>
+        <translation>%1 필요</translation>
+    </message>
+    <message>
+        <source>No account connected yet.</source>
+        <translation>아직 연결된 계정이 없습니다.</translation>
+    </message>
+    <message>
+        <source>Open the page again</source>
+        <translation>페이지 다시 열기</translation>
+    </message>
+    <message>
+        <source>Own Google client ID (optional)</source>
+        <translation>자체 Google 클라이언트 ID(선택 사항)</translation>
+    </message>
+    <message>
+        <source>Signing in to %1</source>
+        <translation>%1에 로그인하는 중</translation>
+    </message>
+    <message>
+        <source>The shared client rclone uses for Google Drive is being retired. With a client ID of your own from the Google Cloud Console, Google Drive keeps working. It is used the next time you connect Google Drive.</source>
+        <translation>rclone이 Google Drive에 사용하는 공유 클라이언트가 폐지됩니다. Google Cloud Console에서 발급한 자체 클라이언트 ID가 있으면 Google Drive를 계속 사용할 수 있습니다. 다음에 Google Drive를 연결할 때 사용됩니다.</translation>
+    </message>
+    <message>
+        <source>You sign in on the service&apos;s own page in your browser. OmaStudio keeps the access keys in the system keyring and creates a folder named %1 in each account for uploads.</source>
+        <translation>로그인은 브라우저에서 서비스 자체 페이지를 통해 이루어집니다. OmaStudio는 액세스 키를 시스템 키링에 보관하고 업로드용으로 각 계정에 %1 폴더를 만듭니다.</translation>
     </message>
 </context>
 <context>
@@ -1090,23 +1370,6 @@
     </message>
 </context>
 <context>
-    <name>HistogramView</name>
-    <message>
-        <source>[S] %1%</source>
-        <comment>S: shadow clipping</comment>
-        <translation>[암] %1%</translation>
-    </message>
-    <message>
-        <source>Histogram</source>
-        <translation>히스토그램</translation>
-    </message>
-    <message>
-        <source>[H] %1%</source>
-        <comment>H: highlight clipping</comment>
-        <translation>[명] %1%</translation>
-    </message>
-</context>
-<context>
     <name>HistoryPanel</name>
     <message>
         <source>History</source>
@@ -1471,6 +1734,32 @@
     </message>
 </context>
 <context>
+    <name>LeftInspector</name>
+    <message>
+        <source>Analyzing...</source>
+        <translation>분석 중...</translation>
+    </message>
+    <message>
+        <source>Extracting dynamic range...</source>
+        <translation>다이내믹 레인지 추출 중...</translation>
+    </message>
+    <message>
+        <source>Suggested scene</source>
+        <translation>추천 장면</translation>
+    </message>
+</context>
+<context>
+    <name>LooksTab</name>
+    <message>
+        <source>LUT</source>
+        <translation>LUT</translation>
+    </message>
+    <message>
+        <source>Presets</source>
+        <translation>사전 설정</translation>
+    </message>
+</context>
+<context>
     <name>LutSelector</name>
     <message>
         <source>Load 3D LUT</source>
@@ -1590,22 +1879,6 @@
         <translation>자르기 모드: 꺼짐</translation>
     </message>
     <message>
-        <source>Analyzing...</source>
-        <translation>분석 중...</translation>
-    </message>
-    <message>
-        <source>Extracting dynamic range...</source>
-        <translation>다이내믹 레인지 추출 중...</translation>
-    </message>
-    <message>
-        <source>Opened %1</source>
-        <translation>%1을(를) 열었습니다</translation>
-    </message>
-    <message>
-        <source>Scanning folder %1</source>
-        <translation>%1 폴더 검색 중</translation>
-    </message>
-    <message>
         <source>Contrast</source>
         <translation>대비</translation>
     </message>
@@ -1630,28 +1903,8 @@
         <translation>검정 계열</translation>
     </message>
     <message>
-        <source>Curve Highlights</source>
-        <translation>커브: 하이라이트</translation>
-    </message>
-    <message>
-        <source>Curve Lights (Upper Mids)</source>
-        <translation>커브: 밝은 영역 (상위 중간톤)</translation>
-    </message>
-    <message>
-        <source>Curve Darks (Lower Mids)</source>
-        <translation>커브: 어두운 영역 (하위 중간톤)</translation>
-    </message>
-    <message>
-        <source>Curve Shadows</source>
-        <translation>커브: 섀도</translation>
-    </message>
-    <message>
         <source>Texture</source>
         <translation>텍스처</translation>
-    </message>
-    <message>
-        <source>Suggested scene</source>
-        <translation>추천 장면</translation>
     </message>
     <message>
         <source>Clarity (Midtone Contrast)</source>
@@ -1674,28 +1927,8 @@
         <translation>선명하게</translation>
     </message>
     <message>
-        <source>Noise Reduction (Luma)</source>
-        <translation>노이즈 감소 (휘도)</translation>
-    </message>
-    <message>
-        <source>Noise Reduction (Color)</source>
-        <translation>노이즈 감소 (색상)</translation>
-    </message>
-    <message>
         <source>Vignette</source>
         <translation>비네팅</translation>
-    </message>
-    <message>
-        <source>Defringe (Chromatic Aberration)</source>
-        <translation>프린지 제거 (색수차)</translation>
-    </message>
-    <message>
-        <source>Lens Distortion Correction</source>
-        <translation>렌즈 왜곡 보정</translation>
-    </message>
-    <message>
-        <source>Open a photo first</source>
-        <translation>먼저 사진을 여세요</translation>
     </message>
     <message>
         <source>Version %1</source>
@@ -1822,34 +2055,6 @@
         <translation>폴더 검색이 응답하지 않았습니다.</translation>
     </message>
     <message>
-        <source>Soft proof: %1</source>
-        <translation>소프트 프루프: %1</translation>
-    </message>
-    <message>
-        <source>Soft proof off</source>
-        <translation>소프트 프루프 끔</translation>
-    </message>
-    <message>
-        <source>Rating: ★</source>
-        <translation>별점: ★</translation>
-    </message>
-    <message>
-        <source>Rating: ★★</source>
-        <translation>별점: ★★</translation>
-    </message>
-    <message>
-        <source>Rating: ★★★</source>
-        <translation>별점: ★★★</translation>
-    </message>
-    <message>
-        <source>Rating: ★★★★</source>
-        <translation>별점: ★★★★</translation>
-    </message>
-    <message>
-        <source>Rating: ★★★★★</source>
-        <translation>별점: ★★★★★</translation>
-    </message>
-    <message>
         <source>Flag cleared</source>
         <translation>플래그 해제됨</translation>
     </message>
@@ -1870,60 +2075,12 @@
         <translation>거부됨</translation>
     </message>
     <message>
-        <source>Adjust</source>
-        <translation>조정</translation>
-    </message>
-    <message>
-        <source>Masks</source>
-        <translation>마스크</translation>
-    </message>
-    <message>
-        <source>Looks</source>
-        <translation>룩</translation>
-    </message>
-    <message>
-        <source>AI</source>
-        <translation>AI 기능</translation>
-    </message>
-    <message>
-        <source>Read the photo&apos;s .xmp sidecar written by another editor</source>
-        <translation>다른 편집기가 쓴 .xmp 파일 읽기</translation>
-    </message>
-    <message>
-        <source>Write the edit, rating and label to an .xmp sidecar for other editors</source>
-        <translation>편집, 등급, 레이블을 다른 편집기용 .xmp 파일에 쓰기</translation>
-    </message>
-    <message>
         <source>Profile</source>
         <translation>프로필</translation>
     </message>
     <message>
-        <source>Color Chrome Effect</source>
-        <translation>컬러 크롬 효과</translation>
-    </message>
-    <message>
-        <source>Color Chrome FX Blue</source>
-        <translation>컬러 크롬 FX 블루</translation>
-    </message>
-    <message>
         <source>White balance</source>
         <translation>화이트 밸런스</translation>
-    </message>
-    <message>
-        <source>Temperature</source>
-        <translation>색온도</translation>
-    </message>
-    <message>
-        <source>Tint</source>
-        <translation>색조</translation>
-    </message>
-    <message>
-        <source>Tone</source>
-        <translation>톤</translation>
-    </message>
-    <message>
-        <source>Presence</source>
-        <translation>존재감</translation>
     </message>
     <message>
         <source>Tone curve</source>
@@ -1946,28 +2103,8 @@
         <translation>변형</translation>
     </message>
     <message>
-        <source>Vertical</source>
-        <translation>세로</translation>
-    </message>
-    <message>
-        <source>Horizontal</source>
-        <translation>가로</translation>
-    </message>
-    <message>
-        <source>Scale</source>
-        <translation>배율</translation>
-    </message>
-    <message>
-        <source>Vertical straightens converging lines, such as buildings photographed from below. Crop afterwards to remove the empty edges.</source>
-        <translation>세로는 아래에서 촬영한 건물처럼 모이는 선을 곧게 폅니다. 그다음 자르기로 빈 가장자리를 없애세요.</translation>
-    </message>
-    <message>
         <source>Grain</source>
         <translation>그레인</translation>
-    </message>
-    <message>
-        <source>Colour management</source>
-        <translation>색상 관리</translation>
     </message>
     <message>
         <source>Heal and clone</source>
@@ -1984,34 +2121,6 @@
     <message>
         <source>LUT</source>
         <translation>LUT</translation>
-    </message>
-    <message>
-        <source>Edit assistant</source>
-        <translation>편집 도우미</translation>
-    </message>
-    <message>
-        <source>Assistant edit applied</source>
-        <translation>도우미 편집 적용됨</translation>
-    </message>
-    <message>
-        <source>Copy</source>
-        <translation>복사</translation>
-    </message>
-    <message>
-        <source>Paste</source>
-        <translation>붙여넣기</translation>
-    </message>
-    <message>
-        <source>Reset</source>
-        <translation>초기화</translation>
-    </message>
-    <message>
-        <source>Import XMP</source>
-        <translation>XMP 가져오기</translation>
-    </message>
-    <message>
-        <source>Write XMP</source>
-        <translation>XMP 쓰기</translation>
     </message>
     <message>
         <source>Opening %1</source>
@@ -2090,6 +2199,17 @@
     <message>
         <source>no answer from the engine</source>
         <translation>엔진 응답 없음</translation>
+    </message>
+</context>
+<context>
+    <name>MasksTab</name>
+    <message>
+        <source>Heal and clone</source>
+        <translation>복구 및 복제</translation>
+    </message>
+    <message>
+        <source>Local adjustments</source>
+        <translation>부분 조정</translation>
     </message>
 </context>
 <context>
@@ -2284,6 +2404,53 @@
     </message>
 </context>
 <context>
+    <name>RightInspector</name>
+    <message>
+        <source>AI</source>
+        <translation>AI 기능</translation>
+    </message>
+    <message>
+        <source>Adjust</source>
+        <translation>조정</translation>
+    </message>
+    <message>
+        <source>Copy</source>
+        <translation>복사</translation>
+    </message>
+    <message>
+        <source>Import XMP</source>
+        <translation>XMP 가져오기</translation>
+    </message>
+    <message>
+        <source>Looks</source>
+        <translation>룩</translation>
+    </message>
+    <message>
+        <source>Masks</source>
+        <translation>마스크</translation>
+    </message>
+    <message>
+        <source>Paste</source>
+        <translation>붙여넣기</translation>
+    </message>
+    <message>
+        <source>Read the photo&apos;s .xmp sidecar written by another editor</source>
+        <translation>다른 편집기가 쓴 .xmp 파일 읽기</translation>
+    </message>
+    <message>
+        <source>Reset</source>
+        <translation>초기화</translation>
+    </message>
+    <message>
+        <source>Write XMP</source>
+        <translation>XMP 쓰기</translation>
+    </message>
+    <message>
+        <source>Write the edit, rating and label to an .xmp sidecar for other editors</source>
+        <translation>편집, 등급, 레이블을 다른 편집기용 .xmp 파일에 쓰기</translation>
+    </message>
+</context>
+<context>
     <name>ScopesView</name>
     <message>
         <source>HIST</source>
@@ -2338,6 +2505,57 @@
     <message>
         <source>SKIN</source>
         <translation>피부</translation>
+    </message>
+</context>
+<context>
+    <name>ShortcutRouter</name>
+    <message>
+        <source>Crop mode: off</source>
+        <translation>자르기 모드: 꺼짐</translation>
+    </message>
+    <message>
+        <source>Crop mode: on (C)</source>
+        <translation>자르기 모드: 켜짐 (C)</translation>
+    </message>
+    <message>
+        <source>Flag cleared</source>
+        <translation>플래그 해제됨</translation>
+    </message>
+    <message>
+        <source>Open a photo first</source>
+        <translation>먼저 사진을 여세요</translation>
+    </message>
+    <message>
+        <source>Rating cleared</source>
+        <translation>별점을 지웠습니다</translation>
+    </message>
+    <message>
+        <source>Rating: ★</source>
+        <translation>별점: ★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★</source>
+        <translation>별점: ★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★</source>
+        <translation>별점: ★★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★★</source>
+        <translation>별점: ★★★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★★★</source>
+        <translation>별점: ★★★★★</translation>
+    </message>
+    <message>
+        <source>Soft proof off</source>
+        <translation>소프트 프루프 끔</translation>
+    </message>
+    <message>
+        <source>Soft proof: %1</source>
+        <translation>소프트 프루프: %1</translation>
     </message>
 </context>
 <context>
@@ -2725,93 +2943,6 @@
     <message>
         <source>Drop Shadow</source>
         <translation>그림자</translation>
-    </message>
-</context>
-<context>
-    <name>CloudDialog</name>
-    <message>
-        <source>Add an account</source>
-        <translation>계정 추가</translation>
-    </message>
-    <message>
-        <source>Browse</source>
-        <translation>찾아보기</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation>취소</translation>
-    </message>
-    <message>
-        <source>Client ID</source>
-        <translation>클라이언트 ID</translation>
-    </message>
-    <message>
-        <source>Client secret</source>
-        <translation>클라이언트 보안 비밀</translation>
-    </message>
-    <message>
-        <source>Close</source>
-        <translation>닫기</translation>
-    </message>
-    <message>
-        <source>Cloud accounts</source>
-        <translation>클라우드 계정</translation>
-    </message>
-    <message>
-        <source>Confirm</source>
-        <translation>확인</translation>
-    </message>
-    <message>
-        <source>Connected</source>
-        <translation>연결됨</translation>
-    </message>
-    <message>
-        <source>Disconnect</source>
-        <translation>연결 해제</translation>
-    </message>
-    <message>
-        <source>Disconnecting removes the account's keys and downloaded copies from this computer. Files in the account stay as they are.</source>
-        <translation>연결을 해제하면 이 컴퓨터에서 계정 키와 다운로드한 사본이 삭제됩니다. 계정의 파일은 그대로 유지됩니다.</translation>
-    </message>
-    <message>
-        <source>Enter this code on the GitHub page that opened in your browser:</source>
-        <translation>브라우저에 열린 GitHub 페이지에 이 코드를 입력하세요:</translation>
-    </message>
-    <message>
-        <source>Finish signing in in your browser. This window updates when you are done.</source>
-        <translation>브라우저에서 로그인을 완료하세요. 완료되면 이 창이 업데이트됩니다.</translation>
-    </message>
-    <message>
-        <source>Install it with: sudo pacman -S %1</source>
-        <translation>설치: sudo pacman -S %1</translation>
-    </message>
-    <message>
-        <source>Needs %1</source>
-        <translation>%1 필요</translation>
-    </message>
-    <message>
-        <source>No account connected yet.</source>
-        <translation>아직 연결된 계정이 없습니다.</translation>
-    </message>
-    <message>
-        <source>Open the page again</source>
-        <translation>페이지 다시 열기</translation>
-    </message>
-    <message>
-        <source>Own Google client ID (optional)</source>
-        <translation>자체 Google 클라이언트 ID(선택 사항)</translation>
-    </message>
-    <message>
-        <source>Signing in to %1</source>
-        <translation>%1에 로그인하는 중</translation>
-    </message>
-    <message>
-        <source>The shared client rclone uses for Google Drive is being retired. With a client ID of your own from the Google Cloud Console, Google Drive keeps working. It is used the next time you connect Google Drive.</source>
-        <translation>rclone이 Google Drive에 사용하는 공유 클라이언트가 폐지됩니다. Google Cloud Console에서 발급한 자체 클라이언트 ID가 있으면 Google Drive를 계속 사용할 수 있습니다. 다음에 Google Drive를 연결할 때 사용됩니다.</translation>
-    </message>
-    <message>
-        <source>You sign in on the service's own page in your browser. OmaStudio keeps the access keys in the system keyring and creates a folder named %1 in each account for uploads.</source>
-        <translation>로그인은 브라우저에서 서비스 자체 페이지를 통해 이루어집니다. OmaStudio는 액세스 키를 시스템 키링에 보관하고 업로드용으로 각 계정에 %1 폴더를 만듭니다.</translation>
     </message>
 </context>
 </TS>

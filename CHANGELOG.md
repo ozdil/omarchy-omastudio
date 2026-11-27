@@ -32,6 +32,7 @@ Fits into Omarchy 4.5: OmaStudio now follows the Omarchy shell's own theme token
 - Destructive actions use the theme's urgent colour (its red).
 - File and folder choosers are the desktop's own, through xdg-desktop-portal, in its theme and with its bookmarks; `zenity` is no longer needed. A Qt platform theme the session sets (such as Omarchy's coming qtengine) is kept.
 - The window fits narrow tiles: the top bar and the view toolbar fall back to icons when their labels don't fit, the left panel steps aside below about 780 px (at the base font size) and the inspector narrows, and the window can be made as small as 720 × 520.
+- Modularized `MainWindow.qml` into 10 dedicated QML modules (`ShortcutRouter`, `LeftInspector`, `CenterWorkspace`, `RightInspector`, `AdjustTab`, `MasksTab`, `LooksTab`, `AiTab`, `ToastBanner`, `ModalHost`), moved undo/redo history into a bounded 100-entry Rust `cxx-qt` `HistoryController`, unified supported RAW/raster extension lists (`src/raw/supported_extensions.inc`) and the 5 built-in look presets (`src/recipe/look_presets.inc`) across engine and Qt `Host`, converted all 10 child editor panels to pure controlled components (removing `syncPanels()` and `rebindWheels()`), deleted dead `HistogramView.qml`, and added `KeyFocus` keyboard/screen-reader accessibility across switches, tabs, pills, presets, scopes, grading wheels, masks, and watermark controls.
 
 ### Fixed
 - Buttons and chips with text no longer clip it at Omarchy's default font size and above: fixed control heights now grow with the font.

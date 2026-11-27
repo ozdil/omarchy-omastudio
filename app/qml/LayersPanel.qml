@@ -51,7 +51,7 @@ Rectangle {
     onSelectedLayerIndexChanged: { editTarget = -1; picking = false; }
     onEditTargetChanged: picking = false
 
-    signal layersChanged()
+    signal layersChanged(var nextLayers)
     signal notify(string text, bool isError)
 
     property string enginePath: ""
@@ -110,12 +110,11 @@ Rectangle {
                  : type === "color_range" ? qsTr("Colour Range %1").arg(n)
                  : qsTr("Brush %1").arg(n);
         list.push(root.newLayer(name, root.defaultShape(type)));
-        root.layersList = list;
+        root.layersChanged(list);
         root.selectedLayerIndex = list.length - 1;
         root.editTarget = -1;
         // A new colour range starts by picking its colour
         root.picking = type === "color_range";
-        root.layersChanged();
     }
 
     // Applies fn to a copy of the active layer and publishes the result
@@ -125,8 +124,7 @@ Rectangle {
         var l = list[root.selectedLayerIndex];
         if (!l.components) l.components = [];
         fn(l);
-        root.layersList = list;
-        root.layersChanged();
+        root.layersChanged(list);
     }
 
     function setLayerValue(key, v) {
@@ -201,9 +199,8 @@ Rectangle {
             var list = root.cloneLayers();
             var label = root.aiKind === "sky" ? qsTr("AI Sky") : qsTr("AI Subject");
             list.push(root.newLayer(qsTr("%1 %2").arg(label).arg(list.length + 1), { "type": "bitmap", "path": resp.data.path }));
-            root.layersList = list;
+            root.layersChanged(list);
             root.selectedLayerIndex = list.length - 1;
-            root.layersChanged();
             root.notify(qsTr("%1 mask ready (%2)").arg(label).arg(resp.data.provider), false);
         }
     }
@@ -240,6 +237,12 @@ Rectangle {
             hoverEnabled: true
             onClicked: sb.clicked()
         }
+        KeyFocus {
+            name: sb.label
+            checkable: sb.active
+            checked: sb.active
+            onActivated: sb.clicked()
+        }
     }
 
     component AiButton: SmallButton {
@@ -263,6 +266,7 @@ Rectangle {
         border.color: Theme.border
         border.width: 1
         Text {
+            id: itLabel
             anchors.centerIn: parent
             text: qsTr("I", "invert mask toggle, first letter of Invert")
             textFormat: Text.PlainText
@@ -275,6 +279,12 @@ Rectangle {
             anchors.fill: parent
             cursorShape: Qt.PointingHandCursor
             onClicked: it.clicked()
+        }
+        KeyFocus {
+            name: itLabel.text
+            checkable: true
+            checked: it.on
+            onActivated: it.clicked()
         }
     }
 
@@ -298,6 +308,10 @@ Rectangle {
             anchors.fill: parent
             cursorShape: Qt.PointingHandCursor
             onClicked: db.clicked()
+        }
+        KeyFocus {
+            name: "X"
+            onActivated: db.clicked()
         }
     }
 
@@ -365,6 +379,7 @@ Rectangle {
 
                 delegate: Rectangle {
                     id: layerItem
+                    required property int index
                     Layout.fillWidth: true
                     implicitHeight: Theme.sp(28)
                     radius: Theme.r(4)
@@ -382,12 +397,12 @@ Rectangle {
 
                         CustomSwitch {
                             checked: layerItem.curLayer ? layerItem.curLayer.enabled : false
+                            accessibleName: layerItem.curLayer ? layerItem.curLayer.name : ""
                             activeColor: Theme.accent
                             onToggled: function(c) {
                                 var list = root.cloneLayers();
                                 list[index].enabled = c;
-                                root.layersList = list;
-                                root.layersChanged();
+                                root.layersChanged(list);
                             }
                         }
 
@@ -407,8 +422,7 @@ Rectangle {
                             onClicked: {
                                 var list = root.cloneLayers();
                                 list[index].invert = !list[index].invert;
-                                root.layersList = list;
-                                root.layersChanged();
+                                root.layersChanged(list);
                             }
                         }
 
@@ -416,14 +430,13 @@ Rectangle {
                             onClicked: {
                                 var list = root.cloneLayers();
                                 list.splice(index, 1);
-                                root.layersList = list;
                                 // Keep the same layer selected when one above it is removed
                                 if (index < root.selectedLayerIndex) {
                                     root.selectedLayerIndex--;
                                 } else if (root.selectedLayerIndex >= list.length) {
                                     root.selectedLayerIndex = list.length - 1;
                                 }
-                                root.layersChanged();
+                                root.layersChanged(list);
                             }
                         }
                     }
@@ -433,6 +446,13 @@ Rectangle {
                         propagateComposedEvents: true
                         z: -1
                         onClicked: root.selectedLayerIndex = index
+                    }
+                    KeyFocus {
+                        z: -1
+                        name: layerItem.curLayer ? layerItem.curLayer.name : ""
+                        checkable: true
+                        checked: root.selectedLayerIndex === index
+                        onActivated: root.selectedLayerIndex = index
                     }
                 }
             }

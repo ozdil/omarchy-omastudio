@@ -141,6 +141,173 @@
     </message>
 </context>
 <context>
+    <name>AdjustTab</name>
+    <message>
+        <source>Blacks</source>
+        <translation>Feketék</translation>
+    </message>
+    <message>
+        <source>Clarity (Midtone Contrast)</source>
+        <translation>Tisztaság (középtónus-kontraszt)</translation>
+    </message>
+    <message>
+        <source>Color Chrome Effect</source>
+        <translation>Color Chrome effektus</translation>
+    </message>
+    <message>
+        <source>Color Chrome FX Blue</source>
+        <translation>Color Chrome FX Kék</translation>
+    </message>
+    <message>
+        <source>Colour grading</source>
+        <translation>Színkorrekció</translation>
+    </message>
+    <message>
+        <source>Colour management</source>
+        <translation>Színkezelés</translation>
+    </message>
+    <message>
+        <source>Colour mixer</source>
+        <translation>Színkeverő</translation>
+    </message>
+    <message>
+        <source>Contrast</source>
+        <translation>Kontraszt</translation>
+    </message>
+    <message>
+        <source>Curve Darks (Lower Mids)</source>
+        <translation>Görbe: sötét tónusok (alsó középtónusok)</translation>
+    </message>
+    <message>
+        <source>Curve Highlights</source>
+        <translation>Görbe: csúcsfények</translation>
+    </message>
+    <message>
+        <source>Curve Lights (Upper Mids)</source>
+        <translation>Görbe: világos tónusok (felső középtónusok)</translation>
+    </message>
+    <message>
+        <source>Curve Shadows</source>
+        <translation>Görbe: árnyékok</translation>
+    </message>
+    <message>
+        <source>Defringe (Chromatic Aberration)</source>
+        <translation>Színszegély eltávolítása (kromatikus aberráció)</translation>
+    </message>
+    <message>
+        <source>Dehaze</source>
+        <translation>Párátlanítás</translation>
+    </message>
+    <message>
+        <source>Detail and optics</source>
+        <translation>Részletek és optika</translation>
+    </message>
+    <message>
+        <source>Exposure</source>
+        <translation>Expozíció</translation>
+    </message>
+    <message>
+        <source>Grain</source>
+        <translation>Szemcse</translation>
+    </message>
+    <message>
+        <source>Highlights</source>
+        <translation>Csúcsfények</translation>
+    </message>
+    <message>
+        <source>Horizontal</source>
+        <translation>Vízszintes</translation>
+    </message>
+    <message>
+        <source>Lens Distortion Correction</source>
+        <translation>Objektív torzításának korrekciója</translation>
+    </message>
+    <message>
+        <source>Noise Reduction (Color)</source>
+        <translation>Zajcsökkentés (szín)</translation>
+    </message>
+    <message>
+        <source>Noise Reduction (Luma)</source>
+        <translation>Zajcsökkentés (fénysűrűség)</translation>
+    </message>
+    <message>
+        <source>Open a photo first</source>
+        <translation>Előbb nyisson meg egy fotót</translation>
+    </message>
+    <message>
+        <source>Presence</source>
+        <translation>Jelenlét</translation>
+    </message>
+    <message>
+        <source>Profile</source>
+        <translation>Profil</translation>
+    </message>
+    <message>
+        <source>Saturation</source>
+        <translation>Telítettség</translation>
+    </message>
+    <message>
+        <source>Scale</source>
+        <translation>Méret</translation>
+    </message>
+    <message>
+        <source>Shadows</source>
+        <translation>Árnyékok</translation>
+    </message>
+    <message>
+        <source>Sharpening</source>
+        <translation>Élesítés</translation>
+    </message>
+    <message>
+        <source>Temperature</source>
+        <translation>Színhőmérséklet</translation>
+    </message>
+    <message>
+        <source>Texture</source>
+        <translation>Textúra</translation>
+    </message>
+    <message>
+        <source>Tint</source>
+        <translation>Színárnyalat</translation>
+    </message>
+    <message>
+        <source>Tone</source>
+        <translation>Tónus</translation>
+    </message>
+    <message>
+        <source>Tone curve</source>
+        <translation>Tónusgörbe</translation>
+    </message>
+    <message>
+        <source>Transform</source>
+        <translation>Átalakítás</translation>
+    </message>
+    <message>
+        <source>Vertical</source>
+        <translation>Függőleges</translation>
+    </message>
+    <message>
+        <source>Vertical straightens converging lines, such as buildings photographed from below. Crop afterwards to remove the empty edges.</source>
+        <translation>A függőleges kiegyenesíti az összetartó vonalakat, például az alulról fotózott épületeknél. Utána vágja le az üres széleket.</translation>
+    </message>
+    <message>
+        <source>Vibrance</source>
+        <translation>Élénkség</translation>
+    </message>
+    <message>
+        <source>Vignette</source>
+        <translation>Vignettálás</translation>
+    </message>
+    <message>
+        <source>White balance</source>
+        <translation>Fehéregyensúly</translation>
+    </message>
+    <message>
+        <source>Whites</source>
+        <translation>Fehérek</translation>
+    </message>
+</context>
+<context>
     <name>AiAssistPanel</name>
     <message>
         <source>%1 (automatic)</source>
@@ -291,10 +458,123 @@
     </message>
 </context>
 <context>
+    <name>AiTab</name>
+    <message>
+        <source>Assistant edit applied</source>
+        <translation>Az asszisztens szerkesztése alkalmazva</translation>
+    </message>
+    <message>
+        <source>Edit assistant</source>
+        <translation>Szerkesztési asszisztens</translation>
+    </message>
+</context>
+<context>
     <name>BoundedTextInput</name>
     <message>
         <source>Clipboard content exceeded byte limit or timed out.</source>
         <translation>A vágólap tartalma túllépte a bájtkorlátot, vagy lejárt az idő.</translation>
+    </message>
+</context>
+<context>
+    <name>CenterWorkspace</name>
+    <message>
+        <source>Opened %1</source>
+        <translation>Megnyitva: %1</translation>
+    </message>
+    <message>
+        <source>Scanning folder %1</source>
+        <translation>Mappa beolvasása: %1</translation>
+    </message>
+    <message>
+        <source>Soft proof: %1</source>
+        <translation>Képernyős próbanyomat: %1</translation>
+    </message>
+</context>
+<context>
+    <name>CloudDialog</name>
+    <message>
+        <source>Add an account</source>
+        <translation>Fiók hozzáadása</translation>
+    </message>
+    <message>
+        <source>Browse</source>
+        <translation>Tallózás</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Mégse</translation>
+    </message>
+    <message>
+        <source>Client ID</source>
+        <translation>Ügyfél-azonosító</translation>
+    </message>
+    <message>
+        <source>Client secret</source>
+        <translation>Ügyféltitok</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>Bezárás</translation>
+    </message>
+    <message>
+        <source>Cloud accounts</source>
+        <translation>Felhőfiókok</translation>
+    </message>
+    <message>
+        <source>Confirm</source>
+        <translation>Megerősítés</translation>
+    </message>
+    <message>
+        <source>Connected</source>
+        <translation>Csatlakoztatva</translation>
+    </message>
+    <message>
+        <source>Disconnect</source>
+        <translation>Leválasztás</translation>
+    </message>
+    <message>
+        <source>Disconnecting removes the account&apos;s keys and downloaded copies from this computer. Files in the account stay as they are.</source>
+        <translation>A leválasztás eltávolítja erről a számítógépről a fiók kulcsait és a letöltött másolatokat. A fiókban lévő fájlok változatlanok maradnak.</translation>
+    </message>
+    <message>
+        <source>Enter this code on the GitHub page that opened in your browser:</source>
+        <translation>Írja be ezt a kódot a böngészőben megnyílt GitHub-oldalon:</translation>
+    </message>
+    <message>
+        <source>Finish signing in in your browser. This window updates when you are done.</source>
+        <translation>Fejezze be a bejelentkezést a böngészőben. Az ablak ezután frissül.</translation>
+    </message>
+    <message>
+        <source>Install it with: sudo pacman -S %1</source>
+        <translation>Telepítés: sudo pacman -S %1</translation>
+    </message>
+    <message>
+        <source>Needs %1</source>
+        <translation>Szükséges: %1</translation>
+    </message>
+    <message>
+        <source>No account connected yet.</source>
+        <translation>Még nincs csatlakoztatott fiók.</translation>
+    </message>
+    <message>
+        <source>Open the page again</source>
+        <translation>Oldal újbóli megnyitása</translation>
+    </message>
+    <message>
+        <source>Own Google client ID (optional)</source>
+        <translation>Saját Google-ügyfélazonosító (nem kötelező)</translation>
+    </message>
+    <message>
+        <source>Signing in to %1</source>
+        <translation>Bejelentkezés: %1</translation>
+    </message>
+    <message>
+        <source>The shared client rclone uses for Google Drive is being retired. With a client ID of your own from the Google Cloud Console, Google Drive keeps working. It is used the next time you connect Google Drive.</source>
+        <translation>Az rclone által a Google Drive-hoz használt közös ügyfél megszűnik. A Google Cloud Console-ból kapott saját ügyfél-azonosítóval a Google Drive tovább működik. A Google Drive következő csatlakoztatásakor lesz használva.</translation>
+    </message>
+    <message>
+        <source>You sign in on the service&apos;s own page in your browser. OmaStudio keeps the access keys in the system keyring and creates a folder named %1 in each account for uploads.</source>
+        <translation>A szolgáltatás saját oldalán jelentkezik be, a böngészőben. Az OmaStudio a hozzáférési kulcsokat a rendszer kulcstartójában tárolja, és minden fiókban létrehoz egy %1 nevű mappát a feltöltésekhez.</translation>
     </message>
 </context>
 <context>
@@ -1090,23 +1370,6 @@
     </message>
 </context>
 <context>
-    <name>HistogramView</name>
-    <message>
-        <source>[S] %1%</source>
-        <comment>S: shadow clipping</comment>
-        <translation>[Á] %1%</translation>
-    </message>
-    <message>
-        <source>Histogram</source>
-        <translation>Hisztogram</translation>
-    </message>
-    <message>
-        <source>[H] %1%</source>
-        <comment>H: highlight clipping</comment>
-        <translation>[Cs] %1%</translation>
-    </message>
-</context>
-<context>
     <name>HistoryPanel</name>
     <message>
         <source>History</source>
@@ -1471,6 +1734,32 @@
     </message>
 </context>
 <context>
+    <name>LeftInspector</name>
+    <message>
+        <source>Analyzing...</source>
+        <translation>Elemzés...</translation>
+    </message>
+    <message>
+        <source>Extracting dynamic range...</source>
+        <translation>Dinamikatartomány kinyerése...</translation>
+    </message>
+    <message>
+        <source>Suggested scene</source>
+        <translation>Javasolt jelenet</translation>
+    </message>
+</context>
+<context>
+    <name>LooksTab</name>
+    <message>
+        <source>LUT</source>
+        <translation>LUT</translation>
+    </message>
+    <message>
+        <source>Presets</source>
+        <translation>Előbeállítások</translation>
+    </message>
+</context>
+<context>
     <name>LutSelector</name>
     <message>
         <source>Load 3D LUT</source>
@@ -1590,22 +1879,6 @@
         <translation>Vágás mód: ki</translation>
     </message>
     <message>
-        <source>Analyzing...</source>
-        <translation>Elemzés...</translation>
-    </message>
-    <message>
-        <source>Extracting dynamic range...</source>
-        <translation>Dinamikatartomány kinyerése...</translation>
-    </message>
-    <message>
-        <source>Opened %1</source>
-        <translation>Megnyitva: %1</translation>
-    </message>
-    <message>
-        <source>Scanning folder %1</source>
-        <translation>Mappa beolvasása: %1</translation>
-    </message>
-    <message>
         <source>Contrast</source>
         <translation>Kontraszt</translation>
     </message>
@@ -1630,28 +1903,8 @@
         <translation>Feketék</translation>
     </message>
     <message>
-        <source>Curve Highlights</source>
-        <translation>Görbe: csúcsfények</translation>
-    </message>
-    <message>
-        <source>Curve Lights (Upper Mids)</source>
-        <translation>Görbe: világos tónusok (felső középtónusok)</translation>
-    </message>
-    <message>
-        <source>Curve Darks (Lower Mids)</source>
-        <translation>Görbe: sötét tónusok (alsó középtónusok)</translation>
-    </message>
-    <message>
-        <source>Curve Shadows</source>
-        <translation>Görbe: árnyékok</translation>
-    </message>
-    <message>
         <source>Texture</source>
         <translation>Textúra</translation>
-    </message>
-    <message>
-        <source>Suggested scene</source>
-        <translation>Javasolt jelenet</translation>
     </message>
     <message>
         <source>Clarity (Midtone Contrast)</source>
@@ -1674,28 +1927,8 @@
         <translation>Élesítés</translation>
     </message>
     <message>
-        <source>Noise Reduction (Luma)</source>
-        <translation>Zajcsökkentés (fénysűrűség)</translation>
-    </message>
-    <message>
-        <source>Noise Reduction (Color)</source>
-        <translation>Zajcsökkentés (szín)</translation>
-    </message>
-    <message>
         <source>Vignette</source>
         <translation>Vignettálás</translation>
-    </message>
-    <message>
-        <source>Defringe (Chromatic Aberration)</source>
-        <translation>Színszegély eltávolítása (kromatikus aberráció)</translation>
-    </message>
-    <message>
-        <source>Lens Distortion Correction</source>
-        <translation>Objektív torzításának korrekciója</translation>
-    </message>
-    <message>
-        <source>Open a photo first</source>
-        <translation>Előbb nyisson meg egy fotót</translation>
     </message>
     <message>
         <source>Version %1</source>
@@ -1822,34 +2055,6 @@
         <translation>A mappa átvizsgálása nem válaszolt.</translation>
     </message>
     <message>
-        <source>Soft proof: %1</source>
-        <translation>Képernyős próbanyomat: %1</translation>
-    </message>
-    <message>
-        <source>Soft proof off</source>
-        <translation>Képernyős próbanyomat ki</translation>
-    </message>
-    <message>
-        <source>Rating: ★</source>
-        <translation>Értékelés: ★</translation>
-    </message>
-    <message>
-        <source>Rating: ★★</source>
-        <translation>Értékelés: ★★</translation>
-    </message>
-    <message>
-        <source>Rating: ★★★</source>
-        <translation>Értékelés: ★★★</translation>
-    </message>
-    <message>
-        <source>Rating: ★★★★</source>
-        <translation>Értékelés: ★★★★</translation>
-    </message>
-    <message>
-        <source>Rating: ★★★★★</source>
-        <translation>Értékelés: ★★★★★</translation>
-    </message>
-    <message>
         <source>Flag cleared</source>
         <translation>Jelölés törölve</translation>
     </message>
@@ -1870,60 +2075,12 @@
         <translation>Elutasítva</translation>
     </message>
     <message>
-        <source>Adjust</source>
-        <translation>Beállítások</translation>
-    </message>
-    <message>
-        <source>Masks</source>
-        <translation>Maszkok</translation>
-    </message>
-    <message>
-        <source>Looks</source>
-        <translation>Stílusok</translation>
-    </message>
-    <message>
-        <source>AI</source>
-        <translation>MI</translation>
-    </message>
-    <message>
-        <source>Read the photo&apos;s .xmp sidecar written by another editor</source>
-        <translation>Egy másik szerkesztő által írt .xmp fájl beolvasása</translation>
-    </message>
-    <message>
-        <source>Write the edit, rating and label to an .xmp sidecar for other editors</source>
-        <translation>A szerkesztés, értékelés és címke írása .xmp fájlba más szerkesztők számára</translation>
-    </message>
-    <message>
         <source>Profile</source>
         <translation>Profil</translation>
     </message>
     <message>
-        <source>Color Chrome Effect</source>
-        <translation>Color Chrome effektus</translation>
-    </message>
-    <message>
-        <source>Color Chrome FX Blue</source>
-        <translation>Color Chrome FX Kék</translation>
-    </message>
-    <message>
         <source>White balance</source>
         <translation>Fehéregyensúly</translation>
-    </message>
-    <message>
-        <source>Temperature</source>
-        <translation>Színhőmérséklet</translation>
-    </message>
-    <message>
-        <source>Tint</source>
-        <translation>Színárnyalat</translation>
-    </message>
-    <message>
-        <source>Tone</source>
-        <translation>Tónus</translation>
-    </message>
-    <message>
-        <source>Presence</source>
-        <translation>Jelenlét</translation>
     </message>
     <message>
         <source>Tone curve</source>
@@ -1946,28 +2103,8 @@
         <translation>Átalakítás</translation>
     </message>
     <message>
-        <source>Vertical</source>
-        <translation>Függőleges</translation>
-    </message>
-    <message>
-        <source>Horizontal</source>
-        <translation>Vízszintes</translation>
-    </message>
-    <message>
-        <source>Scale</source>
-        <translation>Méret</translation>
-    </message>
-    <message>
-        <source>Vertical straightens converging lines, such as buildings photographed from below. Crop afterwards to remove the empty edges.</source>
-        <translation>A függőleges kiegyenesíti az összetartó vonalakat, például az alulról fotózott épületeknél. Utána vágja le az üres széleket.</translation>
-    </message>
-    <message>
         <source>Grain</source>
         <translation>Szemcse</translation>
-    </message>
-    <message>
-        <source>Colour management</source>
-        <translation>Színkezelés</translation>
     </message>
     <message>
         <source>Heal and clone</source>
@@ -1984,34 +2121,6 @@
     <message>
         <source>LUT</source>
         <translation>LUT</translation>
-    </message>
-    <message>
-        <source>Edit assistant</source>
-        <translation>Szerkesztési asszisztens</translation>
-    </message>
-    <message>
-        <source>Assistant edit applied</source>
-        <translation>Az asszisztens szerkesztése alkalmazva</translation>
-    </message>
-    <message>
-        <source>Copy</source>
-        <translation>Másolás</translation>
-    </message>
-    <message>
-        <source>Paste</source>
-        <translation>Beillesztés</translation>
-    </message>
-    <message>
-        <source>Reset</source>
-        <translation>Visszaállítás</translation>
-    </message>
-    <message>
-        <source>Import XMP</source>
-        <translation>XMP importálása</translation>
-    </message>
-    <message>
-        <source>Write XMP</source>
-        <translation>XMP írása</translation>
     </message>
     <message>
         <source>Opening %1</source>
@@ -2090,6 +2199,17 @@
     <message>
         <source>no answer from the engine</source>
         <translation>a motor nem válaszolt</translation>
+    </message>
+</context>
+<context>
+    <name>MasksTab</name>
+    <message>
+        <source>Heal and clone</source>
+        <translation>Javítás és klónozás</translation>
+    </message>
+    <message>
+        <source>Local adjustments</source>
+        <translation>Helyi korrekciók</translation>
     </message>
 </context>
 <context>
@@ -2284,6 +2404,53 @@
     </message>
 </context>
 <context>
+    <name>RightInspector</name>
+    <message>
+        <source>AI</source>
+        <translation>MI</translation>
+    </message>
+    <message>
+        <source>Adjust</source>
+        <translation>Beállítások</translation>
+    </message>
+    <message>
+        <source>Copy</source>
+        <translation>Másolás</translation>
+    </message>
+    <message>
+        <source>Import XMP</source>
+        <translation>XMP importálása</translation>
+    </message>
+    <message>
+        <source>Looks</source>
+        <translation>Stílusok</translation>
+    </message>
+    <message>
+        <source>Masks</source>
+        <translation>Maszkok</translation>
+    </message>
+    <message>
+        <source>Paste</source>
+        <translation>Beillesztés</translation>
+    </message>
+    <message>
+        <source>Read the photo&apos;s .xmp sidecar written by another editor</source>
+        <translation>Egy másik szerkesztő által írt .xmp fájl beolvasása</translation>
+    </message>
+    <message>
+        <source>Reset</source>
+        <translation>Visszaállítás</translation>
+    </message>
+    <message>
+        <source>Write XMP</source>
+        <translation>XMP írása</translation>
+    </message>
+    <message>
+        <source>Write the edit, rating and label to an .xmp sidecar for other editors</source>
+        <translation>A szerkesztés, értékelés és címke írása .xmp fájlba más szerkesztők számára</translation>
+    </message>
+</context>
+<context>
     <name>ScopesView</name>
     <message>
         <source>HIST</source>
@@ -2338,6 +2505,57 @@
     <message>
         <source>SKIN</source>
         <translation>BŐR</translation>
+    </message>
+</context>
+<context>
+    <name>ShortcutRouter</name>
+    <message>
+        <source>Crop mode: off</source>
+        <translation>Vágás mód: ki</translation>
+    </message>
+    <message>
+        <source>Crop mode: on (C)</source>
+        <translation>Vágás mód: be (C)</translation>
+    </message>
+    <message>
+        <source>Flag cleared</source>
+        <translation>Jelölés törölve</translation>
+    </message>
+    <message>
+        <source>Open a photo first</source>
+        <translation>Előbb nyisson meg egy fotót</translation>
+    </message>
+    <message>
+        <source>Rating cleared</source>
+        <translation>Értékelés törölve</translation>
+    </message>
+    <message>
+        <source>Rating: ★</source>
+        <translation>Értékelés: ★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★</source>
+        <translation>Értékelés: ★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★</source>
+        <translation>Értékelés: ★★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★★</source>
+        <translation>Értékelés: ★★★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★★★</source>
+        <translation>Értékelés: ★★★★★</translation>
+    </message>
+    <message>
+        <source>Soft proof off</source>
+        <translation>Képernyős próbanyomat ki</translation>
+    </message>
+    <message>
+        <source>Soft proof: %1</source>
+        <translation>Képernyős próbanyomat: %1</translation>
     </message>
 </context>
 <context>
@@ -2725,93 +2943,6 @@
     <message>
         <source>Drop Shadow</source>
         <translation>Vetett árnyék</translation>
-    </message>
-</context>
-<context>
-    <name>CloudDialog</name>
-    <message>
-        <source>Add an account</source>
-        <translation>Fiók hozzáadása</translation>
-    </message>
-    <message>
-        <source>Browse</source>
-        <translation>Tallózás</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation>Mégse</translation>
-    </message>
-    <message>
-        <source>Client ID</source>
-        <translation>Ügyfél-azonosító</translation>
-    </message>
-    <message>
-        <source>Client secret</source>
-        <translation>Ügyféltitok</translation>
-    </message>
-    <message>
-        <source>Close</source>
-        <translation>Bezárás</translation>
-    </message>
-    <message>
-        <source>Cloud accounts</source>
-        <translation>Felhőfiókok</translation>
-    </message>
-    <message>
-        <source>Confirm</source>
-        <translation>Megerősítés</translation>
-    </message>
-    <message>
-        <source>Connected</source>
-        <translation>Csatlakoztatva</translation>
-    </message>
-    <message>
-        <source>Disconnect</source>
-        <translation>Leválasztás</translation>
-    </message>
-    <message>
-        <source>Disconnecting removes the account's keys and downloaded copies from this computer. Files in the account stay as they are.</source>
-        <translation>A leválasztás eltávolítja erről a számítógépről a fiók kulcsait és a letöltött másolatokat. A fiókban lévő fájlok változatlanok maradnak.</translation>
-    </message>
-    <message>
-        <source>Enter this code on the GitHub page that opened in your browser:</source>
-        <translation>Írja be ezt a kódot a böngészőben megnyílt GitHub-oldalon:</translation>
-    </message>
-    <message>
-        <source>Finish signing in in your browser. This window updates when you are done.</source>
-        <translation>Fejezze be a bejelentkezést a böngészőben. Az ablak ezután frissül.</translation>
-    </message>
-    <message>
-        <source>Install it with: sudo pacman -S %1</source>
-        <translation>Telepítés: sudo pacman -S %1</translation>
-    </message>
-    <message>
-        <source>Needs %1</source>
-        <translation>Szükséges: %1</translation>
-    </message>
-    <message>
-        <source>No account connected yet.</source>
-        <translation>Még nincs csatlakoztatott fiók.</translation>
-    </message>
-    <message>
-        <source>Open the page again</source>
-        <translation>Oldal újbóli megnyitása</translation>
-    </message>
-    <message>
-        <source>Own Google client ID (optional)</source>
-        <translation>Saját Google-ügyfélazonosító (nem kötelező)</translation>
-    </message>
-    <message>
-        <source>Signing in to %1</source>
-        <translation>Bejelentkezés: %1</translation>
-    </message>
-    <message>
-        <source>The shared client rclone uses for Google Drive is being retired. With a client ID of your own from the Google Cloud Console, Google Drive keeps working. It is used the next time you connect Google Drive.</source>
-        <translation>Az rclone által a Google Drive-hoz használt közös ügyfél megszűnik. A Google Cloud Console-ból kapott saját ügyfél-azonosítóval a Google Drive tovább működik. A Google Drive következő csatlakoztatásakor lesz használva.</translation>
-    </message>
-    <message>
-        <source>You sign in on the service's own page in your browser. OmaStudio keeps the access keys in the system keyring and creates a folder named %1 in each account for uploads.</source>
-        <translation>A szolgáltatás saját oldalán jelentkezik be, a böngészőben. Az OmaStudio a hozzáférési kulcsokat a rendszer kulcstartójában tárolja, és minden fiókban létrehoz egy %1 nevű mappát a feltöltésekhez.</translation>
     </message>
 </context>
 </TS>

@@ -141,6 +141,173 @@
     </message>
 </context>
 <context>
+    <name>AdjustTab</name>
+    <message>
+        <source>Blacks</source>
+        <translation>سیاه‌ها</translation>
+    </message>
+    <message>
+        <source>Clarity (Midtone Contrast)</source>
+        <translation>وضوح (کنتراست میانه‌ها)</translation>
+    </message>
+    <message>
+        <source>Color Chrome Effect</source>
+        <translation>جلوهٔ Color Chrome</translation>
+    </message>
+    <message>
+        <source>Color Chrome FX Blue</source>
+        <translation>Color Chrome FX آبی</translation>
+    </message>
+    <message>
+        <source>Colour grading</source>
+        <translation>درجه‌بندی رنگ</translation>
+    </message>
+    <message>
+        <source>Colour management</source>
+        <translation>مدیریت رنگ</translation>
+    </message>
+    <message>
+        <source>Colour mixer</source>
+        <translation>میکسر رنگ</translation>
+    </message>
+    <message>
+        <source>Contrast</source>
+        <translation>کنتراست</translation>
+    </message>
+    <message>
+        <source>Curve Darks (Lower Mids)</source>
+        <translation>منحنی: تیره‌ها (میانه‌های پایین)</translation>
+    </message>
+    <message>
+        <source>Curve Highlights</source>
+        <translation>منحنی: روشنی‌ها</translation>
+    </message>
+    <message>
+        <source>Curve Lights (Upper Mids)</source>
+        <translation>منحنی: روشن‌ها (میانه‌های بالا)</translation>
+    </message>
+    <message>
+        <source>Curve Shadows</source>
+        <translation>منحنی: سایه‌ها</translation>
+    </message>
+    <message>
+        <source>Defringe (Chromatic Aberration)</source>
+        <translation>حذف حاشیهٔ رنگی (ابیراهی رنگی)</translation>
+    </message>
+    <message>
+        <source>Dehaze</source>
+        <translation>مه‌زدایی</translation>
+    </message>
+    <message>
+        <source>Detail and optics</source>
+        <translation>جزئیات و اپتیک</translation>
+    </message>
+    <message>
+        <source>Exposure</source>
+        <translation>نوردهی</translation>
+    </message>
+    <message>
+        <source>Grain</source>
+        <translation>دانه</translation>
+    </message>
+    <message>
+        <source>Highlights</source>
+        <translation>روشنی‌ها</translation>
+    </message>
+    <message>
+        <source>Horizontal</source>
+        <translation>افقی</translation>
+    </message>
+    <message>
+        <source>Lens Distortion Correction</source>
+        <translation>اصلاح اعوجاج لنز</translation>
+    </message>
+    <message>
+        <source>Noise Reduction (Color)</source>
+        <translation>کاهش نویز (رنگ)</translation>
+    </message>
+    <message>
+        <source>Noise Reduction (Luma)</source>
+        <translation>کاهش نویز (روشنایی)</translation>
+    </message>
+    <message>
+        <source>Open a photo first</source>
+        <translation>نخست یک عکس باز کنید</translation>
+    </message>
+    <message>
+        <source>Presence</source>
+        <translation>حضور</translation>
+    </message>
+    <message>
+        <source>Profile</source>
+        <translation>نمایه</translation>
+    </message>
+    <message>
+        <source>Saturation</source>
+        <translation>اشباع</translation>
+    </message>
+    <message>
+        <source>Scale</source>
+        <translation>مقیاس</translation>
+    </message>
+    <message>
+        <source>Shadows</source>
+        <translation>سایه‌ها</translation>
+    </message>
+    <message>
+        <source>Sharpening</source>
+        <translation>تیزکردن</translation>
+    </message>
+    <message>
+        <source>Temperature</source>
+        <translation>دما</translation>
+    </message>
+    <message>
+        <source>Texture</source>
+        <translation>بافت</translation>
+    </message>
+    <message>
+        <source>Tint</source>
+        <translation>ته‌رنگ</translation>
+    </message>
+    <message>
+        <source>Tone</source>
+        <translation>تُن</translation>
+    </message>
+    <message>
+        <source>Tone curve</source>
+        <translation>منحنی تُن</translation>
+    </message>
+    <message>
+        <source>Transform</source>
+        <translation>تبدیل</translation>
+    </message>
+    <message>
+        <source>Vertical</source>
+        <translation>عمودی</translation>
+    </message>
+    <message>
+        <source>Vertical straightens converging lines, such as buildings photographed from below. Crop afterwards to remove the empty edges.</source>
+        <translation>عمودی خطوط همگرا را صاف می‌کند، مانند ساختمان‌هایی که از پایین عکاسی شده‌اند. سپس برای حذف لبه‌های خالی برش دهید.</translation>
+    </message>
+    <message>
+        <source>Vibrance</source>
+        <translation>سرزندگی</translation>
+    </message>
+    <message>
+        <source>Vignette</source>
+        <translation>سایهٔ گوشه‌ها</translation>
+    </message>
+    <message>
+        <source>White balance</source>
+        <translation>تراز سفیدی</translation>
+    </message>
+    <message>
+        <source>Whites</source>
+        <translation>سفیدها</translation>
+    </message>
+</context>
+<context>
     <name>AiAssistPanel</name>
     <message>
         <source>%1 (automatic)</source>
@@ -291,10 +458,123 @@
     </message>
 </context>
 <context>
+    <name>AiTab</name>
+    <message>
+        <source>Assistant edit applied</source>
+        <translation>ویرایش دستیار اعمال شد</translation>
+    </message>
+    <message>
+        <source>Edit assistant</source>
+        <translation>دستیار ویرایش</translation>
+    </message>
+</context>
+<context>
     <name>BoundedTextInput</name>
     <message>
         <source>Clipboard content exceeded byte limit or timed out.</source>
         <translation>محتوای کلیپ‌بورد از حد بایت فراتر رفت یا زمان آن تمام شد.</translation>
+    </message>
+</context>
+<context>
+    <name>CenterWorkspace</name>
+    <message>
+        <source>Opened %1</source>
+        <translation>%1 باز شد</translation>
+    </message>
+    <message>
+        <source>Scanning folder %1</source>
+        <translation>در حال پویش پوشهٔ %1</translation>
+    </message>
+    <message>
+        <source>Soft proof: %1</source>
+        <translation>پیش‌نمایش چاپ: %1</translation>
+    </message>
+</context>
+<context>
+    <name>CloudDialog</name>
+    <message>
+        <source>Add an account</source>
+        <translation>افزودن حساب</translation>
+    </message>
+    <message>
+        <source>Browse</source>
+        <translation>مرور</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>لغو</translation>
+    </message>
+    <message>
+        <source>Client ID</source>
+        <translation>شناسه کلاینت</translation>
+    </message>
+    <message>
+        <source>Client secret</source>
+        <translation>رمز کلاینت</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>بستن</translation>
+    </message>
+    <message>
+        <source>Cloud accounts</source>
+        <translation>حساب‌های ابری</translation>
+    </message>
+    <message>
+        <source>Confirm</source>
+        <translation>تأیید</translation>
+    </message>
+    <message>
+        <source>Connected</source>
+        <translation>متصل</translation>
+    </message>
+    <message>
+        <source>Disconnect</source>
+        <translation>قطع اتصال</translation>
+    </message>
+    <message>
+        <source>Disconnecting removes the account&apos;s keys and downloaded copies from this computer. Files in the account stay as they are.</source>
+        <translation>قطع اتصال، کلیدهای حساب و نسخه‌های دانلودشده را از این رایانه حذف می‌کند. فایل‌های داخل حساب دست‌نخورده می‌مانند.</translation>
+    </message>
+    <message>
+        <source>Enter this code on the GitHub page that opened in your browser:</source>
+        <translation>این کد را در صفحه GitHub که در مرورگر باز شد وارد کنید:</translation>
+    </message>
+    <message>
+        <source>Finish signing in in your browser. This window updates when you are done.</source>
+        <translation>ورود را در مرورگر کامل کنید. این پنجره پس از پایان به‌روز می‌شود.</translation>
+    </message>
+    <message>
+        <source>Install it with: sudo pacman -S %1</source>
+        <translation>نصب با: sudo pacman -S %1</translation>
+    </message>
+    <message>
+        <source>Needs %1</source>
+        <translation>نیازمند %1</translation>
+    </message>
+    <message>
+        <source>No account connected yet.</source>
+        <translation>هنوز هیچ حسابی متصل نشده است.</translation>
+    </message>
+    <message>
+        <source>Open the page again</source>
+        <translation>باز کردن دوباره صفحه</translation>
+    </message>
+    <message>
+        <source>Own Google client ID (optional)</source>
+        <translation>شناسه کلاینت Google خودتان (اختیاری)</translation>
+    </message>
+    <message>
+        <source>Signing in to %1</source>
+        <translation>در حال ورود به %1</translation>
+    </message>
+    <message>
+        <source>The shared client rclone uses for Google Drive is being retired. With a client ID of your own from the Google Cloud Console, Google Drive keeps working. It is used the next time you connect Google Drive.</source>
+        <translation>کلاینت مشترکی که rclone برای Google Drive استفاده می‌کند در حال کنار گذاشته شدن است. با شناسه کلاینت خودتان از Google Cloud Console، ‏Google Drive همچنان کار می‌کند. دفعه بعد که Google Drive را متصل کنید استفاده می‌شود.</translation>
+    </message>
+    <message>
+        <source>You sign in on the service&apos;s own page in your browser. OmaStudio keeps the access keys in the system keyring and creates a folder named %1 in each account for uploads.</source>
+        <translation>ورود در صفحه خود سرویس و در مرورگر انجام می‌شود. OmaStudio کلیدهای دسترسی را در جاکلیدی سیستم نگه می‌دارد و در هر حساب پوشه‌ای به نام %1 برای بارگذاری‌ها می‌سازد.</translation>
     </message>
 </context>
 <context>
@@ -1090,23 +1370,6 @@
     </message>
 </context>
 <context>
-    <name>HistogramView</name>
-    <message>
-        <source>[S] %1%</source>
-        <comment>S: shadow clipping</comment>
-        <translation>[س] %1%</translation>
-    </message>
-    <message>
-        <source>Histogram</source>
-        <translation>هیستوگرام</translation>
-    </message>
-    <message>
-        <source>[H] %1%</source>
-        <comment>H: highlight clipping</comment>
-        <translation>[ر] %1%</translation>
-    </message>
-</context>
-<context>
     <name>HistoryPanel</name>
     <message>
         <source>History</source>
@@ -1471,6 +1734,32 @@
     </message>
 </context>
 <context>
+    <name>LeftInspector</name>
+    <message>
+        <source>Analyzing...</source>
+        <translation>در حال تحلیل...</translation>
+    </message>
+    <message>
+        <source>Extracting dynamic range...</source>
+        <translation>در حال استخراج محدودهٔ دینامیکی...</translation>
+    </message>
+    <message>
+        <source>Suggested scene</source>
+        <translation>صحنهٔ پیشنهادی</translation>
+    </message>
+</context>
+<context>
+    <name>LooksTab</name>
+    <message>
+        <source>LUT</source>
+        <translation>LUT</translation>
+    </message>
+    <message>
+        <source>Presets</source>
+        <translation>پیش‌تنظیم‌ها</translation>
+    </message>
+</context>
+<context>
     <name>LutSelector</name>
     <message>
         <source>Load 3D LUT</source>
@@ -1590,22 +1879,6 @@
         <translation>حالت برش: خاموش</translation>
     </message>
     <message>
-        <source>Analyzing...</source>
-        <translation>در حال تحلیل...</translation>
-    </message>
-    <message>
-        <source>Extracting dynamic range...</source>
-        <translation>در حال استخراج محدودهٔ دینامیکی...</translation>
-    </message>
-    <message>
-        <source>Opened %1</source>
-        <translation>%1 باز شد</translation>
-    </message>
-    <message>
-        <source>Scanning folder %1</source>
-        <translation>در حال پویش پوشهٔ %1</translation>
-    </message>
-    <message>
         <source>Contrast</source>
         <translation>کنتراست</translation>
     </message>
@@ -1630,28 +1903,8 @@
         <translation>سیاه‌ها</translation>
     </message>
     <message>
-        <source>Curve Highlights</source>
-        <translation>منحنی: روشنی‌ها</translation>
-    </message>
-    <message>
-        <source>Curve Lights (Upper Mids)</source>
-        <translation>منحنی: روشن‌ها (میانه‌های بالا)</translation>
-    </message>
-    <message>
-        <source>Curve Darks (Lower Mids)</source>
-        <translation>منحنی: تیره‌ها (میانه‌های پایین)</translation>
-    </message>
-    <message>
-        <source>Curve Shadows</source>
-        <translation>منحنی: سایه‌ها</translation>
-    </message>
-    <message>
         <source>Texture</source>
         <translation>بافت</translation>
-    </message>
-    <message>
-        <source>Suggested scene</source>
-        <translation>صحنهٔ پیشنهادی</translation>
     </message>
     <message>
         <source>Clarity (Midtone Contrast)</source>
@@ -1674,28 +1927,8 @@
         <translation>تیزکردن</translation>
     </message>
     <message>
-        <source>Noise Reduction (Luma)</source>
-        <translation>کاهش نویز (روشنایی)</translation>
-    </message>
-    <message>
-        <source>Noise Reduction (Color)</source>
-        <translation>کاهش نویز (رنگ)</translation>
-    </message>
-    <message>
         <source>Vignette</source>
         <translation>سایهٔ گوشه‌ها</translation>
-    </message>
-    <message>
-        <source>Defringe (Chromatic Aberration)</source>
-        <translation>حذف حاشیهٔ رنگی (ابیراهی رنگی)</translation>
-    </message>
-    <message>
-        <source>Lens Distortion Correction</source>
-        <translation>اصلاح اعوجاج لنز</translation>
-    </message>
-    <message>
-        <source>Open a photo first</source>
-        <translation>نخست یک عکس باز کنید</translation>
     </message>
     <message>
         <source>Version %1</source>
@@ -1822,34 +2055,6 @@
         <translation>پویش پوشه پاسخ نداد.</translation>
     </message>
     <message>
-        <source>Soft proof: %1</source>
-        <translation>پیش‌نمایش چاپ: %1</translation>
-    </message>
-    <message>
-        <source>Soft proof off</source>
-        <translation>پیش‌نمایش چاپ خاموش</translation>
-    </message>
-    <message>
-        <source>Rating: ★</source>
-        <translation>امتیاز: ★</translation>
-    </message>
-    <message>
-        <source>Rating: ★★</source>
-        <translation>امتیاز: ★★</translation>
-    </message>
-    <message>
-        <source>Rating: ★★★</source>
-        <translation>امتیاز: ★★★</translation>
-    </message>
-    <message>
-        <source>Rating: ★★★★</source>
-        <translation>امتیاز: ★★★★</translation>
-    </message>
-    <message>
-        <source>Rating: ★★★★★</source>
-        <translation>امتیاز: ★★★★★</translation>
-    </message>
-    <message>
         <source>Flag cleared</source>
         <translation>نشان برداشته شد</translation>
     </message>
@@ -1870,60 +2075,12 @@
         <translation>ردشده</translation>
     </message>
     <message>
-        <source>Adjust</source>
-        <translation>تنظیم</translation>
-    </message>
-    <message>
-        <source>Masks</source>
-        <translation>ماسک‌ها</translation>
-    </message>
-    <message>
-        <source>Looks</source>
-        <translation>سبک‌ها</translation>
-    </message>
-    <message>
-        <source>AI</source>
-        <translation>هوش مصنوعی</translation>
-    </message>
-    <message>
-        <source>Read the photo&apos;s .xmp sidecar written by another editor</source>
-        <translation>خواندن فایل ‎.xmp نوشته‌شده توسط ویرایشگر دیگر</translation>
-    </message>
-    <message>
-        <source>Write the edit, rating and label to an .xmp sidecar for other editors</source>
-        <translation>نوشتن ویرایش، امتیاز و برچسب در فایل ‎.xmp برای ویرایشگرهای دیگر</translation>
-    </message>
-    <message>
         <source>Profile</source>
         <translation>نمایه</translation>
     </message>
     <message>
-        <source>Color Chrome Effect</source>
-        <translation>جلوهٔ Color Chrome</translation>
-    </message>
-    <message>
-        <source>Color Chrome FX Blue</source>
-        <translation>Color Chrome FX آبی</translation>
-    </message>
-    <message>
         <source>White balance</source>
         <translation>تراز سفیدی</translation>
-    </message>
-    <message>
-        <source>Temperature</source>
-        <translation>دما</translation>
-    </message>
-    <message>
-        <source>Tint</source>
-        <translation>ته‌رنگ</translation>
-    </message>
-    <message>
-        <source>Tone</source>
-        <translation>تُن</translation>
-    </message>
-    <message>
-        <source>Presence</source>
-        <translation>حضور</translation>
     </message>
     <message>
         <source>Tone curve</source>
@@ -1946,28 +2103,8 @@
         <translation>تبدیل</translation>
     </message>
     <message>
-        <source>Vertical</source>
-        <translation>عمودی</translation>
-    </message>
-    <message>
-        <source>Horizontal</source>
-        <translation>افقی</translation>
-    </message>
-    <message>
-        <source>Scale</source>
-        <translation>مقیاس</translation>
-    </message>
-    <message>
-        <source>Vertical straightens converging lines, such as buildings photographed from below. Crop afterwards to remove the empty edges.</source>
-        <translation>عمودی خطوط همگرا را صاف می‌کند، مانند ساختمان‌هایی که از پایین عکاسی شده‌اند. سپس برای حذف لبه‌های خالی برش دهید.</translation>
-    </message>
-    <message>
         <source>Grain</source>
         <translation>دانه</translation>
-    </message>
-    <message>
-        <source>Colour management</source>
-        <translation>مدیریت رنگ</translation>
     </message>
     <message>
         <source>Heal and clone</source>
@@ -1984,34 +2121,6 @@
     <message>
         <source>LUT</source>
         <translation>LUT</translation>
-    </message>
-    <message>
-        <source>Edit assistant</source>
-        <translation>دستیار ویرایش</translation>
-    </message>
-    <message>
-        <source>Assistant edit applied</source>
-        <translation>ویرایش دستیار اعمال شد</translation>
-    </message>
-    <message>
-        <source>Copy</source>
-        <translation>رونوشت</translation>
-    </message>
-    <message>
-        <source>Paste</source>
-        <translation>چسباندن</translation>
-    </message>
-    <message>
-        <source>Reset</source>
-        <translation>بازنشانی</translation>
-    </message>
-    <message>
-        <source>Import XMP</source>
-        <translation>وارد کردن XMP</translation>
-    </message>
-    <message>
-        <source>Write XMP</source>
-        <translation>نوشتن XMP</translation>
     </message>
     <message>
         <source>Opening %1</source>
@@ -2090,6 +2199,17 @@
     <message>
         <source>no answer from the engine</source>
         <translation>پاسخی از موتور نیامد</translation>
+    </message>
+</context>
+<context>
+    <name>MasksTab</name>
+    <message>
+        <source>Heal and clone</source>
+        <translation>ترمیم و کلون</translation>
+    </message>
+    <message>
+        <source>Local adjustments</source>
+        <translation>تنظیمات موضعی</translation>
     </message>
 </context>
 <context>
@@ -2284,6 +2404,53 @@
     </message>
 </context>
 <context>
+    <name>RightInspector</name>
+    <message>
+        <source>AI</source>
+        <translation>هوش مصنوعی</translation>
+    </message>
+    <message>
+        <source>Adjust</source>
+        <translation>تنظیم</translation>
+    </message>
+    <message>
+        <source>Copy</source>
+        <translation>رونوشت</translation>
+    </message>
+    <message>
+        <source>Import XMP</source>
+        <translation>وارد کردن XMP</translation>
+    </message>
+    <message>
+        <source>Looks</source>
+        <translation>سبک‌ها</translation>
+    </message>
+    <message>
+        <source>Masks</source>
+        <translation>ماسک‌ها</translation>
+    </message>
+    <message>
+        <source>Paste</source>
+        <translation>چسباندن</translation>
+    </message>
+    <message>
+        <source>Read the photo&apos;s .xmp sidecar written by another editor</source>
+        <translation>خواندن فایل ‎.xmp نوشته‌شده توسط ویرایشگر دیگر</translation>
+    </message>
+    <message>
+        <source>Reset</source>
+        <translation>بازنشانی</translation>
+    </message>
+    <message>
+        <source>Write XMP</source>
+        <translation>نوشتن XMP</translation>
+    </message>
+    <message>
+        <source>Write the edit, rating and label to an .xmp sidecar for other editors</source>
+        <translation>نوشتن ویرایش، امتیاز و برچسب در فایل ‎.xmp برای ویرایشگرهای دیگر</translation>
+    </message>
+</context>
+<context>
     <name>ScopesView</name>
     <message>
         <source>HIST</source>
@@ -2338,6 +2505,57 @@
     <message>
         <source>SKIN</source>
         <translation>پوست</translation>
+    </message>
+</context>
+<context>
+    <name>ShortcutRouter</name>
+    <message>
+        <source>Crop mode: off</source>
+        <translation>حالت برش: خاموش</translation>
+    </message>
+    <message>
+        <source>Crop mode: on (C)</source>
+        <translation>حالت برش: روشن (C)</translation>
+    </message>
+    <message>
+        <source>Flag cleared</source>
+        <translation>نشان برداشته شد</translation>
+    </message>
+    <message>
+        <source>Open a photo first</source>
+        <translation>نخست یک عکس باز کنید</translation>
+    </message>
+    <message>
+        <source>Rating cleared</source>
+        <translation>امتیاز پاک شد</translation>
+    </message>
+    <message>
+        <source>Rating: ★</source>
+        <translation>امتیاز: ★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★</source>
+        <translation>امتیاز: ★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★</source>
+        <translation>امتیاز: ★★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★★</source>
+        <translation>امتیاز: ★★★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★★★</source>
+        <translation>امتیاز: ★★★★★</translation>
+    </message>
+    <message>
+        <source>Soft proof off</source>
+        <translation>پیش‌نمایش چاپ خاموش</translation>
+    </message>
+    <message>
+        <source>Soft proof: %1</source>
+        <translation>پیش‌نمایش چاپ: %1</translation>
     </message>
 </context>
 <context>
@@ -2725,93 +2943,6 @@
     <message>
         <source>Drop Shadow</source>
         <translation>سایهٔ افتاده</translation>
-    </message>
-</context>
-<context>
-    <name>CloudDialog</name>
-    <message>
-        <source>Add an account</source>
-        <translation>افزودن حساب</translation>
-    </message>
-    <message>
-        <source>Browse</source>
-        <translation>مرور</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation>لغو</translation>
-    </message>
-    <message>
-        <source>Client ID</source>
-        <translation>شناسه کلاینت</translation>
-    </message>
-    <message>
-        <source>Client secret</source>
-        <translation>رمز کلاینت</translation>
-    </message>
-    <message>
-        <source>Close</source>
-        <translation>بستن</translation>
-    </message>
-    <message>
-        <source>Cloud accounts</source>
-        <translation>حساب‌های ابری</translation>
-    </message>
-    <message>
-        <source>Confirm</source>
-        <translation>تأیید</translation>
-    </message>
-    <message>
-        <source>Connected</source>
-        <translation>متصل</translation>
-    </message>
-    <message>
-        <source>Disconnect</source>
-        <translation>قطع اتصال</translation>
-    </message>
-    <message>
-        <source>Disconnecting removes the account's keys and downloaded copies from this computer. Files in the account stay as they are.</source>
-        <translation>قطع اتصال، کلیدهای حساب و نسخه‌های دانلودشده را از این رایانه حذف می‌کند. فایل‌های داخل حساب دست‌نخورده می‌مانند.</translation>
-    </message>
-    <message>
-        <source>Enter this code on the GitHub page that opened in your browser:</source>
-        <translation>این کد را در صفحه GitHub که در مرورگر باز شد وارد کنید:</translation>
-    </message>
-    <message>
-        <source>Finish signing in in your browser. This window updates when you are done.</source>
-        <translation>ورود را در مرورگر کامل کنید. این پنجره پس از پایان به‌روز می‌شود.</translation>
-    </message>
-    <message>
-        <source>Install it with: sudo pacman -S %1</source>
-        <translation>نصب با: sudo pacman -S %1</translation>
-    </message>
-    <message>
-        <source>Needs %1</source>
-        <translation>نیازمند %1</translation>
-    </message>
-    <message>
-        <source>No account connected yet.</source>
-        <translation>هنوز هیچ حسابی متصل نشده است.</translation>
-    </message>
-    <message>
-        <source>Open the page again</source>
-        <translation>باز کردن دوباره صفحه</translation>
-    </message>
-    <message>
-        <source>Own Google client ID (optional)</source>
-        <translation>شناسه کلاینت Google خودتان (اختیاری)</translation>
-    </message>
-    <message>
-        <source>Signing in to %1</source>
-        <translation>در حال ورود به %1</translation>
-    </message>
-    <message>
-        <source>The shared client rclone uses for Google Drive is being retired. With a client ID of your own from the Google Cloud Console, Google Drive keeps working. It is used the next time you connect Google Drive.</source>
-        <translation>کلاینت مشترکی که rclone برای Google Drive استفاده می‌کند در حال کنار گذاشته شدن است. با شناسه کلاینت خودتان از Google Cloud Console، ‏Google Drive همچنان کار می‌کند. دفعه بعد که Google Drive را متصل کنید استفاده می‌شود.</translation>
-    </message>
-    <message>
-        <source>You sign in on the service's own page in your browser. OmaStudio keeps the access keys in the system keyring and creates a folder named %1 in each account for uploads.</source>
-        <translation>ورود در صفحه خود سرویس و در مرورگر انجام می‌شود. OmaStudio کلیدهای دسترسی را در جاکلیدی سیستم نگه می‌دارد و در هر حساب پوشه‌ای به نام %1 برای بارگذاری‌ها می‌سازد.</translation>
     </message>
 </context>
 </TS>

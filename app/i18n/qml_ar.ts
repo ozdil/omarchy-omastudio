@@ -141,6 +141,173 @@
     </message>
 </context>
 <context>
+    <name>AdjustTab</name>
+    <message>
+        <source>Blacks</source>
+        <translation>السوداء</translation>
+    </message>
+    <message>
+        <source>Clarity (Midtone Contrast)</source>
+        <translation>الوضوح (تباين الدرجات المتوسطة)</translation>
+    </message>
+    <message>
+        <source>Color Chrome Effect</source>
+        <translation>تأثير Color Chrome</translation>
+    </message>
+    <message>
+        <source>Color Chrome FX Blue</source>
+        <translation>Color Chrome FX الأزرق</translation>
+    </message>
+    <message>
+        <source>Colour grading</source>
+        <translation>تدريج الألوان</translation>
+    </message>
+    <message>
+        <source>Colour management</source>
+        <translation>إدارة الألوان</translation>
+    </message>
+    <message>
+        <source>Colour mixer</source>
+        <translation>خلاط الألوان</translation>
+    </message>
+    <message>
+        <source>Contrast</source>
+        <translation>التباين</translation>
+    </message>
+    <message>
+        <source>Curve Darks (Lower Mids)</source>
+        <translation>المنحنى: الداكنة (المتوسطة الدنيا)</translation>
+    </message>
+    <message>
+        <source>Curve Highlights</source>
+        <translation>المنحنى: الإضاءات</translation>
+    </message>
+    <message>
+        <source>Curve Lights (Upper Mids)</source>
+        <translation>المنحنى: الفاتحة (المتوسطة العليا)</translation>
+    </message>
+    <message>
+        <source>Curve Shadows</source>
+        <translation>المنحنى: الظلال</translation>
+    </message>
+    <message>
+        <source>Defringe (Chromatic Aberration)</source>
+        <translation>إزالة الهالات (الزيغ اللوني)</translation>
+    </message>
+    <message>
+        <source>Dehaze</source>
+        <translation>إزالة الضباب</translation>
+    </message>
+    <message>
+        <source>Detail and optics</source>
+        <translation>التفاصيل والبصريات</translation>
+    </message>
+    <message>
+        <source>Exposure</source>
+        <translation>التعريض</translation>
+    </message>
+    <message>
+        <source>Grain</source>
+        <translation>الحبيبات</translation>
+    </message>
+    <message>
+        <source>Highlights</source>
+        <translation>الإضاءات</translation>
+    </message>
+    <message>
+        <source>Horizontal</source>
+        <translation>أفقي</translation>
+    </message>
+    <message>
+        <source>Lens Distortion Correction</source>
+        <translation>تصحيح تشوه العدسة</translation>
+    </message>
+    <message>
+        <source>Noise Reduction (Color)</source>
+        <translation>تقليل التشويش (اللون)</translation>
+    </message>
+    <message>
+        <source>Noise Reduction (Luma)</source>
+        <translation>تقليل التشويش (السطوع)</translation>
+    </message>
+    <message>
+        <source>Open a photo first</source>
+        <translation>افتح صورة أولًا</translation>
+    </message>
+    <message>
+        <source>Presence</source>
+        <translation>الحضور</translation>
+    </message>
+    <message>
+        <source>Profile</source>
+        <translation>ملف التعريف</translation>
+    </message>
+    <message>
+        <source>Saturation</source>
+        <translation>التشبع</translation>
+    </message>
+    <message>
+        <source>Scale</source>
+        <translation>المقياس</translation>
+    </message>
+    <message>
+        <source>Shadows</source>
+        <translation>الظلال</translation>
+    </message>
+    <message>
+        <source>Sharpening</source>
+        <translation>زيادة الحدة</translation>
+    </message>
+    <message>
+        <source>Temperature</source>
+        <translation>درجة الحرارة</translation>
+    </message>
+    <message>
+        <source>Texture</source>
+        <translation>الملمس</translation>
+    </message>
+    <message>
+        <source>Tint</source>
+        <translation>الصبغة</translation>
+    </message>
+    <message>
+        <source>Tone</source>
+        <translation>الدرجات اللونية</translation>
+    </message>
+    <message>
+        <source>Tone curve</source>
+        <translation>منحنى الدرجات</translation>
+    </message>
+    <message>
+        <source>Transform</source>
+        <translation>تحويل</translation>
+    </message>
+    <message>
+        <source>Vertical</source>
+        <translation>عمودي</translation>
+    </message>
+    <message>
+        <source>Vertical straightens converging lines, such as buildings photographed from below. Crop afterwards to remove the empty edges.</source>
+        <translation>يقوّم العمودي الخطوط المتقاربة، مثل المباني المصوّرة من الأسفل. قُصّ بعد ذلك لإزالة الحواف الفارغة.</translation>
+    </message>
+    <message>
+        <source>Vibrance</source>
+        <translation>الحيوية</translation>
+    </message>
+    <message>
+        <source>Vignette</source>
+        <translation>تظليل الحواف</translation>
+    </message>
+    <message>
+        <source>White balance</source>
+        <translation>توازن البياض</translation>
+    </message>
+    <message>
+        <source>Whites</source>
+        <translation>البيضاء</translation>
+    </message>
+</context>
+<context>
     <name>AiAssistPanel</name>
     <message>
         <source>%1 (automatic)</source>
@@ -291,10 +458,123 @@
     </message>
 </context>
 <context>
+    <name>AiTab</name>
+    <message>
+        <source>Assistant edit applied</source>
+        <translation>طُبّق تحرير المساعد</translation>
+    </message>
+    <message>
+        <source>Edit assistant</source>
+        <translation>مساعد التحرير</translation>
+    </message>
+</context>
+<context>
     <name>BoundedTextInput</name>
     <message>
         <source>Clipboard content exceeded byte limit or timed out.</source>
         <translation>تجاوز محتوى الحافظة حد البايتات أو انتهت المهلة.</translation>
+    </message>
+</context>
+<context>
+    <name>CenterWorkspace</name>
+    <message>
+        <source>Opened %1</source>
+        <translation>فُتح %1</translation>
+    </message>
+    <message>
+        <source>Scanning folder %1</source>
+        <translation>جارٍ فحص المجلد %1</translation>
+    </message>
+    <message>
+        <source>Soft proof: %1</source>
+        <translation>التدقيق على الشاشة: %1</translation>
+    </message>
+</context>
+<context>
+    <name>CloudDialog</name>
+    <message>
+        <source>Add an account</source>
+        <translation>إضافة حساب</translation>
+    </message>
+    <message>
+        <source>Browse</source>
+        <translation>استعراض</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>إلغاء</translation>
+    </message>
+    <message>
+        <source>Client ID</source>
+        <translation>معرّف العميل</translation>
+    </message>
+    <message>
+        <source>Client secret</source>
+        <translation>سر العميل</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>إغلاق</translation>
+    </message>
+    <message>
+        <source>Cloud accounts</source>
+        <translation>الحسابات السحابية</translation>
+    </message>
+    <message>
+        <source>Confirm</source>
+        <translation>تأكيد</translation>
+    </message>
+    <message>
+        <source>Connected</source>
+        <translation>المتصلة</translation>
+    </message>
+    <message>
+        <source>Disconnect</source>
+        <translation>قطع الاتصال</translation>
+    </message>
+    <message>
+        <source>Disconnecting removes the account&apos;s keys and downloaded copies from this computer. Files in the account stay as they are.</source>
+        <translation>يؤدي قطع الاتصال إلى إزالة مفاتيح الحساب والنسخ المنزّلة من هذا الحاسوب. تبقى الملفات في الحساب كما هي.</translation>
+    </message>
+    <message>
+        <source>Enter this code on the GitHub page that opened in your browser:</source>
+        <translation>أدخل هذا الرمز في صفحة GitHub التي فُتحت في المتصفح:</translation>
+    </message>
+    <message>
+        <source>Finish signing in in your browser. This window updates when you are done.</source>
+        <translation>أكمل تسجيل الدخول في المتصفح. تتحدّث هذه النافذة عند الانتهاء.</translation>
+    </message>
+    <message>
+        <source>Install it with: sudo pacman -S %1</source>
+        <translation>ثبّته بالأمر: sudo pacman -S %1</translation>
+    </message>
+    <message>
+        <source>Needs %1</source>
+        <translation>يتطلب %1</translation>
+    </message>
+    <message>
+        <source>No account connected yet.</source>
+        <translation>لا يوجد حساب متصل بعد.</translation>
+    </message>
+    <message>
+        <source>Open the page again</source>
+        <translation>فتح الصفحة مرة أخرى</translation>
+    </message>
+    <message>
+        <source>Own Google client ID (optional)</source>
+        <translation>معرّف عميل Google خاص بك (اختياري)</translation>
+    </message>
+    <message>
+        <source>Signing in to %1</source>
+        <translation>جارٍ تسجيل الدخول إلى %1</translation>
+    </message>
+    <message>
+        <source>The shared client rclone uses for Google Drive is being retired. With a client ID of your own from the Google Cloud Console, Google Drive keeps working. It is used the next time you connect Google Drive.</source>
+        <translation>يجري إيقاف العميل المشترك الذي يستخدمه rclone مع Google Drive. باستخدام معرّف عميل خاص بك من Google Cloud Console يستمر Google Drive في العمل. يُستخدم في المرة القادمة التي توصل فيها Google Drive.</translation>
+    </message>
+    <message>
+        <source>You sign in on the service&apos;s own page in your browser. OmaStudio keeps the access keys in the system keyring and creates a folder named %1 in each account for uploads.</source>
+        <translation>تسجّل الدخول في صفحة الخدمة نفسها في المتصفح. يحفظ OmaStudio مفاتيح الوصول في حلقة مفاتيح النظام وينشئ في كل حساب مجلدًا باسم %1 للرفع.</translation>
     </message>
 </context>
 <context>
@@ -1105,23 +1385,6 @@
     </message>
 </context>
 <context>
-    <name>HistogramView</name>
-    <message>
-        <source>[S] %1%</source>
-        <comment>S: shadow clipping</comment>
-        <translation>[ظ] %1%</translation>
-    </message>
-    <message>
-        <source>Histogram</source>
-        <translation>المدرج التكراري</translation>
-    </message>
-    <message>
-        <source>[H] %1%</source>
-        <comment>H: highlight clipping</comment>
-        <translation>[إ] %1%</translation>
-    </message>
-</context>
-<context>
     <name>HistoryPanel</name>
     <message>
         <source>History</source>
@@ -1486,6 +1749,32 @@
     </message>
 </context>
 <context>
+    <name>LeftInspector</name>
+    <message>
+        <source>Analyzing...</source>
+        <translation>جارٍ التحليل...</translation>
+    </message>
+    <message>
+        <source>Extracting dynamic range...</source>
+        <translation>جارٍ استخراج النطاق الديناميكي...</translation>
+    </message>
+    <message>
+        <source>Suggested scene</source>
+        <translation>مشهد مقترح</translation>
+    </message>
+</context>
+<context>
+    <name>LooksTab</name>
+    <message>
+        <source>LUT</source>
+        <translation>LUT</translation>
+    </message>
+    <message>
+        <source>Presets</source>
+        <translation>الإعدادات المسبقة</translation>
+    </message>
+</context>
+<context>
     <name>LutSelector</name>
     <message>
         <source>Load 3D LUT</source>
@@ -1610,22 +1899,6 @@
         <translation>وضع القص: إيقاف</translation>
     </message>
     <message>
-        <source>Analyzing...</source>
-        <translation>جارٍ التحليل...</translation>
-    </message>
-    <message>
-        <source>Extracting dynamic range...</source>
-        <translation>جارٍ استخراج النطاق الديناميكي...</translation>
-    </message>
-    <message>
-        <source>Opened %1</source>
-        <translation>فُتح %1</translation>
-    </message>
-    <message>
-        <source>Scanning folder %1</source>
-        <translation>جارٍ فحص المجلد %1</translation>
-    </message>
-    <message>
         <source>Contrast</source>
         <translation>التباين</translation>
     </message>
@@ -1650,28 +1923,8 @@
         <translation>السوداء</translation>
     </message>
     <message>
-        <source>Curve Highlights</source>
-        <translation>المنحنى: الإضاءات</translation>
-    </message>
-    <message>
-        <source>Curve Lights (Upper Mids)</source>
-        <translation>المنحنى: الفاتحة (المتوسطة العليا)</translation>
-    </message>
-    <message>
-        <source>Curve Darks (Lower Mids)</source>
-        <translation>المنحنى: الداكنة (المتوسطة الدنيا)</translation>
-    </message>
-    <message>
-        <source>Curve Shadows</source>
-        <translation>المنحنى: الظلال</translation>
-    </message>
-    <message>
         <source>Texture</source>
         <translation>الملمس</translation>
-    </message>
-    <message>
-        <source>Suggested scene</source>
-        <translation>مشهد مقترح</translation>
     </message>
     <message>
         <source>Clarity (Midtone Contrast)</source>
@@ -1694,28 +1947,8 @@
         <translation>زيادة الحدة</translation>
     </message>
     <message>
-        <source>Noise Reduction (Luma)</source>
-        <translation>تقليل التشويش (السطوع)</translation>
-    </message>
-    <message>
-        <source>Noise Reduction (Color)</source>
-        <translation>تقليل التشويش (اللون)</translation>
-    </message>
-    <message>
         <source>Vignette</source>
         <translation>تظليل الحواف</translation>
-    </message>
-    <message>
-        <source>Defringe (Chromatic Aberration)</source>
-        <translation>إزالة الهالات (الزيغ اللوني)</translation>
-    </message>
-    <message>
-        <source>Lens Distortion Correction</source>
-        <translation>تصحيح تشوه العدسة</translation>
-    </message>
-    <message>
-        <source>Open a photo first</source>
-        <translation>افتح صورة أولًا</translation>
     </message>
     <message>
         <source>Version %1</source>
@@ -1842,34 +2075,6 @@
         <translation>لم يستجب فحص المجلد.</translation>
     </message>
     <message>
-        <source>Soft proof: %1</source>
-        <translation>التدقيق على الشاشة: %1</translation>
-    </message>
-    <message>
-        <source>Soft proof off</source>
-        <translation>التدقيق على الشاشة متوقف</translation>
-    </message>
-    <message>
-        <source>Rating: ★</source>
-        <translation>التقييم: ★</translation>
-    </message>
-    <message>
-        <source>Rating: ★★</source>
-        <translation>التقييم: ★★</translation>
-    </message>
-    <message>
-        <source>Rating: ★★★</source>
-        <translation>التقييم: ★★★</translation>
-    </message>
-    <message>
-        <source>Rating: ★★★★</source>
-        <translation>التقييم: ★★★★</translation>
-    </message>
-    <message>
-        <source>Rating: ★★★★★</source>
-        <translation>التقييم: ★★★★★</translation>
-    </message>
-    <message>
         <source>Flag cleared</source>
         <translation>أُزيلت العلامة</translation>
     </message>
@@ -1890,60 +2095,12 @@
         <translation>مرفوضة</translation>
     </message>
     <message>
-        <source>Adjust</source>
-        <translation>ضبط</translation>
-    </message>
-    <message>
-        <source>Masks</source>
-        <translation>الأقنعة</translation>
-    </message>
-    <message>
-        <source>Looks</source>
-        <translation>الأنماط</translation>
-    </message>
-    <message>
-        <source>AI</source>
-        <translation>الذكاء الاصطناعي</translation>
-    </message>
-    <message>
-        <source>Read the photo&apos;s .xmp sidecar written by another editor</source>
-        <translation>قراءة ملف ‎.xmp الذي كتبه محرر آخر</translation>
-    </message>
-    <message>
-        <source>Write the edit, rating and label to an .xmp sidecar for other editors</source>
-        <translation>كتابة التعديل والتقييم والتسمية في ملف ‎.xmp للمحررات الأخرى</translation>
-    </message>
-    <message>
         <source>Profile</source>
         <translation>ملف التعريف</translation>
     </message>
     <message>
-        <source>Color Chrome Effect</source>
-        <translation>تأثير Color Chrome</translation>
-    </message>
-    <message>
-        <source>Color Chrome FX Blue</source>
-        <translation>Color Chrome FX الأزرق</translation>
-    </message>
-    <message>
         <source>White balance</source>
         <translation>توازن البياض</translation>
-    </message>
-    <message>
-        <source>Temperature</source>
-        <translation>درجة الحرارة</translation>
-    </message>
-    <message>
-        <source>Tint</source>
-        <translation>الصبغة</translation>
-    </message>
-    <message>
-        <source>Tone</source>
-        <translation>الدرجات اللونية</translation>
-    </message>
-    <message>
-        <source>Presence</source>
-        <translation>الحضور</translation>
     </message>
     <message>
         <source>Tone curve</source>
@@ -1966,28 +2123,8 @@
         <translation>تحويل</translation>
     </message>
     <message>
-        <source>Vertical</source>
-        <translation>عمودي</translation>
-    </message>
-    <message>
-        <source>Horizontal</source>
-        <translation>أفقي</translation>
-    </message>
-    <message>
-        <source>Scale</source>
-        <translation>المقياس</translation>
-    </message>
-    <message>
-        <source>Vertical straightens converging lines, such as buildings photographed from below. Crop afterwards to remove the empty edges.</source>
-        <translation>يقوّم العمودي الخطوط المتقاربة، مثل المباني المصوّرة من الأسفل. قُصّ بعد ذلك لإزالة الحواف الفارغة.</translation>
-    </message>
-    <message>
         <source>Grain</source>
         <translation>الحبيبات</translation>
-    </message>
-    <message>
-        <source>Colour management</source>
-        <translation>إدارة الألوان</translation>
     </message>
     <message>
         <source>Heal and clone</source>
@@ -2004,34 +2141,6 @@
     <message>
         <source>LUT</source>
         <translation>LUT</translation>
-    </message>
-    <message>
-        <source>Edit assistant</source>
-        <translation>مساعد التحرير</translation>
-    </message>
-    <message>
-        <source>Assistant edit applied</source>
-        <translation>طُبّق تحرير المساعد</translation>
-    </message>
-    <message>
-        <source>Copy</source>
-        <translation>نسخ</translation>
-    </message>
-    <message>
-        <source>Paste</source>
-        <translation>لصق</translation>
-    </message>
-    <message>
-        <source>Reset</source>
-        <translation>إعادة الضبط</translation>
-    </message>
-    <message>
-        <source>Import XMP</source>
-        <translation>استيراد XMP</translation>
-    </message>
-    <message>
-        <source>Write XMP</source>
-        <translation>كتابة XMP</translation>
     </message>
     <message>
         <source>Opening %1</source>
@@ -2125,6 +2234,17 @@
     <message>
         <source>no answer from the engine</source>
         <translation>لا استجابة من المحرّك</translation>
+    </message>
+</context>
+<context>
+    <name>MasksTab</name>
+    <message>
+        <source>Heal and clone</source>
+        <translation>المعالجة والاستنساخ</translation>
+    </message>
+    <message>
+        <source>Local adjustments</source>
+        <translation>التعديلات الموضعية</translation>
     </message>
 </context>
 <context>
@@ -2319,6 +2439,53 @@
     </message>
 </context>
 <context>
+    <name>RightInspector</name>
+    <message>
+        <source>AI</source>
+        <translation>الذكاء الاصطناعي</translation>
+    </message>
+    <message>
+        <source>Adjust</source>
+        <translation>ضبط</translation>
+    </message>
+    <message>
+        <source>Copy</source>
+        <translation>نسخ</translation>
+    </message>
+    <message>
+        <source>Import XMP</source>
+        <translation>استيراد XMP</translation>
+    </message>
+    <message>
+        <source>Looks</source>
+        <translation>الأنماط</translation>
+    </message>
+    <message>
+        <source>Masks</source>
+        <translation>الأقنعة</translation>
+    </message>
+    <message>
+        <source>Paste</source>
+        <translation>لصق</translation>
+    </message>
+    <message>
+        <source>Read the photo&apos;s .xmp sidecar written by another editor</source>
+        <translation>قراءة ملف ‎.xmp الذي كتبه محرر آخر</translation>
+    </message>
+    <message>
+        <source>Reset</source>
+        <translation>إعادة الضبط</translation>
+    </message>
+    <message>
+        <source>Write XMP</source>
+        <translation>كتابة XMP</translation>
+    </message>
+    <message>
+        <source>Write the edit, rating and label to an .xmp sidecar for other editors</source>
+        <translation>كتابة التعديل والتقييم والتسمية في ملف ‎.xmp للمحررات الأخرى</translation>
+    </message>
+</context>
+<context>
     <name>ScopesView</name>
     <message>
         <source>HIST</source>
@@ -2373,6 +2540,57 @@
     <message>
         <source>SKIN</source>
         <translation>بشرة</translation>
+    </message>
+</context>
+<context>
+    <name>ShortcutRouter</name>
+    <message>
+        <source>Crop mode: off</source>
+        <translation>وضع القص: إيقاف</translation>
+    </message>
+    <message>
+        <source>Crop mode: on (C)</source>
+        <translation>وضع القص: تشغيل (C)</translation>
+    </message>
+    <message>
+        <source>Flag cleared</source>
+        <translation>أُزيلت العلامة</translation>
+    </message>
+    <message>
+        <source>Open a photo first</source>
+        <translation>افتح صورة أولًا</translation>
+    </message>
+    <message>
+        <source>Rating cleared</source>
+        <translation>مُسح التقييم</translation>
+    </message>
+    <message>
+        <source>Rating: ★</source>
+        <translation>التقييم: ★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★</source>
+        <translation>التقييم: ★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★</source>
+        <translation>التقييم: ★★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★★</source>
+        <translation>التقييم: ★★★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★★★</source>
+        <translation>التقييم: ★★★★★</translation>
+    </message>
+    <message>
+        <source>Soft proof off</source>
+        <translation>التدقيق على الشاشة متوقف</translation>
+    </message>
+    <message>
+        <source>Soft proof: %1</source>
+        <translation>التدقيق على الشاشة: %1</translation>
     </message>
 </context>
 <context>
@@ -2765,93 +2983,6 @@
     <message>
         <source>Drop Shadow</source>
         <translation>ظل مُسقط</translation>
-    </message>
-</context>
-<context>
-    <name>CloudDialog</name>
-    <message>
-        <source>Add an account</source>
-        <translation>إضافة حساب</translation>
-    </message>
-    <message>
-        <source>Browse</source>
-        <translation>استعراض</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation>إلغاء</translation>
-    </message>
-    <message>
-        <source>Client ID</source>
-        <translation>معرّف العميل</translation>
-    </message>
-    <message>
-        <source>Client secret</source>
-        <translation>سر العميل</translation>
-    </message>
-    <message>
-        <source>Close</source>
-        <translation>إغلاق</translation>
-    </message>
-    <message>
-        <source>Cloud accounts</source>
-        <translation>الحسابات السحابية</translation>
-    </message>
-    <message>
-        <source>Confirm</source>
-        <translation>تأكيد</translation>
-    </message>
-    <message>
-        <source>Connected</source>
-        <translation>المتصلة</translation>
-    </message>
-    <message>
-        <source>Disconnect</source>
-        <translation>قطع الاتصال</translation>
-    </message>
-    <message>
-        <source>Disconnecting removes the account's keys and downloaded copies from this computer. Files in the account stay as they are.</source>
-        <translation>يؤدي قطع الاتصال إلى إزالة مفاتيح الحساب والنسخ المنزّلة من هذا الحاسوب. تبقى الملفات في الحساب كما هي.</translation>
-    </message>
-    <message>
-        <source>Enter this code on the GitHub page that opened in your browser:</source>
-        <translation>أدخل هذا الرمز في صفحة GitHub التي فُتحت في المتصفح:</translation>
-    </message>
-    <message>
-        <source>Finish signing in in your browser. This window updates when you are done.</source>
-        <translation>أكمل تسجيل الدخول في المتصفح. تتحدّث هذه النافذة عند الانتهاء.</translation>
-    </message>
-    <message>
-        <source>Install it with: sudo pacman -S %1</source>
-        <translation>ثبّته بالأمر: sudo pacman -S %1</translation>
-    </message>
-    <message>
-        <source>Needs %1</source>
-        <translation>يتطلب %1</translation>
-    </message>
-    <message>
-        <source>No account connected yet.</source>
-        <translation>لا يوجد حساب متصل بعد.</translation>
-    </message>
-    <message>
-        <source>Open the page again</source>
-        <translation>فتح الصفحة مرة أخرى</translation>
-    </message>
-    <message>
-        <source>Own Google client ID (optional)</source>
-        <translation>معرّف عميل Google خاص بك (اختياري)</translation>
-    </message>
-    <message>
-        <source>Signing in to %1</source>
-        <translation>جارٍ تسجيل الدخول إلى %1</translation>
-    </message>
-    <message>
-        <source>The shared client rclone uses for Google Drive is being retired. With a client ID of your own from the Google Cloud Console, Google Drive keeps working. It is used the next time you connect Google Drive.</source>
-        <translation>يجري إيقاف العميل المشترك الذي يستخدمه rclone مع Google Drive. باستخدام معرّف عميل خاص بك من Google Cloud Console يستمر Google Drive في العمل. يُستخدم في المرة القادمة التي توصل فيها Google Drive.</translation>
-    </message>
-    <message>
-        <source>You sign in on the service's own page in your browser. OmaStudio keeps the access keys in the system keyring and creates a folder named %1 in each account for uploads.</source>
-        <translation>تسجّل الدخول في صفحة الخدمة نفسها في المتصفح. يحفظ OmaStudio مفاتيح الوصول في حلقة مفاتيح النظام وينشئ في كل حساب مجلدًا باسم %1 للرفع.</translation>
     </message>
 </context>
 </TS>

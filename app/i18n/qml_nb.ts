@@ -141,6 +141,173 @@
     </message>
 </context>
 <context>
+    <name>AdjustTab</name>
+    <message>
+        <source>Blacks</source>
+        <translation>Svarte</translation>
+    </message>
+    <message>
+        <source>Clarity (Midtone Contrast)</source>
+        <translation>Klarhet (mellomtonekontrast)</translation>
+    </message>
+    <message>
+        <source>Color Chrome Effect</source>
+        <translation>Color Chrome-effekt</translation>
+    </message>
+    <message>
+        <source>Color Chrome FX Blue</source>
+        <translation>Color Chrome FX Blå</translation>
+    </message>
+    <message>
+        <source>Colour grading</source>
+        <translation>Fargegradering</translation>
+    </message>
+    <message>
+        <source>Colour management</source>
+        <translation>Fargestyring</translation>
+    </message>
+    <message>
+        <source>Colour mixer</source>
+        <translation>Fargemikser</translation>
+    </message>
+    <message>
+        <source>Contrast</source>
+        <translation>Kontrast</translation>
+    </message>
+    <message>
+        <source>Curve Darks (Lower Mids)</source>
+        <translation>Kurve: mørke toner (nedre mellomtoner)</translation>
+    </message>
+    <message>
+        <source>Curve Highlights</source>
+        <translation>Kurve: høylys</translation>
+    </message>
+    <message>
+        <source>Curve Lights (Upper Mids)</source>
+        <translation>Kurve: lyse toner (øvre mellomtoner)</translation>
+    </message>
+    <message>
+        <source>Curve Shadows</source>
+        <translation>Kurve: skygger</translation>
+    </message>
+    <message>
+        <source>Defringe (Chromatic Aberration)</source>
+        <translation>Fjern fargekanter (kromatisk aberrasjon)</translation>
+    </message>
+    <message>
+        <source>Dehaze</source>
+        <translation>Fjern dis</translation>
+    </message>
+    <message>
+        <source>Detail and optics</source>
+        <translation>Detaljer og optikk</translation>
+    </message>
+    <message>
+        <source>Exposure</source>
+        <translation>Eksponering</translation>
+    </message>
+    <message>
+        <source>Grain</source>
+        <translation>Korn</translation>
+    </message>
+    <message>
+        <source>Highlights</source>
+        <translation>Høylys</translation>
+    </message>
+    <message>
+        <source>Horizontal</source>
+        <translation>Vannrett</translation>
+    </message>
+    <message>
+        <source>Lens Distortion Correction</source>
+        <translation>Korrigering av objektivforvrengning</translation>
+    </message>
+    <message>
+        <source>Noise Reduction (Color)</source>
+        <translation>Støyreduksjon (farge)</translation>
+    </message>
+    <message>
+        <source>Noise Reduction (Luma)</source>
+        <translation>Støyreduksjon (luminans)</translation>
+    </message>
+    <message>
+        <source>Open a photo first</source>
+        <translation>Åpne et bilde først</translation>
+    </message>
+    <message>
+        <source>Presence</source>
+        <translation>Nærvær</translation>
+    </message>
+    <message>
+        <source>Profile</source>
+        <translation>Profil</translation>
+    </message>
+    <message>
+        <source>Saturation</source>
+        <translation>Metning</translation>
+    </message>
+    <message>
+        <source>Scale</source>
+        <translation>Skala</translation>
+    </message>
+    <message>
+        <source>Shadows</source>
+        <translation>Skygger</translation>
+    </message>
+    <message>
+        <source>Sharpening</source>
+        <translation>Skarphet</translation>
+    </message>
+    <message>
+        <source>Temperature</source>
+        <translation>Temperatur</translation>
+    </message>
+    <message>
+        <source>Texture</source>
+        <translation>Struktur</translation>
+    </message>
+    <message>
+        <source>Tint</source>
+        <translation>Fargetone</translation>
+    </message>
+    <message>
+        <source>Tone</source>
+        <translation>Tone</translation>
+    </message>
+    <message>
+        <source>Tone curve</source>
+        <translation>Tonekurve</translation>
+    </message>
+    <message>
+        <source>Transform</source>
+        <translation>Transformer</translation>
+    </message>
+    <message>
+        <source>Vertical</source>
+        <translation>Loddrett</translation>
+    </message>
+    <message>
+        <source>Vertical straightens converging lines, such as buildings photographed from below. Crop afterwards to remove the empty edges.</source>
+        <translation>Loddrett retter opp konvergerende linjer, for eksempel bygninger fotografert nedenfra. Beskjær etterpå for å fjerne de tomme kantene.</translation>
+    </message>
+    <message>
+        <source>Vibrance</source>
+        <translation>Livfullhet</translation>
+    </message>
+    <message>
+        <source>Vignette</source>
+        <translation>Vignettering</translation>
+    </message>
+    <message>
+        <source>White balance</source>
+        <translation>Hvitbalanse</translation>
+    </message>
+    <message>
+        <source>Whites</source>
+        <translation>Hvite</translation>
+    </message>
+</context>
+<context>
     <name>AiAssistPanel</name>
     <message>
         <source>%1 (automatic)</source>
@@ -291,10 +458,123 @@
     </message>
 </context>
 <context>
+    <name>AiTab</name>
+    <message>
+        <source>Assistant edit applied</source>
+        <translation>Assistentens redigering brukt</translation>
+    </message>
+    <message>
+        <source>Edit assistant</source>
+        <translation>Redigeringsassistent</translation>
+    </message>
+</context>
+<context>
     <name>BoundedTextInput</name>
     <message>
         <source>Clipboard content exceeded byte limit or timed out.</source>
         <translation>Innholdet på utklippstavlen overskred bytegrensen eller tok for lang tid.</translation>
+    </message>
+</context>
+<context>
+    <name>CenterWorkspace</name>
+    <message>
+        <source>Opened %1</source>
+        <translation>Åpnet %1</translation>
+    </message>
+    <message>
+        <source>Scanning folder %1</source>
+        <translation>Skanner mappen %1</translation>
+    </message>
+    <message>
+        <source>Soft proof: %1</source>
+        <translation>Softproof: %1</translation>
+    </message>
+</context>
+<context>
+    <name>CloudDialog</name>
+    <message>
+        <source>Add an account</source>
+        <translation>Legg til konto</translation>
+    </message>
+    <message>
+        <source>Browse</source>
+        <translation>Bla gjennom</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Avbryt</translation>
+    </message>
+    <message>
+        <source>Client ID</source>
+        <translation>Klient-ID</translation>
+    </message>
+    <message>
+        <source>Client secret</source>
+        <translation>Klienthemmelighet</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>Lukk</translation>
+    </message>
+    <message>
+        <source>Cloud accounts</source>
+        <translation>Skykontoer</translation>
+    </message>
+    <message>
+        <source>Confirm</source>
+        <translation>Bekreft</translation>
+    </message>
+    <message>
+        <source>Connected</source>
+        <translation>Tilkoblet</translation>
+    </message>
+    <message>
+        <source>Disconnect</source>
+        <translation>Koble fra</translation>
+    </message>
+    <message>
+        <source>Disconnecting removes the account&apos;s keys and downloaded copies from this computer. Files in the account stay as they are.</source>
+        <translation>Når du kobler fra, fjernes kontoens nøkler og nedlastede kopier fra denne datamaskinen. Filene i kontoen forblir som de er.</translation>
+    </message>
+    <message>
+        <source>Enter this code on the GitHub page that opened in your browser:</source>
+        <translation>Skriv inn denne koden på GitHub-siden som åpnet seg i nettleseren:</translation>
+    </message>
+    <message>
+        <source>Finish signing in in your browser. This window updates when you are done.</source>
+        <translation>Fullfør påloggingen i nettleseren. Vinduet oppdateres når du er ferdig.</translation>
+    </message>
+    <message>
+        <source>Install it with: sudo pacman -S %1</source>
+        <translation>Installer med: sudo pacman -S %1</translation>
+    </message>
+    <message>
+        <source>Needs %1</source>
+        <translation>Krever %1</translation>
+    </message>
+    <message>
+        <source>No account connected yet.</source>
+        <translation>Ingen konto tilkoblet ennå.</translation>
+    </message>
+    <message>
+        <source>Open the page again</source>
+        <translation>Åpne siden igjen</translation>
+    </message>
+    <message>
+        <source>Own Google client ID (optional)</source>
+        <translation>Egen Google-klient-ID (valgfritt)</translation>
+    </message>
+    <message>
+        <source>Signing in to %1</source>
+        <translation>Logger på %1</translation>
+    </message>
+    <message>
+        <source>The shared client rclone uses for Google Drive is being retired. With a client ID of your own from the Google Cloud Console, Google Drive keeps working. It is used the next time you connect Google Drive.</source>
+        <translation>Den delte klienten rclone bruker for Google Drive fases ut. Med en egen klient-ID fra Google Cloud Console fortsetter Google Drive å virke. Den brukes neste gang du kobler til Google Drive.</translation>
+    </message>
+    <message>
+        <source>You sign in on the service&apos;s own page in your browser. OmaStudio keeps the access keys in the system keyring and creates a folder named %1 in each account for uploads.</source>
+        <translation>Du logger på tjenestens egen side i nettleseren. OmaStudio lagrer tilgangsnøklene i systemets nøkkelring og oppretter en mappe kalt %1 i hver konto for opplastinger.</translation>
     </message>
 </context>
 <context>
@@ -1093,23 +1373,6 @@
     </message>
 </context>
 <context>
-    <name>HistogramView</name>
-    <message>
-        <source>[S] %1%</source>
-        <comment>S: shadow clipping</comment>
-        <translation>[S] %1%</translation>
-    </message>
-    <message>
-        <source>Histogram</source>
-        <translation>Histogram</translation>
-    </message>
-    <message>
-        <source>[H] %1%</source>
-        <comment>H: highlight clipping</comment>
-        <translation>[H] %1%</translation>
-    </message>
-</context>
-<context>
     <name>HistoryPanel</name>
     <message>
         <source>History</source>
@@ -1474,6 +1737,32 @@
     </message>
 </context>
 <context>
+    <name>LeftInspector</name>
+    <message>
+        <source>Analyzing...</source>
+        <translation>Analyserer...</translation>
+    </message>
+    <message>
+        <source>Extracting dynamic range...</source>
+        <translation>Henter ut dynamisk omfang...</translation>
+    </message>
+    <message>
+        <source>Suggested scene</source>
+        <translation>Foreslått scene</translation>
+    </message>
+</context>
+<context>
+    <name>LooksTab</name>
+    <message>
+        <source>LUT</source>
+        <translation>LUT</translation>
+    </message>
+    <message>
+        <source>Presets</source>
+        <translation>Forhåndsinnstillinger</translation>
+    </message>
+</context>
+<context>
     <name>LutSelector</name>
     <message>
         <source>Load 3D LUT</source>
@@ -1594,22 +1883,6 @@
         <translation>Beskjæringsmodus: av</translation>
     </message>
     <message>
-        <source>Analyzing...</source>
-        <translation>Analyserer...</translation>
-    </message>
-    <message>
-        <source>Extracting dynamic range...</source>
-        <translation>Henter ut dynamisk omfang...</translation>
-    </message>
-    <message>
-        <source>Opened %1</source>
-        <translation>Åpnet %1</translation>
-    </message>
-    <message>
-        <source>Scanning folder %1</source>
-        <translation>Skanner mappen %1</translation>
-    </message>
-    <message>
         <source>Contrast</source>
         <translation>Kontrast</translation>
     </message>
@@ -1634,28 +1907,8 @@
         <translation>Svarte</translation>
     </message>
     <message>
-        <source>Curve Highlights</source>
-        <translation>Kurve: høylys</translation>
-    </message>
-    <message>
-        <source>Curve Lights (Upper Mids)</source>
-        <translation>Kurve: lyse toner (øvre mellomtoner)</translation>
-    </message>
-    <message>
-        <source>Curve Darks (Lower Mids)</source>
-        <translation>Kurve: mørke toner (nedre mellomtoner)</translation>
-    </message>
-    <message>
-        <source>Curve Shadows</source>
-        <translation>Kurve: skygger</translation>
-    </message>
-    <message>
         <source>Texture</source>
         <translation>Struktur</translation>
-    </message>
-    <message>
-        <source>Suggested scene</source>
-        <translation>Foreslått scene</translation>
     </message>
     <message>
         <source>Clarity (Midtone Contrast)</source>
@@ -1678,28 +1931,8 @@
         <translation>Skarphet</translation>
     </message>
     <message>
-        <source>Noise Reduction (Luma)</source>
-        <translation>Støyreduksjon (luminans)</translation>
-    </message>
-    <message>
-        <source>Noise Reduction (Color)</source>
-        <translation>Støyreduksjon (farge)</translation>
-    </message>
-    <message>
         <source>Vignette</source>
         <translation>Vignettering</translation>
-    </message>
-    <message>
-        <source>Defringe (Chromatic Aberration)</source>
-        <translation>Fjern fargekanter (kromatisk aberrasjon)</translation>
-    </message>
-    <message>
-        <source>Lens Distortion Correction</source>
-        <translation>Korrigering av objektivforvrengning</translation>
-    </message>
-    <message>
-        <source>Open a photo first</source>
-        <translation>Åpne et bilde først</translation>
     </message>
     <message>
         <source>Version %1</source>
@@ -1826,34 +2059,6 @@
         <translation>Mappeskanningen svarte ikke.</translation>
     </message>
     <message>
-        <source>Soft proof: %1</source>
-        <translation>Softproof: %1</translation>
-    </message>
-    <message>
-        <source>Soft proof off</source>
-        <translation>Softproof av</translation>
-    </message>
-    <message>
-        <source>Rating: ★</source>
-        <translation>Vurdering: ★</translation>
-    </message>
-    <message>
-        <source>Rating: ★★</source>
-        <translation>Vurdering: ★★</translation>
-    </message>
-    <message>
-        <source>Rating: ★★★</source>
-        <translation>Vurdering: ★★★</translation>
-    </message>
-    <message>
-        <source>Rating: ★★★★</source>
-        <translation>Vurdering: ★★★★</translation>
-    </message>
-    <message>
-        <source>Rating: ★★★★★</source>
-        <translation>Vurdering: ★★★★★</translation>
-    </message>
-    <message>
         <source>Flag cleared</source>
         <translation>Flagg fjernet</translation>
     </message>
@@ -1874,60 +2079,12 @@
         <translation>Avvist</translation>
     </message>
     <message>
-        <source>Adjust</source>
-        <translation>Juster</translation>
-    </message>
-    <message>
-        <source>Masks</source>
-        <translation>Masker</translation>
-    </message>
-    <message>
-        <source>Looks</source>
-        <translation>Stiler</translation>
-    </message>
-    <message>
-        <source>AI</source>
-        <translation>AI</translation>
-    </message>
-    <message>
-        <source>Read the photo&apos;s .xmp sidecar written by another editor</source>
-        <translation>Les .xmp-filen som en annen editor har skrevet</translation>
-    </message>
-    <message>
-        <source>Write the edit, rating and label to an .xmp sidecar for other editors</source>
-        <translation>Skriv redigeringen, vurderingen og etiketten til en .xmp-fil for andre editorer</translation>
-    </message>
-    <message>
         <source>Profile</source>
         <translation>Profil</translation>
     </message>
     <message>
-        <source>Color Chrome Effect</source>
-        <translation>Color Chrome-effekt</translation>
-    </message>
-    <message>
-        <source>Color Chrome FX Blue</source>
-        <translation>Color Chrome FX Blå</translation>
-    </message>
-    <message>
         <source>White balance</source>
         <translation>Hvitbalanse</translation>
-    </message>
-    <message>
-        <source>Temperature</source>
-        <translation>Temperatur</translation>
-    </message>
-    <message>
-        <source>Tint</source>
-        <translation>Fargetone</translation>
-    </message>
-    <message>
-        <source>Tone</source>
-        <translation>Tone</translation>
-    </message>
-    <message>
-        <source>Presence</source>
-        <translation>Nærvær</translation>
     </message>
     <message>
         <source>Tone curve</source>
@@ -1950,28 +2107,8 @@
         <translation>Transformer</translation>
     </message>
     <message>
-        <source>Vertical</source>
-        <translation>Loddrett</translation>
-    </message>
-    <message>
-        <source>Horizontal</source>
-        <translation>Vannrett</translation>
-    </message>
-    <message>
-        <source>Scale</source>
-        <translation>Skala</translation>
-    </message>
-    <message>
-        <source>Vertical straightens converging lines, such as buildings photographed from below. Crop afterwards to remove the empty edges.</source>
-        <translation>Loddrett retter opp konvergerende linjer, for eksempel bygninger fotografert nedenfra. Beskjær etterpå for å fjerne de tomme kantene.</translation>
-    </message>
-    <message>
         <source>Grain</source>
         <translation>Korn</translation>
-    </message>
-    <message>
-        <source>Colour management</source>
-        <translation>Fargestyring</translation>
     </message>
     <message>
         <source>Heal and clone</source>
@@ -1988,34 +2125,6 @@
     <message>
         <source>LUT</source>
         <translation>LUT</translation>
-    </message>
-    <message>
-        <source>Edit assistant</source>
-        <translation>Redigeringsassistent</translation>
-    </message>
-    <message>
-        <source>Assistant edit applied</source>
-        <translation>Assistentens redigering brukt</translation>
-    </message>
-    <message>
-        <source>Copy</source>
-        <translation>Kopier</translation>
-    </message>
-    <message>
-        <source>Paste</source>
-        <translation>Lim inn</translation>
-    </message>
-    <message>
-        <source>Reset</source>
-        <translation>Tilbakestill</translation>
-    </message>
-    <message>
-        <source>Import XMP</source>
-        <translation>Importer XMP</translation>
-    </message>
-    <message>
-        <source>Write XMP</source>
-        <translation>Skriv XMP</translation>
     </message>
     <message>
         <source>Opening %1</source>
@@ -2097,6 +2206,17 @@
     <message>
         <source>no answer from the engine</source>
         <translation>intet svar fra motoren</translation>
+    </message>
+</context>
+<context>
+    <name>MasksTab</name>
+    <message>
+        <source>Heal and clone</source>
+        <translation>Reparer og klon</translation>
+    </message>
+    <message>
+        <source>Local adjustments</source>
+        <translation>Lokale justeringer</translation>
     </message>
 </context>
 <context>
@@ -2291,6 +2411,53 @@
     </message>
 </context>
 <context>
+    <name>RightInspector</name>
+    <message>
+        <source>AI</source>
+        <translation>AI</translation>
+    </message>
+    <message>
+        <source>Adjust</source>
+        <translation>Juster</translation>
+    </message>
+    <message>
+        <source>Copy</source>
+        <translation>Kopier</translation>
+    </message>
+    <message>
+        <source>Import XMP</source>
+        <translation>Importer XMP</translation>
+    </message>
+    <message>
+        <source>Looks</source>
+        <translation>Stiler</translation>
+    </message>
+    <message>
+        <source>Masks</source>
+        <translation>Masker</translation>
+    </message>
+    <message>
+        <source>Paste</source>
+        <translation>Lim inn</translation>
+    </message>
+    <message>
+        <source>Read the photo&apos;s .xmp sidecar written by another editor</source>
+        <translation>Les .xmp-filen som en annen editor har skrevet</translation>
+    </message>
+    <message>
+        <source>Reset</source>
+        <translation>Tilbakestill</translation>
+    </message>
+    <message>
+        <source>Write XMP</source>
+        <translation>Skriv XMP</translation>
+    </message>
+    <message>
+        <source>Write the edit, rating and label to an .xmp sidecar for other editors</source>
+        <translation>Skriv redigeringen, vurderingen og etiketten til en .xmp-fil for andre editorer</translation>
+    </message>
+</context>
+<context>
     <name>ScopesView</name>
     <message>
         <source>HIST</source>
@@ -2345,6 +2512,57 @@
     <message>
         <source>SKIN</source>
         <translation>HUD</translation>
+    </message>
+</context>
+<context>
+    <name>ShortcutRouter</name>
+    <message>
+        <source>Crop mode: off</source>
+        <translation>Beskjæringsmodus: av</translation>
+    </message>
+    <message>
+        <source>Crop mode: on (C)</source>
+        <translation>Beskjæringsmodus: på (C)</translation>
+    </message>
+    <message>
+        <source>Flag cleared</source>
+        <translation>Flagg fjernet</translation>
+    </message>
+    <message>
+        <source>Open a photo first</source>
+        <translation>Åpne et bilde først</translation>
+    </message>
+    <message>
+        <source>Rating cleared</source>
+        <translation>Vurderingen er fjernet</translation>
+    </message>
+    <message>
+        <source>Rating: ★</source>
+        <translation>Vurdering: ★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★</source>
+        <translation>Vurdering: ★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★</source>
+        <translation>Vurdering: ★★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★★</source>
+        <translation>Vurdering: ★★★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★★★</source>
+        <translation>Vurdering: ★★★★★</translation>
+    </message>
+    <message>
+        <source>Soft proof off</source>
+        <translation>Softproof av</translation>
+    </message>
+    <message>
+        <source>Soft proof: %1</source>
+        <translation>Softproof: %1</translation>
     </message>
 </context>
 <context>
@@ -2733,93 +2951,6 @@
     <message>
         <source>Drop Shadow</source>
         <translation>Skygge</translation>
-    </message>
-</context>
-<context>
-    <name>CloudDialog</name>
-    <message>
-        <source>Add an account</source>
-        <translation>Legg til konto</translation>
-    </message>
-    <message>
-        <source>Browse</source>
-        <translation>Bla gjennom</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation>Avbryt</translation>
-    </message>
-    <message>
-        <source>Client ID</source>
-        <translation>Klient-ID</translation>
-    </message>
-    <message>
-        <source>Client secret</source>
-        <translation>Klienthemmelighet</translation>
-    </message>
-    <message>
-        <source>Close</source>
-        <translation>Lukk</translation>
-    </message>
-    <message>
-        <source>Cloud accounts</source>
-        <translation>Skykontoer</translation>
-    </message>
-    <message>
-        <source>Confirm</source>
-        <translation>Bekreft</translation>
-    </message>
-    <message>
-        <source>Connected</source>
-        <translation>Tilkoblet</translation>
-    </message>
-    <message>
-        <source>Disconnect</source>
-        <translation>Koble fra</translation>
-    </message>
-    <message>
-        <source>Disconnecting removes the account's keys and downloaded copies from this computer. Files in the account stay as they are.</source>
-        <translation>Når du kobler fra, fjernes kontoens nøkler og nedlastede kopier fra denne datamaskinen. Filene i kontoen forblir som de er.</translation>
-    </message>
-    <message>
-        <source>Enter this code on the GitHub page that opened in your browser:</source>
-        <translation>Skriv inn denne koden på GitHub-siden som åpnet seg i nettleseren:</translation>
-    </message>
-    <message>
-        <source>Finish signing in in your browser. This window updates when you are done.</source>
-        <translation>Fullfør påloggingen i nettleseren. Vinduet oppdateres når du er ferdig.</translation>
-    </message>
-    <message>
-        <source>Install it with: sudo pacman -S %1</source>
-        <translation>Installer med: sudo pacman -S %1</translation>
-    </message>
-    <message>
-        <source>Needs %1</source>
-        <translation>Krever %1</translation>
-    </message>
-    <message>
-        <source>No account connected yet.</source>
-        <translation>Ingen konto tilkoblet ennå.</translation>
-    </message>
-    <message>
-        <source>Open the page again</source>
-        <translation>Åpne siden igjen</translation>
-    </message>
-    <message>
-        <source>Own Google client ID (optional)</source>
-        <translation>Egen Google-klient-ID (valgfritt)</translation>
-    </message>
-    <message>
-        <source>Signing in to %1</source>
-        <translation>Logger på %1</translation>
-    </message>
-    <message>
-        <source>The shared client rclone uses for Google Drive is being retired. With a client ID of your own from the Google Cloud Console, Google Drive keeps working. It is used the next time you connect Google Drive.</source>
-        <translation>Den delte klienten rclone bruker for Google Drive fases ut. Med en egen klient-ID fra Google Cloud Console fortsetter Google Drive å virke. Den brukes neste gang du kobler til Google Drive.</translation>
-    </message>
-    <message>
-        <source>You sign in on the service's own page in your browser. OmaStudio keeps the access keys in the system keyring and creates a folder named %1 in each account for uploads.</source>
-        <translation>Du logger på tjenestens egen side i nettleseren. OmaStudio lagrer tilgangsnøklene i systemets nøkkelring og oppretter en mappe kalt %1 i hver konto for opplastinger.</translation>
     </message>
 </context>
 </TS>

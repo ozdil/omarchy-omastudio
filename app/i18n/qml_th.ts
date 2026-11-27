@@ -141,6 +141,173 @@
     </message>
 </context>
 <context>
+    <name>AdjustTab</name>
+    <message>
+        <source>Blacks</source>
+        <translation>ส่วนดำ</translation>
+    </message>
+    <message>
+        <source>Clarity (Midtone Contrast)</source>
+        <translation>ความชัด (คอนทราสต์โทนกลาง)</translation>
+    </message>
+    <message>
+        <source>Color Chrome Effect</source>
+        <translation>เอฟเฟกต์ Color Chrome</translation>
+    </message>
+    <message>
+        <source>Color Chrome FX Blue</source>
+        <translation>Color Chrome FX น้ำเงิน</translation>
+    </message>
+    <message>
+        <source>Colour grading</source>
+        <translation>การเกรดสี</translation>
+    </message>
+    <message>
+        <source>Colour management</source>
+        <translation>การจัดการสี</translation>
+    </message>
+    <message>
+        <source>Colour mixer</source>
+        <translation>มิกเซอร์สี</translation>
+    </message>
+    <message>
+        <source>Contrast</source>
+        <translation>คอนทราสต์</translation>
+    </message>
+    <message>
+        <source>Curve Darks (Lower Mids)</source>
+        <translation>เส้นโค้ง: โทนมืด (โทนกลางล่าง)</translation>
+    </message>
+    <message>
+        <source>Curve Highlights</source>
+        <translation>เส้นโค้ง: ไฮไลต์</translation>
+    </message>
+    <message>
+        <source>Curve Lights (Upper Mids)</source>
+        <translation>เส้นโค้ง: โทนสว่าง (โทนกลางบน)</translation>
+    </message>
+    <message>
+        <source>Curve Shadows</source>
+        <translation>เส้นโค้ง: เงา</translation>
+    </message>
+    <message>
+        <source>Defringe (Chromatic Aberration)</source>
+        <translation>ลดขอบสี (ความคลาดสี)</translation>
+    </message>
+    <message>
+        <source>Dehaze</source>
+        <translation>ลดหมอก</translation>
+    </message>
+    <message>
+        <source>Detail and optics</source>
+        <translation>รายละเอียดและออปติก</translation>
+    </message>
+    <message>
+        <source>Exposure</source>
+        <translation>การเปิดรับแสง</translation>
+    </message>
+    <message>
+        <source>Grain</source>
+        <translation>เกรน</translation>
+    </message>
+    <message>
+        <source>Highlights</source>
+        <translation>ไฮไลต์</translation>
+    </message>
+    <message>
+        <source>Horizontal</source>
+        <translation>แนวนอน</translation>
+    </message>
+    <message>
+        <source>Lens Distortion Correction</source>
+        <translation>แก้ไขความบิดเบี้ยวของเลนส์</translation>
+    </message>
+    <message>
+        <source>Noise Reduction (Color)</source>
+        <translation>ลดสัญญาณรบกวน (สี)</translation>
+    </message>
+    <message>
+        <source>Noise Reduction (Luma)</source>
+        <translation>ลดสัญญาณรบกวน (ความสว่าง)</translation>
+    </message>
+    <message>
+        <source>Open a photo first</source>
+        <translation>เปิดภาพก่อน</translation>
+    </message>
+    <message>
+        <source>Presence</source>
+        <translation>ความโดดเด่น</translation>
+    </message>
+    <message>
+        <source>Profile</source>
+        <translation>โปรไฟล์</translation>
+    </message>
+    <message>
+        <source>Saturation</source>
+        <translation>ความอิ่มตัว</translation>
+    </message>
+    <message>
+        <source>Scale</source>
+        <translation>มาตราส่วน</translation>
+    </message>
+    <message>
+        <source>Shadows</source>
+        <translation>เงา</translation>
+    </message>
+    <message>
+        <source>Sharpening</source>
+        <translation>ความคมชัด</translation>
+    </message>
+    <message>
+        <source>Temperature</source>
+        <translation>อุณหภูมิสี</translation>
+    </message>
+    <message>
+        <source>Texture</source>
+        <translation>พื้นผิว</translation>
+    </message>
+    <message>
+        <source>Tint</source>
+        <translation>โทนสี</translation>
+    </message>
+    <message>
+        <source>Tone</source>
+        <translation>โทน</translation>
+    </message>
+    <message>
+        <source>Tone curve</source>
+        <translation>เส้นโค้งโทน</translation>
+    </message>
+    <message>
+        <source>Transform</source>
+        <translation>แปลงรูป</translation>
+    </message>
+    <message>
+        <source>Vertical</source>
+        <translation>แนวตั้ง</translation>
+    </message>
+    <message>
+        <source>Vertical straightens converging lines, such as buildings photographed from below. Crop afterwards to remove the empty edges.</source>
+        <translation>แนวตั้งช่วยปรับเส้นที่ลู่เข้าหากันให้ตรง เช่น อาคารที่ถ่ายจากด้านล่าง จากนั้นครอปเพื่อตัดขอบว่างออก</translation>
+    </message>
+    <message>
+        <source>Vibrance</source>
+        <translation>ความสดใส</translation>
+    </message>
+    <message>
+        <source>Vignette</source>
+        <translation>ขอบมืด</translation>
+    </message>
+    <message>
+        <source>White balance</source>
+        <translation>สมดุลแสงขาว</translation>
+    </message>
+    <message>
+        <source>Whites</source>
+        <translation>ส่วนขาว</translation>
+    </message>
+</context>
+<context>
     <name>AiAssistPanel</name>
     <message>
         <source>%1 (automatic)</source>
@@ -291,10 +458,123 @@
     </message>
 </context>
 <context>
+    <name>AiTab</name>
+    <message>
+        <source>Assistant edit applied</source>
+        <translation>ใช้การแก้ไขของผู้ช่วยแล้ว</translation>
+    </message>
+    <message>
+        <source>Edit assistant</source>
+        <translation>ผู้ช่วยแก้ไข</translation>
+    </message>
+</context>
+<context>
     <name>BoundedTextInput</name>
     <message>
         <source>Clipboard content exceeded byte limit or timed out.</source>
         <translation>เนื้อหาในคลิปบอร์ดเกินขีดจำกัดไบต์หรือหมดเวลา</translation>
+    </message>
+</context>
+<context>
+    <name>CenterWorkspace</name>
+    <message>
+        <source>Opened %1</source>
+        <translation>เปิด %1 แล้ว</translation>
+    </message>
+    <message>
+        <source>Scanning folder %1</source>
+        <translation>กำลังสแกนโฟลเดอร์ %1</translation>
+    </message>
+    <message>
+        <source>Soft proof: %1</source>
+        <translation>พรูฟบนจอ: %1</translation>
+    </message>
+</context>
+<context>
+    <name>CloudDialog</name>
+    <message>
+        <source>Add an account</source>
+        <translation>เพิ่มบัญชี</translation>
+    </message>
+    <message>
+        <source>Browse</source>
+        <translation>เรียกดู</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>ยกเลิก</translation>
+    </message>
+    <message>
+        <source>Client ID</source>
+        <translation>รหัสไคลเอนต์</translation>
+    </message>
+    <message>
+        <source>Client secret</source>
+        <translation>ข้อมูลลับของไคลเอนต์</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>ปิด</translation>
+    </message>
+    <message>
+        <source>Cloud accounts</source>
+        <translation>บัญชีคลาวด์</translation>
+    </message>
+    <message>
+        <source>Confirm</source>
+        <translation>ยืนยัน</translation>
+    </message>
+    <message>
+        <source>Connected</source>
+        <translation>เชื่อมต่อแล้ว</translation>
+    </message>
+    <message>
+        <source>Disconnect</source>
+        <translation>ยกเลิกการเชื่อมต่อ</translation>
+    </message>
+    <message>
+        <source>Disconnecting removes the account&apos;s keys and downloaded copies from this computer. Files in the account stay as they are.</source>
+        <translation>การยกเลิกการเชื่อมต่อจะลบคีย์ของบัญชีและสำเนาที่ดาวน์โหลดไว้ออกจากคอมพิวเตอร์นี้ ไฟล์ในบัญชียังคงอยู่เหมือนเดิม</translation>
+    </message>
+    <message>
+        <source>Enter this code on the GitHub page that opened in your browser:</source>
+        <translation>ป้อนรหัสนี้ในหน้า GitHub ที่เปิดในเบราว์เซอร์:</translation>
+    </message>
+    <message>
+        <source>Finish signing in in your browser. This window updates when you are done.</source>
+        <translation>ลงชื่อเข้าใช้ให้เสร็จในเบราว์เซอร์ หน้าต่างนี้จะอัปเดตเมื่อเสร็จ</translation>
+    </message>
+    <message>
+        <source>Install it with: sudo pacman -S %1</source>
+        <translation>ติดตั้งด้วย: sudo pacman -S %1</translation>
+    </message>
+    <message>
+        <source>Needs %1</source>
+        <translation>ต้องใช้ %1</translation>
+    </message>
+    <message>
+        <source>No account connected yet.</source>
+        <translation>ยังไม่มีบัญชีที่เชื่อมต่อ</translation>
+    </message>
+    <message>
+        <source>Open the page again</source>
+        <translation>เปิดหน้าอีกครั้ง</translation>
+    </message>
+    <message>
+        <source>Own Google client ID (optional)</source>
+        <translation>รหัสไคลเอนต์ Google ของคุณเอง (ไม่บังคับ)</translation>
+    </message>
+    <message>
+        <source>Signing in to %1</source>
+        <translation>กำลังลงชื่อเข้าใช้ %1</translation>
+    </message>
+    <message>
+        <source>The shared client rclone uses for Google Drive is being retired. With a client ID of your own from the Google Cloud Console, Google Drive keeps working. It is used the next time you connect Google Drive.</source>
+        <translation>ไคลเอนต์ที่ใช้ร่วมกันซึ่ง rclone ใช้กับ Google Drive กำลังจะเลิกใช้ เมื่อใช้รหัสไคลเอนต์ของคุณเองจาก Google Cloud Console แล้ว Google Drive จะยังทำงานต่อได้ ระบบจะใช้รหัสนี้ในครั้งถัดไปที่คุณเชื่อมต่อ Google Drive</translation>
+    </message>
+    <message>
+        <source>You sign in on the service&apos;s own page in your browser. OmaStudio keeps the access keys in the system keyring and creates a folder named %1 in each account for uploads.</source>
+        <translation>คุณลงชื่อเข้าใช้ในหน้าของบริการเองผ่านเบราว์เซอร์ OmaStudio เก็บคีย์การเข้าถึงไว้ในพวงกุญแจของระบบ และสร้างโฟลเดอร์ชื่อ %1 ในแต่ละบัญชีสำหรับการอัปโหลด</translation>
     </message>
 </context>
 <context>
@@ -1090,23 +1370,6 @@
     </message>
 </context>
 <context>
-    <name>HistogramView</name>
-    <message>
-        <source>[S] %1%</source>
-        <comment>S: shadow clipping</comment>
-        <translation>[ง] %1%</translation>
-    </message>
-    <message>
-        <source>Histogram</source>
-        <translation>ฮิสโตแกรม</translation>
-    </message>
-    <message>
-        <source>[H] %1%</source>
-        <comment>H: highlight clipping</comment>
-        <translation>[ฮ] %1%</translation>
-    </message>
-</context>
-<context>
     <name>HistoryPanel</name>
     <message>
         <source>History</source>
@@ -1471,6 +1734,32 @@
     </message>
 </context>
 <context>
+    <name>LeftInspector</name>
+    <message>
+        <source>Analyzing...</source>
+        <translation>กำลังวิเคราะห์...</translation>
+    </message>
+    <message>
+        <source>Extracting dynamic range...</source>
+        <translation>กำลังดึงช่วงไดนามิก...</translation>
+    </message>
+    <message>
+        <source>Suggested scene</source>
+        <translation>ฉากที่แนะนำ</translation>
+    </message>
+</context>
+<context>
+    <name>LooksTab</name>
+    <message>
+        <source>LUT</source>
+        <translation>LUT</translation>
+    </message>
+    <message>
+        <source>Presets</source>
+        <translation>พรีเซ็ต</translation>
+    </message>
+</context>
+<context>
     <name>LutSelector</name>
     <message>
         <source>Load 3D LUT</source>
@@ -1590,22 +1879,6 @@
         <translation>โหมดครอป: ปิด</translation>
     </message>
     <message>
-        <source>Analyzing...</source>
-        <translation>กำลังวิเคราะห์...</translation>
-    </message>
-    <message>
-        <source>Extracting dynamic range...</source>
-        <translation>กำลังดึงช่วงไดนามิก...</translation>
-    </message>
-    <message>
-        <source>Opened %1</source>
-        <translation>เปิด %1 แล้ว</translation>
-    </message>
-    <message>
-        <source>Scanning folder %1</source>
-        <translation>กำลังสแกนโฟลเดอร์ %1</translation>
-    </message>
-    <message>
         <source>Contrast</source>
         <translation>คอนทราสต์</translation>
     </message>
@@ -1630,28 +1903,8 @@
         <translation>ส่วนดำ</translation>
     </message>
     <message>
-        <source>Curve Highlights</source>
-        <translation>เส้นโค้ง: ไฮไลต์</translation>
-    </message>
-    <message>
-        <source>Curve Lights (Upper Mids)</source>
-        <translation>เส้นโค้ง: โทนสว่าง (โทนกลางบน)</translation>
-    </message>
-    <message>
-        <source>Curve Darks (Lower Mids)</source>
-        <translation>เส้นโค้ง: โทนมืด (โทนกลางล่าง)</translation>
-    </message>
-    <message>
-        <source>Curve Shadows</source>
-        <translation>เส้นโค้ง: เงา</translation>
-    </message>
-    <message>
         <source>Texture</source>
         <translation>พื้นผิว</translation>
-    </message>
-    <message>
-        <source>Suggested scene</source>
-        <translation>ฉากที่แนะนำ</translation>
     </message>
     <message>
         <source>Clarity (Midtone Contrast)</source>
@@ -1674,28 +1927,8 @@
         <translation>ความคมชัด</translation>
     </message>
     <message>
-        <source>Noise Reduction (Luma)</source>
-        <translation>ลดสัญญาณรบกวน (ความสว่าง)</translation>
-    </message>
-    <message>
-        <source>Noise Reduction (Color)</source>
-        <translation>ลดสัญญาณรบกวน (สี)</translation>
-    </message>
-    <message>
         <source>Vignette</source>
         <translation>ขอบมืด</translation>
-    </message>
-    <message>
-        <source>Defringe (Chromatic Aberration)</source>
-        <translation>ลดขอบสี (ความคลาดสี)</translation>
-    </message>
-    <message>
-        <source>Lens Distortion Correction</source>
-        <translation>แก้ไขความบิดเบี้ยวของเลนส์</translation>
-    </message>
-    <message>
-        <source>Open a photo first</source>
-        <translation>เปิดภาพก่อน</translation>
     </message>
     <message>
         <source>Version %1</source>
@@ -1822,34 +2055,6 @@
         <translation>การสแกนโฟลเดอร์ไม่ตอบสนอง</translation>
     </message>
     <message>
-        <source>Soft proof: %1</source>
-        <translation>พรูฟบนจอ: %1</translation>
-    </message>
-    <message>
-        <source>Soft proof off</source>
-        <translation>ปิดการพรูฟบนจอ</translation>
-    </message>
-    <message>
-        <source>Rating: ★</source>
-        <translation>คะแนน: ★</translation>
-    </message>
-    <message>
-        <source>Rating: ★★</source>
-        <translation>คะแนน: ★★</translation>
-    </message>
-    <message>
-        <source>Rating: ★★★</source>
-        <translation>คะแนน: ★★★</translation>
-    </message>
-    <message>
-        <source>Rating: ★★★★</source>
-        <translation>คะแนน: ★★★★</translation>
-    </message>
-    <message>
-        <source>Rating: ★★★★★</source>
-        <translation>คะแนน: ★★★★★</translation>
-    </message>
-    <message>
         <source>Flag cleared</source>
         <translation>ล้างธงแล้ว</translation>
     </message>
@@ -1870,60 +2075,12 @@
         <translation>ปฏิเสธ</translation>
     </message>
     <message>
-        <source>Adjust</source>
-        <translation>ปรับ</translation>
-    </message>
-    <message>
-        <source>Masks</source>
-        <translation>มาสก์</translation>
-    </message>
-    <message>
-        <source>Looks</source>
-        <translation>ลุค</translation>
-    </message>
-    <message>
-        <source>AI</source>
-        <translation>ปัญญาประดิษฐ์</translation>
-    </message>
-    <message>
-        <source>Read the photo&apos;s .xmp sidecar written by another editor</source>
-        <translation>อ่านไฟล์ .xmp ที่โปรแกรมแก้ไขอื่นเขียนไว้</translation>
-    </message>
-    <message>
-        <source>Write the edit, rating and label to an .xmp sidecar for other editors</source>
-        <translation>เขียนการแก้ไข คะแนน และป้ายกำกับลงในไฟล์ .xmp สำหรับโปรแกรมแก้ไขอื่น</translation>
-    </message>
-    <message>
         <source>Profile</source>
         <translation>โปรไฟล์</translation>
     </message>
     <message>
-        <source>Color Chrome Effect</source>
-        <translation>เอฟเฟกต์ Color Chrome</translation>
-    </message>
-    <message>
-        <source>Color Chrome FX Blue</source>
-        <translation>Color Chrome FX น้ำเงิน</translation>
-    </message>
-    <message>
         <source>White balance</source>
         <translation>สมดุลแสงขาว</translation>
-    </message>
-    <message>
-        <source>Temperature</source>
-        <translation>อุณหภูมิสี</translation>
-    </message>
-    <message>
-        <source>Tint</source>
-        <translation>โทนสี</translation>
-    </message>
-    <message>
-        <source>Tone</source>
-        <translation>โทน</translation>
-    </message>
-    <message>
-        <source>Presence</source>
-        <translation>ความโดดเด่น</translation>
     </message>
     <message>
         <source>Tone curve</source>
@@ -1946,28 +2103,8 @@
         <translation>แปลงรูป</translation>
     </message>
     <message>
-        <source>Vertical</source>
-        <translation>แนวตั้ง</translation>
-    </message>
-    <message>
-        <source>Horizontal</source>
-        <translation>แนวนอน</translation>
-    </message>
-    <message>
-        <source>Scale</source>
-        <translation>มาตราส่วน</translation>
-    </message>
-    <message>
-        <source>Vertical straightens converging lines, such as buildings photographed from below. Crop afterwards to remove the empty edges.</source>
-        <translation>แนวตั้งช่วยปรับเส้นที่ลู่เข้าหากันให้ตรง เช่น อาคารที่ถ่ายจากด้านล่าง จากนั้นครอปเพื่อตัดขอบว่างออก</translation>
-    </message>
-    <message>
         <source>Grain</source>
         <translation>เกรน</translation>
-    </message>
-    <message>
-        <source>Colour management</source>
-        <translation>การจัดการสี</translation>
     </message>
     <message>
         <source>Heal and clone</source>
@@ -1984,34 +2121,6 @@
     <message>
         <source>LUT</source>
         <translation>LUT</translation>
-    </message>
-    <message>
-        <source>Edit assistant</source>
-        <translation>ผู้ช่วยแก้ไข</translation>
-    </message>
-    <message>
-        <source>Assistant edit applied</source>
-        <translation>ใช้การแก้ไขของผู้ช่วยแล้ว</translation>
-    </message>
-    <message>
-        <source>Copy</source>
-        <translation>คัดลอก</translation>
-    </message>
-    <message>
-        <source>Paste</source>
-        <translation>วาง</translation>
-    </message>
-    <message>
-        <source>Reset</source>
-        <translation>รีเซ็ต</translation>
-    </message>
-    <message>
-        <source>Import XMP</source>
-        <translation>นำเข้า XMP</translation>
-    </message>
-    <message>
-        <source>Write XMP</source>
-        <translation>เขียน XMP</translation>
     </message>
     <message>
         <source>Opening %1</source>
@@ -2090,6 +2199,17 @@
     <message>
         <source>no answer from the engine</source>
         <translation>ไม่มีการตอบกลับจากเอนจิน</translation>
+    </message>
+</context>
+<context>
+    <name>MasksTab</name>
+    <message>
+        <source>Heal and clone</source>
+        <translation>ซ่อมและโคลน</translation>
+    </message>
+    <message>
+        <source>Local adjustments</source>
+        <translation>การปรับเฉพาะจุด</translation>
     </message>
 </context>
 <context>
@@ -2284,6 +2404,53 @@
     </message>
 </context>
 <context>
+    <name>RightInspector</name>
+    <message>
+        <source>AI</source>
+        <translation>ปัญญาประดิษฐ์</translation>
+    </message>
+    <message>
+        <source>Adjust</source>
+        <translation>ปรับ</translation>
+    </message>
+    <message>
+        <source>Copy</source>
+        <translation>คัดลอก</translation>
+    </message>
+    <message>
+        <source>Import XMP</source>
+        <translation>นำเข้า XMP</translation>
+    </message>
+    <message>
+        <source>Looks</source>
+        <translation>ลุค</translation>
+    </message>
+    <message>
+        <source>Masks</source>
+        <translation>มาสก์</translation>
+    </message>
+    <message>
+        <source>Paste</source>
+        <translation>วาง</translation>
+    </message>
+    <message>
+        <source>Read the photo&apos;s .xmp sidecar written by another editor</source>
+        <translation>อ่านไฟล์ .xmp ที่โปรแกรมแก้ไขอื่นเขียนไว้</translation>
+    </message>
+    <message>
+        <source>Reset</source>
+        <translation>รีเซ็ต</translation>
+    </message>
+    <message>
+        <source>Write XMP</source>
+        <translation>เขียน XMP</translation>
+    </message>
+    <message>
+        <source>Write the edit, rating and label to an .xmp sidecar for other editors</source>
+        <translation>เขียนการแก้ไข คะแนน และป้ายกำกับลงในไฟล์ .xmp สำหรับโปรแกรมแก้ไขอื่น</translation>
+    </message>
+</context>
+<context>
     <name>ScopesView</name>
     <message>
         <source>HIST</source>
@@ -2338,6 +2505,57 @@
     <message>
         <source>SKIN</source>
         <translation>ผิว</translation>
+    </message>
+</context>
+<context>
+    <name>ShortcutRouter</name>
+    <message>
+        <source>Crop mode: off</source>
+        <translation>โหมดครอป: ปิด</translation>
+    </message>
+    <message>
+        <source>Crop mode: on (C)</source>
+        <translation>โหมดครอป: เปิด (C)</translation>
+    </message>
+    <message>
+        <source>Flag cleared</source>
+        <translation>ล้างธงแล้ว</translation>
+    </message>
+    <message>
+        <source>Open a photo first</source>
+        <translation>เปิดภาพก่อน</translation>
+    </message>
+    <message>
+        <source>Rating cleared</source>
+        <translation>ล้างคะแนนแล้ว</translation>
+    </message>
+    <message>
+        <source>Rating: ★</source>
+        <translation>คะแนน: ★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★</source>
+        <translation>คะแนน: ★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★</source>
+        <translation>คะแนน: ★★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★★</source>
+        <translation>คะแนน: ★★★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★★★</source>
+        <translation>คะแนน: ★★★★★</translation>
+    </message>
+    <message>
+        <source>Soft proof off</source>
+        <translation>ปิดการพรูฟบนจอ</translation>
+    </message>
+    <message>
+        <source>Soft proof: %1</source>
+        <translation>พรูฟบนจอ: %1</translation>
     </message>
 </context>
 <context>
@@ -2725,93 +2943,6 @@
     <message>
         <source>Drop Shadow</source>
         <translation>เงาตกกระทบ</translation>
-    </message>
-</context>
-<context>
-    <name>CloudDialog</name>
-    <message>
-        <source>Add an account</source>
-        <translation>เพิ่มบัญชี</translation>
-    </message>
-    <message>
-        <source>Browse</source>
-        <translation>เรียกดู</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation>ยกเลิก</translation>
-    </message>
-    <message>
-        <source>Client ID</source>
-        <translation>รหัสไคลเอนต์</translation>
-    </message>
-    <message>
-        <source>Client secret</source>
-        <translation>ข้อมูลลับของไคลเอนต์</translation>
-    </message>
-    <message>
-        <source>Close</source>
-        <translation>ปิด</translation>
-    </message>
-    <message>
-        <source>Cloud accounts</source>
-        <translation>บัญชีคลาวด์</translation>
-    </message>
-    <message>
-        <source>Confirm</source>
-        <translation>ยืนยัน</translation>
-    </message>
-    <message>
-        <source>Connected</source>
-        <translation>เชื่อมต่อแล้ว</translation>
-    </message>
-    <message>
-        <source>Disconnect</source>
-        <translation>ยกเลิกการเชื่อมต่อ</translation>
-    </message>
-    <message>
-        <source>Disconnecting removes the account's keys and downloaded copies from this computer. Files in the account stay as they are.</source>
-        <translation>การยกเลิกการเชื่อมต่อจะลบคีย์ของบัญชีและสำเนาที่ดาวน์โหลดไว้ออกจากคอมพิวเตอร์นี้ ไฟล์ในบัญชียังคงอยู่เหมือนเดิม</translation>
-    </message>
-    <message>
-        <source>Enter this code on the GitHub page that opened in your browser:</source>
-        <translation>ป้อนรหัสนี้ในหน้า GitHub ที่เปิดในเบราว์เซอร์:</translation>
-    </message>
-    <message>
-        <source>Finish signing in in your browser. This window updates when you are done.</source>
-        <translation>ลงชื่อเข้าใช้ให้เสร็จในเบราว์เซอร์ หน้าต่างนี้จะอัปเดตเมื่อเสร็จ</translation>
-    </message>
-    <message>
-        <source>Install it with: sudo pacman -S %1</source>
-        <translation>ติดตั้งด้วย: sudo pacman -S %1</translation>
-    </message>
-    <message>
-        <source>Needs %1</source>
-        <translation>ต้องใช้ %1</translation>
-    </message>
-    <message>
-        <source>No account connected yet.</source>
-        <translation>ยังไม่มีบัญชีที่เชื่อมต่อ</translation>
-    </message>
-    <message>
-        <source>Open the page again</source>
-        <translation>เปิดหน้าอีกครั้ง</translation>
-    </message>
-    <message>
-        <source>Own Google client ID (optional)</source>
-        <translation>รหัสไคลเอนต์ Google ของคุณเอง (ไม่บังคับ)</translation>
-    </message>
-    <message>
-        <source>Signing in to %1</source>
-        <translation>กำลังลงชื่อเข้าใช้ %1</translation>
-    </message>
-    <message>
-        <source>The shared client rclone uses for Google Drive is being retired. With a client ID of your own from the Google Cloud Console, Google Drive keeps working. It is used the next time you connect Google Drive.</source>
-        <translation>ไคลเอนต์ที่ใช้ร่วมกันซึ่ง rclone ใช้กับ Google Drive กำลังจะเลิกใช้ เมื่อใช้รหัสไคลเอนต์ของคุณเองจาก Google Cloud Console แล้ว Google Drive จะยังทำงานต่อได้ ระบบจะใช้รหัสนี้ในครั้งถัดไปที่คุณเชื่อมต่อ Google Drive</translation>
-    </message>
-    <message>
-        <source>You sign in on the service's own page in your browser. OmaStudio keeps the access keys in the system keyring and creates a folder named %1 in each account for uploads.</source>
-        <translation>คุณลงชื่อเข้าใช้ในหน้าของบริการเองผ่านเบราว์เซอร์ OmaStudio เก็บคีย์การเข้าถึงไว้ในพวงกุญแจของระบบ และสร้างโฟลเดอร์ชื่อ %1 ในแต่ละบัญชีสำหรับการอัปโหลด</translation>
     </message>
 </context>
 </TS>

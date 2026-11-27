@@ -141,6 +141,173 @@
     </message>
 </context>
 <context>
+    <name>AdjustTab</name>
+    <message>
+        <source>Blacks</source>
+        <translation>Чёрные</translation>
+    </message>
+    <message>
+        <source>Clarity (Midtone Contrast)</source>
+        <translation>Чёткость (контраст средних тонов)</translation>
+    </message>
+    <message>
+        <source>Color Chrome Effect</source>
+        <translation>Эффект Color Chrome</translation>
+    </message>
+    <message>
+        <source>Color Chrome FX Blue</source>
+        <translation>Color Chrome FX Синий</translation>
+    </message>
+    <message>
+        <source>Colour grading</source>
+        <translation>Цветокоррекция</translation>
+    </message>
+    <message>
+        <source>Colour management</source>
+        <translation>Управление цветом</translation>
+    </message>
+    <message>
+        <source>Colour mixer</source>
+        <translation>Микшер цветов</translation>
+    </message>
+    <message>
+        <source>Contrast</source>
+        <translation>Контраст</translation>
+    </message>
+    <message>
+        <source>Curve Darks (Lower Mids)</source>
+        <translation>Кривая: тёмные (нижние средние)</translation>
+    </message>
+    <message>
+        <source>Curve Highlights</source>
+        <translation>Кривая: света</translation>
+    </message>
+    <message>
+        <source>Curve Lights (Upper Mids)</source>
+        <translation>Кривая: светлые (верхние средние)</translation>
+    </message>
+    <message>
+        <source>Curve Shadows</source>
+        <translation>Кривая: тени</translation>
+    </message>
+    <message>
+        <source>Defringe (Chromatic Aberration)</source>
+        <translation>Удаление каймы (хроматическая аберрация)</translation>
+    </message>
+    <message>
+        <source>Dehaze</source>
+        <translation>Удаление дымки</translation>
+    </message>
+    <message>
+        <source>Detail and optics</source>
+        <translation>Детализация и оптика</translation>
+    </message>
+    <message>
+        <source>Exposure</source>
+        <translation>Экспозиция</translation>
+    </message>
+    <message>
+        <source>Grain</source>
+        <translation>Зерно</translation>
+    </message>
+    <message>
+        <source>Highlights</source>
+        <translation>Света</translation>
+    </message>
+    <message>
+        <source>Horizontal</source>
+        <translation>По горизонтали</translation>
+    </message>
+    <message>
+        <source>Lens Distortion Correction</source>
+        <translation>Коррекция дисторсии объектива</translation>
+    </message>
+    <message>
+        <source>Noise Reduction (Color)</source>
+        <translation>Шумоподавление (цвет)</translation>
+    </message>
+    <message>
+        <source>Noise Reduction (Luma)</source>
+        <translation>Шумоподавление (яркость)</translation>
+    </message>
+    <message>
+        <source>Open a photo first</source>
+        <translation>Сначала откройте фото</translation>
+    </message>
+    <message>
+        <source>Presence</source>
+        <translation>Присутствие</translation>
+    </message>
+    <message>
+        <source>Profile</source>
+        <translation>Профиль</translation>
+    </message>
+    <message>
+        <source>Saturation</source>
+        <translation>Насыщенность</translation>
+    </message>
+    <message>
+        <source>Scale</source>
+        <translation>Масштаб</translation>
+    </message>
+    <message>
+        <source>Shadows</source>
+        <translation>Тени</translation>
+    </message>
+    <message>
+        <source>Sharpening</source>
+        <translation>Резкость</translation>
+    </message>
+    <message>
+        <source>Temperature</source>
+        <translation>Температура</translation>
+    </message>
+    <message>
+        <source>Texture</source>
+        <translation>Текстура</translation>
+    </message>
+    <message>
+        <source>Tint</source>
+        <translation>Оттенок</translation>
+    </message>
+    <message>
+        <source>Tone</source>
+        <translation>Тон</translation>
+    </message>
+    <message>
+        <source>Tone curve</source>
+        <translation>Тоновая кривая</translation>
+    </message>
+    <message>
+        <source>Transform</source>
+        <translation>Трансформация</translation>
+    </message>
+    <message>
+        <source>Vertical</source>
+        <translation>По вертикали</translation>
+    </message>
+    <message>
+        <source>Vertical straightens converging lines, such as buildings photographed from below. Crop afterwards to remove the empty edges.</source>
+        <translation>Вертикаль выпрямляет сходящиеся линии, например у зданий, снятых снизу. Затем обрежьте пустые края.</translation>
+    </message>
+    <message>
+        <source>Vibrance</source>
+        <translation>Красочность</translation>
+    </message>
+    <message>
+        <source>Vignette</source>
+        <translation>Виньетка</translation>
+    </message>
+    <message>
+        <source>White balance</source>
+        <translation>Баланс белого</translation>
+    </message>
+    <message>
+        <source>Whites</source>
+        <translation>Белые</translation>
+    </message>
+</context>
+<context>
     <name>AiAssistPanel</name>
     <message>
         <source>%1 (automatic)</source>
@@ -291,10 +458,123 @@
     </message>
 </context>
 <context>
+    <name>AiTab</name>
+    <message>
+        <source>Assistant edit applied</source>
+        <translation>Правка ассистента применена</translation>
+    </message>
+    <message>
+        <source>Edit assistant</source>
+        <translation>Ассистент редактирования</translation>
+    </message>
+</context>
+<context>
     <name>BoundedTextInput</name>
     <message>
         <source>Clipboard content exceeded byte limit or timed out.</source>
         <translation>Содержимое буфера обмена превысило лимит байтов или истекло время ожидания.</translation>
+    </message>
+</context>
+<context>
+    <name>CenterWorkspace</name>
+    <message>
+        <source>Opened %1</source>
+        <translation>Открыто: %1</translation>
+    </message>
+    <message>
+        <source>Scanning folder %1</source>
+        <translation>Сканирование папки %1</translation>
+    </message>
+    <message>
+        <source>Soft proof: %1</source>
+        <translation>Цветопроба: %1</translation>
+    </message>
+</context>
+<context>
+    <name>CloudDialog</name>
+    <message>
+        <source>Add an account</source>
+        <translation>Добавить аккаунт</translation>
+    </message>
+    <message>
+        <source>Browse</source>
+        <translation>Обзор</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Отмена</translation>
+    </message>
+    <message>
+        <source>Client ID</source>
+        <translation>ID клиента</translation>
+    </message>
+    <message>
+        <source>Client secret</source>
+        <translation>Секрет клиента</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>Закрыть</translation>
+    </message>
+    <message>
+        <source>Cloud accounts</source>
+        <translation>Облачные аккаунты</translation>
+    </message>
+    <message>
+        <source>Confirm</source>
+        <translation>Подтвердить</translation>
+    </message>
+    <message>
+        <source>Connected</source>
+        <translation>Подключённые</translation>
+    </message>
+    <message>
+        <source>Disconnect</source>
+        <translation>Отключить</translation>
+    </message>
+    <message>
+        <source>Disconnecting removes the account&apos;s keys and downloaded copies from this computer. Files in the account stay as they are.</source>
+        <translation>При отключении с этого компьютера удаляются ключи аккаунта и загруженные копии. Файлы в аккаунте остаются без изменений.</translation>
+    </message>
+    <message>
+        <source>Enter this code on the GitHub page that opened in your browser:</source>
+        <translation>Введите этот код на странице GitHub, открытой в браузере:</translation>
+    </message>
+    <message>
+        <source>Finish signing in in your browser. This window updates when you are done.</source>
+        <translation>Завершите вход в браузере. Окно обновится, когда вы закончите.</translation>
+    </message>
+    <message>
+        <source>Install it with: sudo pacman -S %1</source>
+        <translation>Установка: sudo pacman -S %1</translation>
+    </message>
+    <message>
+        <source>Needs %1</source>
+        <translation>Требуется %1</translation>
+    </message>
+    <message>
+        <source>No account connected yet.</source>
+        <translation>Пока нет подключённых аккаунтов.</translation>
+    </message>
+    <message>
+        <source>Open the page again</source>
+        <translation>Открыть страницу снова</translation>
+    </message>
+    <message>
+        <source>Own Google client ID (optional)</source>
+        <translation>Собственный ID клиента Google (необязательно)</translation>
+    </message>
+    <message>
+        <source>Signing in to %1</source>
+        <translation>Вход в %1</translation>
+    </message>
+    <message>
+        <source>The shared client rclone uses for Google Drive is being retired. With a client ID of your own from the Google Cloud Console, Google Drive keeps working. It is used the next time you connect Google Drive.</source>
+        <translation>Общий клиент, который rclone использует для Google Drive, выводится из эксплуатации. С собственным ID клиента из Google Cloud Console Google Drive продолжит работать. Он будет использован при следующем подключении Google Drive.</translation>
+    </message>
+    <message>
+        <source>You sign in on the service&apos;s own page in your browser. OmaStudio keeps the access keys in the system keyring and creates a folder named %1 in each account for uploads.</source>
+        <translation>Вход выполняется на странице самого сервиса в браузере. OmaStudio хранит ключи доступа в системной связке ключей и создаёт в каждом аккаунте папку %1 для загрузок.</translation>
     </message>
 </context>
 <context>
@@ -1096,23 +1376,6 @@
     </message>
 </context>
 <context>
-    <name>HistogramView</name>
-    <message>
-        <source>[S] %1%</source>
-        <comment>S: shadow clipping</comment>
-        <translation>[Т] %1%</translation>
-    </message>
-    <message>
-        <source>Histogram</source>
-        <translation>Гистограмма</translation>
-    </message>
-    <message>
-        <source>[H] %1%</source>
-        <comment>H: highlight clipping</comment>
-        <translation>[С] %1%</translation>
-    </message>
-</context>
-<context>
     <name>HistoryPanel</name>
     <message>
         <source>History</source>
@@ -1477,6 +1740,32 @@
     </message>
 </context>
 <context>
+    <name>LeftInspector</name>
+    <message>
+        <source>Analyzing...</source>
+        <translation>Анализ...</translation>
+    </message>
+    <message>
+        <source>Extracting dynamic range...</source>
+        <translation>Определение динамического диапазона...</translation>
+    </message>
+    <message>
+        <source>Suggested scene</source>
+        <translation>Предполагаемая сцена</translation>
+    </message>
+</context>
+<context>
+    <name>LooksTab</name>
+    <message>
+        <source>LUT</source>
+        <translation>LUT</translation>
+    </message>
+    <message>
+        <source>Presets</source>
+        <translation>Пресеты</translation>
+    </message>
+</context>
+<context>
     <name>LutSelector</name>
     <message>
         <source>Load 3D LUT</source>
@@ -1598,22 +1887,6 @@
         <translation>Режим кадрирования: выкл.</translation>
     </message>
     <message>
-        <source>Analyzing...</source>
-        <translation>Анализ...</translation>
-    </message>
-    <message>
-        <source>Extracting dynamic range...</source>
-        <translation>Определение динамического диапазона...</translation>
-    </message>
-    <message>
-        <source>Opened %1</source>
-        <translation>Открыто: %1</translation>
-    </message>
-    <message>
-        <source>Scanning folder %1</source>
-        <translation>Сканирование папки %1</translation>
-    </message>
-    <message>
         <source>Contrast</source>
         <translation>Контраст</translation>
     </message>
@@ -1638,28 +1911,8 @@
         <translation>Чёрные</translation>
     </message>
     <message>
-        <source>Curve Highlights</source>
-        <translation>Кривая: света</translation>
-    </message>
-    <message>
-        <source>Curve Lights (Upper Mids)</source>
-        <translation>Кривая: светлые (верхние средние)</translation>
-    </message>
-    <message>
-        <source>Curve Darks (Lower Mids)</source>
-        <translation>Кривая: тёмные (нижние средние)</translation>
-    </message>
-    <message>
-        <source>Curve Shadows</source>
-        <translation>Кривая: тени</translation>
-    </message>
-    <message>
         <source>Texture</source>
         <translation>Текстура</translation>
-    </message>
-    <message>
-        <source>Suggested scene</source>
-        <translation>Предполагаемая сцена</translation>
     </message>
     <message>
         <source>Clarity (Midtone Contrast)</source>
@@ -1682,28 +1935,8 @@
         <translation>Резкость</translation>
     </message>
     <message>
-        <source>Noise Reduction (Luma)</source>
-        <translation>Шумоподавление (яркость)</translation>
-    </message>
-    <message>
-        <source>Noise Reduction (Color)</source>
-        <translation>Шумоподавление (цвет)</translation>
-    </message>
-    <message>
         <source>Vignette</source>
         <translation>Виньетка</translation>
-    </message>
-    <message>
-        <source>Defringe (Chromatic Aberration)</source>
-        <translation>Удаление каймы (хроматическая аберрация)</translation>
-    </message>
-    <message>
-        <source>Lens Distortion Correction</source>
-        <translation>Коррекция дисторсии объектива</translation>
-    </message>
-    <message>
-        <source>Open a photo first</source>
-        <translation>Сначала откройте фото</translation>
     </message>
     <message>
         <source>Version %1</source>
@@ -1830,34 +2063,6 @@
         <translation>Сканирование папки не ответило.</translation>
     </message>
     <message>
-        <source>Soft proof: %1</source>
-        <translation>Цветопроба: %1</translation>
-    </message>
-    <message>
-        <source>Soft proof off</source>
-        <translation>Цветопроба выключена</translation>
-    </message>
-    <message>
-        <source>Rating: ★</source>
-        <translation>Оценка: ★</translation>
-    </message>
-    <message>
-        <source>Rating: ★★</source>
-        <translation>Оценка: ★★</translation>
-    </message>
-    <message>
-        <source>Rating: ★★★</source>
-        <translation>Оценка: ★★★</translation>
-    </message>
-    <message>
-        <source>Rating: ★★★★</source>
-        <translation>Оценка: ★★★★</translation>
-    </message>
-    <message>
-        <source>Rating: ★★★★★</source>
-        <translation>Оценка: ★★★★★</translation>
-    </message>
-    <message>
         <source>Flag cleared</source>
         <translation>Пометка снята</translation>
     </message>
@@ -1878,60 +2083,12 @@
         <translation>Отклонено</translation>
     </message>
     <message>
-        <source>Adjust</source>
-        <translation>Настройка</translation>
-    </message>
-    <message>
-        <source>Masks</source>
-        <translation>Маски</translation>
-    </message>
-    <message>
-        <source>Looks</source>
-        <translation>Стили</translation>
-    </message>
-    <message>
-        <source>AI</source>
-        <translation>ИИ</translation>
-    </message>
-    <message>
-        <source>Read the photo&apos;s .xmp sidecar written by another editor</source>
-        <translation>Прочитать файл .xmp, записанный другим редактором</translation>
-    </message>
-    <message>
-        <source>Write the edit, rating and label to an .xmp sidecar for other editors</source>
-        <translation>Записать правку, оценку и метку в файл .xmp для других редакторов</translation>
-    </message>
-    <message>
         <source>Profile</source>
         <translation>Профиль</translation>
     </message>
     <message>
-        <source>Color Chrome Effect</source>
-        <translation>Эффект Color Chrome</translation>
-    </message>
-    <message>
-        <source>Color Chrome FX Blue</source>
-        <translation>Color Chrome FX Синий</translation>
-    </message>
-    <message>
         <source>White balance</source>
         <translation>Баланс белого</translation>
-    </message>
-    <message>
-        <source>Temperature</source>
-        <translation>Температура</translation>
-    </message>
-    <message>
-        <source>Tint</source>
-        <translation>Оттенок</translation>
-    </message>
-    <message>
-        <source>Tone</source>
-        <translation>Тон</translation>
-    </message>
-    <message>
-        <source>Presence</source>
-        <translation>Присутствие</translation>
     </message>
     <message>
         <source>Tone curve</source>
@@ -1954,28 +2111,8 @@
         <translation>Трансформация</translation>
     </message>
     <message>
-        <source>Vertical</source>
-        <translation>По вертикали</translation>
-    </message>
-    <message>
-        <source>Horizontal</source>
-        <translation>По горизонтали</translation>
-    </message>
-    <message>
-        <source>Scale</source>
-        <translation>Масштаб</translation>
-    </message>
-    <message>
-        <source>Vertical straightens converging lines, such as buildings photographed from below. Crop afterwards to remove the empty edges.</source>
-        <translation>Вертикаль выпрямляет сходящиеся линии, например у зданий, снятых снизу. Затем обрежьте пустые края.</translation>
-    </message>
-    <message>
         <source>Grain</source>
         <translation>Зерно</translation>
-    </message>
-    <message>
-        <source>Colour management</source>
-        <translation>Управление цветом</translation>
     </message>
     <message>
         <source>Heal and clone</source>
@@ -1992,34 +2129,6 @@
     <message>
         <source>LUT</source>
         <translation>LUT</translation>
-    </message>
-    <message>
-        <source>Edit assistant</source>
-        <translation>Ассистент редактирования</translation>
-    </message>
-    <message>
-        <source>Assistant edit applied</source>
-        <translation>Правка ассистента применена</translation>
-    </message>
-    <message>
-        <source>Copy</source>
-        <translation>Копировать</translation>
-    </message>
-    <message>
-        <source>Paste</source>
-        <translation>Вставить</translation>
-    </message>
-    <message>
-        <source>Reset</source>
-        <translation>Сброс</translation>
-    </message>
-    <message>
-        <source>Import XMP</source>
-        <translation>Импорт XMP</translation>
-    </message>
-    <message>
-        <source>Write XMP</source>
-        <translation>Запись XMP</translation>
     </message>
     <message>
         <source>Opening %1</source>
@@ -2104,6 +2213,17 @@
     <message>
         <source>no answer from the engine</source>
         <translation>движок не ответил</translation>
+    </message>
+</context>
+<context>
+    <name>MasksTab</name>
+    <message>
+        <source>Heal and clone</source>
+        <translation>Восстановление и клонирование</translation>
+    </message>
+    <message>
+        <source>Local adjustments</source>
+        <translation>Локальные коррекции</translation>
     </message>
 </context>
 <context>
@@ -2298,6 +2418,53 @@
     </message>
 </context>
 <context>
+    <name>RightInspector</name>
+    <message>
+        <source>AI</source>
+        <translation>ИИ</translation>
+    </message>
+    <message>
+        <source>Adjust</source>
+        <translation>Настройка</translation>
+    </message>
+    <message>
+        <source>Copy</source>
+        <translation>Копировать</translation>
+    </message>
+    <message>
+        <source>Import XMP</source>
+        <translation>Импорт XMP</translation>
+    </message>
+    <message>
+        <source>Looks</source>
+        <translation>Стили</translation>
+    </message>
+    <message>
+        <source>Masks</source>
+        <translation>Маски</translation>
+    </message>
+    <message>
+        <source>Paste</source>
+        <translation>Вставить</translation>
+    </message>
+    <message>
+        <source>Read the photo&apos;s .xmp sidecar written by another editor</source>
+        <translation>Прочитать файл .xmp, записанный другим редактором</translation>
+    </message>
+    <message>
+        <source>Reset</source>
+        <translation>Сброс</translation>
+    </message>
+    <message>
+        <source>Write XMP</source>
+        <translation>Запись XMP</translation>
+    </message>
+    <message>
+        <source>Write the edit, rating and label to an .xmp sidecar for other editors</source>
+        <translation>Записать правку, оценку и метку в файл .xmp для других редакторов</translation>
+    </message>
+</context>
+<context>
     <name>ScopesView</name>
     <message>
         <source>HIST</source>
@@ -2352,6 +2519,57 @@
     <message>
         <source>SKIN</source>
         <translation>КОЖА</translation>
+    </message>
+</context>
+<context>
+    <name>ShortcutRouter</name>
+    <message>
+        <source>Crop mode: off</source>
+        <translation>Режим кадрирования: выкл.</translation>
+    </message>
+    <message>
+        <source>Crop mode: on (C)</source>
+        <translation>Режим кадрирования: вкл. (C)</translation>
+    </message>
+    <message>
+        <source>Flag cleared</source>
+        <translation>Пометка снята</translation>
+    </message>
+    <message>
+        <source>Open a photo first</source>
+        <translation>Сначала откройте фото</translation>
+    </message>
+    <message>
+        <source>Rating cleared</source>
+        <translation>Оценка снята</translation>
+    </message>
+    <message>
+        <source>Rating: ★</source>
+        <translation>Оценка: ★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★</source>
+        <translation>Оценка: ★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★</source>
+        <translation>Оценка: ★★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★★</source>
+        <translation>Оценка: ★★★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★★★</source>
+        <translation>Оценка: ★★★★★</translation>
+    </message>
+    <message>
+        <source>Soft proof off</source>
+        <translation>Цветопроба выключена</translation>
+    </message>
+    <message>
+        <source>Soft proof: %1</source>
+        <translation>Цветопроба: %1</translation>
     </message>
 </context>
 <context>
@@ -2741,93 +2959,6 @@
     <message>
         <source>Drop Shadow</source>
         <translation>Тень</translation>
-    </message>
-</context>
-<context>
-    <name>CloudDialog</name>
-    <message>
-        <source>Add an account</source>
-        <translation>Добавить аккаунт</translation>
-    </message>
-    <message>
-        <source>Browse</source>
-        <translation>Обзор</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation>Отмена</translation>
-    </message>
-    <message>
-        <source>Client ID</source>
-        <translation>ID клиента</translation>
-    </message>
-    <message>
-        <source>Client secret</source>
-        <translation>Секрет клиента</translation>
-    </message>
-    <message>
-        <source>Close</source>
-        <translation>Закрыть</translation>
-    </message>
-    <message>
-        <source>Cloud accounts</source>
-        <translation>Облачные аккаунты</translation>
-    </message>
-    <message>
-        <source>Confirm</source>
-        <translation>Подтвердить</translation>
-    </message>
-    <message>
-        <source>Connected</source>
-        <translation>Подключённые</translation>
-    </message>
-    <message>
-        <source>Disconnect</source>
-        <translation>Отключить</translation>
-    </message>
-    <message>
-        <source>Disconnecting removes the account's keys and downloaded copies from this computer. Files in the account stay as they are.</source>
-        <translation>При отключении с этого компьютера удаляются ключи аккаунта и загруженные копии. Файлы в аккаунте остаются без изменений.</translation>
-    </message>
-    <message>
-        <source>Enter this code on the GitHub page that opened in your browser:</source>
-        <translation>Введите этот код на странице GitHub, открытой в браузере:</translation>
-    </message>
-    <message>
-        <source>Finish signing in in your browser. This window updates when you are done.</source>
-        <translation>Завершите вход в браузере. Окно обновится, когда вы закончите.</translation>
-    </message>
-    <message>
-        <source>Install it with: sudo pacman -S %1</source>
-        <translation>Установка: sudo pacman -S %1</translation>
-    </message>
-    <message>
-        <source>Needs %1</source>
-        <translation>Требуется %1</translation>
-    </message>
-    <message>
-        <source>No account connected yet.</source>
-        <translation>Пока нет подключённых аккаунтов.</translation>
-    </message>
-    <message>
-        <source>Open the page again</source>
-        <translation>Открыть страницу снова</translation>
-    </message>
-    <message>
-        <source>Own Google client ID (optional)</source>
-        <translation>Собственный ID клиента Google (необязательно)</translation>
-    </message>
-    <message>
-        <source>Signing in to %1</source>
-        <translation>Вход в %1</translation>
-    </message>
-    <message>
-        <source>The shared client rclone uses for Google Drive is being retired. With a client ID of your own from the Google Cloud Console, Google Drive keeps working. It is used the next time you connect Google Drive.</source>
-        <translation>Общий клиент, который rclone использует для Google Drive, выводится из эксплуатации. С собственным ID клиента из Google Cloud Console Google Drive продолжит работать. Он будет использован при следующем подключении Google Drive.</translation>
-    </message>
-    <message>
-        <source>You sign in on the service's own page in your browser. OmaStudio keeps the access keys in the system keyring and creates a folder named %1 in each account for uploads.</source>
-        <translation>Вход выполняется на странице самого сервиса в браузере. OmaStudio хранит ключи доступа в системной связке ключей и создаёт в каждом аккаунте папку %1 для загрузок.</translation>
     </message>
 </context>
 </TS>

@@ -376,92 +376,57 @@ impl Default for Recipe {
     }
 }
 
+include!("look_presets.inc");
+
 impl Recipe {
-    pub fn fuji_classic_chrome() -> Self {
+    fn from_look_preset(spec: &LookPresetSpec) -> Self {
         let mut r = Self::default();
-        r.preset_name = Some("Fuji Classic Chrome".to_string());
-        r.contrast = 15.0;
-        r.highlights = -10.0;
-        r.shadows = 5.0;
-        r.clarity = 12.0;
-        r.vibrance = -15.0;
-        r.saturation = -8.0;
-        // Subtle teal/cyan sky and warm earth tones
-        r.hsl_sat[1] = 10.0;  // Orange
-        r.hsl_sat[5] = -20.0; // Blue
-        r.hsl_hue[5] = -8.0;  // Shift blue toward cyan
-        r.vignette = -12.0;
+        r.preset_name = Some(spec.id.to_string());
+        if let Some(temp) = spec.wb_temperature {
+            r.wb_temperature = temp;
+        }
+        if let Some(tint) = spec.wb_tint {
+            r.wb_tint = tint;
+        }
+        r.contrast = spec.contrast;
+        r.highlights = spec.highlights;
+        r.shadows = spec.shadows;
+        r.whites = spec.whites;
+        r.blacks = spec.blacks;
+        r.texture = spec.texture;
+        r.clarity = spec.clarity;
+        r.vibrance = spec.vibrance;
+        r.saturation = spec.saturation;
+        r.sharpness = spec.sharpness;
+        r.vignette = spec.vignette;
+        r.lift = spec.lift;
+        r.lift_luma = spec.lift_luma;
+        r.gain = spec.gain;
+        r.gain_luma = spec.gain_luma;
+        r.hsl_hue = spec.hsl_hue;
+        r.hsl_sat = spec.hsl_sat;
+        r.hsl_lum = spec.hsl_lum;
         r
+    }
+
+    pub fn fuji_classic_chrome() -> Self {
+        Self::from_look_preset(&LOOK_PRESETS[0])
     }
 
     pub fn fuji_velvia() -> Self {
-        let mut r = Self::default();
-        r.preset_name = Some("Fuji Velvia 50".to_string());
-        r.contrast = 28.0;
-        r.highlights = -15.0;
-        r.shadows = 10.0;
-        r.vibrance = 30.0;
-        r.saturation = 18.0;
-        r.clarity = 16.0;
-        r.hsl_sat[3] = 25.0; // Green boost
-        r.hsl_sat[5] = 25.0; // Deep blue sky
-        r
+        Self::from_look_preset(&LOOK_PRESETS[1])
     }
 
     pub fn leica_monochrom() -> Self {
-        let mut r = Self::default();
-        r.preset_name = Some("Leica Monochrom HC".to_string());
-        r.saturation = -100.0; // Full B&W
-        r.vibrance = -100.0;
-        r.contrast = 35.0;
-        r.highlights = -20.0;
-        r.shadows = -10.0;
-        r.whites = 15.0;
-        r.blacks = -25.0;
-        r.texture = 15.0;
-        r.clarity = 25.0;
-        r.sharpness = 40.0;
-        r.vignette = -18.0;
-        r
+        Self::from_look_preset(&LOOK_PRESETS[3])
     }
 
     pub fn kodak_portra() -> Self {
-        let mut r = Self::default();
-        r.preset_name = Some("Kodak Portra 400".to_string());
-        r.wb_temperature = 5700.0; // Warm golden glow
-        r.wb_tint = 4.0;
-        r.contrast = -5.0;
-        r.highlights = -12.0;
-        r.shadows = 18.0;
-        r.whites = -8.0;
-        r.texture = -5.0; // Soft skin
-        r.clarity = 6.0;
-        r.vibrance = 10.0;
-        r.saturation = -4.0;
-        r.hsl_lum[1] = 12.0; // Brighten orange skin tones
-        r.hsl_sat[1] = -5.0;
-        r
+        Self::from_look_preset(&LOOK_PRESETS[2])
     }
 
     pub fn cinematic_teal_orange() -> Self {
-        let mut r = Self::default();
-        r.preset_name = Some("Cinematic Teal & Orange".to_string());
-        r.contrast = 20.0;
-        r.shadows = -10.0;
-        r.highlights = -15.0;
-        r.clarity = 15.0;
-        r.vibrance = 20.0;
-        // DaVinci Resolve 3-way color wheel grading
-        r.lift = [-0.05, 0.04, 0.12]; // Teal in shadows
-        r.lift_luma = -0.05;
-        r.gain = [0.14, 0.05, -0.08]; // Warm orange in highlights
-        r.gain_luma = 0.02;
-        r.hsl_hue[5] = -25.0; // Blue to Teal
-        r.hsl_sat[5] = 30.0;
-        r.hsl_hue[1] = -5.0;  // Orange warmth
-        r.hsl_sat[1] = 25.0;
-        r.vignette = -20.0;
-        r
+        Self::from_look_preset(&LOOK_PRESETS[4])
     }
 
     pub fn fuji_nostalgic_neg() -> Self {

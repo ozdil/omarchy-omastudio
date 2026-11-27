@@ -26,7 +26,7 @@ Rectangle {
 
     signal watermarkChanged(var options)
 
-    function notifyChanged() {
+    function emitWith(patch) {
         var opts = {
             "enabled": root.watermarkEnabled,
             "watermark_type": root.watermarkType,
@@ -39,6 +39,9 @@ Rectangle {
             "color": root.colorHex,
             "drop_shadow": root.dropShadow
         };
+        if (patch) {
+            for (var k in patch) opts[k] = patch[k];
+        }
         root.watermarkChanged(opts);
     }
 
@@ -54,6 +57,7 @@ Rectangle {
             spacing: 6
 
             Text {
+                id: wmHeader
                 visible: !root.embedded
                 text: qsTr("Watermark")
                 textFormat: Text.PlainText
@@ -68,6 +72,7 @@ Rectangle {
             }
 
             Text {
+                id: wmEmbedLabel
                 visible: root.embedded
                 text: qsTr("Add a watermark")
                 textFormat: Text.PlainText
@@ -79,10 +84,10 @@ Rectangle {
 
             CustomSwitch {
                 checked: root.watermarkEnabled
+                accessibleName: root.embedded ? wmEmbedLabel.text : wmHeader.text
                 activeColor: Theme.accent
                 onToggled: function(isChecked) {
-                    root.watermarkEnabled = isChecked;
-                    root.notifyChanged();
+                    root.emitWith({ "enabled": isChecked });
                 }
             }
         }
@@ -108,6 +113,7 @@ Rectangle {
                     border.width: 1
 
                     Text {
+                        id: textModeLabel
                         anchors.centerIn: parent
                         width: parent.width - 12
                         horizontalAlignment: Text.AlignHCenter
@@ -123,10 +129,13 @@ Rectangle {
                     MouseArea {
                         anchors.fill: parent
                         cursorShape: Qt.PointingHandCursor
-                        onClicked: {
-                            root.watermarkType = "text";
-                            root.notifyChanged();
-                        }
+                        onClicked: root.emitWith({ "watermark_type": "text" })
+                    }
+                    KeyFocus {
+                        name: textModeLabel.text
+                        checkable: true
+                        checked: root.watermarkType === "text"
+                        onActivated: root.emitWith({ "watermark_type": "text" })
                     }
                 }
 
@@ -140,6 +149,7 @@ Rectangle {
                     border.width: 1
 
                     Text {
+                        id: logoModeLabel
                         anchors.centerIn: parent
                         width: parent.width - 12
                         horizontalAlignment: Text.AlignHCenter
@@ -155,10 +165,13 @@ Rectangle {
                     MouseArea {
                         anchors.fill: parent
                         cursorShape: Qt.PointingHandCursor
-                        onClicked: {
-                            root.watermarkType = "logo";
-                            root.notifyChanged();
-                        }
+                        onClicked: root.emitWith({ "watermark_type": "logo" })
+                    }
+                    KeyFocus {
+                        name: logoModeLabel.text
+                        checkable: true
+                        checked: root.watermarkType === "logo"
+                        onActivated: root.emitWith({ "watermark_type": "logo" })
                     }
                 }
             }
@@ -199,14 +212,8 @@ Rectangle {
                         font.pixelSize: Theme.px(10)
                         color: Theme.textMain
                         placeholderTextColor: Theme.textDim
-                        onEditingFinished: {
-                            root.text = text;
-                            root.notifyChanged();
-                        }
-                        onAccepted: {
-                            root.text = text;
-                            root.notifyChanged();
-                        }
+                        onEditingFinished: root.emitWith({ "text": text })
+                        onAccepted: root.emitWith({ "text": text })
                     }
                 }
 
@@ -225,7 +232,8 @@ Rectangle {
                             "{lens} @ {aperture}"
                         ]
 
-                        Rectangle {
+                        delegate: Rectangle {
+                            required property string modelData
                             Layout.fillWidth: true
                             Layout.minimumWidth: 0
                             implicitHeight: Theme.sp(22)
@@ -248,11 +256,11 @@ Rectangle {
                             MouseArea {
                                 anchors.fill: parent
                                 cursorShape: Qt.PointingHandCursor
-                                onClicked: {
-                                    root.text = modelData;
-                                    textInput.text = modelData;
-                                    root.notifyChanged();
-                                }
+                                onClicked: root.emitWith({ "text": modelData })
+                            }
+                            KeyFocus {
+                                name: modelData
+                                onActivated: root.emitWith({ "text": modelData })
                             }
                         }
                     }
@@ -294,14 +302,8 @@ Rectangle {
                         font.pixelSize: Theme.px(10)
                         color: Theme.textMain
                         placeholderTextColor: Theme.textDim
-                        onEditingFinished: {
-                            root.logoPath = text;
-                            root.notifyChanged();
-                        }
-                        onAccepted: {
-                            root.logoPath = text;
-                            root.notifyChanged();
-                        }
+                        onEditingFinished: root.emitWith({ "logo_path": text ? text : null })
+                        onAccepted: root.emitWith({ "logo_path": text ? text : null })
                     }
                 }
             }
@@ -315,6 +317,7 @@ Rectangle {
                 ColumnLayout {
                     spacing: 4
                     Text {
+                        id: posLabel
                         text: qsTr("Position")
                         textFormat: Text.PlainText
                         font.family: Theme.fontFamily
@@ -329,7 +332,8 @@ Rectangle {
 
                         Repeater {
                             model: 9
-                            Rectangle {
+                            delegate: Rectangle {
+                                required property int index
                                 width: 22
                                 height: 22
                                 radius: Theme.r(3)
@@ -348,10 +352,13 @@ Rectangle {
                                 MouseArea {
                                     anchors.fill: parent
                                     cursorShape: Qt.PointingHandCursor
-                                    onClicked: {
-                                        root.positionIndex = index;
-                                        root.notifyChanged();
-                                    }
+                                    onClicked: root.emitWith({ "position_index": index })
+                                }
+                                KeyFocus {
+                                    name: posLabel.text + " " + (index + 1)
+                                    checkable: true
+                                    checked: root.positionIndex === index
+                                    onActivated: root.emitWith({ "position_index": index })
                                 }
                             }
                         }
@@ -368,6 +375,7 @@ Rectangle {
                         Layout.fillWidth: true
                         spacing: 4
                         Text {
+                            id: dropShadowLabel
                             text: qsTr("Drop Shadow")
                             textFormat: Text.PlainText
                             font.family: Theme.fontFamily
@@ -382,10 +390,10 @@ Rectangle {
                             Layout.preferredWidth: 36
                             Layout.preferredHeight: Theme.sp(20)
                             checked: root.dropShadow
+                            accessibleName: dropShadowLabel.text
                             activeColor: Theme.accent
                             onToggled: function(isChecked) {
-                                root.dropShadow = isChecked;
-                                root.notifyChanged();
+                                root.emitWith({ "drop_shadow": isChecked });
                             }
                         }
                     }
@@ -396,7 +404,8 @@ Rectangle {
                         spacing: 6
                         Repeater {
                             model: ["#ffffff", "#c0caf5", "#e0af68", "#f7768e", "#16161e"]
-                            Rectangle {
+                            delegate: Rectangle {
+                                required property string modelData
                                 width: 18
                                 height: 18
                                 radius: 9
@@ -407,10 +416,13 @@ Rectangle {
                                 MouseArea {
                                     anchors.fill: parent
                                     cursorShape: Qt.PointingHandCursor
-                                    onClicked: {
-                                        root.colorHex = modelData;
-                                        root.notifyChanged();
-                                    }
+                                    onClicked: root.emitWith({ "color": modelData })
+                                }
+                                KeyFocus {
+                                    name: modelData
+                                    checkable: true
+                                    checked: root.colorHex === modelData
+                                    onActivated: root.emitWith({ "color": modelData })
                                 }
                             }
                         }
@@ -482,10 +494,14 @@ Rectangle {
                         Behavior on color { ColorAnimation { duration: Theme.duration(100) } }
                     }
 
-                    onMoved: {
-                        root.watermarkOpacity = value;
-                        root.notifyChanged();
-                    }
+                    onMoved: root.emitWith({ "opacity": opSlider.value })
+                }
+
+                Binding {
+                    target: opSlider
+                    property: "value"
+                    value: root.watermarkOpacity
+                    when: !opSlider.pressed
                 }
 
                 // Size
@@ -547,10 +563,14 @@ Rectangle {
                         Behavior on color { ColorAnimation { duration: Theme.duration(100) } }
                     }
 
-                    onMoved: {
-                        root.size = Math.round(value);
-                        root.notifyChanged();
-                    }
+                    onMoved: root.emitWith({ "size": Math.round(szSlider.value) })
+                }
+
+                Binding {
+                    target: szSlider
+                    property: "value"
+                    value: root.size
+                    when: !szSlider.pressed
                 }
             }
         }

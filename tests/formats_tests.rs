@@ -2,18 +2,24 @@
 
 use omastudio_engine::raw::{raster::RASTER_EXTENSIONS, RAW_EXTENSIONS};
 
-fn qml_list(source: &str, property: &str) -> Vec<String> {
-    let start = source.find(&format!("readonly property var {}: [", property)).expect("property present");
-    let rest = &source[start..];
-    let list = &rest[rest.find('[').unwrap() + 1..rest.find(']').unwrap()];
-    list.split(',').map(|s| s.trim().trim_matches('"').to_string()).filter(|s| !s.is_empty()).collect()
-}
-
 #[test]
 fn interface_lists_match_engine_lists() {
+    let host_rs = std::fs::read_to_string(concat!(env!("CARGO_MANIFEST_DIR"), "/app/src/host.rs")).unwrap();
+    assert!(
+        host_rs.contains("include!(\"../../src/raw/supported_extensions.inc\")"),
+        "app/src/host.rs must include the shared src/raw/supported_extensions.inc list"
+    );
+    assert!(
+        host_rs.contains("include!(\"../../src/recipe/look_presets.inc\")"),
+        "app/src/host.rs must include the shared src/recipe/look_presets.inc table"
+    );
+
     let qml = std::fs::read_to_string(concat!(env!("CARGO_MANIFEST_DIR"), "/app/qml/MainWindow.qml")).unwrap();
-    assert_eq!(qml_list(&qml, "rawExtensions"), RAW_EXTENSIONS);
-    assert_eq!(qml_list(&qml, "imageExtensions"), RASTER_EXTENSIONS);
+    assert!(
+        qml.contains("Host.rawExtensions") && qml.contains("Host.imageExtensions"),
+        "MainWindow.qml must read supported extensions from Host instead of duplicating arrays"
+    );
+    assert!(!RAW_EXTENSIONS.is_empty() && !RASTER_EXTENSIONS.is_empty());
 }
 
 #[test]

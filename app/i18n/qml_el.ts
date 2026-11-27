@@ -141,6 +141,173 @@
     </message>
 </context>
 <context>
+    <name>AdjustTab</name>
+    <message>
+        <source>Blacks</source>
+        <translation>Μαύρα</translation>
+    </message>
+    <message>
+        <source>Clarity (Midtone Contrast)</source>
+        <translation>Ευκρίνεια (αντίθεση μεσαίων τόνων)</translation>
+    </message>
+    <message>
+        <source>Color Chrome Effect</source>
+        <translation>Εφέ Color Chrome</translation>
+    </message>
+    <message>
+        <source>Color Chrome FX Blue</source>
+        <translation>Color Chrome FX Μπλε</translation>
+    </message>
+    <message>
+        <source>Colour grading</source>
+        <translation>Χρωματική διαβάθμιση</translation>
+    </message>
+    <message>
+        <source>Colour management</source>
+        <translation>Διαχείριση χρώματος</translation>
+    </message>
+    <message>
+        <source>Colour mixer</source>
+        <translation>Μίκτης χρωμάτων</translation>
+    </message>
+    <message>
+        <source>Contrast</source>
+        <translation>Αντίθεση</translation>
+    </message>
+    <message>
+        <source>Curve Darks (Lower Mids)</source>
+        <translation>Καμπύλη: σκούροι τόνοι (κάτω μεσαίοι)</translation>
+    </message>
+    <message>
+        <source>Curve Highlights</source>
+        <translation>Καμπύλη: φωτεινά</translation>
+    </message>
+    <message>
+        <source>Curve Lights (Upper Mids)</source>
+        <translation>Καμπύλη: ανοιχτοί τόνοι (άνω μεσαίοι)</translation>
+    </message>
+    <message>
+        <source>Curve Shadows</source>
+        <translation>Καμπύλη: σκιές</translation>
+    </message>
+    <message>
+        <source>Defringe (Chromatic Aberration)</source>
+        <translation>Αφαίρεση κροσσών (χρωματική εκτροπή)</translation>
+    </message>
+    <message>
+        <source>Dehaze</source>
+        <translation>Αφαίρεση θολούρας</translation>
+    </message>
+    <message>
+        <source>Detail and optics</source>
+        <translation>Λεπτομέρεια και οπτική</translation>
+    </message>
+    <message>
+        <source>Exposure</source>
+        <translation>Έκθεση</translation>
+    </message>
+    <message>
+        <source>Grain</source>
+        <translation>Κόκκος</translation>
+    </message>
+    <message>
+        <source>Highlights</source>
+        <translation>Φωτεινά</translation>
+    </message>
+    <message>
+        <source>Horizontal</source>
+        <translation>Οριζόντια</translation>
+    </message>
+    <message>
+        <source>Lens Distortion Correction</source>
+        <translation>Διόρθωση παραμόρφωσης φακού</translation>
+    </message>
+    <message>
+        <source>Noise Reduction (Color)</source>
+        <translation>Μείωση θορύβου (χρώμα)</translation>
+    </message>
+    <message>
+        <source>Noise Reduction (Luma)</source>
+        <translation>Μείωση θορύβου (φωτεινότητα)</translation>
+    </message>
+    <message>
+        <source>Open a photo first</source>
+        <translation>Ανοίξτε πρώτα μια φωτογραφία</translation>
+    </message>
+    <message>
+        <source>Presence</source>
+        <translation>Παρουσία</translation>
+    </message>
+    <message>
+        <source>Profile</source>
+        <translation>Προφίλ</translation>
+    </message>
+    <message>
+        <source>Saturation</source>
+        <translation>Κορεσμός</translation>
+    </message>
+    <message>
+        <source>Scale</source>
+        <translation>Κλίμακα</translation>
+    </message>
+    <message>
+        <source>Shadows</source>
+        <translation>Σκιές</translation>
+    </message>
+    <message>
+        <source>Sharpening</source>
+        <translation>Όξυνση</translation>
+    </message>
+    <message>
+        <source>Temperature</source>
+        <translation>Θερμοκρασία</translation>
+    </message>
+    <message>
+        <source>Texture</source>
+        <translation>Υφή</translation>
+    </message>
+    <message>
+        <source>Tint</source>
+        <translation>Απόχρωση</translation>
+    </message>
+    <message>
+        <source>Tone</source>
+        <translation>Τόνος</translation>
+    </message>
+    <message>
+        <source>Tone curve</source>
+        <translation>Καμπύλη τόνων</translation>
+    </message>
+    <message>
+        <source>Transform</source>
+        <translation>Μετασχηματισμός</translation>
+    </message>
+    <message>
+        <source>Vertical</source>
+        <translation>Κατακόρυφα</translation>
+    </message>
+    <message>
+        <source>Vertical straightens converging lines, such as buildings photographed from below. Crop afterwards to remove the empty edges.</source>
+        <translation>Το κατακόρυφο ισιώνει τις συγκλίνουσες γραμμές, όπως κτίρια που φωτογραφήθηκαν από κάτω. Περικόψτε μετά για να αφαιρέσετε τα κενά άκρα.</translation>
+    </message>
+    <message>
+        <source>Vibrance</source>
+        <translation>Ζωντάνια</translation>
+    </message>
+    <message>
+        <source>Vignette</source>
+        <translation>Βινιέτα</translation>
+    </message>
+    <message>
+        <source>White balance</source>
+        <translation>Ισορροπία λευκού</translation>
+    </message>
+    <message>
+        <source>Whites</source>
+        <translation>Λευκά</translation>
+    </message>
+</context>
+<context>
     <name>AiAssistPanel</name>
     <message>
         <source>%1 (automatic)</source>
@@ -291,10 +458,123 @@
     </message>
 </context>
 <context>
+    <name>AiTab</name>
+    <message>
+        <source>Assistant edit applied</source>
+        <translation>Εφαρμόστηκε η επεξεργασία του βοηθού</translation>
+    </message>
+    <message>
+        <source>Edit assistant</source>
+        <translation>Βοηθός επεξεργασίας</translation>
+    </message>
+</context>
+<context>
     <name>BoundedTextInput</name>
     <message>
         <source>Clipboard content exceeded byte limit or timed out.</source>
         <translation>Το περιεχόμενο του προχείρου ξεπέρασε το όριο byte ή έληξε ο χρόνος.</translation>
+    </message>
+</context>
+<context>
+    <name>CenterWorkspace</name>
+    <message>
+        <source>Opened %1</source>
+        <translation>Άνοιξε το %1</translation>
+    </message>
+    <message>
+        <source>Scanning folder %1</source>
+        <translation>Σάρωση φακέλου %1</translation>
+    </message>
+    <message>
+        <source>Soft proof: %1</source>
+        <translation>Δοκιμή οθόνης: %1</translation>
+    </message>
+</context>
+<context>
+    <name>CloudDialog</name>
+    <message>
+        <source>Add an account</source>
+        <translation>Προσθήκη λογαριασμού</translation>
+    </message>
+    <message>
+        <source>Browse</source>
+        <translation>Περιήγηση</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Ακύρωση</translation>
+    </message>
+    <message>
+        <source>Client ID</source>
+        <translation>Αναγνωριστικό πελάτη</translation>
+    </message>
+    <message>
+        <source>Client secret</source>
+        <translation>Μυστικό πελάτη</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>Κλείσιμο</translation>
+    </message>
+    <message>
+        <source>Cloud accounts</source>
+        <translation>Λογαριασμοί cloud</translation>
+    </message>
+    <message>
+        <source>Confirm</source>
+        <translation>Επιβεβαίωση</translation>
+    </message>
+    <message>
+        <source>Connected</source>
+        <translation>Συνδεδεμένοι</translation>
+    </message>
+    <message>
+        <source>Disconnect</source>
+        <translation>Αποσύνδεση</translation>
+    </message>
+    <message>
+        <source>Disconnecting removes the account&apos;s keys and downloaded copies from this computer. Files in the account stay as they are.</source>
+        <translation>Η αποσύνδεση αφαιρεί από αυτόν τον υπολογιστή τα κλειδιά του λογαριασμού και τα αντίγραφα που λήφθηκαν. Τα αρχεία στον λογαριασμό μένουν ως έχουν.</translation>
+    </message>
+    <message>
+        <source>Enter this code on the GitHub page that opened in your browser:</source>
+        <translation>Πληκτρολογήστε αυτόν τον κωδικό στη σελίδα του GitHub που άνοιξε στο πρόγραμμα περιήγησης:</translation>
+    </message>
+    <message>
+        <source>Finish signing in in your browser. This window updates when you are done.</source>
+        <translation>Ολοκληρώστε τη σύνδεση στο πρόγραμμα περιήγησης. Το παράθυρο ενημερώνεται όταν τελειώσετε.</translation>
+    </message>
+    <message>
+        <source>Install it with: sudo pacman -S %1</source>
+        <translation>Εγκατάσταση: sudo pacman -S %1</translation>
+    </message>
+    <message>
+        <source>Needs %1</source>
+        <translation>Απαιτεί %1</translation>
+    </message>
+    <message>
+        <source>No account connected yet.</source>
+        <translation>Δεν έχει συνδεθεί ακόμη λογαριασμός.</translation>
+    </message>
+    <message>
+        <source>Open the page again</source>
+        <translation>Άνοιγμα της σελίδας ξανά</translation>
+    </message>
+    <message>
+        <source>Own Google client ID (optional)</source>
+        <translation>Δικό σας αναγνωριστικό πελάτη Google (προαιρετικό)</translation>
+    </message>
+    <message>
+        <source>Signing in to %1</source>
+        <translation>Σύνδεση σε %1</translation>
+    </message>
+    <message>
+        <source>The shared client rclone uses for Google Drive is being retired. With a client ID of your own from the Google Cloud Console, Google Drive keeps working. It is used the next time you connect Google Drive.</source>
+        <translation>Ο κοινόχρηστος πελάτης που χρησιμοποιεί το rclone για το Google Drive καταργείται. Με δικό σας αναγνωριστικό πελάτη από το Google Cloud Console, το Google Drive συνεχίζει να λειτουργεί. Θα χρησιμοποιηθεί την επόμενη φορά που θα συνδέσετε το Google Drive.</translation>
+    </message>
+    <message>
+        <source>You sign in on the service&apos;s own page in your browser. OmaStudio keeps the access keys in the system keyring and creates a folder named %1 in each account for uploads.</source>
+        <translation>Συνδέεστε στη σελίδα της ίδιας της υπηρεσίας, στο πρόγραμμα περιήγησης. Το OmaStudio φυλάσσει τα κλειδιά πρόσβασης στη μπρελόκ κλειδιών του συστήματος και δημιουργεί σε κάθε λογαριασμό έναν φάκελο με όνομα %1 για μεταφορτώσεις.</translation>
     </message>
 </context>
 <context>
@@ -1093,23 +1373,6 @@
     </message>
 </context>
 <context>
-    <name>HistogramView</name>
-    <message>
-        <source>[S] %1%</source>
-        <comment>S: shadow clipping</comment>
-        <translation>[Σ] %1%</translation>
-    </message>
-    <message>
-        <source>Histogram</source>
-        <translation>Ιστόγραμμα</translation>
-    </message>
-    <message>
-        <source>[H] %1%</source>
-        <comment>H: highlight clipping</comment>
-        <translation>[Φ] %1%</translation>
-    </message>
-</context>
-<context>
     <name>HistoryPanel</name>
     <message>
         <source>History</source>
@@ -1474,6 +1737,32 @@
     </message>
 </context>
 <context>
+    <name>LeftInspector</name>
+    <message>
+        <source>Analyzing...</source>
+        <translation>Ανάλυση...</translation>
+    </message>
+    <message>
+        <source>Extracting dynamic range...</source>
+        <translation>Εξαγωγή δυναμικού εύρους...</translation>
+    </message>
+    <message>
+        <source>Suggested scene</source>
+        <translation>Προτεινόμενη σκηνή</translation>
+    </message>
+</context>
+<context>
+    <name>LooksTab</name>
+    <message>
+        <source>LUT</source>
+        <translation>LUT</translation>
+    </message>
+    <message>
+        <source>Presets</source>
+        <translation>Προκαθορισμένα</translation>
+    </message>
+</context>
+<context>
     <name>LutSelector</name>
     <message>
         <source>Load 3D LUT</source>
@@ -1594,22 +1883,6 @@
         <translation>Λειτουργία περικοπής: ανενεργή</translation>
     </message>
     <message>
-        <source>Analyzing...</source>
-        <translation>Ανάλυση...</translation>
-    </message>
-    <message>
-        <source>Extracting dynamic range...</source>
-        <translation>Εξαγωγή δυναμικού εύρους...</translation>
-    </message>
-    <message>
-        <source>Opened %1</source>
-        <translation>Άνοιξε το %1</translation>
-    </message>
-    <message>
-        <source>Scanning folder %1</source>
-        <translation>Σάρωση φακέλου %1</translation>
-    </message>
-    <message>
         <source>Contrast</source>
         <translation>Αντίθεση</translation>
     </message>
@@ -1634,28 +1907,8 @@
         <translation>Μαύρα</translation>
     </message>
     <message>
-        <source>Curve Highlights</source>
-        <translation>Καμπύλη: φωτεινά</translation>
-    </message>
-    <message>
-        <source>Curve Lights (Upper Mids)</source>
-        <translation>Καμπύλη: ανοιχτοί τόνοι (άνω μεσαίοι)</translation>
-    </message>
-    <message>
-        <source>Curve Darks (Lower Mids)</source>
-        <translation>Καμπύλη: σκούροι τόνοι (κάτω μεσαίοι)</translation>
-    </message>
-    <message>
-        <source>Curve Shadows</source>
-        <translation>Καμπύλη: σκιές</translation>
-    </message>
-    <message>
         <source>Texture</source>
         <translation>Υφή</translation>
-    </message>
-    <message>
-        <source>Suggested scene</source>
-        <translation>Προτεινόμενη σκηνή</translation>
     </message>
     <message>
         <source>Clarity (Midtone Contrast)</source>
@@ -1678,28 +1931,8 @@
         <translation>Όξυνση</translation>
     </message>
     <message>
-        <source>Noise Reduction (Luma)</source>
-        <translation>Μείωση θορύβου (φωτεινότητα)</translation>
-    </message>
-    <message>
-        <source>Noise Reduction (Color)</source>
-        <translation>Μείωση θορύβου (χρώμα)</translation>
-    </message>
-    <message>
         <source>Vignette</source>
         <translation>Βινιέτα</translation>
-    </message>
-    <message>
-        <source>Defringe (Chromatic Aberration)</source>
-        <translation>Αφαίρεση κροσσών (χρωματική εκτροπή)</translation>
-    </message>
-    <message>
-        <source>Lens Distortion Correction</source>
-        <translation>Διόρθωση παραμόρφωσης φακού</translation>
-    </message>
-    <message>
-        <source>Open a photo first</source>
-        <translation>Ανοίξτε πρώτα μια φωτογραφία</translation>
     </message>
     <message>
         <source>Version %1</source>
@@ -1826,34 +2059,6 @@
         <translation>Η σάρωση του φακέλου δεν απάντησε.</translation>
     </message>
     <message>
-        <source>Soft proof: %1</source>
-        <translation>Δοκιμή οθόνης: %1</translation>
-    </message>
-    <message>
-        <source>Soft proof off</source>
-        <translation>Δοκιμή οθόνης ανενεργή</translation>
-    </message>
-    <message>
-        <source>Rating: ★</source>
-        <translation>Βαθμολογία: ★</translation>
-    </message>
-    <message>
-        <source>Rating: ★★</source>
-        <translation>Βαθμολογία: ★★</translation>
-    </message>
-    <message>
-        <source>Rating: ★★★</source>
-        <translation>Βαθμολογία: ★★★</translation>
-    </message>
-    <message>
-        <source>Rating: ★★★★</source>
-        <translation>Βαθμολογία: ★★★★</translation>
-    </message>
-    <message>
-        <source>Rating: ★★★★★</source>
-        <translation>Βαθμολογία: ★★★★★</translation>
-    </message>
-    <message>
         <source>Flag cleared</source>
         <translation>Η σήμανση αφαιρέθηκε</translation>
     </message>
@@ -1874,60 +2079,12 @@
         <translation>Απορριφθείσα</translation>
     </message>
     <message>
-        <source>Adjust</source>
-        <translation>Ρυθμίσεις</translation>
-    </message>
-    <message>
-        <source>Masks</source>
-        <translation>Μάσκες</translation>
-    </message>
-    <message>
-        <source>Looks</source>
-        <translation>Στυλ</translation>
-    </message>
-    <message>
-        <source>AI</source>
-        <translation>ΤΝ</translation>
-    </message>
-    <message>
-        <source>Read the photo&apos;s .xmp sidecar written by another editor</source>
-        <translation>Ανάγνωση του αρχείου .xmp που έγραψε άλλος επεξεργαστής</translation>
-    </message>
-    <message>
-        <source>Write the edit, rating and label to an .xmp sidecar for other editors</source>
-        <translation>Εγγραφή της επεξεργασίας, της βαθμολογίας και της ετικέτας σε αρχείο .xmp για άλλους επεξεργαστές</translation>
-    </message>
-    <message>
         <source>Profile</source>
         <translation>Προφίλ</translation>
     </message>
     <message>
-        <source>Color Chrome Effect</source>
-        <translation>Εφέ Color Chrome</translation>
-    </message>
-    <message>
-        <source>Color Chrome FX Blue</source>
-        <translation>Color Chrome FX Μπλε</translation>
-    </message>
-    <message>
         <source>White balance</source>
         <translation>Ισορροπία λευκού</translation>
-    </message>
-    <message>
-        <source>Temperature</source>
-        <translation>Θερμοκρασία</translation>
-    </message>
-    <message>
-        <source>Tint</source>
-        <translation>Απόχρωση</translation>
-    </message>
-    <message>
-        <source>Tone</source>
-        <translation>Τόνος</translation>
-    </message>
-    <message>
-        <source>Presence</source>
-        <translation>Παρουσία</translation>
     </message>
     <message>
         <source>Tone curve</source>
@@ -1950,28 +2107,8 @@
         <translation>Μετασχηματισμός</translation>
     </message>
     <message>
-        <source>Vertical</source>
-        <translation>Κατακόρυφα</translation>
-    </message>
-    <message>
-        <source>Horizontal</source>
-        <translation>Οριζόντια</translation>
-    </message>
-    <message>
-        <source>Scale</source>
-        <translation>Κλίμακα</translation>
-    </message>
-    <message>
-        <source>Vertical straightens converging lines, such as buildings photographed from below. Crop afterwards to remove the empty edges.</source>
-        <translation>Το κατακόρυφο ισιώνει τις συγκλίνουσες γραμμές, όπως κτίρια που φωτογραφήθηκαν από κάτω. Περικόψτε μετά για να αφαιρέσετε τα κενά άκρα.</translation>
-    </message>
-    <message>
         <source>Grain</source>
         <translation>Κόκκος</translation>
-    </message>
-    <message>
-        <source>Colour management</source>
-        <translation>Διαχείριση χρώματος</translation>
     </message>
     <message>
         <source>Heal and clone</source>
@@ -1988,34 +2125,6 @@
     <message>
         <source>LUT</source>
         <translation>LUT</translation>
-    </message>
-    <message>
-        <source>Edit assistant</source>
-        <translation>Βοηθός επεξεργασίας</translation>
-    </message>
-    <message>
-        <source>Assistant edit applied</source>
-        <translation>Εφαρμόστηκε η επεξεργασία του βοηθού</translation>
-    </message>
-    <message>
-        <source>Copy</source>
-        <translation>Αντιγραφή</translation>
-    </message>
-    <message>
-        <source>Paste</source>
-        <translation>Επικόλληση</translation>
-    </message>
-    <message>
-        <source>Reset</source>
-        <translation>Επαναφορά</translation>
-    </message>
-    <message>
-        <source>Import XMP</source>
-        <translation>Εισαγωγή XMP</translation>
-    </message>
-    <message>
-        <source>Write XMP</source>
-        <translation>Εγγραφή XMP</translation>
     </message>
     <message>
         <source>Opening %1</source>
@@ -2097,6 +2206,17 @@
     <message>
         <source>no answer from the engine</source>
         <translation>καμία απάντηση από τη μηχανή</translation>
+    </message>
+</context>
+<context>
+    <name>MasksTab</name>
+    <message>
+        <source>Heal and clone</source>
+        <translation>Επιδιόρθωση και κλωνοποίηση</translation>
+    </message>
+    <message>
+        <source>Local adjustments</source>
+        <translation>Τοπικές ρυθμίσεις</translation>
     </message>
 </context>
 <context>
@@ -2291,6 +2411,53 @@
     </message>
 </context>
 <context>
+    <name>RightInspector</name>
+    <message>
+        <source>AI</source>
+        <translation>ΤΝ</translation>
+    </message>
+    <message>
+        <source>Adjust</source>
+        <translation>Ρυθμίσεις</translation>
+    </message>
+    <message>
+        <source>Copy</source>
+        <translation>Αντιγραφή</translation>
+    </message>
+    <message>
+        <source>Import XMP</source>
+        <translation>Εισαγωγή XMP</translation>
+    </message>
+    <message>
+        <source>Looks</source>
+        <translation>Στυλ</translation>
+    </message>
+    <message>
+        <source>Masks</source>
+        <translation>Μάσκες</translation>
+    </message>
+    <message>
+        <source>Paste</source>
+        <translation>Επικόλληση</translation>
+    </message>
+    <message>
+        <source>Read the photo&apos;s .xmp sidecar written by another editor</source>
+        <translation>Ανάγνωση του αρχείου .xmp που έγραψε άλλος επεξεργαστής</translation>
+    </message>
+    <message>
+        <source>Reset</source>
+        <translation>Επαναφορά</translation>
+    </message>
+    <message>
+        <source>Write XMP</source>
+        <translation>Εγγραφή XMP</translation>
+    </message>
+    <message>
+        <source>Write the edit, rating and label to an .xmp sidecar for other editors</source>
+        <translation>Εγγραφή της επεξεργασίας, της βαθμολογίας και της ετικέτας σε αρχείο .xmp για άλλους επεξεργαστές</translation>
+    </message>
+</context>
+<context>
     <name>ScopesView</name>
     <message>
         <source>HIST</source>
@@ -2345,6 +2512,57 @@
     <message>
         <source>SKIN</source>
         <translation>ΔΕΡΜΑ</translation>
+    </message>
+</context>
+<context>
+    <name>ShortcutRouter</name>
+    <message>
+        <source>Crop mode: off</source>
+        <translation>Λειτουργία περικοπής: ανενεργή</translation>
+    </message>
+    <message>
+        <source>Crop mode: on (C)</source>
+        <translation>Λειτουργία περικοπής: ενεργή (C)</translation>
+    </message>
+    <message>
+        <source>Flag cleared</source>
+        <translation>Η σήμανση αφαιρέθηκε</translation>
+    </message>
+    <message>
+        <source>Open a photo first</source>
+        <translation>Ανοίξτε πρώτα μια φωτογραφία</translation>
+    </message>
+    <message>
+        <source>Rating cleared</source>
+        <translation>Η βαθμολογία διαγράφηκε</translation>
+    </message>
+    <message>
+        <source>Rating: ★</source>
+        <translation>Βαθμολογία: ★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★</source>
+        <translation>Βαθμολογία: ★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★</source>
+        <translation>Βαθμολογία: ★★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★★</source>
+        <translation>Βαθμολογία: ★★★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★★★</source>
+        <translation>Βαθμολογία: ★★★★★</translation>
+    </message>
+    <message>
+        <source>Soft proof off</source>
+        <translation>Δοκιμή οθόνης ανενεργή</translation>
+    </message>
+    <message>
+        <source>Soft proof: %1</source>
+        <translation>Δοκιμή οθόνης: %1</translation>
     </message>
 </context>
 <context>
@@ -2733,93 +2951,6 @@
     <message>
         <source>Drop Shadow</source>
         <translation>Σκιά</translation>
-    </message>
-</context>
-<context>
-    <name>CloudDialog</name>
-    <message>
-        <source>Add an account</source>
-        <translation>Προσθήκη λογαριασμού</translation>
-    </message>
-    <message>
-        <source>Browse</source>
-        <translation>Περιήγηση</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation>Ακύρωση</translation>
-    </message>
-    <message>
-        <source>Client ID</source>
-        <translation>Αναγνωριστικό πελάτη</translation>
-    </message>
-    <message>
-        <source>Client secret</source>
-        <translation>Μυστικό πελάτη</translation>
-    </message>
-    <message>
-        <source>Close</source>
-        <translation>Κλείσιμο</translation>
-    </message>
-    <message>
-        <source>Cloud accounts</source>
-        <translation>Λογαριασμοί cloud</translation>
-    </message>
-    <message>
-        <source>Confirm</source>
-        <translation>Επιβεβαίωση</translation>
-    </message>
-    <message>
-        <source>Connected</source>
-        <translation>Συνδεδεμένοι</translation>
-    </message>
-    <message>
-        <source>Disconnect</source>
-        <translation>Αποσύνδεση</translation>
-    </message>
-    <message>
-        <source>Disconnecting removes the account's keys and downloaded copies from this computer. Files in the account stay as they are.</source>
-        <translation>Η αποσύνδεση αφαιρεί από αυτόν τον υπολογιστή τα κλειδιά του λογαριασμού και τα αντίγραφα που λήφθηκαν. Τα αρχεία στον λογαριασμό μένουν ως έχουν.</translation>
-    </message>
-    <message>
-        <source>Enter this code on the GitHub page that opened in your browser:</source>
-        <translation>Πληκτρολογήστε αυτόν τον κωδικό στη σελίδα του GitHub που άνοιξε στο πρόγραμμα περιήγησης:</translation>
-    </message>
-    <message>
-        <source>Finish signing in in your browser. This window updates when you are done.</source>
-        <translation>Ολοκληρώστε τη σύνδεση στο πρόγραμμα περιήγησης. Το παράθυρο ενημερώνεται όταν τελειώσετε.</translation>
-    </message>
-    <message>
-        <source>Install it with: sudo pacman -S %1</source>
-        <translation>Εγκατάσταση: sudo pacman -S %1</translation>
-    </message>
-    <message>
-        <source>Needs %1</source>
-        <translation>Απαιτεί %1</translation>
-    </message>
-    <message>
-        <source>No account connected yet.</source>
-        <translation>Δεν έχει συνδεθεί ακόμη λογαριασμός.</translation>
-    </message>
-    <message>
-        <source>Open the page again</source>
-        <translation>Άνοιγμα της σελίδας ξανά</translation>
-    </message>
-    <message>
-        <source>Own Google client ID (optional)</source>
-        <translation>Δικό σας αναγνωριστικό πελάτη Google (προαιρετικό)</translation>
-    </message>
-    <message>
-        <source>Signing in to %1</source>
-        <translation>Σύνδεση σε %1</translation>
-    </message>
-    <message>
-        <source>The shared client rclone uses for Google Drive is being retired. With a client ID of your own from the Google Cloud Console, Google Drive keeps working. It is used the next time you connect Google Drive.</source>
-        <translation>Ο κοινόχρηστος πελάτης που χρησιμοποιεί το rclone για το Google Drive καταργείται. Με δικό σας αναγνωριστικό πελάτη από το Google Cloud Console, το Google Drive συνεχίζει να λειτουργεί. Θα χρησιμοποιηθεί την επόμενη φορά που θα συνδέσετε το Google Drive.</translation>
-    </message>
-    <message>
-        <source>You sign in on the service's own page in your browser. OmaStudio keeps the access keys in the system keyring and creates a folder named %1 in each account for uploads.</source>
-        <translation>Συνδέεστε στη σελίδα της ίδιας της υπηρεσίας, στο πρόγραμμα περιήγησης. Το OmaStudio φυλάσσει τα κλειδιά πρόσβασης στη μπρελόκ κλειδιών του συστήματος και δημιουργεί σε κάθε λογαριασμό έναν φάκελο με όνομα %1 για μεταφορτώσεις.</translation>
     </message>
 </context>
 </TS>

@@ -6,6 +6,7 @@
 //! omastudio-app ipc <method> [args...]  call the running window, e.g. `ipc openPhoto F.RAF`
 //! ```
 
+mod history;
 mod host;
 mod hyprland;
 mod ipc;

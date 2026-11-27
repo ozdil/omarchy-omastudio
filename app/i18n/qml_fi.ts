@@ -141,6 +141,173 @@
     </message>
 </context>
 <context>
+    <name>AdjustTab</name>
+    <message>
+        <source>Blacks</source>
+        <translation>Mustat</translation>
+    </message>
+    <message>
+        <source>Clarity (Midtone Contrast)</source>
+        <translation>Selkeys (keskisävyjen kontrasti)</translation>
+    </message>
+    <message>
+        <source>Color Chrome Effect</source>
+        <translation>Color Chrome -tehoste</translation>
+    </message>
+    <message>
+        <source>Color Chrome FX Blue</source>
+        <translation>Color Chrome FX Sininen</translation>
+    </message>
+    <message>
+        <source>Colour grading</source>
+        <translation>Värimäärittely</translation>
+    </message>
+    <message>
+        <source>Colour management</source>
+        <translation>Värinhallinta</translation>
+    </message>
+    <message>
+        <source>Colour mixer</source>
+        <translation>Värimikseri</translation>
+    </message>
+    <message>
+        <source>Contrast</source>
+        <translation>Kontrasti</translation>
+    </message>
+    <message>
+        <source>Curve Darks (Lower Mids)</source>
+        <translation>Käyrä: tummat (alemmat keskisävyt)</translation>
+    </message>
+    <message>
+        <source>Curve Highlights</source>
+        <translation>Käyrä: kirkkaat sävyt</translation>
+    </message>
+    <message>
+        <source>Curve Lights (Upper Mids)</source>
+        <translation>Käyrä: vaaleat (ylemmät keskisävyt)</translation>
+    </message>
+    <message>
+        <source>Curve Shadows</source>
+        <translation>Käyrä: varjot</translation>
+    </message>
+    <message>
+        <source>Defringe (Chromatic Aberration)</source>
+        <translation>Reunavärien poisto (kromaattinen aberraatio)</translation>
+    </message>
+    <message>
+        <source>Dehaze</source>
+        <translation>Usvanpoisto</translation>
+    </message>
+    <message>
+        <source>Detail and optics</source>
+        <translation>Yksityiskohdat ja optiikka</translation>
+    </message>
+    <message>
+        <source>Exposure</source>
+        <translation>Valotus</translation>
+    </message>
+    <message>
+        <source>Grain</source>
+        <translation>Rakeisuus</translation>
+    </message>
+    <message>
+        <source>Highlights</source>
+        <translation>Kirkkaat sävyt</translation>
+    </message>
+    <message>
+        <source>Horizontal</source>
+        <translation>Vaakasuunta</translation>
+    </message>
+    <message>
+        <source>Lens Distortion Correction</source>
+        <translation>Objektiivin vääristymän korjaus</translation>
+    </message>
+    <message>
+        <source>Noise Reduction (Color)</source>
+        <translation>Kohinanpoisto (väri)</translation>
+    </message>
+    <message>
+        <source>Noise Reduction (Luma)</source>
+        <translation>Kohinanpoisto (luminanssi)</translation>
+    </message>
+    <message>
+        <source>Open a photo first</source>
+        <translation>Avaa ensin kuva</translation>
+    </message>
+    <message>
+        <source>Presence</source>
+        <translation>Läsnäolo</translation>
+    </message>
+    <message>
+        <source>Profile</source>
+        <translation>Profiili</translation>
+    </message>
+    <message>
+        <source>Saturation</source>
+        <translation>Kylläisyys</translation>
+    </message>
+    <message>
+        <source>Scale</source>
+        <translation>Skaalaus</translation>
+    </message>
+    <message>
+        <source>Shadows</source>
+        <translation>Varjot</translation>
+    </message>
+    <message>
+        <source>Sharpening</source>
+        <translation>Terävöitys</translation>
+    </message>
+    <message>
+        <source>Temperature</source>
+        <translation>Lämpötila</translation>
+    </message>
+    <message>
+        <source>Texture</source>
+        <translation>Rakenne</translation>
+    </message>
+    <message>
+        <source>Tint</source>
+        <translation>Sävy</translation>
+    </message>
+    <message>
+        <source>Tone</source>
+        <translation>Sävy</translation>
+    </message>
+    <message>
+        <source>Tone curve</source>
+        <translation>Sävykäyrä</translation>
+    </message>
+    <message>
+        <source>Transform</source>
+        <translation>Muunna</translation>
+    </message>
+    <message>
+        <source>Vertical</source>
+        <translation>Pystysuunta</translation>
+    </message>
+    <message>
+        <source>Vertical straightens converging lines, such as buildings photographed from below. Crop afterwards to remove the empty edges.</source>
+        <translation>Pystysuunta oikaisee suppenevat linjat, kuten alhaalta kuvatut rakennukset. Rajaa jälkeenpäin tyhjät reunat pois.</translation>
+    </message>
+    <message>
+        <source>Vibrance</source>
+        <translation>Eloisuus</translation>
+    </message>
+    <message>
+        <source>Vignette</source>
+        <translation>Vinjetointi</translation>
+    </message>
+    <message>
+        <source>White balance</source>
+        <translation>Valkotasapaino</translation>
+    </message>
+    <message>
+        <source>Whites</source>
+        <translation>Valkoiset</translation>
+    </message>
+</context>
+<context>
     <name>AiAssistPanel</name>
     <message>
         <source>%1 (automatic)</source>
@@ -291,10 +458,123 @@
     </message>
 </context>
 <context>
+    <name>AiTab</name>
+    <message>
+        <source>Assistant edit applied</source>
+        <translation>Avustajan muokkaus käytetty</translation>
+    </message>
+    <message>
+        <source>Edit assistant</source>
+        <translation>Muokkausavustaja</translation>
+    </message>
+</context>
+<context>
     <name>BoundedTextInput</name>
     <message>
         <source>Clipboard content exceeded byte limit or timed out.</source>
         <translation>Leikepöydän sisältö ylitti tavurajan tai aikakatkaisu umpeutui.</translation>
+    </message>
+</context>
+<context>
+    <name>CenterWorkspace</name>
+    <message>
+        <source>Opened %1</source>
+        <translation>Avattu %1</translation>
+    </message>
+    <message>
+        <source>Scanning folder %1</source>
+        <translation>Tutkitaan kansiota %1</translation>
+    </message>
+    <message>
+        <source>Soft proof: %1</source>
+        <translation>Näyttövedos: %1</translation>
+    </message>
+</context>
+<context>
+    <name>CloudDialog</name>
+    <message>
+        <source>Add an account</source>
+        <translation>Lisää tili</translation>
+    </message>
+    <message>
+        <source>Browse</source>
+        <translation>Selaa</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Peruuta</translation>
+    </message>
+    <message>
+        <source>Client ID</source>
+        <translation>Asiakastunnus</translation>
+    </message>
+    <message>
+        <source>Client secret</source>
+        <translation>Asiakassalaisuus</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>Sulje</translation>
+    </message>
+    <message>
+        <source>Cloud accounts</source>
+        <translation>Pilvitilit</translation>
+    </message>
+    <message>
+        <source>Confirm</source>
+        <translation>Vahvista</translation>
+    </message>
+    <message>
+        <source>Connected</source>
+        <translation>Yhdistetyt</translation>
+    </message>
+    <message>
+        <source>Disconnect</source>
+        <translation>Katkaise yhteys</translation>
+    </message>
+    <message>
+        <source>Disconnecting removes the account&apos;s keys and downloaded copies from this computer. Files in the account stay as they are.</source>
+        <translation>Yhteyden katkaiseminen poistaa tilin avaimet ja ladatut kopiot tältä tietokoneelta. Tilin tiedostot pysyvät ennallaan.</translation>
+    </message>
+    <message>
+        <source>Enter this code on the GitHub page that opened in your browser:</source>
+        <translation>Syötä tämä koodi selaimessa avautuneelle GitHub-sivulle:</translation>
+    </message>
+    <message>
+        <source>Finish signing in in your browser. This window updates when you are done.</source>
+        <translation>Viimeistele kirjautuminen selaimessa. Ikkuna päivittyy, kun olet valmis.</translation>
+    </message>
+    <message>
+        <source>Install it with: sudo pacman -S %1</source>
+        <translation>Asenna komennolla: sudo pacman -S %1</translation>
+    </message>
+    <message>
+        <source>Needs %1</source>
+        <translation>Vaatii: %1</translation>
+    </message>
+    <message>
+        <source>No account connected yet.</source>
+        <translation>Yhtään tiliä ei ole vielä yhdistetty.</translation>
+    </message>
+    <message>
+        <source>Open the page again</source>
+        <translation>Avaa sivu uudelleen</translation>
+    </message>
+    <message>
+        <source>Own Google client ID (optional)</source>
+        <translation>Oma Google-asiakastunnus (valinnainen)</translation>
+    </message>
+    <message>
+        <source>Signing in to %1</source>
+        <translation>Kirjaudutaan: %1</translation>
+    </message>
+    <message>
+        <source>The shared client rclone uses for Google Drive is being retired. With a client ID of your own from the Google Cloud Console, Google Drive keeps working. It is used the next time you connect Google Drive.</source>
+        <translation>Jaettu asiakas, jota rclone käyttää Google Driveen, poistuu käytöstä. Omalla Google Cloud Consolesta saadulla asiakastunnuksella Google Drive toimii edelleen. Sitä käytetään, kun yhdistät Google Driven seuraavan kerran.</translation>
+    </message>
+    <message>
+        <source>You sign in on the service&apos;s own page in your browser. OmaStudio keeps the access keys in the system keyring and creates a folder named %1 in each account for uploads.</source>
+        <translation>Kirjaudut palvelun omalla sivulla selaimessa. OmaStudio säilyttää käyttöavaimet järjestelmän avainnipussa ja luo jokaiseen tiliin latauksia varten kansion nimeltä %1.</translation>
     </message>
 </context>
 <context>
@@ -1093,23 +1373,6 @@
     </message>
 </context>
 <context>
-    <name>HistogramView</name>
-    <message>
-        <source>[S] %1%</source>
-        <comment>S: shadow clipping</comment>
-        <translation>[V] %1%</translation>
-    </message>
-    <message>
-        <source>Histogram</source>
-        <translation>Histogrammi</translation>
-    </message>
-    <message>
-        <source>[H] %1%</source>
-        <comment>H: highlight clipping</comment>
-        <translation>[K] %1%</translation>
-    </message>
-</context>
-<context>
     <name>HistoryPanel</name>
     <message>
         <source>History</source>
@@ -1474,6 +1737,32 @@
     </message>
 </context>
 <context>
+    <name>LeftInspector</name>
+    <message>
+        <source>Analyzing...</source>
+        <translation>Analysoidaan...</translation>
+    </message>
+    <message>
+        <source>Extracting dynamic range...</source>
+        <translation>Selvitetään dynamiikka-aluetta...</translation>
+    </message>
+    <message>
+        <source>Suggested scene</source>
+        <translation>Ehdotettu näkymä</translation>
+    </message>
+</context>
+<context>
+    <name>LooksTab</name>
+    <message>
+        <source>LUT</source>
+        <translation>LUT</translation>
+    </message>
+    <message>
+        <source>Presets</source>
+        <translation>Esiasetukset</translation>
+    </message>
+</context>
+<context>
     <name>LutSelector</name>
     <message>
         <source>Load 3D LUT</source>
@@ -1594,22 +1883,6 @@
         <translation>Rajaustila: pois</translation>
     </message>
     <message>
-        <source>Analyzing...</source>
-        <translation>Analysoidaan...</translation>
-    </message>
-    <message>
-        <source>Extracting dynamic range...</source>
-        <translation>Selvitetään dynamiikka-aluetta...</translation>
-    </message>
-    <message>
-        <source>Opened %1</source>
-        <translation>Avattu %1</translation>
-    </message>
-    <message>
-        <source>Scanning folder %1</source>
-        <translation>Tutkitaan kansiota %1</translation>
-    </message>
-    <message>
         <source>Contrast</source>
         <translation>Kontrasti</translation>
     </message>
@@ -1634,28 +1907,8 @@
         <translation>Mustat</translation>
     </message>
     <message>
-        <source>Curve Highlights</source>
-        <translation>Käyrä: kirkkaat sävyt</translation>
-    </message>
-    <message>
-        <source>Curve Lights (Upper Mids)</source>
-        <translation>Käyrä: vaaleat (ylemmät keskisävyt)</translation>
-    </message>
-    <message>
-        <source>Curve Darks (Lower Mids)</source>
-        <translation>Käyrä: tummat (alemmat keskisävyt)</translation>
-    </message>
-    <message>
-        <source>Curve Shadows</source>
-        <translation>Käyrä: varjot</translation>
-    </message>
-    <message>
         <source>Texture</source>
         <translation>Rakenne</translation>
-    </message>
-    <message>
-        <source>Suggested scene</source>
-        <translation>Ehdotettu näkymä</translation>
     </message>
     <message>
         <source>Clarity (Midtone Contrast)</source>
@@ -1678,28 +1931,8 @@
         <translation>Terävöitys</translation>
     </message>
     <message>
-        <source>Noise Reduction (Luma)</source>
-        <translation>Kohinanpoisto (luminanssi)</translation>
-    </message>
-    <message>
-        <source>Noise Reduction (Color)</source>
-        <translation>Kohinanpoisto (väri)</translation>
-    </message>
-    <message>
         <source>Vignette</source>
         <translation>Vinjetointi</translation>
-    </message>
-    <message>
-        <source>Defringe (Chromatic Aberration)</source>
-        <translation>Reunavärien poisto (kromaattinen aberraatio)</translation>
-    </message>
-    <message>
-        <source>Lens Distortion Correction</source>
-        <translation>Objektiivin vääristymän korjaus</translation>
-    </message>
-    <message>
-        <source>Open a photo first</source>
-        <translation>Avaa ensin kuva</translation>
     </message>
     <message>
         <source>Version %1</source>
@@ -1826,34 +2059,6 @@
         <translation>Kansion tarkistus ei vastannut.</translation>
     </message>
     <message>
-        <source>Soft proof: %1</source>
-        <translation>Näyttövedos: %1</translation>
-    </message>
-    <message>
-        <source>Soft proof off</source>
-        <translation>Näyttövedos pois</translation>
-    </message>
-    <message>
-        <source>Rating: ★</source>
-        <translation>Arvio: ★</translation>
-    </message>
-    <message>
-        <source>Rating: ★★</source>
-        <translation>Arvio: ★★</translation>
-    </message>
-    <message>
-        <source>Rating: ★★★</source>
-        <translation>Arvio: ★★★</translation>
-    </message>
-    <message>
-        <source>Rating: ★★★★</source>
-        <translation>Arvio: ★★★★</translation>
-    </message>
-    <message>
-        <source>Rating: ★★★★★</source>
-        <translation>Arvio: ★★★★★</translation>
-    </message>
-    <message>
         <source>Flag cleared</source>
         <translation>Merkintä poistettu</translation>
     </message>
@@ -1874,60 +2079,12 @@
         <translation>Hylätty</translation>
     </message>
     <message>
-        <source>Adjust</source>
-        <translation>Säädä</translation>
-    </message>
-    <message>
-        <source>Masks</source>
-        <translation>Maskit</translation>
-    </message>
-    <message>
-        <source>Looks</source>
-        <translation>Tyylit</translation>
-    </message>
-    <message>
-        <source>AI</source>
-        <translation>Tekoäly</translation>
-    </message>
-    <message>
-        <source>Read the photo&apos;s .xmp sidecar written by another editor</source>
-        <translation>Lue toisen editorin kirjoittama .xmp-tiedosto</translation>
-    </message>
-    <message>
-        <source>Write the edit, rating and label to an .xmp sidecar for other editors</source>
-        <translation>Kirjoita muokkaus, arvio ja merkintä .xmp-tiedostoon muita editoreja varten</translation>
-    </message>
-    <message>
         <source>Profile</source>
         <translation>Profiili</translation>
     </message>
     <message>
-        <source>Color Chrome Effect</source>
-        <translation>Color Chrome -tehoste</translation>
-    </message>
-    <message>
-        <source>Color Chrome FX Blue</source>
-        <translation>Color Chrome FX Sininen</translation>
-    </message>
-    <message>
         <source>White balance</source>
         <translation>Valkotasapaino</translation>
-    </message>
-    <message>
-        <source>Temperature</source>
-        <translation>Lämpötila</translation>
-    </message>
-    <message>
-        <source>Tint</source>
-        <translation>Sävy</translation>
-    </message>
-    <message>
-        <source>Tone</source>
-        <translation>Sävy</translation>
-    </message>
-    <message>
-        <source>Presence</source>
-        <translation>Läsnäolo</translation>
     </message>
     <message>
         <source>Tone curve</source>
@@ -1950,28 +2107,8 @@
         <translation>Muunna</translation>
     </message>
     <message>
-        <source>Vertical</source>
-        <translation>Pystysuunta</translation>
-    </message>
-    <message>
-        <source>Horizontal</source>
-        <translation>Vaakasuunta</translation>
-    </message>
-    <message>
-        <source>Scale</source>
-        <translation>Skaalaus</translation>
-    </message>
-    <message>
-        <source>Vertical straightens converging lines, such as buildings photographed from below. Crop afterwards to remove the empty edges.</source>
-        <translation>Pystysuunta oikaisee suppenevat linjat, kuten alhaalta kuvatut rakennukset. Rajaa jälkeenpäin tyhjät reunat pois.</translation>
-    </message>
-    <message>
         <source>Grain</source>
         <translation>Rakeisuus</translation>
-    </message>
-    <message>
-        <source>Colour management</source>
-        <translation>Värinhallinta</translation>
     </message>
     <message>
         <source>Heal and clone</source>
@@ -1988,34 +2125,6 @@
     <message>
         <source>LUT</source>
         <translation>LUT</translation>
-    </message>
-    <message>
-        <source>Edit assistant</source>
-        <translation>Muokkausavustaja</translation>
-    </message>
-    <message>
-        <source>Assistant edit applied</source>
-        <translation>Avustajan muokkaus käytetty</translation>
-    </message>
-    <message>
-        <source>Copy</source>
-        <translation>Kopioi</translation>
-    </message>
-    <message>
-        <source>Paste</source>
-        <translation>Liitä</translation>
-    </message>
-    <message>
-        <source>Reset</source>
-        <translation>Palauta</translation>
-    </message>
-    <message>
-        <source>Import XMP</source>
-        <translation>Tuo XMP</translation>
-    </message>
-    <message>
-        <source>Write XMP</source>
-        <translation>Kirjoita XMP</translation>
     </message>
     <message>
         <source>Opening %1</source>
@@ -2097,6 +2206,17 @@
     <message>
         <source>no answer from the engine</source>
         <translation>moottori ei vastannut</translation>
+    </message>
+</context>
+<context>
+    <name>MasksTab</name>
+    <message>
+        <source>Heal and clone</source>
+        <translation>Korjaus ja kloonaus</translation>
+    </message>
+    <message>
+        <source>Local adjustments</source>
+        <translation>Paikalliset säädöt</translation>
     </message>
 </context>
 <context>
@@ -2291,6 +2411,53 @@
     </message>
 </context>
 <context>
+    <name>RightInspector</name>
+    <message>
+        <source>AI</source>
+        <translation>Tekoäly</translation>
+    </message>
+    <message>
+        <source>Adjust</source>
+        <translation>Säädä</translation>
+    </message>
+    <message>
+        <source>Copy</source>
+        <translation>Kopioi</translation>
+    </message>
+    <message>
+        <source>Import XMP</source>
+        <translation>Tuo XMP</translation>
+    </message>
+    <message>
+        <source>Looks</source>
+        <translation>Tyylit</translation>
+    </message>
+    <message>
+        <source>Masks</source>
+        <translation>Maskit</translation>
+    </message>
+    <message>
+        <source>Paste</source>
+        <translation>Liitä</translation>
+    </message>
+    <message>
+        <source>Read the photo&apos;s .xmp sidecar written by another editor</source>
+        <translation>Lue toisen editorin kirjoittama .xmp-tiedosto</translation>
+    </message>
+    <message>
+        <source>Reset</source>
+        <translation>Palauta</translation>
+    </message>
+    <message>
+        <source>Write XMP</source>
+        <translation>Kirjoita XMP</translation>
+    </message>
+    <message>
+        <source>Write the edit, rating and label to an .xmp sidecar for other editors</source>
+        <translation>Kirjoita muokkaus, arvio ja merkintä .xmp-tiedostoon muita editoreja varten</translation>
+    </message>
+</context>
+<context>
     <name>ScopesView</name>
     <message>
         <source>HIST</source>
@@ -2345,6 +2512,57 @@
     <message>
         <source>SKIN</source>
         <translation>IHO</translation>
+    </message>
+</context>
+<context>
+    <name>ShortcutRouter</name>
+    <message>
+        <source>Crop mode: off</source>
+        <translation>Rajaustila: pois</translation>
+    </message>
+    <message>
+        <source>Crop mode: on (C)</source>
+        <translation>Rajaustila: päällä (C)</translation>
+    </message>
+    <message>
+        <source>Flag cleared</source>
+        <translation>Merkintä poistettu</translation>
+    </message>
+    <message>
+        <source>Open a photo first</source>
+        <translation>Avaa ensin kuva</translation>
+    </message>
+    <message>
+        <source>Rating cleared</source>
+        <translation>Arvio poistettu</translation>
+    </message>
+    <message>
+        <source>Rating: ★</source>
+        <translation>Arvio: ★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★</source>
+        <translation>Arvio: ★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★</source>
+        <translation>Arvio: ★★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★★</source>
+        <translation>Arvio: ★★★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★★★</source>
+        <translation>Arvio: ★★★★★</translation>
+    </message>
+    <message>
+        <source>Soft proof off</source>
+        <translation>Näyttövedos pois</translation>
+    </message>
+    <message>
+        <source>Soft proof: %1</source>
+        <translation>Näyttövedos: %1</translation>
     </message>
 </context>
 <context>
@@ -2733,93 +2951,6 @@
     <message>
         <source>Drop Shadow</source>
         <translation>Varjostus</translation>
-    </message>
-</context>
-<context>
-    <name>CloudDialog</name>
-    <message>
-        <source>Add an account</source>
-        <translation>Lisää tili</translation>
-    </message>
-    <message>
-        <source>Browse</source>
-        <translation>Selaa</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation>Peruuta</translation>
-    </message>
-    <message>
-        <source>Client ID</source>
-        <translation>Asiakastunnus</translation>
-    </message>
-    <message>
-        <source>Client secret</source>
-        <translation>Asiakassalaisuus</translation>
-    </message>
-    <message>
-        <source>Close</source>
-        <translation>Sulje</translation>
-    </message>
-    <message>
-        <source>Cloud accounts</source>
-        <translation>Pilvitilit</translation>
-    </message>
-    <message>
-        <source>Confirm</source>
-        <translation>Vahvista</translation>
-    </message>
-    <message>
-        <source>Connected</source>
-        <translation>Yhdistetyt</translation>
-    </message>
-    <message>
-        <source>Disconnect</source>
-        <translation>Katkaise yhteys</translation>
-    </message>
-    <message>
-        <source>Disconnecting removes the account's keys and downloaded copies from this computer. Files in the account stay as they are.</source>
-        <translation>Yhteyden katkaiseminen poistaa tilin avaimet ja ladatut kopiot tältä tietokoneelta. Tilin tiedostot pysyvät ennallaan.</translation>
-    </message>
-    <message>
-        <source>Enter this code on the GitHub page that opened in your browser:</source>
-        <translation>Syötä tämä koodi selaimessa avautuneelle GitHub-sivulle:</translation>
-    </message>
-    <message>
-        <source>Finish signing in in your browser. This window updates when you are done.</source>
-        <translation>Viimeistele kirjautuminen selaimessa. Ikkuna päivittyy, kun olet valmis.</translation>
-    </message>
-    <message>
-        <source>Install it with: sudo pacman -S %1</source>
-        <translation>Asenna komennolla: sudo pacman -S %1</translation>
-    </message>
-    <message>
-        <source>Needs %1</source>
-        <translation>Vaatii: %1</translation>
-    </message>
-    <message>
-        <source>No account connected yet.</source>
-        <translation>Yhtään tiliä ei ole vielä yhdistetty.</translation>
-    </message>
-    <message>
-        <source>Open the page again</source>
-        <translation>Avaa sivu uudelleen</translation>
-    </message>
-    <message>
-        <source>Own Google client ID (optional)</source>
-        <translation>Oma Google-asiakastunnus (valinnainen)</translation>
-    </message>
-    <message>
-        <source>Signing in to %1</source>
-        <translation>Kirjaudutaan: %1</translation>
-    </message>
-    <message>
-        <source>The shared client rclone uses for Google Drive is being retired. With a client ID of your own from the Google Cloud Console, Google Drive keeps working. It is used the next time you connect Google Drive.</source>
-        <translation>Jaettu asiakas, jota rclone käyttää Google Driveen, poistuu käytöstä. Omalla Google Cloud Consolesta saadulla asiakastunnuksella Google Drive toimii edelleen. Sitä käytetään, kun yhdistät Google Driven seuraavan kerran.</translation>
-    </message>
-    <message>
-        <source>You sign in on the service's own page in your browser. OmaStudio keeps the access keys in the system keyring and creates a folder named %1 in each account for uploads.</source>
-        <translation>Kirjaudut palvelun omalla sivulla selaimessa. OmaStudio säilyttää käyttöavaimet järjestelmän avainnipussa ja luo jokaiseen tiliin latauksia varten kansion nimeltä %1.</translation>
     </message>
 </context>
 </TS>

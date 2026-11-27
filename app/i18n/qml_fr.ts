@@ -141,6 +141,173 @@
     </message>
 </context>
 <context>
+    <name>AdjustTab</name>
+    <message>
+        <source>Blacks</source>
+        <translation>Noirs</translation>
+    </message>
+    <message>
+        <source>Clarity (Midtone Contrast)</source>
+        <translation>Clarté (contraste des tons moyens)</translation>
+    </message>
+    <message>
+        <source>Color Chrome Effect</source>
+        <translation>Effet Color Chrome</translation>
+    </message>
+    <message>
+        <source>Color Chrome FX Blue</source>
+        <translation>Color Chrome FX Bleu</translation>
+    </message>
+    <message>
+        <source>Colour grading</source>
+        <translation>Étalonnage des couleurs</translation>
+    </message>
+    <message>
+        <source>Colour management</source>
+        <translation>Gestion des couleurs</translation>
+    </message>
+    <message>
+        <source>Colour mixer</source>
+        <translation>Mélangeur de couleurs</translation>
+    </message>
+    <message>
+        <source>Contrast</source>
+        <translation>Contraste</translation>
+    </message>
+    <message>
+        <source>Curve Darks (Lower Mids)</source>
+        <translation>Courbe : sombres (tons moyens bas)</translation>
+    </message>
+    <message>
+        <source>Curve Highlights</source>
+        <translation>Courbe : hautes lumières</translation>
+    </message>
+    <message>
+        <source>Curve Lights (Upper Mids)</source>
+        <translation>Courbe : clairs (tons moyens hauts)</translation>
+    </message>
+    <message>
+        <source>Curve Shadows</source>
+        <translation>Courbe : ombres</translation>
+    </message>
+    <message>
+        <source>Defringe (Chromatic Aberration)</source>
+        <translation>Suppression des franges (aberration chromatique)</translation>
+    </message>
+    <message>
+        <source>Dehaze</source>
+        <translation>Correction du voile</translation>
+    </message>
+    <message>
+        <source>Detail and optics</source>
+        <translation>Détail et optique</translation>
+    </message>
+    <message>
+        <source>Exposure</source>
+        <translation>Exposition</translation>
+    </message>
+    <message>
+        <source>Grain</source>
+        <translation>Grain</translation>
+    </message>
+    <message>
+        <source>Highlights</source>
+        <translation>Hautes lumières</translation>
+    </message>
+    <message>
+        <source>Horizontal</source>
+        <translation>Horizontal</translation>
+    </message>
+    <message>
+        <source>Lens Distortion Correction</source>
+        <translation>Correction de la distorsion de l&apos;objectif</translation>
+    </message>
+    <message>
+        <source>Noise Reduction (Color)</source>
+        <translation>Réduction du bruit (couleur)</translation>
+    </message>
+    <message>
+        <source>Noise Reduction (Luma)</source>
+        <translation>Réduction du bruit (luminance)</translation>
+    </message>
+    <message>
+        <source>Open a photo first</source>
+        <translation>Ouvrez d&apos;abord une photo</translation>
+    </message>
+    <message>
+        <source>Presence</source>
+        <translation>Présence</translation>
+    </message>
+    <message>
+        <source>Profile</source>
+        <translation>Profil</translation>
+    </message>
+    <message>
+        <source>Saturation</source>
+        <translation>Saturation</translation>
+    </message>
+    <message>
+        <source>Scale</source>
+        <translation>Échelle</translation>
+    </message>
+    <message>
+        <source>Shadows</source>
+        <translation>Ombres</translation>
+    </message>
+    <message>
+        <source>Sharpening</source>
+        <translation>Netteté</translation>
+    </message>
+    <message>
+        <source>Temperature</source>
+        <translation>Température</translation>
+    </message>
+    <message>
+        <source>Texture</source>
+        <translation>Texture</translation>
+    </message>
+    <message>
+        <source>Tint</source>
+        <translation>Teinte</translation>
+    </message>
+    <message>
+        <source>Tone</source>
+        <translation>Tonalité</translation>
+    </message>
+    <message>
+        <source>Tone curve</source>
+        <translation>Courbe des tonalités</translation>
+    </message>
+    <message>
+        <source>Transform</source>
+        <translation>Transformation</translation>
+    </message>
+    <message>
+        <source>Vertical</source>
+        <translation>Vertical</translation>
+    </message>
+    <message>
+        <source>Vertical straightens converging lines, such as buildings photographed from below. Crop afterwards to remove the empty edges.</source>
+        <translation>Vertical redresse les lignes convergentes, comme les bâtiments photographiés d&apos;en bas. Recadrez ensuite pour supprimer les bords vides.</translation>
+    </message>
+    <message>
+        <source>Vibrance</source>
+        <translation>Vibrance</translation>
+    </message>
+    <message>
+        <source>Vignette</source>
+        <translation>Vignettage</translation>
+    </message>
+    <message>
+        <source>White balance</source>
+        <translation>Balance des blancs</translation>
+    </message>
+    <message>
+        <source>Whites</source>
+        <translation>Blancs</translation>
+    </message>
+</context>
+<context>
     <name>AiAssistPanel</name>
     <message>
         <source>%1 (automatic)</source>
@@ -291,10 +458,123 @@
     </message>
 </context>
 <context>
+    <name>AiTab</name>
+    <message>
+        <source>Assistant edit applied</source>
+        <translation>Retouche de l&apos;assistant appliquée</translation>
+    </message>
+    <message>
+        <source>Edit assistant</source>
+        <translation>Assistant de retouche</translation>
+    </message>
+</context>
+<context>
     <name>BoundedTextInput</name>
     <message>
         <source>Clipboard content exceeded byte limit or timed out.</source>
         <translation>Le contenu du presse-papiers dépasse la limite d&apos;octets ou le délai est écoulé.</translation>
+    </message>
+</context>
+<context>
+    <name>CenterWorkspace</name>
+    <message>
+        <source>Opened %1</source>
+        <translation>%1 ouvert</translation>
+    </message>
+    <message>
+        <source>Scanning folder %1</source>
+        <translation>Analyse du dossier %1</translation>
+    </message>
+    <message>
+        <source>Soft proof: %1</source>
+        <translation>Épreuvage écran : %1</translation>
+    </message>
+</context>
+<context>
+    <name>CloudDialog</name>
+    <message>
+        <source>Add an account</source>
+        <translation>Ajouter un compte</translation>
+    </message>
+    <message>
+        <source>Browse</source>
+        <translation>Parcourir</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Annuler</translation>
+    </message>
+    <message>
+        <source>Client ID</source>
+        <translation>ID client</translation>
+    </message>
+    <message>
+        <source>Client secret</source>
+        <translation>Secret client</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>Fermer</translation>
+    </message>
+    <message>
+        <source>Cloud accounts</source>
+        <translation>Comptes cloud</translation>
+    </message>
+    <message>
+        <source>Confirm</source>
+        <translation>Confirmer</translation>
+    </message>
+    <message>
+        <source>Connected</source>
+        <translation>Connectés</translation>
+    </message>
+    <message>
+        <source>Disconnect</source>
+        <translation>Déconnecter</translation>
+    </message>
+    <message>
+        <source>Disconnecting removes the account&apos;s keys and downloaded copies from this computer. Files in the account stay as they are.</source>
+        <translation>La déconnexion supprime de cet ordinateur les clés du compte et les copies téléchargées. Les fichiers du compte restent inchangés.</translation>
+    </message>
+    <message>
+        <source>Enter this code on the GitHub page that opened in your browser:</source>
+        <translation>Saisissez ce code sur la page GitHub ouverte dans votre navigateur :</translation>
+    </message>
+    <message>
+        <source>Finish signing in in your browser. This window updates when you are done.</source>
+        <translation>Terminez la connexion dans votre navigateur. Cette fenêtre se met à jour ensuite.</translation>
+    </message>
+    <message>
+        <source>Install it with: sudo pacman -S %1</source>
+        <translation>Installation : sudo pacman -S %1</translation>
+    </message>
+    <message>
+        <source>Needs %1</source>
+        <translation>Nécessite %1</translation>
+    </message>
+    <message>
+        <source>No account connected yet.</source>
+        <translation>Aucun compte connecté pour l&apos;instant.</translation>
+    </message>
+    <message>
+        <source>Open the page again</source>
+        <translation>Rouvrir la page</translation>
+    </message>
+    <message>
+        <source>Own Google client ID (optional)</source>
+        <translation>Votre propre ID client Google (facultatif)</translation>
+    </message>
+    <message>
+        <source>Signing in to %1</source>
+        <translation>Connexion à %1</translation>
+    </message>
+    <message>
+        <source>The shared client rclone uses for Google Drive is being retired. With a client ID of your own from the Google Cloud Console, Google Drive keeps working. It is used the next time you connect Google Drive.</source>
+        <translation>Le client partagé que rclone utilise pour Google Drive est en cours de retrait. Avec votre propre ID client issu de la Google Cloud Console, Google Drive continue de fonctionner. Il sera utilisé lors de la prochaine connexion de Google Drive.</translation>
+    </message>
+    <message>
+        <source>You sign in on the service&apos;s own page in your browser. OmaStudio keeps the access keys in the system keyring and creates a folder named %1 in each account for uploads.</source>
+        <translation>Vous vous connectez sur la page du service, dans votre navigateur. OmaStudio conserve les clés d&apos;accès dans le trousseau du système et crée dans chaque compte un dossier nommé %1 pour les envois.</translation>
     </message>
 </context>
 <context>
@@ -699,7 +979,7 @@
     </message>
     <message>
         <source>After export, the files are also copied into the %1 folder of the account (on GitHub: the private %1 repository).</source>
-        <translation>Après l'export, les fichiers sont aussi copiés dans le dossier %1 du compte (sur GitHub : le dépôt privé %1).</translation>
+        <translation>Après l&apos;export, les fichiers sont aussi copiés dans le dossier %1 du compte (sur GitHub : le dépôt privé %1).</translation>
     </message>
     <message>
         <source>This computer only</source>
@@ -941,7 +1221,7 @@
     </message>
     <message>
         <source>Connect Google Drive, OneDrive, Dropbox, GitHub and other accounts</source>
-        <translation>Connecter Google Drive, OneDrive, Dropbox, GitHub et d'autres comptes</translation>
+        <translation>Connecter Google Drive, OneDrive, Dropbox, GitHub et d&apos;autres comptes</translation>
     </message>
     <message>
         <source>No folders or photos here.</source>
@@ -1090,23 +1370,6 @@
     <message>
         <source>Version %1</source>
         <translation>Version %1</translation>
-    </message>
-</context>
-<context>
-    <name>HistogramView</name>
-    <message>
-        <source>[S] %1%</source>
-        <comment>S: shadow clipping</comment>
-        <translation>[O] %1 %</translation>
-    </message>
-    <message>
-        <source>Histogram</source>
-        <translation>Histogramme</translation>
-    </message>
-    <message>
-        <source>[H] %1%</source>
-        <comment>H: highlight clipping</comment>
-        <translation>[HL] %1 %</translation>
     </message>
 </context>
 <context>
@@ -1474,6 +1737,32 @@
     </message>
 </context>
 <context>
+    <name>LeftInspector</name>
+    <message>
+        <source>Analyzing...</source>
+        <translation>Analyse...</translation>
+    </message>
+    <message>
+        <source>Extracting dynamic range...</source>
+        <translation>Extraction de la plage dynamique...</translation>
+    </message>
+    <message>
+        <source>Suggested scene</source>
+        <translation>Scène suggérée</translation>
+    </message>
+</context>
+<context>
+    <name>LooksTab</name>
+    <message>
+        <source>LUT</source>
+        <translation>LUT</translation>
+    </message>
+    <message>
+        <source>Presets</source>
+        <translation>Préréglages</translation>
+    </message>
+</context>
+<context>
     <name>LutSelector</name>
     <message>
         <source>Load 3D LUT</source>
@@ -1594,22 +1883,6 @@
         <translation>Mode recadrage : désactivé</translation>
     </message>
     <message>
-        <source>Analyzing...</source>
-        <translation>Analyse...</translation>
-    </message>
-    <message>
-        <source>Extracting dynamic range...</source>
-        <translation>Extraction de la plage dynamique...</translation>
-    </message>
-    <message>
-        <source>Opened %1</source>
-        <translation>%1 ouvert</translation>
-    </message>
-    <message>
-        <source>Scanning folder %1</source>
-        <translation>Analyse du dossier %1</translation>
-    </message>
-    <message>
         <source>Contrast</source>
         <translation>Contraste</translation>
     </message>
@@ -1634,28 +1907,8 @@
         <translation>Noirs</translation>
     </message>
     <message>
-        <source>Curve Highlights</source>
-        <translation>Courbe : hautes lumières</translation>
-    </message>
-    <message>
-        <source>Curve Lights (Upper Mids)</source>
-        <translation>Courbe : clairs (tons moyens hauts)</translation>
-    </message>
-    <message>
-        <source>Curve Darks (Lower Mids)</source>
-        <translation>Courbe : sombres (tons moyens bas)</translation>
-    </message>
-    <message>
-        <source>Curve Shadows</source>
-        <translation>Courbe : ombres</translation>
-    </message>
-    <message>
         <source>Texture</source>
         <translation>Texture</translation>
-    </message>
-    <message>
-        <source>Suggested scene</source>
-        <translation>Scène suggérée</translation>
     </message>
     <message>
         <source>Clarity (Midtone Contrast)</source>
@@ -1678,28 +1931,8 @@
         <translation>Netteté</translation>
     </message>
     <message>
-        <source>Noise Reduction (Luma)</source>
-        <translation>Réduction du bruit (luminance)</translation>
-    </message>
-    <message>
-        <source>Noise Reduction (Color)</source>
-        <translation>Réduction du bruit (couleur)</translation>
-    </message>
-    <message>
         <source>Vignette</source>
         <translation>Vignettage</translation>
-    </message>
-    <message>
-        <source>Defringe (Chromatic Aberration)</source>
-        <translation>Suppression des franges (aberration chromatique)</translation>
-    </message>
-    <message>
-        <source>Lens Distortion Correction</source>
-        <translation>Correction de la distorsion de l&apos;objectif</translation>
-    </message>
-    <message>
-        <source>Open a photo first</source>
-        <translation>Ouvrez d&apos;abord une photo</translation>
     </message>
     <message>
         <source>Version %1</source>
@@ -1826,34 +2059,6 @@
         <translation>L&apos;analyse du dossier n&apos;a pas répondu.</translation>
     </message>
     <message>
-        <source>Soft proof: %1</source>
-        <translation>Épreuvage écran : %1</translation>
-    </message>
-    <message>
-        <source>Soft proof off</source>
-        <translation>Épreuvage écran désactivé</translation>
-    </message>
-    <message>
-        <source>Rating: ★</source>
-        <translation>Note : ★</translation>
-    </message>
-    <message>
-        <source>Rating: ★★</source>
-        <translation>Note : ★★</translation>
-    </message>
-    <message>
-        <source>Rating: ★★★</source>
-        <translation>Note : ★★★</translation>
-    </message>
-    <message>
-        <source>Rating: ★★★★</source>
-        <translation>Note : ★★★★</translation>
-    </message>
-    <message>
-        <source>Rating: ★★★★★</source>
-        <translation>Note : ★★★★★</translation>
-    </message>
-    <message>
         <source>Flag cleared</source>
         <translation>Marquage supprimé</translation>
     </message>
@@ -1874,60 +2079,12 @@
         <translation>Rejetée</translation>
     </message>
     <message>
-        <source>Adjust</source>
-        <translation>Réglages</translation>
-    </message>
-    <message>
-        <source>Masks</source>
-        <translation>Masques</translation>
-    </message>
-    <message>
-        <source>Looks</source>
-        <translation>Styles</translation>
-    </message>
-    <message>
-        <source>AI</source>
-        <translation>IA</translation>
-    </message>
-    <message>
-        <source>Read the photo&apos;s .xmp sidecar written by another editor</source>
-        <translation>Lire le fichier .xmp écrit par un autre éditeur</translation>
-    </message>
-    <message>
-        <source>Write the edit, rating and label to an .xmp sidecar for other editors</source>
-        <translation>Écrire les réglages, la note et le libellé dans un fichier .xmp pour d’autres éditeurs</translation>
-    </message>
-    <message>
         <source>Profile</source>
         <translation>Profil</translation>
     </message>
     <message>
-        <source>Color Chrome Effect</source>
-        <translation>Effet Color Chrome</translation>
-    </message>
-    <message>
-        <source>Color Chrome FX Blue</source>
-        <translation>Color Chrome FX Bleu</translation>
-    </message>
-    <message>
         <source>White balance</source>
         <translation>Balance des blancs</translation>
-    </message>
-    <message>
-        <source>Temperature</source>
-        <translation>Température</translation>
-    </message>
-    <message>
-        <source>Tint</source>
-        <translation>Teinte</translation>
-    </message>
-    <message>
-        <source>Tone</source>
-        <translation>Tonalité</translation>
-    </message>
-    <message>
-        <source>Presence</source>
-        <translation>Présence</translation>
     </message>
     <message>
         <source>Tone curve</source>
@@ -1950,28 +2107,8 @@
         <translation>Transformation</translation>
     </message>
     <message>
-        <source>Vertical</source>
-        <translation>Vertical</translation>
-    </message>
-    <message>
-        <source>Horizontal</source>
-        <translation>Horizontal</translation>
-    </message>
-    <message>
-        <source>Scale</source>
-        <translation>Échelle</translation>
-    </message>
-    <message>
-        <source>Vertical straightens converging lines, such as buildings photographed from below. Crop afterwards to remove the empty edges.</source>
-        <translation>Vertical redresse les lignes convergentes, comme les bâtiments photographiés d&apos;en bas. Recadrez ensuite pour supprimer les bords vides.</translation>
-    </message>
-    <message>
         <source>Grain</source>
         <translation>Grain</translation>
-    </message>
-    <message>
-        <source>Colour management</source>
-        <translation>Gestion des couleurs</translation>
     </message>
     <message>
         <source>Heal and clone</source>
@@ -1988,34 +2125,6 @@
     <message>
         <source>LUT</source>
         <translation>LUT</translation>
-    </message>
-    <message>
-        <source>Edit assistant</source>
-        <translation>Assistant de retouche</translation>
-    </message>
-    <message>
-        <source>Assistant edit applied</source>
-        <translation>Retouche de l&apos;assistant appliquée</translation>
-    </message>
-    <message>
-        <source>Copy</source>
-        <translation>Copier</translation>
-    </message>
-    <message>
-        <source>Paste</source>
-        <translation>Coller</translation>
-    </message>
-    <message>
-        <source>Reset</source>
-        <translation>Réinitialiser</translation>
-    </message>
-    <message>
-        <source>Import XMP</source>
-        <translation>Importer XMP</translation>
-    </message>
-    <message>
-        <source>Write XMP</source>
-        <translation>Écrire XMP</translation>
     </message>
     <message>
         <source>Opening %1</source>
@@ -2077,7 +2186,7 @@
     </message>
     <message>
         <source>Sign-in did not finish.</source>
-        <translation>La connexion n'a pas abouti.</translation>
+        <translation>La connexion n&apos;a pas abouti.</translation>
     </message>
     <message>
         <source>The folder could not be listed.</source>
@@ -2085,7 +2194,7 @@
     </message>
     <message>
         <source>Upload failed: %1</source>
-        <translation>Échec de l'envoi : %1</translation>
+        <translation>Échec de l&apos;envoi : %1</translation>
     </message>
     <message numerus="yes">
         <source>Uploaded %n file(s) to %1</source>
@@ -2097,6 +2206,17 @@
     <message>
         <source>no answer from the engine</source>
         <translation>pas de réponse du moteur</translation>
+    </message>
+</context>
+<context>
+    <name>MasksTab</name>
+    <message>
+        <source>Heal and clone</source>
+        <translation>Correction et clonage</translation>
+    </message>
+    <message>
+        <source>Local adjustments</source>
+        <translation>Réglages locaux</translation>
     </message>
 </context>
 <context>
@@ -2291,6 +2411,53 @@
     </message>
 </context>
 <context>
+    <name>RightInspector</name>
+    <message>
+        <source>AI</source>
+        <translation>IA</translation>
+    </message>
+    <message>
+        <source>Adjust</source>
+        <translation>Réglages</translation>
+    </message>
+    <message>
+        <source>Copy</source>
+        <translation>Copier</translation>
+    </message>
+    <message>
+        <source>Import XMP</source>
+        <translation>Importer XMP</translation>
+    </message>
+    <message>
+        <source>Looks</source>
+        <translation>Styles</translation>
+    </message>
+    <message>
+        <source>Masks</source>
+        <translation>Masques</translation>
+    </message>
+    <message>
+        <source>Paste</source>
+        <translation>Coller</translation>
+    </message>
+    <message>
+        <source>Read the photo&apos;s .xmp sidecar written by another editor</source>
+        <translation>Lire le fichier .xmp écrit par un autre éditeur</translation>
+    </message>
+    <message>
+        <source>Reset</source>
+        <translation>Réinitialiser</translation>
+    </message>
+    <message>
+        <source>Write XMP</source>
+        <translation>Écrire XMP</translation>
+    </message>
+    <message>
+        <source>Write the edit, rating and label to an .xmp sidecar for other editors</source>
+        <translation>Écrire les réglages, la note et le libellé dans un fichier .xmp pour d’autres éditeurs</translation>
+    </message>
+</context>
+<context>
     <name>ScopesView</name>
     <message>
         <source>HIST</source>
@@ -2345,6 +2512,57 @@
     <message>
         <source>SKIN</source>
         <translation>PEAU</translation>
+    </message>
+</context>
+<context>
+    <name>ShortcutRouter</name>
+    <message>
+        <source>Crop mode: off</source>
+        <translation>Mode recadrage : désactivé</translation>
+    </message>
+    <message>
+        <source>Crop mode: on (C)</source>
+        <translation>Mode recadrage : activé (C)</translation>
+    </message>
+    <message>
+        <source>Flag cleared</source>
+        <translation>Marquage supprimé</translation>
+    </message>
+    <message>
+        <source>Open a photo first</source>
+        <translation>Ouvrez d&apos;abord une photo</translation>
+    </message>
+    <message>
+        <source>Rating cleared</source>
+        <translation>Note supprimée</translation>
+    </message>
+    <message>
+        <source>Rating: ★</source>
+        <translation>Note : ★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★</source>
+        <translation>Note : ★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★</source>
+        <translation>Note : ★★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★★</source>
+        <translation>Note : ★★★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★★★</source>
+        <translation>Note : ★★★★★</translation>
+    </message>
+    <message>
+        <source>Soft proof off</source>
+        <translation>Épreuvage écran désactivé</translation>
+    </message>
+    <message>
+        <source>Soft proof: %1</source>
+        <translation>Épreuvage écran : %1</translation>
     </message>
 </context>
 <context>
@@ -2733,93 +2951,6 @@
     <message>
         <source>Drop Shadow</source>
         <translation>Ombre portée</translation>
-    </message>
-</context>
-<context>
-    <name>CloudDialog</name>
-    <message>
-        <source>Add an account</source>
-        <translation>Ajouter un compte</translation>
-    </message>
-    <message>
-        <source>Browse</source>
-        <translation>Parcourir</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation>Annuler</translation>
-    </message>
-    <message>
-        <source>Client ID</source>
-        <translation>ID client</translation>
-    </message>
-    <message>
-        <source>Client secret</source>
-        <translation>Secret client</translation>
-    </message>
-    <message>
-        <source>Close</source>
-        <translation>Fermer</translation>
-    </message>
-    <message>
-        <source>Cloud accounts</source>
-        <translation>Comptes cloud</translation>
-    </message>
-    <message>
-        <source>Confirm</source>
-        <translation>Confirmer</translation>
-    </message>
-    <message>
-        <source>Connected</source>
-        <translation>Connectés</translation>
-    </message>
-    <message>
-        <source>Disconnect</source>
-        <translation>Déconnecter</translation>
-    </message>
-    <message>
-        <source>Disconnecting removes the account's keys and downloaded copies from this computer. Files in the account stay as they are.</source>
-        <translation>La déconnexion supprime de cet ordinateur les clés du compte et les copies téléchargées. Les fichiers du compte restent inchangés.</translation>
-    </message>
-    <message>
-        <source>Enter this code on the GitHub page that opened in your browser:</source>
-        <translation>Saisissez ce code sur la page GitHub ouverte dans votre navigateur :</translation>
-    </message>
-    <message>
-        <source>Finish signing in in your browser. This window updates when you are done.</source>
-        <translation>Terminez la connexion dans votre navigateur. Cette fenêtre se met à jour ensuite.</translation>
-    </message>
-    <message>
-        <source>Install it with: sudo pacman -S %1</source>
-        <translation>Installation : sudo pacman -S %1</translation>
-    </message>
-    <message>
-        <source>Needs %1</source>
-        <translation>Nécessite %1</translation>
-    </message>
-    <message>
-        <source>No account connected yet.</source>
-        <translation>Aucun compte connecté pour l'instant.</translation>
-    </message>
-    <message>
-        <source>Open the page again</source>
-        <translation>Rouvrir la page</translation>
-    </message>
-    <message>
-        <source>Own Google client ID (optional)</source>
-        <translation>Votre propre ID client Google (facultatif)</translation>
-    </message>
-    <message>
-        <source>Signing in to %1</source>
-        <translation>Connexion à %1</translation>
-    </message>
-    <message>
-        <source>The shared client rclone uses for Google Drive is being retired. With a client ID of your own from the Google Cloud Console, Google Drive keeps working. It is used the next time you connect Google Drive.</source>
-        <translation>Le client partagé que rclone utilise pour Google Drive est en cours de retrait. Avec votre propre ID client issu de la Google Cloud Console, Google Drive continue de fonctionner. Il sera utilisé lors de la prochaine connexion de Google Drive.</translation>
-    </message>
-    <message>
-        <source>You sign in on the service's own page in your browser. OmaStudio keeps the access keys in the system keyring and creates a folder named %1 in each account for uploads.</source>
-        <translation>Vous vous connectez sur la page du service, dans votre navigateur. OmaStudio conserve les clés d'accès dans le trousseau du système et crée dans chaque compte un dossier nommé %1 pour les envois.</translation>
     </message>
 </context>
 </TS>

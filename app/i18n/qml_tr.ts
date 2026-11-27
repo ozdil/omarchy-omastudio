@@ -141,6 +141,173 @@
     </message>
 </context>
 <context>
+    <name>AdjustTab</name>
+    <message>
+        <source>Blacks</source>
+        <translation>Siyahlar</translation>
+    </message>
+    <message>
+        <source>Clarity (Midtone Contrast)</source>
+        <translation>Netlik (orta ton kontrastı)</translation>
+    </message>
+    <message>
+        <source>Color Chrome Effect</source>
+        <translation>Color Chrome efekti</translation>
+    </message>
+    <message>
+        <source>Color Chrome FX Blue</source>
+        <translation>Color Chrome FX Mavi</translation>
+    </message>
+    <message>
+        <source>Colour grading</source>
+        <translation>Renk derecelendirme</translation>
+    </message>
+    <message>
+        <source>Colour management</source>
+        <translation>Renk yönetimi</translation>
+    </message>
+    <message>
+        <source>Colour mixer</source>
+        <translation>Renk karıştırıcı</translation>
+    </message>
+    <message>
+        <source>Contrast</source>
+        <translation>Kontrast</translation>
+    </message>
+    <message>
+        <source>Curve Darks (Lower Mids)</source>
+        <translation>Eğri koyu tonları (alt orta tonlar)</translation>
+    </message>
+    <message>
+        <source>Curve Highlights</source>
+        <translation>Eğri vurguları</translation>
+    </message>
+    <message>
+        <source>Curve Lights (Upper Mids)</source>
+        <translation>Eğri açık tonları (üst orta tonlar)</translation>
+    </message>
+    <message>
+        <source>Curve Shadows</source>
+        <translation>Eğri gölgeleri</translation>
+    </message>
+    <message>
+        <source>Defringe (Chromatic Aberration)</source>
+        <translation>Renk saçağı giderme (kromatik sapma)</translation>
+    </message>
+    <message>
+        <source>Dehaze</source>
+        <translation>Pus giderme</translation>
+    </message>
+    <message>
+        <source>Detail and optics</source>
+        <translation>Ayrıntı ve optik</translation>
+    </message>
+    <message>
+        <source>Exposure</source>
+        <translation>Pozlama</translation>
+    </message>
+    <message>
+        <source>Grain</source>
+        <translation>Gren</translation>
+    </message>
+    <message>
+        <source>Highlights</source>
+        <translation>Vurgular</translation>
+    </message>
+    <message>
+        <source>Horizontal</source>
+        <translation>Yatay</translation>
+    </message>
+    <message>
+        <source>Lens Distortion Correction</source>
+        <translation>Objektif bozulması düzeltme</translation>
+    </message>
+    <message>
+        <source>Noise Reduction (Color)</source>
+        <translation>Gürültü azaltma (renk)</translation>
+    </message>
+    <message>
+        <source>Noise Reduction (Luma)</source>
+        <translation>Gürültü azaltma (parlaklık)</translation>
+    </message>
+    <message>
+        <source>Open a photo first</source>
+        <translation>Önce bir fotoğraf açın</translation>
+    </message>
+    <message>
+        <source>Presence</source>
+        <translation>Canlılık ve doku</translation>
+    </message>
+    <message>
+        <source>Profile</source>
+        <translation>Profil</translation>
+    </message>
+    <message>
+        <source>Saturation</source>
+        <translation>Doygunluk</translation>
+    </message>
+    <message>
+        <source>Scale</source>
+        <translation>Ölçek</translation>
+    </message>
+    <message>
+        <source>Shadows</source>
+        <translation>Gölgeler</translation>
+    </message>
+    <message>
+        <source>Sharpening</source>
+        <translation>Keskinleştirme</translation>
+    </message>
+    <message>
+        <source>Temperature</source>
+        <translation>Sıcaklık</translation>
+    </message>
+    <message>
+        <source>Texture</source>
+        <translation>Doku</translation>
+    </message>
+    <message>
+        <source>Tint</source>
+        <translation>Ton</translation>
+    </message>
+    <message>
+        <source>Tone</source>
+        <translation>Ton</translation>
+    </message>
+    <message>
+        <source>Tone curve</source>
+        <translation>Ton eğrisi</translation>
+    </message>
+    <message>
+        <source>Transform</source>
+        <translation>Dönüştür</translation>
+    </message>
+    <message>
+        <source>Vertical</source>
+        <translation>Dikey</translation>
+    </message>
+    <message>
+        <source>Vertical straightens converging lines, such as buildings photographed from below. Crop afterwards to remove the empty edges.</source>
+        <translation>Dikey, aşağıdan çekilmiş binalar gibi birbirine yaklaşan çizgileri düzeltir. Ardından boş kenarları kaldırmak için kırpın.</translation>
+    </message>
+    <message>
+        <source>Vibrance</source>
+        <translation>Canlılık</translation>
+    </message>
+    <message>
+        <source>Vignette</source>
+        <translation>Vinyet</translation>
+    </message>
+    <message>
+        <source>White balance</source>
+        <translation>Beyaz dengesi</translation>
+    </message>
+    <message>
+        <source>Whites</source>
+        <translation>Beyazlar</translation>
+    </message>
+</context>
+<context>
     <name>AiAssistPanel</name>
     <message>
         <source>%1 (automatic)</source>
@@ -291,10 +458,123 @@
     </message>
 </context>
 <context>
+    <name>AiTab</name>
+    <message>
+        <source>Assistant edit applied</source>
+        <translation>Asistanın düzenlemesi uygulandı</translation>
+    </message>
+    <message>
+        <source>Edit assistant</source>
+        <translation>Düzenleme asistanı</translation>
+    </message>
+</context>
+<context>
     <name>BoundedTextInput</name>
     <message>
         <source>Clipboard content exceeded byte limit or timed out.</source>
         <translation>Pano içeriği bayt sınırını aştı veya zaman aşımına uğradı.</translation>
+    </message>
+</context>
+<context>
+    <name>CenterWorkspace</name>
+    <message>
+        <source>Opened %1</source>
+        <translation>%1 açıldı</translation>
+    </message>
+    <message>
+        <source>Scanning folder %1</source>
+        <translation>%1 klasörü taranıyor</translation>
+    </message>
+    <message>
+        <source>Soft proof: %1</source>
+        <translation>Ekran provası: %1</translation>
+    </message>
+</context>
+<context>
+    <name>CloudDialog</name>
+    <message>
+        <source>Add an account</source>
+        <translation>Hesap ekle</translation>
+    </message>
+    <message>
+        <source>Browse</source>
+        <translation>Göz at</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>İptal</translation>
+    </message>
+    <message>
+        <source>Client ID</source>
+        <translation>İstemci kimliği</translation>
+    </message>
+    <message>
+        <source>Client secret</source>
+        <translation>İstemci gizli anahtarı</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>Kapat</translation>
+    </message>
+    <message>
+        <source>Cloud accounts</source>
+        <translation>Bulut hesapları</translation>
+    </message>
+    <message>
+        <source>Confirm</source>
+        <translation>Onayla</translation>
+    </message>
+    <message>
+        <source>Connected</source>
+        <translation>Bağlı</translation>
+    </message>
+    <message>
+        <source>Disconnect</source>
+        <translation>Bağlantıyı kes</translation>
+    </message>
+    <message>
+        <source>Disconnecting removes the account&apos;s keys and downloaded copies from this computer. Files in the account stay as they are.</source>
+        <translation>Bağlantıyı kesmek, hesabın anahtarlarını ve indirilen kopyaları bu bilgisayardan kaldırır. Hesaptaki dosyalar olduğu gibi kalır.</translation>
+    </message>
+    <message>
+        <source>Enter this code on the GitHub page that opened in your browser:</source>
+        <translation>Tarayıcınızda açılan GitHub sayfasına bu kodu girin:</translation>
+    </message>
+    <message>
+        <source>Finish signing in in your browser. This window updates when you are done.</source>
+        <translation>Girişi tarayıcınızda tamamlayın. İşlem bitince bu pencere güncellenir.</translation>
+    </message>
+    <message>
+        <source>Install it with: sudo pacman -S %1</source>
+        <translation>Kurulum: sudo pacman -S %1</translation>
+    </message>
+    <message>
+        <source>Needs %1</source>
+        <translation>%1 gerekli</translation>
+    </message>
+    <message>
+        <source>No account connected yet.</source>
+        <translation>Henüz bağlı hesap yok.</translation>
+    </message>
+    <message>
+        <source>Open the page again</source>
+        <translation>Sayfayı yeniden aç</translation>
+    </message>
+    <message>
+        <source>Own Google client ID (optional)</source>
+        <translation>Kendi Google istemci kimliğiniz (isteğe bağlı)</translation>
+    </message>
+    <message>
+        <source>Signing in to %1</source>
+        <translation>%1 hesabına giriş yapılıyor</translation>
+    </message>
+    <message>
+        <source>The shared client rclone uses for Google Drive is being retired. With a client ID of your own from the Google Cloud Console, Google Drive keeps working. It is used the next time you connect Google Drive.</source>
+        <translation>rclone&apos;un Google Drive için kullandığı ortak istemci kullanımdan kaldırılıyor. Google Cloud Console&apos;dan alacağınız kendi istemci kimliğinizle Google Drive çalışmaya devam eder. Google Drive&apos;ı bir sonraki bağlayışınızda kullanılır.</translation>
+    </message>
+    <message>
+        <source>You sign in on the service&apos;s own page in your browser. OmaStudio keeps the access keys in the system keyring and creates a folder named %1 in each account for uploads.</source>
+        <translation>Girişi hizmetin kendi sayfasında, tarayıcınızda yaparsınız. OmaStudio erişim anahtarlarını sistem anahtarlığında saklar ve yüklemeler için her hesapta %1 adlı bir klasör oluşturur.</translation>
     </message>
 </context>
 <context>
@@ -698,7 +978,7 @@
     </message>
     <message>
         <source>After export, the files are also copied into the %1 folder of the account (on GitHub: the private %1 repository).</source>
-        <translation>Dışa aktarmadan sonra dosyalar hesabın %1 klasörüne de kopyalanır (GitHub'da: özel %1 deposu).</translation>
+        <translation>Dışa aktarmadan sonra dosyalar hesabın %1 klasörüne de kopyalanır (GitHub&apos;da: özel %1 deposu).</translation>
     </message>
     <message>
         <source>This computer only</source>
@@ -1090,23 +1370,6 @@
     </message>
 </context>
 <context>
-    <name>HistogramView</name>
-    <message>
-        <source>[S] %1%</source>
-        <comment>S: shadow clipping</comment>
-        <translation>[G] %%1</translation>
-    </message>
-    <message>
-        <source>Histogram</source>
-        <translation>Histogram</translation>
-    </message>
-    <message>
-        <source>[H] %1%</source>
-        <comment>H: highlight clipping</comment>
-        <translation>[V] %%1</translation>
-    </message>
-</context>
-<context>
     <name>HistoryPanel</name>
     <message>
         <source>History</source>
@@ -1471,6 +1734,32 @@
     </message>
 </context>
 <context>
+    <name>LeftInspector</name>
+    <message>
+        <source>Analyzing...</source>
+        <translation>Analiz ediliyor...</translation>
+    </message>
+    <message>
+        <source>Extracting dynamic range...</source>
+        <translation>Dinamik aralık çıkarılıyor...</translation>
+    </message>
+    <message>
+        <source>Suggested scene</source>
+        <translation>Önerilen sahne</translation>
+    </message>
+</context>
+<context>
+    <name>LooksTab</name>
+    <message>
+        <source>LUT</source>
+        <translation>LUT</translation>
+    </message>
+    <message>
+        <source>Presets</source>
+        <translation>Hazır ayarlar</translation>
+    </message>
+</context>
+<context>
     <name>LutSelector</name>
     <message>
         <source>Load 3D LUT</source>
@@ -1590,22 +1879,6 @@
         <translation>Kırpma modu: kapalı</translation>
     </message>
     <message>
-        <source>Analyzing...</source>
-        <translation>Analiz ediliyor...</translation>
-    </message>
-    <message>
-        <source>Extracting dynamic range...</source>
-        <translation>Dinamik aralık çıkarılıyor...</translation>
-    </message>
-    <message>
-        <source>Opened %1</source>
-        <translation>%1 açıldı</translation>
-    </message>
-    <message>
-        <source>Scanning folder %1</source>
-        <translation>%1 klasörü taranıyor</translation>
-    </message>
-    <message>
         <source>Contrast</source>
         <translation>Kontrast</translation>
     </message>
@@ -1630,28 +1903,8 @@
         <translation>Siyahlar</translation>
     </message>
     <message>
-        <source>Curve Highlights</source>
-        <translation>Eğri vurguları</translation>
-    </message>
-    <message>
-        <source>Curve Lights (Upper Mids)</source>
-        <translation>Eğri açık tonları (üst orta tonlar)</translation>
-    </message>
-    <message>
-        <source>Curve Darks (Lower Mids)</source>
-        <translation>Eğri koyu tonları (alt orta tonlar)</translation>
-    </message>
-    <message>
-        <source>Curve Shadows</source>
-        <translation>Eğri gölgeleri</translation>
-    </message>
-    <message>
         <source>Texture</source>
         <translation>Doku</translation>
-    </message>
-    <message>
-        <source>Suggested scene</source>
-        <translation>Önerilen sahne</translation>
     </message>
     <message>
         <source>Clarity (Midtone Contrast)</source>
@@ -1674,28 +1927,8 @@
         <translation>Keskinleştirme</translation>
     </message>
     <message>
-        <source>Noise Reduction (Luma)</source>
-        <translation>Gürültü azaltma (parlaklık)</translation>
-    </message>
-    <message>
-        <source>Noise Reduction (Color)</source>
-        <translation>Gürültü azaltma (renk)</translation>
-    </message>
-    <message>
         <source>Vignette</source>
         <translation>Vinyet</translation>
-    </message>
-    <message>
-        <source>Defringe (Chromatic Aberration)</source>
-        <translation>Renk saçağı giderme (kromatik sapma)</translation>
-    </message>
-    <message>
-        <source>Lens Distortion Correction</source>
-        <translation>Objektif bozulması düzeltme</translation>
-    </message>
-    <message>
-        <source>Open a photo first</source>
-        <translation>Önce bir fotoğraf açın</translation>
     </message>
     <message>
         <source>Version %1</source>
@@ -1822,34 +2055,6 @@
         <translation>Tarama yanıt vermedi.</translation>
     </message>
     <message>
-        <source>Soft proof: %1</source>
-        <translation>Ekran provası: %1</translation>
-    </message>
-    <message>
-        <source>Soft proof off</source>
-        <translation>Ekran provası kapalı</translation>
-    </message>
-    <message>
-        <source>Rating: ★</source>
-        <translation>Puan: ★</translation>
-    </message>
-    <message>
-        <source>Rating: ★★</source>
-        <translation>Puan: ★★</translation>
-    </message>
-    <message>
-        <source>Rating: ★★★</source>
-        <translation>Puan: ★★★</translation>
-    </message>
-    <message>
-        <source>Rating: ★★★★</source>
-        <translation>Puan: ★★★★</translation>
-    </message>
-    <message>
-        <source>Rating: ★★★★★</source>
-        <translation>Puan: ★★★★★</translation>
-    </message>
-    <message>
         <source>Flag cleared</source>
         <translation>İşaret kaldırıldı</translation>
     </message>
@@ -1870,60 +2075,12 @@
         <translation>Reddedildi</translation>
     </message>
     <message>
-        <source>Adjust</source>
-        <translation>Ayarla</translation>
-    </message>
-    <message>
-        <source>Masks</source>
-        <translation>Maskeler</translation>
-    </message>
-    <message>
-        <source>Looks</source>
-        <translation>Görünümler</translation>
-    </message>
-    <message>
-        <source>AI</source>
-        <translation>Yapay zekâ</translation>
-    </message>
-    <message>
-        <source>Read the photo&apos;s .xmp sidecar written by another editor</source>
-        <translation>Başka bir düzenleyicinin yazdığı .xmp dosyasını oku</translation>
-    </message>
-    <message>
-        <source>Write the edit, rating and label to an .xmp sidecar for other editors</source>
-        <translation>Düzenlemeyi, puanı ve etiketi diğer düzenleyiciler için bir .xmp dosyasına yaz</translation>
-    </message>
-    <message>
         <source>Profile</source>
         <translation>Profil</translation>
     </message>
     <message>
-        <source>Color Chrome Effect</source>
-        <translation>Color Chrome efekti</translation>
-    </message>
-    <message>
-        <source>Color Chrome FX Blue</source>
-        <translation>Color Chrome FX Mavi</translation>
-    </message>
-    <message>
         <source>White balance</source>
         <translation>Beyaz dengesi</translation>
-    </message>
-    <message>
-        <source>Temperature</source>
-        <translation>Sıcaklık</translation>
-    </message>
-    <message>
-        <source>Tint</source>
-        <translation>Ton</translation>
-    </message>
-    <message>
-        <source>Tone</source>
-        <translation>Ton</translation>
-    </message>
-    <message>
-        <source>Presence</source>
-        <translation>Canlılık ve doku</translation>
     </message>
     <message>
         <source>Tone curve</source>
@@ -1946,28 +2103,8 @@
         <translation>Dönüştür</translation>
     </message>
     <message>
-        <source>Vertical</source>
-        <translation>Dikey</translation>
-    </message>
-    <message>
-        <source>Horizontal</source>
-        <translation>Yatay</translation>
-    </message>
-    <message>
-        <source>Scale</source>
-        <translation>Ölçek</translation>
-    </message>
-    <message>
-        <source>Vertical straightens converging lines, such as buildings photographed from below. Crop afterwards to remove the empty edges.</source>
-        <translation>Dikey, aşağıdan çekilmiş binalar gibi birbirine yaklaşan çizgileri düzeltir. Ardından boş kenarları kaldırmak için kırpın.</translation>
-    </message>
-    <message>
         <source>Grain</source>
         <translation>Gren</translation>
-    </message>
-    <message>
-        <source>Colour management</source>
-        <translation>Renk yönetimi</translation>
     </message>
     <message>
         <source>Heal and clone</source>
@@ -1984,34 +2121,6 @@
     <message>
         <source>LUT</source>
         <translation>LUT</translation>
-    </message>
-    <message>
-        <source>Edit assistant</source>
-        <translation>Düzenleme asistanı</translation>
-    </message>
-    <message>
-        <source>Assistant edit applied</source>
-        <translation>Asistanın düzenlemesi uygulandı</translation>
-    </message>
-    <message>
-        <source>Copy</source>
-        <translation>Kopyala</translation>
-    </message>
-    <message>
-        <source>Paste</source>
-        <translation>Yapıştır</translation>
-    </message>
-    <message>
-        <source>Reset</source>
-        <translation>Sıfırla</translation>
-    </message>
-    <message>
-        <source>Import XMP</source>
-        <translation>XMP içe aktar</translation>
-    </message>
-    <message>
-        <source>Write XMP</source>
-        <translation>XMP yaz</translation>
     </message>
     <message>
         <source>Opening %1</source>
@@ -2090,6 +2199,17 @@
     <message>
         <source>no answer from the engine</source>
         <translation>motor yanıt vermedi</translation>
+    </message>
+</context>
+<context>
+    <name>MasksTab</name>
+    <message>
+        <source>Heal and clone</source>
+        <translation>Rötuş ve klon</translation>
+    </message>
+    <message>
+        <source>Local adjustments</source>
+        <translation>Yerel ayarlamalar</translation>
     </message>
 </context>
 <context>
@@ -2284,6 +2404,53 @@
     </message>
 </context>
 <context>
+    <name>RightInspector</name>
+    <message>
+        <source>AI</source>
+        <translation>Yapay zekâ</translation>
+    </message>
+    <message>
+        <source>Adjust</source>
+        <translation>Ayarla</translation>
+    </message>
+    <message>
+        <source>Copy</source>
+        <translation>Kopyala</translation>
+    </message>
+    <message>
+        <source>Import XMP</source>
+        <translation>XMP içe aktar</translation>
+    </message>
+    <message>
+        <source>Looks</source>
+        <translation>Görünümler</translation>
+    </message>
+    <message>
+        <source>Masks</source>
+        <translation>Maskeler</translation>
+    </message>
+    <message>
+        <source>Paste</source>
+        <translation>Yapıştır</translation>
+    </message>
+    <message>
+        <source>Read the photo&apos;s .xmp sidecar written by another editor</source>
+        <translation>Başka bir düzenleyicinin yazdığı .xmp dosyasını oku</translation>
+    </message>
+    <message>
+        <source>Reset</source>
+        <translation>Sıfırla</translation>
+    </message>
+    <message>
+        <source>Write XMP</source>
+        <translation>XMP yaz</translation>
+    </message>
+    <message>
+        <source>Write the edit, rating and label to an .xmp sidecar for other editors</source>
+        <translation>Düzenlemeyi, puanı ve etiketi diğer düzenleyiciler için bir .xmp dosyasına yaz</translation>
+    </message>
+</context>
+<context>
     <name>ScopesView</name>
     <message>
         <source>HIST</source>
@@ -2338,6 +2505,57 @@
     <message>
         <source>SKIN</source>
         <translation>CİLT</translation>
+    </message>
+</context>
+<context>
+    <name>ShortcutRouter</name>
+    <message>
+        <source>Crop mode: off</source>
+        <translation>Kırpma modu: kapalı</translation>
+    </message>
+    <message>
+        <source>Crop mode: on (C)</source>
+        <translation>Kırpma modu: açık (C)</translation>
+    </message>
+    <message>
+        <source>Flag cleared</source>
+        <translation>İşaret kaldırıldı</translation>
+    </message>
+    <message>
+        <source>Open a photo first</source>
+        <translation>Önce bir fotoğraf açın</translation>
+    </message>
+    <message>
+        <source>Rating cleared</source>
+        <translation>Puan kaldırıldı</translation>
+    </message>
+    <message>
+        <source>Rating: ★</source>
+        <translation>Puan: ★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★</source>
+        <translation>Puan: ★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★</source>
+        <translation>Puan: ★★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★★</source>
+        <translation>Puan: ★★★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★★★</source>
+        <translation>Puan: ★★★★★</translation>
+    </message>
+    <message>
+        <source>Soft proof off</source>
+        <translation>Ekran provası kapalı</translation>
+    </message>
+    <message>
+        <source>Soft proof: %1</source>
+        <translation>Ekran provası: %1</translation>
     </message>
 </context>
 <context>
@@ -2725,93 +2943,6 @@
     <message>
         <source>Drop Shadow</source>
         <translation>Gölge efekti</translation>
-    </message>
-</context>
-<context>
-    <name>CloudDialog</name>
-    <message>
-        <source>Add an account</source>
-        <translation>Hesap ekle</translation>
-    </message>
-    <message>
-        <source>Browse</source>
-        <translation>Göz at</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation>İptal</translation>
-    </message>
-    <message>
-        <source>Client ID</source>
-        <translation>İstemci kimliği</translation>
-    </message>
-    <message>
-        <source>Client secret</source>
-        <translation>İstemci gizli anahtarı</translation>
-    </message>
-    <message>
-        <source>Close</source>
-        <translation>Kapat</translation>
-    </message>
-    <message>
-        <source>Cloud accounts</source>
-        <translation>Bulut hesapları</translation>
-    </message>
-    <message>
-        <source>Confirm</source>
-        <translation>Onayla</translation>
-    </message>
-    <message>
-        <source>Connected</source>
-        <translation>Bağlı</translation>
-    </message>
-    <message>
-        <source>Disconnect</source>
-        <translation>Bağlantıyı kes</translation>
-    </message>
-    <message>
-        <source>Disconnecting removes the account's keys and downloaded copies from this computer. Files in the account stay as they are.</source>
-        <translation>Bağlantıyı kesmek, hesabın anahtarlarını ve indirilen kopyaları bu bilgisayardan kaldırır. Hesaptaki dosyalar olduğu gibi kalır.</translation>
-    </message>
-    <message>
-        <source>Enter this code on the GitHub page that opened in your browser:</source>
-        <translation>Tarayıcınızda açılan GitHub sayfasına bu kodu girin:</translation>
-    </message>
-    <message>
-        <source>Finish signing in in your browser. This window updates when you are done.</source>
-        <translation>Girişi tarayıcınızda tamamlayın. İşlem bitince bu pencere güncellenir.</translation>
-    </message>
-    <message>
-        <source>Install it with: sudo pacman -S %1</source>
-        <translation>Kurulum: sudo pacman -S %1</translation>
-    </message>
-    <message>
-        <source>Needs %1</source>
-        <translation>%1 gerekli</translation>
-    </message>
-    <message>
-        <source>No account connected yet.</source>
-        <translation>Henüz bağlı hesap yok.</translation>
-    </message>
-    <message>
-        <source>Open the page again</source>
-        <translation>Sayfayı yeniden aç</translation>
-    </message>
-    <message>
-        <source>Own Google client ID (optional)</source>
-        <translation>Kendi Google istemci kimliğiniz (isteğe bağlı)</translation>
-    </message>
-    <message>
-        <source>Signing in to %1</source>
-        <translation>%1 hesabına giriş yapılıyor</translation>
-    </message>
-    <message>
-        <source>The shared client rclone uses for Google Drive is being retired. With a client ID of your own from the Google Cloud Console, Google Drive keeps working. It is used the next time you connect Google Drive.</source>
-        <translation>rclone'un Google Drive için kullandığı ortak istemci kullanımdan kaldırılıyor. Google Cloud Console'dan alacağınız kendi istemci kimliğinizle Google Drive çalışmaya devam eder. Google Drive'ı bir sonraki bağlayışınızda kullanılır.</translation>
-    </message>
-    <message>
-        <source>You sign in on the service's own page in your browser. OmaStudio keeps the access keys in the system keyring and creates a folder named %1 in each account for uploads.</source>
-        <translation>Girişi hizmetin kendi sayfasında, tarayıcınızda yaparsınız. OmaStudio erişim anahtarlarını sistem anahtarlığında saklar ve yüklemeler için her hesapta %1 adlı bir klasör oluşturur.</translation>
     </message>
 </context>
 </TS>

@@ -141,6 +141,173 @@
     </message>
 </context>
 <context>
+    <name>AdjustTab</name>
+    <message>
+        <source>Blacks</source>
+        <translation>काले</translation>
+    </message>
+    <message>
+        <source>Clarity (Midtone Contrast)</source>
+        <translation>स्पष्टता (मध्य टोन कंट्रास्ट)</translation>
+    </message>
+    <message>
+        <source>Color Chrome Effect</source>
+        <translation>Color Chrome प्रभाव</translation>
+    </message>
+    <message>
+        <source>Color Chrome FX Blue</source>
+        <translation>Color Chrome FX नीला</translation>
+    </message>
+    <message>
+        <source>Colour grading</source>
+        <translation>रंग ग्रेडिंग</translation>
+    </message>
+    <message>
+        <source>Colour management</source>
+        <translation>रंग प्रबंधन</translation>
+    </message>
+    <message>
+        <source>Colour mixer</source>
+        <translation>रंग मिक्सर</translation>
+    </message>
+    <message>
+        <source>Contrast</source>
+        <translation>कंट्रास्ट</translation>
+    </message>
+    <message>
+        <source>Curve Darks (Lower Mids)</source>
+        <translation>कर्व: गहरे टोन (निचले मध्य)</translation>
+    </message>
+    <message>
+        <source>Curve Highlights</source>
+        <translation>कर्व: हाइलाइट</translation>
+    </message>
+    <message>
+        <source>Curve Lights (Upper Mids)</source>
+        <translation>कर्व: हल्के टोन (ऊपरी मध्य)</translation>
+    </message>
+    <message>
+        <source>Curve Shadows</source>
+        <translation>कर्व: छाया</translation>
+    </message>
+    <message>
+        <source>Defringe (Chromatic Aberration)</source>
+        <translation>रंगीन किनारे हटाएँ (वर्णिक विपथन)</translation>
+    </message>
+    <message>
+        <source>Dehaze</source>
+        <translation>धुंध हटाएँ</translation>
+    </message>
+    <message>
+        <source>Detail and optics</source>
+        <translation>विवरण और ऑप्टिक्स</translation>
+    </message>
+    <message>
+        <source>Exposure</source>
+        <translation>एक्सपोज़र</translation>
+    </message>
+    <message>
+        <source>Grain</source>
+        <translation>ग्रेन</translation>
+    </message>
+    <message>
+        <source>Highlights</source>
+        <translation>हाइलाइट</translation>
+    </message>
+    <message>
+        <source>Horizontal</source>
+        <translation>क्षैतिज</translation>
+    </message>
+    <message>
+        <source>Lens Distortion Correction</source>
+        <translation>लेंस विरूपण सुधार</translation>
+    </message>
+    <message>
+        <source>Noise Reduction (Color)</source>
+        <translation>शोर कमी (रंग)</translation>
+    </message>
+    <message>
+        <source>Noise Reduction (Luma)</source>
+        <translation>शोर कमी (ल्यूमा)</translation>
+    </message>
+    <message>
+        <source>Open a photo first</source>
+        <translation>पहले कोई फ़ोटो खोलें</translation>
+    </message>
+    <message>
+        <source>Presence</source>
+        <translation>प्रेज़ेंस</translation>
+    </message>
+    <message>
+        <source>Profile</source>
+        <translation>प्रोफ़ाइल</translation>
+    </message>
+    <message>
+        <source>Saturation</source>
+        <translation>संतृप्ति</translation>
+    </message>
+    <message>
+        <source>Scale</source>
+        <translation>स्केल</translation>
+    </message>
+    <message>
+        <source>Shadows</source>
+        <translation>छाया</translation>
+    </message>
+    <message>
+        <source>Sharpening</source>
+        <translation>शार्पनिंग</translation>
+    </message>
+    <message>
+        <source>Temperature</source>
+        <translation>तापमान</translation>
+    </message>
+    <message>
+        <source>Texture</source>
+        <translation>बनावट</translation>
+    </message>
+    <message>
+        <source>Tint</source>
+        <translation>टिंट</translation>
+    </message>
+    <message>
+        <source>Tone</source>
+        <translation>टोन</translation>
+    </message>
+    <message>
+        <source>Tone curve</source>
+        <translation>टोन कर्व</translation>
+    </message>
+    <message>
+        <source>Transform</source>
+        <translation>रूपांतरण</translation>
+    </message>
+    <message>
+        <source>Vertical</source>
+        <translation>लंबवत</translation>
+    </message>
+    <message>
+        <source>Vertical straightens converging lines, such as buildings photographed from below. Crop afterwards to remove the empty edges.</source>
+        <translation>लंबवत मिलती हुई रेखाओं को सीधा करता है, जैसे नीचे से खींची गई इमारतें। फिर खाली किनारे हटाने के लिए क्रॉप करें।</translation>
+    </message>
+    <message>
+        <source>Vibrance</source>
+        <translation>वाइब्रेंस</translation>
+    </message>
+    <message>
+        <source>Vignette</source>
+        <translation>विनेट</translation>
+    </message>
+    <message>
+        <source>White balance</source>
+        <translation>व्हाइट बैलेंस</translation>
+    </message>
+    <message>
+        <source>Whites</source>
+        <translation>सफ़ेद</translation>
+    </message>
+</context>
+<context>
     <name>AiAssistPanel</name>
     <message>
         <source>%1 (automatic)</source>
@@ -291,10 +458,123 @@
     </message>
 </context>
 <context>
+    <name>AiTab</name>
+    <message>
+        <source>Assistant edit applied</source>
+        <translation>सहायक का संपादन लागू किया गया</translation>
+    </message>
+    <message>
+        <source>Edit assistant</source>
+        <translation>संपादन सहायक</translation>
+    </message>
+</context>
+<context>
     <name>BoundedTextInput</name>
     <message>
         <source>Clipboard content exceeded byte limit or timed out.</source>
         <translation>क्लिपबोर्ड सामग्री बाइट सीमा से अधिक हो गई या समय समाप्त हो गया।</translation>
+    </message>
+</context>
+<context>
+    <name>CenterWorkspace</name>
+    <message>
+        <source>Opened %1</source>
+        <translation>%1 खोला गया</translation>
+    </message>
+    <message>
+        <source>Scanning folder %1</source>
+        <translation>फ़ोल्डर %1 स्कैन हो रहा है</translation>
+    </message>
+    <message>
+        <source>Soft proof: %1</source>
+        <translation>सॉफ़्ट प्रूफ़: %1</translation>
+    </message>
+</context>
+<context>
+    <name>CloudDialog</name>
+    <message>
+        <source>Add an account</source>
+        <translation>खाता जोड़ें</translation>
+    </message>
+    <message>
+        <source>Browse</source>
+        <translation>ब्राउज़ करें</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>रद्द करें</translation>
+    </message>
+    <message>
+        <source>Client ID</source>
+        <translation>क्लाइंट आईडी</translation>
+    </message>
+    <message>
+        <source>Client secret</source>
+        <translation>क्लाइंट सीक्रेट</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>बंद करें</translation>
+    </message>
+    <message>
+        <source>Cloud accounts</source>
+        <translation>क्लाउड खाते</translation>
+    </message>
+    <message>
+        <source>Confirm</source>
+        <translation>पुष्टि करें</translation>
+    </message>
+    <message>
+        <source>Connected</source>
+        <translation>जुड़े हुए</translation>
+    </message>
+    <message>
+        <source>Disconnect</source>
+        <translation>डिस्कनेक्ट करें</translation>
+    </message>
+    <message>
+        <source>Disconnecting removes the account&apos;s keys and downloaded copies from this computer. Files in the account stay as they are.</source>
+        <translation>डिस्कनेक्ट करने से इस कंप्यूटर से खाते की कुंजियाँ और डाउनलोड की गई प्रतियाँ हट जाती हैं। खाते की फ़ाइलें जैसी हैं वैसी रहती हैं।</translation>
+    </message>
+    <message>
+        <source>Enter this code on the GitHub page that opened in your browser:</source>
+        <translation>ब्राउज़र में खुले GitHub पेज पर यह कोड डालें:</translation>
+    </message>
+    <message>
+        <source>Finish signing in in your browser. This window updates when you are done.</source>
+        <translation>ब्राउज़र में साइन-इन पूरा करें। पूरा होने पर यह विंडो अपडेट हो जाएगी।</translation>
+    </message>
+    <message>
+        <source>Install it with: sudo pacman -S %1</source>
+        <translation>इंस्टॉल करें: sudo pacman -S %1</translation>
+    </message>
+    <message>
+        <source>Needs %1</source>
+        <translation>%1 आवश्यक</translation>
+    </message>
+    <message>
+        <source>No account connected yet.</source>
+        <translation>अभी तक कोई खाता नहीं जुड़ा है।</translation>
+    </message>
+    <message>
+        <source>Open the page again</source>
+        <translation>पेज फिर से खोलें</translation>
+    </message>
+    <message>
+        <source>Own Google client ID (optional)</source>
+        <translation>अपनी Google क्लाइंट आईडी (वैकल्पिक)</translation>
+    </message>
+    <message>
+        <source>Signing in to %1</source>
+        <translation>%1 में साइन इन हो रहा है</translation>
+    </message>
+    <message>
+        <source>The shared client rclone uses for Google Drive is being retired. With a client ID of your own from the Google Cloud Console, Google Drive keeps working. It is used the next time you connect Google Drive.</source>
+        <translation>rclone जिस साझा क्लाइंट से Google Drive चलाता है, वह बंद किया जा रहा है। Google Cloud Console से ली गई अपनी क्लाइंट आईडी से Google Drive चलता रहेगा। इसका उपयोग अगली बार Google Drive जोड़ने पर होगा।</translation>
+    </message>
+    <message>
+        <source>You sign in on the service&apos;s own page in your browser. OmaStudio keeps the access keys in the system keyring and creates a folder named %1 in each account for uploads.</source>
+        <translation>आप ब्राउज़र में सेवा के अपने पेज पर साइन इन करते हैं। OmaStudio एक्सेस कुंजियाँ सिस्टम कीरिंग में रखता है और अपलोड के लिए हर खाते में %1 नाम का फ़ोल्डर बनाता है।</translation>
     </message>
 </context>
 <context>
@@ -1093,23 +1373,6 @@
     </message>
 </context>
 <context>
-    <name>HistogramView</name>
-    <message>
-        <source>[S] %1%</source>
-        <comment>S: shadow clipping</comment>
-        <translation>[छ] %1%</translation>
-    </message>
-    <message>
-        <source>Histogram</source>
-        <translation>हिस्टोग्राम</translation>
-    </message>
-    <message>
-        <source>[H] %1%</source>
-        <comment>H: highlight clipping</comment>
-        <translation>[हा] %1%</translation>
-    </message>
-</context>
-<context>
     <name>HistoryPanel</name>
     <message>
         <source>History</source>
@@ -1474,6 +1737,32 @@
     </message>
 </context>
 <context>
+    <name>LeftInspector</name>
+    <message>
+        <source>Analyzing...</source>
+        <translation>विश्लेषण हो रहा है...</translation>
+    </message>
+    <message>
+        <source>Extracting dynamic range...</source>
+        <translation>डायनामिक रेंज निकाली जा रही है...</translation>
+    </message>
+    <message>
+        <source>Suggested scene</source>
+        <translation>सुझाया गया दृश्य</translation>
+    </message>
+</context>
+<context>
+    <name>LooksTab</name>
+    <message>
+        <source>LUT</source>
+        <translation>LUT</translation>
+    </message>
+    <message>
+        <source>Presets</source>
+        <translation>प्रीसेट</translation>
+    </message>
+</context>
+<context>
     <name>LutSelector</name>
     <message>
         <source>Load 3D LUT</source>
@@ -1594,22 +1883,6 @@
         <translation>क्रॉप मोड: बंद</translation>
     </message>
     <message>
-        <source>Analyzing...</source>
-        <translation>विश्लेषण हो रहा है...</translation>
-    </message>
-    <message>
-        <source>Extracting dynamic range...</source>
-        <translation>डायनामिक रेंज निकाली जा रही है...</translation>
-    </message>
-    <message>
-        <source>Opened %1</source>
-        <translation>%1 खोला गया</translation>
-    </message>
-    <message>
-        <source>Scanning folder %1</source>
-        <translation>फ़ोल्डर %1 स्कैन हो रहा है</translation>
-    </message>
-    <message>
         <source>Contrast</source>
         <translation>कंट्रास्ट</translation>
     </message>
@@ -1634,28 +1907,8 @@
         <translation>काले</translation>
     </message>
     <message>
-        <source>Curve Highlights</source>
-        <translation>कर्व: हाइलाइट</translation>
-    </message>
-    <message>
-        <source>Curve Lights (Upper Mids)</source>
-        <translation>कर्व: हल्के टोन (ऊपरी मध्य)</translation>
-    </message>
-    <message>
-        <source>Curve Darks (Lower Mids)</source>
-        <translation>कर्व: गहरे टोन (निचले मध्य)</translation>
-    </message>
-    <message>
-        <source>Curve Shadows</source>
-        <translation>कर्व: छाया</translation>
-    </message>
-    <message>
         <source>Texture</source>
         <translation>बनावट</translation>
-    </message>
-    <message>
-        <source>Suggested scene</source>
-        <translation>सुझाया गया दृश्य</translation>
     </message>
     <message>
         <source>Clarity (Midtone Contrast)</source>
@@ -1678,28 +1931,8 @@
         <translation>शार्पनिंग</translation>
     </message>
     <message>
-        <source>Noise Reduction (Luma)</source>
-        <translation>शोर कमी (ल्यूमा)</translation>
-    </message>
-    <message>
-        <source>Noise Reduction (Color)</source>
-        <translation>शोर कमी (रंग)</translation>
-    </message>
-    <message>
         <source>Vignette</source>
         <translation>विनेट</translation>
-    </message>
-    <message>
-        <source>Defringe (Chromatic Aberration)</source>
-        <translation>रंगीन किनारे हटाएँ (वर्णिक विपथन)</translation>
-    </message>
-    <message>
-        <source>Lens Distortion Correction</source>
-        <translation>लेंस विरूपण सुधार</translation>
-    </message>
-    <message>
-        <source>Open a photo first</source>
-        <translation>पहले कोई फ़ोटो खोलें</translation>
     </message>
     <message>
         <source>Version %1</source>
@@ -1826,34 +2059,6 @@
         <translation>फ़ोल्डर स्कैन ने जवाब नहीं दिया।</translation>
     </message>
     <message>
-        <source>Soft proof: %1</source>
-        <translation>सॉफ़्ट प्रूफ़: %1</translation>
-    </message>
-    <message>
-        <source>Soft proof off</source>
-        <translation>सॉफ़्ट प्रूफ़ बंद</translation>
-    </message>
-    <message>
-        <source>Rating: ★</source>
-        <translation>रेटिंग: ★</translation>
-    </message>
-    <message>
-        <source>Rating: ★★</source>
-        <translation>रेटिंग: ★★</translation>
-    </message>
-    <message>
-        <source>Rating: ★★★</source>
-        <translation>रेटिंग: ★★★</translation>
-    </message>
-    <message>
-        <source>Rating: ★★★★</source>
-        <translation>रेटिंग: ★★★★</translation>
-    </message>
-    <message>
-        <source>Rating: ★★★★★</source>
-        <translation>रेटिंग: ★★★★★</translation>
-    </message>
-    <message>
         <source>Flag cleared</source>
         <translation>फ़्लैग हटाया गया</translation>
     </message>
@@ -1874,60 +2079,12 @@
         <translation>अस्वीकृत</translation>
     </message>
     <message>
-        <source>Adjust</source>
-        <translation>समायोजन</translation>
-    </message>
-    <message>
-        <source>Masks</source>
-        <translation>मास्क</translation>
-    </message>
-    <message>
-        <source>Looks</source>
-        <translation>लुक</translation>
-    </message>
-    <message>
-        <source>AI</source>
-        <translation>AI</translation>
-    </message>
-    <message>
-        <source>Read the photo&apos;s .xmp sidecar written by another editor</source>
-        <translation>दूसरे एडिटर की लिखी .xmp फ़ाइल पढ़ें</translation>
-    </message>
-    <message>
-        <source>Write the edit, rating and label to an .xmp sidecar for other editors</source>
-        <translation>दूसरे एडिटरों के लिए संपादन, रेटिंग और लेबल को .xmp फ़ाइल में लिखें</translation>
-    </message>
-    <message>
         <source>Profile</source>
         <translation>प्रोफ़ाइल</translation>
     </message>
     <message>
-        <source>Color Chrome Effect</source>
-        <translation>Color Chrome प्रभाव</translation>
-    </message>
-    <message>
-        <source>Color Chrome FX Blue</source>
-        <translation>Color Chrome FX नीला</translation>
-    </message>
-    <message>
         <source>White balance</source>
         <translation>व्हाइट बैलेंस</translation>
-    </message>
-    <message>
-        <source>Temperature</source>
-        <translation>तापमान</translation>
-    </message>
-    <message>
-        <source>Tint</source>
-        <translation>टिंट</translation>
-    </message>
-    <message>
-        <source>Tone</source>
-        <translation>टोन</translation>
-    </message>
-    <message>
-        <source>Presence</source>
-        <translation>प्रेज़ेंस</translation>
     </message>
     <message>
         <source>Tone curve</source>
@@ -1950,28 +2107,8 @@
         <translation>रूपांतरण</translation>
     </message>
     <message>
-        <source>Vertical</source>
-        <translation>लंबवत</translation>
-    </message>
-    <message>
-        <source>Horizontal</source>
-        <translation>क्षैतिज</translation>
-    </message>
-    <message>
-        <source>Scale</source>
-        <translation>स्केल</translation>
-    </message>
-    <message>
-        <source>Vertical straightens converging lines, such as buildings photographed from below. Crop afterwards to remove the empty edges.</source>
-        <translation>लंबवत मिलती हुई रेखाओं को सीधा करता है, जैसे नीचे से खींची गई इमारतें। फिर खाली किनारे हटाने के लिए क्रॉप करें।</translation>
-    </message>
-    <message>
         <source>Grain</source>
         <translation>ग्रेन</translation>
-    </message>
-    <message>
-        <source>Colour management</source>
-        <translation>रंग प्रबंधन</translation>
     </message>
     <message>
         <source>Heal and clone</source>
@@ -1988,34 +2125,6 @@
     <message>
         <source>LUT</source>
         <translation>LUT</translation>
-    </message>
-    <message>
-        <source>Edit assistant</source>
-        <translation>संपादन सहायक</translation>
-    </message>
-    <message>
-        <source>Assistant edit applied</source>
-        <translation>सहायक का संपादन लागू किया गया</translation>
-    </message>
-    <message>
-        <source>Copy</source>
-        <translation>कॉपी करें</translation>
-    </message>
-    <message>
-        <source>Paste</source>
-        <translation>चिपकाएँ</translation>
-    </message>
-    <message>
-        <source>Reset</source>
-        <translation>रीसेट</translation>
-    </message>
-    <message>
-        <source>Import XMP</source>
-        <translation>XMP आयात करें</translation>
-    </message>
-    <message>
-        <source>Write XMP</source>
-        <translation>XMP लिखें</translation>
     </message>
     <message>
         <source>Opening %1</source>
@@ -2097,6 +2206,17 @@
     <message>
         <source>no answer from the engine</source>
         <translation>इंजन से कोई उत्तर नहीं</translation>
+    </message>
+</context>
+<context>
+    <name>MasksTab</name>
+    <message>
+        <source>Heal and clone</source>
+        <translation>सुधार और क्लोन</translation>
+    </message>
+    <message>
+        <source>Local adjustments</source>
+        <translation>स्थानीय समायोजन</translation>
     </message>
 </context>
 <context>
@@ -2291,6 +2411,53 @@
     </message>
 </context>
 <context>
+    <name>RightInspector</name>
+    <message>
+        <source>AI</source>
+        <translation>AI</translation>
+    </message>
+    <message>
+        <source>Adjust</source>
+        <translation>समायोजन</translation>
+    </message>
+    <message>
+        <source>Copy</source>
+        <translation>कॉपी करें</translation>
+    </message>
+    <message>
+        <source>Import XMP</source>
+        <translation>XMP आयात करें</translation>
+    </message>
+    <message>
+        <source>Looks</source>
+        <translation>लुक</translation>
+    </message>
+    <message>
+        <source>Masks</source>
+        <translation>मास्क</translation>
+    </message>
+    <message>
+        <source>Paste</source>
+        <translation>चिपकाएँ</translation>
+    </message>
+    <message>
+        <source>Read the photo&apos;s .xmp sidecar written by another editor</source>
+        <translation>दूसरे एडिटर की लिखी .xmp फ़ाइल पढ़ें</translation>
+    </message>
+    <message>
+        <source>Reset</source>
+        <translation>रीसेट</translation>
+    </message>
+    <message>
+        <source>Write XMP</source>
+        <translation>XMP लिखें</translation>
+    </message>
+    <message>
+        <source>Write the edit, rating and label to an .xmp sidecar for other editors</source>
+        <translation>दूसरे एडिटरों के लिए संपादन, रेटिंग और लेबल को .xmp फ़ाइल में लिखें</translation>
+    </message>
+</context>
+<context>
     <name>ScopesView</name>
     <message>
         <source>HIST</source>
@@ -2345,6 +2512,57 @@
     <message>
         <source>SKIN</source>
         <translation>त्वचा</translation>
+    </message>
+</context>
+<context>
+    <name>ShortcutRouter</name>
+    <message>
+        <source>Crop mode: off</source>
+        <translation>क्रॉप मोड: बंद</translation>
+    </message>
+    <message>
+        <source>Crop mode: on (C)</source>
+        <translation>क्रॉप मोड: चालू (C)</translation>
+    </message>
+    <message>
+        <source>Flag cleared</source>
+        <translation>फ़्लैग हटाया गया</translation>
+    </message>
+    <message>
+        <source>Open a photo first</source>
+        <translation>पहले कोई फ़ोटो खोलें</translation>
+    </message>
+    <message>
+        <source>Rating cleared</source>
+        <translation>रेटिंग हटाई गई</translation>
+    </message>
+    <message>
+        <source>Rating: ★</source>
+        <translation>रेटिंग: ★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★</source>
+        <translation>रेटिंग: ★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★</source>
+        <translation>रेटिंग: ★★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★★</source>
+        <translation>रेटिंग: ★★★★</translation>
+    </message>
+    <message>
+        <source>Rating: ★★★★★</source>
+        <translation>रेटिंग: ★★★★★</translation>
+    </message>
+    <message>
+        <source>Soft proof off</source>
+        <translation>सॉफ़्ट प्रूफ़ बंद</translation>
+    </message>
+    <message>
+        <source>Soft proof: %1</source>
+        <translation>सॉफ़्ट प्रूफ़: %1</translation>
     </message>
 </context>
 <context>
@@ -2733,93 +2951,6 @@
     <message>
         <source>Drop Shadow</source>
         <translation>ड्रॉप शैडो</translation>
-    </message>
-</context>
-<context>
-    <name>CloudDialog</name>
-    <message>
-        <source>Add an account</source>
-        <translation>खाता जोड़ें</translation>
-    </message>
-    <message>
-        <source>Browse</source>
-        <translation>ब्राउज़ करें</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation>रद्द करें</translation>
-    </message>
-    <message>
-        <source>Client ID</source>
-        <translation>क्लाइंट आईडी</translation>
-    </message>
-    <message>
-        <source>Client secret</source>
-        <translation>क्लाइंट सीक्रेट</translation>
-    </message>
-    <message>
-        <source>Close</source>
-        <translation>बंद करें</translation>
-    </message>
-    <message>
-        <source>Cloud accounts</source>
-        <translation>क्लाउड खाते</translation>
-    </message>
-    <message>
-        <source>Confirm</source>
-        <translation>पुष्टि करें</translation>
-    </message>
-    <message>
-        <source>Connected</source>
-        <translation>जुड़े हुए</translation>
-    </message>
-    <message>
-        <source>Disconnect</source>
-        <translation>डिस्कनेक्ट करें</translation>
-    </message>
-    <message>
-        <source>Disconnecting removes the account's keys and downloaded copies from this computer. Files in the account stay as they are.</source>
-        <translation>डिस्कनेक्ट करने से इस कंप्यूटर से खाते की कुंजियाँ और डाउनलोड की गई प्रतियाँ हट जाती हैं। खाते की फ़ाइलें जैसी हैं वैसी रहती हैं।</translation>
-    </message>
-    <message>
-        <source>Enter this code on the GitHub page that opened in your browser:</source>
-        <translation>ब्राउज़र में खुले GitHub पेज पर यह कोड डालें:</translation>
-    </message>
-    <message>
-        <source>Finish signing in in your browser. This window updates when you are done.</source>
-        <translation>ब्राउज़र में साइन-इन पूरा करें। पूरा होने पर यह विंडो अपडेट हो जाएगी।</translation>
-    </message>
-    <message>
-        <source>Install it with: sudo pacman -S %1</source>
-        <translation>इंस्टॉल करें: sudo pacman -S %1</translation>
-    </message>
-    <message>
-        <source>Needs %1</source>
-        <translation>%1 आवश्यक</translation>
-    </message>
-    <message>
-        <source>No account connected yet.</source>
-        <translation>अभी तक कोई खाता नहीं जुड़ा है।</translation>
-    </message>
-    <message>
-        <source>Open the page again</source>
-        <translation>पेज फिर से खोलें</translation>
-    </message>
-    <message>
-        <source>Own Google client ID (optional)</source>
-        <translation>अपनी Google क्लाइंट आईडी (वैकल्पिक)</translation>
-    </message>
-    <message>
-        <source>Signing in to %1</source>
-        <translation>%1 में साइन इन हो रहा है</translation>
-    </message>
-    <message>
-        <source>The shared client rclone uses for Google Drive is being retired. With a client ID of your own from the Google Cloud Console, Google Drive keeps working. It is used the next time you connect Google Drive.</source>
-        <translation>rclone जिस साझा क्लाइंट से Google Drive चलाता है, वह बंद किया जा रहा है। Google Cloud Console से ली गई अपनी क्लाइंट आईडी से Google Drive चलता रहेगा। इसका उपयोग अगली बार Google Drive जोड़ने पर होगा।</translation>
-    </message>
-    <message>
-        <source>You sign in on the service's own page in your browser. OmaStudio keeps the access keys in the system keyring and creates a folder named %1 in each account for uploads.</source>
-        <translation>आप ब्राउज़र में सेवा के अपने पेज पर साइन इन करते हैं। OmaStudio एक्सेस कुंजियाँ सिस्टम कीरिंग में रखता है और अपलोड के लिए हर खाते में %1 नाम का फ़ोल्डर बनाता है।</translation>
     </message>
 </context>
 </TS>

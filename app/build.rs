@@ -73,10 +73,13 @@ fn main() {
     assert!(codes.iter().any(|c| c == "en"), "app/i18n/qml_en.ts is missing");
     println!("cargo:rustc-env=OMASTUDIO_LANGUAGES={}", codes.join(","));
 
+    println!("cargo:rerun-if-changed=../src/raw/supported_extensions.inc");
+    println!("cargo:rerun-if-changed=../src/recipe/look_presets.inc");
+
     CxxQtBuilder::new_qml_module(QmlModule::new("OmaStudio.Host"))
         .qt_module("Gui")
         .qt_module("Quick")
-        .files(["src/host.rs", "src/hyprland.rs", "src/process.rs", "src/watched_file.rs"])
+        .files(["src/history.rs", "src/host.rs", "src/hyprland.rs", "src/process.rs", "src/watched_file.rs"])
         .qrc_resources(QResources::new().resource(ui))
         .build();
 }
