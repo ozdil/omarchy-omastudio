@@ -340,7 +340,7 @@ impl Profile {
 }
 
 /// Processes a 16-bit linear RGB buffer (0..65535) and outputs an 8-bit RGB buffer for high-speed viewport rendering.
-/// The output uses the BT.709 curve; use [`process_buffer_16_to_8_ex`] for another colour space.
+/// The output uses the IEC 61966-2.1 sRGB curve; use [`process_buffer_16_to_8_ex`] for another colour space.
 pub fn process_buffer_16_to_8(
     input: &[u16],
     width: u32,
@@ -348,12 +348,14 @@ pub fn process_buffer_16_to_8(
     channels: u32,
     recipe: &Recipe,
 ) -> (Vec<u8>, HistogramData) {
-    process_buffer_16_to_8_ex(input, width, height, channels, recipe, Transfer::bt709(), false, false)
+    process_buffer_16_to_8_ex(input, width, height, channels, recipe, Transfer::srgb(), false, false)
 }
 
 /// Attempts the zero-copy Vulkan DMA-BUF + explicit `SYNC_FD` interactive preview path
-/// (`WP-15`), returning `None` cleanly whenever the GPU/driver or current view options
-/// require the `memfd` / CPU path.
+/// (`WP-15`/`WP-16`), applying an optional cached 33³ GPU soft-proof / display-gamut 3D LUT
+/// directly onto unquantized FP16 pixels. Returns `None` cleanly whenever the GPU/driver or
+/// current view options require the `memfd` / CPU path.
+#[allow(clippy::too_many_arguments)]
 pub fn try_process_preview_dmabuf(
     input: &[u16],
     width: u32,
@@ -362,6 +364,7 @@ pub fn try_process_preview_dmabuf(
     recipe: &Recipe,
     transfer: Transfer,
     color_space: crate::preview_shm::ColorSpaceTag,
+    proof_lut: Option<&crate::icc::SoftProofLut>,
 ) -> Option<crate::gpu::dmabuf::ExportedDmaBufFrame> {
     let ch = channels as usize;
     let w = width as usize;
@@ -384,6 +387,7 @@ pub fn try_process_preview_dmabuf(
         &ops.gpu_inputs(gain, transfer),
         scale,
         color_space,
+        proof_lut,
     )
 }
 
@@ -399,6 +403,35 @@ pub fn process_buffer_16_to_8_ex(
     highlight_mask: bool,
     shadow_mask: bool,
 ) -> (Vec<u8>, HistogramData) {
+    let (pixels, hist, _) = process_buffer_16_to_8_proof(
+        input,
+        width,
+        height,
+        channels,
+        recipe,
+        transfer,
+        highlight_mask,
+        shadow_mask,
+        None,
+    );
+    (pixels, hist)
+}
+
+/// Extended 16-to-8 processing with an optional 33³ GPU soft-proof / display-gamut 3D LUT.
+/// Returns `(pixels, histogram, gpu_proofed)` where `gpu_proofed` is `true` iff `proof_lut`
+/// was already applied on the GPU.
+#[allow(clippy::too_many_arguments)]
+pub fn process_buffer_16_to_8_proof(
+    input: &[u16],
+    width: u32,
+    height: u32,
+    channels: u32,
+    recipe: &Recipe,
+    transfer: Transfer,
+    highlight_mask: bool,
+    shadow_mask: bool,
+    proof_lut: Option<&crate::icc::SoftProofLut>,
+) -> (Vec<u8>, HistogramData, bool) {
     let ch = channels as usize;
     let w = width as usize;
     let h = height as usize;
@@ -425,13 +458,22 @@ pub fn process_buffer_16_to_8_ex(
     let mut gpu_failed = false;
     // The whole preview runs on the GPU when there is one worth using, and only the
     // 8-bit frame and the scope counts come back
-    match crate::gpu::local::run_display_checked(input, w, h, ch, recipe, &ops.gpu_inputs(gain, transfer), scale) {
+    match crate::gpu::local::run_display_checked_with_proof(
+        input,
+        w,
+        h,
+        ch,
+        recipe,
+        &ops.gpu_inputs(gain, transfer),
+        scale,
+        proof_lut,
+    ) {
         crate::gpu::StageOutcome::Done((mut output, hist)) => {
             prof.mark("gpu_display");
             clipping_overlay(&mut output, ch, highlight_mask, shadow_mask);
             prof.mark("overlay");
             prof.finish(w, h);
-            return (output, hist);
+            return (output, hist, proof_lut.is_some());
         }
         crate::gpu::StageOutcome::Failed => {
             gpu_failed = true;
@@ -616,11 +658,11 @@ pub fn process_buffer_16_to_8_ex(
 
     prof.mark("overlay");
     prof.finish(w, h);
-    (output, hist)
+    (output, hist, false)
 }
 
 /// Processes a 16-bit linear RGB buffer and outputs a 16-bit RGB buffer (0..65535) for master export.
-/// The output uses the BT.709 curve; use [`process_buffer_16_to_16_ex`] for another colour space.
+/// The output uses the IEC 61966-2.1 sRGB curve; use [`process_buffer_16_to_16_ex`] for another colour space.
 pub fn process_buffer_16_to_16(
     input: &[u16],
     width: u32,
@@ -628,7 +670,7 @@ pub fn process_buffer_16_to_16(
     channels: u32,
     recipe: &Recipe,
 ) -> (Vec<u16>, HistogramData) {
-    process_buffer_16_to_16_ex(input, width, height, channels, recipe, Transfer::bt709())
+    process_buffer_16_to_16_ex(input, width, height, channels, recipe, Transfer::srgb())
 }
 
 /// Rows per band of the master export. Each band is processed on its own with
@@ -1145,7 +1187,7 @@ pub fn process_split_comparison_16_to_8(
     recipe: &Recipe,
     split_ratio: f32,
 ) -> (Vec<u8>, HistogramData) {
-    process_split_comparison_16_to_8_ex(input, width, height, channels, recipe, Transfer::bt709(), split_ratio, false, false)
+    process_split_comparison_16_to_8_ex(input, width, height, channels, recipe, Transfer::srgb(), split_ratio, false, false)
 }
 
 /// Extended Before / After split comparison buffer with clipping mask overlay support

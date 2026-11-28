@@ -17,7 +17,7 @@ fn test_presence_clarity_midtone_isolation() {
             // Perceptually even gradient: 16-bit input is linear light, so decode an even
             // display-encoded ramp to get shadows, midtones and highlights where they appear.
             let encoded = x as f32 / (width - 1) as f32;
-            let v = (Transfer::bt709().decode(encoded) * 65535.0).round() as u16;
+            let v = (Transfer::srgb().decode(encoded) * 65535.0).round() as u16;
             buffer16[idx] = v;
             buffer16[idx + 1] = v;
             buffer16[idx + 2] = v;

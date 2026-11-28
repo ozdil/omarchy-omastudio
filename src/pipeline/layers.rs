@@ -544,7 +544,7 @@ pub fn shape_weight(shape: &MaskShape, u: f32, v: f32, rgb: (f32, f32, f32)) -> 
 }
 
 static DISPLAY: std::sync::LazyLock<crate::pipeline::transfer::Transfer> =
-    std::sync::LazyLock::new(crate::pipeline::transfer::Transfer::bt709);
+    std::sync::LazyLock::new(crate::pipeline::transfer::Transfer::srgb);
 
 /// Middle grey (18 % reflectance) on the display-encoded scale the layers work on.
 const MID_GREY: f32 = 0.41;
@@ -687,7 +687,7 @@ mod tests {
         assert_eq!(w_outside, 0.0);
     }
 
-    /// +1 EV on a layer doubles the light, which is 2^0.45 on encoded values.
+    /// +1 EV on a layer doubles the light, which follows the IEC 61966-2.1 sRGB display curve.
     #[test]
     fn layer_exposure_is_one_stop_per_ev() {
         let layer = AdjustmentLayer {
@@ -695,7 +695,7 @@ mod tests {
             exposure: 1.0,
             ..Default::default()
         };
-        let t = crate::pipeline::transfer::Transfer::bt709();
+        let t = crate::pipeline::transfer::Transfer::srgb();
         let enc = t.encode(0.1);
         let (r, _, _) = apply_layers_pixel(enc, enc, enc, &[layer], 0.5, 0.5);
         let linear = t.decode(r);

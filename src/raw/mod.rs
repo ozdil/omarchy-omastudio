@@ -224,8 +224,8 @@ impl OutputColorSpace {
     /// (LibRaw output_color, gamm[0], gamm[1])
     fn libraw_params(self) -> (i32, f64, f64) {
         match self {
-            // Keep LibRaw's default BT.709 curve so exports match the viewport preview
-            Self::Srgb => (1, 0.45, 4.5),
+            // IEC 61966-2.1 sRGB TRC matching embedded `Profile::new_srgb()` (BUG-BE-17)
+            Self::Srgb => (1, 1.0 / 2.4, 12.92),
             Self::AdobeRgb => (2, 1.0 / 2.199_218_75, 0.0),
             Self::ProPhotoRgb => (4, 1.0 / 1.8, 0.0),
             Self::DisplayP3 => (7, 1.0 / 2.4, 12.92),

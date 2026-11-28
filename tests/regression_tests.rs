@@ -106,8 +106,8 @@ fn split_before_half_is_not_gamma_encoded_twice() {
     let input = vec![v; 8 * 2 * 3];
     let (out, _) = process_split_comparison_16_to_8(&input, 8, 2, 3, &Recipe::default(), 1.0);
     // Pixel 0 lies in the BEFORE half: linear 0.2 is display-encoded exactly once with
-    // the buffer's BT.709 curve (~104), not passed through raw (~51) or encoded twice (~170).
-    let once = (Transfer::bt709().encode(0.2) * 255.0).round() as i32;
+    // the buffer's IEC 61966-2.1 sRGB curve (~124), not passed through raw (~51) or encoded twice (~182).
+    let once = (Transfer::srgb().encode(0.2) * 255.0).round() as i32;
     assert!((out[0] as i32 - once).abs() <= 1, "before value {} (want {})", out[0], once);
 }
 

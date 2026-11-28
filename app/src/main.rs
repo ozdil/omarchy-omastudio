@@ -16,6 +16,7 @@ mod preview_shm;
 mod process;
 mod viewport_rhi;
 mod watched_file;
+mod wayland_color;
 
 use std::path::Path;
 

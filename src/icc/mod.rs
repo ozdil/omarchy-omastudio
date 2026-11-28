@@ -5,9 +5,12 @@ use lcms2::{
 };
 use rayon::prelude::*;
 use serde::{Deserialize, Serialize};
+use std::collections::hash_map::DefaultHasher;
 use std::env;
 use std::fs;
+use std::hash::{Hash, Hasher};
 use std::path::{Path, PathBuf};
+use std::sync::{Arc, Mutex, OnceLock};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct IccProfileInfo {
@@ -413,6 +416,334 @@ pub fn soft_proof_rgb8(pixels: &mut [u8], proof_icc: &[u8], intent: RenderingInt
     Ok(())
 }
 
+/// Edge dimension of GPU soft-proof 3D LUTs (`33 × 33 × 33 = 35,937` texels, ~287 KiB as `Rgba16Float`).
+pub const PROOF_LUT_SIZE: usize = 33;
+const PROOF_LUT_CACHE_LIMIT: usize = 16;
+
+/// Pre-baked 33³ Little CMS proofing 3D LUT ready for hardware trilinear GPU sampling
+/// (`texture_3d<f32>` in `Rgba16Float` format, indexed as `[b][g][r]`).
+#[derive(Debug)]
+pub struct SoftProofLut {
+    pub size: u32,
+    pub key: u64,
+    /// Interleaved IEEE 754 binary16 RGBA texels (`size^3 * 4` words) for `Rgba16Float` 3D upload.
+    pub rgba_f16: Vec<u16>,
+    /// Interleaved f32 RGB texels (`size^3` entries) for CPU reference sampling and tests.
+    pub rgb_f32: Vec<[f32; 3]>,
+}
+
+impl SoftProofLut {
+    /// Trilinearly samples the baked 33³ LUT on CPU (matching GPU hardware `textureSampleLevel`).
+    pub fn sample(&self, rgb: [f32; 3]) -> [f32; 3] {
+        let n = self.size as usize;
+        let max_i = (n - 1) as f32;
+        let x = rgb[0].clamp(0.0, 1.0) * max_i;
+        let y = rgb[1].clamp(0.0, 1.0) * max_i;
+        let z = rgb[2].clamp(0.0, 1.0) * max_i;
+        let x0 = (x.floor() as usize).min(n - 1);
+        let y0 = (y.floor() as usize).min(n - 1);
+        let z0 = (z.floor() as usize).min(n - 1);
+        let x1 = (x0 + 1).min(n - 1);
+        let y1 = (y0 + 1).min(n - 1);
+        let z1 = (z0 + 1).min(n - 1);
+        let fx = x - x0 as f32;
+        let fy = y - y0 as f32;
+        let fz = z - z0 as f32;
+
+        let at = |rx: usize, gy: usize, bz: usize| self.rgb_f32[(bz * n + gy) * n + rx];
+        let lerp3 = |a: [f32; 3], b: [f32; 3], t: f32| {
+            [
+                a[0] + (b[0] - a[0]) * t,
+                a[1] + (b[1] - a[1]) * t,
+                a[2] + (b[2] - a[2]) * t,
+            ]
+        };
+
+        let c00 = lerp3(at(x0, y0, z0), at(x1, y0, z0), fx);
+        let c10 = lerp3(at(x0, y1, z0), at(x1, y1, z0), fx);
+        let c01 = lerp3(at(x0, y0, z1), at(x1, y0, z1), fx);
+        let c11 = lerp3(at(x0, y1, z1), at(x1, y1, z1), fx);
+        let c0 = lerp3(c00, c10, fy);
+        let c1 = lerp3(c01, c11, fy);
+        lerp3(c0, c1, fz)
+    }
+
+    /// Applies this baked 33³ LUT in place to an 8-bit interleaved RGB buffer on CPU.
+    pub fn apply_rgb8(&self, pixels: &mut [u8]) {
+        let (rgb, _) = pixels.as_chunks_mut::<3>();
+        rgb.par_chunks_mut(64 * 1024).for_each(|chunk| {
+            for px in chunk {
+                let out = self.sample([
+                    px[0] as f32 / 255.0,
+                    px[1] as f32 / 255.0,
+                    px[2] as f32 / 255.0,
+                ]);
+                px[0] = (out[0].clamp(0.0, 1.0) * 255.0).round() as u8;
+                px[1] = (out[1].clamp(0.0, 1.0) * 255.0).round() as u8;
+                px[2] = (out[2].clamp(0.0, 1.0) * 255.0).round() as u8;
+            }
+        });
+    }
+}
+
+fn f32_to_f16_bits(v: f32) -> u16 {
+    let bits = v.to_bits();
+    let sign = ((bits >> 16) & 0x8000) as u16;
+    let exp = ((bits >> 23) & 0xFF) as i32;
+    let mant = bits & 0x007F_FFFF;
+    if exp == 255 {
+        return sign | 0x7C00 | u16::from(mant != 0);
+    }
+    let half_exp = exp - 127 + 15;
+    if half_exp >= 31 {
+        return sign | 0x7C00;
+    }
+    if half_exp <= 0 {
+        if half_exp < -10 {
+            return sign;
+        }
+        let shifted = (mant | 0x0080_0000) >> (1 - half_exp);
+        return sign | (((shifted + 0x1000) >> 13) as u16);
+    }
+    let rounded = mant + 0x1000;
+    if rounded >= 0x0080_0000 {
+        return sign | (((half_exp + 1) as u16) << 10);
+    }
+    sign | ((half_exp as u16) << 10) | ((rounded >> 13) as u16)
+}
+
+type ProofLutCache = Mutex<Vec<(u64, Arc<SoftProofLut>)>>;
+
+fn proof_lut_cache() -> &'static ProofLutCache {
+    static CACHE: OnceLock<ProofLutCache> = OnceLock::new();
+    CACHE.get_or_init(|| Mutex::new(Vec::new()))
+}
+
+fn proof_lut_cache_key(
+    working_space: OutputColorSpace,
+    display_space: OutputColorSpace,
+    proof_icc: &[u8],
+    intent: RenderingIntent,
+    gamut_warning: bool,
+) -> u64 {
+    let mut h = DefaultHasher::new();
+    (working_space as u8).hash(&mut h);
+    (display_space as u8).hash(&mut h);
+    (intent as u8).hash(&mut h);
+    gamut_warning.hash(&mut h);
+    proof_icc.hash(&mut h);
+    h.finish()
+}
+
+fn profile_for_space_in_context(
+    context: &ThreadContext,
+    space: OutputColorSpace,
+) -> Result<Profile<ThreadContext>, String> {
+    if space == OutputColorSpace::Srgb {
+        return Ok(Profile::new_srgb_context(context));
+    }
+    let bytes = builtin_profile(space)
+        .icc()
+        .map_err(|e| format!("Could not serialise {:?} ICC profile: {}", space, e))?;
+    Profile::new_icc_context(context, &bytes)
+        .map_err(|e| format!("Could not load {:?} ICC profile: {}", space, e))
+}
+
+/// Bakes (or fetches from a bounded 16-entry LRU cache) a 33³ Little CMS soft-proof 3D LUT
+/// mapping `working_space` -> `proof_icc` (`intent`) -> `display_space`.
+pub fn bake_soft_proof_lut(
+    working_space: OutputColorSpace,
+    display_space: OutputColorSpace,
+    proof_icc: &[u8],
+    intent: RenderingIntent,
+    gamut_warning: bool,
+) -> Result<Arc<SoftProofLut>, String> {
+    let key = proof_lut_cache_key(working_space, display_space, proof_icc, intent, gamut_warning);
+    {
+        let mut cache = proof_lut_cache().lock().unwrap_or_else(|e| e.into_inner());
+        if let Some(pos) = cache.iter().position(|(k, _)| *k == key) {
+            let entry = cache.remove(pos);
+            let lut = Arc::clone(&entry.1);
+            cache.push(entry);
+            return Ok(lut);
+        }
+    }
+
+    let mut context = ThreadContext::new();
+    if gamut_warning {
+        let mut codes = [0u16; 16];
+        codes[..3].copy_from_slice(&GAMUT_WARNING_RGB);
+        context.set_alarm_codes(codes);
+    }
+    let src_profile = profile_for_space_in_context(&context, working_space)?;
+    let dst_profile = profile_for_space_in_context(&context, display_space)?;
+    let proof = Profile::new_icc_context(&context, proof_icc)
+        .map_err(|e| format!("Invalid proof profile: {}", e))?;
+
+    let mut flags = Flags::NO_CACHE | Flags::SOFT_PROOFING;
+    if gamut_warning {
+        flags = flags | Flags::GAMUT_CHECK;
+    }
+    if intent != RenderingIntent::AbsoluteColorimetric {
+        flags = flags | Flags::BLACKPOINT_COMPENSATION;
+    }
+
+    let transform: Transform<[u16; 3], [u16; 3], ThreadContext, _> = Transform::new_proofing_context(
+        &context,
+        &src_profile,
+        PixelFormat::RGB_16,
+        &dst_profile,
+        PixelFormat::RGB_16,
+        &proof,
+        intent.into(),
+        Intent::RelativeColorimetric,
+        flags,
+    )
+    .map_err(|e| format!("Could not build proofing 3D LUT transform: {}", e))?;
+
+    let n = PROOF_LUT_SIZE;
+    let total = n * n * n;
+    let mut lattice = Vec::with_capacity(total);
+    let denom = (n - 1) as f64;
+    for bz in 0..n {
+        let b16 = ((bz as f64 / denom) * 65535.0).round() as u16;
+        for gy in 0..n {
+            let g16 = ((gy as f64 / denom) * 65535.0).round() as u16;
+            for rx in 0..n {
+                let r16 = ((rx as f64 / denom) * 65535.0).round() as u16;
+                lattice.push([r16, g16, b16]);
+            }
+        }
+    }
+    transform.transform_in_place(&mut lattice);
+
+    let one_f16 = f32_to_f16_bits(1.0);
+    let mut rgba_f16 = Vec::with_capacity(total * 4);
+    let mut rgb_f32 = Vec::with_capacity(total);
+    for [r, g, b] in lattice {
+        let rf = r as f32 / 65535.0;
+        let gf = g as f32 / 65535.0;
+        let bf = b as f32 / 65535.0;
+        rgb_f32.push([rf, gf, bf]);
+        rgba_f16.push(f32_to_f16_bits(rf));
+        rgba_f16.push(f32_to_f16_bits(gf));
+        rgba_f16.push(f32_to_f16_bits(bf));
+        rgba_f16.push(one_f16);
+    }
+
+    let lut = Arc::new(SoftProofLut {
+        size: n as u32,
+        key,
+        rgba_f16,
+        rgb_f32,
+    });
+    let mut cache = proof_lut_cache().lock().unwrap_or_else(|e| e.into_inner());
+    if !cache.iter().any(|(k, _)| *k == key) {
+        if cache.len() >= PROOF_LUT_CACHE_LIMIT {
+            cache.remove(0);
+        }
+        cache.push((key, Arc::clone(&lut)));
+    }
+    Ok(lut)
+}
+
+/// Resolves a named or file-backed proof profile and returns its cached 33³ GPU soft-proof LUT.
+pub fn bake_soft_proof_lut_named(
+    profile_name: &str,
+    working_space: OutputColorSpace,
+    display_space: OutputColorSpace,
+    intent: RenderingIntent,
+    gamut_warning: bool,
+) -> Result<Arc<SoftProofLut>, String> {
+    let bytes = proof_profile_bytes(profile_name)?;
+    bake_soft_proof_lut(working_space, display_space, &bytes, intent, gamut_warning)
+}
+
+/// Bakes (or fetches from the 16-entry LRU cache) a 33³ GPU 3D LUT converting
+/// `working_space` directly to `display_space` when no soft-proof profile is active.
+/// Returns `Ok(None)` when `working_space == display_space`.
+pub fn bake_display_transform_lut(
+    working_space: OutputColorSpace,
+    display_space: OutputColorSpace,
+) -> Result<Option<Arc<SoftProofLut>>, String> {
+    if working_space == display_space {
+        return Ok(None);
+    }
+    let mut h = DefaultHasher::new();
+    0xD15Au16.hash(&mut h);
+    (working_space as u8).hash(&mut h);
+    (display_space as u8).hash(&mut h);
+    let key = h.finish();
+    {
+        let mut cache = proof_lut_cache().lock().unwrap_or_else(|e| e.into_inner());
+        if let Some(pos) = cache.iter().position(|(k, _)| *k == key) {
+            let entry = cache.remove(pos);
+            let lut = Arc::clone(&entry.1);
+            cache.push(entry);
+            return Ok(Some(lut));
+        }
+    }
+
+    let context = ThreadContext::new();
+    let src_profile = profile_for_space_in_context(&context, working_space)?;
+    let dst_profile = profile_for_space_in_context(&context, display_space)?;
+    let transform: Transform<[u16; 3], [u16; 3], ThreadContext, _> = Transform::new_flags_context(
+        &context,
+        &src_profile,
+        PixelFormat::RGB_16,
+        &dst_profile,
+        PixelFormat::RGB_16,
+        Intent::RelativeColorimetric,
+        Flags::NO_CACHE | Flags::BLACKPOINT_COMPENSATION,
+    )
+    .map_err(|e| format!("Could not build display 3D LUT transform: {}", e))?;
+
+    let n = PROOF_LUT_SIZE;
+    let total = n * n * n;
+    let mut lattice = Vec::with_capacity(total);
+    let denom = (n - 1) as f64;
+    for bz in 0..n {
+        let b16 = ((bz as f64 / denom) * 65535.0).round() as u16;
+        for gy in 0..n {
+            let g16 = ((gy as f64 / denom) * 65535.0).round() as u16;
+            for rx in 0..n {
+                let r16 = ((rx as f64 / denom) * 65535.0).round() as u16;
+                lattice.push([r16, g16, b16]);
+            }
+        }
+    }
+    transform.transform_in_place(&mut lattice);
+
+    let one_f16 = f32_to_f16_bits(1.0);
+    let mut rgba_f16 = Vec::with_capacity(total * 4);
+    let mut rgb_f32 = Vec::with_capacity(total);
+    for [r, g, b] in lattice {
+        let rf = r as f32 / 65535.0;
+        let gf = g as f32 / 65535.0;
+        let bf = b as f32 / 65535.0;
+        rgb_f32.push([rf, gf, bf]);
+        rgba_f16.push(f32_to_f16_bits(rf));
+        rgba_f16.push(f32_to_f16_bits(gf));
+        rgba_f16.push(f32_to_f16_bits(bf));
+        rgba_f16.push(one_f16);
+    }
+
+    let lut = Arc::new(SoftProofLut {
+        size: n as u32,
+        key,
+        rgba_f16,
+        rgb_f32,
+    });
+    let mut cache = proof_lut_cache().lock().unwrap_or_else(|e| e.into_inner());
+    if !cache.iter().any(|(k, _)| *k == key) {
+        if cache.len() >= PROOF_LUT_CACHE_LIMIT {
+            cache.remove(0);
+        }
+        cache.push((key, Arc::clone(&lut)));
+    }
+    Ok(Some(lut))
+}
+
 /// How lcms2 maps colours that a destination profile cannot hold.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
@@ -530,5 +861,56 @@ mod proof_tests {
         let mut px = vec![255u8, 0, 0];
         soft_proof_rgb8(&mut px, &narrow, RenderingIntent::RelativeColorimetric, false).unwrap();
         assert!(px[1] > 20 && px[2] > 20, "{px:?}");
+    }
+
+    #[test]
+    fn soft_proof_33_cube_lut_matches_lcms2_and_caches() {
+        let narrow = narrow_profile();
+        let lut_warn = bake_soft_proof_lut(
+            OutputColorSpace::Srgb,
+            OutputColorSpace::Srgb,
+            &narrow,
+            RenderingIntent::RelativeColorimetric,
+            true,
+        )
+        .expect("bake 33^3 LUT with gamut warning");
+        let lut_warn_cached = bake_soft_proof_lut(
+            OutputColorSpace::Srgb,
+            OutputColorSpace::Srgb,
+            &narrow,
+            RenderingIntent::RelativeColorimetric,
+            true,
+        )
+        .expect("cached LUT");
+        assert!(Arc::ptr_eq(&lut_warn, &lut_warn_cached));
+        assert_eq!(lut_warn.size, PROOF_LUT_SIZE as u32);
+        assert_eq!(lut_warn.rgba_f16.len(), PROOF_LUT_SIZE * PROOF_LUT_SIZE * PROOF_LUT_SIZE * 4);
+
+        // Out-of-gamut red lands on magenta alarm colour; mid-grey stays neutral
+        let red_warn = lut_warn.sample([1.0, 0.0, 0.0]);
+        assert!(red_warn[0] > 0.95 && red_warn[1] < 0.05 && red_warn[2] > 0.7, "{red_warn:?}");
+        let grey = lut_warn.sample([0.5, 0.5, 0.5]);
+        assert!(grey.iter().all(|&v| (v - 0.5).abs() < 0.02), "{grey:?}");
+
+        // Without warning, sRGB -> narrow -> sRGB dulls pure red consistently with soft_proof_rgb8
+        let lut_no_warn = bake_soft_proof_lut(
+            OutputColorSpace::Srgb,
+            OutputColorSpace::Srgb,
+            &narrow,
+            RenderingIntent::RelativeColorimetric,
+            false,
+        )
+        .expect("bake 33^3 LUT without gamut warning");
+        let red_soft = lut_no_warn.sample([1.0, 0.0, 0.0]);
+        let mut cpu_px = vec![255u8, 0, 0];
+        soft_proof_rgb8(&mut cpu_px, &narrow, RenderingIntent::RelativeColorimetric, false).unwrap();
+        for c in 0..3 {
+            let cpu_f = cpu_px[c] as f32 / 255.0;
+            assert!(
+                (red_soft[c] - cpu_f).abs() < 0.02,
+                "ch {c}: lut={} vs cpu={cpu_f}",
+                red_soft[c]
+            );
+        }
     }
 }

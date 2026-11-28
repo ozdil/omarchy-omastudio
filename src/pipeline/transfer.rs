@@ -106,7 +106,7 @@ impl Transfer {
 
 impl Default for Transfer {
     fn default() -> Self {
-        Self::bt709()
+        Self::srgb()
     }
 }
 

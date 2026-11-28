@@ -529,7 +529,12 @@ Rectangle {
             root.compareRef = "before";
             return;   // the change of compareRef asks again
         }
-        root.sendDaemonCommand({ cmd: "reference", recipe: recipe, proof: root.proofRequest() });
+        root.sendDaemonCommand({
+            cmd: "reference",
+            recipe: recipe,
+            proof: root.proofRequest(),
+            display_color_space: Host.displayColorSpace
+        });
     }
 
     // Vulkan RHI DMA-BUF preview fallback state (latches to memfd if import ever fails)
@@ -1483,7 +1488,8 @@ Rectangle {
                     shadow_mask: root.viewport.showShadowMask,
                     proof: root.proofRequest(),
                     focus_peaking: root.focusPeaking,
-                    prefer_memfd: preferMemfd
+                    prefer_memfd: preferMemfd,
+                    display_color_space: Host.displayColorSpace
                 });
             }
         }

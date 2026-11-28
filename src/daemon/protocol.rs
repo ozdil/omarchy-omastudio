@@ -223,4 +223,7 @@ pub struct DaemonCommand {
     /// `adjust`: request `memfd` transport (used during colour picking, compare, or DMA-BUF fallback)
     #[serde(default)]
     pub prefer_memfd: Option<bool>,
+    /// `adjust`, `reference`: active display colour space reported by Wayland (`"srgb"`, `"display_p3"`, `"bt2020"`, `"bt2100_pq"`, `"bt2100_hlg"`)
+    #[serde(default)]
+    pub display_color_space: Option<String>,
 }

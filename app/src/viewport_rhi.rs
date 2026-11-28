@@ -35,9 +35,13 @@ pub mod ffi {
 
         include!("viewport_rhi_bridge.h");
         fn configure_vulkan_graphics_api(allow_vulkan: bool);
+        fn configure_surface_format(prefer_hdr_float: bool, prefer_10bit: bool, color_space_code: i32);
         fn configure_window_and_show(
             engine: Pin<&mut QQmlApplicationEngine>,
             enable_dmabuf_extensions: bool,
+            prefer_hdr_float: bool,
+            prefer_10bit: bool,
+            color_space_code: i32,
         );
     }
 
@@ -56,8 +60,8 @@ fn inbox() -> &'static Mutex<Option<ParkedFrame>> {
     INBOX.get_or_init(|| Mutex::new(None))
 }
 
-/// Configures Qt Quick to use the Vulkan RHI backend prior to `QGuiApplication::new()`
-/// unless overridden by `QSG_RHI_BACKEND` or `QT_QUICK_BACKEND=software`.
+/// Configures Qt Quick to use the Vulkan RHI backend and 10-bit/FP16 `QSurfaceFormat`
+/// prior to `QGuiApplication::new()` unless overridden by `QSG_RHI_BACKEND` or software mode.
 pub fn configure_graphics_api() {
     let explicit_backend = std::env::var("QSG_RHI_BACKEND")
         .ok()
@@ -66,12 +70,23 @@ pub fn configure_graphics_api() {
         .ok()
         .is_some_and(|v| v.trim().eq_ignore_ascii_case("software"));
     ffi::configure_vulkan_graphics_api(!explicit_backend && !software);
+    if !software {
+        let info = crate::wayland_color::detected();
+        ffi::configure_surface_format(info.prefer_hdr_float, info.prefer_10bit, info.color_space_code);
+    }
 }
 
-/// Applies per-window Vulkan DMA-BUF/SYNC_FD extensions on the root `QQuickWindow` before
-/// showing the window (`Main.qml` starts with `visible: false`).
+/// Applies per-window surface format and Vulkan DMA-BUF/SYNC_FD extensions on the root
+/// `QQuickWindow` before showing the window (`Main.qml` starts with `visible: false`).
 pub fn configure_window_and_show(engine: Pin<&mut QQmlApplicationEngine>) {
-    ffi::configure_window_and_show(engine, dmabuf_enabled_by_env());
+    let info = crate::wayland_color::detected();
+    ffi::configure_window_and_show(
+        engine,
+        dmabuf_enabled_by_env(),
+        info.prefer_hdr_float,
+        info.prefer_10bit,
+        info.color_space_code,
+    );
 }
 
 /// Parks a newly received DMA-BUF + `SYNC_FD` frame for `OmaRhiViewportRenderer` to consume,

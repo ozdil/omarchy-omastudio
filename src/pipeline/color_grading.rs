@@ -6,7 +6,7 @@ use std::sync::LazyLock;
 /// but Oklab is defined on linear light: hues and chroma read on encoded values are
 /// skewed (orange reads as yellow, saturation is overstated in the shadows). The
 /// Oklch tools decode with the pipeline's default curve first and encode afterwards.
-static DISPLAY: LazyLock<Transfer> = LazyLock::new(Transfer::bt709);
+static DISPLAY: LazyLock<Transfer> = LazyLock::new(Transfer::srgb);
 
 /// Display-encoded RGB → Oklab.
 #[inline(always)]

@@ -22,7 +22,7 @@ use omastudio_engine::{
     },
     fuji, gpu, icc,
     pipeline::{
-        self, process_buffer_16_to_8_ex, process_split_comparison_16_to_8_ex,
+        self, process_buffer_16_to_8_proof, process_split_comparison_16_to_8_ex,
         try_process_preview_dmabuf,
     },
     preview_shm::{
@@ -41,11 +41,52 @@ use crate::cli::{
     inspect::{InspectResult, JevInspectResult, thumbnail_path_for},
     print_json,
 };
-use protocol::{DaemonCommand, DetailResult, REFERENCE_SLOT, RenderResult, apply_proof};
+use protocol::{DaemonCommand, DetailResult, ProofRequest, REFERENCE_SLOT, RenderResult, apply_proof};
 use state::{DaemonCache, cap_preview, resample_rect, retouched_full, spawn_full_decode};
 use worker::{ExportJob, spawn_export_worker};
 
 const MAX_LINE_BYTES: usize = 1024 * 1024; // 1 MiB JSON line limit
+
+fn parse_display_color_space(name: Option<&str>) -> (raw::OutputColorSpace, ColorSpaceTag) {
+    match name.map(|s| s.trim().to_ascii_lowercase()).as_deref() {
+        Some("display_p3") => (raw::OutputColorSpace::DisplayP3, ColorSpaceTag::DisplayP3),
+        Some("bt2020") => (raw::OutputColorSpace::Rec2020, ColorSpaceTag::Bt2020),
+        Some("bt2100_pq") => (raw::OutputColorSpace::Rec2020, ColorSpaceTag::Bt2100Pq),
+        Some("bt2100_hlg") => (raw::OutputColorSpace::Rec2020, ColorSpaceTag::Bt2100Hlg),
+        _ => (raw::OutputColorSpace::Srgb, ColorSpaceTag::Srgb),
+    }
+}
+
+/// Resolves the cached 33³ GPU LUT for soft-proofing (fused with wide-gamut display conversion)
+/// or direct working-space -> display-space conversion (`WP-16`).
+fn resolve_preview_lut(
+    proof: Option<&ProofRequest>,
+    display_color_space: Option<&str>,
+) -> (Option<Arc<icc::SoftProofLut>>, ColorSpaceTag, Option<String>) {
+    let (display_space, display_tag) = parse_display_color_space(display_color_space);
+    if let Some(p) = proof {
+        match icc::bake_soft_proof_lut_named(
+            &p.profile,
+            raw::OutputColorSpace::Srgb,
+            display_space,
+            p.intent,
+            p.gamut_warning,
+        ) {
+            Ok(lut) => return (Some(lut), display_tag, None),
+            Err(err) => {
+                let fallback_lut = icc::bake_display_transform_lut(raw::OutputColorSpace::Srgb, display_space)
+                    .ok()
+                    .flatten();
+                let tag = if fallback_lut.is_some() { display_tag } else { ColorSpaceTag::Srgb };
+                return (fallback_lut, tag, Some(err));
+            }
+        }
+    }
+    match icc::bake_display_transform_lut(raw::OutputColorSpace::Srgb, display_space) {
+        Ok(Some(lut)) => (Some(lut), display_tag, None),
+        _ => (None, ColorSpaceTag::Srgb, None),
+    }
+}
 
 /// Thread-safe command queue that coalesces queued interactive `adjust` commands.
 struct CommandQueue {
@@ -249,12 +290,28 @@ pub fn run() {
                     height as usize,
                     channels as usize,
                 );
-                let (mut rgb, _) = gpu::with_preview_source_key(preview_key, || {
-                    process_buffer_16_to_8_ex(&buffer, width, height, channels, &recipe, transfer, false, false)
+                let (preview_lut, display_tag, proof_error) = resolve_preview_lut(
+                    cmd_obj.proof.as_ref(),
+                    cmd_obj.display_color_space.as_deref(),
+                );
+                let (mut rgb, _, gpu_proofed) = gpu::with_preview_source_key(preview_key, || {
+                    process_buffer_16_to_8_proof(
+                        &buffer,
+                        width,
+                        height,
+                        channels,
+                        &recipe,
+                        transfer,
+                        false,
+                        false,
+                        preview_lut.as_deref(),
+                    )
                 });
-                let proof_error = apply_proof(&mut rgb, cmd_obj.proof.as_ref());
+                if !gpu_proofed && let Some(lut) = preview_lut.as_deref() {
+                    lut.apply_rgb8(&mut rgb);
+                }
                 if let Some(published) = preview_ring.as_mut().and_then(|ring| {
-                    ring.write_rgb8_as_rgba8(SlotKind::Reference, &rgb, width, height, ColorSpaceTag::Srgb)
+                    ring.write_rgb8_as_rgba8(SlotKind::Reference, &rgb, width, height, display_tag)
                 }) {
                     print_json(
                         &ResponseWrapper::ok_action(
@@ -432,15 +489,20 @@ pub fn run() {
                     channels as usize,
                 );
 
-                // Stage 4B (WP-15): Zero-copy Vulkan DMA-BUF + explicit SYNC_FD preview when
-                // enabled and no CPU-only overlay (split/clipping/soft-proof/peaking) is active.
+                let (preview_lut, display_tag, proof_error) = resolve_preview_lut(
+                    cmd_obj.proof.as_ref(),
+                    cmd_obj.display_color_space.as_deref(),
+                );
+
+                // Stage 4B/WP-16: Zero-copy Vulkan DMA-BUF + explicit SYNC_FD preview when
+                // enabled and no CPU-only overlay (split/clipping/peaking) is active.
+                // Soft-proofing and display gamut mapping run directly on GPU via cached 33³ 3D LUT.
                 let allow_dmabuf = dmabuf_active
                     && cmd_obj.out.is_none()
                     && cmd_obj.prefer_memfd != Some(true)
                     && split <= 0.001
                     && !highlight_mask
                     && !shadow_mask
-                    && cmd_obj.proof.is_none()
                     && cmd_obj.focus_peaking != Some(true);
                 if allow_dmabuf
                     && let Some(sock) = preview_sock.as_ref()
@@ -452,7 +514,8 @@ pub fn run() {
                             channels,
                             &recipe,
                             transfer,
-                            ColorSpaceTag::Srgb,
+                            display_tag,
+                            preview_lut.as_deref(),
                         )
                     })
                 {
@@ -467,7 +530,7 @@ pub fn run() {
                             print_json(
                                 &ResponseWrapper::ok_action(
                                     "adjust",
-                                    RenderResult::from_dmabuf(&exported.desc, exported.histogram, None),
+                                    RenderResult::from_dmabuf(&exported.desc, exported.histogram, proof_error),
                                 )
                                 .with_context(req_id, photo_path),
                             );
@@ -480,9 +543,9 @@ pub fn run() {
                     }
                 }
 
-                let (mut final_buf, hist) = gpu::with_preview_source_key(preview_key, || {
+                let (mut final_buf, hist, gpu_proofed) = gpu::with_preview_source_key(preview_key, || {
                     if split > 0.001 {
-                        process_split_comparison_16_to_8_ex(
+                        let (buf, hist) = process_split_comparison_16_to_8_ex(
                             buffer,
                             width,
                             height,
@@ -492,9 +555,10 @@ pub fn run() {
                             split,
                             highlight_mask,
                             shadow_mask,
-                        )
+                        );
+                        (buf, hist, false)
                     } else {
-                        process_buffer_16_to_8_ex(
+                        process_buffer_16_to_8_proof(
                             buffer,
                             width,
                             height,
@@ -503,18 +567,21 @@ pub fn run() {
                             transfer,
                             highlight_mask,
                             shadow_mask,
+                            preview_lut.as_deref(),
                         )
                     }
                 });
 
-                let proof_error = apply_proof(&mut final_buf, cmd_obj.proof.as_ref());
+                if !gpu_proofed && let Some(lut) = preview_lut.as_deref() {
+                    lut.apply_rgb8(&mut final_buf);
+                }
                 if cmd_obj.focus_peaking == Some(true) {
                     pipeline::peaking::apply(&mut final_buf, width as usize, height as usize);
                 }
 
                 if cmd_obj.out.is_none()
                     && let Some(published) = preview_ring.as_mut().and_then(|ring| {
-                        ring.write_rgb8_as_rgba8(SlotKind::Preview, &final_buf, width, height, ColorSpaceTag::Srgb)
+                        ring.write_rgb8_as_rgba8(SlotKind::Preview, &final_buf, width, height, display_tag)
                     })
                 {
                     print_json(
