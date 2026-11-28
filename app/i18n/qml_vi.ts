@@ -2232,6 +2232,10 @@
         <source>no answer from the engine</source>
         <translation>không có phản hồi từ bộ máy</translation>
     </message>
+    <message>
+        <source>Open a photo first</source>
+        <translation>Hãy mở ảnh trước</translation>
+    </message>
 </context>
 <context>
     <name>MasksTab</name>

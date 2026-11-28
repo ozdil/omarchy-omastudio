@@ -2246,6 +2246,10 @@
         <source>no answer from the engine</source>
         <translation>рушій не відповів</translation>
     </message>
+    <message>
+        <source>Open a photo first</source>
+        <translation>Спершу відкрийте фото</translation>
+    </message>
 </context>
 <context>
     <name>MasksTab</name>

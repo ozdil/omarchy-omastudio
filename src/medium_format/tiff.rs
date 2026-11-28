@@ -3,8 +3,10 @@
 //! so a 200 MB raw is never loaded to look at a few tags.
 
 use std::collections::HashMap;
-use std::fs::File;
+use std::fs::{File, OpenOptions};
 use std::io::{Read, Seek, SeekFrom};
+#[cfg(unix)]
+use std::os::unix::fs::OpenOptionsExt;
 use std::path::Path;
 
 /// Upper bound on entries per IFD, against corrupt counts.
@@ -87,8 +89,16 @@ pub struct Tiff {
 
 impl Tiff {
     pub fn open(path: &Path) -> Result<Self, String> {
-        let mut file = File::open(path).map_err(|e| format!("Cannot open {}: {}", path.display(), e))?;
-        let len = file.metadata().map(|m| m.len()).unwrap_or(0);
+        let mut opts = OpenOptions::new();
+        opts.read(true);
+        #[cfg(unix)]
+        opts.custom_flags(libc::O_NOFOLLOW | libc::O_CLOEXEC);
+        let mut file = opts.open(path).map_err(|e| format!("Cannot open {}: {}", path.display(), e))?;
+        let meta = file.metadata().map_err(|e| format!("Cannot stat {}: {}", path.display(), e))?;
+        if !meta.file_type().is_file() {
+            return Err(format!("{} is not a regular file", path.display()));
+        }
+        let len = meta.len();
         let mut head = [0u8; 8];
         file.read_exact(&mut head).map_err(|e| format!("File too short: {}", e))?;
         let little_endian = match &head[..2] {
@@ -132,20 +142,34 @@ impl Tiff {
             return (Vec::new(), 0);
         };
         let n = n.min(MAX_ENTRIES);
-        let Some(raw) = self.read_at(offset + 2, n * 12 + 4) else {
+        let Some(table_offset) = offset.checked_add(2) else {
+            return (Vec::new(), 0);
+        };
+        let Some(table_len) = n.checked_mul(12).and_then(|b| b.checked_add(4)) else {
+            return (Vec::new(), 0);
+        };
+        let Some(raw) = self.read_at(table_offset, table_len) else {
             return (Vec::new(), 0);
         };
         let mut entries = Vec::with_capacity(n);
         for i in 0..n {
             let e = &raw[i * 12..i * 12 + 12];
+            let Some(inline_offset) = table_offset.checked_add(i as u64 * 12 + 8) else {
+                continue;
+            };
             let mut entry = Entry {
                 tag: self.u16_at(&e[0..2]),
                 kind: self.u16_at(&e[2..4]),
                 count: self.u32_at(&e[4..8]),
-                offset: offset + 2 + i as u64 * 12 + 8,
+                offset: inline_offset,
             };
             match entry.size() {
-                Some(s) if s > 4 => entry.offset = self.u32_at(&e[8..12]) as u64 + base,
+                Some(s) if s > 4 => {
+                    let Some(val_off) = (self.u32_at(&e[8..12]) as u64).checked_add(base) else {
+                        continue;
+                    };
+                    entry.offset = val_off;
+                }
                 Some(_) => {}
                 None => continue,
             }
@@ -338,6 +362,18 @@ pub(crate) mod tests {
         std::fs::write(&dir, b"II*\0\xff\xff\xff\x7f").unwrap();
         let mut t = Tiff::open(&dir).unwrap();
         assert!(Directories::read(&mut t).main.iter().all(|m| m.is_empty()));
+        assert!(t.ifd(u64::MAX, u64::MAX).0.is_empty());
+        assert!(t.ifd(u64::MAX - 1, 0).0.is_empty());
+
+        #[cfg(unix)]
+        {
+            let link = std::env::temp_dir().join(format!("omastudio-tiff-link-{}", std::process::id()));
+            let _ = std::fs::remove_file(&link);
+            std::os::unix::fs::symlink(&dir, &link).unwrap();
+            assert!(Tiff::open(&link).is_err());
+            let _ = std::fs::remove_file(&link);
+        }
+
         std::fs::remove_file(&dir).ok();
         assert!(Tiff::open(Path::new("/nonexistent/x.3fr")).is_err());
     }

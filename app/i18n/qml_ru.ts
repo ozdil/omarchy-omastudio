@@ -2246,6 +2246,10 @@
         <source>no answer from the engine</source>
         <translation>движок не ответил</translation>
     </message>
+    <message>
+        <source>Open a photo first</source>
+        <translation>Сначала откройте фото</translation>
+    </message>
 </context>
 <context>
     <name>MasksTab</name>

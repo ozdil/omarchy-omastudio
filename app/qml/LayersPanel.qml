@@ -531,7 +531,7 @@ Rectangle {
 
                             // Click cycles add, subtract, intersect
                             SmallButton {
-                                implicitWidth: Math.max(implicitHeight * 3.5, implicitWidth)
+                                Layout.minimumWidth: implicitHeight * 3.5
                                 label: compItem.comp ? root.modeLabel(compItem.comp.mode) : ""
                                 labelColor: compItem.comp && compItem.comp.mode === "subtract" ? Theme.accentRed
                                           : compItem.comp && compItem.comp.mode === "intersect" ? Theme.accentCyan

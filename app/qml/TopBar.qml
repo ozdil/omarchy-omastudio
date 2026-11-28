@@ -389,6 +389,7 @@ Rectangle {
         OmaButton {
             id: exportBtn
             primary: true
+            enabled: root.hasPhoto
             icon: Theme.iconExport
             text: qsTr("Export")
             showLabel: !root.tight

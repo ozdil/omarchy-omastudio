@@ -25,12 +25,15 @@ static TMP_COUNTER: AtomicU64 = AtomicU64::new(0);
 
 #[cxx_qt::bridge]
 pub mod qobject {
-    // SAFETY: Qt C++ headers and types match cxx-qt-lib bindings for the lifetime of the Qt app.
+    // SAFETY: Qt C++ headers and helper functions match cxx-qt-lib and our C++ implementation
+    // for the lifetime of the Qt application.
     unsafe extern "C++" {
         include!("cxx-qt-lib/qstring.h");
         type QString = cxx_qt_lib::QString;
         include!("cxx-qt-lib/qurl.h");
         type QUrl = cxx_qt_lib::QUrl;
+        include!("viewport_rhi_bridge.h");
+        fn clipboard_text_bounded(max_bytes: i32, exceeded: &mut bool) -> QString;
     }
 
     #[auto_cxx_name]
@@ -79,6 +82,15 @@ pub mod qobject {
         /// dialog's starting folder; empty for anything that is not a folder.
         #[qinvokable]
         fn folder_url(self: &Host, path: &QString) -> QUrl;
+
+        /// True when `path` refers to an existing directory on disk (used by drag-and-drop).
+        #[qinvokable]
+        fn is_directory(self: &Host, path: &QString) -> bool;
+
+        /// Reads the system clipboard natively via Qt (`QClipboard`, Wayland & X11) bounded
+        /// by `max_bytes`, returning JSON `{"text": "...", "exceeded": false}`.
+        #[qinvokable]
+        fn clipboard_text_bounded(self: &Host, max_bytes: i32) -> QString;
 
         /// Stores the interface language ("" follows the system) and updates
         /// `uiLanguage`; false when the choice could not be saved.
@@ -222,6 +234,20 @@ impl qobject::Host {
         } else {
             cxx_qt_lib::QUrl::default()
         }
+    }
+
+    pub fn is_directory(&self, path: &QString) -> bool {
+        is_directory_path(&String::from(path))
+    }
+
+    pub fn clipboard_text_bounded(&self, max_bytes: i32) -> QString {
+        let mut exceeded = false;
+        let text = qobject::clipboard_text_bounded(max_bytes, &mut exceeded);
+        let payload = serde_json::json!({
+            "text": String::from(&text),
+            "exceeded": exceeded,
+        });
+        QString::from(payload.to_string().as_str())
     }
 
     pub fn set_ui_language(mut self: Pin<&mut Self>, code: &QString) -> bool {
@@ -489,6 +515,10 @@ pub(crate) fn write_private_file_atomic(path: &Path, data: &[u8]) -> io::Result<
     Ok(())
 }
 
+fn is_directory_path(path: &str) -> bool {
+    !path.is_empty() && Path::new(path).is_dir()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -568,5 +598,21 @@ mod tests {
         assert_eq!(pval["hsl_lum"][1], 12.0);
 
         assert!(apply_look_preset_json(base, "No Such Preset").is_none());
+    }
+
+    #[test]
+    fn is_directory_path_distinguishes_directories_from_regular_files() {
+        let base = std::env::temp_dir().join(format!("omastudio-isdir-test-{}", std::process::id()));
+        let _ = std::fs::remove_dir_all(&base);
+        std::fs::create_dir_all(&base).unwrap();
+        let file = base.join("notes.txt");
+        std::fs::write(&file, b"hello").unwrap();
+
+        assert!(is_directory_path(&base.to_string_lossy()));
+        assert!(!is_directory_path(&file.to_string_lossy()));
+        assert!(!is_directory_path(""));
+        assert!(!is_directory_path(&base.join("missing").to_string_lossy()));
+
+        let _ = std::fs::remove_dir_all(&base);
     }
 }

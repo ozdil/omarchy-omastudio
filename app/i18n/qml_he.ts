@@ -2239,6 +2239,10 @@
         <source>no answer from the engine</source>
         <translation>אין תשובה מהמנוע</translation>
     </message>
+    <message>
+        <source>Open a photo first</source>
+        <translation>יש לפתוח תמונה תחילה</translation>
+    </message>
 </context>
 <context>
     <name>MasksTab</name>

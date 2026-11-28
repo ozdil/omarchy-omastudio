@@ -40,7 +40,6 @@ Rectangle {
 
     focus: visible
     onVisibleChanged: if (visible) { root.forceActiveFocus(); root.confirmDisconnect = ""; }
-    Keys.onEscapePressed: root.closeRequested()
 
     // Swallow clicks on the dialog body so they don't reach the overlay's close handler
     MouseArea {

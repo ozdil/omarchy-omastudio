@@ -64,21 +64,29 @@ def frames(path, device):
 
 
 def containers(stream):
-    """Reassembles containers that span several transfers, per direction."""
+    """Reassembles containers that span or coalesce across transfers, per direction."""
     pending = {True: None, False: None}
     for t, out, data in stream:
+        buf = bytearray(data)
         cur = pending[out]
-        if cur is None:
-            if len(data) < 12:
-                continue
-            length = struct.unpack_from("<I", data)[0]
-            if length < 12 or length > 1 << 31:
-                length = len(data)
-            cur = [t, bytearray(), length]
-        cur[1] += data
-        if len(cur[1]) >= cur[2]:
-            yield cur[0], out, bytes(cur[1][:cur[2]])
-            cur = None
+        while buf or (cur is not None and len(cur[1]) >= cur[2]):
+            if cur is None:
+                if len(buf) < 12:
+                    break
+                length = struct.unpack_from("<I", buf)[0]
+                if length < 12 or length > 1 << 31:
+                    length = len(buf)
+                cur = [t, bytearray(), length]
+            if buf:
+                need = cur[2] - len(cur[1])
+                take = min(need, len(buf))
+                cur[1] += buf[:take]
+                del buf[:take]
+            if len(cur[1]) >= cur[2]:
+                yield cur[0], out, bytes(cur[1][:cur[2]])
+                cur = None
+            else:
+                break
         pending[out] = cur
 
 
@@ -109,8 +117,14 @@ def main():
     if a.markers and os.path.exists(a.markers):
         with open(a.markers, encoding="utf-8") as f:
             for row in f:
-                t, _, text = row.rstrip("\n").partition("\t")
-                notes.append((float(t), text))
+                stripped = row.rstrip("\n")
+                if not stripped.strip():
+                    continue
+                t, _, text = stripped.partition("\t")
+                try:
+                    notes.append((float(t), text))
+                except ValueError:
+                    continue
     if a.dump:
         os.makedirs(a.dump, exist_ok=True)
 

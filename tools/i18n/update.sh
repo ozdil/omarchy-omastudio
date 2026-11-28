@@ -19,12 +19,15 @@ done
 for ts in app/i18n/qml_*.ts; do
     code="${ts##*/qml_}"
     code="${code%.ts}"
-    # English is the source language; its file only carries plural forms
-    plural=""
-    [ "$code" = "en" ] && plural="-pluralonly"
     [ -s "$ts" ] || rm -f "$ts"
-    "$LUPDATE" -silent -no-obsolete -locations none -source-language en -target-language "$code" \
-        $plural app/qml/*.qml -ts "$ts"
+    # English is the source language; its file only carries plural forms
+    if [ "$code" = "en" ]; then
+        "$LUPDATE" -silent -no-obsolete -locations none -source-language en -target-language "$code" \
+            -pluralonly app/qml/*.qml -ts "$ts"
+    else
+        "$LUPDATE" -silent -no-obsolete -locations none -source-language en -target-language "$code" \
+            app/qml/*.qml -ts "$ts"
+    fi
 done
 
-python3 tools/i18n/check.py --quiet || true
+python3 tools/i18n/check.py --quiet

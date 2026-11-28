@@ -54,6 +54,10 @@ pub mod qobject {
         #[qsignal]
         fn line_read(self: Pin<&mut HostProcess>, line: QString);
 
+        /// One bounded line of standard error output (without the trailing newline).
+        #[qsignal]
+        fn stderr_line(self: Pin<&mut HostProcess>, line: QString);
+
         /// The process ended. `output` holds everything it printed unless
         /// `splitLines` is set. `exitCode` is -1 when it was killed or could not start,
         /// -2 when its output exceeded `maxOutputBytes`.
@@ -78,6 +82,7 @@ pub mod qobject {
 
 const DEFAULT_MAX_OUTPUT: i32 = 64 << 20;
 const STDIN_QUEUE_CAPACITY: usize = 64;
+const STDERR_LINE_LIMIT: usize = 4096;
 
 /// Non-blocking handle to a dedicated stdin writer thread so `HostProcess::write`
 /// never stalls the Qt GUI thread when a child's pipe buffer is full.
@@ -224,7 +229,97 @@ fn reap_process_group(child: &mut Child, wait_for_exit: Duration) {
 
 enum Event {
     Line(String),
+    StderrLine(String),
     Finished(i32, String),
+}
+
+/// Reads lines from `reader` with a hard per-line byte bound while draining any
+/// remaining bytes on overlong lines so child processes can never block on a full pipe.
+fn read_bounded_stderr_lines<R: Read>(reader: R, limit: usize, mut on_line: impl FnMut(String)) {
+    let mut br = BufReader::new(reader);
+    let mut buf = Vec::new();
+    let mut truncated = false;
+    loop {
+        let chunk = match br.fill_buf() {
+            Ok([]) | Err(_) => break,
+            Ok(c) => c,
+        };
+        let mut consumed = 0;
+        while consumed < chunk.len() {
+            if let Some(rel) = chunk[consumed..].iter().position(|&b| b == b'\n') {
+                let piece = &chunk[consumed..consumed + rel];
+                if buf.len() < limit {
+                    let take = (limit - buf.len()).min(piece.len());
+                    buf.extend_from_slice(&piece[..take]);
+                    if take < piece.len() {
+                        truncated = true;
+                    }
+                } else if !piece.is_empty() {
+                    truncated = true;
+                }
+                while buf.last().is_some_and(|&b| b == b'\r') {
+                    buf.pop();
+                }
+                if !buf.is_empty() {
+                    let mut line = String::from_utf8_lossy(&buf).into_owned();
+                    if truncated {
+                        line.push_str(" ...");
+                    }
+                    on_line(line);
+                }
+                buf.clear();
+                truncated = false;
+                consumed += rel + 1;
+            } else {
+                let piece = &chunk[consumed..];
+                if buf.len() < limit {
+                    let take = (limit - buf.len()).min(piece.len());
+                    buf.extend_from_slice(&piece[..take]);
+                    if take < piece.len() {
+                        truncated = true;
+                    }
+                } else if !piece.is_empty() {
+                    truncated = true;
+                }
+                consumed = chunk.len();
+            }
+        }
+        br.consume(consumed);
+    }
+    while buf.last().is_some_and(|&b| b == b'\r') {
+        buf.pop();
+    }
+    if !buf.is_empty() {
+        let mut line = String::from_utf8_lossy(&buf).into_owned();
+        if truncated {
+            line.push_str(" ...");
+        }
+        on_line(line);
+    }
+}
+
+fn deliver_event(qt: &cxx_qt::CxxQtThread<qobject::HostProcess>, generation: u64, event: Event) -> bool {
+    qt.queue(move |mut obj: Pin<&mut qobject::HostProcess>| {
+        if obj.generation != generation {
+            return;
+        }
+        match event {
+            Event::Line(line) => obj.as_mut().line_read(QString::from(line.as_str())),
+            Event::StderrLine(line) => obj.as_mut().stderr_line(QString::from(line.as_str())),
+            Event::Finished(code, output) => {
+                let rust = obj.as_mut().rust_mut().get_mut();
+                rust.stdin = None;
+                rust.preview_sock = None;
+                if rust.preview_channel {
+                    preview_provider::clear_ring(generation);
+                    viewport_rhi::clear_frames(generation);
+                }
+                obj.as_mut().set_state(false);
+                obj.as_mut().finished(code, QString::from(output.as_str()));
+            }
+        }
+    })
+    .is_ok()
 }
 
 impl qobject::HostProcess {
@@ -296,7 +391,7 @@ impl qobject::HostProcess {
         };
         let mut cmd = Command::new(program);
         cmd.process_group(0);
-        cmd.args(rest).stdout(Stdio::piped()).stderr(Stdio::inherit());
+        cmd.args(rest).stdout(Stdio::piped()).stderr(Stdio::piped());
         cmd.stdin(if self.stdin_enabled { Stdio::piped() } else { Stdio::null() });
 
         let use_preview = self.preview_channel && !memfd_disabled_by_env();
@@ -339,6 +434,7 @@ impl qobject::HostProcess {
             }
         };
         let stdout = child.stdout.take().expect("piped stdout");
+        let stderr = child.stderr.take().expect("piped stderr");
         let split = self.split_lines;
         let limit = self.max_output_bytes.max(0) as usize;
         let qt = self.qt_thread();
@@ -380,29 +476,15 @@ impl qobject::HostProcess {
         self.as_mut().set_state(true);
         self.as_mut().started();
 
+        let qt_err = qt.clone();
+        let stderr_thread = std::thread::spawn(move || {
+            read_bounded_stderr_lines(stderr, STDERR_LINE_LIMIT, |line| {
+                eprintln!("{line}");
+                let _ = deliver_event(&qt_err, generation, Event::StderrLine(line));
+            });
+        });
+
         std::thread::spawn(move || {
-            let deliver = |event: Event| {
-                qt.queue(move |mut obj: Pin<&mut qobject::HostProcess>| {
-                    if obj.generation != generation {
-                        return;
-                    }
-                    match event {
-                        Event::Line(line) => obj.as_mut().line_read(QString::from(line.as_str())),
-                        Event::Finished(code, output) => {
-                            let rust = obj.as_mut().rust_mut().get_mut();
-                            rust.stdin = None;
-                            rust.preview_sock = None;
-                            if rust.preview_channel {
-                                preview_provider::clear_ring(generation);
-                                viewport_rhi::clear_frames(generation);
-                            }
-                            obj.as_mut().set_state(false);
-                            obj.as_mut().finished(code, QString::from(output.as_str()));
-                        }
-                    }
-                })
-                .is_ok()
-            };
             let mut overflow = false;
             let mut output = Vec::new();
             if split {
@@ -420,7 +502,7 @@ impl qobject::HostProcess {
                             while line.last().is_some_and(|&b| b == b'\n' || b == b'\r') {
                                 line.pop();
                             }
-                            if !deliver(Event::Line(String::from_utf8_lossy(&line).into_owned())) {
+                            if !deliver_event(&qt, generation, Event::Line(String::from_utf8_lossy(&line).into_owned())) {
                                 break;
                             }
                         }
@@ -436,12 +518,13 @@ impl qobject::HostProcess {
                 output.clear();
             }
             let status = child.lock().ok().and_then(|mut g| g.take()).and_then(|mut c| c.wait().ok());
+            let _ = stderr_thread.join();
             let code = match status {
                 _ if overflow => -2,
                 Some(s) => s.code().unwrap_or(-1),
                 None => -1,
             };
-            deliver(Event::Finished(code, String::from_utf8_lossy(&output).into_owned()));
+            deliver_event(&qt, generation, Event::Finished(code, String::from_utf8_lossy(&output).into_owned()));
         });
     }
 }
@@ -568,5 +651,21 @@ mod tests {
 
         drop(writer);
         reap_process_group(&mut child, Duration::ZERO);
+    }
+
+    #[test]
+    fn stderr_reader_truncates_overlong_lines_and_drains_large_stream() {
+        let mut payload = Vec::new();
+        payload.extend_from_slice(b"warn: line one\r\n");
+        payload.extend(std::iter::repeat_n(b'x', 16_384));
+        payload.extend_from_slice(b"\nfinal line");
+
+        let mut lines = Vec::new();
+        read_bounded_stderr_lines(std::io::Cursor::new(payload), 64, |l| lines.push(l));
+        assert_eq!(lines.len(), 3);
+        assert_eq!(lines[0], "warn: line one");
+        assert!(lines[1].ends_with(" ..."), "overlong line should be marked truncated: {}", lines[1]);
+        assert_eq!(lines[1].len(), 64 + 4);
+        assert_eq!(lines[2], "final line");
     }
 }

@@ -2232,6 +2232,10 @@
         <source>no answer from the engine</source>
         <translation>tidak ada jawaban dari mesin</translation>
     </message>
+    <message>
+        <source>Open a photo first</source>
+        <translation>Buka foto terlebih dahulu</translation>
+    </message>
 </context>
 <context>
     <name>MasksTab</name>

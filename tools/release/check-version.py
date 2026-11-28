@@ -65,6 +65,14 @@ def main() -> int:
     if not re.search(r"^## \[Unreleased\]", changelog, re.M):
         errors.append("CHANGELOG.md: no '## [Unreleased]' section")
 
+    major_minor = ".".join(version.split(".")[:2])
+    guide_en = (ROOT / "docs" / "guide" / "en.md").read_text(encoding="utf-8")
+    guide_match = re.search(r"OmaStudio\s+(\d+\.\d+)", guide_en)
+    if not guide_match:
+        errors.append("docs/guide/en.md: no 'OmaStudio MAJOR.MINOR' version reference")
+    elif guide_match.group(1) != major_minor:
+        errors.append(f"docs/guide/en.md: OmaStudio {guide_match.group(1)} (Cargo.toml says {major_minor})")
+
     if len(sys.argv) > 1:
         tag = sys.argv[1].removeprefix("refs/tags/")
         if tag != f"v{version}":

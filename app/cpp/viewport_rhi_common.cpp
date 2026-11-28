@@ -5,7 +5,9 @@
 #include <QtCore/QObject>
 #include <QtCore/QPointF>
 #include <QtCore/QtGlobal>
+#include <QtGui/QClipboard>
 #include <QtGui/QColorSpace>
+#include <QtGui/QGuiApplication>
 #include <QtGui/QSurfaceFormat>
 #include <QtQuick/QQuickGraphicsConfiguration>
 #include <QtQuick/QQuickWindow>
@@ -121,4 +123,31 @@ void configure_window_and_show(
         }
         window->show();
     }
+}
+
+QString clipboard_text_bounded(int max_bytes, bool &exceeded) {
+    exceeded = false;
+    if (max_bytes <= 0) {
+        return QString();
+    }
+    const qsizetype cap = max_bytes > 65536 ? 65536 : max_bytes;
+    QClipboard *cb = QGuiApplication::clipboard();
+    if (!cb) {
+        return QString();
+    }
+    const QString text = cb->text(QClipboard::Clipboard);
+    if (text.isEmpty()) {
+        return QString();
+    }
+    // Every UTF-16 code unit encodes to at least 1 UTF-8 byte; reject oversized payloads
+    // before allocating a UTF-8 copy so massive clipboards cannot stall the UI thread.
+    if (text.size() > cap) {
+        exceeded = true;
+        return QString();
+    }
+    if (text.toUtf8().size() > cap) {
+        exceeded = true;
+        return QString();
+    }
+    return text;
 }

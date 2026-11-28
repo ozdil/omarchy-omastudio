@@ -139,6 +139,7 @@ Rectangle {
         property string label: ""
         property bool primary: false
         property bool busy: false
+        property bool isIcon: false
         signal clicked()
         implicitWidth: btnText.implicitWidth + 16
         implicitHeight: Theme.sp(24)
@@ -158,9 +159,9 @@ Rectangle {
             elide: Text.ElideRight
             text: btn.busy ? "..." : btn.label
             textFormat: Text.PlainText
-            font.family: Theme.fontFamily
-            font.pixelSize: Theme.px(9)
-            font.weight: Font.Bold
+            font.family: (btn.isIcon && !btn.busy) ? Theme.iconFont : Theme.fontFamily
+            font.pixelSize: Theme.px(btn.isIcon ? 11 : 9)
+            font.weight: btn.isIcon ? Font.Normal : Font.Bold
             color: btn.filled ? Theme.onAccent : (btn.enabled ? Theme.textMain : Theme.textDim)
         }
 
@@ -201,6 +202,7 @@ Rectangle {
             }
             PanelButton {
                 label: Theme.iconRefresh
+                isIcon: true
                 busy: root.busyAction === "list"
                 enabled: root.busyAction === ""
                 onClicked: root.refreshLibrary()

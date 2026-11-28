@@ -27,7 +27,7 @@ Item {
             str = str.replace(/\{iso\}/g, root.exifMetadata.iso ? ("ISO " + Math.round(root.exifMetadata.iso)) : "");
             str = str.replace(/\{aperture\}/g, root.exifMetadata.aperture ? ("f/" + root.exifMetadata.aperture.toFixed(1)) : "");
             var s = root.exifMetadata.shutter;
-            var shutterStr = (s && s < 1.0 && s > 0.0) ? ("1/" + Math.round(1.0 / s) + "s") : ((s ? s.toFixed(1) : "") + "s");
+            var shutterStr = (s && s > 0.0) ? (s < 1.0 ? ("1/" + Math.round(1.0 / s) + "s") : (s.toFixed(1) + "s")) : "";
             str = str.replace(/\{shutter\}/g, shutterStr);
             str = str.replace(/\{focal\}/g, root.exifMetadata.focal_length ? (Math.round(root.exifMetadata.focal_length) + "mm") : "");
         }
@@ -62,7 +62,7 @@ Item {
                 visible: root.watermarkType === "logo" && root.logoPath !== ""
                 source: root.logoPath ? ("file://" + root.logoPath) : ""
                 fillMode: Image.PreserveAspectFit
-                height: root.size * 2
+                Layout.preferredHeight: root.size * 2
                 mipmap: true
             }
 

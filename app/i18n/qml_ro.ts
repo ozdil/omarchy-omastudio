@@ -2246,6 +2246,10 @@
         <source>no answer from the engine</source>
         <translation>niciun răspuns de la motor</translation>
     </message>
+    <message>
+        <source>Open a photo first</source>
+        <translation>Deschideți mai întâi o fotografie</translation>
+    </message>
 </context>
 <context>
     <name>MasksTab</name>

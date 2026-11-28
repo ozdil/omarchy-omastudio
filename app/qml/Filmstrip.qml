@@ -446,14 +446,17 @@ Rectangle {
 
                             // Rating Stars & Pick/Reject Flag Badges (Lightroom Culling Overlay)
                             RowLayout {
+                                id: cullingOverlay
+                                readonly property int itemRating: (root.activePhotoPath === modelData.path) ? root.activeRating : (modelData.rating || 0)
+                                readonly property string itemFlag: (root.activePhotoPath === modelData.path) ? root.activeFlag : (modelData.flag || "none")
                                 anchors.bottom: parent.bottom
                                 anchors.left: parent.left
                                 anchors.margins: 3
                                 spacing: 2
-                                visible: (root.activePhotoPath === modelData.path && (root.activeRating > 0 || root.activeFlag !== "none"))
+                                visible: !modelData.is_dir && (itemRating > 0 || itemFlag !== "none")
 
                                 Rectangle {
-                                    visible: root.activeFlag === "pick"
+                                    visible: cullingOverlay.itemFlag === "pick"
                                     implicitWidth: 14
                                     implicitHeight: 14
                                     radius: Theme.r(2)
@@ -470,7 +473,7 @@ Rectangle {
                                 }
 
                                 Rectangle {
-                                    visible: root.activeFlag === "reject"
+                                    visible: cullingOverlay.itemFlag === "reject"
                                     implicitWidth: 14
                                     implicitHeight: 14
                                     radius: Theme.r(2)
@@ -487,19 +490,18 @@ Rectangle {
                                 }
 
                                 Rectangle {
-                                    visible: root.activeRating > 0
-                                    implicitWidth: starsText.implicitWidth + 4
+                                    visible: cullingOverlay.itemRating > 0
+                                    implicitWidth: starsText.implicitWidth + 6
                                     implicitHeight: 14
                                     radius: Theme.r(2)
                                     color: Qt.rgba(0, 0, 0, 0.75)
                                     Text {
-                                        font.family: Theme.fontFamily
                                         id: starsText
                                         anchors.centerIn: parent
-                                        text: "*".repeat(root.activeRating)
+                                        text: Theme.iconStar.repeat(Math.max(0, Math.min(5, cullingOverlay.itemRating)))
                                         textFormat: Text.PlainText
-                                        font.pixelSize: Theme.px(9)
-                                        font.weight: Font.Bold
+                                        font.family: Theme.iconFont
+                                        font.pixelSize: Theme.px(8)
                                         color: Theme.accentYellow
                                     }
                                 }

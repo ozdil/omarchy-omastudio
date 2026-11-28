@@ -7,14 +7,30 @@
 //! table.
 
 use std::collections::HashMap;
-use std::fs::File;
+use std::fs::{File, OpenOptions};
 use std::io::{Read, Seek, SeekFrom};
+#[cfg(unix)]
+use std::os::unix::fs::OpenOptionsExt;
 use std::path::Path;
 
 /// Bytes read from the start of the embedded JPEG; EXIF (APP1) is at most 64 KiB.
 const JPEG_HEAD: u64 = 128 * 1024;
 /// Upper bound on MakerNote IFD entries, against corrupt counts.
 const MAX_ENTRIES: usize = 1024;
+
+/// Opens a regular file without following symlinks and returns `(file, byte_len)`.
+fn open_regular_nofollow(path: &Path) -> Result<(File, u64), String> {
+    let mut opts = OpenOptions::new();
+    opts.read(true);
+    #[cfg(unix)]
+    opts.custom_flags(libc::O_NOFOLLOW | libc::O_CLOEXEC);
+    let file = opts.open(path).map_err(|e| format!("Cannot open {}: {}", path.display(), e))?;
+    let meta = file.metadata().map_err(|e| format!("Cannot stat {}: {}", path.display(), e))?;
+    if !meta.file_type().is_file() {
+        return Err(format!("{} is not a regular file", path.display()));
+    }
+    Ok((file, meta.len()))
+}
 
 /// One MakerNote value, decoded to the integers the tags use.
 #[derive(Debug, Clone, PartialEq)]
@@ -58,14 +74,18 @@ pub type Tags = HashMap<u16, Value>;
 
 /// Reads the Fujifilm MakerNote of a RAF or JPEG file.
 pub fn read_file(path: &Path) -> Result<Tags, String> {
-    let mut file = File::open(path).map_err(|e| format!("Cannot open {}: {}", path.display(), e))?;
+    let (mut file, file_len) = open_regular_nofollow(path)?;
     let mut head = [0u8; 92];
     file.read_exact(&mut head).map_err(|e| format!("File too short: {}", e))?;
 
     let jpeg = if head.starts_with(b"FUJIFILMCCD-RAW") {
         let offset = u32::from_be_bytes([head[84], head[85], head[86], head[87]]) as u64;
         let length = u32::from_be_bytes([head[88], head[89], head[90], head[91]]) as u64;
-        let mut buf = vec![0u8; length.min(JPEG_HEAD) as usize];
+        let read_len = length.min(JPEG_HEAD);
+        if read_len == 0 || offset.checked_add(read_len).is_none_or(|end| end > file_len) {
+            return Err("Embedded JPEG truncated".to_string());
+        }
+        let mut buf = vec![0u8; read_len as usize];
         file.seek(SeekFrom::Start(offset)).map_err(|e| e.to_string())?;
         file.read_exact(&mut buf).map_err(|e| format!("Embedded JPEG truncated: {}", e))?;
         buf
@@ -82,7 +102,7 @@ pub fn read_file(path: &Path) -> Result<Tags, String> {
 /// The full-size JPEG the camera stored inside a RAF.
 pub fn embedded_jpeg(path: &Path) -> Result<Vec<u8>, String> {
     const MAX: u64 = 64 * 1024 * 1024;
-    let mut file = File::open(path).map_err(|e| format!("Cannot open {}: {}", path.display(), e))?;
+    let (mut file, file_len) = open_regular_nofollow(path)?;
     let mut head = [0u8; 92];
     file.read_exact(&mut head).map_err(|e| format!("File too short: {}", e))?;
     if !head.starts_with(b"FUJIFILMCCD-RAW") {
@@ -90,7 +110,7 @@ pub fn embedded_jpeg(path: &Path) -> Result<Vec<u8>, String> {
     }
     let offset = u32::from_be_bytes([head[84], head[85], head[86], head[87]]) as u64;
     let length = u32::from_be_bytes([head[88], head[89], head[90], head[91]]) as u64;
-    if length == 0 || length > MAX {
+    if length == 0 || length > MAX || offset.checked_add(length).is_none_or(|end| end > file_len) {
         return Err("RAF has no usable embedded JPEG".to_string());
     }
     let mut buf = vec![0u8; length as usize];
@@ -292,5 +312,30 @@ mod tests {
         let mut note = makernote(&[(0x1401, 3, vec![0x600])]);
         note[14] = 0xff; // absurd entry count
         let _ = parse_makernote(&note);
+    }
+
+    #[test]
+    fn embedded_jpeg_rejects_oversized_claimed_length_and_symlinks() {
+        let base = std::env::temp_dir().join(format!("omastudio-mn-test-{}", std::process::id()));
+        let _ = std::fs::remove_dir_all(&base);
+        std::fs::create_dir_all(&base).unwrap();
+        let raf = base.join("truncated.raf");
+        let mut header = [0u8; 92];
+        header[..16].copy_from_slice(b"FUJIFILMCCD-RAW ");
+        // Claim a 32 MiB embedded JPEG starting at offset 92 inside a 92-byte file
+        header[84..88].copy_from_slice(&92u32.to_be_bytes());
+        header[88..92].copy_from_slice(&(32u32 * 1024 * 1024).to_be_bytes());
+        std::fs::write(&raf, header).unwrap();
+
+        assert!(embedded_jpeg(&raf).is_err());
+        assert!(read_file(&raf).is_err());
+
+        #[cfg(unix)]
+        {
+            let link = base.join("link.raf");
+            std::os::unix::fs::symlink(&raf, &link).unwrap();
+            assert!(embedded_jpeg(&link).is_err());
+        }
+        let _ = std::fs::remove_dir_all(&base);
     }
 }

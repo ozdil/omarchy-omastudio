@@ -2232,6 +2232,10 @@
         <source>no answer from the engine</source>
         <translation>motor yanıt vermedi</translation>
     </message>
+    <message>
+        <source>Open a photo first</source>
+        <translation>Önce bir fotoğraf açın</translation>
+    </message>
 </context>
 <context>
     <name>MasksTab</name>

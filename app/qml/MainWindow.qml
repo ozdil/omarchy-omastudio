@@ -1189,7 +1189,13 @@ Rectangle {
             daemonProc.running = true;
         }
         if (root.daemonReady) {
-            daemonProc.write(JSON.stringify(obj) + "\n");
+            if (!daemonProc.write(JSON.stringify(obj) + "\n")) {
+                console.warn("Engine daemon stdin write failed; re-queueing and restarting daemon");
+                root.daemonReady = false;
+                root.daemonQueue.push(obj);
+                daemonProc.running = false;
+                daemonProc.running = true;
+            }
         } else {
             root.daemonQueue.push(obj);
         }
@@ -1540,11 +1546,22 @@ Rectangle {
             root.handleDaemonMessage(line);
         }
 
+        onStderrLine: function(line) {
+            console.warn("engine:", line);
+        }
+
         onStarted: {
             root.daemonReady = true;
             while (root.daemonQueue.length > 0) {
                 var cmd = root.daemonQueue.shift();
-                daemonProc.write(JSON.stringify(cmd) + "\n");
+                if (!daemonProc.write(JSON.stringify(cmd) + "\n")) {
+                    console.warn("Engine daemon stdin write failed while draining queue");
+                    root.daemonReady = false;
+                    root.daemonQueue.unshift(cmd);
+                    daemonProc.running = false;
+                    daemonProc.running = true;
+                    break;
+                }
             }
         }
 
@@ -1586,7 +1603,14 @@ Rectangle {
         // than one command line argument may be
         stdinEnabled: true
         property string recipeJson: ""
-        onStarted: exportProc.write(exportProc.recipeJson + "\n")
+        onStarted: {
+            if (!exportProc.write(exportProc.recipeJson + "\n")) {
+                exportProc.running = false;
+                root.exportDialog.isExporting = false;
+                root.exportDialog.exportStatusIsError = true;
+                root.exportDialog.exportStatusText = qsTr("Export failed");
+            }
+        }
         onFinished: function(exitCode, output) {
             root.exportDialog.isExporting = false;
             try {
@@ -1638,7 +1662,10 @@ Rectangle {
     function loadStudioCatalog(filterQuery) {
         root.isListingFolder = true;
         filmstrip.currentFolder = "Studio Catalog";
-        var cmd = [root.resolveEnginePath(), "catalog", "list"];
+        var q = String(filterQuery || "").trim();
+        var cmd = q.length > 0
+            ? [root.resolveEnginePath(), "catalog", "query", "--search", q]
+            : [root.resolveEnginePath(), "catalog", "list"];
         listProc.command = cmd;
         listProc.running = true;
     }
@@ -1662,12 +1689,30 @@ Rectangle {
                                 path: it.path,
                                 // Never the original file: only engine-encoded thumbnails reach Qt
                                 thumbnail: it.thumbnail_path || "",
+                                rating: it.rating || 0,
+                                flag: it.flag || "none",
                                 is_remote: false
                             });
                         }
                         root.photoList = arr;
                     } else if (Array.isArray(resp.data)) {
-                        root.photoList = resp.data;
+                        var normalized = [];
+                        for (var j = 0; j < resp.data.length; j++) {
+                            var entry = resp.data[j];
+                            if (entry && entry.name === undefined && entry.path) {
+                                normalized.push({
+                                    name: String(entry.path).split("/").pop(),
+                                    path: entry.path,
+                                    thumbnail: entry.thumbnail_path || "",
+                                    rating: entry.rating || 0,
+                                    flag: entry.flag || "none",
+                                    is_remote: false
+                                });
+                            } else {
+                                normalized.push(entry);
+                            }
+                        }
+                        root.photoList = normalized;
                     }
                 } else if (resp.error) {
                     var cleanMsg = String(resp.error || "").split("\n")[0].substring(0, 80);
@@ -2225,6 +2270,10 @@ Rectangle {
                 root.showToast(root.viewport.isCropMode ? qsTr("Crop mode: on (C)") : qsTr("Crop mode: off"), Theme.accentYellow);
             }
             onExportClicked: {
+                if (root.activePhotoPath === "") {
+                    root.showToast(qsTr("Open a photo first"), Theme.textDim);
+                    return;
+                }
                 root.exportDialog.isBatchMode = false;
                 root.exportDialog.batchCount = 0;
                 root.exportDialog.exportStatusText = "";

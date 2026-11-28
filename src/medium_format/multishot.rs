@@ -14,6 +14,7 @@ pub const FOUR_SHOT: [(usize, usize); 4] = [(0, 0), (0, 1), (1, 1), (1, 0)];
 pub enum Error {
     FrameCount(usize),
     SizeMismatch,
+    InvalidOffset,
 }
 
 impl std::fmt::Display for Error {
@@ -21,6 +22,7 @@ impl std::fmt::Display for Error {
         match self {
             Self::FrameCount(n) => write!(f, "a 4-shot merge needs 4 frames, got {}", n),
             Self::SizeMismatch => write!(f, "the frames differ in size"),
+            Self::InvalidOffset => write!(f, "4-shot offsets must be 0 or 1 photosite"),
         }
     }
 }
@@ -44,12 +46,20 @@ pub fn merge_four(frames: &[Frame], offsets: &[(usize, usize); 4]) -> Result<(Ve
     if frames.len() != 4 {
         return Err(Error::FrameCount(frames.len()));
     }
+    if offsets.iter().any(|&(dy, dx)| dy > 1 || dx > 1) {
+        return Err(Error::InvalidOffset);
+    }
     let (w, h) = (frames[0].width, frames[0].height);
-    if frames.iter().any(|f| f.width != w || f.height != h || f.data.len() < w * h) || w < 2 || h < 2 {
+    if w < 2 || h < 2 {
+        return Err(Error::SizeMismatch);
+    }
+    let pixels = w.checked_mul(h).ok_or(Error::SizeMismatch)?;
+    let out_len = pixels.checked_mul(3).ok_or(Error::SizeMismatch)?;
+    if frames.iter().any(|f| f.width != w || f.height != h || f.data.len() < pixels) {
         return Err(Error::SizeMismatch);
     }
     let (ow, oh) = (w - 1, h - 1);
-    let mut out = vec![0f32; w * h * 3];
+    let mut out = vec![0f32; out_len];
     for y in 0..oh {
         for x in 0..ow {
             let mut sum = [0f32; 3];
@@ -149,5 +159,7 @@ mod tests {
         let f = |w| Frame { data: &plane, width: w, height: 4, color: &rggb };
         assert_eq!(merge_four(&[f(4), f(4)], &FOUR_SHOT).unwrap_err(), Error::FrameCount(2));
         assert_eq!(merge_four(&[f(4), f(4), f(4), f(2)], &FOUR_SHOT).unwrap_err(), Error::SizeMismatch);
+        let bad_offsets = [(0, 0), (0, 2), (1, 1), (1, 0)];
+        assert_eq!(merge_four(&[f(4), f(4), f(4), f(4)], &bad_offsets).unwrap_err(), Error::InvalidOffset);
     }
 }
