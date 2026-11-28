@@ -95,7 +95,7 @@ fn main() {
             let src = Path::new("shaders").join(name);
             let dst = shader_out.join(format!("{name}.qsb"));
             let status = Command::new(&qrhi.qsb)
-                .args(["--glsl", "150,300 es", "--vulkan", "100", "-o"])
+                .args(["--glsl", "150,300 es", "-o"])
                 .arg(&dst)
                 .arg(&src)
                 .status()
