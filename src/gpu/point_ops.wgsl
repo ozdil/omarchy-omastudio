@@ -141,7 +141,7 @@ fn tone(cin: vec3<f32>) -> vec3<f32> {
     } else if (on(P_ACES_TONEMAP)) {
         la = aces_tonemap_encoded(la);
     } else {
-        la = clamp(la, 0.0, 1.5);
+        la = clamp(la, 0.0, 6.0);
     }
 
     let ratio = select(1.0, la / luma, luma > 1e-5);
@@ -364,7 +364,7 @@ fn hsl_mixer(c: vec3<f32>) -> vec3<f32> {
         nc = max(chroma * (1.0 + ds), 0.0);
     }
     let cw = clamp(chroma / 0.12, 0.2, 1.0);
-    let nl = clamp(lab.x + dl * cw, 0.0, 1.5);
+    let nl = clamp(lab.x + dl * cw, 0.0, 6.0);
     return oklab_to_encoded(vec3<f32>(nl, nc * cos(rad), nc * sin(rad)));
 }
 

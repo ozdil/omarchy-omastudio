@@ -43,6 +43,8 @@ Rectangle {
     property int quality: 90
     // 0 = the format's best depth
     property int bitDepth: 0
+    property string hdrMode: "sdr"
+    property real hdrHeadroomStops: 2.0
     property string tiffCompression: "deflate"
     property int scalePercent: 100
     property var maxDimension: null
@@ -99,19 +101,50 @@ Rectangle {
         default: return 8;
         }
     }
+    function hdrOptionsFor(fmt) {
+        var sdrOpt = { "id": "sdr", "label": "SDR", "tip": qsTr("Standard dynamic range with ICC profile") };
+        var pqOpt = { "id": "pq10", "label": "HDR10 PQ", "tip": qsTr("10/12-bit BT.2020 PQ (SMPTE ST 2084, CICP)") };
+        var hlgOpt = { "id": "hlg10", "label": "HLG", "tip": qsTr("10/12-bit BT.2020 Hybrid Log-Gamma (BT.2100, CICP)") };
+        var gmOpt = { "id": "gain_map", "label": qsTr("Gain map"), "tip": qsTr("ISO 21496-1 SDR base with HDR gain map") };
+        var opts = [];
+        if (fmt === "avif") opts = [sdrOpt, pqOpt, hlgOpt, gmOpt];
+        else if (fmt === "jxl" || fmt === "heic") opts = [sdrOpt, pqOpt, hlgOpt];
+        else if (fmt === "jpeg") opts = [sdrOpt, gmOpt];
+        return opts;
+    }
+    readonly property var hdrOptions: hdrOptionsFor(selectedFormat)
+    readonly property bool hasHdrModes: hdrOptions.length > 0
     readonly property int effectiveDepth: depthsFor(selectedFormat).indexOf(bitDepth) >= 0 ? bitDepth : bestDepth(selectedFormat)
     readonly property bool hasQuality: ["jpeg", "webp", "avif", "heic", "jxl"].indexOf(selectedFormat) >= 0
     readonly property bool hasLossless: ["webp", "avif", "heic", "jxl"].indexOf(selectedFormat) >= 0
     readonly property bool statusIsError: exportStatusIsError || exportStatusText.indexOf("[ERR]") === 0
 
-    onSelectedFormatChanged: bitDepth = 0
+    onSelectedFormatChanged: {
+        bitDepth = 0;
+        var supported = false;
+        var opts = hdrOptionsFor(selectedFormat);
+        for (var i = 0; i < opts.length; i++) {
+            if (opts[i].id === hdrMode) { supported = true; break; }
+        }
+        if (!supported) hdrMode = "sdr";
+    }
+    readonly property bool requireHighBitDepth: hdrMode === "pq10" || hdrMode === "hlg10" || (selectedFormat === "avif" && hdrMode === "gain_map")
+    onHdrModeChanged: {
+        if (requireHighBitDepth && effectiveDepth < 10) {
+            bitDepth = 0;
+        }
+    }
 
     function startExport() {
         if (root.isExporting) return;
+        var hdrPayload = root.hdrMode === "gain_map"
+            ? { "mode": "gain_map", "headroom_stops": root.hdrHeadroomStops }
+            : root.hdrMode;
         root.doExport({
             "format": root.selectedFormat,
             "quality": root.quality,
             "bit_depth": root.effectiveDepth,
+            "hdr_mode": hdrPayload,
             "tiff_compression": root.tiffCompression,
             "scale_percent": root.scalePercent,
             "max_dimension": root.maxDimension,
@@ -353,11 +386,39 @@ Rectangle {
 
                     Caption { text: qsTr("Bit depth") }
                     Segmented {
-                        options: root.depthsFor(root.selectedFormat).map(function(d) {
-                            return { "id": d, "label": (root.selectedFormat === "exr" ? (d === 16 ? qsTr("Half float") : qsTr("Full float")) : qsTr("%1-bit").arg(d)) };
-                        })
+                        options: root.depthsFor(root.selectedFormat)
+                            .filter(function(d) {
+                                return !root.requireHighBitDepth || d >= 10;
+                            })
+                            .map(function(d) {
+                                return { "id": d, "label": (root.selectedFormat === "exr" ? (d === 16 ? qsTr("Half float") : qsTr("Full float")) : qsTr("%1-bit").arg(d)) };
+                            })
                         current: root.effectiveDepth
                         onPicked: function(id) { root.bitDepth = id }
+                    }
+
+                    Caption { visible: root.hasHdrModes; text: qsTr("Dynamic range") }
+                    Segmented {
+                        visible: root.hasHdrModes
+                        options: root.hdrOptions
+                        current: root.hdrMode
+                        onPicked: function(id) { root.hdrMode = id }
+                    }
+                    SliderGroup {
+                        visible: root.hasHdrModes && root.hdrMode === "gain_map"
+                        title: qsTr("HDR headroom")
+                        from: 1.0
+                        to: 4.0
+                        stepSize: 0.25
+                        decimals: 2
+                        suffix: " EV"
+                        value: root.hdrHeadroomStops
+                        defaultValue: 2.0
+                        onSliderMoved: function(v) { root.hdrHeadroomStops = Math.round(v * 4) / 4 }
+                    }
+                    Hint {
+                        visible: root.hasHdrModes && (root.hdrMode === "pq10" || root.hdrMode === "hlg10")
+                        text: qsTr("Encoded in BT.2020 with CICP metadata; ignores the SDR ICC profile.")
                     }
 
                     Caption { visible: root.selectedFormat === "tiff"; text: qsTr("Compression") }

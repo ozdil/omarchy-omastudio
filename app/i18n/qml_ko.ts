@@ -988,6 +988,38 @@
         <source>Upload to</source>
         <translation>업로드 위치</translation>
     </message>
+    <message>
+        <source>Dynamic range</source>
+        <translation>다이나믹 레인지</translation>
+    </message>
+    <message>
+        <source>Gain map</source>
+        <translation>게인 맵</translation>
+    </message>
+    <message>
+        <source>Standard dynamic range with ICC profile</source>
+        <translation>ICC 프로필을 포함한 표준 다이나믹 레인지</translation>
+    </message>
+    <message>
+        <source>10/12-bit BT.2020 PQ (SMPTE ST 2084, CICP)</source>
+        <translation>10/12비트 BT.2020 PQ (SMPTE ST 2084, CICP)</translation>
+    </message>
+    <message>
+        <source>10/12-bit BT.2020 Hybrid Log-Gamma (BT.2100, CICP)</source>
+        <translation>10/12비트 BT.2020 하이브리드 로그 감마 (BT.2100, CICP)</translation>
+    </message>
+    <message>
+        <source>ISO 21496-1 SDR base with HDR gain map</source>
+        <translation>HDR 게인 맵이 포함된 ISO 21496-1 SDR 기본 이미지</translation>
+    </message>
+    <message>
+        <source>HDR headroom</source>
+        <translation>HDR 헤드룸</translation>
+    </message>
+    <message>
+        <source>Encoded in BT.2020 with CICP metadata; ignores the SDR ICC profile.</source>
+        <translation>CICP 메타데이터와 함께 BT.2020으로 인코딩되며 SDR ICC 프로필은 무시됩니다.</translation>
+    </message>
 </context>
 <context>
     <name>FilmGrainPanel</name>

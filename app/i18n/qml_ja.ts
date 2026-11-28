@@ -988,6 +988,38 @@
         <source>Upload to</source>
         <translation>アップロード先</translation>
     </message>
+    <message>
+        <source>Dynamic range</source>
+        <translation>ダイナミックレンジ</translation>
+    </message>
+    <message>
+        <source>Gain map</source>
+        <translation>ゲインマップ</translation>
+    </message>
+    <message>
+        <source>Standard dynamic range with ICC profile</source>
+        <translation>ICCプロファイル付き標準ダイナミックレンジ</translation>
+    </message>
+    <message>
+        <source>10/12-bit BT.2020 PQ (SMPTE ST 2084, CICP)</source>
+        <translation>10/12ビット BT.2020 PQ (SMPTE ST 2084, CICP)</translation>
+    </message>
+    <message>
+        <source>10/12-bit BT.2020 Hybrid Log-Gamma (BT.2100, CICP)</source>
+        <translation>10/12ビット BT.2020 ハイブリッドログガンマ (BT.2100, CICP)</translation>
+    </message>
+    <message>
+        <source>ISO 21496-1 SDR base with HDR gain map</source>
+        <translation>HDRゲインマップ付き ISO 21496-1 SDRベース</translation>
+    </message>
+    <message>
+        <source>HDR headroom</source>
+        <translation>HDRヘッドルーム</translation>
+    </message>
+    <message>
+        <source>Encoded in BT.2020 with CICP metadata; ignores the SDR ICC profile.</source>
+        <translation>CICPメタデータ付きBT.2020でエンコードされます。SDRのICCプロファイルは無視されます。</translation>
+    </message>
 </context>
 <context>
     <name>FilmGrainPanel</name>

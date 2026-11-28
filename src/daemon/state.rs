@@ -14,8 +14,10 @@ use super::protocol::FullReady;
 pub struct DaemonCache {
     pub current_path: Option<String>,
     pub raw_buffer_16: Option<Arc<Vec<u16>>>,
+    /// Unclipped scene-linear float preview buffer for EXR / Radiance HDR / float TIFF (`BUG-BE-18`).
+    pub raw_buffer_f32: Option<Arc<Vec<f32>>>,
     pub raw_buffer_8: Option<Arc<Vec<u8>>>,
-    /// Transfer curve of `raw_buffer_16` (linear light for LibRaw decodes).
+    /// Transfer curve of `raw_buffer_16` / `raw_buffer_f32` (linear light).
     pub transfer: Transfer,
     /// The photo's baseline exposure (see `Recipe::baseline_exposure`).
     pub baseline_exposure: f32,
@@ -40,6 +42,7 @@ impl Default for DaemonCache {
         Self {
             current_path: None,
             raw_buffer_16: None,
+            raw_buffer_f32: None,
             raw_buffer_8: None,
             transfer: Transfer::default(),
             baseline_exposure: 0.0,
@@ -56,8 +59,13 @@ impl Default for DaemonCache {
     }
 }
 
+pub enum FullPixels {
+    U16(Vec<u16>),
+    F32(Vec<f32>),
+}
+
 pub struct FullFrame {
-    pub data: Vec<u16>,
+    pub data: FullPixels,
     pub width: usize,
     pub height: usize,
     pub transfer: Transfer,
@@ -94,6 +102,44 @@ pub fn cap_preview(data: &[u16], width: u32, height: u32, channels: u32) -> (Vec
     }
 }
 
+/// Scales an unclipped scene-linear float preview down to [`PREVIEW_MAX_EDGE`] without clamping `> 1.0`.
+pub fn cap_preview_f32(data: &[f32], width: u32, height: u32) -> (Vec<f32>, u32, u32) {
+    let long = width.max(height);
+    if long <= PREVIEW_MAX_EDGE || width == 0 || height == 0 {
+        return (data.to_vec(), width, height);
+    }
+    let scale = PREVIEW_MAX_EDGE as f64 / long as f64;
+    let (nw, nh) = (
+        ((width as f64 * scale).round() as u32).max(1),
+        ((height as f64 * scale).round() as u32).max(1),
+    );
+    let (sw, sh, dw, dh) = (width as usize, height as usize, nw as usize, nh as usize);
+    let mut out = vec![0.0f32; dw * dh * 3];
+    for y in 0..dh {
+        let sy = ((y as f64 + 0.5) * sh as f64 / dh as f64 - 0.5).clamp(0.0, (sh - 1) as f64);
+        let y0 = sy.floor() as usize;
+        let y1 = (y0 + 1).min(sh - 1);
+        let fy = (sy - y0 as f64) as f32;
+        for x in 0..dw {
+            let sx = ((x as f64 + 0.5) * sw as f64 / dw as f64 - 0.5).clamp(0.0, (sw - 1) as f64);
+            let x0 = sx.floor() as usize;
+            let x1 = (x0 + 1).min(sw - 1);
+            let fx = (sx - x0 as f64) as f32;
+            let dst = (y * dw + x) * 3;
+            let p00 = (y0 * sw + x0) * 3;
+            let p10 = (y0 * sw + x1) * 3;
+            let p01 = (y1 * sw + x0) * 3;
+            let p11 = (y1 * sw + x1) * 3;
+            for c in 0..3 {
+                let top = data[p00 + c] * (1.0 - fx) + data[p10 + c] * fx;
+                let bot = data[p01 + c] * (1.0 - fx) + data[p11 + c] * fx;
+                out[dst + c] = top * (1.0 - fy) + bot * fy;
+            }
+        }
+    }
+    (out, nw, nh)
+}
+
 /// Decodes `path` at full resolution on a background thread and stores it in the cache
 /// if that photo is still the current one.
 pub fn spawn_full_decode(cache: Arc<Mutex<DaemonCache>>, path: String) {
@@ -116,12 +162,17 @@ pub fn spawn_full_decode(cache: Arc<Mutex<DaemonCache>>, path: String) {
         if full.channels != 3 {
             return;
         }
+        let data = if let Some(f32_slice) = full.as_slice_f32() {
+            FullPixels::F32(f32_slice.to_vec())
+        } else {
+            FullPixels::U16(full.to_vec_u16())
+        };
         let frame = FullFrame {
             width: full.width as usize,
             height: full.height as usize,
             transfer: full.transfer,
             baseline_exposure,
-            data: full.to_vec_u16(),
+            data,
         };
         let ready = FullReady { path: path.clone(), width: frame.width, height: frame.height };
         let mut c = cache.lock().unwrap_or_else(|e| e.into_inner());
@@ -145,25 +196,33 @@ pub fn retouched_full(
     if spots.is_empty() {
         return full;
     }
+    let FullPixels::U16(ref u16_data) = full.data else {
+        return full;
+    };
     if let Some((base, cached_spots, done)) = &cache.lock().unwrap_or_else(|e| e.into_inner()).full_retouched
         && Arc::ptr_eq(base, &full)
         && cached_spots.as_slice() == spots
     {
         return done.clone();
     }
-    let done = match pipeline::retouch::apply(&full.data, full.width, full.height, 3, spots) {
+    let done = match pipeline::retouch::apply(u16_data, full.width, full.height, 3, spots) {
         std::borrow::Cow::Borrowed(_) => return full,
-        std::borrow::Cow::Owned(data) => Arc::new(FullFrame { data, ..*full }),
+        std::borrow::Cow::Owned(data) => Arc::new(FullFrame {
+            data: FullPixels::U16(data),
+            width: full.width,
+            height: full.height,
+            transfer: full.transfer,
+            baseline_exposure: full.baseline_exposure,
+        }),
     };
     cache.lock().unwrap_or_else(|e| e.into_inner()).full_retouched = Some((full, spots.to_vec(), done.clone()));
     done
 }
 
-/// Pixels of `frame` scaled by `scale`, for the rectangle (x, y, w, h) of the scaled
+/// Pixels of `u16` `frame` scaled by `scale`, for the rectangle (x, y, w, h) of the scaled
 /// frame: box-filtered when reducing, bilinear when enlarging.
-pub fn resample_rect(frame: &FullFrame, scale: f64, rect: (usize, usize, usize, usize)) -> Vec<u16> {
+pub fn resample_rect_u16(data: &[u16], fw: usize, fh: usize, scale: f64, rect: (usize, usize, usize, usize)) -> Vec<u16> {
     let (rx, ry, rw, rh) = rect;
-    let (fw, fh) = (frame.width, frame.height);
     let mut out = vec![0u16; rw * rh * 3];
     out.par_chunks_mut(rw * 3).enumerate().for_each(|(j, row)| {
         let vy = ry + j;
@@ -185,7 +244,7 @@ pub fn resample_rect(frame: &FullFrame, scale: f64, rect: (usize, usize, usize, 
                 for y in y0..y1 {
                     for x in x0..x1 {
                         let k = (y * fw + x) * 3;
-                        for (acc, &v) in sum.iter_mut().zip(&frame.data[k..k + 3]) {
+                        for (acc, &v) in sum.iter_mut().zip(&data[k..k + 3]) {
                             *acc += v as u64;
                         }
                     }
@@ -201,10 +260,61 @@ pub fn resample_rect(frame: &FullFrame, scale: f64, rect: (usize, usize, usize, 
                 let (x1, y1) = ((x0 + 1).min(fw - 1), (y0 + 1).min(fh - 1));
                 let (fx, fy) = (sx - x0 as f64, sy - y0 as f64);
                 for (c, p) in px.iter_mut().enumerate() {
-                    let at = |y: usize, x: usize| frame.data[(y * fw + x) * 3 + c] as f64;
+                    let at = |y: usize, x: usize| data[(y * fw + x) * 3 + c] as f64;
                     let v = (at(y0, x0) * (1.0 - fx) + at(y0, x1) * fx) * (1.0 - fy)
                         + (at(y1, x0) * (1.0 - fx) + at(y1, x1) * fx) * fy;
                     *p = v.round() as u16;
+                }
+            }
+        }
+    });
+    out
+}
+
+/// Unclipped scene-linear `f32` version of [`resample_rect_u16`] preserving HDR `> 1.0` headroom.
+pub fn resample_rect_f32(data: &[f32], fw: usize, fh: usize, scale: f64, rect: (usize, usize, usize, usize)) -> Vec<f32> {
+    let (rx, ry, rw, rh) = rect;
+    let mut out = vec![0.0f32; rw * rh * 3];
+    out.par_chunks_mut(rw * 3).enumerate().for_each(|(j, row)| {
+        let vy = ry + j;
+        for i in 0..rw {
+            let vx = rx + i;
+            let px = &mut row[i * 3..i * 3 + 3];
+            if scale < 1.0 {
+                let (x0, x1) = (
+                    (vx as f64 / scale) as usize,
+                    (((vx + 1) as f64 / scale) as usize).max((vx as f64 / scale) as usize + 1),
+                );
+                let (y0, y1) = (
+                    (vy as f64 / scale) as usize,
+                    (((vy + 1) as f64 / scale) as usize).max((vy as f64 / scale) as usize + 1),
+                );
+                let (x1, y1) = (x1.min(fw), y1.min(fh));
+                let (x0, y0) = (x0.min(x1.saturating_sub(1)), y0.min(y1.saturating_sub(1)));
+                let mut sum = [0.0f64; 3];
+                for y in y0..y1 {
+                    for x in x0..x1 {
+                        let k = (y * fw + x) * 3;
+                        for (acc, &v) in sum.iter_mut().zip(&data[k..k + 3]) {
+                            *acc += v as f64;
+                        }
+                    }
+                }
+                let n = ((x1 - x0) * (y1 - y0)).max(1) as f64;
+                for (p, acc) in px.iter_mut().zip(sum) {
+                    *p = (acc / n) as f32;
+                }
+            } else {
+                let sx = ((vx as f64 + 0.5) / scale - 0.5).clamp(0.0, (fw - 1) as f64);
+                let sy = ((vy as f64 + 0.5) / scale - 0.5).clamp(0.0, (fh - 1) as f64);
+                let (x0, y0) = (sx as usize, sy as usize);
+                let (x1, y1) = ((x0 + 1).min(fw - 1), (y0 + 1).min(fh - 1));
+                let (fx, fy) = (sx - x0 as f64, sy - y0 as f64);
+                for (c, p) in px.iter_mut().enumerate() {
+                    let at = |y: usize, x: usize| data[(y * fw + x) * 3 + c] as f64;
+                    let v = (at(y0, x0) * (1.0 - fx) + at(y0, x1) * fx) * (1.0 - fy)
+                        + (at(y1, x0) * (1.0 - fx) + at(y1, x1) * fx) * fy;
+                    *p = v as f32;
                 }
             }
         }

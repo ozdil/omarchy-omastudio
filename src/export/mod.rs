@@ -1,9 +1,12 @@
 pub mod watermark;
 pub mod exif;
+pub mod hdr;
 pub mod tiff_writer;
 
+pub use hdr::HdrMode;
+
 use crate::icc::{self, ExportProfile, RenderingIntent};
-use crate::pipeline::render_16;
+use crate::pipeline::{render_16, render_16_to_f32, render_f32_to_16, render_f32_to_f32};
 use crate::raw::{OutputColorSpace, RawImage};
 use crate::recipe::Recipe;
 use crate::security::{run_bounded_command, secure_command, secure_command_with_mem_limit};
@@ -21,6 +24,8 @@ pub struct ExportOptions {
     pub quality: u32,   // 1 to 100 (100 = lossless where the format has it)
     /// Bits per channel; 0 picks the format's best. See [`effective_bit_depth`].
     pub bit_depth: u8,
+    /// Dynamic range output mode: SDR (default), PQ10/HLG10 CICP HDR, or ISO 21496-1 Gain Map.
+    pub hdr_mode: HdrMode,
     /// TIFF compression: "none", "lzw" or "deflate".
     pub tiff_compression: String,
     pub scale_percent: u32, // 25, 50, 75, 100
@@ -44,6 +49,7 @@ impl Default for ExportOptions {
             format: "jxl".to_string(),
             quality: 90,
             bit_depth: 0,
+            hdr_mode: HdrMode::Sdr,
             tiff_compression: "deflate".to_string(),
             scale_percent: 100,
             max_dimension: None,
@@ -65,43 +71,6 @@ pub fn export_photo<P: AsRef<Path>>(
     options: &ExportOptions,
 ) -> Result<PathBuf, String> {
     let mut prof = crate::pipeline::Profile::start();
-    let raw = RawImage::open(&raw_path)
-        .map_err(|e| format!("Could not open RAW for export: {}", e))?;
-    prof.mark("open");
-
-    // Render straight into the requested space when the decoder can (built-in spaces
-    // from a RAW), otherwise into a built-in space lcms2 converts from: ProPhoto for
-    // custom profiles so nothing is clipped first, sRGB for raster sources.
-    let target = options.icc_profile.as_deref().map(ExportProfile::resolve).transpose()?;
-    let render_space = match &target {
-        Some(ExportProfile::Builtin(space)) => *space,
-        Some(ExportProfile::Custom { .. } | ExportProfile::AcesCg) => OutputColorSpace::ProPhotoRgb,
-        None => OutputColorSpace::Srgb,
-    };
-    let decoded_space = if raw.set_output_space(render_space) { render_space } else { OutputColorSpace::Srgb };
-
-    // Demosaic at high quality with full 16-bit depth (48-bit RGB)
-    let processed = raw.process_full_16(3)
-        .map_err(|e| format!("Failed to demosaic full resolution 16-bit: {}", e))?;
-    prof.mark("decode");
-    // Measured on this development, not a second half-size one: a photo already
-    // measured (by its preview in the app) keeps that value
-    let recipe = &Recipe { baseline_exposure: raw.baseline_exposure_from(&processed), ..recipe.clone() };
-    prof.mark("baseline");
-
-    let mut final_buf = render_16(
-        processed.as_slice_u16(),
-        processed.width,
-        processed.height,
-        processed.channels,
-        recipe,
-        processed.transfer,
-    );
-    let (width, height) = (processed.width, processed.height);
-    prof.mark("render");
-    // A 100 MP frame is 600 MB at 16 bits; free the decode before encoding starts
-    drop(processed);
-    prof.mark("free_decode");
 
     let fmt = options.format.to_lowercase();
     let fmt = match fmt.as_str() {
@@ -110,79 +79,44 @@ pub fn export_photo<P: AsRef<Path>>(
         "heif" => "heic".to_string(),
         _ => fmt,
     };
-    let depth = effective_bit_depth(&fmt, options.bit_depth);
-    let source_profile = icc::builtin_profile(decoded_space);
+    hdr::validate_hdr_mode(&fmt, options.hdr_mode)?;
+    let depth = hdr::effective_hdr_bit_depth(&fmt, effective_bit_depth(&fmt, options.bit_depth), options.hdr_mode);
 
-    // OpenEXR is scene-linear float: its conversion runs at encode time, straight from
-    // the decoded space, so nothing is quantised to a display curve in between.
-    let exr_target = if fmt == "exr" {
-        let target = target.as_ref().map_or(Ok(ExportProfile::Builtin(OutputColorSpace::Srgb)), |t| match t {
-            ExportProfile::Builtin(space) => Ok(ExportProfile::Builtin(*space)),
-            ExportProfile::AcesCg => Ok(ExportProfile::AcesCg),
-            ExportProfile::Custom { .. } => t.linear().map(|_| ExportProfile::AcesCg),
-        })?;
-        Some(target.linear()?)
-    } else {
-        None
+    let raw = RawImage::open(&raw_path)
+        .map_err(|e| format!("Could not open RAW for export: {}", e))?;
+    prof.mark("open");
+
+    // Render straight into the requested space when the decoder can (built-in spaces
+    // from a RAW), otherwise into a built-in space lcms2 converts from: ProPhoto for
+    // custom profiles so nothing is clipped first, sRGB for raster sources.
+    let target = options.icc_profile.as_deref().map(ExportProfile::resolve).transpose()?;
+    let render_space = match options.hdr_mode {
+        HdrMode::Pq10 | HdrMode::Hlg10 => OutputColorSpace::Rec2020,
+        HdrMode::GainMap { .. } => OutputColorSpace::Srgb,
+        HdrMode::Sdr => match &target {
+            Some(ExportProfile::Builtin(space)) => *space,
+            Some(ExportProfile::Custom { .. } | ExportProfile::AcesCg) => OutputColorSpace::ProPhotoRgb,
+            None => OutputColorSpace::Srgb,
+        },
     };
+    let decoded_space = if raw.set_output_space(render_space) { render_space } else { OutputColorSpace::Srgb };
 
-    let icc_bytes = match (&target, &exr_target) {
-        (_, Some(_)) | (None, _) => None,
-        (Some(target), None) => {
-            match target {
-                ExportProfile::Builtin(space) if *space == decoded_space => {}
-                ExportProfile::Builtin(space) => {
-                    icc::convert_rgb16(&mut final_buf, &source_profile, &icc::builtin_profile(*space), options.rendering_intent)?
-                }
-                ExportProfile::AcesCg => {
-                    icc::convert_rgb16(&mut final_buf, &source_profile, &icc::acescg_profile(), options.rendering_intent)?
-                }
-                ExportProfile::Custom { profile, .. } => {
-                    icc::convert_rgb16(&mut final_buf, &source_profile, profile, options.rendering_intent)?
-                }
-            }
-            Some(target.icc_bytes()?)
-        }
-    };
-    let icc_bytes = icc_bytes.as_deref();
-    prof.mark("icc");
+    // Demosaic at high quality with full 16-bit depth (or unclipped f32 for HDR raster sources)
+    let processed = raw.process_full_16(3)
+        .map_err(|e| format!("Failed to demosaic full resolution 16-bit: {}", e))?;
+    prof.mark("decode");
+    // Measured on this development, not a second half-size one: a photo already
+    // measured (by its preview in the app) keeps that value
+    let recipe = &Recipe { baseline_exposure: raw.baseline_exposure_from(&processed), ..recipe.clone() };
+    prof.mark("baseline");
 
-    // Convert to 16-bit ImageBuffer
-    let img: ImageBuffer<Rgb<u16>, Vec<u16>> = ImageBuffer::from_raw(width, height, final_buf)
-        .ok_or_else(|| "Failed to construct 16-bit ImageBuffer from processed data".to_string())?;
-    let mut dyn_img = DynamicImage::ImageRgb16(img);
-
-    dyn_img = apply_geometry(dyn_img, recipe);
-    prof.mark("geometry");
-
-    // Apply scaling / resizing
-    let cur_w = dyn_img.width();
-    let cur_h = dyn_img.height();
-    if let Some(max_dim) = options.max_dimension {
-        if cur_w > max_dim || cur_h > max_dim {
-            dyn_img = dyn_img.resize(max_dim, max_dim, image::imageops::FilterType::Lanczos3);
-        }
-    } else if options.scale_percent < 100 && options.scale_percent > 0 {
-        let new_w = ((cur_w as u64 * options.scale_percent as u64) / 100).max(1) as u32;
-        let new_h = ((cur_h as u64 * options.scale_percent as u64) / 100).max(1) as u32;
-        dyn_img = dyn_img.resize_exact(new_w, new_h, image::imageops::FilterType::Lanczos3);
-    }
-
-    prof.mark("resize");
-    // Apply Watermark if enabled
-    if let Some(ref wm) = options.watermark {
-        let meta_opt = raw.get_metadata().ok();
-        watermark::apply_watermark(&mut dyn_img, wm, meta_opt.as_ref());
-    }
-
-    // Resolve output directory
+    // Resolve output directory early so both HDR/EXR and SDR paths share destination setup
     let expanded_dir = if options.output_dir.starts_with("~/") {
         let home = std::env::var("HOME").unwrap_or_else(|_| ".".to_string());
         PathBuf::from(home).join(&options.output_dir[2..])
     } else {
         PathBuf::from(&options.output_dir)
     };
-
     // User-chosen folder: may be a symlink or an external mount; permissions untouched
     crate::security::SecureDir::open_user_dir(&expanded_dir)
         .map_err(|e| format!("Failed to create export directory: {}", e))?;
@@ -192,7 +126,6 @@ pub fn export_photo<P: AsRef<Path>>(
         .file_stem()
         .and_then(|s| s.to_str())
         .unwrap_or("photo");
-
     let ext = match fmt.as_str() {
         "jpeg" => "jpg",
         "tiff" => "tif",
@@ -203,182 +136,449 @@ pub fn export_photo<P: AsRef<Path>>(
         _ => format!("{}_omastudio.{}", stem, ext),
     };
     let final_dest = expanded_dir.join(&out_filename);
-
-    // Pixels at the chosen depth: 8-bit for 8, 16-bit for everything above (AVIF and
-    // HEIF encoders reduce 16-bit PNG input to 10/12 bits themselves).
-    let dyn_img = if depth <= 8 && fmt != "exr" {
-        DynamicImage::ImageRgb8(dyn_img.to_rgb8())
-    } else {
-        dyn_img
-    };
-    let dyn_img_size = (dyn_img.width(), dyn_img.height());
-    // Camera metadata the TIFF and JPEG writers embed themselves (Fujifilm RAF sources);
-    // everything else is copied by exiftool afterwards
-    let artist = options.artist_copyright.as_deref().filter(|a| !a.trim().is_empty());
-    let srgb = options.icc_profile.as_deref().is_none_or(|p| p.eq_ignore_ascii_case("srgb"));
-    let own_exif = if options.preserve_exif {
-        exif::from_raf(raw_path.as_ref())
-    } else {
-        artist.map(|_| exif::Exif::default())
-    }
-    .map(|e| {
-        e.adjusted(&exif::Adjust {
-            strip_gps: options.strip_gps,
-            srgb,
-            artist,
-            width: dyn_img_size.0,
-            height: dyn_img_size.1,
-        })
-    });
-    let mut exif_written = false;
     let quality = options.quality.clamp(1, 100);
-    prof.mark("watermark+depth");
+    let artist = options.artist_copyright.as_deref().filter(|a| !a.trim().is_empty());
 
-    match fmt.as_str() {
-        "jxl" => {
-            let tmp = TempPng::write(&expanded_dir, stem, &dyn_img, icc_bytes)?;
-            let stage = StagedOutput::new(&final_dest, ext);
-            // cjxl carries the PNG's iCCP profile and bit depth into the JXL file;
-            // distance 0 is mathematically lossless
-            let distance = if quality >= 100 { "0".to_string() } else { ((100 - quality) as f32 / 10.0).to_string() };
-            let mut cmd = secure_command("cjxl");
-            // The ISOBMFF container lets exiftool add the camera's Exif box below; a bare
-            // codestream cannot carry metadata
-            cmd.arg("-d").arg(&distance).arg("-e").arg("7").arg("--container=1")
-                .arg("--").arg(&tmp.0).arg(stage.stage_path());
-            run_encoder(cmd, "cjxl", 120)?;
-            stage.commit()?;
-        }
-        "avif" => {
-            let tmp = TempPng::write(&expanded_dir, stem, &dyn_img, icc_bytes)?;
-            let stage = StagedOutput::new(&final_dest, ext);
-            let mut cmd = secure_command("avifenc");
-            cmd.arg("-s").arg("4").arg("-d").arg(depth.to_string());
-            if quality >= 100 {
-                cmd.arg("--lossless");
-            } else {
-                cmd.arg("-q").arg(quality.to_string());
-            }
-            cmd.arg("--").arg(&tmp.0).arg(stage.stage_path());
-            // A missing avifenc falls through to ffmpeg, not abort the export
-            if run_encoder(cmd, "avifenc", 120).is_err() {
-                let _ = fs::remove_file(stage.stage_path());
-                let mut f_cmd = secure_command("ffmpeg");
-                for arg in build_ffmpeg_avif_args(&tmp.0, stage.stage_path(), depth, quality) {
-                    f_cmd.arg(arg);
-                }
-                let ff_ok = run_bounded_command(f_cmd, Duration::from_secs(60))
-                    .map(|(code, _, _)| code == 0)
-                    .unwrap_or(false);
-                if !ff_ok || !stage.stage_path().exists() {
-                    return Err("AVIF export failed: neither avifenc nor ffmpeg (libsvtav1) succeeded".to_string());
-                }
-            }
-            stage.commit()?;
-        }
-        "heic" => {
-            let tmp = TempPng::write(&expanded_dir, stem, &dyn_img, icc_bytes)?;
-            let stage = StagedOutput::new(&final_dest, ext);
-            // heif-enc (libheif) with x265; the PNG's ICC profile is carried over
-            let mut cmd = secure_command("heif-enc");
-            if quality >= 100 {
-                cmd.arg("--lossless");
-            } else {
-                cmd.arg("-q").arg(quality.to_string());
-            }
-            cmd.arg("-b").arg(depth.to_string()).arg("-o").arg(stage.stage_path()).arg("--").arg(&tmp.0);
-            run_encoder(cmd, "heif-enc", 180)?;
-            stage.commit()?;
-        }
-        "webp" => {
-            // Lossy WebP comes from cwebp (libwebp-utils), which keeps the ICC profile.
-            // Quality 100 uses the built-in lossless encoder. A missing cwebp is an error:
-            // falling back to lossless would silently write files many times larger.
-            if quality < 100 {
-                let tmp = TempPng::write(&expanded_dir, stem, &dyn_img, icc_bytes)?;
-                let stage = StagedOutput::new(&final_dest, ext);
-                let mut cmd = secure_command("cwebp");
-                cmd.arg("-q").arg(quality.to_string()).arg("-m").arg("6").arg("-metadata").arg("icc")
-                    .arg("-o").arg(stage.stage_path()).arg("--").arg(&tmp.0);
-                run_encoder(cmd, "cwebp", 120).map_err(|e| {
-                    format!("{}. Install libwebp-utils, or export at quality 100 for lossless WebP.", e)
-                })?;
-                stage.commit()?;
-            } else {
-                let mut buf = Vec::new();
-                let mut encoder = image::codecs::webp::WebPEncoder::new_lossless(&mut buf);
-                set_icc(&mut encoder, icc_bytes)?;
-                dyn_img.write_with_encoder(encoder)
-                    .map_err(|e| format!("Failed to encode WebP: {}", e))?;
-                crate::security::atomic_write_user(&final_dest, &buf)
-                    .map_err(|e| format!("Failed to securely write WebP file: {}", e))?;
-            }
-        }
-        "tiff" => {
-            let write_err = |e: std::io::Error| format!("Failed to securely write TIFF file: {}", e);
-            match tiff_codec(&options.tiff_compression) {
-                Some(codec) => {
-                    let rgb16;
-                    let rgb8;
-                    let samples = match (&dyn_img, depth <= 8) {
-                        (DynamicImage::ImageRgb8(img), true) => tiff_writer::Samples::U8(img.as_raw()),
-                        (DynamicImage::ImageRgb16(img), false) => tiff_writer::Samples::U16(img.as_raw()),
-                        (img, true) => {
-                            rgb8 = img.to_rgb8();
-                            tiff_writer::Samples::U8(rgb8.as_raw())
-                        }
-                        (img, false) => {
-                            rgb16 = img.to_rgb16();
-                            tiff_writer::Samples::U16(rgb16.as_raw())
-                        }
-                    };
-                    let parts = tiff_writer::build(dyn_img.width(), dyn_img.height(), samples, codec, icc_bytes, own_exif.as_ref())?;
-                    exif_written = own_exif.is_some();
-                    prof.mark("encode");
-                    crate::security::atomic_write_user_parts(&final_dest, &parts.slices()).map_err(write_err)?;
-                }
-                None => {
-                    let buf = encode_tiff(&dyn_img, depth, &options.tiff_compression, icc_bytes)?;
-                    prof.mark("encode");
-                    crate::security::atomic_write_user(&final_dest, &buf).map_err(write_err)?;
-                }
-            }
-        }
-        "png" => {
-            let buf = encode_png(&dyn_img, icc_bytes)?;
-            crate::security::atomic_write_user(&final_dest, &buf)
-                .map_err(|e| format!("Failed to securely write PNG file: {}", e))?;
-        }
-        "jpeg" => {
-            let mut buf = std::io::Cursor::new(Vec::new());
-            {
-                let mut encoder = image::codecs::jpeg::JpegEncoder::new_with_quality(&mut buf, quality as u8);
-                set_icc(&mut encoder, icc_bytes)?;
-                dyn_img.write_with_encoder(encoder)
-                    .map_err(|e| format!("Failed to encode JPEG: {}", e))?;
-            }
-            let mut buf = buf.into_inner();
-            if let Some(seg) = own_exif.as_ref().and_then(exif::Exif::app1) {
-                buf = exif::insert_app1(buf, &seg);
-                exif_written = true;
-            }
-            prof.mark("encode");
-            crate::security::atomic_write_user(&final_dest, &buf)
-                .map_err(|e| format!("Failed to securely write JPEG file: {}", e))?;
-        }
-        "exr" => {
-            let (linear, chroma) = exr_target.as_ref().ok_or("OpenEXR target missing")?;
-            let rgb16 = dyn_img.to_rgb16();
-            let pixels = icc::convert_rgb16_to_f32(rgb16.as_raw(), &source_profile, linear, options.rendering_intent)?;
-            let buf = encode_exr(rgb16.width(), rgb16.height(), &pixels, depth, *chroma)?;
+    let mut exif_written = false;
+    let dyn_img_size: (u32, u32);
+
+    // Unclipped float export path for OpenEXR, CICP PQ10/HLG10 HDR, and ISO 21496-1 Gain Map.
+    if fmt == "exr" || options.hdr_mode.is_hdr() {
+        let transfer = processed.transfer;
+        let (width, height) = (processed.width, processed.height);
+        let f32_display = if let Some(f32_slice) = processed.as_slice_f32() {
+            render_f32_to_f32(f32_slice, width, height, processed.channels, recipe, transfer)
+        } else {
+            render_16_to_f32(processed.as_slice_u16(), width, height, processed.channels, recipe, transfer)
+        };
+        prof.mark("render");
+        drop(processed);
+        prof.mark("free_decode");
+
+        let (f32_display, out_w, out_h) = hdr::apply_geometry_f32(f32_display, width, height, recipe);
+        prof.mark("geometry");
+        let (f32_display, out_w, out_h) = hdr::resize_f32(
+            f32_display,
+            out_w,
+            out_h,
+            options.max_dimension,
+            options.scale_percent,
+        );
+        prof.mark("resize");
+        dyn_img_size = (out_w, out_h);
+
+        if fmt == "exr" {
+            let chroma = match target.as_ref() {
+                None => icc::primaries(OutputColorSpace::Srgb),
+                Some(ExportProfile::Builtin(space)) => icc::primaries(*space),
+                Some(ExportProfile::AcesCg) => icc::ACES_AP1,
+                Some(custom @ ExportProfile::Custom { .. }) => custom.linear()?.1,
+            };
+            let linear_px = hdr::linearize_and_convert_f32(&f32_display, transfer, decoded_space, chroma);
+            let buf = encode_exr(out_w, out_h, &linear_px, depth, chroma)?;
             crate::security::atomic_write_user(&final_dest, &buf)
                 .map_err(|e| format!("Failed to securely write OpenEXR file: {}", e))?;
+        } else if matches!(options.hdr_mode, HdrMode::Pq10 | HdrMode::Hlg10) {
+            let linear_rec2020 = hdr::linearize_and_convert_f32(
+                &f32_display,
+                transfer,
+                decoded_space,
+                icc::primaries(OutputColorSpace::Rec2020),
+            );
+            let hdr_16 = hdr::encode_hdr_16_from_linear_rec2020(&linear_rec2020, options.hdr_mode);
+            let hdr_buf: ImageBuffer<Rgb<u16>, Vec<u16>> = ImageBuffer::from_raw(out_w, out_h, hdr_16)
+                .ok_or_else(|| "Failed to construct 16-bit HDR ImageBuffer".to_string())?;
+            let mut hdr_img = DynamicImage::ImageRgb16(hdr_buf);
+            if let Some(ref wm) = options.watermark {
+                let meta_opt = raw.get_metadata().ok();
+                watermark::apply_watermark(&mut hdr_img, wm, meta_opt.as_ref());
+            }
+            // Do not embed an sRGB iCCP chunk in PQ/HLG intermediate PNGs: CICP defines the space.
+            let tmp = TempPng::write(&expanded_dir, stem, &hdr_img, None)?;
+            let stage = StagedOutput::new(&final_dest, ext);
+            match fmt.as_str() {
+                "avif" => {
+                    let mut cmd = secure_command("avifenc");
+                    for arg in hdr::build_avifenc_args(&tmp.0, stage.stage_path(), depth, quality, options.hdr_mode) {
+                        cmd.arg(arg);
+                    }
+                    if run_encoder(cmd, "avifenc", 120).is_err() {
+                        let _ = fs::remove_file(stage.stage_path());
+                        let mut f_cmd = secure_command("ffmpeg");
+                        for arg in hdr::build_ffmpeg_avif_args(&tmp.0, stage.stage_path(), depth, quality, options.hdr_mode) {
+                            f_cmd.arg(arg);
+                        }
+                        let ff_ok = run_bounded_command(f_cmd, Duration::from_secs(60))
+                            .map(|(code, _, _)| code == 0)
+                            .unwrap_or(false);
+                        if !ff_ok || !stage.stage_path().exists() {
+                            return Err("HDR AVIF export failed: neither avifenc nor ffmpeg (libsvtav1) succeeded".to_string());
+                        }
+                    }
+                    stage.commit()?;
+                }
+                "jxl" => {
+                    let mut cmd = secure_command("cjxl");
+                    for arg in hdr::build_cjxl_args(&tmp.0, stage.stage_path(), quality, options.hdr_mode) {
+                        cmd.arg(arg);
+                    }
+                    run_encoder(cmd, "cjxl", 120)?;
+                    stage.commit()?;
+                }
+                "heic" => {
+                    let mut cmd = secure_command("heif-enc");
+                    for arg in hdr::build_heif_enc_args(&tmp.0, stage.stage_path(), depth, quality, options.hdr_mode) {
+                        cmd.arg(arg);
+                    }
+                    run_encoder(cmd, "heif-enc", 180)?;
+                    stage.commit()?;
+                }
+                other => return Err(format!("Unsupported HDR export format: {}", other)),
+            }
+        } else if let HdrMode::GainMap { headroom_stops } = options.hdr_mode {
+            // SDR base image in sRGB (same dimensions & crop/resize as HDR alternate)
+            let mut sdr_u16: Vec<u16> = f32_display
+                .par_iter()
+                .map(|&v| (v.clamp(0.0, 1.0) * 65535.0 + 0.5) as u16)
+                .collect();
+            if decoded_space != OutputColorSpace::Srgb {
+                icc::convert_rgb16(
+                    &mut sdr_u16,
+                    &icc::builtin_profile(decoded_space),
+                    &icc::builtin_profile(OutputColorSpace::Srgb),
+                    options.rendering_intent,
+                )?;
+            }
+            let sdr_buf: ImageBuffer<Rgb<u16>, Vec<u16>> = ImageBuffer::from_raw(out_w, out_h, sdr_u16)
+                .ok_or_else(|| "Failed to construct 16-bit SDR base ImageBuffer".to_string())?;
+            let mut sdr_img = DynamicImage::ImageRgb16(sdr_buf);
+            if let Some(ref wm) = options.watermark {
+                let meta_opt = raw.get_metadata().ok();
+                watermark::apply_watermark(&mut sdr_img, wm, meta_opt.as_ref());
+            }
+
+            // HDR alternate image in linear BT.2020 -> PQ
+            let linear_rec2020 = hdr::linearize_and_convert_f32(
+                &f32_display,
+                transfer,
+                decoded_space,
+                icc::primaries(OutputColorSpace::Rec2020),
+            );
+            let stage = StagedOutput::new(&final_dest, ext);
+            match fmt.as_str() {
+                "avif" => {
+                    let hdr_16 = hdr::encode_hdr_16_from_linear_rec2020(&linear_rec2020, options.hdr_mode);
+                    let hdr_buf: ImageBuffer<Rgb<u16>, Vec<u16>> = ImageBuffer::from_raw(out_w, out_h, hdr_16)
+                        .ok_or_else(|| "Failed to construct 16-bit HDR alternate ImageBuffer".to_string())?;
+                    let mut hdr_img = DynamicImage::ImageRgb16(hdr_buf);
+                    if let Some(ref wm) = options.watermark {
+                        let meta_opt = raw.get_metadata().ok();
+                        watermark::apply_watermark(&mut hdr_img, wm, meta_opt.as_ref());
+                    }
+                    let tmp_sdr = TempPng::write(&expanded_dir, &format!("{stem}_sdr"), &sdr_img, None)?;
+                    let tmp_hdr = TempPng::write(&expanded_dir, &format!("{stem}_hdr"), &hdr_img, None)?;
+                    let mut cmd = secure_command("avifgainmaputil");
+                    for arg in hdr::build_avifgainmaputil_args(
+                        &tmp_sdr.0,
+                        &tmp_hdr.0,
+                        stage.stage_path(),
+                        depth,
+                        quality,
+                    ) {
+                        cmd.arg(arg);
+                    }
+                    run_encoder(cmd, "avifgainmaputil", 180).map_err(|e| {
+                        format!(
+                            "{}. Install libavif (with avifgainmaputil) for ISO 21496-1 AVIF Gain Map export.",
+                            e
+                        )
+                    })?;
+                    stage.commit()?;
+                }
+                "jpeg" => {
+                    let sdr_rgb8 = DynamicImage::ImageRgb8(sdr_img.to_rgb8());
+                    let srgb_icc = icc::builtin_profile(OutputColorSpace::Srgb).icc().ok();
+                    let own_exif = if options.preserve_exif {
+                        exif::from_raf(raw_path.as_ref())
+                    } else {
+                        artist.map(|_| exif::Exif::default())
+                    }
+                    .map(|e| {
+                        e.adjusted(&exif::Adjust {
+                            strip_gps: options.strip_gps,
+                            srgb: true,
+                            artist,
+                            width: out_w,
+                            height: out_h,
+                        })
+                    });
+                    let mut jpg_cursor = std::io::Cursor::new(Vec::new());
+                    {
+                        let mut encoder = image::codecs::jpeg::JpegEncoder::new_with_quality(&mut jpg_cursor, quality as u8);
+                        set_icc(&mut encoder, srgb_icc.as_deref())?;
+                        sdr_rgb8.write_with_encoder(encoder)
+                            .map_err(|e| format!("Failed to encode SDR base JPEG: {}", e))?;
+                    }
+                    let mut sdr_jpg_bytes = jpg_cursor.into_inner();
+                    if let Some(seg) = own_exif.as_ref().and_then(exif::Exif::app1) {
+                        sdr_jpg_bytes = exif::insert_app1(sdr_jpg_bytes, &seg);
+                        exif_written = true;
+                    }
+                    let hdr_raw_bytes = hdr::pack_rgba1010102_le_from_linear_rec2020(&linear_rec2020, headroom_stops);
+                    let tmp_sdr = TempBytes::write(&expanded_dir, &format!("{stem}_sdr"), "jpg", &sdr_jpg_bytes)?;
+                    let tmp_hdr = TempBytes::write(&expanded_dir, &format!("{stem}_hdr"), "raw", &hdr_raw_bytes)?;
+                    let mut cmd = secure_command("ultrahdr_app");
+                    for arg in hdr::build_ultrahdr_args(
+                        &tmp_hdr.0,
+                        &tmp_sdr.0,
+                        stage.stage_path(),
+                        out_w,
+                        out_h,
+                        quality,
+                    ) {
+                        cmd.arg(arg);
+                    }
+                    run_encoder(cmd, "ultrahdr_app", 180).map_err(|e| {
+                        format!(
+                            "{}. Install libultrahdr (ultrahdr_app) for ISO 21496-1 Ultra HDR JPEG export.",
+                            e
+                        )
+                    })?;
+                    stage.commit()?;
+                }
+                other => return Err(format!("Unsupported Gain Map export format: {}", other)),
+            }
         }
-        _ => return Err(format!("Unsupported export format: {}", fmt)),
+    } else {
+        // Standard SDR export path (16-bit RAW or unclipped float raster rendered to 16-bit SDR).
+        let mut final_buf = if let Some(f32_slice) = processed.as_slice_f32() {
+            render_f32_to_16(
+                f32_slice,
+                processed.width,
+                processed.height,
+                processed.channels,
+                recipe,
+                processed.transfer,
+            )
+        } else {
+            render_16(
+                processed.as_slice_u16(),
+                processed.width,
+                processed.height,
+                processed.channels,
+                recipe,
+                processed.transfer,
+            )
+        };
+        let (width, height) = (processed.width, processed.height);
+        prof.mark("render");
+        // A 100 MP frame is 600 MB at 16 bits; free the decode before encoding starts
+        drop(processed);
+        prof.mark("free_decode");
+
+        let source_profile = icc::builtin_profile(decoded_space);
+        let icc_bytes = match &target {
+            None => None,
+            Some(target) => {
+                match target {
+                    ExportProfile::Builtin(space) if *space == decoded_space => {}
+                    ExportProfile::Builtin(space) => {
+                        icc::convert_rgb16(&mut final_buf, &source_profile, &icc::builtin_profile(*space), options.rendering_intent)?
+                    }
+                    ExportProfile::AcesCg => {
+                        icc::convert_rgb16(&mut final_buf, &source_profile, &icc::acescg_profile(), options.rendering_intent)?
+                    }
+                    ExportProfile::Custom { profile, .. } => {
+                        icc::convert_rgb16(&mut final_buf, &source_profile, profile, options.rendering_intent)?
+                    }
+                }
+                Some(target.icc_bytes()?)
+            }
+        };
+        let icc_bytes = icc_bytes.as_deref();
+        prof.mark("icc");
+
+        // Convert to 16-bit ImageBuffer
+        let img: ImageBuffer<Rgb<u16>, Vec<u16>> = ImageBuffer::from_raw(width, height, final_buf)
+            .ok_or_else(|| "Failed to construct 16-bit ImageBuffer from processed data".to_string())?;
+        let mut dyn_img = DynamicImage::ImageRgb16(img);
+
+        dyn_img = apply_geometry(dyn_img, recipe);
+        prof.mark("geometry");
+
+        // Apply scaling / resizing
+        let cur_w = dyn_img.width();
+        let cur_h = dyn_img.height();
+        if let Some(max_dim) = options.max_dimension {
+            if cur_w > max_dim || cur_h > max_dim {
+                dyn_img = dyn_img.resize(max_dim, max_dim, image::imageops::FilterType::Lanczos3);
+            }
+        } else if options.scale_percent < 100 && options.scale_percent > 0 {
+            let new_w = ((cur_w as u64 * options.scale_percent as u64) / 100).max(1) as u32;
+            let new_h = ((cur_h as u64 * options.scale_percent as u64) / 100).max(1) as u32;
+            dyn_img = dyn_img.resize_exact(new_w, new_h, image::imageops::FilterType::Lanczos3);
+        }
+
+        prof.mark("resize");
+        // Apply Watermark if enabled
+        if let Some(ref wm) = options.watermark {
+            let meta_opt = raw.get_metadata().ok();
+            watermark::apply_watermark(&mut dyn_img, wm, meta_opt.as_ref());
+        }
+
+        // Pixels at the chosen depth: 8-bit for 8, 16-bit for everything above (AVIF and
+        // HEIF encoders reduce 16-bit PNG input to 10/12 bits themselves).
+        let dyn_img = if depth <= 8 {
+            DynamicImage::ImageRgb8(dyn_img.to_rgb8())
+        } else {
+            dyn_img
+        };
+        dyn_img_size = (dyn_img.width(), dyn_img.height());
+        // Camera metadata the TIFF and JPEG writers embed themselves (Fujifilm RAF sources);
+        // everything else is copied by exiftool afterwards
+        let srgb = options.icc_profile.as_deref().is_none_or(|p| p.eq_ignore_ascii_case("srgb"));
+        let own_exif = if options.preserve_exif {
+            exif::from_raf(raw_path.as_ref())
+        } else {
+            artist.map(|_| exif::Exif::default())
+        }
+        .map(|e| {
+            e.adjusted(&exif::Adjust {
+                strip_gps: options.strip_gps,
+                srgb,
+                artist,
+                width: dyn_img_size.0,
+                height: dyn_img_size.1,
+            })
+        });
+        prof.mark("watermark+depth");
+
+        match fmt.as_str() {
+            "jxl" => {
+                let tmp = TempPng::write(&expanded_dir, stem, &dyn_img, icc_bytes)?;
+                let stage = StagedOutput::new(&final_dest, ext);
+                let mut cmd = secure_command("cjxl");
+                for arg in hdr::build_cjxl_args(&tmp.0, stage.stage_path(), quality, HdrMode::Sdr) {
+                    cmd.arg(arg);
+                }
+                run_encoder(cmd, "cjxl", 120)?;
+                stage.commit()?;
+            }
+            "avif" => {
+                let tmp = TempPng::write(&expanded_dir, stem, &dyn_img, icc_bytes)?;
+                let stage = StagedOutput::new(&final_dest, ext);
+                let mut cmd = secure_command("avifenc");
+                for arg in hdr::build_avifenc_args(&tmp.0, stage.stage_path(), depth, quality, HdrMode::Sdr) {
+                    cmd.arg(arg);
+                }
+                // A missing avifenc falls through to ffmpeg, not abort the export
+                if run_encoder(cmd, "avifenc", 120).is_err() {
+                    let _ = fs::remove_file(stage.stage_path());
+                    let mut f_cmd = secure_command("ffmpeg");
+                    for arg in hdr::build_ffmpeg_avif_args(&tmp.0, stage.stage_path(), depth, quality, HdrMode::Sdr) {
+                        f_cmd.arg(arg);
+                    }
+                    let ff_ok = run_bounded_command(f_cmd, Duration::from_secs(60))
+                        .map(|(code, _, _)| code == 0)
+                        .unwrap_or(false);
+                    if !ff_ok || !stage.stage_path().exists() {
+                        return Err("AVIF export failed: neither avifenc nor ffmpeg (libsvtav1) succeeded".to_string());
+                    }
+                }
+                stage.commit()?;
+            }
+            "heic" => {
+                let tmp = TempPng::write(&expanded_dir, stem, &dyn_img, icc_bytes)?;
+                let stage = StagedOutput::new(&final_dest, ext);
+                let mut cmd = secure_command("heif-enc");
+                for arg in hdr::build_heif_enc_args(&tmp.0, stage.stage_path(), depth, quality, HdrMode::Sdr) {
+                    cmd.arg(arg);
+                }
+                run_encoder(cmd, "heif-enc", 180)?;
+                stage.commit()?;
+            }
+            "webp" => {
+                // Lossy WebP comes from cwebp (libwebp-utils), which keeps the ICC profile.
+                // Quality 100 uses the built-in lossless encoder. A missing cwebp is an error:
+                // falling back to lossless would silently write files many times larger.
+                if quality < 100 {
+                    let tmp = TempPng::write(&expanded_dir, stem, &dyn_img, icc_bytes)?;
+                    let stage = StagedOutput::new(&final_dest, ext);
+                    let mut cmd = secure_command("cwebp");
+                    cmd.arg("-q").arg(quality.to_string()).arg("-m").arg("6").arg("-metadata").arg("icc")
+                        .arg("-o").arg(stage.stage_path()).arg("--").arg(&tmp.0);
+                    run_encoder(cmd, "cwebp", 120).map_err(|e| {
+                        format!("{}. Install libwebp-utils, or export at quality 100 for lossless WebP.", e)
+                    })?;
+                    stage.commit()?;
+                } else {
+                    let mut buf = Vec::new();
+                    let mut encoder = image::codecs::webp::WebPEncoder::new_lossless(&mut buf);
+                    set_icc(&mut encoder, icc_bytes)?;
+                    dyn_img.write_with_encoder(encoder)
+                        .map_err(|e| format!("Failed to encode WebP: {}", e))?;
+                    crate::security::atomic_write_user(&final_dest, &buf)
+                        .map_err(|e| format!("Failed to securely write WebP file: {}", e))?;
+                }
+            }
+            "tiff" => {
+                let write_err = |e: std::io::Error| format!("Failed to securely write TIFF file: {}", e);
+                match tiff_codec(&options.tiff_compression) {
+                    Some(codec) => {
+                        let rgb16;
+                        let rgb8;
+                        let samples = match (&dyn_img, depth <= 8) {
+                            (DynamicImage::ImageRgb8(img), true) => tiff_writer::Samples::U8(img.as_raw()),
+                            (DynamicImage::ImageRgb16(img), false) => tiff_writer::Samples::U16(img.as_raw()),
+                            (img, true) => {
+                                rgb8 = img.to_rgb8();
+                                tiff_writer::Samples::U8(rgb8.as_raw())
+                            }
+                            (img, false) => {
+                                rgb16 = img.to_rgb16();
+                                tiff_writer::Samples::U16(rgb16.as_raw())
+                            }
+                        };
+                        let parts = tiff_writer::build(dyn_img.width(), dyn_img.height(), samples, codec, icc_bytes, own_exif.as_ref())?;
+                        exif_written = own_exif.is_some();
+                        prof.mark("encode");
+                        crate::security::atomic_write_user_parts(&final_dest, &parts.slices()).map_err(write_err)?;
+                    }
+                    None => {
+                        let buf = encode_tiff(&dyn_img, depth, &options.tiff_compression, icc_bytes)?;
+                        prof.mark("encode");
+                        crate::security::atomic_write_user(&final_dest, &buf).map_err(write_err)?;
+                    }
+                }
+            }
+            "png" => {
+                let buf = encode_png(&dyn_img, icc_bytes)?;
+                crate::security::atomic_write_user(&final_dest, &buf)
+                    .map_err(|e| format!("Failed to securely write PNG file: {}", e))?;
+            }
+            "jpeg" => {
+                let mut buf = std::io::Cursor::new(Vec::new());
+                {
+                    let mut encoder = image::codecs::jpeg::JpegEncoder::new_with_quality(&mut buf, quality as u8);
+                    set_icc(&mut encoder, icc_bytes)?;
+                    dyn_img.write_with_encoder(encoder)
+                        .map_err(|e| format!("Failed to encode JPEG: {}", e))?;
+                }
+                let mut buf = buf.into_inner();
+                if let Some(seg) = own_exif.as_ref().and_then(exif::Exif::app1) {
+                    buf = exif::insert_app1(buf, &seg);
+                    exif_written = true;
+                }
+                prof.mark("encode");
+                crate::security::atomic_write_user(&final_dest, &buf)
+                    .map_err(|e| format!("Failed to securely write JPEG file: {}", e))?;
+            }
+            _ => return Err(format!("Unsupported export format: {}", fmt)),
+        }
     }
 
     prof.mark("write");
-    // Copy camera EXIF and GPS settings; the ICC profile is already in the file
+    // Copy camera EXIF and GPS settings; the ICC profile / CICP is already in the file
     if !exif_written && (options.preserve_exif || options.artist_copyright.is_some()) {
         // Enforce 512 MiB RLIMIT_AS ceiling on ExifTool helper to defend against
         // unbounded pointer array allocations (e.g. unchecked APP11/JUMBF sequence numbers)
@@ -393,11 +593,15 @@ pub fn export_photo<P: AsRef<Path>>(
                 // Pixels are already rotated by the decoder; copying the source Orientation
                 // tag would make viewers rotate the export a second time.
                 .arg("-Orientation#=1")
-                // The export carries its own ICC profile; a profile copied from the
+                // The export carries its own ICC profile or CICP; a profile copied from the
                 // camera file would replace it
                 .arg("--ICC_Profile:all");
-            // EXIF can only name sRGB; any other profile is "uncalibrated" there
-            let srgb = options.icc_profile.as_deref().is_none_or(|p| p.eq_ignore_ascii_case("srgb"));
+            // EXIF can only name sRGB; PQ/HLG or wide-gamut profiles are "uncalibrated" there
+            let srgb = match options.hdr_mode {
+                HdrMode::Pq10 | HdrMode::Hlg10 => false,
+                HdrMode::GainMap { .. } => true,
+                HdrMode::Sdr => options.icc_profile.as_deref().is_none_or(|p| p.eq_ignore_ascii_case("srgb")),
+            };
             exif_cmd.arg(if srgb { "-ExifIFD:ColorSpace#=1" } else { "-ExifIFD:ColorSpace#=65535" });
 
             if options.strip_gps {
@@ -553,9 +757,31 @@ impl Drop for TempPng {
     }
 }
 
-/// RAII sibling staging path for external encoders (cjxl, avifenc, ffmpeg, heif-enc, cwebp).
-/// Preserves the target extension so format-inferring encoders work, and atomically renames
-/// into `dest` only on `commit()`. Drops unlink the incomplete stage file on any error.
+/// A temporary binary file handed to an external encoder (e.g. raw RGBA1010102 or SDR JPEG
+/// for `ultrahdr_app`); removed automatically on drop.
+struct TempBytes(PathBuf);
+
+impl TempBytes {
+    fn write(dir: &Path, stem: &str, ext: &str, bytes: &[u8]) -> Result<Self, String> {
+        let nanos = SystemTime::now().duration_since(UNIX_EPOCH).unwrap_or_default().as_nanos();
+        let seq = EXPORT_TEMP_SEQ.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+        let path = dir.join(format!(".tmp_{}_{}_{}_{}.{}", stem, std::process::id(), seq, nanos, ext));
+        crate::security::atomic_write_user(&path, bytes)
+            .map_err(|e| format!("Failed to save temporary {}: {}", ext, e))?;
+        Ok(Self(path))
+    }
+}
+
+impl Drop for TempBytes {
+    fn drop(&mut self) {
+        let _ = fs::remove_file(&self.0);
+    }
+}
+
+/// RAII sibling staging path for external encoders (cjxl, avifenc, ffmpeg, heif-enc, cwebp,
+/// avifgainmaputil, ultrahdr_app). Preserves the target extension so format-inferring encoders
+/// work, and atomically renames into `dest` only on `commit()`. Drops unlink the incomplete
+/// stage file on any error.
 struct StagedOutput {
     stage: PathBuf,
     dest: PathBuf,
@@ -594,36 +820,6 @@ impl Drop for StagedOutput {
             let _ = fs::remove_file(&self.stage);
         }
     }
-}
-
-/// Builds FFmpeg AVIF encoding arguments without `--` (unsupported by FFmpeg), using the
-/// `file:` protocol to guard leading `-` or protocol-like filenames, selecting 10-bit pixel
-/// format for >8-bit depths, and enabling lossless mode at quality 100.
-fn build_ffmpeg_avif_args(input: &Path, output: &Path, depth: u8, quality: u32) -> Vec<String> {
-    let pix_fmt = if depth > 8 { "yuv420p10le" } else { "yuv420p" };
-    let mut args = vec![
-        "-y".to_string(),
-        "-i".to_string(),
-        format!("file:{}", input.display()),
-        "-c:v".to_string(),
-        "libsvtav1".to_string(),
-        "-pix_fmt".to_string(),
-        pix_fmt.to_string(),
-    ];
-    if quality >= 100 {
-        args.push("-crf".to_string());
-        args.push("0".to_string());
-        args.push("-svtav1-params".to_string());
-        args.push("lossless=1".to_string());
-    } else {
-        let crf = (35u32.saturating_sub(quality * 20 / 100)).to_string();
-        args.push("-crf".to_string());
-        args.push(crf);
-    }
-    args.push("-f".to_string());
-    args.push("avif".to_string());
-    args.push(format!("file:{}", output.display()));
-    args
 }
 
 /// Guards relative paths starting with `-` or `@` before handing them to `exiftool`.
@@ -905,14 +1101,14 @@ mod tests {
     fn ffmpeg_avif_args_omit_double_dash_and_honor_depth_and_lossless() {
         let inp = Path::new("/tmp/-in.png");
         let out = Path::new("/tmp/-out.avif");
-        let lossy10 = build_ffmpeg_avif_args(inp, out, 12, 85);
+        let lossy10 = hdr::build_ffmpeg_avif_args(inp, out, 12, 85, HdrMode::Sdr);
         assert!(!lossy10.iter().any(|a| a == "--"), "ffmpeg rejects -- separator");
         assert!(lossy10.contains(&"file:/tmp/-in.png".to_string()));
         assert!(lossy10.contains(&"file:/tmp/-out.avif".to_string()));
         assert!(lossy10.contains(&"yuv420p10le".to_string()));
         assert!(lossy10.contains(&"avif".to_string()));
 
-        let lossless8 = build_ffmpeg_avif_args(inp, out, 8, 100);
+        let lossless8 = hdr::build_ffmpeg_avif_args(inp, out, 8, 100, HdrMode::Sdr);
         assert!(lossless8.contains(&"yuv420p".to_string()));
         assert!(lossless8.contains(&"lossless=1".to_string()));
     }
@@ -946,6 +1142,107 @@ mod tests {
         fs::write(s.stage_path(), b"complete-jxl").unwrap();
         s.commit().unwrap();
         assert_eq!(fs::read(&dest).unwrap(), b"complete-jxl");
+
+        let _ = fs::remove_dir_all(&dir);
+    }
+
+    /// BUG-BE-18: Opening a scene-linear HDR OpenEXR with > 1.0 highlights must preserve
+    /// headroom in preview and allow highlight recovery in both preview and SDR/EXR export.
+    #[test]
+    fn exr_highlight_recovery_and_unclipped_exr_roundtrip() {
+        let dir = std::env::temp_dir().join(format!("omastudio_hdr_exr_test_{}", std::process::id()));
+        let _ = fs::remove_dir_all(&dir);
+        fs::create_dir_all(&dir).unwrap();
+
+        let (w, h) = (16u32, 16u32);
+        let mut src_pixels = Vec::with_capacity((w * h * 3) as usize);
+        for _y in 0..h {
+            for x in 0..w {
+                if x < w / 2 {
+                    // Neutral 2-stop HDR highlight (+2 EV above diffuse white)
+                    src_pixels.extend_from_slice(&[4.0f32, 4.0f32, 4.0f32]);
+                } else {
+                    // Chromatic HDR highlight (R=+2 EV, G=+1 EV, B=-1 EV)
+                    src_pixels.extend_from_slice(&[4.0f32, 2.0f32, 0.5f32]);
+                }
+            }
+        }
+        let exr_bytes = encode_exr(w, h, &src_pixels, 32, icc::primaries(OutputColorSpace::Srgb)).unwrap();
+        let exr_path = dir.join("hdr_plate.exr");
+        fs::write(&exr_path, &exr_bytes).unwrap();
+
+        // 1. Half-size preview stays unclipped f32 with > 1.0 values intact
+        let raw = RawImage::open(&exr_path).unwrap();
+        let preview = raw.process_preview_16(true).unwrap();
+        assert!(preview.is_float(), "EXR preview must stay OwnedF32");
+        let f32_prev = preview.as_slice_f32().unwrap();
+        let pw = preview.width as usize;
+        let right_idx = (preview.height as usize / 2 * pw + pw - 1) * 3;
+        assert!((f32_prev[0] - 4.0).abs() < 1e-3, "neutral headroom clipped: {}", f32_prev[0]);
+        assert!((f32_prev[right_idx] - 4.0).abs() < 1e-3, "red headroom clipped: {}", f32_prev[right_idx]);
+        assert!((f32_prev[right_idx + 1] - 2.0).abs() < 1e-3, "green headroom clipped: {}", f32_prev[right_idx + 1]);
+
+        // 2. Preview at -3.0 EV recovers [4.0, 2.0, 0.5] -> [0.5, 0.25, 0.0625] linear
+        // (sRGB ≈ [187, 137, 72]; a clipped u16 loader would collapse both R and G to 99!)
+        let dark_recipe = Recipe {
+            exposure: -3.0,
+            highlight_reconstruct: false,
+            sharpness: 0.0,
+            denoise_col: 0.0,
+            denoise_lum: 0.0,
+            ..Recipe::default()
+        };
+        let (rgb8, _) = crate::pipeline::process_buffer_f32_to_8(
+            f32_prev,
+            preview.width,
+            preview.height,
+            preview.channels,
+            &dark_recipe,
+        );
+        let pr = &rgb8[right_idx..right_idx + 3];
+        assert!((pr[0] as i32 - 187).abs() <= 4, "R should recover to ~187, got {:?}", pr);
+        assert!((pr[1] as i32 - 137).abs() <= 4, "G should recover to ~137, got {:?}", pr);
+        assert!((pr[2] as i32 - 72).abs() <= 4, "B should recover to ~72, got {:?}", pr);
+
+        // 3. SDR 16-bit PNG export at -3.0 EV recovers exact unclipped channels
+        let png_opts = ExportOptions {
+            format: "png".to_string(),
+            bit_depth: 16,
+            preserve_exif: false,
+            output_dir: dir.to_string_lossy().to_string(),
+            ..ExportOptions::default()
+        };
+        let png_out = export_photo(&exr_path, &dark_recipe, &png_opts).unwrap();
+        let decoded_png = image::open(&png_out).unwrap().to_rgb16();
+        let px = decoded_png.get_pixel(w - 2, h / 2);
+        assert!((px[0] as i32 - 48192).abs() <= 1000, "PNG R should recover to ~48192, got {:?}", px);
+        assert!((px[1] as i32 - 35217).abs() <= 1000, "PNG G should recover to ~35217, got {:?}", px);
+        assert!((px[2] as i32 - 18423).abs() <= 1000, "PNG B should recover to ~18423, got {:?}", px);
+
+        // 4. OpenEXR export at neutral 0.0 EV preserves > 1.0 scene-linear headroom unclipped!
+        let neutral_recipe = Recipe {
+            highlight_reconstruct: false,
+            sharpness: 0.0,
+            denoise_col: 0.0,
+            denoise_lum: 0.0,
+            ..Recipe::default()
+        };
+        let exr_opts = ExportOptions {
+            format: "exr".to_string(),
+            bit_depth: 32,
+            preserve_exif: false,
+            output_dir: dir.to_string_lossy().to_string(),
+            ..ExportOptions::default()
+        };
+        let exr_out = export_photo(&exr_path, &neutral_recipe, &exr_opts).unwrap();
+        let re_opened = RawImage::open(&exr_out).unwrap().process_full_16(3).unwrap();
+        let roundtrip = re_opened.as_slice_f32().unwrap();
+        let left_mid = (8 * w as usize + 2) * 3;
+        let right_mid = (8 * w as usize + w as usize - 2) * 3;
+        assert!((roundtrip[left_mid] - 4.0).abs() < 0.05, "neutral EXR clipped: {}", roundtrip[left_mid]);
+        assert!((roundtrip[left_mid + 1] - 4.0).abs() < 0.05, "neutral EXR clipped: {}", roundtrip[left_mid + 1]);
+        assert!(roundtrip[right_mid] > 2.5, "chromatic EXR R clipped: {}", roundtrip[right_mid]);
+        assert!(roundtrip[right_mid + 1] > 1.8, "chromatic EXR G clipped: {}", roundtrip[right_mid + 1]);
 
         let _ = fs::remove_dir_all(&dir);
     }

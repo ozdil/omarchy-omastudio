@@ -187,7 +187,33 @@ pub fn render_file(raw_path: &str, recipe: &Recipe, split: f32, out_path: &str) 
     let preview = raw.process_preview_16(true)?;
     let recipe = &Recipe { baseline_exposure: raw.baseline_exposure_from(&preview), ..recipe.clone() };
 
-    let (final_buf, hist) = if split > 0.001 {
+    let (final_buf, hist) = if let Some(f32_slice) = preview.as_slice_f32() {
+        if split > 0.001 {
+            omastudio_engine::pipeline::process_split_comparison_f32_to_8_ex(
+                f32_slice,
+                preview.width,
+                preview.height,
+                preview.channels,
+                recipe,
+                preview.transfer,
+                split,
+                false,
+                false,
+            )
+        } else {
+            omastudio_engine::pipeline::process_buffer_f32_to_8_proof(
+                f32_slice,
+                preview.width,
+                preview.height,
+                preview.channels,
+                recipe,
+                preview.transfer,
+                false,
+                false,
+                None,
+            )
+        }
+    } else if split > 0.001 {
         process_split_comparison_16_to_8_ex(
             preview.as_slice_u16(),
             preview.width,

@@ -84,20 +84,17 @@ fn decode_with_image(path: &Path) -> Result<DynamicImage, String> {
     Ok(to_srgb(img, icc.as_deref()))
 }
 
-/// sRGB-encodes float images and converts an embedded non-sRGB profile to sRGB.
+/// Preserves scene-linear float images (EXR, HDR, float TIFF) as unclipped non-negative
+/// `ImageRgb32F` (so > 1.0 HDR highlight headroom survives into exposure & HDR export, `BUG-BE-18`),
+/// and converts embedded non-sRGB ICC profiles on integer rasters to sRGB.
 pub fn to_srgb(img: DynamicImage, icc: Option<&[u8]>) -> DynamicImage {
     let is_float = matches!(img, DynamicImage::ImageRgb32F(_) | DynamicImage::ImageRgba32F(_));
     if is_float {
-        // Scene-linear (EXR, HDR, float TIFF) with Rec.709 primaries
-        let rgb = img.to_rgb32f();
-        let (w, h) = rgb.dimensions();
-        let srgb = crate::pipeline::transfer::Transfer::srgb();
-        let data: Vec<u16> = rgb
-            .into_raw()
-            .into_iter()
-            .map(|v| (srgb.encode(v.clamp(0.0, 1.0)) * 65535.0).round() as u16)
-            .collect();
-        return image::ImageBuffer::from_raw(w, h, data).map(DynamicImage::ImageRgb16).unwrap_or(img);
+        let mut rgb = img.to_rgb32f();
+        for v in rgb.as_mut() {
+            *v = if v.is_finite() && *v > 0.0 { *v } else { 0.0 };
+        }
+        return DynamicImage::ImageRgb32F(rgb);
     }
     let Some(bytes) = icc else { return img };
     let Ok(profile) = lcms2::Profile::new_icc(bytes) else { return img };
@@ -140,13 +137,16 @@ mod tests {
     use super::*;
 
     #[test]
-    fn float_images_are_srgb_encoded() {
-        let img = image::Rgb32FImage::from_pixel(2, 2, image::Rgb([0.214, 1.0, 4.0]));
-        let out = to_srgb(DynamicImage::ImageRgb32F(img), None).to_rgb16();
-        let p = out.get_pixel(0, 0);
-        assert!((p[0] as i32 - 32768).abs() < 400, "{:?}", p);
-        assert_eq!(p[1], 65535);
-        assert_eq!(p[2], 65535);
+    fn float_images_preserve_hdr_headroom_unclipped() {
+        let img = image::Rgb32FImage::from_pixel(2, 2, image::Rgb([-0.5, 0.214, 4.0]));
+        let out = to_srgb(DynamicImage::ImageRgb32F(img), None);
+        let DynamicImage::ImageRgb32F(rgb) = out else {
+            panic!("expected unclipped ImageRgb32F");
+        };
+        let p = rgb.get_pixel(0, 0);
+        assert_eq!(p[0], 0.0, "negative values sanitize to 0.0");
+        assert!((p[1] - 0.214).abs() < 1e-6);
+        assert!((p[2] - 4.0).abs() < 1e-6, "HDR > 1.0 highlight headroom must survive unclipped");
     }
 
     #[test]

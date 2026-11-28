@@ -22,7 +22,8 @@ use omastudio_engine::{
     },
     fuji, gpu, icc,
     pipeline::{
-        self, process_buffer_16_to_8_proof, process_split_comparison_16_to_8_ex,
+        self, process_buffer_16_to_8_proof, process_buffer_f32_to_8_proof,
+        process_split_comparison_16_to_8_ex, process_split_comparison_f32_to_8_ex,
         try_process_preview_dmabuf,
     },
     preview_shm::{
@@ -42,8 +43,16 @@ use crate::cli::{
     print_json,
 };
 use protocol::{DaemonCommand, DetailResult, ProofRequest, REFERENCE_SLOT, RenderResult, apply_proof};
-use state::{DaemonCache, cap_preview, resample_rect, retouched_full, spawn_full_decode};
+use state::{
+    DaemonCache, FullPixels, cap_preview, cap_preview_f32, resample_rect_f32, resample_rect_u16,
+    retouched_full, spawn_full_decode,
+};
 use worker::{ExportJob, spawn_export_worker};
+
+enum CachedPreview {
+    U16(Arc<Vec<u16>>),
+    F32(Arc<Vec<f32>>),
+}
 
 const MAX_LINE_BYTES: usize = 1024 * 1024; // 1 MiB JSON line limit
 
@@ -260,11 +269,16 @@ pub fn run() {
             "reference" => {
                 // The other side of the compare view: the open photo with another recipe
                 // (a snapshot, a version, or the defaults for "before")
-                let (buffer, width, height, channels, transfer, baseline, preview_gen, photo_path) = {
+                let (preview_buf, width, height, channels, transfer, baseline, preview_gen, photo_path) = {
                     let c = cache.lock().unwrap_or_else(|e| e.into_inner());
-                    match c.raw_buffer_16.as_ref() {
-                        Some(b) => (
-                            Arc::clone(b),
+                    let preview_buf = if let Some(b) = c.raw_buffer_16.as_ref() {
+                        Some(CachedPreview::U16(Arc::clone(b)))
+                    } else {
+                        c.raw_buffer_f32.as_ref().map(|b| CachedPreview::F32(Arc::clone(b)))
+                    };
+                    match preview_buf {
+                        Some(buf) => (
+                            buf,
                             c.width,
                             c.height,
                             c.channels,
@@ -294,20 +308,36 @@ pub fn run() {
                     cmd_obj.proof.as_ref(),
                     cmd_obj.display_color_space.as_deref(),
                 );
-                let (mut rgb, _, gpu_proofed) = gpu::with_preview_source_key(preview_key, || {
-                    process_buffer_16_to_8_proof(
-                        &buffer,
-                        width,
-                        height,
-                        channels,
-                        &recipe,
-                        transfer,
-                        false,
-                        false,
-                        preview_lut.as_deref(),
-                    )
-                });
-                if !gpu_proofed && let Some(lut) = preview_lut.as_deref() {
+                let (mut rgb, _, already_proofed) = match preview_buf {
+                    CachedPreview::U16(buffer) => gpu::with_preview_source_key(preview_key, || {
+                        process_buffer_16_to_8_proof(
+                            &buffer,
+                            width,
+                            height,
+                            channels,
+                            &recipe,
+                            transfer,
+                            false,
+                            false,
+                            preview_lut.as_deref(),
+                        )
+                    }),
+                    CachedPreview::F32(buffer) => {
+                        let (rgb, hist) = process_buffer_f32_to_8_proof(
+                            &buffer,
+                            width,
+                            height,
+                            channels,
+                            &recipe,
+                            transfer,
+                            false,
+                            false,
+                            preview_lut.as_deref(),
+                        );
+                        (rgb, hist, true)
+                    }
+                };
+                if !already_proofed && let Some(lut) = preview_lut.as_deref() {
                     lut.apply_rgb8(&mut rgb);
                 }
                 if let Some(published) = preview_ring.as_mut().and_then(|ring| {
@@ -385,15 +415,32 @@ pub fn run() {
 
                         match raw.process_preview_16(true) {
                             Ok(prev) => {
-                                let (u16_full, pw, ph) = cap_preview(prev.as_slice_u16(), prev.width, prev.height, prev.channels);
-                                let u16_vec = Arc::new(u16_full);
-                                let u16_slice = &u16_vec[..];
                                 let transfer = prev.transfer;
-                                let lut: Vec<u8> = (0u32..=65535)
-                                    .map(|x| (transfer.encode(x as f32 / 65535.0).clamp(0.0, 1.0) * 255.0).round() as u8)
-                                    .collect();
-                                let u8_vec: Vec<u8> = u16_slice.par_iter().map(|&x| lut[x as usize]).collect();
-                                let u8_arc = Arc::new(u8_vec);
+                                let (raw_buf_16, raw_buf_f32, u8_arc, pw, ph) =
+                                    if let Some(f32_slice) = prev.as_slice_f32() {
+                                        let (f32_full, pw, ph) = cap_preview_f32(f32_slice, prev.width, prev.height);
+                                        let f32_vec = Arc::new(f32_full);
+                                        let u8_vec: Vec<u8> = f32_vec
+                                            .par_iter()
+                                            .map(|&x| {
+                                                (transfer.encode(x.max(0.0)).clamp(0.0, 1.0) * 255.0).round() as u8
+                                            })
+                                            .collect();
+                                        (None, Some(f32_vec), Arc::new(u8_vec), pw, ph)
+                                    } else {
+                                        let (u16_full, pw, ph) =
+                                            cap_preview(prev.as_slice_u16(), prev.width, prev.height, prev.channels);
+                                        let u16_vec = Arc::new(u16_full);
+                                        let lut: Vec<u8> = (0u32..=65535)
+                                            .map(|x| {
+                                                (transfer.encode(x as f32 / 65535.0).clamp(0.0, 1.0) * 255.0).round()
+                                                    as u8
+                                            })
+                                            .collect();
+                                        let u8_vec: Vec<u8> =
+                                            u16_vec.par_iter().map(|&x| lut[x as usize]).collect();
+                                        (Some(u16_vec), None, Arc::new(u8_vec), pw, ph)
+                                    };
 
                                 let mut c = cache.lock().unwrap_or_else(|e| e.into_inner());
                                 c.current_path = Some(p.clone());
@@ -401,7 +448,8 @@ pub fn run() {
                                 c.width = pw;
                                 c.height = ph;
                                 c.channels = prev.channels;
-                                c.raw_buffer_16 = Some(u16_vec);
+                                c.raw_buffer_16 = raw_buf_16;
+                                c.raw_buffer_f32 = raw_buf_f32;
                                 c.raw_buffer_8 = Some(Arc::clone(&u8_arc));
                                 c.transfer = transfer;
                                 c.metadata = Some(meta.clone());
@@ -444,13 +492,17 @@ pub fn run() {
             "adjust" => {
                 let mut c = cache.lock().unwrap_or_else(|e| e.into_inner());
                 let photo_path = c.current_path.clone();
-                if c.raw_buffer_16.is_none() {
+                let preview_buf = if let Some(b) = c.raw_buffer_16.as_ref() {
+                    CachedPreview::U16(Arc::clone(b))
+                } else if let Some(b) = c.raw_buffer_f32.as_ref() {
+                    CachedPreview::F32(Arc::clone(b))
+                } else {
                     print_json::<()>(
                         &ResponseWrapper::err_action("adjust", "No RAW image currently loaded in daemon cache")
                             .with_context(req_id, photo_path),
                     );
                     continue;
-                }
+                };
 
                 let width = c.width;
                 let height = c.height;
@@ -463,21 +515,8 @@ pub fn run() {
                 let next_slot = (c.ping_pong + 1) % 2;
                 c.ping_pong = next_slot;
 
-                let buffer_arc = match c.raw_buffer_16.as_ref() {
-                    Some(b) => Arc::clone(b),
-                    None => {
-                        print_json::<()>(
-                            &ResponseWrapper::err_action("adjust", "Buffer unavailable")
-                                .with_context(req_id, photo_path),
-                        );
-                        continue;
-                    }
-                };
-
                 // Drop cache lock immediately so other daemon queries or inspection are never blocked
                 drop(c);
-
-                let buffer = buffer_arc.as_ref();
 
                 let highlight_mask = cmd_obj.highlight_mask.unwrap_or(false);
                 let shadow_mask = cmd_obj.shadow_mask.unwrap_or(false);
@@ -494,85 +533,120 @@ pub fn run() {
                     cmd_obj.display_color_space.as_deref(),
                 );
 
-                // Stage 4B/WP-16: Zero-copy Vulkan DMA-BUF + explicit SYNC_FD preview when
-                // enabled and no CPU-only overlay (split/clipping/peaking) is active.
-                // Soft-proofing and display gamut mapping run directly on GPU via cached 33³ 3D LUT.
-                let allow_dmabuf = dmabuf_active
-                    && cmd_obj.out.is_none()
-                    && cmd_obj.prefer_memfd != Some(true)
-                    && split <= 0.001
-                    && !highlight_mask
-                    && !shadow_mask
-                    && cmd_obj.focus_peaking != Some(true);
-                if allow_dmabuf
-                    && let Some(sock) = preview_sock.as_ref()
-                    && let Some(exported) = gpu::with_preview_source_key(preview_key, || {
-                        try_process_preview_dmabuf(
-                            buffer,
-                            width,
-                            height,
-                            channels,
-                            &recipe,
-                            transfer,
-                            display_tag,
-                            preview_lut.as_deref(),
-                        )
-                    })
-                {
-                    match send_dmabuf_frame_and_wait_ack(
-                        sock.as_raw_fd(),
-                        &exported.desc,
-                        exported.dmabuf_fd.as_raw_fd(),
-                        exported.sync_fd.as_ref().map(AsRawFd::as_raw_fd),
-                        2_000,
-                    ) {
-                        Ok(()) => {
-                            print_json(
-                                &ResponseWrapper::ok_action(
-                                    "adjust",
-                                    RenderResult::from_dmabuf(&exported.desc, exported.histogram, proof_error),
+                let (mut final_buf, hist, already_proofed) = match preview_buf {
+                    CachedPreview::U16(buffer_arc) => {
+                        let buffer = buffer_arc.as_ref();
+                        // Stage 4B/WP-16: Zero-copy Vulkan DMA-BUF + explicit SYNC_FD preview when
+                        // enabled and no CPU-only overlay (split/clipping/peaking) is active.
+                        // Soft-proofing and display gamut mapping run directly on GPU via cached 33³ 3D LUT.
+                        let allow_dmabuf = dmabuf_active
+                            && cmd_obj.out.is_none()
+                            && cmd_obj.prefer_memfd != Some(true)
+                            && split <= 0.001
+                            && !highlight_mask
+                            && !shadow_mask
+                            && cmd_obj.focus_peaking != Some(true);
+                        if allow_dmabuf
+                            && let Some(sock) = preview_sock.as_ref()
+                            && let Some(exported) = gpu::with_preview_source_key(preview_key, || {
+                                try_process_preview_dmabuf(
+                                    buffer,
+                                    width,
+                                    height,
+                                    channels,
+                                    &recipe,
+                                    transfer,
+                                    display_tag,
+                                    preview_lut.as_deref(),
                                 )
-                                .with_context(req_id, photo_path),
+                            })
+                        {
+                            match send_dmabuf_frame_and_wait_ack(
+                                sock.as_raw_fd(),
+                                &exported.desc,
+                                exported.dmabuf_fd.as_raw_fd(),
+                                exported.sync_fd.as_ref().map(AsRawFd::as_raw_fd),
+                                2_000,
+                            ) {
+                                Ok(()) => {
+                                    print_json(
+                                        &ResponseWrapper::ok_action(
+                                            "adjust",
+                                            RenderResult::from_dmabuf(&exported.desc, exported.histogram, proof_error),
+                                        )
+                                        .with_context(req_id, photo_path),
+                                    );
+                                    continue;
+                                }
+                                Err(e) => {
+                                    eprintln!("omastudio: DMA-BUF send failed, switching session to memfd: {e}");
+                                    dmabuf_active = false;
+                                }
+                            }
+                        }
+
+                        gpu::with_preview_source_key(preview_key, || {
+                            if split > 0.001 {
+                                let (buf, hist) = process_split_comparison_16_to_8_ex(
+                                    buffer,
+                                    width,
+                                    height,
+                                    channels,
+                                    &recipe,
+                                    transfer,
+                                    split,
+                                    highlight_mask,
+                                    shadow_mask,
+                                );
+                                (buf, hist, false)
+                            } else {
+                                process_buffer_16_to_8_proof(
+                                    buffer,
+                                    width,
+                                    height,
+                                    channels,
+                                    &recipe,
+                                    transfer,
+                                    highlight_mask,
+                                    shadow_mask,
+                                    preview_lut.as_deref(),
+                                )
+                            }
+                        })
+                    }
+                    CachedPreview::F32(buffer_arc) => {
+                        let buffer = buffer_arc.as_ref();
+                        if split > 0.001 {
+                            let (buf, hist) = process_split_comparison_f32_to_8_ex(
+                                buffer,
+                                width,
+                                height,
+                                channels,
+                                &recipe,
+                                transfer,
+                                split,
+                                highlight_mask,
+                                shadow_mask,
                             );
-                            continue;
-                        }
-                        Err(e) => {
-                            eprintln!("omastudio: DMA-BUF send failed, switching session to memfd: {e}");
-                            dmabuf_active = false;
+                            (buf, hist, false)
+                        } else {
+                            let (buf, hist) = process_buffer_f32_to_8_proof(
+                                buffer,
+                                width,
+                                height,
+                                channels,
+                                &recipe,
+                                transfer,
+                                highlight_mask,
+                                shadow_mask,
+                                preview_lut.as_deref(),
+                            );
+                            (buf, hist, true)
                         }
                     }
-                }
+                };
 
-                let (mut final_buf, hist, gpu_proofed) = gpu::with_preview_source_key(preview_key, || {
-                    if split > 0.001 {
-                        let (buf, hist) = process_split_comparison_16_to_8_ex(
-                            buffer,
-                            width,
-                            height,
-                            channels,
-                            &recipe,
-                            transfer,
-                            split,
-                            highlight_mask,
-                            shadow_mask,
-                        );
-                        (buf, hist, false)
-                    } else {
-                        process_buffer_16_to_8_proof(
-                            buffer,
-                            width,
-                            height,
-                            channels,
-                            &recipe,
-                            transfer,
-                            highlight_mask,
-                            shadow_mask,
-                            preview_lut.as_deref(),
-                        )
-                    }
-                });
-
-                if !gpu_proofed && let Some(lut) = preview_lut.as_deref() {
+                if !already_proofed && let Some(lut) = preview_lut.as_deref() {
                     lut.apply_rgb8(&mut final_buf);
                 }
                 if cmd_obj.focus_peaking == Some(true) {
@@ -682,9 +756,17 @@ pub fn run() {
                 let out = (ox, oy, ow, oh);
                 let src = pipeline::region_source(out, vw, vh, &recipe);
                 let full = retouched_full(&cache, full, &recipe.retouch);
-                let input = resample_rect(&full, scale, src);
                 let window = pipeline::Window { x0: src.0, y0: src.1, frame_w: vw, frame_h: vh };
-                let mut rgb = pipeline::render_region_8(&input, src.2, src.3, window, out, &recipe, full.transfer);
+                let mut rgb = match &full.data {
+                    FullPixels::U16(data) => {
+                        let input = resample_rect_u16(data, full.width, full.height, scale, src);
+                        pipeline::render_region_8(&input, src.2, src.3, window, out, &recipe, full.transfer)
+                    }
+                    FullPixels::F32(data) => {
+                        let input = resample_rect_f32(data, full.width, full.height, scale, src);
+                        pipeline::render_region_f32_8(&input, src.2, src.3, window, out, &recipe, full.transfer)
+                    }
+                };
                 pipeline::clipping_overlay(
                     &mut rgb,
                     3,

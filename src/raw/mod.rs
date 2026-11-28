@@ -34,6 +34,8 @@ pub enum BufferStorage {
     LibRaw(*mut u8),
     OwnedU8(Vec<u8>),
     OwnedU16(Vec<u16>),
+    /// Unclipped scene-linear float RGB (`>= 0.0`, preserving HDR headroom above `1.0`).
+    OwnedF32(Vec<f32>),
 }
 
 pub struct ProcessedBuffer {
@@ -43,7 +45,7 @@ pub struct ProcessedBuffer {
     pub channels: u32,
     pub bits_per_sample: u32,
     pub data_size: usize,
-    /// Display curve of this buffer's colour space. 16-bit buffers hold linear light
+    /// Display curve of this buffer's colour space. 16-bit and float buffers hold linear light
     /// and the pipeline encodes them with this curve; 8-bit buffers are already encoded.
     pub transfer: Transfer,
 }
@@ -53,6 +55,17 @@ unsafe impl Send for ProcessedBuffer {}
 unsafe impl Sync for ProcessedBuffer {}
 
 impl ProcessedBuffer {
+    pub fn is_float(&self) -> bool {
+        matches!(self.storage, BufferStorage::OwnedF32(_))
+    }
+
+    pub fn as_slice_f32(&self) -> Option<&[f32]> {
+        match &self.storage {
+            BufferStorage::OwnedF32(vec) => Some(&vec[..(self.data_size / 4).min(vec.len())]),
+            _ => None,
+        }
+    }
+
     pub fn as_slice(&self) -> &[u8] {
         if self.data_size == 0 {
             &[]
@@ -73,6 +86,12 @@ impl ProcessedBuffer {
                         std::slice::from_raw_parts(vec.as_ptr() as *const u8, self.data_size.min(vec.len() * 2))
                     }
                 }
+                BufferStorage::OwnedF32(vec) => {
+                    // SAFETY: Vec<f32> cast to &[u8] slice of byte length data_size
+                    unsafe {
+                        std::slice::from_raw_parts(vec.as_ptr() as *const u8, self.data_size.min(vec.len() * 4))
+                    }
+                }
             }
         }
     }
@@ -85,6 +104,9 @@ impl ProcessedBuffer {
     /// Applies radial lens corrections. 16-bit buffers are linear light; 8-bit ones are
     /// encoded with the buffer's curve.
     fn with_lens_correction(self, corr: &lens::RadialCorrection) -> ProcessedBuffer {
+        if self.is_float() {
+            return self;
+        }
         let (w, h) = (self.width as usize, self.height as usize);
         let (storage, data_size) = if self.bits_per_sample == 16 {
             let out = corr.apply_linear_u16(&self.as_slice_u16()[..w * h * 3], w, h);
@@ -100,7 +122,11 @@ impl ProcessedBuffer {
 
     fn expand_gray_to_rgb(self) -> ProcessedBuffer {
         let pixels = (self.width as usize) * (self.height as usize);
-        let (storage, data_size) = if self.bits_per_sample == 16 {
+        let (storage, data_size) = if let Some(src) = self.as_slice_f32() {
+            let out: Vec<f32> = src.iter().take(pixels).flat_map(|&v| [v, v, v]).collect();
+            let len = out.len() * 4;
+            (BufferStorage::OwnedF32(out), len)
+        } else if self.bits_per_sample == 16 {
             let src = self.as_slice_u16();
             let out: Vec<u16> = src.iter().take(pixels).flat_map(|&v| [v, v, v]).collect();
             let len = out.len() * 2;
@@ -149,6 +175,7 @@ impl ProcessedBuffer {
                         &[]
                     }
                 }
+                BufferStorage::OwnedF32(_) => &[],
             }
         }
     }
@@ -156,6 +183,10 @@ impl ProcessedBuffer {
     pub fn to_vec_u16(&self) -> Vec<u16> {
         match &self.storage {
             BufferStorage::OwnedU16(vec) => vec[..(self.data_size / 2).min(vec.len())].to_vec(),
+            BufferStorage::OwnedF32(vec) => vec[..(self.data_size / 4).min(vec.len())]
+                .iter()
+                .map(|&v| (v.clamp(0.0, 1.0) * 65535.0).round() as u16)
+                .collect(),
             BufferStorage::OwnedU8(vec) => {
                 let ptr = vec.as_ptr();
                 if (ptr as usize).is_multiple_of(std::mem::align_of::<u16>()) {
@@ -479,7 +510,22 @@ impl RawImage {
 
         match &self.backend {
             RawBackend::Raster { img } => {
-                let thumb = img.thumbnail(400, 400);
+                let thumb = match img {
+                    image::DynamicImage::ImageRgb32F(f32_img) => {
+                        let srgb = Transfer::srgb();
+                        let scaled = image::DynamicImage::ImageRgb32F(f32_img.clone()).thumbnail(400, 400).to_rgb32f();
+                        let (tw, th) = scaled.dimensions();
+                        let u8_raw: Vec<u8> = scaled
+                            .into_raw()
+                            .into_iter()
+                            .map(|v| (srgb.encode(v.max(0.0)).clamp(0.0, 1.0) * 255.0).round() as u8)
+                            .collect();
+                        image::ImageBuffer::<image::Rgb<u8>, Vec<u8>>::from_raw(tw, th, u8_raw)
+                            .map(image::DynamicImage::ImageRgb8)
+                            .unwrap_or_else(|| img.thumbnail(400, 400))
+                    }
+                    _ => img.thumbnail(400, 400),
+                };
                 let mut buf = std::io::Cursor::new(Vec::new());
                 let ext = dest
                     .extension()
@@ -594,6 +640,41 @@ impl RawImage {
         }
         match &self.backend {
             RawBackend::Raster { img } => {
+                if let image::DynamicImage::ImageRgb32F(f32_img) = img {
+                    let (w, h, raw_f32) = if half_size && f32_img.width() > 2 && f32_img.height() > 2 {
+                        downsample_rgb32f_half(f32_img)
+                    } else {
+                        (f32_img.width(), f32_img.height(), f32_img.as_raw().clone())
+                    };
+                    if bps == 16 {
+                        let data_size = raw_f32.len() * 4;
+                        return Ok(ProcessedBuffer {
+                            storage: BufferStorage::OwnedF32(raw_f32),
+                            width: w,
+                            height: h,
+                            channels: 3,
+                            bits_per_sample: 32,
+                            data_size,
+                            transfer: Transfer::srgb(),
+                        });
+                    }
+                    let srgb = Transfer::srgb();
+                    let raw_vec: Vec<u8> = raw_f32
+                        .into_iter()
+                        .map(|v| (srgb.encode(v.max(0.0)).clamp(0.0, 1.0) * 255.0).round() as u8)
+                        .collect();
+                    let data_size = raw_vec.len();
+                    return Ok(ProcessedBuffer {
+                        storage: BufferStorage::OwnedU8(raw_vec),
+                        width: w,
+                        height: h,
+                        channels: 3,
+                        bits_per_sample: 8,
+                        data_size,
+                        transfer: Transfer::srgb(),
+                    });
+                }
+
                 let target_img = if half_size {
                     let w = (img.width() / 2).max(1);
                     let h = (img.height() / 2).max(1);
@@ -868,4 +949,29 @@ fn apply_crop(info: &mut COmaRawCfaInfo, crop: crate::medium_format::Rect) {
     info.left_margin = x as i32;
     info.width = w as i32;
     info.height = h as i32;
+}
+
+/// 2×2 scene-linear box downsampler for unclipped float HDR previews (never clamps `> 1.0`).
+fn downsample_rgb32f_half(img: &image::Rgb32FImage) -> (u32, u32, Vec<f32>) {
+    let (sw, sh) = (img.width() as usize, img.height() as usize);
+    let (dw, dh) = ((sw / 2).max(1), (sh / 2).max(1));
+    let src = img.as_raw();
+    let mut out = vec![0.0f32; dw * dh * 3];
+    for y in 0..dh {
+        let sy0 = (y * 2).min(sh - 1);
+        let sy1 = (sy0 + 1).min(sh - 1);
+        for x in 0..dw {
+            let sx0 = (x * 2).min(sw - 1);
+            let sx1 = (sx0 + 1).min(sw - 1);
+            let dst = (y * dw + x) * 3;
+            let p00 = (sy0 * sw + sx0) * 3;
+            let p10 = (sy0 * sw + sx1) * 3;
+            let p01 = (sy1 * sw + sx0) * 3;
+            let p11 = (sy1 * sw + sx1) * 3;
+            for c in 0..3 {
+                out[dst + c] = 0.25 * (src[p00 + c] + src[p10 + c] + src[p01 + c] + src[p11 + c]);
+            }
+        }
+    }
+    (dw as u32, dh as u32, out)
 }

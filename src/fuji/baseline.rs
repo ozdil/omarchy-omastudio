@@ -147,6 +147,9 @@ fn measure_inner(path: &Path, buf: &ProcessedBuffer, neutral_for_calibration: bo
     recipe.grain_amount = 0.0;
     recipe.denoise_lum = 0.0;
     recipe.denoise_col = 0.0;
+    if buf.is_float() {
+        return Err("float raster buffer has no camera baseline".to_string());
+    }
     let (small, w, h) = shrink(buf.as_slice_u16(), buf.width, buf.height, buf.channels).ok_or("unusable development")?;
     let median_at = |ev: f32| {
         let r = crate::recipe::Recipe { baseline_exposure: ev, ..recipe.clone() };

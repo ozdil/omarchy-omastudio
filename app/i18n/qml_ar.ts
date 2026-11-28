@@ -993,6 +993,38 @@
         <source>Upload to</source>
         <translation>الرفع إلى</translation>
     </message>
+    <message>
+        <source>Dynamic range</source>
+        <translation>النطاق الديناميكي</translation>
+    </message>
+    <message>
+        <source>Gain map</source>
+        <translation>خريطة الكسب</translation>
+    </message>
+    <message>
+        <source>Standard dynamic range with ICC profile</source>
+        <translation>نطاق ديناميكي قياسي بملف تعريف ICC</translation>
+    </message>
+    <message>
+        <source>10/12-bit BT.2020 PQ (SMPTE ST 2084, CICP)</source>
+        <translation>BT.2020 PQ بعمق 10/12 بت (SMPTE ST 2084، CICP)</translation>
+    </message>
+    <message>
+        <source>10/12-bit BT.2020 Hybrid Log-Gamma (BT.2100, CICP)</source>
+        <translation>BT.2020 Hybrid Log-Gamma بعمق 10/12 بت (BT.2100، CICP)</translation>
+    </message>
+    <message>
+        <source>ISO 21496-1 SDR base with HDR gain map</source>
+        <translation>أساس SDR وفق ISO 21496-1 مع خريطة كسب HDR</translation>
+    </message>
+    <message>
+        <source>HDR headroom</source>
+        <translation>هامش HDR العلوي</translation>
+    </message>
+    <message>
+        <source>Encoded in BT.2020 with CICP metadata; ignores the SDR ICC profile.</source>
+        <translation>مُرمَّز بفضاء BT.2020 وبيانات CICP؛ يتجاهل ملف تعريف ICC لـ SDR.</translation>
+    </message>
 </context>
 <context>
     <name>FilmGrainPanel</name>

@@ -213,7 +213,7 @@ pub fn apply_detail_scaled(
                 // Noise-gate threshold: do not sharpen tiny noise fluctuations (< 0.012)
                 let noise_gate = ((edge_mag - 0.012) / 0.03).clamp(0.0, 1.0);
                 let boost = laplacian * sh_strength * noise_gate;
-                final_l = (final_l + boost).clamp(0.0, 1.5);
+                final_l = (final_l + boost).clamp(0.0, 6.0);
             }
 
             row[x] = final_l;
