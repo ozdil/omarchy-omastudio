@@ -1,6 +1,5 @@
 import QtQuick
 import Quickshell
-import qs.Commons
 import qs.Ui
 
 // OmaStudio in the Omarchy bar: shows or hides the editor window, and starts it when
@@ -26,6 +25,8 @@ BarWidget {
     // Nerd Font camera-iris glyph, like the editor's own icon
     text: "󰄄"
     tooltipText: "OmaStudio"
-    onPressed: function(mouseButton) { root.toggleEditor() }
+    onPressed: function(mouseButton) {
+      if (mouseButton === Qt.LeftButton) root.toggleEditor()
+    }
   }
 }

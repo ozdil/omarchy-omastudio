@@ -2232,6 +2232,10 @@
         <source>no answer from the engine</source>
         <translation>엔진 응답 없음</translation>
     </message>
+    <message>
+        <source>Open a photo first</source>
+        <translation>먼저 사진을 여세요</translation>
+    </message>
 </context>
 <context>
     <name>MasksTab</name>

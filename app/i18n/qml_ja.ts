@@ -2232,6 +2232,10 @@
         <source>no answer from the engine</source>
         <translation>エンジンから応答がありません</translation>
     </message>
+    <message>
+        <source>Open a photo first</source>
+        <translation>先に写真を開いてください</translation>
+    </message>
 </context>
 <context>
     <name>MasksTab</name>

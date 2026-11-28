@@ -80,18 +80,47 @@ fn file_name(label: &str) -> String {
     if name.is_empty() { "Recipe".to_string() } else { name }
 }
 
+/// Saves a profile into `dir` as .FP1 using exclusive atomic file creation (`O_CREAT|O_EXCL`)
+/// so concurrent saves never overwrite an existing recipe or follow symlinks.
+fn save_in(dir: &Path, profile: &fp1::Profile) -> Result<PathBuf, String> {
+    use std::fs::OpenOptions;
+    use std::io::Write;
+    #[cfg(unix)]
+    use std::os::unix::fs::OpenOptionsExt;
+
+    security::ensure_secure_dir(dir).map_err(|e| format!("Cannot create {}: {}", dir.display(), e))?;
+    let base = file_name(&profile.label);
+    let content = fp1::write(profile);
+    for n in 1..1000 {
+        let path = if n == 1 {
+            dir.join(format!("{}.FP1", base))
+        } else {
+            dir.join(format!("{} ({}).FP1", base, n))
+        };
+        let mut opts = OpenOptions::new();
+        opts.write(true).create_new(true);
+        #[cfg(unix)]
+        opts.mode(0o600).custom_flags(libc::O_NOFOLLOW | libc::O_CLOEXEC);
+        match opts.open(&path) {
+            Ok(mut file) => {
+                if let Err(e) = file.write_all(content.as_bytes()).and_then(|_| file.sync_all()) {
+                    drop(file);
+                    let _ = std::fs::remove_file(&path);
+                    return Err(format!("Cannot write {}: {}", path.display(), e));
+                }
+                return Ok(path);
+            }
+            Err(e) if e.kind() == std::io::ErrorKind::AlreadyExists => continue,
+            Err(e) => return Err(format!("Cannot write {}: {}", path.display(), e)),
+        }
+    }
+    Err("Too many recipes with this name".to_string())
+}
+
 /// Saves a profile into the library as .FP1 and returns its path. An existing
 /// recipe with the same name is kept; the new one gets a numbered name.
 pub fn save(profile: &fp1::Profile) -> Result<PathBuf, String> {
-    let dir = dir();
-    security::ensure_secure_dir(&dir).map_err(|e| format!("Cannot create {}: {}", dir.display(), e))?;
-    let base = file_name(&profile.label);
-    let path = (1..1000)
-        .map(|n| if n == 1 { dir.join(format!("{}.FP1", base)) } else { dir.join(format!("{} ({}).FP1", base, n)) })
-        .find(|p| std::fs::symlink_metadata(p).is_err())
-        .ok_or("Too many recipes with this name")?;
-    security::atomic_write_secure(&path, fp1::write(profile).as_bytes()).map_err(|e| format!("Cannot write {}: {}", path.display(), e))?;
-    Ok(path)
+    save_in(&dir(), profile)
 }
 
 /// Writes a profile to a path the user chose (for X RAW Studio or sharing).
@@ -108,5 +137,27 @@ mod tests {
         assert_eq!(file_name("../../etc/passwd"), "______etc_passwd");
         assert_eq!(file_name("Kodak Portra 400"), "Kodak Portra 400");
         assert_eq!(file_name("  "), "Recipe");
+    }
+
+    #[test]
+    fn save_in_creates_unique_0600_files_without_clobbering_or_following_symlinks() {
+        let base = std::env::temp_dir().join(format!("omastudio-fuji-lib-{}", std::process::id()));
+        let _ = std::fs::remove_dir_all(&base);
+        let profile = fp1::Profile {
+            label: "Classic Look".into(),
+            device: "GFX100S".into(),
+            recipe: CameraRecipe::default(),
+        };
+        let p1 = save_in(&base, &profile).unwrap();
+        let p2 = save_in(&base, &profile).unwrap();
+        assert_ne!(p1, p2);
+        assert!(p1.ends_with("Classic Look.FP1"));
+        assert!(p2.ends_with("Classic Look (2).FP1"));
+        #[cfg(unix)]
+        {
+            use std::os::unix::fs::PermissionsExt;
+            assert_eq!(std::fs::metadata(&p1).unwrap().permissions().mode() & 0o777, 0o600);
+        }
+        let _ = std::fs::remove_dir_all(&base);
     }
 }

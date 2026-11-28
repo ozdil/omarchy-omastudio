@@ -136,7 +136,19 @@ impl Fit {
 
 /// Box-averages an RGB8 image onto a `dw`×`dh` grid, as 0..1 floats.
 pub(crate) fn reduce(src: &[u8], sw: u32, sh: u32, dw: u32, dh: u32) -> Vec<[f32; 3]> {
-    let mut out = vec![[0.0f32; 3]; (dw * dh) as usize];
+    if sw == 0 || sh == 0 || dw == 0 || dh == 0 {
+        return Vec::new();
+    }
+    let Some(expected) = (sw as usize).checked_mul(sh as usize).and_then(|n| n.checked_mul(3)) else {
+        return Vec::new();
+    };
+    let Some(out_len) = (dw as usize).checked_mul(dh as usize) else {
+        return Vec::new();
+    };
+    if src.len() < expected {
+        return vec![[0.0f32; 3]; out_len];
+    }
+    let mut out = vec![[0.0f32; 3]; out_len];
     for (y, row) in out.chunks_mut(dw as usize).enumerate() {
         let y0 = (y as u64 * sh as u64 / dh as u64) as u32;
         let y1 = (((y as u64 + 1) * sh as u64 / dh as u64) as u32).max(y0 + 1);
@@ -203,6 +215,9 @@ pub fn load_pair(path: &Path, allow_non_neutral: bool) -> Result<Pair, String> {
     let preview = raw.process_preview_16(true)?;
     if preview.channels != 3 {
         return Err("Unexpected channel count".into());
+    }
+    if jw == 0 || jh == 0 || preview.width == 0 || preview.height == 0 {
+        return Err("Empty camera JPEG or RAW preview".into());
     }
     let neutral = Recipe {
         sharpness: 0.0,
@@ -286,6 +301,10 @@ pub fn calibrate(paths: &[PathBuf], allow_non_neutral: bool, write: bool) -> (Ve
     }
     let mut reports = Vec::new();
     for (sim_id, fit) in fits {
+        if fit.samples == 0 {
+            skipped.push(format!("{sim_id}: no usable unclipped colour samples; keeping existing LUT"));
+            continue;
+        }
         let lut = fit.solve();
         let sim = pipeline::film_sim::FilmSimulation::from_id(&sim_id);
         let hold = &held[&sim_id];
@@ -318,10 +337,18 @@ pub fn calibrate(paths: &[PathBuf], allow_non_neutral: bool, write: bool) -> (Ve
     (reports, skipped)
 }
 
+fn sanitize_cube_title(title: &str) -> String {
+    title
+        .chars()
+        .filter(|&c| !c.is_control() && c != '"')
+        .collect()
+}
+
 pub fn write_cube(lut: &Lut3D, path: &Path, title: &str) -> Result<(), String> {
+    let safe_title = sanitize_cube_title(title);
     let mut out = format!(
         "# OmaStudio film simulation calibration, measured from the photographer's own RAF files\nTITLE \"{}\"\nLUT_3D_SIZE {}\n",
-        title, lut.size
+        safe_title, lut.size
     );
     for e in &lut.table {
         out += &format!("{:.6} {:.6} {:.6}\n", e[0], e[1], e[2]);
@@ -363,5 +390,17 @@ mod tests {
         let src = [0u8, 0, 0, 255, 255, 255, 0, 0, 0, 255, 255, 255];
         let out = reduce(&src, 2, 2, 1, 1);
         assert!((out[0][0] - 0.5).abs() < 1e-6);
+    }
+
+    #[test]
+    fn reduce_guards_zero_dimensions_and_short_buffers() {
+        assert!(reduce(&[], 0, 2, 1, 1).is_empty());
+        assert!(reduce(&[], 2, 2, 0, 1).is_empty());
+        assert_eq!(reduce(&[1, 2], 4, 4, 2, 2).len(), 4);
+    }
+
+    #[test]
+    fn cube_title_sanitizes_quotes_and_newlines() {
+        assert_eq!(sanitize_cube_title("Provia\"\nLUT_3D_SIZE 2\r\t"), "ProviaLUT_3D_SIZE 2");
     }
 }

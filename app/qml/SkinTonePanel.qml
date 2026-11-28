@@ -107,8 +107,8 @@ Rectangle {
             visible: root.skinToneEnabled
 
             Rectangle {
-                width: 24
-                height: 24
+                implicitWidth: 24
+                implicitHeight: 24
                 radius: 12
                 border.color: Theme.border
                 border.width: 1

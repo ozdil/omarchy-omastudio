@@ -2239,6 +2239,10 @@
         <source>no answer from the engine</source>
         <translation>geen antwoord van de engine</translation>
     </message>
+    <message>
+        <source>Open a photo first</source>
+        <translation>Open eerst een foto</translation>
+    </message>
 </context>
 <context>
     <name>MasksTab</name>

@@ -132,9 +132,12 @@ pub fn lensfun_dirs() -> Vec<PathBuf> {
     let xdg_data = crate::paths::xdg_data_dir();
     vec![
         PathBuf::from("/usr/share/lensfun/version_1"),
+        PathBuf::from("/usr/share/lensfun/version_2"),
         PathBuf::from("/usr/share/lensfun"),
         PathBuf::from("/usr/local/share/lensfun/version_1"),
+        PathBuf::from("/usr/local/share/lensfun/version_2"),
         xdg_data.join("lensfun/updates/version_1"),
+        xdg_data.join("lensfun/updates/version_2"),
         xdg_data.join("lensfun"),
         crate::paths::app_data_dir().join("lenses"),
     ]

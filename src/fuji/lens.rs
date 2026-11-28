@@ -12,8 +12,10 @@
 //! remapping the raw development with these values brings it within half a pixel of
 //! the camera's own JPEG (2.8 px without).
 
-use std::fs::File;
+use std::fs::{File, OpenOptions};
 use std::io::{Read, Seek, SeekFrom};
+#[cfg(unix)]
+use std::os::unix::fs::OpenOptionsExt;
 use std::path::Path;
 
 use crate::raw::lens::RadialCorrection;
@@ -27,15 +29,23 @@ const MAX_VALUES: u32 = 128;
 
 /// Reads the corrections of a RAF file. None for other files, or a RAF without them.
 pub fn read(path: &Path) -> Option<RadialCorrection> {
-    let mut f = File::open(path).ok()?;
+    let mut opts = OpenOptions::new();
+    opts.read(true);
+    #[cfg(unix)]
+    opts.custom_flags(libc::O_NOFOLLOW | libc::O_CLOEXEC);
+    let mut f = opts.open(path).ok()?;
+    let meta = f.metadata().ok()?;
+    if !meta.file_type().is_file() {
+        return None;
+    }
     let mut header = [0u8; 0x6c];
     f.read_exact(&mut header).ok()?;
     if !header.starts_with(b"FUJIFILMCCD-RAW") {
         return None;
     }
     let base = u32::from_be_bytes(header[0x64..0x68].try_into().ok()?) as u64;
-    let file_len = f.metadata().ok()?.len();
-    if base == 0 || base + 8 > file_len {
+    let file_len = meta.len();
+    if base == 0 || base.checked_add(8).is_none_or(|end| end > file_len) {
         return None;
     }
     let mut ifd = Ifd { f, base, file_len };

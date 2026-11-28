@@ -2239,6 +2239,10 @@
         <source>no answer from the engine</source>
         <translation>el motor no respondió</translation>
     </message>
+    <message>
+        <source>Open a photo first</source>
+        <translation>Abra primero una foto</translation>
+    </message>
 </context>
 <context>
     <name>MasksTab</name>

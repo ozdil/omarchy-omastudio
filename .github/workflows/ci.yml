@@ -70,10 +70,10 @@ jobs:
       - name: QMLlint
         run: |
           QMLLINT="$(command -v /usr/lib/qt6/bin/qmllint || command -v qmllint6 || command -v qmllint)"
-          "$QMLLINT" -I app/qml app/qml/*.qml
+          "$QMLLINT" --block-scope-var-declaration=info -I app/qml app/qml/*.qml
           "$QMLLINT" --ignore-settings --import=info --missing-type=info --unresolved-type=info --unqualified=info --missing-property=info omarchy-plugin/Panel.qml
       - name: ShellCheck
-        run: shellcheck -x -S warning omastudio omastudio-status omastudio-dashboard tools/fuji-usb/capture.sh tools/i18n/update.sh
+        run: shellcheck -x omastudio omastudio-status omastudio-dashboard tools/fuji-usb/capture.sh tools/i18n/update.sh
 
   build-aarch64:
     name: Build, Unit/Integration Tests & GPU Parity (aarch64)

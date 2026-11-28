@@ -66,21 +66,43 @@ fn strength(value: &str) -> Option<Strength> {
 }
 
 /// First signed number in the value: "+1.5", "-2", "0 (normal)".
+/// Skips bare `+` or `-` punctuation that is not immediately followed by a digit.
 fn number(value: &str) -> Option<f32> {
-    let start = value.find(|c: char| c.is_ascii_digit() || c == '+' || c == '-')?;
-    let tail = &value[start..];
-    let end = tail
-        .char_indices()
-        .skip(1)
-        .find(|&(_, c)| !(c.is_ascii_digit() || c == '.'))
-        .map(|(i, _)| i)
-        .unwrap_or(tail.len());
-    tail[..end].trim_start_matches('+').parse().ok()
+    let bytes = value.as_bytes();
+    let mut i = 0;
+    while i < bytes.len() {
+        let b = bytes[i];
+        let is_start = b.is_ascii_digit()
+            || ((b == b'+' || b == b'-') && i + 1 < bytes.len() && bytes[i + 1].is_ascii_digit());
+        if is_start {
+            let tail = &value[i..];
+            let end = tail
+                .char_indices()
+                .skip(1)
+                .find(|&(_, c)| !(c.is_ascii_digit() || c == '.'))
+                .map(|(j, _)| j)
+                .unwrap_or(tail.len());
+            if let Ok(parsed) = tail[..end].trim_start_matches('+').parse::<f32>()
+                && parsed.is_finite()
+            {
+                return Some(parsed);
+            }
+            i += end.max(1);
+        } else {
+            i += 1;
+        }
+    }
+    None
 }
 
 /// "+1/3", "-2/3", "+1", "+1 1/3", "+1/3 to +2/3" (takes the first).
 fn exposure(value: &str) -> Option<f32> {
-    let first = value.split("to").next()?.trim();
+    // Split on word-bounded " to " (case-insensitive) so words like "stop" are never split.
+    let lower = value.to_ascii_lowercase();
+    let first = match lower.find(" to ") {
+        Some(idx) => value[..idx].trim(),
+        None => value.trim(),
+    };
     let sign = if first.starts_with('-') { -1.0 } else { 1.0 };
     let digits = first.trim_start_matches(['+', '-']);
     let mut total = 0.0;
@@ -90,21 +112,21 @@ fn exposure(value: &str) -> Option<f32> {
             let (Ok(n), Ok(d)) = (n.parse::<f32>(), d.trim_end_matches(|c: char| !c.is_ascii_digit()).parse::<f32>()) else {
                 break;
             };
-            if d > 0.0 {
+            if d > 0.0 && n.is_finite() && d.is_finite() {
                 total += n / d;
                 found = true;
             }
             break;
         }
         match part.parse::<f32>() {
-            Ok(v) => {
+            Ok(v) if v.is_finite() => {
                 total += v;
                 found = true;
             }
-            Err(_) => break,
+            _ => break,
         }
     }
-    found.then_some(sign * total)
+    found.then_some((sign * total).clamp(-5.0, 5.0))
 }
 
 fn white_balance(value: &str, r: &mut CameraRecipe) {
@@ -162,7 +184,9 @@ pub fn parse(text: &str) -> Result<CameraRecipe, String> {
                     r.dynamic_range_auto = true;
                     Some(())
                 } else {
-                    number(&v.replace("dr", "")).map(|n| r.dynamic_range = Some(n as u32))
+                    number(&value.to_ascii_lowercase().replace("dr", ""))
+                        .filter(|&n| (100.0..=800.0).contains(&n))
+                        .map(|n| r.dynamic_range = Some(n.round() as u32))
                 }
             }
             "drangepriority" => {
@@ -248,5 +272,17 @@ mod tests {
     #[test]
     fn unrelated_text_is_refused() {
         assert!(parse("hello world\nnothing here").is_err());
+    }
+
+    #[test]
+    fn handles_bare_dashes_stop_word_and_negative_dr() {
+        let r = parse(
+            "Classic Chrome\nColor: Fuji - vivid +2\nExposure: +1 stop\nDynamic Range: -100",
+        )
+        .unwrap();
+        assert_eq!(r.color, 2);
+        assert!((r.exposure_bias - 1.0).abs() < 1e-5);
+        // Negative DR is rejected; default 100 stays intact instead of wrapping to u32::MAX
+        assert_eq!(r.dynamic_range, Some(100));
     }
 }

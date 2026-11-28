@@ -1,5 +1,6 @@
 #pragma once
 
+#include <QtCore/QString>
 #include <QtQml/QQmlApplicationEngine>
 
 /// Requests Qt Quick's Vulkan RHI backend before `QGuiApplication` is constructed,
@@ -20,3 +21,7 @@ void configure_window_and_show(
     bool prefer_10bit,
     int color_space_code
 );
+
+/// Reads the system clipboard (Wayland or X11 via Qt) if its UTF-8 byte length does not
+/// exceed `max_bytes`. Sets `exceeded` to true and returns an empty string when larger.
+QString clipboard_text_bounded(int max_bytes, bool &exceeded);

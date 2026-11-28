@@ -64,6 +64,8 @@ pub struct FolderScanItem {
     pub thumbnail: String,
     pub is_remote: bool,
     pub is_dir: bool,
+    pub rating: u8,
+    pub flag: String,
 }
 
 pub fn scan_directory(dir_path: &str) -> Result<Vec<FolderScanItem>, String> {
@@ -81,6 +83,7 @@ pub fn scan_directory(dir_path: &str) -> Result<Vec<FolderScanItem>, String> {
 
     let thumb_dir = paths::app_cache_dir().join("thumbnails");
     let _ = security::ensure_secure_dir(&thumb_dir);
+    let catalog = Catalog::load();
 
     let mut dirs = Vec::new();
     let mut items = Vec::new();
@@ -95,6 +98,8 @@ pub fn scan_directory(dir_path: &str) -> Result<Vec<FolderScanItem>, String> {
                     thumbnail: String::new(),
                     is_remote: false,
                     is_dir: true,
+                    rating: 0,
+                    flag: "none".to_string(),
                 });
                 continue;
             }
@@ -109,10 +114,12 @@ pub fn scan_directory(dir_path: &str) -> Result<Vec<FolderScanItem>, String> {
                     {
                         let _ = raw.extract_thumbnail(&thumb_path);
                     }
+                    let path_str = path.to_string_lossy().to_string();
+                    let cat_item = catalog.get(&path_str);
 
                     items.push(FolderScanItem {
                         name: path.file_name().and_then(|s| s.to_str()).unwrap_or("").to_string(),
-                        path: path.to_string_lossy().to_string(),
+                        path: path_str,
                         thumbnail: if thumb_path.exists() {
                             thumb_path.to_string_lossy().to_string()
                         } else {
@@ -120,6 +127,8 @@ pub fn scan_directory(dir_path: &str) -> Result<Vec<FolderScanItem>, String> {
                         },
                         is_remote: false,
                         is_dir: false,
+                        rating: cat_item.map_or(0, |c| c.rating),
+                        flag: cat_item.map_or_else(|| "none".to_string(), |c| c.flag.clone()),
                     });
                 }
             }

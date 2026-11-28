@@ -106,7 +106,12 @@ Item {
             if (router.host.showAboutModal) router.host.showAboutModal = false;
             else if (router.host.showExportModal) router.host.showExportModal = false;
             else if (router.host.showCloudModal) router.host.showCloudModal = false;
+            else if (router.host.aiChatOpen) router.host.aiChatOpen = false;
             else if (router.viewport && router.viewport.isCropMode) router.viewport.isCropMode = false;
+            else if (router.viewport && router.viewport.loupeActive) router.viewport.loupeActive = false;
+            else if (router.host.compareMode) router.host.compareMode = false;
+            else if (router.host.retouchPanel && router.host.retouchPanel.editing) router.host.retouchPanel.editing = false;
+            else if (router.host.layersPanel && router.host.layersPanel.picking) router.host.layersPanel.picking = false;
             else {
                 var win = router.host.Window.window;
                 if (win && win.activeFocusItem && win.activeFocusItem !== win.contentItem) {

@@ -467,7 +467,7 @@ Rectangle {
                     font.family: Theme.fontFamily
                     font.pixelSize: Theme.px(10)
                     font.weight: Font.Bold
-                    color: Theme.onAccent
+                    color: Theme.accentText
                 }
 
                 MouseArea {

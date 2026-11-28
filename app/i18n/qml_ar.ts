@@ -2267,6 +2267,10 @@
         <source>no answer from the engine</source>
         <translation>لا استجابة من المحرّك</translation>
     </message>
+    <message>
+        <source>Open a photo first</source>
+        <translation>افتح صورة أولًا</translation>
+    </message>
 </context>
 <context>
     <name>MasksTab</name>

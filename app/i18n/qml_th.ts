@@ -2232,6 +2232,10 @@
         <source>no answer from the engine</source>
         <translation>ไม่มีการตอบกลับจากเอนจิน</translation>
     </message>
+    <message>
+        <source>Open a photo first</source>
+        <translation>เปิดภาพก่อน</translation>
+    </message>
 </context>
 <context>
     <name>MasksTab</name>

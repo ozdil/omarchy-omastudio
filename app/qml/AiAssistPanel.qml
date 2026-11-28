@@ -106,8 +106,14 @@ ColumnLayout {
         property string recipeJson: ""
         property string targetPhotoPath: ""
         onStarted: {
-            editProc.write(editProc.recipeJson + "\n");
+            var payload = editProc.recipeJson + "\n";
             editProc.recipeJson = "";
+            if (!editProc.write(payload)) {
+                editProc.running = false;
+                var err = qsTr("AI edit failed");
+                root.notify(err, true);
+                root.editFailed(err);
+            }
         }
         onFinished: function(exitCode, output) {
             if (editProc.targetPhotoPath !== "" && editProc.targetPhotoPath !== root.activePhotoPath) {
@@ -132,8 +138,12 @@ ColumnLayout {
         onStarted: {
             // The key travels on stdin, never as an argument
             if (setupProc.action === "key") {
-                setupProc.write(keyInput.text + "\n");
+                var key = keyInput.text + "\n";
                 keyInput.text = "";
+                if (!setupProc.write(key)) {
+                    setupProc.running = false;
+                    root.notify(qsTr("Failed"), true);
+                }
             }
         }
         onFinished: function(exitCode, output) {
@@ -224,7 +234,7 @@ ColumnLayout {
             font.family: Theme.fontFamily
             font.pixelSize: Theme.px(9)
             font.weight: Font.Bold
-            color: sb.primary ? Theme.onAccent : Theme.textMain
+            color: sb.primary ? Theme.accentText : Theme.textMain
         }
         MouseArea {
             id: sbMouse

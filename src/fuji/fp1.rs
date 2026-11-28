@@ -50,6 +50,10 @@ const FILM_SIMS: &[(&str, FilmSim)] = &[
 /// (FP1 white balance, CameraRecipe white balance name)
 const WHITE_BALANCES: &[(&str, &str)] = &[
     ("Auto", "Auto"),
+    ("Auto_White", "Auto (white priority)"),
+    ("AutoWhitePriority", "Auto (white priority)"),
+    ("Auto_Ambience", "Auto (ambience priority)"),
+    ("AutoAmbiencePriority", "Auto (ambience priority)"),
     ("Daylight", "Daylight"),
     ("Shade", "Shade"),
     ("FLight1", "Fluorescent"),
@@ -57,6 +61,9 @@ const WHITE_BALANCES: &[(&str, &str)] = &[
     ("FLight3", "Fluorescent"),
     ("Incandescent", "Incandescent"),
     ("UnderWater", "Underwater"),
+    ("Custom1", "Custom"),
+    ("Custom2", "Custom"),
+    ("Custom3", "Custom"),
     ("Temperature", "Kelvin"),
 ];
 
@@ -99,26 +106,46 @@ fn parse_ev(v: &str) -> f32 {
     let (sign, rest) = match v.as_bytes().first() {
         Some(b'P') => (1.0, &v[1..]),
         Some(b'M') => (-1.0, &v[1..]),
-        _ => return v.parse().unwrap_or(0.0),
+        _ => {
+            let parsed = v.parse::<f32>().unwrap_or(0.0);
+            return if parsed.is_finite() { parsed.clamp(-5.0, 5.0) } else { 0.0 };
+        }
     };
     let value: f32 = rest.replacen('P', ".", 1).parse().unwrap_or(0.0);
+    if !value.is_finite() {
+        return 0.0;
+    }
     // .33/.67 are thirds of a stop
-    sign * ((value * 3.0).round() / 3.0)
+    (sign * ((value.clamp(0.0, 5.0) * 3.0).round() / 3.0)).clamp(-5.0, 5.0)
 }
 
 fn format_ev(ev: f32) -> String {
-    let thirds = (ev * 3.0).round() as i32;
+    if !ev.is_finite() {
+        return "0".to_string();
+    }
+    let thirds = (ev.clamp(-5.0, 5.0) * 3.0).round() as i32;
     if thirds == 0 {
         return "0".to_string();
     }
     let sign = if thirds > 0 { 'P' } else { 'M' };
-    let (whole, frac) = (thirds.abs() / 3, thirds.abs() % 3);
+    let abs = thirds.unsigned_abs();
+    let (whole, frac) = (abs / 3, abs % 3);
     let frac = ["00", "33", "67"][frac as usize];
     format!("{}{}P{}", sign, whole, frac)
 }
 
-fn int(v: &str) -> i32 {
-    v.trim_start_matches('+').parse::<f32>().map(|f| f as i32).unwrap_or(0)
+fn int_clamped(v: &str, min: i32, max: i32) -> i32 {
+    match v.trim().trim_start_matches('+').parse::<f32>() {
+        Ok(f) if f.is_finite() => (f.round() as i32).clamp(min, max),
+        _ => 0,
+    }
+}
+
+fn tone_clamped(v: &str) -> f32 {
+    match v.trim().parse::<f32>() {
+        Ok(f) if f.is_finite() => f.clamp(-2.0, 4.0),
+        _ => 0.0,
+    }
 }
 
 struct ParsedFp1 {
@@ -289,18 +316,18 @@ pub fn parse(xml: &str) -> Result<Profile, String> {
         color_chrome_fx_blue: strength(field("ColorChromeBlue")),
         white_balance,
         color_temperature,
-        wb_shift: (int(field("WBShiftR")), int(field("WBShiftB"))),
+        wb_shift: (int_clamped(field("WBShiftR"), -9, 9), int_clamped(field("WBShiftB"), -9, 9)),
         dynamic_range,
         dynamic_range_auto,
         d_range_priority: None,
-        highlight: field("HighlightTone").parse().unwrap_or(0.0),
-        shadow: field("ShadowTone").parse().unwrap_or(0.0),
-        color: int(field("Color")),
-        sharpness: int(field("Sharpness")),
-        noise_reduction: int(field("NoisReduction")),
-        clarity: int(field("Clarity")),
-        mono_warm_cool: int(field("BlackImageTone")),
-        mono_magenta_green: int(field("MonochromaticColor_RG")),
+        highlight: tone_clamped(field("HighlightTone")),
+        shadow: tone_clamped(field("ShadowTone")),
+        color: int_clamped(field("Color"), -5, 5),
+        sharpness: int_clamped(field("Sharpness"), -5, 5),
+        noise_reduction: int_clamped(field("NoisReduction"), -5, 5),
+        clarity: int_clamped(field("Clarity"), -5, 5),
+        mono_warm_cool: int_clamped(field("BlackImageTone"), -18, 18),
+        mono_magenta_green: int_clamped(field("MonochromaticColor_RG"), -18, 18),
         exposure_bias: parse_ev(field("ExposureBias")),
     };
     Ok(Profile { label: parsed.label, device, recipe })
@@ -314,7 +341,10 @@ pub fn write(profile: &Profile) -> String {
     let kelvin = r.color_temperature.map(|k| format!("{}K", k)).unwrap_or_else(|| "0K".to_string());
     let dr = if r.dynamic_range_auto { "0".to_string() } else { r.dynamic_range.unwrap_or(100).to_string() };
     let half = |v: f32| {
-        let v = (v * 2.0).round() / 2.0;
+        if !v.is_finite() {
+            return "0".to_string();
+        }
+        let v = (v.clamp(-2.0, 4.0) * 2.0).round() / 2.0;
         if v.fract() == 0.0 { format!("{}", v as i32) } else { format!("{:.1}", v) }
     };
     let device = escape_xml(&profile.device);
@@ -433,6 +463,26 @@ mod tests {
         assert_eq!(format_ev(1.67), "P1P67");
         assert_eq!(parse_ev("M2P33"), -7.0 / 3.0);
         assert_eq!(parse_ev("0"), 0.0);
+        assert_eq!(format_ev(f32::NEG_INFINITY), "0");
+        assert_eq!(format_ev(f32::NAN), "0");
+        assert_eq!(format_ev(-99.0), "M5P00");
+        assert_eq!(parse_ev("NaN"), 0.0);
+        assert_eq!(parse_ev("M99P00"), -5.0);
+    }
+
+    #[test]
+    fn supports_extended_wb_modes_and_clamps_out_of_range_fields() {
+        let xml = PORTRA
+            .replace("<WhiteBalance>Daylight</WhiteBalance>", "<WhiteBalance>AutoWhitePriority</WhiteBalance>")
+            .replace("<HighlightTone>-1</HighlightTone>", "<HighlightTone>NaN</HighlightTone>")
+            .replace("<WBShiftR>3</WBShiftR>", "<WBShiftR>999</WBShiftR>");
+        let p = parse(&xml).unwrap();
+        assert_eq!(p.recipe.white_balance, "Auto (white priority)");
+        assert_eq!(p.recipe.highlight, 0.0);
+        assert_eq!(p.recipe.wb_shift.0, 9);
+
+        let custom = PORTRA.replace("<WhiteBalance>Daylight</WhiteBalance>", "<WhiteBalance>Custom2</WhiteBalance>");
+        assert_eq!(parse(&custom).unwrap().recipe.white_balance, "Custom");
     }
 
     #[test]

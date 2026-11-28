@@ -201,7 +201,7 @@ Rectangle {
                 spacing: 8
                 visible: !root.monochrome
 
-                Rectangle { Layout.fillWidth: true; height: 1; color: Theme.border }
+                Rectangle { Layout.fillWidth: true; implicitHeight: 1; color: Theme.border }
 
                 Text {
                     text: qsTr("Green output")
@@ -255,7 +255,7 @@ Rectangle {
                 spacing: 8
                 visible: !root.monochrome
 
-                Rectangle { Layout.fillWidth: true; height: 1; color: Theme.border }
+                Rectangle { Layout.fillWidth: true; implicitHeight: 1; color: Theme.border }
 
                 Text {
                     text: qsTr("Blue output")

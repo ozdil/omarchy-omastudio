@@ -27,7 +27,7 @@ Item {
             str = str.replace(/\{iso\}/g, root.exifMetadata.iso ? ("ISO " + Math.round(root.exifMetadata.iso)) : "");
             str = str.replace(/\{aperture\}/g, root.exifMetadata.aperture ? ("f/" + root.exifMetadata.aperture.toFixed(1)) : "");
             var s = root.exifMetadata.shutter;
-            var shutterStr = (s && s < 1.0 && s > 0.0) ? ("1/" + Math.round(1.0 / s) + "s") : ((s ? s.toFixed(1) : "") + "s");
+            var shutterStr = (s && s > 0.0) ? (s < 1.0 ? ("1/" + Math.round(1.0 / s) + "s") : (s.toFixed(1) + "s")) : "";
             str = str.replace(/\{shutter\}/g, shutterStr);
             str = str.replace(/\{focal\}/g, root.exifMetadata.focal_length ? (Math.round(root.exifMetadata.focal_length) + "mm") : "");
         }
@@ -39,16 +39,15 @@ Item {
         visible: root.shown && (root.watermarkType === "text" ? root.text.length > 0 : root.logoPath.length > 0)
         opacity: root.watermarkOpacity
 
-        // 9-Point Anchor Placement
-        anchors.left: (root.positionIndex === 0 || root.positionIndex === 3 || root.positionIndex === 6) ? parent.left : undefined
-        anchors.horizontalCenter: (root.positionIndex === 1 || root.positionIndex === 4 || root.positionIndex === 7) ? parent.horizontalCenter : undefined
-        anchors.right: (root.positionIndex === 2 || root.positionIndex === 5 || root.positionIndex === 8) ? parent.right : undefined
-
-        anchors.top: (root.positionIndex === 0 || root.positionIndex === 1 || root.positionIndex === 2) ? parent.top : undefined
-        anchors.verticalCenter: (root.positionIndex === 3 || root.positionIndex === 4 || root.positionIndex === 5) ? parent.verticalCenter : undefined
-        anchors.bottom: (root.positionIndex === 6 || root.positionIndex === 7 || root.positionIndex === 8) ? parent.bottom : undefined
-
-        anchors.margins: root.margin
+        // 9-Point Placement
+        readonly property int col: root.positionIndex % 3
+        readonly property int row: Math.floor(root.positionIndex / 3)
+        x: col === 0 ? root.margin
+           : (col === 1 ? Math.round((parent.width - width) / 2)
+           : Math.max(root.margin, parent.width - width - root.margin))
+        y: row === 0 ? root.margin
+           : (row === 1 ? Math.round((parent.height - height) / 2)
+           : Math.max(root.margin, parent.height - height - root.margin))
 
         implicitWidth: contentRow.implicitWidth
         implicitHeight: contentRow.implicitHeight
@@ -62,7 +61,7 @@ Item {
                 visible: root.watermarkType === "logo" && root.logoPath !== ""
                 source: root.logoPath ? ("file://" + root.logoPath) : ""
                 fillMode: Image.PreserveAspectFit
-                height: root.size * 2
+                Layout.preferredHeight: root.size * 2
                 mipmap: true
             }
 

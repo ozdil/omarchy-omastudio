@@ -2239,6 +2239,10 @@
         <source>no answer from the engine</source>
         <translation>καμία απάντηση από τη μηχανή</translation>
     </message>
+    <message>
+        <source>Open a photo first</source>
+        <translation>Ανοίξτε πρώτα μια φωτογραφία</translation>
+    </message>
 </context>
 <context>
     <name>MasksTab</name>

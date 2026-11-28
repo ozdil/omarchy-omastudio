@@ -314,10 +314,10 @@ Rectangle {
 
     // Rust-backed Undo / Redo History Controller (100-entry bounded stack)
     HistoryController {
-        id: historyCtrl
+        id: historyController
         onRevisionChanged: Qt.callLater(root.refreshHistory)
     }
-    readonly property alias historyCtrl: historyCtrl
+    readonly property alias historyCtrl: historyController
     property bool isPerformingUndoRedo: false
     // Engine-only tone flags with no UI control yet; kept so UI saves don't drop them
     property bool highlightReconstruct: true
@@ -326,7 +326,7 @@ Rectangle {
     function pushUndoState() {
         if (root.isPerformingUndoRedo) return;
         undoCommitTimer.stop();
-        historyCtrl.pushState(JSON.stringify(root.buildRecipeObject()));
+        historyController.pushState(JSON.stringify(root.buildRecipeObject()));
     }
 
     // Every render request (re)starts undoCommitTimer; once edits settle, the
@@ -334,7 +334,7 @@ Rectangle {
     function commitPendingUndo() {
         undoCommitTimer.stop();
         if (root.isPerformingUndoRedo || root.activePhotoPath === "") return;
-        historyCtrl.commitPending(JSON.stringify(root.buildRecipeObject()));
+        historyController.commitPending(JSON.stringify(root.buildRecipeObject()));
     }
 
     Timer {
@@ -346,7 +346,7 @@ Rectangle {
 
     function undo() {
         undoCommitTimer.stop();
-        var prevJson = historyCtrl.undo(JSON.stringify(root.buildRecipeObject()));
+        var prevJson = historyController.undo(JSON.stringify(root.buildRecipeObject()));
         if (prevJson === "") {
             root.showToast(qsTr("Nothing to undo"), Theme.textDim);
             return;
@@ -361,7 +361,7 @@ Rectangle {
 
     function redo() {
         undoCommitTimer.stop();
-        var nextJson = historyCtrl.redo(JSON.stringify(root.buildRecipeObject()));
+        var nextJson = historyController.redo(JSON.stringify(root.buildRecipeObject()));
         if (nextJson === "") {
             root.showToast(qsTr("Nothing to redo"), Theme.textDim);
             return;
@@ -432,7 +432,7 @@ Rectangle {
             root.historyModel = [];
             return;
         }
-        var descriptors = JSON.parse(historyCtrl.diffDescriptors(JSON.stringify(root.buildRecipeObject())));
+        var descriptors = JSON.parse(historyController.diffDescriptors(JSON.stringify(root.buildRecipeObject())));
         var model = [];
         for (var i = 0; i < descriptors.length; ++i)
             model.push({ "label": root.formatHistoryDescriptor(descriptors[i]) });
@@ -442,7 +442,7 @@ Rectangle {
     // Go back or forward to a state in the history; later states stay until the next edit
     function jumpToHistory(index) {
         undoCommitTimer.stop();
-        var targetJson = historyCtrl.jumpTo(index, JSON.stringify(root.buildRecipeObject()));
+        var targetJson = historyController.jumpTo(index, JSON.stringify(root.buildRecipeObject()));
         if (targetJson === "") return;
         root.isPerformingUndoRedo = true;
         var target = Object.assign({}, JSON.parse(targetJson), { "rating": root.photoRating, "flag": root.photoFlag });
@@ -709,7 +709,7 @@ Rectangle {
         root.preSocialRecipe = null;
         root.highlightReconstruct = true;
         root.filmicAgx = false;
-        historyCtrl.setBaseline(JSON.stringify(root.buildRecipeObject()));
+        historyController.setBaseline(JSON.stringify(root.buildRecipeObject()));
         root.showToast(qsTr("Reset to defaults"), Theme.textDim);
         root.requestRender();
     }
@@ -999,7 +999,7 @@ Rectangle {
         root.filmicAgx = Boolean(r.filmic_agx);
 
         // Programmatic recipe changes (load, undo, paste, AI) are not user edits
-        historyCtrl.setBaseline(JSON.stringify(root.buildRecipeObject()));
+        historyController.setBaseline(JSON.stringify(root.buildRecipeObject()));
         requestRender();
     }
 
@@ -1114,7 +1114,7 @@ Rectangle {
         if (r.highlight_reconstruct !== undefined) root.highlightReconstruct = Boolean(r.highlight_reconstruct);
         if (r.filmic_agx !== undefined) root.filmicAgx = Boolean(r.filmic_agx);
 
-        historyCtrl.setBaseline(JSON.stringify(root.buildRecipeObject()));
+        historyController.setBaseline(JSON.stringify(root.buildRecipeObject()));
         requestRender();
     }
 
@@ -1189,7 +1189,13 @@ Rectangle {
             daemonProc.running = true;
         }
         if (root.daemonReady) {
-            daemonProc.write(JSON.stringify(obj) + "\n");
+            if (!daemonProc.write(JSON.stringify(obj) + "\n")) {
+                console.warn("Engine daemon stdin write failed; re-queueing and restarting daemon");
+                root.daemonReady = false;
+                root.daemonQueue.push(obj);
+                daemonProc.running = false;
+                daemonProc.running = true;
+            }
         } else {
             root.daemonQueue.push(obj);
         }
@@ -1540,11 +1546,22 @@ Rectangle {
             root.handleDaemonMessage(line);
         }
 
+        onStderrLine: function(line) {
+            console.warn("engine:", line);
+        }
+
         onStarted: {
             root.daemonReady = true;
             while (root.daemonQueue.length > 0) {
                 var cmd = root.daemonQueue.shift();
-                daemonProc.write(JSON.stringify(cmd) + "\n");
+                if (!daemonProc.write(JSON.stringify(cmd) + "\n")) {
+                    console.warn("Engine daemon stdin write failed while draining queue");
+                    root.daemonReady = false;
+                    root.daemonQueue.unshift(cmd);
+                    daemonProc.running = false;
+                    daemonProc.running = true;
+                    break;
+                }
             }
         }
 
@@ -1569,7 +1586,7 @@ Rectangle {
     FileDialog {
         id: openFileProc
         title: qsTr("Open photo")
-        currentFolder: Host.folderUrl(filmstrip.currentFolder)
+        currentFolder: Host.folderUrl(filmstripBar.currentFolder)
         nameFilters: [qsTr("Photos") + " (" + root.globs(root.rawExtensions.concat(root.imageExtensions)) + ")",
                       qsTr("RAW") + " (" + root.globs(root.rawExtensions) + ")",
                       qsTr("Images") + " (" + root.globs(root.imageExtensions) + ")"]
@@ -1586,7 +1603,14 @@ Rectangle {
         // than one command line argument may be
         stdinEnabled: true
         property string recipeJson: ""
-        onStarted: exportProc.write(exportProc.recipeJson + "\n")
+        onStarted: {
+            if (!exportProc.write(exportProc.recipeJson + "\n")) {
+                exportProc.running = false;
+                root.exportDialog.isExporting = false;
+                root.exportDialog.exportStatusIsError = true;
+                root.exportDialog.exportStatusText = qsTr("Export failed");
+            }
+        }
         onFinished: function(exitCode, output) {
             root.exportDialog.isExporting = false;
             try {
@@ -1637,8 +1661,11 @@ Rectangle {
     // Load Studio Catalog
     function loadStudioCatalog(filterQuery) {
         root.isListingFolder = true;
-        filmstrip.currentFolder = "Studio Catalog";
-        var cmd = [root.resolveEnginePath(), "catalog", "list"];
+        filmstripBar.currentFolder = "Studio Catalog";
+        var q = String(filterQuery || "").trim();
+        var cmd = q.length > 0
+            ? [root.resolveEnginePath(), "catalog", "query", "--search", q]
+            : [root.resolveEnginePath(), "catalog", "list"];
         listProc.command = cmd;
         listProc.running = true;
     }
@@ -1662,12 +1689,30 @@ Rectangle {
                                 path: it.path,
                                 // Never the original file: only engine-encoded thumbnails reach Qt
                                 thumbnail: it.thumbnail_path || "",
+                                rating: it.rating || 0,
+                                flag: it.flag || "none",
                                 is_remote: false
                             });
                         }
                         root.photoList = arr;
                     } else if (Array.isArray(resp.data)) {
-                        root.photoList = resp.data;
+                        var normalized = [];
+                        for (var j = 0; j < resp.data.length; j++) {
+                            var entry = resp.data[j];
+                            if (entry && entry.name === undefined && entry.path) {
+                                normalized.push({
+                                    name: String(entry.path).split("/").pop(),
+                                    path: entry.path,
+                                    thumbnail: entry.thumbnail_path || "",
+                                    rating: entry.rating || 0,
+                                    flag: entry.flag || "none",
+                                    is_remote: false
+                                });
+                            } else {
+                                normalized.push(entry);
+                            }
+                        }
+                        root.photoList = normalized;
                     }
                 } else if (resp.error) {
                     var cleanMsg = String(resp.error || "").split("\n")[0].substring(0, 80);
@@ -1866,7 +1911,7 @@ Rectangle {
             root.preSocialRecipe = null;
             // Undo history and grade versions belong to the previous photo
             undoCommitTimer.stop();
-            historyCtrl.reset();
+            historyController.reset();
             root.gradeVersions = { "A": null, "B": null, "C": null, "D": null };
             root.currentGradeVersion = "A";
             root.snapshots = [];
@@ -1983,7 +2028,7 @@ Rectangle {
                         if (root.cloudAccounts[i].id === root.cloudAccount) known = true;
                     if (root.cloudAccount !== "" && !known) {
                         root.leaveCloud();
-                        filmstrip.currentFolder = "~/Pictures";
+                        filmstripBar.currentFolder = "~/Pictures";
                         root.scanLocalFolder("~/Pictures");
                     }
                 }
@@ -2087,7 +2132,7 @@ Rectangle {
                     root.showToast(qsTr("%1 connected").arg(msg.data.label), Theme.accentGreen);
                     root.refreshCloud();
                     root.showCloudModal = false;
-                    filmstrip.isCatalogMode = false;
+                    filmstripBar.isCatalogMode = false;
                     root.openCloudFolder(msg.data.id, "");
                 } else if (msg.success === false) {
                     root.cloudDialog.errorText = String(msg.error || "").substring(0, 300);
@@ -2120,8 +2165,8 @@ Rectangle {
     // A folder on this computer in the filmstrip (control socket `openFolder`)
     function openLocalFolder(dir) {
         root.leaveCloud();
-        filmstrip.isCatalogMode = false;
-        filmstrip.currentFolder = dir;
+        filmstripBar.isCatalogMode = false;
+        filmstripBar.currentFolder = dir;
         root.scanLocalFolder(dir);
     }
 
@@ -2225,6 +2270,10 @@ Rectangle {
                 root.showToast(root.viewport.isCropMode ? qsTr("Crop mode: on (C)") : qsTr("Crop mode: off"), Theme.accentYellow);
             }
             onExportClicked: {
+                if (root.activePhotoPath === "") {
+                    root.showToast(qsTr("Open a photo first"), Theme.textDim);
+                    return;
+                }
                 root.exportDialog.isBatchMode = false;
                 root.exportDialog.batchCount = 0;
                 root.exportDialog.exportStatusText = "";
@@ -2253,19 +2302,19 @@ Rectangle {
                 host: root
                 layersPanel: rightInspector.layersPanel
                 retouchPanel: rightInspector.retouchPanel
-                filmstrip: filmstrip
+                filmstrip: filmstripBar
             }
 
             RightInspector {
                 id: rightInspector
                 host: root
-                filmstrip: filmstrip
+                filmstrip: filmstripBar
             }
         }
 
         // BOTTOM FILMSTRIP
         Filmstrip {
-            id: filmstrip
+            id: filmstripBar
             visible: root.showFilmstrip
             Layout.fillWidth: true
             photoList: root.photoList
@@ -2292,7 +2341,7 @@ Rectangle {
                     return;
                 }
                 root.showToast(qsTr("Opening %1").arg(remotePath), Theme.accent);
-                filmstrip.currentFolder = remotePath;
+                filmstripBar.currentFolder = remotePath;
                 root.scanLocalFolder(remotePath);
             }
             onConnectRequested: {
@@ -2310,14 +2359,14 @@ Rectangle {
                     root.openCloudFolder(root.cloudAccount, segs.join("/"));
                     return;
                 }
-                var cur = filmstrip.currentFolder || "~/Pictures";
+                var cur = filmstripBar.currentFolder || "~/Pictures";
                 if (cur.indexOf("/") !== -1) {
                     var parts = cur.split("/").filter(function(p) { return p.length > 0; });
                     if (parts.length > 1) {
                         parts.pop();
                         var parentP = (cur.startsWith("/") ? "/" : "") + parts.join("/");
                         if (parentP === "~") parentP = Host.homeDir;
-                        filmstrip.currentFolder = parentP;
+                        filmstripBar.currentFolder = parentP;
                         root.scanLocalFolder(parentP);
                     }
                 }
@@ -2328,25 +2377,25 @@ Rectangle {
                     root.showToast(qsTr("Loading the catalog…"), Theme.accentCyan);
                     root.loadStudioCatalog("");
                 } else {
-                    filmstrip.currentFolder = "~/Pictures";
+                    filmstripBar.currentFolder = "~/Pictures";
                     root.scanLocalFolder("~/Pictures");
                 }
             }
             onRefreshRequested: {
-                if (root.cloudAccount !== "" && !filmstrip.isCatalogMode) {
+                if (root.cloudAccount !== "" && !filmstripBar.isCatalogMode) {
                     root.openCloudFolder(root.cloudAccount, root.cloudPath);
-                } else if (filmstrip.isCatalogMode) {
+                } else if (filmstripBar.isCatalogMode) {
                     root.showToast(qsTr("Refreshing the catalog…"), Theme.accentCyan);
                     root.loadStudioCatalog("");
                 } else {
-                    root.scanLocalFolder(filmstrip.currentFolder || "~/Pictures");
+                    root.scanLocalFolder(filmstripBar.currentFolder || "~/Pictures");
                 }
             }
             onBatchExportRequested: {
                 // Photos in a cloud account are downloaded before they can be exported
                 var missing = [];
-                for (var i = 0; i < filmstrip.selectedPaths.length; i++) {
-                    var item = root.cloudItem(filmstrip.selectedPaths[i]);
+                for (var i = 0; i < filmstripBar.selectedPaths.length; i++) {
+                    var item = root.cloudItem(filmstripBar.selectedPaths[i]);
                     if (item) missing.push(item);
                 }
                 if (missing.length > 0) {
@@ -2374,7 +2423,7 @@ Rectangle {
 
     function openBatchExport() {
         root.exportDialog.isBatchMode = true;
-        root.exportDialog.batchCount = filmstrip.selectedPaths.length;
+        root.exportDialog.batchCount = filmstripBar.selectedPaths.length;
         root.exportDialog.exportStatusText = "";
         root.exportDialog.exportStatusIsError = false;
         root.showExportModal = true;
@@ -2382,12 +2431,12 @@ Rectangle {
 
     function startExport(opts) {
         root.exportDialog.isExporting = true;
-        if (root.exportDialog.isBatchMode && filmstrip.selectedPaths.length > 0) {
+        if (root.exportDialog.isBatchMode && filmstripBar.selectedPaths.length > 0) {
             root.exportDialog.exportStatusIsError = false;
-            root.exportDialog.exportStatusText = qsTr("Exporting %n photos…", "", filmstrip.selectedPaths.length);
+            root.exportDialog.exportStatusText = qsTr("Exporting %n photos…", "", filmstripBar.selectedPaths.length);
             var batchItems = [];
-            for (var i = 0; i < filmstrip.selectedPaths.length; i++) {
-                var p = filmstrip.selectedPaths[i];
+            for (var i = 0; i < filmstripBar.selectedPaths.length; i++) {
+                var p = filmstripBar.selectedPaths[i];
                 batchItems.push({
                     "path": p,
                     "recipe": (p === root.activePhotoPath ? root.buildRecipeObject() : null)
@@ -2449,7 +2498,7 @@ Rectangle {
     function disconnectCloudAccount(account) {
         if (root.cloudAccount === account) {
             root.leaveCloud();
-            filmstrip.currentFolder = "~/Pictures";
+            filmstripBar.currentFolder = "~/Pictures";
             root.scanLocalFolder("~/Pictures");
         }
         if (root.cloudUploadAccount === account) root.cloudUploadAccount = "";
@@ -2466,7 +2515,7 @@ Rectangle {
     ModalHost {
         id: modalHost
         host: root
-        filmstrip: filmstrip
+        filmstrip: filmstripBar
     }
 
     Component.onCompleted: {

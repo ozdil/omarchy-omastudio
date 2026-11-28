@@ -2239,6 +2239,10 @@
         <source>no answer from the engine</source>
         <translation>इंजन से कोई उत्तर नहीं</translation>
     </message>
+    <message>
+        <source>Open a photo first</source>
+        <translation>पहले कोई फ़ोटो खोलें</translation>
+    </message>
 </context>
 <context>
     <name>MasksTab</name>

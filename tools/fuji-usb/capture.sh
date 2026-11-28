@@ -24,7 +24,7 @@ dev=$((10#$(awk '{print $4}' <<<"$line" | tr -d :)))
 echo "Camera: $line"
 
 out=${1:-"$HOME/omastudio-captures/$(date +%Y%m%d-%H%M%S)"}
-mkdir -p "$out"
+install -d -m 700 "$out"
 markers="$out/markers.tsv"
 : >"$markers"
 
@@ -32,7 +32,10 @@ sudo modprobe usbmon
 sudo -v
 sudo tshark -q -i "usbmon$bus" -w "$out/capture.pcapng" 2>"$out/tshark.log" &
 cap=$!
-trap 'sudo kill -INT $cap 2>/dev/null || true' EXIT
+stop_capture() {
+    sudo kill -INT -- "$cap" 2>/dev/null || true
+}
+trap stop_capture EXIT
 sleep 2
 
 cat <<MSG
@@ -49,8 +52,8 @@ while IFS= read -r -p "> " note && [[ -n $note ]]; do
     printf '%s\t%s\n' "$(date +%s.%N)" "$note" >>"$markers"
 done
 
-sudo kill -INT $cap
-wait $cap 2>/dev/null || true
+stop_capture
+wait "$cap" 2>/dev/null || true
 trap - EXIT
 sudo chown "$(id -u):$(id -g)" "$out/capture.pcapng"
 echo "device=$dev" >"$out/device"

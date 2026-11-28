@@ -47,24 +47,19 @@ TextEdit {
     }
 
     function startBoundedPaste() {
-        if (readOnly || pasteProcess.running) return;
+        if (readOnly) return;
         control.pasteNotice = "";
-        pasteProcess.command = ["timeout", "--signal=KILL", "1", "wl-paste", "--no-newline", "--type", "text/plain;charset=utf-8"];
-        pasteProcess.running = true;
-    }
-
-    Process {
-        id: pasteProcess
-        // Killed (exit code -2) once the clipboard exceeds the limit
-        maxOutputBytes: control.maxPasteBytes
-
-        onFinished: (exitCode, output) => {
-            if (exitCode === -2 || exitCode === 124 || exitCode === 137) {
+        var rawJson = Host.clipboardTextBounded(Math.max(1, control.maxPasteBytes));
+        try {
+            var res = JSON.parse(rawJson);
+            if (res.exceeded) {
                 control.pasteNotice = qsTr("Clipboard content exceeded byte limit or timed out.");
                 return;
             }
-            if (exitCode !== 0 || output.length === 0) return;
-            control.insertCleanText(output);
+            if (!res.text || res.text.length === 0) return;
+            control.insertCleanText(res.text);
+        } catch (e) {
+            return;
         }
     }
 

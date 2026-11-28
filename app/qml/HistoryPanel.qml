@@ -134,7 +134,7 @@ Rectangle {
         Rectangle {
             Layout.fillWidth: true
             Layout.topMargin: 4
-            height: 1
+            implicitHeight: 1
             color: Theme.border
         }
 

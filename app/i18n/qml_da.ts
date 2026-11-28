@@ -2239,6 +2239,10 @@
         <source>no answer from the engine</source>
         <translation>intet svar fra motoren</translation>
     </message>
+    <message>
+        <source>Open a photo first</source>
+        <translation>Åbn et foto først</translation>
+    </message>
 </context>
 <context>
     <name>MasksTab</name>

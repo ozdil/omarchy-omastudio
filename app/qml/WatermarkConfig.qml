@@ -227,7 +227,7 @@ Rectangle {
                     Repeater {
                         model: [
                             "{camera} | {lens}",
-                            "{aperture} {shutter} ISO {iso}",
+                            "{aperture} {shutter} {iso}",
                             "(c) OmaStudio",
                             "{lens} @ {aperture}"
                         ]

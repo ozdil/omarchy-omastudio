@@ -1434,7 +1434,7 @@ Rectangle {
                     textFormat: Text.PlainText
                     font.pixelSize: Theme.px(9)
                     font.weight: Font.Bold
-                    color: resetMouse.containsMouse ? Theme.onAccent : Theme.accent
+                    color: resetMouse.containsMouse ? Theme.accentText : Theme.accent
                 }
 
                 MouseArea {
@@ -1647,6 +1647,7 @@ Rectangle {
                     MouseArea {
                         id: aspMouse
                         anchors.fill: parent
+                        hoverEnabled: true
                         cursorShape: Qt.PointingHandCursor
                         onClicked: root.applyAspectPreset(modelData)
                     }
@@ -1707,6 +1708,7 @@ Rectangle {
                 MouseArea {
                     id: rstCropMouse
                     anchors.fill: parent
+                    hoverEnabled: true
                     cursorShape: Qt.PointingHandCursor
                     onClicked: root.resetCrop()
                 }
@@ -1726,7 +1728,7 @@ Rectangle {
                     textFormat: Text.PlainText
                     font.pixelSize: Theme.px(9)
                     font.weight: Font.Bold
-                    color: Theme.onAccent
+                    color: Theme.accentText
                 }
                 MouseArea {
                     anchors.fill: parent
@@ -1877,22 +1879,26 @@ Rectangle {
             }
             if (!path || path.trim() === "") return;
 
+            if (Host.isDirectory(path)) {
+                root.folderDropped(path);
+                drop.acceptProposedAction();
+                return;
+            }
+
             var lower = path.toLowerCase();
-            var rawExts = [".3fr", ".ari", ".arw", ".bay", ".cap", ".cr2", ".cr3", ".crw", ".cs1", ".dc2", ".dcr", ".dcs", ".dng", ".drf", ".eip", ".erf", ".fff", ".gpr", ".iiq", ".k25", ".kc2", ".kdc", ".mdc", ".mef", ".mfw", ".mos", ".mrw", ".nef", ".nrw", ".orf", ".ori", ".pef", ".ptx", ".pxn", ".qtk", ".raf", ".raw", ".rdc", ".rw2", ".rwl", ".rwz", ".sr2", ".srf", ".srw", ".sti", ".x3f", ".jpg", ".jpeg", ".jpe", ".png", ".webp", ".tif", ".tiff", ".heic", ".heif", ".hif", ".avif", ".jxl", ".exr", ".hdr", ".pnm", ".ppm", ".pgm", ".pam"];
-            var isFile = false;
-            for (var i = 0; i < rawExts.length; i++) {
-                if (lower.endsWith(rawExts[i])) {
-                    isFile = true;
+            var exts = JSON.parse(Host.rawExtensions).concat(JSON.parse(Host.imageExtensions));
+            var supported = false;
+            for (var i = 0; i < exts.length; i++) {
+                if (lower.endsWith("." + exts[i])) {
+                    supported = true;
                     break;
                 }
             }
 
-            if (isFile) {
+            if (supported) {
                 root.fileDropped(path);
-            } else {
-                root.folderDropped(path);
+                drop.acceptProposedAction();
             }
-            drop.acceptProposedAction();
         }
     }
 
@@ -1912,8 +1918,8 @@ Rectangle {
 
             Rectangle {
                 Layout.alignment: Qt.AlignHCenter
-                width: 64
-                height: 64
+                implicitWidth: 64
+                implicitHeight: 64
                 radius: 32
                 color: Qt.rgba(0, 0, 0, 0.6)
                 border.color: Theme.accent

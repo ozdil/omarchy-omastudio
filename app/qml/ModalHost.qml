@@ -28,6 +28,7 @@ Item {
             id: exportDialog
             anchors.centerIn: parent
             host: modals.host
+            iccProfiles: modals.host ? modals.host.iccProfiles : []
             watermarkEnabled: modals.host ? modals.host.watermarkEnabled : false
             watermarkOptions: modals.host ? modals.host.buildWatermarkOptions() : ({})
             cloudAccounts: modals.host ? modals.host.cloudAccounts : []

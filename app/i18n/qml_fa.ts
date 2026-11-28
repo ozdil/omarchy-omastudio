@@ -2232,6 +2232,10 @@
         <source>no answer from the engine</source>
         <translation>پاسخی از موتور نیامد</translation>
     </message>
+    <message>
+        <source>Open a photo first</source>
+        <translation>نخست یک عکس باز کنید</translation>
+    </message>
 </context>
 <context>
     <name>MasksTab</name>

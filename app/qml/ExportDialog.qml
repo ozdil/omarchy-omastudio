@@ -36,7 +36,10 @@ Rectangle {
         title: qsTr("Export folder")
         onAccepted: {
             var p = Host.localPath(selectedFolder);
-            if (p.length > 0) root.localOutputDir = p;
+            if (p.length > 0) {
+                root.localOutputDir = p;
+                if (folderInput.text !== p) folderInput.text = p;
+            }
         }
     }
     property string selectedFormat: "jpeg"
@@ -50,6 +53,7 @@ Rectangle {
     property var maxDimension: null
     property bool stripGps: true
     property bool preserveExif: true
+    property var iccProfiles: []
     property string selectedIcc: "sRGB"
     property string renderingIntent: "relative_colorimetric"
     property string localOutputDir: "~/Pictures/OmaStudio_Exports"
@@ -454,14 +458,32 @@ Rectangle {
                         columnSpacing: Theme.px(6)
                         rowSpacing: Theme.px(6)
                         Repeater {
-                            model: [
-                                { id: "sRGB", name: "sRGB", desc: qsTr("Web, screens") },
-                                { id: "DisplayP3", name: "Display P3", desc: qsTr("Modern screens") },
-                                { id: "AdobeRGB1998", name: "Adobe RGB", desc: qsTr("Print") },
-                                { id: "ProPhotoRGB", name: "ProPhoto RGB", desc: qsTr("Editing, archive") },
-                                { id: "Rec2020", name: "Rec. 2020", desc: qsTr("HDR, video") },
-                                { id: "ACEScg", name: "ACEScg", desc: qsTr("Linear, VFX") }
-                            ]
+                            model: {
+                                var profiles = [
+                                    { id: "sRGB", name: "sRGB", desc: qsTr("Web, screens") },
+                                    { id: "DisplayP3", name: "Display P3", desc: qsTr("Modern screens") },
+                                    { id: "AdobeRGB1998", name: "Adobe RGB", desc: qsTr("Print") },
+                                    { id: "ProPhotoRGB", name: "ProPhoto RGB", desc: qsTr("Editing, archive") },
+                                    { id: "Rec2020", name: "Rec. 2020", desc: qsTr("HDR, video") },
+                                    { id: "ACEScg", name: "ACEScg", desc: qsTr("Linear, VFX") }
+                                ];
+                                var seen = {};
+                                for (var i = 0; i < profiles.length; ++i) seen[profiles[i].id.toLowerCase()] = true;
+                                var extra = root.iccProfiles || [];
+                                for (var j = 0; j < extra.length; ++j) {
+                                    var p = extra[j];
+                                    if (!p || !p.id) continue;
+                                    var key = String(p.id).toLowerCase();
+                                    if (seen[key]) continue;
+                                    seen[key] = true;
+                                    profiles.push({
+                                        id: String(p.id),
+                                        name: String(p.name || p.id),
+                                        desc: String(p.description || "")
+                                    });
+                                }
+                                return profiles;
+                            }
                             delegate: Rectangle {
                                 required property var modelData
                                 readonly property bool isCur: root.selectedIcc === modelData.id
@@ -481,6 +503,8 @@ Rectangle {
                                         font.pixelSize: Theme.px(11)
                                         font.weight: Font.DemiBold
                                         color: parent.parent.isCur ? Theme.accent : Theme.textMain
+                                        elide: Text.ElideRight
+                                        Layout.fillWidth: true
                                     }
                                     Text {
                                         text: modelData.desc
@@ -499,6 +523,9 @@ Rectangle {
                                     cursorShape: Qt.PointingHandCursor
                                     onClicked: root.selectedIcc = modelData.id
                                 }
+                                ToolTip.visible: iccMouse.containsMouse && (modelData.desc || "") !== ""
+                                ToolTip.delay: 400
+                                ToolTip.text: modelData.name + (modelData.desc ? (" — " + modelData.desc) : "")
                             }
                         }
                     }
@@ -608,8 +635,13 @@ Rectangle {
                             font.pixelSize: Theme.px(11)
                             color: Theme.textMain
                             maxLength: 1024
-                            text: root.localOutputDir
-                            onTextChanged: if (text.length > 0) root.localOutputDir = text
+                            onTextChanged: if (text.length > 0 && root.localOutputDir !== text) root.localOutputDir = text
+                            Binding {
+                                target: folderInput
+                                property: "text"
+                                value: root.localOutputDir
+                                when: !folderInput.activeFocus
+                            }
                         }
                     }
                     Rectangle {
@@ -653,8 +685,13 @@ Rectangle {
                             font.pixelSize: Theme.px(11)
                             color: Theme.textMain
                             maxLength: 64
-                            text: root.nameTag
-                            onTextChanged: root.nameTag = text
+                            onTextChanged: if (root.nameTag !== text) root.nameTag = text
+                            Binding {
+                                target: nameTagInput
+                                property: "text"
+                                value: root.nameTag
+                                when: !nameTagInput.activeFocus
+                            }
                         }
                     }
                     Hint {
@@ -766,7 +803,7 @@ Rectangle {
                     font.family: Theme.fontFamily
                     font.pixelSize: Theme.px(12)
                     font.weight: Font.DemiBold
-                    color: root.isExporting ? Theme.textMuted : Theme.onAccent
+                    color: root.isExporting ? Theme.textMuted : Theme.accentText
                 }
                 MouseArea {
                     id: exportMouse

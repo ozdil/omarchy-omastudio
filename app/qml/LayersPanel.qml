@@ -464,7 +464,7 @@ Rectangle {
             spacing: 8
             visible: root.activeL !== null
 
-            Rectangle { Layout.fillWidth: true; height: 1; color: Theme.border }
+            Rectangle { Layout.fillWidth: true; implicitHeight: 1; color: Theme.border }
 
             Text {
                 text: root.activeL ? root.activeL.name : ""
@@ -531,7 +531,7 @@ Rectangle {
 
                             // Click cycles add, subtract, intersect
                             SmallButton {
-                                implicitWidth: Math.max(implicitHeight * 3.5, implicitWidth)
+                                Layout.minimumWidth: implicitHeight * 3.5
                                 label: compItem.comp ? root.modeLabel(compItem.comp.mode) : ""
                                 labelColor: compItem.comp && compItem.comp.mode === "subtract" ? Theme.accentRed
                                           : compItem.comp && compItem.comp.mode === "intersect" ? Theme.accentCyan
@@ -721,7 +721,7 @@ Rectangle {
                 }
             }
 
-            Rectangle { Layout.fillWidth: true; height: 1; color: Theme.border }
+            Rectangle { Layout.fillWidth: true; implicitHeight: 1; color: Theme.border }
 
             LayerSlider {
                 key: "opacity"

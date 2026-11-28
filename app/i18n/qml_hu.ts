@@ -2232,6 +2232,10 @@
         <source>no answer from the engine</source>
         <translation>a motor nem válaszolt</translation>
     </message>
+    <message>
+        <source>Open a photo first</source>
+        <translation>Előbb nyisson meg egy fotót</translation>
+    </message>
 </context>
 <context>
     <name>MasksTab</name>

@@ -2239,6 +2239,10 @@
         <source>no answer from the engine</source>
         <translation>sem resposta do mecanismo</translation>
     </message>
+    <message>
+        <source>Open a photo first</source>
+        <translation>Abra uma foto primeiro</translation>
+    </message>
 </context>
 <context>
     <name>MasksTab</name>

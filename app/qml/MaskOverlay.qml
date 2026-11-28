@@ -169,9 +169,14 @@ Item {
         onExited: root.hoverPos = Qt.point(-1, -1)
         onPositionChanged: function(ev) {
             root.hoverPos = Qt.point(ev.x, ev.y);
-            if (root.tool !== "brush" || !pressed) return;
+            if (root.tool !== "brush" || !pressed || width <= 0 || height <= 0) return;
             var p = [root.clamp01(ev.x / width), root.clamp01(ev.y / height)];
             var pts = root.livePoints;
+            if (!pts || pts.length === 0) {
+                root.livePoints = [[Math.round(p[0] * 1e4) / 1e4, Math.round(p[1] * 1e4) / 1e4]];
+                canvas.requestPaint();
+                return;
+            }
             var last = pts[pts.length - 1];
             // A point every quarter radius keeps the stroke smooth and the recipe small
             var dx = (p[0] - last[0]) * width, dy = (p[1] - last[1]) * height;
@@ -182,6 +187,7 @@ Item {
             canvas.requestPaint();
         }
         onPressed: function(ev) {
+            if (width <= 0 || height <= 0) return;
             var u = root.clamp01(ev.x / width), v = root.clamp01(ev.y / height);
             if (root.tool === "pick") {
                 root.pickAt(u, v);

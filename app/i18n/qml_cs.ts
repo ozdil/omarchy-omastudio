@@ -2246,6 +2246,10 @@
         <source>no answer from the engine</source>
         <translation>žádná odpověď od jádra</translation>
     </message>
+    <message>
+        <source>Open a photo first</source>
+        <translation>Nejprve otevřete fotografii</translation>
+    </message>
 </context>
 <context>
     <name>MasksTab</name>

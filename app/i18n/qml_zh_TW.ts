@@ -2232,6 +2232,10 @@
         <source>no answer from the engine</source>
         <translation>引擎沒有回應</translation>
     </message>
+    <message>
+        <source>Open a photo first</source>
+        <translation>請先開啟照片</translation>
+    </message>
 </context>
 <context>
     <name>MasksTab</name>
