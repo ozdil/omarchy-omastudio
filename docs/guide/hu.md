@@ -4,7 +4,7 @@
 
 [Minden nyelv](../README.md) · [Technológiák](../technology/hu.md) · [README](../../README.md)
 
-Ez az útmutató az OmaStudio 3.2-es verziójáról szól. Bemutatja az alkalmazás telepítését, az ablak felépítését, valamint az egyes panelek és eszközök használatát. A képernyőképeken Fujifilm GFX 50R és Hasselblad CFV-50c mintafájlok láthatók a [raw.pixls.us](https://raw.pixls.us) oldalról (CC0).
+Ez az útmutató az OmaStudio 3.3-as verziójáról szól. Bemutatja az alkalmazás telepítését, az ablak felépítését, valamint az egyes panelek és eszközök használatát. A képernyőképeken Fujifilm GFX 50R és Hasselblad CFV-50c mintafájlok láthatók a [raw.pixls.us](https://raw.pixls.us) oldalról (CC0).
 
 ![Az OmaStudio egy Fujifilm GFX 50R fotóval](../images/lang/main-hu.webp)
 

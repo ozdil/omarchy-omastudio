@@ -4,7 +4,7 @@
 
 [Alle Sprachen](../README.md) · [Technologien](../technology/de.md) · [README](../../README.md)
 
-Dieses Handbuch beschreibt OmaStudio 3.2. Es erklärt die Installation, den Aufbau des Fensters und die Verwendung aller Bereiche und Werkzeuge. Die Bildschirmfotos zeigen Beispieldateien einer Fujifilm GFX 50R und einer Hasselblad CFV-50c von [raw.pixls.us](https://raw.pixls.us) (CC0).
+Dieses Handbuch beschreibt OmaStudio 3.3. Es erklärt die Installation, den Aufbau des Fensters und die Verwendung aller Bereiche und Werkzeuge. Die Bildschirmfotos zeigen Beispieldateien einer Fujifilm GFX 50R und einer Hasselblad CFV-50c von [raw.pixls.us](https://raw.pixls.us) (CC0).
 
 ![OmaStudio mit einem Foto der Fujifilm GFX 50R](../images/lang/main-de.webp)
 

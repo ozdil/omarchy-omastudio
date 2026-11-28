@@ -4,7 +4,7 @@
 
 [Wszystkie języki](../README.md) · [Technologie](../technology/pl.md) · [README](../../README.md)
 
-Ten podręcznik dotyczy OmaStudio 3.2. Wyjaśnia, jak zainstalować aplikację, jak zbudowane jest okno i jak korzystać z każdego panelu i narzędzia. Zrzuty ekranu pokazują przykładowe pliki z aparatów Fujifilm GFX 50R i Hasselblad CFV-50c z serwisu [raw.pixls.us](https://raw.pixls.us) (CC0).
+Ten podręcznik dotyczy OmaStudio 3.3. Wyjaśnia, jak zainstalować aplikację, jak zbudowane jest okno i jak korzystać z każdego panelu i narzędzia. Zrzuty ekranu pokazują przykładowe pliki z aparatów Fujifilm GFX 50R i Hasselblad CFV-50c z serwisu [raw.pixls.us](https://raw.pixls.us) (CC0).
 
 ![OmaStudio ze zdjęciem z Fujifilm GFX 50R](../images/lang/main-pl.webp)
 

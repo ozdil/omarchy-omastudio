@@ -4,7 +4,7 @@
 
 [Alle sprog](../README.md) · [Teknologier](../technology/da.md) · [README](../../README.md)
 
-Denne vejledning gælder OmaStudio 3.2. Den forklarer, hvordan du installerer programmet, hvordan vinduet er opbygget, og hvordan du bruger hvert panel og værktøj. Skærmbillederne viser eksempelfiler fra Fujifilm GFX 50R og Hasselblad CFV-50c fra [raw.pixls.us](https://raw.pixls.us) (CC0).
+Denne vejledning gælder OmaStudio 3.3. Den forklarer, hvordan du installerer programmet, hvordan vinduet er opbygget, og hvordan du bruger hvert panel og værktøj. Skærmbillederne viser eksempelfiler fra Fujifilm GFX 50R og Hasselblad CFV-50c fra [raw.pixls.us](https://raw.pixls.us) (CC0).
 
 ![OmaStudio med et billede fra Fujifilm GFX 50R](../images/lang/main-da.webp)
 
