@@ -11,17 +11,30 @@ Rectangle {
     border.width: 1
     clip: true
 
+    property Item sourceItem: null
+    property real sourceAspect: 1.5
+    property bool useSoftwareFallback: false
     property string imageSource: ""
     property int revisionCounter: 0
-    onImageSourceChanged: {
-        if (!root.imageSource || root.imageSource.length === 0) {
+    readonly property bool useLiveMirror: !root.useSoftwareFallback && root.sourceItem !== null && root.imageSource.length > 0
+
+    function toImageUrl(src, rev) {
+        if (!src || src.length === 0) return "";
+        if (src.indexOf("image://") === 0 || src.indexOf("file://") === 0 || src.indexOf("qrc:/") === 0)
+            return src;
+        var url = "file://" + src + "?v=" + rev;
+        return url;
+    }
+
+    function syncFallbackImages() {
+        if (!root.imageSource || root.imageSource.length === 0 || root.useLiveMirror) {
             miniImg0.source = "";
             miniImg1.source = "";
             miniImage.currentSource = "";
             return;
         }
         root.revisionCounter++;
-        var nextSrc = "file://" + root.imageSource + "?v=" + root.revisionCounter;
+        var nextSrc = root.toImageUrl(root.imageSource, root.revisionCounter);
 
         if (miniImg0.status !== Image.Ready && miniImg1.status !== Image.Ready) {
             miniImg0.source = nextSrc;
@@ -31,6 +44,9 @@ Rectangle {
             miniImg0.source = nextSrc;
         }
     }
+
+    onImageSourceChanged: root.syncFallbackImages()
+    onUseLiveMirrorChanged: root.syncFallbackImages()
     property real zoomFactor: 1.0
 
     property real rotationAngle: 0.0
@@ -86,18 +102,40 @@ Rectangle {
                 property int activeBuffer: 0
                 property string currentSource: ""
                 readonly property var currentActiveImage: activeBuffer === 0 ? miniImg0 : miniImg1
-                readonly property real paintedWidth: currentActiveImage && currentActiveImage.paintedWidth > 0 ? currentActiveImage.paintedWidth : width
-                readonly property real paintedHeight: currentActiveImage && currentActiveImage.paintedHeight > 0 ? currentActiveImage.paintedHeight : height
+                readonly property real safeAspect: root.sourceAspect > 0.01 ? root.sourceAspect : 1.5
+                readonly property real mirrorFitW: (width / Math.max(1, height) > safeAspect) ? (height * safeAspect) : width
+                readonly property real mirrorFitH: (width / Math.max(1, height) > safeAspect) ? height : (width / safeAspect)
+                readonly property real paintedWidth: root.useLiveMirror
+                    ? mirrorFitW
+                    : (currentActiveImage && currentActiveImage.paintedWidth > 0 ? currentActiveImage.paintedWidth : width)
+                readonly property real paintedHeight: root.useLiveMirror
+                    ? mirrorFitH
+                    : (currentActiveImage && currentActiveImage.paintedHeight > 0 ? currentActiveImage.paintedHeight : height)
 
+                // Zero-decode live GPU mirror of Viewport's preview surface (saves ~100+ MB vs duplicate decode)
+                ShaderEffectSource {
+                    id: miniMirror
+                    visible: root.useLiveMirror
+                    sourceItem: root.useLiveMirror ? root.sourceItem : null
+                    live: root.useLiveMirror
+                    hideSource: false
+                    smooth: true
+                    textureSize: Qt.size(256, 256)
+                    anchors.centerIn: parent
+                    width: miniImage.mirrorFitW
+                    height: miniImage.mirrorFitH
+                }
+
+                // Software-renderer fallback (QT_QUICK_BACKEND=software does not support ShaderEffectSource)
                 Image {
                     id: miniImg0
                     anchors.fill: parent
                     fillMode: Image.PreserveAspectFit
-                    sourceSize: Qt.size(360, 270)
+                    sourceSize: Qt.size(256, 256)
                     asynchronous: true
                     cache: false
                     smooth: true
-                    visible: opacity > 0.001
+                    visible: !root.useLiveMirror && opacity > 0.001
                     opacity: miniImage.activeBuffer === 0 ? 1.0 : 0.0
                     z: miniImage.activeBuffer === 0 ? 2 : 1
                     onStatusChanged: {
@@ -114,11 +152,11 @@ Rectangle {
                     id: miniImg1
                     anchors.fill: parent
                     fillMode: Image.PreserveAspectFit
-                    sourceSize: Qt.size(360, 270)
+                    sourceSize: Qt.size(256, 256)
                     asynchronous: true
                     cache: false
                     smooth: true
-                    visible: opacity > 0.001
+                    visible: !root.useLiveMirror && opacity > 0.001
                     opacity: miniImage.activeBuffer === 1 ? 1.0 : 0.0
                     z: miniImage.activeBuffer === 1 ? 2 : 1
                     onStatusChanged: {

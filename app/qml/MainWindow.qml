@@ -1264,7 +1264,12 @@ Rectangle {
                 }
             } else if (act === "reference") {
                 if (root.isStalePhotoResponse(respReqId, respPhoto, root.latestRefReqId)) return;
-                if (data) root.referenceImage = "file://" + data.image + "?v=" + (++root.referenceRevision);
+                if (data && data.image) {
+                    var refImg = String(data.image);
+                    root.referenceImage = (refImg.indexOf("image://") === 0 || refImg.indexOf("file://") === 0)
+                        ? refImg
+                        : ("file://" + refImg + "?v=" + (++root.referenceRevision));
+                }
             } else if (act === "icc_profiles") {
                 if (Array.isArray(data)) root.iccProfiles = data;
             } else if (act === "ai_auto") {
@@ -1478,6 +1483,7 @@ Rectangle {
         running: true
         stdinEnabled: true
         splitLines: true
+        previewChannel: true
 
         onLineRead: function(line) {
             root.handleDaemonMessage(line);

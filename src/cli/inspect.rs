@@ -237,11 +237,7 @@ pub fn render_file(raw_path: &str, recipe: &Recipe, split: f32, out_path: &str) 
             .map_err(|e| format!("Failed to save preview: {}", e))?;
     }
 
-    Ok(RenderResult {
-        image: out_path.to_string(),
-        histogram: hist,
-        proof_error: None,
-    })
+    Ok(RenderResult::from_file(out_path.to_string(), hist, None))
 }
 
 pub fn run_ai_auto(raw_path: &str) -> Result<InspectResult, String> {

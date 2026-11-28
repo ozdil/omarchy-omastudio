@@ -2,7 +2,7 @@
 
 use std::sync::atomic::AtomicUsize;
 
-use omastudio_engine::{export::ExportOptions, icc, pipeline, recipe::Recipe};
+use omastudio_engine::{export::ExportOptions, icc, pipeline, preview_shm::PublishedFrame, recipe::Recipe};
 use serde::{Deserialize, Serialize};
 
 /// Alternates the compare view between two files, so it never reads one being written.
@@ -15,6 +15,60 @@ pub struct RenderResult {
     /// Why the soft proof could not be applied (the preview is then shown unproofed)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub proof_error: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub slot: Option<usize>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub generation: Option<u64>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub width: Option<u32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub height: Option<u32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub stride: Option<u32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub format: Option<&'static str>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub color_space: Option<&'static str>,
+}
+
+impl RenderResult {
+    pub fn from_file(
+        image: String,
+        histogram: pipeline::histogram::HistogramData,
+        proof_error: Option<String>,
+    ) -> Self {
+        Self {
+            image,
+            histogram,
+            proof_error,
+            slot: None,
+            generation: None,
+            width: None,
+            height: None,
+            stride: None,
+            format: None,
+            color_space: None,
+        }
+    }
+
+    pub fn from_published(
+        frame: PublishedFrame,
+        histogram: pipeline::histogram::HistogramData,
+        proof_error: Option<String>,
+    ) -> Self {
+        Self {
+            image: frame.url,
+            histogram,
+            proof_error,
+            slot: Some(frame.slot),
+            generation: Some(frame.generation),
+            width: Some(frame.width),
+            height: Some(frame.height),
+            stride: Some(frame.stride),
+            format: Some(frame.format.as_str()),
+            color_space: Some(frame.color_space.as_str()),
+        }
+    }
 }
 
 /// Soft-proofing settings sent with `adjust` and `detail`: a view option, not part of the edit.
@@ -81,6 +135,16 @@ pub struct DetailResult {
     pub region: [f64; 4],
     pub width: usize,
     pub height: usize,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub slot: Option<usize>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub generation: Option<u64>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub stride: Option<u32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub format: Option<&'static str>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub color_space: Option<&'static str>,
 }
 
 #[derive(Deserialize)]

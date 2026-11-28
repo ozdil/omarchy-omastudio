@@ -407,3 +407,155 @@ fn test_daemon_detail_rejects_extreme_or_invalid_regions_and_renders_valid_ppm()
     assert!(status.success(), "daemon exited with {status:?}");
     let _ = std::fs::remove_dir_all(&dir);
 }
+
+#[test]
+fn test_daemon_memfd_preview_ring_zero_disk_writes() {
+    use omastudio_engine::preview_shm::{
+        ColorSpaceTag, ENV_PREVIEW_FD, PixelFormat, PreviewRingReader, SlotKind,
+        create_preview_socketpair, parse_provider_id,
+    };
+    use std::os::fd::AsRawFd;
+    use std::os::unix::process::CommandExt;
+
+    let dir = std::env::temp_dir().join(format!("omastudio_daemon_memfd_test_{}", std::process::id()));
+    let _ = std::fs::remove_dir_all(&dir);
+    let runtime_dir = dir.join("runtime");
+    std::fs::create_dir_all(&runtime_dir).unwrap();
+    let img_path = dir.join("tiny_memfd.png");
+    let img = image::RgbImage::from_pixel(32, 24, image::Rgb([40, 120, 210]));
+    img.save(&img_path).unwrap();
+
+    let (parent_fd, child_fd) = create_preview_socketpair().expect("socketpair");
+    let child_raw = child_fd.as_raw_fd();
+
+    let mut cmd = Command::new(env!("CARGO_BIN_EXE_omastudio-engine"));
+    cmd.arg("daemon")
+        .env(ENV_PREVIEW_FD, child_raw.to_string())
+        .env("XDG_RUNTIME_DIR", &runtime_dir)
+        .env_remove("OMASTUDIO_PREVIEW_MODE")
+        .stdin(Stdio::piped())
+        .stdout(Stdio::piped());
+    // SAFETY: `fcntl(F_SETFD, 0)` is async-signal-safe and clears FD_CLOEXEC solely on the child socketpair half.
+    unsafe {
+        cmd.pre_exec(move || {
+            if libc::fcntl(child_raw, libc::F_SETFD, 0) != 0 {
+                return Err(std::io::Error::last_os_error());
+            }
+            Ok(())
+        });
+    }
+
+    let mut child = cmd.spawn().expect("Failed to start omastudio-engine daemon");
+    drop(child_fd);
+
+    // Complete SCM_RIGHTS handshake with daemon
+    let ring = PreviewRingReader::recv_and_ack(parent_fd.as_raw_fd())
+        .expect("recv_and_ack")
+        .expect("memfd ring negotiated");
+
+    let mut stdin = child.stdin.take().expect("stdin");
+    let mut reader = BufReader::new(child.stdout.take().expect("stdout"));
+
+    writeln!(
+        stdin,
+        "{}",
+        serde_json::json!({ "cmd": "load", "request_id": 10, "path": img_path.to_string_lossy() })
+    )
+    .unwrap();
+    stdin.flush().unwrap();
+
+    let mut got_load = false;
+    let mut got_full = false;
+    while !(got_load && got_full) {
+        let mut line = String::new();
+        reader.read_line(&mut line).unwrap();
+        let v: serde_json::Value = serde_json::from_str(&line).unwrap();
+        if v["action"] == "load" {
+            assert_eq!(v["success"], true);
+            got_load = true;
+        } else if v["action"] == "full_ready" {
+            got_full = true;
+        }
+    }
+
+    // 1. Interactive adjust must publish to memfd slot 0 (no .ppm file)
+    writeln!(stdin, r#"{{"cmd": "adjust", "request_id": 11, "recipe": {{}}}}"#).unwrap();
+    stdin.flush().unwrap();
+    let mut line = String::new();
+    reader.read_line(&mut line).unwrap();
+    let v: serde_json::Value = serde_json::from_str(&line).unwrap();
+    assert_eq!(v["success"], true, "adjust failed: {v}");
+    let url = v["data"]["image"].as_str().unwrap();
+    assert!(url.starts_with("image://omastudio/preview/0/"), "unexpected url: {url}");
+    assert_eq!(v["data"]["slot"], 0);
+    assert_eq!(v["data"]["width"], 16);
+    assert_eq!(v["data"]["height"], 12);
+    assert_eq!(v["data"]["stride"], 64);
+    assert_eq!(v["data"]["format"], "rgba8888");
+    assert_eq!(v["data"]["color_space"], "srgb");
+
+    let (kind, slot, generation) = parse_provider_id(url.strip_prefix("image://omastudio/").unwrap()).unwrap();
+    assert_eq!((kind, slot), (SlotKind::Preview, 0));
+    let frame = ring.read_frame(kind, slot).expect("read preview frame from memfd");
+    assert_eq!(frame.generation, generation);
+    assert_eq!((frame.width, frame.height, frame.stride), (16, 12, 64));
+    assert_eq!(frame.format, PixelFormat::Rgba8888);
+    assert_eq!(frame.color_space, ColorSpaceTag::Srgb);
+    assert_eq!(frame.pixels.len(), 16 * 12 * 4);
+    assert_eq!(frame.pixels[3], 255);
+
+    // 2. Compare reference & detail & loupe must also publish via memfd
+    writeln!(stdin, r#"{{"cmd": "reference", "request_id": 12, "recipe": {{}}}}"#).unwrap();
+    writeln!(
+        stdin,
+        r#"{{"cmd": "detail", "request_id": 13, "region": [0.0, 0.0, 1.0, 1.0], "out_width": 16, "out_height": 12}}"#
+    )
+    .unwrap();
+    writeln!(
+        stdin,
+        r#"{{"cmd": "detail", "tag": "loupe", "request_id": 14, "region": [0.0, 0.0, 1.0, 1.0], "out_width": 16, "out_height": 12}}"#
+    )
+    .unwrap();
+    stdin.flush().unwrap();
+
+    for expected_prefix in [
+        "image://omastudio/reference/0/",
+        "image://omastudio/detail/0/",
+        "image://omastudio/loupe/0/",
+    ] {
+        line.clear();
+        reader.read_line(&mut line).unwrap();
+        let resp: serde_json::Value = serde_json::from_str(&line).unwrap();
+        assert_eq!(resp["success"], true, "unexpected failure: {resp}");
+        let img_url = resp["data"]["image"].as_str().unwrap();
+        assert!(
+            img_url.starts_with(expected_prefix),
+            "expected {expected_prefix}, got {img_url}"
+        );
+        let (k, s, g) = parse_provider_id(img_url.strip_prefix("image://omastudio/").unwrap()).unwrap();
+        let f = ring.read_frame(k, s).expect("memfd frame readable");
+        assert_eq!(f.generation, g);
+    }
+
+    // 3. Verify zero .ppm preview files were written into the isolated runtime directory
+    fn has_ppm(root: &std::path::Path) -> bool {
+        let Ok(rd) = std::fs::read_dir(root) else { return false };
+        for entry in rd.flatten() {
+            let p = entry.path();
+            if p.is_dir() && has_ppm(&p) {
+                return true;
+            }
+            if p.extension().is_some_and(|e| e == "ppm") {
+                return true;
+            }
+        }
+        false
+    }
+    assert!(!has_ppm(&runtime_dir), "memfd mode must not write .ppm preview files");
+
+    writeln!(stdin, r#"{{"cmd": "exit"}}"#).unwrap();
+    stdin.flush().unwrap();
+    assert!(child.wait().unwrap().success());
+    let _ = std::fs::remove_dir_all(&dir);
+}
+

@@ -11,6 +11,8 @@ mod host;
 mod hyprland;
 mod ipc;
 mod language;
+mod preview_provider;
+mod preview_shm;
 mod process;
 mod watched_file;
 
@@ -94,7 +96,8 @@ fn run(photo: Option<&Path>) -> i32 {
     QGuiApplication::set_desktop_file_name(&QString::from("omastudio"));
 
     let mut engine = QQmlApplicationEngine::new();
-    if let Some(engine) = engine.as_mut() {
+    if let Some(mut engine) = engine.as_mut() {
+        preview_provider::register(engine.as_mut());
         engine.load(&main_qml());
     }
     let code = app.as_mut().map_or(1, |a| a.exec());

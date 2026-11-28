@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
+import OmaStudio.Host
 
 // Left workspace inspector: Navigator, Scopes, EXIF metadata, Scene suggestion,
 // and History/Snapshots panel.
@@ -35,6 +36,11 @@ Rectangle {
             Navigator {
                 id: navigator
                 Layout.fillWidth: true
+                sourceItem: panel.viewport ? panel.viewport.previewSourceItem : null
+                sourceAspect: (panel.viewport && panel.viewport.previewHeight > 0)
+                    ? (panel.viewport.previewWidth / panel.viewport.previewHeight)
+                    : 1.5
+                useSoftwareFallback: Host.softwareRenderer
                 zoomFactor: panel.viewport ? panel.viewport.zoomFactor : 1.0
                 rotationAngle: panel.viewport ? panel.viewport.rotationAngle : 0.0
                 normX: panel.viewport ? panel.viewport.normX : 0.0
