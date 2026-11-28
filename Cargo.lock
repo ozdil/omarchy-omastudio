@@ -1133,6 +1133,7 @@ dependencies = [
 name = "omastudio-engine"
 version = "3.2.1"
 dependencies = [
+ "ash",
  "cc",
  "exr",
  "flate2",

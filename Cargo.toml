@@ -29,6 +29,7 @@ exr = { version = "1.74", default-features = false }
 libc = "0.2"
 lcms2 = "6.2"
 nusb = "0.2.9"
+ash = { version = "0.38", default-features = false }
 wgpu = { version = "30.0.2", default-features = false, features = ["std", "wgsl", "vulkan", "gles"] }
 pollster = "1.0.1"
 quick-xml = "0.42"

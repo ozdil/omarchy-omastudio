@@ -351,6 +351,42 @@ pub fn process_buffer_16_to_8(
     process_buffer_16_to_8_ex(input, width, height, channels, recipe, Transfer::bt709(), false, false)
 }
 
+/// Attempts the zero-copy Vulkan DMA-BUF + explicit `SYNC_FD` interactive preview path
+/// (`WP-15`), returning `None` cleanly whenever the GPU/driver or current view options
+/// require the `memfd` / CPU path.
+pub fn try_process_preview_dmabuf(
+    input: &[u16],
+    width: u32,
+    height: u32,
+    channels: u32,
+    recipe: &Recipe,
+    transfer: Transfer,
+    color_space: crate::preview_shm::ColorSpaceTag,
+) -> Option<crate::gpu::dmabuf::ExportedDmaBufFrame> {
+    let ch = channels as usize;
+    let w = width as usize;
+    let h = height as usize;
+    let retouched = retouch::apply(input, w, h, ch, &recipe.retouch);
+    let (wb_r, wb_g, wb_b) = white_balance::kelvin_to_rgb_multipliers(
+        recipe.wb_temperature,
+        recipe.wb_tint,
+    );
+    let exp_factor = 2.0f32.powf(recipe.exposure + recipe.baseline_exposure);
+    let ops = PointOps::new(recipe);
+    let gain = [wb_r * exp_factor, wb_g * exp_factor, wb_b * exp_factor];
+    let scale = frame_scale(w, h);
+    crate::gpu::local::run_display_dmabuf(
+        &retouched,
+        w,
+        h,
+        ch,
+        recipe,
+        &ops.gpu_inputs(gain, transfer),
+        scale,
+        color_space,
+    )
+}
+
 /// Extended 16-to-8 processing supporting zebra highlight & shadow clipping mask overlays
 #[allow(clippy::too_many_arguments)]
 pub fn process_buffer_16_to_8_ex(

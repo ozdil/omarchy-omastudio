@@ -29,7 +29,7 @@ optdepends=(
     'rclone: Google Drive, OneDrive, Dropbox, Box, pCloud and Yandex Disk accounts'
     'github-cli: GitHub account'
 )
-makedepends=('rust' 'cargo' 'pkgconf' 'clang' 'mold' 'qt6-tools')
+makedepends=('rust' 'cargo' 'pkgconf' 'clang' 'mold' 'qt6-shadertools' 'qt6-tools' 'vulkan-headers')
 checkdepends=('vulkan-icd-loader' 'vulkan-swrast')
 source=()
 sha256sums=()
