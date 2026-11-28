@@ -12,6 +12,10 @@ Removed, Fixed and Security. Releases up to 3.1.0 group their entries by area.
 
 ## [Unreleased]
 
+### Security
+- Hardened all GitHub Actions workflows (`ci.yml`, `codeql.yml`, `release.yml`) with top-level `permissions: {}`, least-privilege job-scoped tokens, `persist-credentials: false` on every `actions/checkout`, explicit `timeout-minutes` bounds, non-`master` `concurrency` cancellation, `$RUNNER_TEMP` object output in `codeql.yml`, and updated SHA-pinned `github/codeql-action` (`v4.39.5`) and `softprops/action-gh-release` (`v3.0.4`).
+- Added `.github/CODEOWNERS`, weekly `github-actions` Dependabot updates, and automated OpenSSF Scorecard supply-chain analysis (`.github/workflows/scorecard.yml`, uploading SARIF results to GitHub Code Scanning).
+
 ## [3.3.0] - 2026-11-28
 
 Fullstack modernization, modern Linux GPU/AI driver support, zero-copy Vulkan/DMA-BUF & 10-bit/HDR display and export pipeline, multi-architecture `aarch64` Linux support, and Omarchy 4.5 integration: OmaStudio now follows the Omarchy shell's own theme tokens, language, corners and animations live, draws its controls the way the shell does, and fits a tiled window at any Omarchy font size.

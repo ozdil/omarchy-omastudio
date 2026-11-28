@@ -5,8 +5,11 @@ on:
     branches: [master]
   pull_request:
 
-permissions:
-  contents: read
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/master' }}
 
 jobs:
   # Arch Linux container so CI uses the same LibRaw, Qt and Rust packages as Omarchy.
@@ -14,6 +17,9 @@ jobs:
   test:
     name: Build, Unit/Integration Tests & GPU Parity (x86_64)
     runs-on: ubuntu-latest
+    timeout-minutes: 25
+    permissions:
+      contents: read
     container: archlinux:latest
     steps:
       - name: Install build, Qt, and Mesa lavapipe dependencies
@@ -23,6 +29,8 @@ jobs:
           qt6-base qt6-declarative qt6-shadertools qt6-tools python rustup
           vulkan-headers vulkan-icd-loader vulkan-swrast
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - name: Install pinned Rust toolchain
         run: rustup toolchain install
       - name: Build workspace
@@ -50,6 +58,9 @@ jobs:
   lint:
     name: Clippy, QMLlint, ShellCheck & Cargo Audit
     runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
     container: archlinux:latest
     steps:
       - name: Install lint, audit & build dependencies
@@ -59,6 +70,8 @@ jobs:
           qt6-base qt6-declarative qt6-shadertools qt6-tools shellcheck rustup
           vulkan-headers
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - name: Install pinned Rust toolchain
         run: rustup toolchain install
       # Note: Whole-repo `cargo fmt --all -- --check` is deferred to a dedicated
@@ -78,6 +91,9 @@ jobs:
   build-aarch64:
     name: Build, Unit/Integration Tests & GPU Parity (aarch64)
     runs-on: ubuntu-24.04-arm
+    timeout-minutes: 25
+    permissions:
+      contents: read
     # Digest-pinned actively maintained Arch Linux ARM base-devel image (Omarchy 4.5 Mac / Snapdragon X)
     container: lfdevs/archlinuxarm:base-devel@sha256:758b1987aaba2e34fd6f2451cfdc8008127e884d6f8adac38ebcf4b3623acfd2
     steps:
@@ -88,6 +104,8 @@ jobs:
           qt6-base qt6-declarative qt6-shadertools qt6-tools python rustup
           vulkan-headers vulkan-icd-loader vulkan-swrast
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - name: Install pinned Rust toolchain
         run: rustup toolchain install
       - name: Build & test ARM64 (CPU)
