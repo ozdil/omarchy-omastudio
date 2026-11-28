@@ -4,7 +4,7 @@
 
 [모든 언어](../README.md) · [사용 기술](../technology/ko.md) · [README](../../README.md)
 
-이 설명서는 OmaStudio 3.2을 다룹니다. 응용 프로그램 설치 방법, 창의 구성, 각 패널과 도구의 사용법을 설명합니다. 스크린샷에는 [raw.pixls.us](https://raw.pixls.us)(CC0)의 Fujifilm GFX 50R 및 Hasselblad CFV-50c 샘플 파일을 사용했습니다.
+이 설명서는 OmaStudio 3.3을 다룹니다. 응용 프로그램 설치 방법, 창의 구성, 각 패널과 도구의 사용법을 설명합니다. 스크린샷에는 [raw.pixls.us](https://raw.pixls.us)(CC0)의 Fujifilm GFX 50R 및 Hasselblad CFV-50c 샘플 파일을 사용했습니다.
 
 ![Fujifilm GFX 50R 사진을 연 OmaStudio](../images/lang/main-ko.webp)
 

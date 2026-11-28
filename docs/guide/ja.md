@@ -4,7 +4,7 @@
 
 [すべての言語](../README.md) · [使用技術](../technology/ja.md) · [README](../../README.md)
 
-このガイドは OmaStudio 3.2 を対象としています。アプリケーションのインストール方法、ウィンドウの構成、各パネルとツールの使い方を説明します。スクリーンショットには [raw.pixls.us](https://raw.pixls.us)（CC0）の Fujifilm GFX 50R と Hasselblad CFV-50c のサンプルファイルを使っています。
+このガイドは OmaStudio 3.3 を対象としています。アプリケーションのインストール方法、ウィンドウの構成、各パネルとツールの使い方を説明します。スクリーンショットには [raw.pixls.us](https://raw.pixls.us)（CC0）の Fujifilm GFX 50R と Hasselblad CFV-50c のサンプルファイルを使っています。
 
 ![Fujifilm GFX 50R の写真を開いた OmaStudio](../images/lang/main-ja.webp)
 

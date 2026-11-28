@@ -4,7 +4,7 @@
 
 [كل اللغات](../README.md) · [التقنيات](../technology/ar.md) · [README](../../README.md)
 
-يغطي هذا الدليل OmaStudio 3.2. يشرح كيفية تثبيت التطبيق، والتنقل في النافذة، واستخدام كل لوحة وأداة. تعرض لقطات الشاشة ملفات نموذجية من Fujifilm GFX 50R وHasselblad CFV-50c مأخوذة من [raw.pixls.us](https://raw.pixls.us) (CC0).
+يغطي هذا الدليل OmaStudio 3.3. يشرح كيفية تثبيت التطبيق، والتنقل في النافذة، واستخدام كل لوحة وأداة. تعرض لقطات الشاشة ملفات نموذجية من Fujifilm GFX 50R وHasselblad CFV-50c مأخوذة من [raw.pixls.us](https://raw.pixls.us) (CC0).
 
 ![OmaStudio مع صورة من Fujifilm GFX 50R](../images/lang/main-ar.webp)
 

@@ -4,7 +4,7 @@
 
 [Tất cả ngôn ngữ](../README.md) · [Công nghệ](../technology/vi.md) · [README](../../README.md)
 
-Hướng dẫn này dành cho OmaStudio 3.2. Tài liệu giải thích cách cài đặt ứng dụng, bố cục cửa sổ và cách dùng từng bảng điều khiển và công cụ. Ảnh chụp màn hình dùng các tệp mẫu Fujifilm GFX 50R và Hasselblad CFV-50c từ [raw.pixls.us](https://raw.pixls.us) (CC0).
+Hướng dẫn này dành cho OmaStudio 3.3. Tài liệu giải thích cách cài đặt ứng dụng, bố cục cửa sổ và cách dùng từng bảng điều khiển và công cụ. Ảnh chụp màn hình dùng các tệp mẫu Fujifilm GFX 50R và Hasselblad CFV-50c từ [raw.pixls.us](https://raw.pixls.us) (CC0).
 
 ![OmaStudio với một ảnh Fujifilm GFX 50R](../images/lang/main-vi.webp)
 

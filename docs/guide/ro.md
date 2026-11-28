@@ -4,7 +4,7 @@
 
 [Toate limbile](../README.md) · [Tehnologii](../technology/ro.md) · [README](../../README.md)
 
-Acest ghid se referă la OmaStudio 3.2. Explică instalarea aplicației, organizarea ferestrei și folosirea fiecărui panou și instrument. Capturile de ecran arată fișiere de exemplu Fujifilm GFX 50R și Hasselblad CFV-50c de pe [raw.pixls.us](https://raw.pixls.us) (CC0).
+Acest ghid se referă la OmaStudio 3.3. Explică instalarea aplicației, organizarea ferestrei și folosirea fiecărui panou și instrument. Capturile de ecran arată fișiere de exemplu Fujifilm GFX 50R și Hasselblad CFV-50c de pe [raw.pixls.us](https://raw.pixls.us) (CC0).
 
 ![OmaStudio cu o fotografie Fujifilm GFX 50R](../images/lang/main-ro.webp)
 

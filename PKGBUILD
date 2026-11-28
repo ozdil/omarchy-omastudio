@@ -1,6 +1,6 @@
 # Maintainer: Ozan Özdil
 pkgname=omastudio
-pkgver=3.2.1
+pkgver=3.3.0
 pkgrel=1
 pkgdesc="The Complete Medium Format RAW Editor for Omarchy"
 arch=('x86_64' 'aarch64')
@@ -9,7 +9,6 @@ license=('MIT')
 depends=('libraw>=0.22' 'lcms2' 'sqlite' 'xdg-desktop-portal' 'qt6-base>=6.12' 'qt6-declarative>=6.12' 'qt6-wayland' 'qt6-svg' 'libjxl' 'libavif' 'libwebp-utils' 'libheif')
 optdepends=(
     'quickshell: OmaStudio button in the Omarchy bar'
-    'wl-clipboard: bounded paste in text fields'
     'vulkan-icd-loader: GPU compute pipeline (demosaic, point ops, local filters)'
     'nvidia-utils: NVIDIA RTX 20–50 Vulkan driver (with nvidia-open; legacy GTX 900/10xx use AUR nvidia-580xx-utils or vulkan-nouveau)'
     'vulkan-nouveau: open-source Mesa NVK Vulkan driver for NVIDIA GPUs (including legacy GTX 900/10xx)'

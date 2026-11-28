@@ -4,7 +4,7 @@
 
 [所有語言](../README.md) · [所用技術](../technology/zh_TW.md) · [README](../../README.md)
 
-本指南適用於 OmaStudio 3.2，介紹如何安裝應用、視窗的佈局，以及每個面板和工具的用法。截圖使用的是 [raw.pixls.us](https://raw.pixls.us)（CC0）上的 Fujifilm GFX 50R 和 Hasselblad CFV-50c 示例檔案。
+本指南適用於 OmaStudio 3.3，介紹如何安裝應用、視窗的佈局，以及每個面板和工具的用法。截圖使用的是 [raw.pixls.us](https://raw.pixls.us)（CC0）上的 Fujifilm GFX 50R 和 Hasselblad CFV-50c 示例檔案。
 
 ![開啟 Fujifilm GFX 50R 照片的 OmaStudio](../images/lang/main-zh_TW.webp)
 

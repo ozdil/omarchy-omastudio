@@ -4,7 +4,7 @@
 
 [ทุกภาษา](../README.md) · [เทคโนโลยี](../technology/th.md) · [README](../../README.md)
 
-คู่มือนี้ครอบคลุม OmaStudio 3.2 อธิบายวิธีติดตั้งแอปพลิเคชัน ส่วนต่าง ๆ ของหน้าต่าง และการใช้แต่ละแผงและเครื่องมือ ภาพหน้าจอใช้ไฟล์ตัวอย่างจาก Fujifilm GFX 50R และ Hasselblad CFV-50c จาก [raw.pixls.us](https://raw.pixls.us) (CC0)
+คู่มือนี้ครอบคลุม OmaStudio 3.3 อธิบายวิธีติดตั้งแอปพลิเคชัน ส่วนต่าง ๆ ของหน้าต่าง และการใช้แต่ละแผงและเครื่องมือ ภาพหน้าจอใช้ไฟล์ตัวอย่างจาก Fujifilm GFX 50R และ Hasselblad CFV-50c จาก [raw.pixls.us](https://raw.pixls.us) (CC0)
 
 ![OmaStudio พร้อมภาพจาก Fujifilm GFX 50R](../images/lang/main-th.webp)
 

@@ -12,7 +12,9 @@ Removed, Fixed and Security. Releases up to 3.1.0 group their entries by area.
 
 ## [Unreleased]
 
-Fits into Omarchy 4.5: OmaStudio now follows the Omarchy shell's own theme tokens, language, corners and animations live, draws its controls the way the shell does, and fits a tiled window at any Omarchy font size.
+## [3.3.0] - 2026-11-28
+
+Fullstack modernization, modern Linux GPU/AI driver support, zero-copy Vulkan/DMA-BUF & 10-bit/HDR display and export pipeline, multi-architecture `aarch64` Linux support, and Omarchy 4.5 integration: OmaStudio now follows the Omarchy shell's own theme tokens, language, corners and animations live, draws its controls the way the shell does, and fits a tiled window at any Omarchy font size.
 
 ### Added
 - The interface follows the language picked in Omarchy (Setup > Language, `omarchy language <code>`), and switches at once when it changes, as the desktop does. A language picked in OmaStudio still wins; "System default" means Omarchy's language, then the locale.
@@ -386,7 +388,8 @@ A large stability and correctness release covering the engine, the UI, colour ha
 ### CI
 - Build, test and `clippy -D warnings` run on every pull request on a pinned toolchain; the workflow token is read-only.
 
-[Unreleased]: https://github.com/ozdil/omarchy-omastudio/compare/v3.2.1...HEAD
+[Unreleased]: https://github.com/ozdil/omarchy-omastudio/compare/v3.3.0...HEAD
+[3.3.0]: https://github.com/ozdil/omarchy-omastudio/compare/v3.2.1...v3.3.0
 [3.2.1]: https://github.com/ozdil/omarchy-omastudio/compare/v3.2.0...v3.2.1
 [3.2.0]: https://github.com/ozdil/omarchy-omastudio/compare/v3.1.0...v3.2.0
 [3.1.0]: https://github.com/ozdil/omarchy-omastudio/compare/v3.0.0...v3.1.0

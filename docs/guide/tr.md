@@ -4,7 +4,7 @@
 
 [Tüm diller](../README.md) · [Teknolojiler](../technology/tr.md) · [README](../../README.tr.md)
 
-Bu kılavuz OmaStudio 3.2 içindir. Uygulamanın nasıl kurulacağını, pencerede nelerin nerede olduğunu ve her panelin ve aracın nasıl kullanılacağını anlatır. Ekran görüntülerinde [raw.pixls.us](https://raw.pixls.us) sitesinden alınan Fujifilm GFX 50R ve Hasselblad CFV-50c örnek dosyaları (CC0) kullanılmıştır.
+Bu kılavuz OmaStudio 3.3 içindir. Uygulamanın nasıl kurulacağını, pencerede nelerin nerede olduğunu ve her panelin ve aracın nasıl kullanılacağını anlatır. Ekran görüntülerinde [raw.pixls.us](https://raw.pixls.us) sitesinden alınan Fujifilm GFX 50R ve Hasselblad CFV-50c örnek dosyaları (CC0) kullanılmıştır.
 
 ![Fujifilm GFX 50R fotoğrafıyla OmaStudio](../images/lang/main-tr.webp)
 

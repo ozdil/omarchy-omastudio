@@ -4,7 +4,7 @@
 
 [כל השפות](../README.md) · [טכנולוגיות](../technology/he.md) · [README](../../README.md)
 
-המדריך עוסק ב־OmaStudio 3.2. הוא מסביר איך להתקין את היישום, איך להתמצא בחלון ואיך להשתמש בכל לוח ובכל כלי. צילומי המסך מציגים קובצי דוגמה של Fujifilm GFX 50R ו־Hasselblad CFV-50c מאתר [raw.pixls.us](https://raw.pixls.us) (CC0).
+המדריך עוסק ב־OmaStudio 3.3. הוא מסביר איך להתקין את היישום, איך להתמצא בחלון ואיך להשתמש בכל לוח ובכל כלי. צילומי המסך מציגים קובצי דוגמה של Fujifilm GFX 50R ו־Hasselblad CFV-50c מאתר [raw.pixls.us](https://raw.pixls.us) (CC0).
 
 ![OmaStudio עם תמונה מ־Fujifilm GFX 50R](../images/lang/main-he.webp)
 
