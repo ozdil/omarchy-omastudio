@@ -162,7 +162,7 @@ Rectangle {
             font.family: (btn.isIcon && !btn.busy) ? Theme.iconFont : Theme.fontFamily
             font.pixelSize: Theme.px(btn.isIcon ? 11 : 9)
             font.weight: btn.isIcon ? Font.Normal : Font.Bold
-            color: btn.filled ? Theme.onAccent : (btn.enabled ? Theme.textMain : Theme.textDim)
+            color: btn.filled ? Theme.accentText : (btn.enabled ? Theme.textMain : Theme.textDim)
         }
 
         MouseArea {
@@ -304,7 +304,7 @@ Rectangle {
             }
         }
 
-        Rectangle { Layout.fillWidth: true; height: 1; color: Theme.border }
+        Rectangle { Layout.fillWidth: true; implicitHeight: 1; color: Theme.border }
 
         // Camera on USB
         RowLayout {
@@ -447,7 +447,7 @@ Rectangle {
             }
         }
 
-        Rectangle { Layout.fillWidth: true; height: 1; color: Theme.border }
+        Rectangle { Layout.fillWidth: true; implicitHeight: 1; color: Theme.border }
 
         // Pixel Shift Multi-Shot
         SectionTitle { text: qsTr("Pixel shift") }

@@ -803,7 +803,7 @@ Rectangle {
                     font.family: Theme.fontFamily
                     font.pixelSize: Theme.px(12)
                     font.weight: Font.DemiBold
-                    color: root.isExporting ? Theme.textMuted : Theme.onAccent
+                    color: root.isExporting ? Theme.textMuted : Theme.accentText
                 }
                 MouseArea {
                     id: exportMouse

@@ -218,7 +218,7 @@ Rectangle {
                         text: Theme.iconExport
                         font.family: Theme.iconFont
                         font.pixelSize: Theme.px(10)
-                        color: Theme.onAccent
+                        color: Theme.accentText
                     }
                     Text {
                         font.family: Theme.fontFamily
@@ -226,7 +226,7 @@ Rectangle {
                         textFormat: Text.PlainText
                         font.pixelSize: Theme.px(9)
                         font.weight: Font.Bold
-                        color: Theme.onAccent
+                        color: Theme.accentText
                     }
                 }
 
@@ -238,8 +238,8 @@ Rectangle {
             }
 
             Rectangle {
-                width: 22
-                height: 22
+                implicitWidth: 22
+                implicitHeight: 22
                 radius: Theme.r(4)
                 color: Theme.bgCard
                 border.color: Theme.border

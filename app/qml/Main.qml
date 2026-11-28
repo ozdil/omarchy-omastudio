@@ -28,7 +28,7 @@ Window {
     palette.buttonText: Theme.textMain
     palette.brightText: Theme.textMain
     palette.highlight: Theme.accent
-    palette.highlightedText: Theme.onAccent
+    palette.highlightedText: Theme.accentText
     palette.mid: Theme.border
     palette.dark: Theme.textDim
     palette.light: Theme.bgCardHover

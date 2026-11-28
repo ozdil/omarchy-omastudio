@@ -1434,7 +1434,7 @@ Rectangle {
                     textFormat: Text.PlainText
                     font.pixelSize: Theme.px(9)
                     font.weight: Font.Bold
-                    color: resetMouse.containsMouse ? Theme.onAccent : Theme.accent
+                    color: resetMouse.containsMouse ? Theme.accentText : Theme.accent
                 }
 
                 MouseArea {
@@ -1728,7 +1728,7 @@ Rectangle {
                     textFormat: Text.PlainText
                     font.pixelSize: Theme.px(9)
                     font.weight: Font.Bold
-                    color: Theme.onAccent
+                    color: Theme.accentText
                 }
                 MouseArea {
                     anchors.fill: parent
@@ -1918,8 +1918,8 @@ Rectangle {
 
             Rectangle {
                 Layout.alignment: Qt.AlignHCenter
-                width: 64
-                height: 64
+                implicitWidth: 64
+                implicitHeight: 64
                 radius: 32
                 color: Qt.rgba(0, 0, 0, 0.6)
                 border.color: Theme.accent

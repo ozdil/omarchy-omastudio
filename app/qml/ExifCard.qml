@@ -22,8 +22,8 @@ Rectangle {
             spacing: 8
 
             Rectangle {
-                width: 24
-                height: 24
+                implicitWidth: 24
+                implicitHeight: 24
                 radius: Theme.r(6)
                 color: Qt.rgba(Theme.accent.r, Theme.accent.g, Theme.accent.b, 0.15)
                 border.color: Theme.accent

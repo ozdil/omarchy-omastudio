@@ -464,7 +464,7 @@ Rectangle {
             spacing: 8
             visible: root.activeL !== null
 
-            Rectangle { Layout.fillWidth: true; height: 1; color: Theme.border }
+            Rectangle { Layout.fillWidth: true; implicitHeight: 1; color: Theme.border }
 
             Text {
                 text: root.activeL ? root.activeL.name : ""
@@ -721,7 +721,7 @@ Rectangle {
                 }
             }
 
-            Rectangle { Layout.fillWidth: true; height: 1; color: Theme.border }
+            Rectangle { Layout.fillWidth: true; implicitHeight: 1; color: Theme.border }
 
             LayerSlider {
                 key: "opacity"

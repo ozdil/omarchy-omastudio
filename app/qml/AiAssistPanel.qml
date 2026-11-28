@@ -234,7 +234,7 @@ ColumnLayout {
             font.family: Theme.fontFamily
             font.pixelSize: Theme.px(9)
             font.weight: Font.Bold
-            color: sb.primary ? Theme.onAccent : Theme.textMain
+            color: sb.primary ? Theme.accentText : Theme.textMain
         }
         MouseArea {
             id: sbMouse
