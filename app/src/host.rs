@@ -49,6 +49,7 @@ pub mod qobject {
         #[qproperty(QString, available_languages, READ, CONSTANT)]
         #[qproperty(QString, raw_extensions, READ, CONSTANT)]
         #[qproperty(QString, image_extensions, READ, CONSTANT)]
+        #[qproperty(bool, software_renderer, READ, CONSTANT)]
         type Host = super::HostRust;
 
         /// A control-socket call; answer it with `ipcReply(id, text)`. `args` is a
@@ -115,6 +116,7 @@ pub struct HostRust {
     available_languages: QString,
     raw_extensions: QString,
     image_extensions: QString,
+    software_renderer: bool,
 }
 
 impl Default for HostRust {
@@ -122,6 +124,9 @@ impl Default for HostRust {
         let home = std::env::var("HOME").unwrap_or_default();
         let raw_json = serde_json::to_string(supported_extensions::RAW_EXTENSIONS).unwrap_or_else(|_| "[]".into());
         let img_json = serde_json::to_string(supported_extensions::RASTER_EXTENSIONS).unwrap_or_else(|_| "[]".into());
+        let software_renderer = std::env::var("QT_QUICK_BACKEND")
+            .ok()
+            .is_some_and(|v| v.trim().eq_ignore_ascii_case("software"));
         Self {
             open_path: QString::from(std::env::var("OMASTUDIO_OPEN_PATH").unwrap_or_default().as_str()),
             engine_path: QString::from(engine_path(&home).to_string_lossy().as_ref()),
@@ -136,6 +141,7 @@ impl Default for HostRust {
             available_languages: QString::from(language::AVAILABLE),
             raw_extensions: QString::from(raw_json.as_str()),
             image_extensions: QString::from(img_json.as_str()),
+            software_renderer,
         }
     }
 }

@@ -75,11 +75,23 @@ fn main() {
 
     println!("cargo:rerun-if-changed=../src/raw/supported_extensions.inc");
     println!("cargo:rerun-if-changed=../src/recipe/look_presets.inc");
+    println!("cargo:rerun-if-changed=../src/preview_shm.rs");
+    println!("cargo:rerun-if-changed=cpp/preview_provider.h");
+    println!("cargo:rerun-if-changed=cpp/preview_provider.cpp");
 
     CxxQtBuilder::new_qml_module(QmlModule::new("OmaStudio.Host"))
         .qt_module("Gui")
         .qt_module("Quick")
-        .files(["src/history.rs", "src/host.rs", "src/hyprland.rs", "src/process.rs", "src/watched_file.rs"])
+        .include_dir("cpp")
+        .cpp_file("cpp/preview_provider.cpp")
+        .files([
+            "src/history.rs",
+            "src/host.rs",
+            "src/hyprland.rs",
+            "src/preview_provider.rs",
+            "src/process.rs",
+            "src/watched_file.rs",
+        ])
         .qrc_resources(QResources::new().resource(ui))
         .build();
 }

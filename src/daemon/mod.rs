@@ -11,6 +11,7 @@ pub mod worker;
 
 use std::collections::VecDeque;
 use std::io::{self, BufRead};
+use std::os::fd::AsRawFd;
 use std::path::Path;
 use std::sync::{Arc, Condvar, Mutex};
 
@@ -21,6 +22,7 @@ use omastudio_engine::{
     },
     fuji, gpu, icc,
     pipeline::{self, process_buffer_16_to_8_ex, process_split_comparison_16_to_8_ex},
+    preview_shm::{ColorSpaceTag, PreviewRingWriter, SlotKind, take_inherited_preview_fd},
     raw::{self, RawImage},
     recipe::{Catalog, CatalogFilter, Recipe},
     security,
@@ -174,6 +176,18 @@ fn spawn_stdin_reader(queue: Arc<CommandQueue>) {
 }
 
 pub fn run() {
+    let mut preview_ring: Option<PreviewRingWriter> = take_inherited_preview_fd().and_then(|sock| {
+        match PreviewRingWriter::create()
+            .and_then(|ring| ring.send_and_wait_ack(sock.as_raw_fd(), 2_000).map(|()| ring))
+        {
+            Ok(ring) => Some(ring),
+            Err(e) => {
+                eprintln!("omastudio: memfd preview ring unavailable, falling back to /dev/shm: {e}");
+                None
+            }
+        }
+    });
+
     let cache = Arc::new(Mutex::new(DaemonCache::default()));
     let (export_tx, export_worker) = spawn_export_worker();
     let mut warm_up_worker: Option<std::thread::JoinHandle<()>> = None;
@@ -228,6 +242,18 @@ pub fn run() {
                     process_buffer_16_to_8_ex(&buffer, width, height, channels, &recipe, transfer, false, false)
                 });
                 let proof_error = apply_proof(&mut rgb, cmd_obj.proof.as_ref());
+                if let Some(published) = preview_ring.as_mut().and_then(|ring| {
+                    ring.write_rgb8_as_rgba8(SlotKind::Reference, &rgb, width, height, ColorSpaceTag::Srgb)
+                }) {
+                    print_json(
+                        &ResponseWrapper::ok_action(
+                            "reference",
+                            RenderResult::from_published(published, Default::default(), proof_error),
+                        )
+                        .with_context(req_id, photo_path),
+                    );
+                    continue;
+                }
                 let slot = REFERENCE_SLOT.fetch_add(1, std::sync::atomic::Ordering::Relaxed) % 2;
                 let dest = security::get_secure_preview_dir().join(format!("omastudio_reference_{}.ppm", slot));
                 let mut ppm = format!("P6\n{} {}\n255\n", width, height).into_bytes();
@@ -236,11 +262,11 @@ pub fn run() {
                     Ok(()) => print_json(
                         &ResponseWrapper::ok_action(
                             "reference",
-                            RenderResult {
-                                image: dest.to_string_lossy().to_string(),
-                                histogram: Default::default(),
+                            RenderResult::from_file(
+                                dest.to_string_lossy().to_string(),
+                                Default::default(),
                                 proof_error,
-                            },
+                            ),
                         )
                         .with_context(req_id, photo_path),
                     ),
@@ -383,12 +409,6 @@ pub fn run() {
                 // Drop cache lock immediately so other daemon queries or inspection are never blocked
                 drop(c);
 
-                let base_dir = security::get_secure_preview_dir();
-
-                let out_dest = cmd_obj.out.unwrap_or_else(|| {
-                    base_dir.join(format!("omastudio_preview_{}.ppm", next_slot)).to_string_lossy().to_string()
-                });
-
                 let buffer = buffer_arc.as_ref();
 
                 let highlight_mask = cmd_obj.highlight_mask.unwrap_or(false);
@@ -433,6 +453,25 @@ pub fn run() {
                     pipeline::peaking::apply(&mut final_buf, width as usize, height as usize);
                 }
 
+                if cmd_obj.out.is_none()
+                    && let Some(published) = preview_ring.as_mut().and_then(|ring| {
+                        ring.write_rgb8_as_rgba8(SlotKind::Preview, &final_buf, width, height, ColorSpaceTag::Srgb)
+                    })
+                {
+                    print_json(
+                        &ResponseWrapper::ok_action(
+                            "adjust",
+                            RenderResult::from_published(published, hist, proof_error),
+                        )
+                        .with_context(req_id, photo_path),
+                    );
+                    continue;
+                }
+
+                let base_dir = security::get_secure_preview_dir();
+                let out_dest = cmd_obj.out.unwrap_or_else(|| {
+                    base_dir.join(format!("omastudio_preview_{}.ppm", next_slot)).to_string_lossy().to_string()
+                });
                 let dest_path = Path::new(&out_dest);
                 let write_result: Result<(), String> = if out_dest.ends_with(".ppm") {
                     let mut ppm_bytes = format!("P6\n{} {}\n255\n", width, height).into_bytes();
@@ -466,7 +505,7 @@ pub fn run() {
                 print_json(
                     &ResponseWrapper::ok_action(
                         "adjust",
-                        RenderResult { image: out_dest, histogram: hist, proof_error },
+                        RenderResult::from_file(out_dest, hist, proof_error),
                     )
                     .with_context(req_id, photo_path),
                 );
@@ -532,6 +571,32 @@ pub fn run() {
                 }
 
                 let tag = (cmd_obj.tag.as_deref() == Some("loupe")).then_some("loupe");
+                let region = [ox as f64 / vw as f64, oy as f64 / vh as f64, ow as f64 / vw as f64, oh as f64 / vh as f64];
+                let slot_kind = if tag == Some("loupe") { SlotKind::Loupe } else { SlotKind::Detail };
+                if let Some(published) = preview_ring.as_mut().and_then(|ring| {
+                    ring.write_rgb8_as_rgba8(slot_kind, &rgb, ow as u32, oh as u32, ColorSpaceTag::Srgb)
+                }) {
+                    print_json(
+                        &ResponseWrapper::ok_action(
+                            "detail",
+                            DetailResult {
+                                image: published.url,
+                                tag,
+                                proof_error,
+                                region,
+                                width: ow,
+                                height: oh,
+                                slot: Some(published.slot),
+                                generation: Some(published.generation),
+                                stride: Some(published.stride),
+                                format: Some(published.format.as_str()),
+                                color_space: Some(published.color_space.as_str()),
+                            },
+                        )
+                        .with_context(req_id, photo_path),
+                    );
+                    continue;
+                }
                 let dest = security::get_secure_preview_dir().join(format!("omastudio_{}_{}.ppm", tag.unwrap_or("detail"), slot));
                 let mut ppm = format!("P6\n{} {}\n255\n", ow, oh).into_bytes();
                 ppm.extend_from_slice(&rgb);
@@ -549,9 +614,14 @@ pub fn run() {
                             image: dest.to_string_lossy().to_string(),
                             tag,
                             proof_error,
-                            region: [ox as f64 / vw as f64, oy as f64 / vh as f64, ow as f64 / vw as f64, oh as f64 / vh as f64],
+                            region,
                             width: ow,
                             height: oh,
+                            slot: None,
+                            generation: None,
+                            stride: None,
+                            format: None,
+                            color_space: None,
                         },
                     )
                     .with_context(req_id, photo_path),

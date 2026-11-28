@@ -17,6 +17,13 @@ Rectangle {
 
     property string imageSource: ""
     property int revisionCounter: 0
+    function toImageUrl(src, rev) {
+        if (!src || src.length === 0) return "";
+        if (src.indexOf("image://") === 0 || src.indexOf("file://") === 0 || src.indexOf("qrc:/") === 0)
+            return src;
+        var url = "file://" + src + "?v=" + rev;
+        return url;
+    }
     onImageSourceChanged: {
         if (!root.imageSource || root.imageSource.length === 0) {
             imgBuffer0.source = "";
@@ -25,7 +32,7 @@ Rectangle {
             return;
         }
         root.revisionCounter++;
-        var nextSrc = "file://" + root.imageSource + "?v=" + root.revisionCounter;
+        var nextSrc = root.toImageUrl(root.imageSource, root.revisionCounter);
         // A new preview means new adjustments: the detail view and the loupe follow
         if (root.detailWanted) detailTimer.restart();
         if (root.loupeActive) root.sendLoupeRequest();
@@ -60,6 +67,8 @@ Rectangle {
     property bool detailPending: false
     readonly property bool detailShown: detailImage.visible
     readonly property real previewWidth: mainImage.imageWidth
+    readonly property real previewHeight: mainImage.imageHeight
+    readonly property alias previewSourceItem: previewSurface
     signal detailRequested(var region, int outWidth, int outHeight)
 
     // Loupe: the full-resolution photo at 1:1 around the pointer, whatever the zoom
@@ -113,7 +122,7 @@ Rectangle {
     // Answer from the engine; asks again if the pointer has moved a pixel or more since
     function showLoupe(path, region) {
         root.loupePending = false;
-        root.loupeShown = { "region": region, "path": "file://" + path + "?v=" + (++root.revisionCounter) };
+        root.loupeShown = { "region": region, "path": root.toImageUrl(path, ++root.revisionCounter) };
         var want = root.loupeRequest;
         if (want && (Math.abs(want.region[0] - region[0]) * root.fullWidth >= 1
                      || Math.abs(want.region[1] - region[1]) * root.fullHeight >= 1))
@@ -179,7 +188,7 @@ Rectangle {
             return;
         }
         root.detailRegion = want;
-        detailImage.source = "file://" + path + "?v=" + (++root.revisionCounter);
+        detailImage.source = root.toImageUrl(path, ++root.revisionCounter);
     }
 
     function detailFailed() {
@@ -658,45 +667,50 @@ Rectangle {
                     ? currentActiveImage.implicitHeight
                     : ((pendingImage && pendingImage.implicitHeight > 0) ? pendingImage.implicitHeight : 1)
 
-                Image {
-                    id: imgBuffer0
+                Item {
+                    id: previewSurface
                     anchors.fill: parent
-                    fillMode: Image.PreserveAspectFit
-                    asynchronous: true
-                    cache: false
-                    smooth: true
-                    mipmap: true
-                    visible: opacity > 0.001
-                    opacity: mainImage.activeBuffer === 0 ? 1.0 : 0.0
-                    z: mainImage.activeBuffer === 0 ? 2 : 1
 
-                    onStatusChanged: {
-                        if (status === Image.Ready) {
-                            if (mainImage.activeBuffer === 1 || mainImage.currentSource === "") {
-                                mainImage.activeBuffer = 0;
-                                mainImage.currentSource = source;
+                    Image {
+                        id: imgBuffer0
+                        anchors.fill: parent
+                        fillMode: Image.PreserveAspectFit
+                        asynchronous: true
+                        cache: false
+                        smooth: true
+                        mipmap: true
+                        visible: opacity > 0.001
+                        opacity: mainImage.activeBuffer === 0 ? 1.0 : 0.0
+                        z: mainImage.activeBuffer === 0 ? 2 : 1
+
+                        onStatusChanged: {
+                            if (status === Image.Ready) {
+                                if (mainImage.activeBuffer === 1 || mainImage.currentSource === "") {
+                                    mainImage.activeBuffer = 0;
+                                    mainImage.currentSource = source;
+                                }
                             }
                         }
                     }
-                }
 
-                Image {
-                    id: imgBuffer1
-                    anchors.fill: parent
-                    fillMode: Image.PreserveAspectFit
-                    asynchronous: true
-                    cache: false
-                    smooth: true
-                    mipmap: true
-                    visible: opacity > 0.001
-                    opacity: mainImage.activeBuffer === 1 ? 1.0 : 0.0
-                    z: mainImage.activeBuffer === 1 ? 2 : 1
+                    Image {
+                        id: imgBuffer1
+                        anchors.fill: parent
+                        fillMode: Image.PreserveAspectFit
+                        asynchronous: true
+                        cache: false
+                        smooth: true
+                        mipmap: true
+                        visible: opacity > 0.001
+                        opacity: mainImage.activeBuffer === 1 ? 1.0 : 0.0
+                        z: mainImage.activeBuffer === 1 ? 2 : 1
 
-                    onStatusChanged: {
-                        if (status === Image.Ready) {
-                            if (mainImage.activeBuffer === 0 || mainImage.currentSource === "") {
-                                mainImage.activeBuffer = 1;
-                                mainImage.currentSource = source;
+                        onStatusChanged: {
+                            if (status === Image.Ready) {
+                                if (mainImage.activeBuffer === 0 || mainImage.currentSource === "") {
+                                    mainImage.activeBuffer = 1;
+                                    mainImage.currentSource = source;
+                                }
                             }
                         }
                     }

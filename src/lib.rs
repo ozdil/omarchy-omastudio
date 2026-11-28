@@ -11,6 +11,7 @@ pub mod medium_format;
 pub mod ml;
 pub mod paths;
 pub mod pipeline;
+pub mod preview_shm;
 pub mod ptp;
 pub mod raw;
 pub mod recipe;

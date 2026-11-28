@@ -7,6 +7,7 @@
 //! than that over a session); a process that exceeds it is killed.
 
 use std::io::{BufRead, BufReader, Read, Write};
+use std::os::fd::{AsRawFd, OwnedFd};
 use std::os::unix::process::CommandExt;
 use std::pin::Pin;
 use std::process::{Child, ChildStdin, Command, Stdio};
@@ -16,6 +17,11 @@ use std::time::{Duration, Instant};
 
 use cxx_qt::{CxxQtType, Threading};
 use cxx_qt_lib::{QList, QString, QStringList};
+
+use crate::preview_provider;
+use crate::preview_shm::{
+    ENV_PREVIEW_FD, PreviewRingReader, create_preview_socketpair, memfd_disabled_by_env,
+};
 
 #[cxx_qt::bridge]
 pub mod qobject {
@@ -35,6 +41,7 @@ pub mod qobject {
         #[qproperty(bool, running, READ, WRITE = set_running, NOTIFY)]
         #[qproperty(bool, stdin_enabled)]
         #[qproperty(bool, split_lines)]
+        #[qproperty(bool, preview_channel)]
         #[qproperty(i32, max_output_bytes)]
         type HostProcess = super::HostProcessRust;
 
@@ -100,16 +107,39 @@ impl StdinWriter {
     }
 }
 
+/// Shared handle to the parent half of the `SOCK_SEQPACKET` preview channel so stopping or
+/// dropping `HostProcess` immediately wakes a blocked `recvmsg()` worker thread.
+struct PreviewSocketGuard {
+    fd: Arc<OwnedFd>,
+}
+
+impl PreviewSocketGuard {
+    fn shutdown(&self) {
+        // SAFETY: `self.fd` is an open Unix socket descriptor owned by this `Arc<OwnedFd>`.
+        unsafe {
+            libc::shutdown(self.fd.as_raw_fd(), libc::SHUT_RDWR);
+        }
+    }
+}
+
+impl Drop for PreviewSocketGuard {
+    fn drop(&mut self) {
+        self.shutdown();
+    }
+}
+
 pub struct HostProcessRust {
     command: QStringList,
     running: bool,
     stdin_enabled: bool,
     split_lines: bool,
+    preview_channel: bool,
     max_output_bytes: i32,
     /// Bumped on every start and stop, so callbacks of an older run are ignored.
     generation: u64,
     child: Arc<Mutex<Option<Child>>>,
     stdin: Option<StdinWriter>,
+    preview_sock: Option<PreviewSocketGuard>,
 }
 
 impl Default for HostProcessRust {
@@ -119,10 +149,12 @@ impl Default for HostProcessRust {
             running: false,
             stdin_enabled: false,
             split_lines: false,
+            preview_channel: false,
             max_output_bytes: DEFAULT_MAX_OUTPUT,
             generation: 0,
             child: Arc::new(Mutex::new(None)),
             stdin: None,
+            preview_sock: None,
         }
     }
 }
@@ -130,6 +162,10 @@ impl Default for HostProcessRust {
 impl Drop for HostProcessRust {
     fn drop(&mut self) {
         self.stdin = None;
+        self.preview_sock = None;
+        if self.preview_channel {
+            preview_provider::clear_ring(self.generation);
+        }
         terminate(&self.child, Duration::ZERO);
     }
 }
@@ -209,12 +245,17 @@ impl qobject::HostProcess {
 
     pub fn graceful_stop(mut self: Pin<&mut Self>, timeout_ms: i32) {
         let wait = Duration::from_millis(timeout_ms.clamp(0, 10_000) as u64);
-        let child = {
+        let (child, prev_gen, has_preview) = {
             let rust = self.as_mut().rust_mut().get_mut();
+            let prev = rust.generation;
             rust.generation += 1;
             rust.stdin = None;
-            rust.child.clone()
+            rust.preview_sock = None;
+            (rust.child.clone(), prev, rust.preview_channel)
         };
+        if has_preview {
+            preview_provider::clear_ring(prev_gen);
+        }
         terminate(&child, wait);
         self.set_state(false);
     }
@@ -227,12 +268,17 @@ impl qobject::HostProcess {
     }
 
     fn stop(mut self: Pin<&mut Self>) {
-        let child = {
+        let (child, prev_gen, has_preview) = {
             let rust = self.as_mut().rust_mut().get_mut();
+            let prev = rust.generation;
             rust.generation += 1;
             rust.stdin = None;
-            rust.child.clone()
+            rust.preview_sock = None;
+            (rust.child.clone(), prev, rust.preview_channel)
         };
+        if has_preview {
+            preview_provider::clear_ring(prev_gen);
+        }
         terminate(&child, Duration::ZERO);
         self.set_state(false);
     }
@@ -247,7 +293,40 @@ impl qobject::HostProcess {
         cmd.process_group(0);
         cmd.args(rest).stdout(Stdio::piped()).stderr(Stdio::inherit());
         cmd.stdin(if self.stdin_enabled { Stdio::piped() } else { Stdio::null() });
-        let mut child = match cmd.spawn() {
+
+        let use_preview = self.preview_channel && !memfd_disabled_by_env();
+        let mut preview_pair: Option<(OwnedFd, OwnedFd)> = None;
+        if use_preview {
+            match create_preview_socketpair() {
+                Ok((parent_fd, child_fd)) => {
+                    let child_raw = child_fd.as_raw_fd();
+                    cmd.env(ENV_PREVIEW_FD, child_raw.to_string());
+                    // SAFETY: `fcntl(F_SETFD, 0)` is async-signal-safe and clears FD_CLOEXEC
+                    // strictly on the inherited child half of the socketpair before `exec`.
+                    unsafe {
+                        cmd.pre_exec(move || {
+                            if libc::fcntl(child_raw, libc::F_SETFD, 0) != 0 {
+                                return Err(std::io::Error::last_os_error());
+                            }
+                            Ok(())
+                        });
+                    }
+                    preview_pair = Some((parent_fd, child_fd));
+                }
+                Err(e) => {
+                    eprintln!("omastudio-app: failed to create preview socketpair: {e}");
+                }
+            }
+        }
+
+        let spawn_result = cmd.spawn();
+        // Close parent's copy of `child_fd` immediately regardless of spawn outcome.
+        let parent_preview_fd = preview_pair.map(|(parent_fd, child_fd)| {
+            drop(child_fd);
+            Arc::new(parent_fd)
+        });
+
+        let mut child = match spawn_result {
             Ok(c) => c,
             Err(e) => {
                 self.as_mut().finished(-1, QString::from(format!("{program}: {e}").as_str()));
@@ -264,8 +343,20 @@ impl qobject::HostProcess {
             rust.stdin = child.stdin.take().map(StdinWriter::spawn);
             // A new slot per run: a reader thread of an earlier run keeps its own
             rust.child = Arc::new(Mutex::new(Some(child)));
+            rust.preview_sock = parent_preview_fd
+                .as_ref()
+                .map(|fd| PreviewSocketGuard { fd: Arc::clone(fd) });
         }
         let generation = self.generation;
+        if let Some(parent_fd) = parent_preview_fd {
+            std::thread::spawn(move || {
+                match PreviewRingReader::recv_and_ack(parent_fd.as_raw_fd()) {
+                    Ok(Some(reader)) => preview_provider::install_ring(generation, reader),
+                    Ok(None) => {}
+                    Err(e) => eprintln!("omastudio-app: memfd preview handshake failed: {e}"),
+                }
+            });
+        }
         let child = self.child.clone();
         self.as_mut().set_state(true);
         self.as_mut().started();
@@ -279,7 +370,12 @@ impl qobject::HostProcess {
                     match event {
                         Event::Line(line) => obj.as_mut().line_read(QString::from(line.as_str())),
                         Event::Finished(code, output) => {
-                            obj.as_mut().rust_mut().get_mut().stdin = None;
+                            let rust = obj.as_mut().rust_mut().get_mut();
+                            rust.stdin = None;
+                            rust.preview_sock = None;
+                            if rust.preview_channel {
+                                preview_provider::clear_ring(generation);
+                            }
                             obj.as_mut().set_state(false);
                             obj.as_mut().finished(code, QString::from(output.as_str()));
                         }
