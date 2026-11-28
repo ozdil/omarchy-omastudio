@@ -156,3 +156,40 @@ fn custom_icc_files_are_used_and_non_rgb_profiles_rejected() {
 
     let _ = std::fs::remove_dir_all(&dir);
 }
+
+#[test]
+fn srgb_transfer_matches_icc_profile_and_exr_linearization() {
+    use omastudio_engine::icc::{convert_rgb16_to_f32, ExportProfile};
+    let trc = OutputColorSpace::Srgb.transfer();
+    let srgb_icc = builtin_profile(OutputColorSpace::Srgb);
+    let (linear_icc, _) = ExportProfile::Builtin(OutputColorSpace::Srgb).linear().unwrap();
+
+    // Linear shadows (0.01..0.5) encoded with OutputColorSpace::Srgb::transfer() must
+    // linearize back through Profile::new_srgb() -> linear Rec.709 with <0.002 drift
+    // (previously BT.709 (0.45, 4.5) caused ~0.04 shadow drift in OpenEXR exports).
+    let linear_samples = [0.002f32, 0.01, 0.03, 0.10, 0.18, 0.50, 0.90, 1.0];
+    let encoded_u16: Vec<u16> = linear_samples
+        .iter()
+        .flat_map(|&v| {
+            let e = (trc.encode(v).clamp(0.0, 1.0) * 65535.0).round() as u16;
+            [e, e, e]
+        })
+        .collect();
+    let recovered = convert_rgb16_to_f32(
+        &encoded_u16,
+        &srgb_icc,
+        &linear_icc,
+        RenderingIntent::RelativeColorimetric,
+    )
+    .expect("sRGB -> linear Rec.709 conversion");
+
+    for (idx, &expected) in linear_samples.iter().enumerate() {
+        let got = recovered[idx * 3];
+        assert!(
+            (got - expected).abs() < 0.002,
+            "shadow/midtone drift at linear {expected}: got {got} (diff {})",
+            (got - expected).abs()
+        );
+    }
+}
+

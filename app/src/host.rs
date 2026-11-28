@@ -50,6 +50,11 @@ pub mod qobject {
         #[qproperty(QString, raw_extensions, READ, CONSTANT)]
         #[qproperty(QString, image_extensions, READ, CONSTANT)]
         #[qproperty(bool, software_renderer, READ, CONSTANT)]
+        #[qproperty(QString, display_color_space, READ, CONSTANT)]
+        #[qproperty(bool, display_hdr_active, READ, CONSTANT)]
+        #[qproperty(i32, display_max_luminance, READ, CONSTANT)]
+        #[qproperty(i32, display_sdr_white_nits, READ, CONSTANT)]
+        #[qproperty(bool, display_color_management, READ, CONSTANT)]
         type Host = super::HostRust;
 
         /// A control-socket call; answer it with `ipcReply(id, text)`. `args` is a
@@ -117,6 +122,11 @@ pub struct HostRust {
     raw_extensions: QString,
     image_extensions: QString,
     software_renderer: bool,
+    display_color_space: QString,
+    display_hdr_active: bool,
+    display_max_luminance: i32,
+    display_sdr_white_nits: i32,
+    display_color_management: bool,
 }
 
 impl Default for HostRust {
@@ -127,6 +137,7 @@ impl Default for HostRust {
         let software_renderer = std::env::var("QT_QUICK_BACKEND")
             .ok()
             .is_some_and(|v| v.trim().eq_ignore_ascii_case("software"));
+        let display = crate::wayland_color::detected();
         Self {
             open_path: QString::from(std::env::var("OMASTUDIO_OPEN_PATH").unwrap_or_default().as_str()),
             engine_path: QString::from(engine_path(&home).to_string_lossy().as_ref()),
@@ -142,6 +153,11 @@ impl Default for HostRust {
             raw_extensions: QString::from(raw_json.as_str()),
             image_extensions: QString::from(img_json.as_str()),
             software_renderer,
+            display_color_space: QString::from(display.color_space.as_str()),
+            display_hdr_active: display.hdr_active,
+            display_max_luminance: display.max_luminance_nits as i32,
+            display_sdr_white_nits: display.sdr_white_nits as i32,
+            display_color_management: display.protocol_supported,
         }
     }
 }

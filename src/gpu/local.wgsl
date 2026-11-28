@@ -487,11 +487,17 @@ fn finish(@builtin(global_invocation_id) id: vec3<u32>) {
         g = g * factor;
         b = b * factor;
     }
+    let out_y = select(id.y, id.y - valid_y0, p.mode == 0u);
+    let out_i = out_y * p.w + id.x;
+    if ((p.flags & 4u) != 0u) {
+        rgb[out_i * 3u] = max(r, 0.0);
+        rgb[out_i * 3u + 1u] = max(g, 0.0);
+        rgb[out_i * 3u + 2u] = max(b, 0.0);
+    }
     let r8 = u32(clamp(r, 0.0, 1.0) * 255.0);
     let g8 = u32(clamp(g, 0.0, 1.0) * 255.0);
     let b8 = u32(clamp(b, 0.0, 1.0) * 255.0);
-    let out_y = select(id.y, id.y - valid_y0, p.mode == 0u);
-    px8[out_y * p.w + id.x] = r8 | (g8 << 8u) | (b8 << 16u);
+    px8[out_i] = r8 | (g8 << 8u) | (b8 << 16u);
 }
 
 // --- Adjustment layers (pipeline::layers::apply_layers_pixel) -----------------------

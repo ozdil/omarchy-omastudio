@@ -155,7 +155,7 @@ fn pack(recipe: &Recipe, inputs: &PointInputs) -> (Params, Vec<f32>) {
     p.f("SLOPE", &[slope]);
     p.f("TOE_LINEAR", &[toe_linear]);
     p.f("OFFSET_ENC", &[offset]);
-    let [bp, bs, bte, btl, bo] = Transfer::bt709().parts();
+    let [bp, bs, bte, btl, bo] = Transfer::srgb().parts();
     p.f("BT_POWER", &[bp]);
     p.f("BT_SLOPE", &[bs]);
     p.f("BT_TOE_ENCODED", &[bte]);

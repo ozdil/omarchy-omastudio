@@ -162,6 +162,44 @@ fn hist_all(@builtin(local_invocation_index) li: u32, @builtin(workgroup_id) wg:
 }
 "#;
 
+/// Hardware-trilinear 33³ 3D LUT soft-proof / wide-gamut display pass operating in place
+/// on packed 8-bit `px8` pixels (runs after scope/histogram accumulation and before `pack3`).
+const PROOF_PX8_WGSL: &str = r#"
+struct ProofParams {
+    w: u32,
+    h: u32,
+    lut_size: u32,
+    _pad: u32,
+}
+
+@group(0) @binding(0) var<uniform> pp: ProofParams;
+@group(0) @binding(1) var<storage, read_write> px8: array<u32>;
+@group(0) @binding(2) var proof_lut: texture_3d<f32>;
+@group(0) @binding(3) var proof_sampler: sampler;
+
+@compute @workgroup_size(16, 16)
+fn proof_px8(@builtin(global_invocation_id) id: vec3<u32>) {
+    if id.x >= pp.w || id.y >= pp.h {
+        return;
+    }
+    let idx = id.y * pp.w + id.x;
+    let v = px8[idx];
+    let c = vec3<f32>(
+        f32(v & 255u) / 255.0,
+        f32((v >> 8u) & 255u) / 255.0,
+        f32((v >> 16u) & 255u) / 255.0,
+    );
+    let n = f32(pp.lut_size);
+    let uvw = (c * (n - 1.0) + vec3<f32>(0.5)) / n;
+    let out_c = clamp(textureSampleLevel(proof_lut, proof_sampler, uvw, 0.0).rgb, vec3<f32>(0.0), vec3<f32>(1.0));
+    let r8 = u32(out_c.x * 255.0 + 0.5);
+    let g8 = u32(out_c.y * 255.0 + 0.5);
+    let b8 = u32(out_c.z * 255.0 + 0.5);
+    let a8 = v & 0xff000000u;
+    px8[idx] = r8 | (g8 << 8u) | (b8 << 16u) | a8;
+}
+"#;
+
 /// A step's parameter words, zero after `head`.
 fn words(head: &[u32]) -> [u32; PARAMS_WORDS] {
     let mut p = [0u32; PARAMS_WORDS];
@@ -556,6 +594,7 @@ fn display_steps_for_strip(
     scale: f32,
     geometry: Option<&crate::pipeline::detail::Geometry>,
     combine_scopes: bool,
+    write_rgb_f32: bool,
 ) -> Vec<Step> {
     let wu = frame_w as u32;
     let strip_h = strip.sy1 - strip.sy0;
@@ -567,6 +606,7 @@ fn display_steps_for_strip(
     let mut steps = Vec::new();
     let grain = recipe.grain_amount > 0.001;
     let vignette = recipe.vignette.abs() >= 0.01;
+    let write_f32_flag = (write_rgb_f32 as u32) << 2;
     let f = [
         (recipe.grain_amount / 100.0) * 0.12,
         (recipe.grain_size.max(1.0) * scale).max(1.0),
@@ -608,7 +648,7 @@ fn display_steps_for_strip(
             steps.push(finish(
                 valid_hu,
                 2,
-                (vignette as u32) << 1,
+                ((vignette as u32) << 1) | write_f32_flag,
                 [frame_w as u32, frame_h as u32, strip.out_y0 as u32, 0],
                 [valid_hu, strip.out_y0 as u32, 0, 0],
                 px_valid,
@@ -620,18 +660,12 @@ fn display_steps_for_strip(
             steps.push(finish(
                 strip_hu,
                 0,
-                grain as u32 | (vignette as u32) << 1,
+                grain as u32 | ((vignette as u32) << 1) | write_f32_flag,
                 [frame_w as u32, frame_h as u32, strip.sy0 as u32, valid_y0],
                 [valid_y1, strip.out_y0 as u32, 0, 0],
                 px_strip,
             ));
         }
-    }
-    if ch == 3 {
-        let groups = ((frame_w * valid_rows * 3).div_ceil(4) as u32).div_ceil(256);
-        let gx = groups.min(32768);
-        let params = words(&[wu, valid_hu, gx * 256]);
-        steps.push(Step { entry: entry("pack3"), params, groups: (gx, groups.div_ceil(gx)) });
     }
     if combine_scopes {
         steps.push(Step { entry: HIST_ALL_ENTRY, params: words(&[wu, valid_hu]), groups: (HIST_GROUPS, 1) });
@@ -640,13 +674,176 @@ fn display_steps_for_strip(
             steps.push(Step { entry: entry(name), params: words(&[wu, valid_hu]), groups: (HIST_GROUPS, 1) });
         }
     }
+    if ch == 3 {
+        let groups = ((frame_w * valid_rows * 3).div_ceil(4) as u32).div_ceil(256);
+        let gx = groups.min(32768);
+        let params = words(&[wu, valid_hu, gx * 256]);
+        steps.push(Step { entry: entry("pack3"), params, groups: (gx, groups.div_ceil(gx)) });
+    }
     steps
+}
+
+struct ProofPass {
+    layout: wgpu::BindGroupLayout,
+    pipeline: wgpu::ComputePipeline,
+    params: wgpu::Buffer,
+    sampler: wgpu::Sampler,
+    cached_lut: std::sync::Mutex<Option<(u64, wgpu::Texture, wgpu::TextureView)>>,
+}
+
+impl ProofPass {
+    fn new(device: &wgpu::Device, cache: Option<&wgpu::PipelineCache>) -> Self {
+        let module = device.create_shader_module(wgpu::ShaderModuleDescriptor {
+            label: Some("local proof_px8"),
+            source: wgpu::ShaderSource::Wgsl(PROOF_PX8_WGSL.into()),
+        });
+        let layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+            label: Some("local proof_px8"),
+            entries: &[
+                wgpu::BindGroupLayoutEntry {
+                    binding: 0,
+                    visibility: wgpu::ShaderStages::COMPUTE,
+                    ty: wgpu::BindingType::Buffer {
+                        ty: wgpu::BufferBindingType::Uniform,
+                        has_dynamic_offset: false,
+                        min_binding_size: wgpu::BufferSize::new(16),
+                    },
+                    count: None,
+                },
+                wgpu::BindGroupLayoutEntry {
+                    binding: 1,
+                    visibility: wgpu::ShaderStages::COMPUTE,
+                    ty: wgpu::BindingType::Buffer {
+                        ty: wgpu::BufferBindingType::Storage { read_only: false },
+                        has_dynamic_offset: false,
+                        min_binding_size: None,
+                    },
+                    count: None,
+                },
+                wgpu::BindGroupLayoutEntry {
+                    binding: 2,
+                    visibility: wgpu::ShaderStages::COMPUTE,
+                    ty: wgpu::BindingType::Texture {
+                        sample_type: wgpu::TextureSampleType::Float { filterable: true },
+                        view_dimension: wgpu::TextureViewDimension::D3,
+                        multisampled: false,
+                    },
+                    count: None,
+                },
+                wgpu::BindGroupLayoutEntry {
+                    binding: 3,
+                    visibility: wgpu::ShaderStages::COMPUTE,
+                    ty: wgpu::BindingType::Sampler(wgpu::SamplerBindingType::Filtering),
+                    count: None,
+                },
+            ],
+        });
+        let pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
+            label: Some("local proof_px8"),
+            bind_group_layouts: &[Some(&layout)],
+            immediate_size: 0,
+        });
+        let pipeline = device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
+            label: Some("proof_px8"),
+            layout: Some(&pipeline_layout),
+            module: &module,
+            entry_point: Some("proof_px8"),
+            compilation_options: Default::default(),
+            cache,
+        });
+        let params = create_buf(device, "local proof params", 16, wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST);
+        let sampler = device.create_sampler(&wgpu::SamplerDescriptor {
+            label: Some("local proof 3d sampler"),
+            address_mode_u: wgpu::AddressMode::ClampToEdge,
+            address_mode_v: wgpu::AddressMode::ClampToEdge,
+            address_mode_w: wgpu::AddressMode::ClampToEdge,
+            mag_filter: wgpu::FilterMode::Linear,
+            min_filter: wgpu::FilterMode::Linear,
+            mipmap_filter: wgpu::MipmapFilterMode::Nearest,
+            ..Default::default()
+        });
+        Self {
+            layout,
+            pipeline,
+            params,
+            sampler,
+            cached_lut: std::sync::Mutex::new(None),
+        }
+    }
+
+    fn encode(
+        &self,
+        enc: &mut wgpu::CommandEncoder,
+        gpu: &Gpu,
+        px8: &wgpu::Buffer,
+        w: u32,
+        h: u32,
+        lut: &crate::icc::SoftProofLut,
+    ) -> Result<(), String> {
+        let mut guard = self.cached_lut.lock().map_err(|_| "GPU proof LUT lock poisoned")?;
+        if !guard.as_ref().is_some_and(|(k, _, _)| *k == lut.key) {
+            let n = lut.size;
+            let tex = gpu.device.create_texture(&wgpu::TextureDescriptor {
+                label: Some("local proof 33^3 3d"),
+                size: wgpu::Extent3d {
+                    width: n,
+                    height: n,
+                    depth_or_array_layers: n,
+                },
+                mip_level_count: 1,
+                sample_count: 1,
+                dimension: wgpu::TextureDimension::D3,
+                format: wgpu::TextureFormat::Rgba16Float,
+                usage: wgpu::TextureUsages::TEXTURE_BINDING | wgpu::TextureUsages::COPY_DST,
+                view_formats: &[],
+            });
+            gpu.queue.write_texture(
+                tex.as_image_copy(),
+                as_bytes(&lut.rgba_f16),
+                wgpu::TexelCopyBufferLayout {
+                    offset: 0,
+                    bytes_per_row: Some(n * 8),
+                    rows_per_image: Some(n),
+                },
+                wgpu::Extent3d {
+                    width: n,
+                    height: n,
+                    depth_or_array_layers: n,
+                },
+            );
+            let view = tex.create_view(&wgpu::TextureViewDescriptor::default());
+            *guard = Some((lut.key, tex, view));
+        }
+        let (_, _, proof_view) = guard.as_ref().expect("proof 3d lut texture");
+        gpu.queue.write_buffer(&self.params, 0, as_bytes(&[w, h, lut.size, 0u32]));
+        let bind_group = gpu.device.create_bind_group(&wgpu::BindGroupDescriptor {
+            label: Some("local proof_px8 bg"),
+            layout: &self.layout,
+            entries: &[
+                wgpu::BindGroupEntry { binding: 0, resource: self.params.as_entire_binding() },
+                wgpu::BindGroupEntry { binding: 1, resource: px8.as_entire_binding() },
+                wgpu::BindGroupEntry { binding: 2, resource: wgpu::BindingResource::TextureView(proof_view) },
+                wgpu::BindGroupEntry { binding: 3, resource: wgpu::BindingResource::Sampler(&self.sampler) },
+            ],
+        });
+        drop(guard);
+
+        let mut pass = enc.begin_compute_pass(&wgpu::ComputePassDescriptor {
+            label: Some("local proof_px8"),
+            timestamp_writes: None,
+        });
+        pass.set_pipeline(&self.pipeline);
+        pass.set_bind_group(0, &bind_group, &[]);
+        pass.dispatch_workgroups(w.div_ceil(16), h.div_ceil(16), 1);
+        Ok(())
+    }
 }
 
 pub struct Pipeline {
     layout: wgpu::BindGroupLayout,
     pipelines: Vec<wgpu::ComputePipeline>,
     hist_all: Option<wgpu::ComputePipeline>,
+    proof: ProofPass,
     /// Kept between calls; previews call this on every edit.
     buffers: std::sync::Mutex<Option<Buffers>>,
 }
@@ -967,7 +1164,8 @@ impl Pipeline {
                 cache,
             })
         });
-        Self { layout, pipelines, hist_all, buffers: std::sync::Mutex::new(None) }
+        let proof = ProofPass::new(device, cache);
+        Self { layout, pipelines, hist_all, proof, buffers: std::sync::Mutex::new(None) }
     }
 }
 
@@ -1254,13 +1452,29 @@ pub fn run_display_checked(
     inputs: &super::point_ops::PointInputs,
     scale: f32,
 ) -> super::StageOutcome<(Vec<u8>, crate::pipeline::histogram::HistogramData)> {
+    run_display_checked_with_proof(input, w, h, ch, recipe, inputs, scale, None)
+}
+
+/// Whole 8-bit preview on the GPU with an optional 33³ hardware-trilinear soft-proof /
+/// wide-gamut display 3D LUT applied in place on GPU after scope accumulation (`WP-16`).
+#[allow(clippy::too_many_arguments)]
+pub fn run_display_checked_with_proof(
+    input: &[u16],
+    w: usize,
+    h: usize,
+    ch: usize,
+    recipe: &Recipe,
+    inputs: &super::point_ops::PointInputs,
+    scale: f32,
+    proof_lut: Option<&crate::icc::SoftProofLut>,
+) -> super::StageOutcome<(Vec<u8>, crate::pipeline::histogram::HistogramData)> {
     if w * h < super::point_ops::MIN_PIXELS {
         return super::StageOutcome::Skipped;
     }
     let Some(gpu) = super::acquire().filter(|g| super::stages_worthwhile(g)) else {
         return super::StageOutcome::Skipped;
     };
-    match display_on(&gpu, input, w, h, ch, recipe, inputs, scale) {
+    match display_on_with_options(&gpu, input, w, h, ch, recipe, inputs, scale, gpu_strip_limit(&gpu), None, proof_lut) {
         Ok(v) => super::StageOutcome::Done(v),
         Err(e) => {
             eprintln!("omastudio: GPU preview stages failed, using the CPU: {e}");
@@ -1334,7 +1548,7 @@ fn display_on_with_limit(
     scale: f32,
     limit: u64,
 ) -> Result<(Vec<u8>, crate::pipeline::histogram::HistogramData), String> {
-    display_on_with_options(gpu, input, w, h, ch, recipe, inputs, scale, limit, None)
+    display_on_with_options(gpu, input, w, h, ch, recipe, inputs, scale, limit, None, None)
 }
 
 #[allow(clippy::too_many_arguments)]
@@ -1349,6 +1563,7 @@ fn display_on_with_options(
     scale: f32,
     limit: u64,
     combine_scopes_override: Option<bool>,
+    proof_lut: Option<&crate::icc::SoftProofLut>,
 ) -> Result<(Vec<u8>, crate::pipeline::histogram::HistogramData), String> {
     if w == 0 || h == 0 || !(3..=4).contains(&ch) || input.len() < w * h * ch {
         return Err("unsupported buffer".to_string());
@@ -1372,7 +1587,7 @@ fn display_on_with_options(
             steps.push(layer_dispatch(w, strip_h, (0, strip.sy0, w, h)));
         }
         steps.extend(plan(w, strip_h, w, h, recipe, scale));
-        steps.extend(display_steps_for_strip(w, h, &strip, ch, recipe, scale, geometry.as_ref(), combine_scopes));
+        steps.extend(display_steps_for_strip(w, h, &strip, ch, recipe, scale, geometry.as_ref(), combine_scopes, false));
         bands.push(BandJob {
             strip_h,
             valid_y0: strip.out_y0.saturating_sub(strip.sy0),
@@ -1396,7 +1611,7 @@ fn display_on_with_options(
         w,
         bands,
         &lay,
-        Out::Display { ch, pixels: &mut pixels, words: &mut words },
+        Out::Display { ch, pixels: &mut pixels, words: &mut words, proof_lut },
         limit,
     )?;
     if ch == 4 {
@@ -1408,8 +1623,9 @@ fn display_on_with_options(
     Ok((pixels, hist))
 }
 
-/// Zero-copy GPU-to-GPU Vulkan DMA-BUF display path (`WP-15`): runs the entire single-band
-/// preview pipeline on the GPU, writes directly into a double-buffered exportable `Rgba16Float`
+/// Zero-copy GPU-to-GPU Vulkan DMA-BUF display path (`WP-15`/`WP-16`): runs the entire single-band
+/// preview pipeline on the GPU, writes unquantized FP16 pixels (optionally soft-proofed /
+/// gamut-mapped via a cached 33³ 3D LUT) directly into a double-buffered exportable `Rgba16Float`
 /// `VkImage`, signals an exportable `SYNC_FD` semaphore, and reads back ONLY the tiny scope/
 /// histogram counts (zero pixel readback over PCIe). Returns `None` on unsupported GPUs,
 /// multi-band frames, or any runtime error so the daemon falls back transparently to `memfd`.
@@ -1423,6 +1639,7 @@ pub fn run_display_dmabuf(
     inputs: &super::point_ops::PointInputs,
     scale: f32,
     color_space: crate::preview_shm::ColorSpaceTag,
+    proof_lut: Option<&crate::icc::SoftProofLut>,
 ) -> Option<super::dmabuf::ExportedDmaBufFrame> {
     if ch != 3 || w == 0 || h == 0 || w * h < super::point_ops::MIN_PIXELS {
         return None;
@@ -1431,7 +1648,7 @@ pub fn run_display_dmabuf(
         super::stages_worthwhile(g)
             && g.dmabuf_caps.is_some_and(super::dmabuf::DmaBufCaps::is_supported)
     })?;
-    match display_dmabuf_on(&gpu, input, w, h, ch, recipe, inputs, scale, color_space) {
+    match display_dmabuf_on(&gpu, input, w, h, ch, recipe, inputs, scale, color_space, proof_lut) {
         Ok(frame) => Some(frame),
         Err(e) => {
             if super::profiling_enabled() {
@@ -1453,6 +1670,7 @@ fn display_dmabuf_on(
     inputs: &super::point_ops::PointInputs,
     scale: f32,
     color_space: crate::preview_shm::ColorSpaceTag,
+    proof_lut: Option<&crate::icc::SoftProofLut>,
 ) -> Result<super::dmabuf::ExportedDmaBufFrame, String> {
     if input.len() < w * h * ch {
         return Err("unsupported buffer".to_string());
@@ -1479,7 +1697,9 @@ fn display_dmabuf_on(
         steps.push(layer_dispatch(w, h, (0, 0, w, h)));
     }
     steps.extend(plan(w, h, w, h, recipe, scale));
-    steps.extend(display_steps_for_strip(w, h, strip, 4, recipe, scale, geometry.as_ref(), combine_scopes));
+    // Single-band (`valid_y0 == 0`): enable `write_rgb_f32` so `finish` writes unquantized
+    // post-grain/geometry/vignette float RGB back to `bufs.compute.rgb` for FP16 DMA-BUF export.
+    steps.extend(display_steps_for_strip(w, h, strip, 4, recipe, scale, geometry.as_ref(), combine_scopes, true));
 
     let max_groups = gpu.limits.max_compute_workgroups_per_dimension;
     for s in &steps {
@@ -1575,8 +1795,15 @@ fn display_dmabuf_on(
         // Copy ONLY the tiny scope/histogram buffer — zero full-frame pixel readback.
         enc.copy_buffer_to_buffer(&disp.hist, 0, &disp.staging_hist, 0, hist_len);
 
-        let (idx, desc, dmabuf_fd, sync_fd) =
-            pool.encode_submit_and_export(gpu, enc, &disp.px8, w as u32, h as u32, color_space)?;
+        let (idx, desc, dmabuf_fd, sync_fd) = pool.encode_submit_and_export(
+            gpu,
+            enc,
+            &bufs.compute.rgb,
+            w as u32,
+            h as u32,
+            color_space,
+            proof_lut,
+        )?;
 
         let (tx, rx) = mpsc::channel();
         disp.staging_hist.map_async(wgpu::MapMode::Read, 0..hist_len, move |r| {
@@ -1634,7 +1861,12 @@ enum Out<'a> {
     F32(&'a mut [f32]),
     /// The display tail's 8-bit pixels (`ch` bytes each, alpha left at 0) and the
     /// histogram and scope words accumulated across all bands.
-    Display { ch: usize, pixels: &'a mut Vec<u8>, words: &'a mut Vec<u32> },
+    Display {
+        ch: usize,
+        pixels: &'a mut Vec<u8>,
+        words: &'a mut Vec<u32>,
+        proof_lut: Option<&'a crate::icc::SoftProofLut>,
+    },
 }
 
 #[cfg(test)]
@@ -1841,6 +2073,18 @@ fn execute_bands(
             {
                 enc.clear_buffer(hist_buf, 0, Some(hist_len));
             }
+            let (proof_lut, split_at) = match &out {
+                Out::Display { ch, proof_lut: Some(lut), .. } => {
+                    let pack3_idx = entry("pack3");
+                    let split = if *ch == 3 && band.steps.last().is_some_and(|s| s.entry == pack3_idx) {
+                        band.steps.len() - 1
+                    } else {
+                        band.steps.len()
+                    };
+                    (Some(*lut), split)
+                }
+                _ => (None, band.steps.len()),
+            };
             {
                 let timestamp_writes = ts_active.map(|ts| wgpu::ComputePassTimestampWrites {
                     query_set: &ts.query_set,
@@ -1851,7 +2095,7 @@ fn execute_bands(
                     label: Some("local"),
                     timestamp_writes,
                 });
-                for (i, s) in band.steps.iter().enumerate() {
+                for (i, s) in band.steps[..split_at].iter().enumerate() {
                     let step_pipeline = if s.entry == HIST_ALL_ENTRY {
                         pipeline.hist_all.as_ref().expect("hist_all pipeline")
                     } else {
@@ -1860,6 +2104,22 @@ fn execute_bands(
                     pass.set_pipeline(step_pipeline);
                     pass.set_bind_group(0, bind, &[(i as u64 * stride) as u32]);
                     pass.dispatch_workgroups(s.groups.0, s.groups.1, 1);
+                }
+            }
+            if let Some(lut) = proof_lut {
+                let disp = bufs.display.as_ref().expect("display buffers");
+                pipeline.proof.encode(&mut enc, gpu, &disp.px8, w as u32, valid_rows as u32, lut)?;
+                if split_at < band.steps.len() {
+                    let mut pass = enc.begin_compute_pass(&wgpu::ComputePassDescriptor {
+                        label: Some("local pack3 post-proof"),
+                        timestamp_writes: None,
+                    });
+                    for (offset, s) in band.steps[split_at..].iter().enumerate() {
+                        let i = split_at + offset;
+                        pass.set_pipeline(&pipeline.pipelines[s.entry]);
+                        pass.set_bind_group(0, bind, &[(i as u64 * stride) as u32]);
+                        pass.dispatch_workgroups(s.groups.0, s.groups.1, 1);
+                    }
                 }
             }
             if let Some(ts) = ts_active {
@@ -1931,7 +2191,7 @@ fn execute_bands(
                         super::point_ops::as_bytes_mut(&mut data[band.out_y0 * w * 3..band.out_y1 * w * 3])
                             .copy_from_slice(&view);
                     }
-                    Out::Display { ch, pixels, words } => {
+                    Out::Display { ch, pixels, words, .. } => {
                         pixels.extend_from_slice(&view[..w * valid_rows * *ch]);
                         if let Some((staging_hist, _, _)) = hist_state.as_ref() {
                             let hist = staging_hist.get_mapped_range(0..hist_len).map_err(|e| e.to_string())?;
@@ -2778,7 +3038,7 @@ mod tests {
         let p = pipeline(&gpu).expect("local pipeline");
         super::super::set_bench_profiling(true);
         let _ = super::super::take_last_gpu_pass_ms();
-        let (px_sep, hist_sep) = display_on_with_options(&gpu, &input, w, h, 3, &recipe, &inputs, scale, gpu_strip_limit(&gpu), Some(false))
+        let (px_sep, hist_sep) = display_on_with_options(&gpu, &input, w, h, 3, &recipe, &inputs, scale, gpu_strip_limit(&gpu), Some(false), None)
             .expect("separate scope passes");
         let ts_ms = super::super::take_last_gpu_pass_ms();
         super::super::set_bench_profiling(false);
@@ -2788,7 +3048,7 @@ mod tests {
         }
 
         if p.hist_all.is_some() {
-            let (px_comb, hist_comb) = display_on_with_options(&gpu, &input, w, h, 3, &recipe, &inputs, scale, gpu_strip_limit(&gpu), Some(true))
+            let (px_comb, hist_comb) = display_on_with_options(&gpu, &input, w, h, 3, &recipe, &inputs, scale, gpu_strip_limit(&gpu), Some(true), None)
                 .expect("combined hist_all pass");
             assert_eq!(px_comb, px_sep, "combined hist_all pixels must match separate passes");
             assert_eq!(hist_comb.red, hist_sep.red);
@@ -2819,5 +3079,105 @@ mod tests {
                 gpu.limits.max_compute_workgroup_storage_size, COMBINED_HIST_WG_STORAGE
             );
         }
+    }
+
+    #[test]
+    fn soft_proof_33_cube_gpu_matches_cpu() {
+        use crate::icc::{RenderingIntent, bake_soft_proof_lut, builtin_profile};
+        use crate::pipeline::transfer::Transfer;
+        use crate::pipeline::{PointOps, white_balance};
+        use crate::raw::OutputColorSpace;
+
+        let _test_lock = super::super::TEST_GPU_LOCK.lock().unwrap_or_else(|e| e.into_inner());
+        let Some(gpu) = super::super::acquire() else {
+            eprintln!("no GPU, skipped");
+            return;
+        };
+
+        let (w, h) = (96usize, 64usize);
+        let input: Vec<u16> = (0..w * h * 3)
+            .map(|i| {
+                let (px, c) = (i / 3, i % 3);
+                let (x, y) = (px % w, px / w);
+                match c {
+                    0 => ((x * 65535) / (w - 1)) as u16,
+                    1 => ((y * 65535) / (h - 1)) as u16,
+                    _ => (((x + y) * 32767) / (w + h)) as u16,
+                }
+            })
+            .collect();
+        let recipe = Recipe {
+            sharpness: 0.0,
+            denoise_col: 0.0,
+            denoise_lum: 0.0,
+            ..Recipe::default()
+        };
+        let transfer = Transfer::srgb();
+        let ops = PointOps::new(&recipe);
+        let (wr, wg, wb) = white_balance::kelvin_to_rgb_multipliers(recipe.wb_temperature, recipe.wb_tint);
+        let inputs = ops.gpu_inputs([wr, wg, wb], transfer);
+        let scale = crate::pipeline::frame_scale(w, h);
+
+        // Bake a non-trivial sRGB -> AdobeRGB -> DisplayP3 soft-proof LUT so every channel transforms.
+        let proof_icc = builtin_profile(OutputColorSpace::AdobeRgb).icc().expect("AdobeRGB ICC");
+        let lut = bake_soft_proof_lut(
+            OutputColorSpace::Srgb,
+            OutputColorSpace::DisplayP3,
+            &proof_icc,
+            RenderingIntent::RelativeColorimetric,
+            false,
+        )
+        .expect("bake 33^3 soft-proof LUT");
+
+        let (unproofed_gpu, hist_unproofed) = display_on_with_options(
+            &gpu,
+            &input,
+            w,
+            h,
+            3,
+            &recipe,
+            &inputs,
+            scale,
+            gpu_strip_limit(&gpu),
+            None,
+            None,
+        )
+        .expect("GPU unproofed display");
+        let (proofed_gpu, hist_proofed) = display_on_with_options(
+            &gpu,
+            &input,
+            w,
+            h,
+            3,
+            &recipe,
+            &inputs,
+            scale,
+            gpu_strip_limit(&gpu),
+            None,
+            Some(&lut),
+        )
+        .expect("GPU 33^3 soft-proof display");
+
+        // Histogram/scopes must stay computed on the pre-proof working pixels.
+        assert_eq!(hist_proofed.red, hist_unproofed.red);
+        assert_eq!(hist_proofed.green, hist_unproofed.green);
+        assert_eq!(hist_proofed.blue, hist_unproofed.blue);
+
+        // Apply the exact same 33^3 LUT on CPU to the unproofed GPU frame and verify <= 1-bit parity.
+        let mut expected = unproofed_gpu;
+        lut.apply_rgb8(&mut expected);
+        let mut worst = 0u8;
+        let mut diff_count = 0usize;
+        for (a, b) in expected.iter().zip(&proofed_gpu) {
+            let d = a.abs_diff(*b);
+            worst = worst.max(d);
+            if d > 1 {
+                diff_count += 1;
+            }
+        }
+        assert!(
+            worst <= 2 && diff_count == 0,
+            "GPU 33^3 soft-proof drifted from CPU trilinear LUT (worst={worst}, >1 count={diff_count})"
+        );
     }
 }

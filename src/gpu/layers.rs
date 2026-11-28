@@ -31,7 +31,7 @@ pub fn pack(list: &[AdjustmentLayer]) -> Option<Vec<f32>> {
     let shapes: usize = active.iter().map(|l| 1 + l.components.len()).sum();
     let mut out = vec![0.0f32; HEADER + BLOCK * (active.len() + shapes)];
     out[0] = active.len() as f32;
-    out[4..9].copy_from_slice(&Transfer::bt709().parts());
+    out[4..9].copy_from_slice(&Transfer::srgb().parts());
     let mut images: Vec<f32> = Vec::new();
     let image_base = out.len();
     let mut at = HEADER;

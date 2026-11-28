@@ -59,24 +59,29 @@ const PACK_RGBA16F_WGSL: &str = r#"
 struct BlitParams {
     w: u32,
     h: u32,
-    _pad0: u32,
+    proof_size: u32,
     _pad1: u32,
 }
 
 @group(0) @binding(0) var<uniform> bp: BlitParams;
-@group(0) @binding(1) var<storage, read> px8: array<u32>;
+@group(0) @binding(1) var<storage, read> rgb: array<f32>;
 @group(0) @binding(2) var out_tex: texture_storage_2d<rgba16float, write>;
+@group(0) @binding(3) var proof_lut: texture_3d<f32>;
+@group(0) @binding(4) var proof_sampler: sampler;
 
 @compute @workgroup_size(16, 16)
 fn pack_rgba16f(@builtin(global_invocation_id) id: vec3<u32>) {
     if id.x >= bp.w || id.y >= bp.h {
         return;
     }
-    let p = px8[id.y * bp.w + id.x];
-    let r = f32(p & 255u) / 255.0;
-    let g = f32((p >> 8u) & 255u) / 255.0;
-    let b = f32((p >> 16u) & 255u) / 255.0;
-    textureStore(out_tex, vec2<i32>(i32(id.x), i32(id.y)), vec4<f32>(r, g, b, 1.0));
+    let idx = (id.y * bp.w + id.x) * 3u;
+    var c = vec3<f32>(max(rgb[idx], 0.0), max(rgb[idx + 1u], 0.0), max(rgb[idx + 2u], 0.0));
+    if bp.proof_size > 1u {
+        let n = f32(bp.proof_size);
+        let uvw = (clamp(c, vec3<f32>(0.0), vec3<f32>(1.0)) * (n - 1.0) + vec3<f32>(0.5)) / n;
+        c = textureSampleLevel(proof_lut, proof_sampler, uvw, 0.0).rgb;
+    }
+    textureStore(out_tex, vec2<i32>(i32(id.x), i32(id.y)), vec4<f32>(c, 1.0));
 }
 "#;
 
@@ -426,11 +431,15 @@ fn find_memory_type(
     None
 }
 
-/// Double-buffered `Rgba16Float` DMA-BUF swap pool + `pack_rgba16f` compute pipeline.
+/// Double-buffered `Rgba16Float` DMA-BUF swap pool + `pack_rgba16f` compute pipeline
+/// with cached 33³ GPU soft-proof 3D LUT texture (`WP-16`).
 pub(super) struct DmaBufPool {
     pipeline: wgpu::ComputePipeline,
     layout: wgpu::BindGroupLayout,
     params: wgpu::Buffer,
+    proof_sampler: wgpu::Sampler,
+    dummy_proof_view: wgpu::TextureView,
+    proof_tex: Option<(u64, wgpu::Texture, wgpu::TextureView)>,
     slots: Option<[ExportableSlot; 2]>,
     next_slot: usize,
     generation: u64,
@@ -476,6 +485,22 @@ impl DmaBufPool {
                     },
                     count: None,
                 },
+                wgpu::BindGroupLayoutEntry {
+                    binding: 3,
+                    visibility: wgpu::ShaderStages::COMPUTE,
+                    ty: wgpu::BindingType::Texture {
+                        sample_type: wgpu::TextureSampleType::Float { filterable: true },
+                        view_dimension: wgpu::TextureViewDimension::D3,
+                        multisampled: false,
+                    },
+                    count: None,
+                },
+                wgpu::BindGroupLayoutEntry {
+                    binding: 4,
+                    visibility: wgpu::ShaderStages::COMPUTE,
+                    ty: wgpu::BindingType::Sampler(wgpu::SamplerBindingType::Filtering),
+                    count: None,
+                },
             ],
         });
         let pipeline_layout = gpu.device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
@@ -497,6 +522,27 @@ impl DmaBufPool {
             usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
             mapped_at_creation: false,
         });
+        let proof_sampler = gpu.device.create_sampler(&wgpu::SamplerDescriptor {
+            label: Some("dmabuf proof 3d sampler"),
+            address_mode_u: wgpu::AddressMode::ClampToEdge,
+            address_mode_v: wgpu::AddressMode::ClampToEdge,
+            address_mode_w: wgpu::AddressMode::ClampToEdge,
+            mag_filter: wgpu::FilterMode::Linear,
+            min_filter: wgpu::FilterMode::Linear,
+            mipmap_filter: wgpu::MipmapFilterMode::Nearest,
+            ..Default::default()
+        });
+        let dummy_tex = gpu.device.create_texture(&wgpu::TextureDescriptor {
+            label: Some("dmabuf proof dummy 3d"),
+            size: wgpu::Extent3d { width: 1, height: 1, depth_or_array_layers: 1 },
+            mip_level_count: 1,
+            sample_count: 1,
+            dimension: wgpu::TextureDimension::D3,
+            format: wgpu::TextureFormat::Rgba16Float,
+            usage: wgpu::TextureUsages::TEXTURE_BINDING | wgpu::TextureUsages::COPY_DST,
+            view_formats: &[],
+        });
+        let dummy_proof_view = dummy_tex.create_view(&wgpu::TextureViewDescriptor::default());
         if let Some(err) = pollster::block_on(scope.pop()) {
             return Err(format!("dmabuf pack_rgba16f shader: {err}"));
         }
@@ -504,10 +550,50 @@ impl DmaBufPool {
             pipeline,
             layout,
             params,
+            proof_sampler,
+            dummy_proof_view,
+            proof_tex: None,
             slots: None,
             next_slot: 0,
             generation: 0,
         })
+    }
+
+    fn ensure_proof_lut(&mut self, gpu: &Gpu, lut: &crate::icc::SoftProofLut) {
+        if self.proof_tex.as_ref().is_some_and(|(k, _, _)| *k == lut.key) {
+            return;
+        }
+        let n = lut.size;
+        let tex = gpu.device.create_texture(&wgpu::TextureDescriptor {
+            label: Some("dmabuf proof 33^3 3d"),
+            size: wgpu::Extent3d {
+                width: n,
+                height: n,
+                depth_or_array_layers: n,
+            },
+            mip_level_count: 1,
+            sample_count: 1,
+            dimension: wgpu::TextureDimension::D3,
+            format: wgpu::TextureFormat::Rgba16Float,
+            usage: wgpu::TextureUsages::TEXTURE_BINDING | wgpu::TextureUsages::COPY_DST,
+            view_formats: &[],
+        });
+        gpu.queue.write_texture(
+            tex.as_image_copy(),
+            super::as_bytes(&lut.rgba_f16),
+            wgpu::TexelCopyBufferLayout {
+                offset: 0,
+                bytes_per_row: Some(n * 8),
+                rows_per_image: Some(n),
+            },
+            wgpu::Extent3d {
+                width: n,
+                height: n,
+                depth_or_array_layers: n,
+            },
+        );
+        let view = tex.create_view(&wgpu::TextureViewDescriptor::default());
+        self.proof_tex = Some((lut.key, tex, view));
     }
 
     fn ensure_slots(&mut self, gpu: &Gpu, width: u32, height: u32) -> Result<usize, String> {
@@ -527,17 +613,20 @@ impl DmaBufPool {
         Ok(idx)
     }
 
-    /// Encodes `pack_rgba16f` from `px8` into the next double-buffered exportable `VkImage`,
-    /// attaches its `SYNC_FD` export semaphore to `gpu.queue`, submits `enc`, and exports
+    /// Encodes `pack_rgba16f` from unquantized float `rgb` (applying an optional 33³ GPU
+    /// soft-proof 3D LUT) into the next double-buffered exportable `VkImage`, attaches its
+    /// `SYNC_FD` export semaphore to `gpu.queue`, submits `enc`, and exports
     /// `(DmaBufFrameDesc, dmabuf_fd, sync_fd)` alongside the submission index.
+    #[allow(clippy::too_many_arguments)]
     pub(super) fn encode_submit_and_export(
         &mut self,
         gpu: &Gpu,
         mut enc: wgpu::CommandEncoder,
-        px8: &wgpu::Buffer,
+        rgb: &wgpu::Buffer,
         width: u32,
         height: u32,
         color_space: ColorSpaceTag,
+        proof_lut: Option<&crate::icc::SoftProofLut>,
     ) -> Result<(wgpu::SubmissionIndex, DmaBufFrameDesc, OwnedFd, Option<OwnedFd>), String> {
         let caps = gpu
             .dmabuf_caps
@@ -547,9 +636,16 @@ impl DmaBufPool {
         self.generation = self.generation.wrapping_add(1).max(1);
         let generation = self.generation;
         let slot_idx = self.ensure_slots(gpu, width, height)?;
+        if let Some(lut) = proof_lut {
+            self.ensure_proof_lut(gpu, lut);
+        }
         let slot = &self.slots.as_ref().expect("just initialized")[slot_idx];
+        let (proof_size, proof_view) = match (proof_lut, self.proof_tex.as_ref()) {
+            (Some(lut), Some((_, _, view))) => (lut.size, view),
+            _ => (0u32, &self.dummy_proof_view),
+        };
 
-        let uniform_words = [width, height, 0u32, 0u32];
+        let uniform_words = [width, height, proof_size, 0u32];
         gpu.queue.write_buffer(&self.params, 0, super::as_bytes(&uniform_words));
 
         let bind_group = gpu.device.create_bind_group(&wgpu::BindGroupDescriptor {
@@ -562,11 +658,19 @@ impl DmaBufPool {
                 },
                 wgpu::BindGroupEntry {
                     binding: 1,
-                    resource: px8.as_entire_binding(),
+                    resource: rgb.as_entire_binding(),
                 },
                 wgpu::BindGroupEntry {
                     binding: 2,
                     resource: wgpu::BindingResource::TextureView(&slot.view),
+                },
+                wgpu::BindGroupEntry {
+                    binding: 3,
+                    resource: wgpu::BindingResource::TextureView(proof_view),
+                },
+                wgpu::BindGroupEntry {
+                    binding: 4,
+                    resource: wgpu::BindingResource::Sampler(&self.proof_sampler),
                 },
             ],
         });

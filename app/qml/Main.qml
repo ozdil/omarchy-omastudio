@@ -278,6 +278,13 @@ Window {
                     "isSplitView": mainWin.isSplitView,
                     "windowVisible": win.visible,
                     "devicePixelRatio": win.screen ? win.screen.devicePixelRatio : 1,
+                    "display": {
+                        "colorSpace": Host.displayColorSpace,
+                        "hdrActive": Host.displayHdrActive,
+                        "maxLuminanceNits": Host.displayMaxLuminance,
+                        "sdrWhiteNits": Host.displaySdrWhiteNits,
+                        "waylandColorManagement": Host.displayColorManagement
+                    },
                     "view": mainWin.viewState(),
                     "recipe": mainWin.buildRecipeObject()
                 };
