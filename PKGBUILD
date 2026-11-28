@@ -3,7 +3,7 @@ pkgname=omastudio
 pkgver=3.2.1
 pkgrel=1
 pkgdesc="The Complete Medium Format RAW Editor for Omarchy"
-arch=('x86_64')
+arch=('x86_64' 'aarch64')
 url="https://github.com/ozdil/omarchy-omastudio"
 license=('MIT')
 depends=('libraw>=0.22' 'lcms2' 'sqlite' 'xdg-desktop-portal' 'qt6-base>=6.12' 'qt6-declarative>=6.12' 'qt6-wayland' 'qt6-svg' 'libjxl' 'libavif' 'libwebp-utils' 'libheif')
@@ -19,6 +19,7 @@ optdepends=(
     'vulkan-freedreno: Qualcomm Snapdragon X/X2 Adreno Vulkan driver (Mesa Turnip)'
     'lensfun: medium format lens correction profiles'
     'perl-image-exiftool: preserve EXIF metadata on export'
+    'libultrahdr: ISO 21496-1 Ultra HDR JPEG gain-map export (ultrahdr_app)'
     'ffmpeg: AVIF export fallback'
     'curl: AI edit assistant'
     'libsecret: keep AI provider keys and cloud account keys in the keyring (secret-tool)'
