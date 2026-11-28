@@ -989,6 +989,38 @@
         <source>Upload to</source>
         <translation>Μεταφόρτωση σε</translation>
     </message>
+    <message>
+        <source>Dynamic range</source>
+        <translation>Δυναμικό εύρος</translation>
+    </message>
+    <message>
+        <source>Gain map</source>
+        <translation>Χάρτης ενίσχυσης</translation>
+    </message>
+    <message>
+        <source>Standard dynamic range with ICC profile</source>
+        <translation>Τυπικό δυναμικό εύρος με προφίλ ICC</translation>
+    </message>
+    <message>
+        <source>10/12-bit BT.2020 PQ (SMPTE ST 2084, CICP)</source>
+        <translation>BT.2020 PQ 10/12-bit (SMPTE ST 2084, μεταδεδομένα CICP)</translation>
+    </message>
+    <message>
+        <source>10/12-bit BT.2020 Hybrid Log-Gamma (BT.2100, CICP)</source>
+        <translation>BT.2020 Υβριδικό Log-Gamma 10/12-bit (BT.2100, CICP)</translation>
+    </message>
+    <message>
+        <source>ISO 21496-1 SDR base with HDR gain map</source>
+        <translation>Βάση SDR ISO 21496-1 με χάρτη ενίσχυσης HDR</translation>
+    </message>
+    <message>
+        <source>HDR headroom</source>
+        <translation>Περιθώριο HDR</translation>
+    </message>
+    <message>
+        <source>Encoded in BT.2020 with CICP metadata; ignores the SDR ICC profile.</source>
+        <translation>Κωδικοποίηση σε BT.2020 με μεταδεδομένα CICP· αγνοεί το προφίλ ICC του SDR.</translation>
+    </message>
 </context>
 <context>
     <name>FilmGrainPanel</name>

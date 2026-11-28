@@ -170,7 +170,7 @@ pub fn apply_hsl_mixer(r: f32, g: f32, b: f32, recipe: &Recipe) -> (f32, f32, f3
 
     // 3. New Lightness (anchored to color band saturation)
     let chroma_weight = (chroma / 0.12).clamp(0.2, 1.0);
-    let new_l = (big_l + delta_l * chroma_weight).clamp(0.0, 1.5);
+    let new_l = (big_l + delta_l * chroma_weight).clamp(0.0, 6.0);
 
     let new_a = new_chroma * new_hue_rad.cos();
     let new_b = new_chroma * new_hue_rad.sin();

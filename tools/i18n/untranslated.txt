@@ -82,3 +82,8 @@ Facebook
 Claude
 Codex
 LM
+# HDR transfer and range acronyms
+SDR
+HDR10 PQ
+HLG
+

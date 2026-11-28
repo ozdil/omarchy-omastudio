@@ -988,6 +988,38 @@
         <source>Upload to</source>
         <translation>Feltöltés ide</translation>
     </message>
+    <message>
+        <source>Dynamic range</source>
+        <translation>Dinamikatartomány</translation>
+    </message>
+    <message>
+        <source>Gain map</source>
+        <translation>Erősítési térkép</translation>
+    </message>
+    <message>
+        <source>Standard dynamic range with ICC profile</source>
+        <translation>Normál dinamikatartomány ICC-profillal</translation>
+    </message>
+    <message>
+        <source>10/12-bit BT.2020 PQ (SMPTE ST 2084, CICP)</source>
+        <translation>10/12 bites BT.2020 PQ (SMPTE ST 2084, CICP)</translation>
+    </message>
+    <message>
+        <source>10/12-bit BT.2020 Hybrid Log-Gamma (BT.2100, CICP)</source>
+        <translation>10/12 bites BT.2020 Hybrid Log-Gamma (BT.2100, CICP)</translation>
+    </message>
+    <message>
+        <source>ISO 21496-1 SDR base with HDR gain map</source>
+        <translation>ISO 21496-1 SDR alap HDR erősítési térképpel</translation>
+    </message>
+    <message>
+        <source>HDR headroom</source>
+        <translation>HDR tartalék</translation>
+    </message>
+    <message>
+        <source>Encoded in BT.2020 with CICP metadata; ignores the SDR ICC profile.</source>
+        <translation>BT.2020 térben, CICP metaadatokkal kódolva; figyelmen kívül hagyja az SDR ICC-profilt.</translation>
+    </message>
 </context>
 <context>
     <name>FilmGrainPanel</name>

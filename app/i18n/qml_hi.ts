@@ -989,6 +989,38 @@
         <source>Upload to</source>
         <translation>यहाँ अपलोड करें</translation>
     </message>
+    <message>
+        <source>Dynamic range</source>
+        <translation>डायनामिक रेंज</translation>
+    </message>
+    <message>
+        <source>Gain map</source>
+        <translation>गेन मैप</translation>
+    </message>
+    <message>
+        <source>Standard dynamic range with ICC profile</source>
+        <translation>ICC प्रोफ़ाइल के साथ मानक डायनामिक रेंज</translation>
+    </message>
+    <message>
+        <source>10/12-bit BT.2020 PQ (SMPTE ST 2084, CICP)</source>
+        <translation>10/12-बिट BT.2020 PQ (SMPTE ST 2084, CICP)</translation>
+    </message>
+    <message>
+        <source>10/12-bit BT.2020 Hybrid Log-Gamma (BT.2100, CICP)</source>
+        <translation>10/12-बिट BT.2020 हाइब्रिड लॉग-गामा (BT.2100, CICP)</translation>
+    </message>
+    <message>
+        <source>ISO 21496-1 SDR base with HDR gain map</source>
+        <translation>HDR गेन मैप के साथ ISO 21496-1 SDR आधार</translation>
+    </message>
+    <message>
+        <source>HDR headroom</source>
+        <translation>HDR हेडरूम</translation>
+    </message>
+    <message>
+        <source>Encoded in BT.2020 with CICP metadata; ignores the SDR ICC profile.</source>
+        <translation>CICP मेटाडेटा के साथ BT.2020 में एन्कोड किया गया; SDR ICC प्रोफ़ाइल को अनदेखा करता है।</translation>
+    </message>
 </context>
 <context>
     <name>FilmGrainPanel</name>

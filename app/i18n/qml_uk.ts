@@ -990,6 +990,38 @@
         <source>Upload to</source>
         <translation>Вивантажити до</translation>
     </message>
+    <message>
+        <source>Dynamic range</source>
+        <translation>Динамічний діапазон</translation>
+    </message>
+    <message>
+        <source>Gain map</source>
+        <translation>Карта підсилення</translation>
+    </message>
+    <message>
+        <source>Standard dynamic range with ICC profile</source>
+        <translation>Стандартний динамічний діапазон із профілем ICC</translation>
+    </message>
+    <message>
+        <source>10/12-bit BT.2020 PQ (SMPTE ST 2084, CICP)</source>
+        <translation>10/12-біт BT.2020 PQ (SMPTE ST 2084, CICP)</translation>
+    </message>
+    <message>
+        <source>10/12-bit BT.2020 Hybrid Log-Gamma (BT.2100, CICP)</source>
+        <translation>10/12-біт BT.2020 Hybrid Log-Gamma (BT.2100, CICP)</translation>
+    </message>
+    <message>
+        <source>ISO 21496-1 SDR base with HDR gain map</source>
+        <translation>База SDR ISO 21496-1 із картою підсилення HDR</translation>
+    </message>
+    <message>
+        <source>HDR headroom</source>
+        <translation>Запас HDR</translation>
+    </message>
+    <message>
+        <source>Encoded in BT.2020 with CICP metadata; ignores the SDR ICC profile.</source>
+        <translation>Кодується в BT.2020 із метаданими CICP; профіль ICC для SDR ігнорується.</translation>
+    </message>
 </context>
 <context>
     <name>FilmGrainPanel</name>

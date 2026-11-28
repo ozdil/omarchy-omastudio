@@ -1010,6 +1010,116 @@ pub fn render_region_8(
     output
 }
 
+/// Renders part of an unclipped scene-linear float frame to 8-bit RGB, for the viewport's
+/// 1:1 detail / loupe view on OpenEXR / Radiance HDR / float TIFF files (`BUG-BE-18`).
+pub fn render_region_f32_8(
+    input: &[f32],
+    w: usize,
+    h: usize,
+    window: Window,
+    out: (usize, usize, usize, usize),
+    recipe: &Recipe,
+    transfer: Transfer,
+) -> Vec<u8> {
+    let (ox, oy, ow, oh) = out;
+    if w == 0 || h == 0 || ow == 0 || oh == 0 || window.frame_w == 0 || window.frame_h == 0 || input.len() < w * h * 3 {
+        return vec![0u8; ow * oh * 3];
+    }
+    let (wb_r, wb_g, wb_b) = white_balance::kelvin_to_rgb_multipliers(recipe.wb_temperature, recipe.wb_tint);
+    let exp_factor = 2.0f32.powf(recipe.exposure + recipe.baseline_exposure);
+    let ops = PointOps::new(recipe);
+    let (kr, kg, kb) = (wb_r * exp_factor, wb_g * exp_factor, wb_b * exp_factor);
+
+    let mut buf = vec![0.0f32; w * h * 3];
+    buf.par_chunks_mut(w * 3).enumerate().for_each(|(y, row)| {
+        let in_row = &input[y * w * 3..(y + 1) * w * 3];
+        for x in 0..w {
+            let px = x * 3;
+            let (r, g, b) = ops.apply(
+                transfer.encode(in_row[px].max(0.0) * kr),
+                transfer.encode(in_row[px + 1].max(0.0) * kg),
+                transfer.encode(in_row[px + 2].max(0.0) * kb),
+            );
+            row[px] = r.max(0.0);
+            row[px + 1] = g.max(0.0);
+            row[px + 2] = b.max(0.0);
+        }
+    });
+    if !recipe.layers.is_empty() {
+        let inv_w = 1.0 / (window.frame_w as f32).max(1.0);
+        let inv_h = 1.0 / (window.frame_h as f32).max(1.0);
+        buf.par_chunks_mut(w * 3).enumerate().for_each(|(y, row)| {
+            let v = ((window.y0 + y) as f32 + 0.5) * inv_h;
+            for x in 0..w {
+                let u = ((window.x0 + x) as f32 + 0.5) * inv_w;
+                let px = x * 3;
+                let (lr, lg, lb) = layers::apply_layers_pixel(row[px], row[px + 1], row[px + 2], &recipe.layers, u, v);
+                row[px] = lr.max(0.0);
+                row[px + 1] = lg.max(0.0);
+                row[px + 2] = lb.max(0.0);
+            }
+        });
+    }
+    let scale = frame_scale(window.frame_w, window.frame_h);
+    neighbourhood_passes(&mut buf, w, h, recipe, scale, true);
+    if recipe.grain_amount > 0.001 {
+        film_grain::apply_film_grain_window(
+            &mut buf,
+            w as u32,
+            window.x0 as u32,
+            window.y0 as u32,
+            recipe.grain_amount,
+            recipe.grain_size,
+            recipe.grain_roughness,
+            scale,
+        );
+    }
+
+    let lens = detail::Geometry::new(window.frame_w, window.frame_h, recipe);
+    let (fw, fh) = (window.frame_w as f32, window.frame_h as f32);
+    let mut output = vec![0u8; ow * oh * 3];
+    output.par_chunks_mut(ow * 3).enumerate().for_each(|(j, row)| {
+        let gy = oy + j;
+        for i in 0..ow {
+            let gx = ox + i;
+            let (sx, sy) = match &lens {
+                Some(l) => l.source(gx as f32, gy as f32),
+                None => (gx as f32, gy as f32),
+            };
+            let px = if sx >= 0.0 && sx <= fw - 1.0 && sy >= 0.0 && sy <= fh - 1.0 {
+                let lx = (sx - window.x0 as f32).clamp(0.0, (w - 1) as f32);
+                let ly = (sy - window.y0 as f32).clamp(0.0, (h - 1) as f32);
+                let (x0, y0) = (lx.floor() as usize, ly.floor() as usize);
+                let (x1, y1) = ((x0 + 1).min(w - 1), (y0 + 1).min(h - 1));
+                let (fx, fy) = (lx - x0 as f32, ly - y0 as f32);
+                let at = |yy: usize, xx: usize, c: usize| buf[(yy * w + xx) * 3 + c];
+                let sample = |c: usize| {
+                    let top = at(y0, x0, c) * (1.0 - fx) + at(y0, x1, c) * fx;
+                    let bottom = at(y1, x0, c) * (1.0 - fx) + at(y1, x1, c) * fx;
+                    top * (1.0 - fy) + bottom * fy
+                };
+                (sample(0), sample(1), sample(2))
+            } else {
+                (0.0, 0.0, 0.0)
+            };
+            let (r, g, b) = detail::apply_vignette(
+                px.0,
+                px.1,
+                px.2,
+                gx as u32,
+                gy as u32,
+                window.frame_w as u32,
+                window.frame_h as u32,
+                recipe.vignette,
+            );
+            row[i * 3] = (r.clamp(0.0, 1.0) * 255.0) as u8;
+            row[i * 3 + 1] = (g.clamp(0.0, 1.0) * 255.0) as u8;
+            row[i * 3 + 2] = (b.clamp(0.0, 1.0) * 255.0) as u8;
+        }
+    });
+    output
+}
+
 /// The frame rectangle (x, y, width, height) [`render_region_8`] needs as input to
 /// render `out` of a `frame_w` x `frame_h` frame with `recipe`.
 pub fn region_source(out: (usize, usize, usize, usize), frame_w: usize, frame_h: usize, recipe: &Recipe) -> (usize, usize, usize, usize) {
@@ -1247,6 +1357,306 @@ pub fn process_split_comparison_16_to_8_ex(
             }
         });
 
+    (output, hist)
+}
+
+/// Processes an unclipped scene-linear `f32` RGB buffer (`>= 0.0`, preserving HDR values
+/// above `1.0` from EXR/HDR/float TIFF, `BUG-BE-18`) through the full edit pipeline and
+/// returns unclipped display-encoded `f32` RGB (`>= 0.0`).
+pub fn render_f32_to_f32(
+    input: &[f32],
+    width: u32,
+    height: u32,
+    channels: u32,
+    recipe: &Recipe,
+    transfer: Transfer,
+) -> Vec<f32> {
+    let ch = channels as usize;
+    let w = width as usize;
+    let h = height as usize;
+    let num_pixels = w * h;
+    if w == 0 || h == 0 || ch < 3 || input.len() < num_pixels * ch {
+        return Vec::new();
+    }
+
+    let (wb_r, wb_g, wb_b) = white_balance::kelvin_to_rgb_multipliers(
+        recipe.wb_temperature,
+        recipe.wb_tint,
+    );
+    let exp_factor = 2.0f32.powf(recipe.exposure + recipe.baseline_exposure);
+    let ops = PointOps::new(recipe);
+    let kr = wb_r * exp_factor;
+    let kg = wb_g * exp_factor;
+    let kb = wb_b * exp_factor;
+
+    let mut f32_buf = vec![0.0f32; num_pixels * 3];
+    f32_buf
+        .par_chunks_mut(w * 3)
+        .enumerate()
+        .for_each(|(y_idx, row_f32)| {
+            let in_row = &input[y_idx * w * ch..(y_idx + 1) * w * ch];
+            for x in 0..w {
+                let px_in = x * ch;
+                let px_out = x * 3;
+                let r_enc = transfer.encode(in_row[px_in].max(0.0) * kr);
+                let g_enc = transfer.encode(in_row[px_in + 1].max(0.0) * kg);
+                let b_enc = transfer.encode(in_row[px_in + 2].max(0.0) * kb);
+                let (r6, g6, b6) = ops.apply(r_enc, g_enc, b_enc);
+                row_f32[px_out] = r6.max(0.0);
+                row_f32[px_out + 1] = g6.max(0.0);
+                row_f32[px_out + 2] = b6.max(0.0);
+            }
+        });
+
+    if !recipe.layers.is_empty() {
+        let inv_w = 1.0 / (w as f32).max(1.0);
+        let inv_h = 1.0 / (h as f32).max(1.0);
+        f32_buf
+            .par_chunks_mut(w * 3)
+            .enumerate()
+            .for_each(|(y_idx, row_f32)| {
+                let v = (y_idx as f32 + 0.5) * inv_h;
+                for x in 0..w {
+                    let u = (x as f32 + 0.5) * inv_w;
+                    let px = x * 3;
+                    let (lr, lg, lb) = layers::apply_layers_pixel(
+                        row_f32[px],
+                        row_f32[px + 1],
+                        row_f32[px + 2],
+                        &recipe.layers,
+                        u,
+                        v,
+                    );
+                    row_f32[px] = lr.max(0.0);
+                    row_f32[px + 1] = lg.max(0.0);
+                    row_f32[px + 2] = lb.max(0.0);
+                }
+            });
+    }
+
+    let scale = frame_scale(w, h);
+    neighbourhood_passes(&mut f32_buf, w, h, recipe, scale, true);
+
+    if recipe.grain_amount > 0.001 {
+        film_grain::apply_film_grain_window(
+            &mut f32_buf,
+            width,
+            0,
+            0,
+            recipe.grain_amount,
+            recipe.grain_size,
+            recipe.grain_roughness,
+            scale,
+        );
+    }
+
+    if let Some(geometry) = detail::Geometry::new(w, h, recipe) {
+        f32_buf = detail::apply_geometry(&f32_buf, w, h, 3, &geometry);
+    }
+
+    if recipe.vignette.abs() >= 0.01 {
+        f32_buf
+            .par_chunks_mut(w * 3)
+            .enumerate()
+            .for_each(|(y_idx, row)| {
+                let y = y_idx as u32;
+                for x in 0..w {
+                    let px = x * 3;
+                    let (r, g, b) = detail::apply_vignette(
+                        row[px],
+                        row[px + 1],
+                        row[px + 2],
+                        x as u32,
+                        y,
+                        width,
+                        height,
+                        recipe.vignette,
+                    );
+                    row[px] = r.max(0.0);
+                    row[px + 1] = g.max(0.0);
+                    row[px + 2] = b.max(0.0);
+                }
+            });
+    }
+
+    f32_buf
+}
+
+/// Renders an unclipped scene-linear `f32` RGB buffer into 16-bit display-encoded RGB (`0..65535`).
+pub fn render_f32_to_16(
+    input: &[f32],
+    width: u32,
+    height: u32,
+    channels: u32,
+    recipe: &Recipe,
+    transfer: Transfer,
+) -> Vec<u16> {
+    let f32_buf = render_f32_to_f32(input, width, height, channels, recipe, transfer);
+    f32_buf
+        .into_par_iter()
+        .map(|v| (v.clamp(0.0, 1.0) * 65535.0 + 0.5) as u16)
+        .collect()
+}
+
+/// Renders a 16-bit linear RGB RAW buffer into unclipped display-encoded `f32` RGB (`>= 0.0`,
+/// retaining > 1.0 highlight headroom for PQ10 / HLG10 / ISO 21496-1 Gain Map and OpenEXR exports).
+pub fn render_16_to_f32(
+    input: &[u16],
+    width: u32,
+    height: u32,
+    channels: u32,
+    recipe: &Recipe,
+    transfer: Transfer,
+) -> Vec<f32> {
+    let ch = channels as usize;
+    let w = width as usize;
+    let h = height as usize;
+    let num_pixels = w * h;
+    if w == 0 || h == 0 || ch < 3 || input.len() < num_pixels * ch {
+        return Vec::new();
+    }
+
+    let retouched = retouch::apply(input, w, h, ch, &recipe.retouch);
+    let input = &*retouched;
+    let stage = PointStage::new(recipe, transfer);
+    let lens = detail::Geometry::new(w, h, recipe);
+    let scale = frame_scale(w, h);
+    let halo = crate::gpu::local::required_halo(recipe, scale);
+    let effective_max_rows = match crate::gpu::local::recommended_band_rows(w, h, recipe, scale) {
+        Some(gpu_rows) => BAND_ROWS.min(gpu_rows).max(1),
+        None => BAND_ROWS,
+    };
+    let bands = h.div_ceil(effective_max_rows).max(1);
+    let band_rows = h.div_ceil(bands).max(1);
+
+    let mut out = vec![0.0f32; num_pixels * 3];
+    let mut gpu_failed = false;
+    for y0 in (0..h).step_by(band_rows) {
+        let y1 = (y0 + band_rows).min(h);
+        let (by0, by1) = (y0.saturating_sub(halo), (y1 + halo).min(h));
+        let band = process_band(input, w, ch, by0, by1, Window::whole(w, h), recipe, &stage, &mut gpu_failed);
+        let inner = &band[(y0 - by0) * w * 3..(y1 - by0) * w * 3];
+        out[y0 * w * 3..y1 * w * 3].copy_from_slice(inner);
+    }
+
+    if let Some(lens) = lens {
+        out = detail::apply_geometry(&out, w, h, 3, &lens);
+    }
+    if recipe.vignette.abs() >= 0.01 {
+        out.par_chunks_mut(w * 3).enumerate().for_each(|(y_idx, row)| {
+            let y = y_idx as u32;
+            for x in 0..w {
+                let px = x * 3;
+                let (r, g, b) = detail::apply_vignette(
+                    row[px],
+                    row[px + 1],
+                    row[px + 2],
+                    x as u32,
+                    y,
+                    width,
+                    height,
+                    recipe.vignette,
+                );
+                row[px] = r.max(0.0);
+                row[px + 1] = g.max(0.0);
+                row[px + 2] = b.max(0.0);
+            }
+        });
+    }
+    out
+}
+
+/// Interactive 8-bit preview renderer for unclipped scene-linear `f32` HDR buffers (`BUG-BE-18`).
+#[allow(clippy::too_many_arguments)]
+pub fn process_buffer_f32_to_8_proof(
+    input: &[f32],
+    width: u32,
+    height: u32,
+    channels: u32,
+    recipe: &Recipe,
+    transfer: Transfer,
+    highlight_mask: bool,
+    shadow_mask: bool,
+    proof_lut: Option<&crate::icc::SoftProofLut>,
+) -> (Vec<u8>, HistogramData) {
+    let w = width as usize;
+    let h = height as usize;
+    let f32_buf = render_f32_to_f32(input, width, height, channels, recipe, transfer);
+    let mut output: Vec<u8> = f32_buf
+        .into_par_iter()
+        .map(|v| (v.clamp(0.0, 1.0) * 255.0) as u8)
+        .collect();
+    let hist = compute_histogram_with_dimensions(&output, w, h, 3);
+    if let Some(lut) = proof_lut {
+        lut.apply_rgb8(&mut output);
+    }
+    clipping_overlay(&mut output, 3, highlight_mask, shadow_mask);
+    (output, hist)
+}
+
+/// Convenience 8-bit preview wrapper for unclipped `f32` HDR buffers using IEC sRGB transfer.
+pub fn process_buffer_f32_to_8(
+    input: &[f32],
+    width: u32,
+    height: u32,
+    channels: u32,
+    recipe: &Recipe,
+) -> (Vec<u8>, HistogramData) {
+    process_buffer_f32_to_8_proof(input, width, height, channels, recipe, Transfer::srgb(), false, false, None)
+}
+
+/// Before / After split comparison for unclipped scene-linear `f32` HDR buffers.
+#[allow(clippy::too_many_arguments)]
+pub fn process_split_comparison_f32_to_8_ex(
+    input: &[f32],
+    width: u32,
+    height: u32,
+    channels: u32,
+    recipe: &Recipe,
+    transfer: Transfer,
+    split_ratio: f32,
+    highlight_mask: bool,
+    shadow_mask: bool,
+) -> (Vec<u8>, HistogramData) {
+    let (processed, hist) = process_buffer_f32_to_8_proof(
+        input,
+        width,
+        height,
+        channels,
+        recipe,
+        transfer,
+        highlight_mask,
+        shadow_mask,
+        None,
+    );
+    let ch = channels as usize;
+    let w = width as usize;
+    let split_x = ((width as f32) * split_ratio.clamp(0.0, 1.0)) as usize;
+    let base_exp = 2.0f32.powf(recipe.baseline_exposure);
+
+    let mut output = vec![0u8; w * height as usize * 3];
+    output
+        .par_chunks_mut(w * 3)
+        .enumerate()
+        .for_each(|(y, row)| {
+            let orig_row = &input[y * w * ch..(y + 1) * w * ch];
+            let proc_row = &processed[y * w * 3..(y + 1) * w * 3];
+            for x in 0..w {
+                let dst = x * 3;
+                if x < split_x {
+                    let src = x * ch;
+                    row[dst] = (transfer.encode(orig_row[src].max(0.0) * base_exp).clamp(0.0, 1.0) * 255.0) as u8;
+                    row[dst + 1] = (transfer.encode(orig_row[src + 1].max(0.0) * base_exp).clamp(0.0, 1.0) * 255.0) as u8;
+                    row[dst + 2] = (transfer.encode(orig_row[src + 2].max(0.0) * base_exp).clamp(0.0, 1.0) * 255.0) as u8;
+                } else if x == split_x || x == split_x + 1 {
+                    row[dst] = 255;
+                    row[dst + 1] = 255;
+                    row[dst + 2] = 255;
+                } else {
+                    row[dst..dst + 3].copy_from_slice(&proc_row[dst..dst + 3]);
+                }
+            }
+        });
     (output, hist)
 }
 

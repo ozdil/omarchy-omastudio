@@ -988,6 +988,38 @@
         <source>Upload to</source>
         <translation>上传到</translation>
     </message>
+    <message>
+        <source>Dynamic range</source>
+        <translation>动态范围</translation>
+    </message>
+    <message>
+        <source>Gain map</source>
+        <translation>增益图</translation>
+    </message>
+    <message>
+        <source>Standard dynamic range with ICC profile</source>
+        <translation>带 ICC 配置文件的标准动态范围</translation>
+    </message>
+    <message>
+        <source>10/12-bit BT.2020 PQ (SMPTE ST 2084, CICP)</source>
+        <translation>10/12 位 BT.2020 PQ (SMPTE ST 2084, CICP)</translation>
+    </message>
+    <message>
+        <source>10/12-bit BT.2020 Hybrid Log-Gamma (BT.2100, CICP)</source>
+        <translation>10/12 位 BT.2020 混合对数伽马 (BT.2100, CICP)</translation>
+    </message>
+    <message>
+        <source>ISO 21496-1 SDR base with HDR gain map</source>
+        <translation>带 HDR 增益图的 ISO 21496-1 SDR 基础图像</translation>
+    </message>
+    <message>
+        <source>HDR headroom</source>
+        <translation>HDR 动态余量</translation>
+    </message>
+    <message>
+        <source>Encoded in BT.2020 with CICP metadata; ignores the SDR ICC profile.</source>
+        <translation>使用带 CICP 元数据的 BT.2020 编码；忽略 SDR ICC 配置文件。</translation>
+    </message>
 </context>
 <context>
     <name>FilmGrainPanel</name>

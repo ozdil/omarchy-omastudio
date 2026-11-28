@@ -989,6 +989,38 @@
         <source>Upload to</source>
         <translation>Uploaden naar</translation>
     </message>
+    <message>
+        <source>Dynamic range</source>
+        <translation>Dynamisch bereik</translation>
+    </message>
+    <message>
+        <source>Gain map</source>
+        <translation>Versterkingskaart</translation>
+    </message>
+    <message>
+        <source>Standard dynamic range with ICC profile</source>
+        <translation>Standaard dynamisch bereik met ICC-profiel</translation>
+    </message>
+    <message>
+        <source>10/12-bit BT.2020 PQ (SMPTE ST 2084, CICP)</source>
+        <translation>10/12-bits BT.2020 PQ (SMPTE ST 2084, CICP)</translation>
+    </message>
+    <message>
+        <source>10/12-bit BT.2020 Hybrid Log-Gamma (BT.2100, CICP)</source>
+        <translation>10/12-bits BT.2020 Hybrid Log-Gamma (BT.2100, CICP)</translation>
+    </message>
+    <message>
+        <source>ISO 21496-1 SDR base with HDR gain map</source>
+        <translation>ISO 21496-1 SDR-basis met HDR-versterkingskaart</translation>
+    </message>
+    <message>
+        <source>HDR headroom</source>
+        <translation>HDR-hoofdruimte</translation>
+    </message>
+    <message>
+        <source>Encoded in BT.2020 with CICP metadata; ignores the SDR ICC profile.</source>
+        <translation>Gecodeerd in BT.2020 met CICP-metadata; negeert het SDR ICC-profiel.</translation>
+    </message>
 </context>
 <context>
     <name>FilmGrainPanel</name>

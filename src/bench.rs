@@ -116,7 +116,7 @@ pub fn run(photo: Option<&str>, runs: usize) -> Result<BenchReport, String> {
             let preview = raw.process_preview_16(true)?;
             let d = ms(t.elapsed());
             let (w, h, ch, tr) = (preview.width, preview.height, preview.channels, preview.transfer);
-            (p.to_string(), preview.as_slice_u16().to_vec(), w, h, ch, tr, Some(d))
+            (p.to_string(), preview.to_vec_u16(), w, h, ch, tr, Some(d))
         }
         None => {
             let (w, h) = (3840usize, 2560usize);

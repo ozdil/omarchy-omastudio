@@ -338,7 +338,7 @@ fn luma_filter(@builtin(global_invocation_id) id: vec3<u32>) {
     if ((p.flags & 2u) != 0u) {
         let laplacian = 4.0 * center - (n_up + n_dn + n_lt + n_rt);
         let noise_gate = clamp((abs(laplacian) - 0.012) / 0.03, 0.0, 1.0);
-        final_l = clamp(final_l + laplacian * p.f1 * noise_gate, 0.0, 1.5);
+        final_l = clamp(final_l + laplacian * p.f1 * noise_gate, 0.0, 6.0);
     }
     pl[plane(4u) + i] = final_l;
 }

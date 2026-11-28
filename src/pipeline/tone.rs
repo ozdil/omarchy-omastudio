@@ -138,7 +138,7 @@ pub fn apply_tone_pixel(
     } else if recipe.aces_tonemap {
         luma_adj = crate::pipeline::aces::apply_aces_tonemap_encoded(luma_adj);
     } else {
-        luma_adj = luma_adj.clamp(0.0, 1.5);
+        luma_adj = luma_adj.clamp(0.0, 6.0);
     }
 
     // =========================================================================
