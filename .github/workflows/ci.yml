@@ -74,3 +74,36 @@ jobs:
           "$QMLLINT" --ignore-settings --import=info --missing-type=info --unresolved-type=info --unqualified=info --missing-property=info omarchy-plugin/Panel.qml
       - name: ShellCheck
         run: shellcheck -x -S warning omastudio omastudio-status omastudio-dashboard tools/fuji-usb/capture.sh tools/i18n/update.sh
+
+  build-aarch64:
+    name: Build, Unit/Integration Tests & GPU Parity (aarch64)
+    runs-on: ubuntu-24.04-arm
+    # Digest-pinned actively maintained Arch Linux ARM base-devel image (Omarchy 4.5 Mac / Snapdragon X)
+    container: lfdevs/archlinuxarm:base-devel@sha256:758b1987aaba2e34fd6f2451cfdc8008127e884d6f8adac38ebcf4b3623acfd2
+    steps:
+      - name: Install ARM64 build, Qt, and Mesa lavapipe dependencies
+        run: >
+          pacman -Syyu --noconfirm --needed
+          base-devel clang git lcms2 libraw mold pkgconf sqlite
+          qt6-base qt6-declarative qt6-shadertools qt6-tools python rustup
+          vulkan-headers vulkan-icd-loader vulkan-swrast
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Install pinned Rust toolchain
+        run: rustup toolchain install
+      - name: Build & test ARM64 (CPU)
+        run: |
+          cargo build --locked --workspace --all-targets
+          cargo test --locked --workspace
+      - name: Run WGSL / GPU parity tests via Mesa lavapipe (aarch64)
+        env:
+          OMASTUDIO_GPU: "software"
+          OMASTUDIO_GPU_STAGES: "on"
+        run: |
+          LVP_ICD=""
+          for f in /usr/share/vulkan/icd.d/lvp_icd.json "/usr/share/vulkan/icd.d/lvp_icd.$(uname -m).json"; do
+            [ -f "$f" ] && LVP_ICD="$f" && break
+          done
+          test -n "$LVP_ICD"
+          OMASTUDIO_GPU=software VK_DRIVER_FILES="$LVP_ICD" target/debug/omastudio-engine gpu \
+            | python3 -c 'import json,sys; d=json.load(sys.stdin); assert d.get("success") is True and (d.get("data") or {}).get("enabled") is True, d'
+          VK_DRIVER_FILES="$LVP_ICD" cargo test --locked --workspace -- --nocapture gpu::

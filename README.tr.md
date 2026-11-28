@@ -97,7 +97,7 @@ Bu komut uygulamayı, motoru, ICC profillerini, masaüstü girdisini, MIT lisans
 
 ### Sürüm arşivi
 
-[Sürümler sayfasından](https://github.com/ozdil/omarchy-omastudio/releases) `omastudio-<sürüm>-x86_64-linux.tar.gz` dosyasını indirin, `checksums.txt` ile doğrulayın, sonra `bin/*` içeriğini `~/.local/bin` klasörüne, `share/omastudio` klasörünü `~/.local/share/omastudio` konumuna kopyalayın.
+[Sürümler sayfasından](https://github.com/ozdil/omarchy-omastudio/releases) `omastudio-<sürüm>-x86_64-linux.tar.gz` veya `omastudio-<sürüm>-aarch64-linux.tar.gz` dosyasını indirin, `checksums.txt` ile doğrulayın, sonra `bin/*` içeriğini `~/.local/bin` klasörüne, `share/omastudio` klasörünü `~/.local/share/omastudio` konumuna kopyalayın.
 
 ### Kaynaktan derleme
 

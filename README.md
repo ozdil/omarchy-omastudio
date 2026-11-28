@@ -108,7 +108,7 @@ This installs the application, the engine, the ICC profiles, the desktop entry, 
 
 ### Release archive
 
-Download `omastudio-<version>-x86_64-linux.tar.gz` from the [releases page](https://github.com/ozdil/omarchy-omastudio/releases), check it against `checksums.txt`, then copy `bin/*` to `~/.local/bin` and `share/omastudio` to `~/.local/share/omastudio`.
+Download `omastudio-<version>-x86_64-linux.tar.gz` or `omastudio-<version>-aarch64-linux.tar.gz` from the [releases page](https://github.com/ozdil/omarchy-omastudio/releases), check it against `checksums.txt`, then copy `bin/*` to `~/.local/bin` and `share/omastudio` to `~/.local/share/omastudio`.
 
 ### Build from source
 
