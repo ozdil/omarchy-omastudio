@@ -14,6 +14,7 @@ mod language;
 mod preview_provider;
 mod preview_shm;
 mod process;
+mod viewport_rhi;
 mod watched_file;
 
 use std::path::Path;
@@ -86,6 +87,9 @@ fn run(photo: Option<&Path>) -> i32 {
         unsafe { std::env::set_var("OMASTUDIO_OPEN_PATH", p) };
     }
 
+    // Request Vulkan RHI prior to QGuiApplication unless overridden by QSG_RHI_BACKEND / software.
+    viewport_rhi::configure_graphics_api();
+
     let mut app = QGuiApplication::new();
     if let Some(mut a) = app.as_mut() {
         a.as_mut().set_application_name(&QString::from("OmaStudio"));
@@ -98,7 +102,9 @@ fn run(photo: Option<&Path>) -> i32 {
     let mut engine = QQmlApplicationEngine::new();
     if let Some(mut engine) = engine.as_mut() {
         preview_provider::register(engine.as_mut());
-        engine.load(&main_qml());
+        engine.as_mut().load(&main_qml());
+        // Apply per-window Vulkan external-memory / DMA-BUF / SYNC_FD extensions before showing.
+        viewport_rhi::configure_window_and_show(engine.as_mut());
     }
     let code = app.as_mut().map_or(1, |a| a.exec());
     ipc::cleanup();

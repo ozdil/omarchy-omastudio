@@ -13,7 +13,9 @@ Window {
     // Hyprland tiles windows narrower than this; the layout follows down to here
     minimumWidth: 720
     minimumHeight: 520
-    visible: true
+    // Shown from Rust (`viewport_rhi::configure_window_and_show`) after Vulkan RHI device
+    // extensions are attached to `QQuickGraphicsConfiguration`.
+    visible: false
     color: Theme.bgBase
 
     // Qt Quick Controls (tooltips, scroll bars, popups, sliders) in the Omarchy theme

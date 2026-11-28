@@ -17,12 +17,23 @@ pub const MAX_FRAME_BYTES: usize = 128 << 20;
 /// Maximum accepted single image dimension.
 pub const MAX_DIMENSION: u32 = 16_384;
 
-/// Binary magic for the initial `SCM_RIGHTS` ring descriptor packet.
+/// Binary magic for the `SCM_RIGHTS` preview control packets.
 pub const RING_MAGIC: [u8; 4] = *b"OMFD";
 pub const RING_VERSION: u32 = 1;
 pub const MSG_KIND_MEMFD_RING_INIT: u32 = 1;
-/// 4-byte acknowledgement sent by `omastudio-app` after mapping all slots.
+pub const MSG_KIND_DMABUF_FRAME: u32 = 2;
+/// 4-byte acknowledgement sent by `omastudio-app` after mapping slots or parking a DMA-BUF frame.
 pub const RING_ACK_OK: [u8; 4] = *b"OKAY";
+
+/// Vulkan `VK_FORMAT_R16G16B16A16_SFLOAT` (core WebGPU `Rgba16Float` storage format).
+#[allow(dead_code)]
+pub const VK_FORMAT_R16G16B16A16_SFLOAT: u32 = 97;
+/// FourCC `AB4H` (`DRM_FORMAT_ABGR16161616F`), matching `VK_FORMAT_R16G16B16A16_SFLOAT`.
+#[allow(dead_code)]
+pub const DRM_FORMAT_ABGR16161616F: u32 = u32::from_le_bytes(*b"AB4H");
+/// `DRM_FORMAT_MOD_INVALID` when a driver does not advertise DRM format modifiers.
+#[allow(dead_code)]
+pub const DRM_FORMAT_MOD_INVALID: u64 = 0x00ff_ffff_ffff_ffff;
 
 /// Environment variable carrying the inherited Unix `SOCK_SEQPACKET` FD into `omastudio-engine daemon`.
 pub const ENV_PREVIEW_FD: &str = "OMASTUDIO_PREVIEW_FD";
@@ -219,13 +230,54 @@ fn decode_init_msg(buf: &[u8]) -> Option<[usize; TOTAL_SLOTS]> {
     Some(caps)
 }
 
+/// Interactive preview transport selected via `OMASTUDIO_PREVIEW_MODE` (`auto|dma-buf|memfd|shm`).
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[allow(dead_code)]
+pub enum PreviewMode {
+    Auto,
+    DmaBuf,
+    Memfd,
+    File,
+}
+
+#[allow(dead_code)]
+pub fn parse_preview_mode(raw: Option<&str>) -> PreviewMode {
+    match raw.map(|s| s.trim().to_ascii_lowercase()).as_deref() {
+        Some("dma-buf" | "dmabuf" | "vulkan") => PreviewMode::DmaBuf,
+        Some("memfd") => PreviewMode::Memfd,
+        Some("shm" | "ppm" | "file") => PreviewMode::File,
+        _ => PreviewMode::Auto,
+    }
+}
+
+#[allow(dead_code)]
+pub fn preview_mode_from_env() -> PreviewMode {
+    let raw = std::env::var("OMASTUDIO_PREVIEW_MODE").ok();
+    parse_preview_mode(raw.as_deref())
+}
+
 /// Returns whether the user explicitly disabled `memfd` previews via `OMASTUDIO_PREVIEW_MODE`.
 #[allow(dead_code)]
 pub fn memfd_disabled_by_env() -> bool {
-    std::env::var("OMASTUDIO_PREVIEW_MODE")
+    preview_mode_from_env() == PreviewMode::File
+}
+
+/// Returns whether GPU-to-GPU DMA-BUF previews are permitted by environment overrides.
+#[allow(dead_code)]
+pub fn dmabuf_enabled_by_env() -> bool {
+    if std::env::var("QT_QUICK_BACKEND")
         .ok()
-        .map(|v| v.trim().to_ascii_lowercase())
-        .is_some_and(|v| matches!(v.as_str(), "shm" | "ppm" | "file"))
+        .is_some_and(|v| v.trim().eq_ignore_ascii_case("software"))
+    {
+        return false;
+    }
+    if std::env::var("QSG_RHI_BACKEND")
+        .ok()
+        .is_some_and(|v| !v.trim().is_empty() && !v.trim().eq_ignore_ascii_case("vulkan"))
+    {
+        return false;
+    }
+    matches!(preview_mode_from_env(), PreviewMode::Auto | PreviewMode::DmaBuf)
 }
 
 /// Creates a connected Unix `SOCK_SEQPACKET | SOCK_CLOEXEC` socketpair for FD passing.
@@ -884,6 +936,223 @@ fn recv_fds(sock_fd: RawFd) -> io::Result<Option<(Vec<u8>, Vec<OwnedFd>)>> {
     Ok(Some((payload, received)))
 }
 
+/// Metadata carried alongside `[dmabuf_fd, (optional) sync_fd]` over `OMASTUDIO_PREVIEW_FD`.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[allow(dead_code)]
+pub struct DmaBufFrameDesc {
+    pub generation: u64,
+    pub width: u32,
+    pub height: u32,
+    pub stride: u32,
+    pub offset: u32,
+    pub vk_format: u32,
+    pub drm_format: u32,
+    pub drm_modifier: u64,
+    pub alloc_size: u64,
+    pub color_space: ColorSpaceTag,
+    pub has_sync_fd: bool,
+    pub device_uuid: [u8; 16],
+}
+
+/// Received DMA-BUF frame descriptors + owned file descriptors on the `omastudio-app` side.
+#[derive(Debug)]
+#[allow(dead_code)]
+pub struct ReceivedDmaBufFrame {
+    pub desc: DmaBufFrameDesc,
+    pub dmabuf_fd: OwnedFd,
+    pub sync_fd: Option<OwnedFd>,
+}
+
+const DMABUF_MSG_BYTES: usize = 80;
+
+#[allow(dead_code)]
+fn encode_dmabuf_msg(desc: &DmaBufFrameDesc) -> [u8; DMABUF_MSG_BYTES] {
+    let mut buf = [0u8; DMABUF_MSG_BYTES];
+    buf[0..4].copy_from_slice(&RING_MAGIC);
+    buf[4..8].copy_from_slice(&RING_VERSION.to_le_bytes());
+    buf[8..12].copy_from_slice(&MSG_KIND_DMABUF_FRAME.to_le_bytes());
+    buf[12] = desc.color_space as u8;
+    buf[13] = u8::from(desc.has_sync_fd);
+    buf[16..24].copy_from_slice(&desc.generation.to_le_bytes());
+    buf[24..28].copy_from_slice(&desc.width.to_le_bytes());
+    buf[28..32].copy_from_slice(&desc.height.to_le_bytes());
+    buf[32..36].copy_from_slice(&desc.stride.to_le_bytes());
+    buf[36..40].copy_from_slice(&desc.offset.to_le_bytes());
+    buf[40..44].copy_from_slice(&desc.vk_format.to_le_bytes());
+    buf[44..48].copy_from_slice(&desc.drm_format.to_le_bytes());
+    buf[48..56].copy_from_slice(&desc.drm_modifier.to_le_bytes());
+    buf[56..64].copy_from_slice(&desc.alloc_size.to_le_bytes());
+    buf[64..80].copy_from_slice(&desc.device_uuid);
+    buf
+}
+
+#[allow(dead_code)]
+fn decode_dmabuf_msg(buf: &[u8]) -> Option<DmaBufFrameDesc> {
+    if buf.len() != DMABUF_MSG_BYTES || buf[0..4] != RING_MAGIC {
+        return None;
+    }
+    let version = u32::from_le_bytes(buf[4..8].try_into().ok()?);
+    let kind = u32::from_le_bytes(buf[8..12].try_into().ok()?);
+    if version != RING_VERSION || kind != MSG_KIND_DMABUF_FRAME {
+        return None;
+    }
+    let color_space = ColorSpaceTag::from_u32(buf[12] as u32)?;
+    let has_sync_fd = buf[13] != 0;
+    let generation = u64::from_le_bytes(buf[16..24].try_into().ok()?);
+    let width = u32::from_le_bytes(buf[24..28].try_into().ok()?);
+    let height = u32::from_le_bytes(buf[28..32].try_into().ok()?);
+    let stride = u32::from_le_bytes(buf[32..36].try_into().ok()?);
+    let offset = u32::from_le_bytes(buf[36..40].try_into().ok()?);
+    let vk_format = u32::from_le_bytes(buf[40..44].try_into().ok()?);
+    let drm_format = u32::from_le_bytes(buf[44..48].try_into().ok()?);
+    let drm_modifier = u64::from_le_bytes(buf[48..56].try_into().ok()?);
+    let alloc_size = u64::from_le_bytes(buf[56..64].try_into().ok()?);
+    let mut device_uuid = [0u8; 16];
+    device_uuid.copy_from_slice(&buf[64..80]);
+
+    if generation == 0
+        || width == 0
+        || height == 0
+        || width > MAX_DIMENSION
+        || height > MAX_DIMENSION
+        || alloc_size == 0
+        || alloc_size > (512 << 20)
+    {
+        return None;
+    }
+    Some(DmaBufFrameDesc {
+        generation,
+        width,
+        height,
+        stride,
+        offset,
+        vk_format,
+        drm_format,
+        drm_modifier,
+        alloc_size,
+        color_space,
+        has_sync_fd,
+        device_uuid,
+    })
+}
+
+/// Transfers a DMA-BUF frame FD (and optional Vulkan `SYNC_FD`) over `sock_fd` via `SCM_RIGHTS`
+/// and waits up to `timeout_ms` for `omastudio-app` to park the descriptors (`RING_ACK_OK`).
+#[allow(dead_code)]
+pub fn send_dmabuf_frame_and_wait_ack(
+    sock_fd: RawFd,
+    desc: &DmaBufFrameDesc,
+    dmabuf_fd: RawFd,
+    sync_fd: Option<RawFd>,
+    timeout_ms: i32,
+) -> io::Result<()> {
+    let mut wire_desc = *desc;
+    wire_desc.has_sync_fd = sync_fd.is_some();
+    let payload = encode_dmabuf_msg(&wire_desc);
+    if let Some(sfd) = sync_fd {
+        send_fds(sock_fd, &payload, &[dmabuf_fd, sfd])?;
+    } else {
+        send_fds(sock_fd, &payload, &[dmabuf_fd])?;
+    }
+
+    let mut pfd = libc::pollfd {
+        fd: sock_fd,
+        events: libc::POLLIN,
+        revents: 0,
+    };
+    loop {
+        // SAFETY: `pfd` points to one valid `pollfd` struct.
+        let rc = unsafe { libc::poll(&mut pfd, 1, timeout_ms) };
+        if rc < 0 {
+            let err = io::Error::last_os_error();
+            if err.kind() == io::ErrorKind::Interrupted {
+                continue;
+            }
+            return Err(err);
+        }
+        if rc == 0 {
+            return Err(io::Error::new(
+                io::ErrorKind::TimedOut,
+                "timed out waiting for DMA-BUF frame ack",
+            ));
+        }
+        break;
+    }
+
+    let mut ack = [0u8; 4];
+    // SAFETY: `ack` is a valid 4-byte writable buffer; `sock_fd` is an open Unix socket.
+    let n = unsafe { libc::recv(sock_fd, ack.as_mut_ptr().cast(), ack.len(), 0) };
+    if n != 4 || ack != RING_ACK_OK {
+        return Err(io::Error::new(
+            io::ErrorKind::InvalidData,
+            "invalid DMA-BUF frame ack from host app",
+        ));
+    }
+    Ok(())
+}
+
+/// Receives the next DMA-BUF frame descriptor + `SCM_RIGHTS` FDs from `sock_fd`, invokes
+/// `on_frame` **before** replying with `RING_ACK_OK` (guaranteeing happens-before visibility
+/// before the daemon emits its stdout JSON line), and returns `Ok(false)` on peer EOF.
+#[allow(dead_code)]
+pub fn recv_dmabuf_frame_with_ack<F>(sock_fd: RawFd, on_frame: F) -> io::Result<bool>
+where
+    F: FnOnce(ReceivedDmaBufFrame),
+{
+    let Some((payload, mut fds)) = recv_fds(sock_fd)? else {
+        return Ok(false);
+    };
+    let Some(desc) = decode_dmabuf_msg(&payload) else {
+        return Err(io::Error::new(
+            io::ErrorKind::InvalidData,
+            "invalid DMA-BUF frame descriptor header",
+        ));
+    };
+    let expected_fds = if desc.has_sync_fd { 2 } else { 1 };
+    if fds.len() != expected_fds {
+        return Err(io::Error::new(
+            io::ErrorKind::InvalidData,
+            format!("expected {expected_fds} DMA-BUF FDs, got {}", fds.len()),
+        ));
+    }
+    let sync_fd = if desc.has_sync_fd { fds.pop() } else { None };
+    let dmabuf_fd = fds
+        .pop()
+        .ok_or_else(|| io::Error::new(io::ErrorKind::InvalidData, "missing dmabuf_fd"))?;
+
+    on_frame(ReceivedDmaBufFrame {
+        desc,
+        dmabuf_fd,
+        sync_fd,
+    });
+
+    // SAFETY: `RING_ACK_OK` is a valid 4-byte buffer; `MSG_NOSIGNAL` avoids SIGPIPE.
+    let sent = unsafe {
+        libc::send(
+            sock_fd,
+            RING_ACK_OK.as_ptr().cast(),
+            RING_ACK_OK.len(),
+            libc::MSG_NOSIGNAL,
+        )
+    };
+    if sent != 4 {
+        return Err(io::Error::last_os_error());
+    }
+    Ok(true)
+}
+
+/// Receives the next DMA-BUF frame descriptor + `SCM_RIGHTS` FDs from `sock_fd` and replies
+/// with `RING_ACK_OK`. Returns `Ok(None)` cleanly on peer EOF or socket shutdown.
+#[allow(dead_code)]
+pub fn recv_dmabuf_frame_and_ack(sock_fd: RawFd) -> io::Result<Option<ReceivedDmaBufFrame>> {
+    let mut out = None;
+    if recv_dmabuf_frame_with_ack(sock_fd, |frame| out = Some(frame))? {
+        Ok(out)
+    } else {
+        Ok(None)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -956,6 +1225,60 @@ mod tests {
             .expect("publish loupe");
         assert_eq!(pub4.url, "image://omastudio/loupe/0/4");
         assert_eq!(reader.read_frame(SlotKind::Loupe, 0).unwrap().generation, 4);
+    }
+
+    #[test]
+    fn dmabuf_frame_scm_rights_roundtrip_with_sync_fd() {
+        let (parent, child) = create_preview_socketpair().expect("socketpair");
+        // Use two dummy eventfds to exercise exact 2-FD SCM_RIGHTS + ack framing cleanly
+        // SAFETY: `eventfd(0, EFD_CLOEXEC)` creates a valid standalone Linux descriptor.
+        let fake_dmabuf = unsafe { OwnedFd::from_raw_fd(libc::eventfd(0, libc::EFD_CLOEXEC)) };
+        // SAFETY: `eventfd(1, EFD_CLOEXEC)` creates a signalled Linux descriptor.
+        let fake_sync = unsafe { OwnedFd::from_raw_fd(libc::eventfd(1, libc::EFD_CLOEXEC)) };
+
+        let desc = DmaBufFrameDesc {
+            generation: 7,
+            width: 1920,
+            height: 1080,
+            stride: 1920 * 8,
+            offset: 0,
+            vk_format: VK_FORMAT_R16G16B16A16_SFLOAT,
+            drm_format: DRM_FORMAT_ABGR16161616F,
+            drm_modifier: 0,
+            alloc_size: 1920 * 1080 * 8,
+            color_space: ColorSpaceTag::DisplayP3,
+            has_sync_fd: true,
+            device_uuid: [0x11; 16],
+        };
+
+        let rx = std::thread::spawn(move || {
+            recv_dmabuf_frame_and_ack(parent.as_raw_fd())
+                .expect("recv dmabuf")
+                .expect("some frame")
+        });
+
+        send_dmabuf_frame_and_wait_ack(
+            child.as_raw_fd(),
+            &desc,
+            fake_dmabuf.as_raw_fd(),
+            Some(fake_sync.as_raw_fd()),
+            5_000,
+        )
+        .expect("send dmabuf");
+
+        let got = rx.join().expect("join");
+        assert_eq!(got.desc, desc);
+        assert!(got.dmabuf_fd.as_raw_fd() >= 0);
+        assert!(got.sync_fd.is_some());
+    }
+
+    #[test]
+    fn preview_mode_env_parsing() {
+        assert_eq!(parse_preview_mode(None), PreviewMode::Auto);
+        assert_eq!(parse_preview_mode(Some("auto")), PreviewMode::Auto);
+        assert_eq!(parse_preview_mode(Some("dma-buf")), PreviewMode::DmaBuf);
+        assert_eq!(parse_preview_mode(Some("MEMFD")), PreviewMode::Memfd);
+        assert_eq!(parse_preview_mode(Some("shm")), PreviewMode::File);
     }
 
     #[test]

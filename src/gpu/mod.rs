@@ -12,6 +12,7 @@
 //! demosaic/export work).
 
 pub mod demosaic;
+pub mod dmabuf;
 pub mod layers;
 pub mod local;
 pub mod point_ops;
@@ -118,8 +119,10 @@ pub struct Gpu {
     pub info: wgpu::AdapterInfo,
     pub limits: wgpu::Limits,
     /// Opportunistically enabled optional features (`PIPELINE_CACHE`, `SHADER_F16`,
-    /// `SUBGROUP`, `TIMESTAMP_QUERY`).
+    /// `SUBGROUP`, `TIMESTAMP_QUERY`, `VULKAN_EXTERNAL_MEMORY_FD`, `VULKAN_EXTERNAL_MEMORY_DMA_BUF`).
     pub features: wgpu::Features,
+    /// Vulkan DMA-BUF + `SYNC_FD` capabilities probed at device creation.
+    pub dmabuf_caps: Option<dmabuf::DmaBufCaps>,
     pub(super) pipeline_cache: Option<wgpu::PipelineCache>,
     pipeline_cache_path: Option<PathBuf>,
     pipeline_cache_io: Mutex<()>,
@@ -130,6 +133,7 @@ pub struct Gpu {
     demosaic: OnceLock<Result<demosaic::Pipelines, String>>,
     point_ops: OnceLock<Result<point_ops::Pipeline, String>>,
     local: OnceLock<Result<local::Pipeline, String>>,
+    dmabuf_pool: OnceLock<Result<Mutex<dmabuf::DmaBufPool>, String>>,
     preview_src: Mutex<Option<Arc<PreviewSource>>>,
     stages_auto: OnceLock<bool>,
 }
@@ -356,6 +360,8 @@ pub struct GpuStatus {
     pub features: Vec<&'static str>,
     /// Whether processing stages (point ops / local / display) are enabled on this GPU.
     pub stages_enabled: bool,
+    /// Whether zero-copy Vulkan DMA-BUF + explicit SYNC_FD preview export is supported.
+    pub dma_buf_export: bool,
     /// Why no GPU is used, when none is.
     pub reason: Option<String>,
 }
@@ -487,6 +493,8 @@ fn feature_names(features: wgpu::Features) -> Vec<&'static str> {
         (wgpu::Features::SHADER_F16, "SHADER_F16"),
         (wgpu::Features::SUBGROUP, "SUBGROUP"),
         (wgpu::Features::TIMESTAMP_QUERY, "TIMESTAMP_QUERY"),
+        (wgpu::Features::VULKAN_EXTERNAL_MEMORY_FD, "VULKAN_EXTERNAL_MEMORY_FD"),
+        (wgpu::Features::VULKAN_EXTERNAL_MEMORY_DMA_BUF, "VULKAN_EXTERNAL_MEMORY_DMA_BUF"),
     ] {
         if features.contains(flag) {
             out.push(name);
@@ -506,6 +514,7 @@ pub fn status() -> GpuStatus {
             driver: Some(format!("{} {}", g.info.driver, g.info.driver_info).trim().to_string()),
             features: feature_names(g.features),
             stages_enabled: stages_worthwhile(&g),
+            dma_buf_export: g.dmabuf_caps.is_some_and(dmabuf::DmaBufCaps::is_supported),
             reason: None,
         },
         Err(e) => GpuStatus {
@@ -517,6 +526,7 @@ pub fn status() -> GpuStatus {
             driver: None,
             features: Vec::new(),
             stages_enabled: false,
+            dma_buf_export: false,
             reason: Some(e),
         },
     }
@@ -696,17 +706,91 @@ fn init() -> Result<Gpu, InitError> {
     let optional = wgpu::Features::PIPELINE_CACHE
         | wgpu::Features::SHADER_F16
         | wgpu::Features::SUBGROUP
-        | wgpu::Features::TIMESTAMP_QUERY;
+        | wgpu::Features::TIMESTAMP_QUERY
+        | wgpu::Features::VULKAN_EXTERNAL_MEMORY_FD
+        | wgpu::Features::VULKAN_EXTERNAL_MEMORY_DMA_BUF;
     let features = adapter.features() & optional;
-    let (device, queue) = pollster::block_on(adapter.request_device(&wgpu::DeviceDescriptor {
+    let device_desc = wgpu::DeviceDescriptor {
         label: Some("omastudio"),
         required_features: features,
         required_limits: limits.clone(),
         experimental_features: wgpu::ExperimentalFeatures::default(),
         memory_hints: wgpu::MemoryHints::Performance,
         trace: wgpu::Trace::Off,
-    }))
-    .map_err(|e| InitError::Transient(format!("{}: {}", info.name, e)))?;
+    };
+
+    let mut dmabuf_caps: Option<dmabuf::DmaBufCaps> = None;
+    let mut hal_opened: Option<(wgpu::Device, wgpu::Queue)> = None;
+
+    if info.backend == wgpu::Backend::Vulkan {
+        let has_dmabuf_features = features.contains(
+            wgpu::Features::VULKAN_EXTERNAL_MEMORY_FD | wgpu::Features::VULKAN_EXTERNAL_MEMORY_DMA_BUF,
+        );
+        // SAFETY: `adapter` is live and uses the Vulkan backend; `as_hal` borrows the HAL adapter
+        // solely for capability inspection and optional `open_with_callback` device creation.
+        let hal_guard = unsafe { adapter.as_hal::<wgpu::hal::api::Vulkan>() };
+        if let Some(hal_adapter) = hal_guard.as_deref() {
+            let device_uuid = dmabuf::query_device_uuid(
+                hal_adapter.shared_instance().raw_instance(),
+                hal_adapter.raw_physical_device(),
+            );
+            let supports_ext_sem_fd = hal_adapter
+                .physical_device_capabilities()
+                .supports_extension(ash::khr::external_semaphore_fd::NAME);
+            if has_dmabuf_features && supports_ext_sem_fd {
+                // SAFETY: `VK_KHR_external_semaphore_fd` was just verified in `physical_device_capabilities()`;
+                // callback only appends that supported extension without removing any wgpu-required features.
+                let opened = unsafe {
+                    hal_adapter.open_with_callback(
+                        features,
+                        &limits,
+                        &wgpu::MemoryHints::Performance,
+                        Some(Box::new(|args| {
+                            if !args.extensions.contains(&ash::khr::external_semaphore_fd::NAME) {
+                                args.extensions.push(ash::khr::external_semaphore_fd::NAME);
+                            }
+                        })),
+                    )
+                };
+                if let Ok(open_dev) = opened {
+                    // Drop the HAL adapter borrow before calling `adapter.create_device_from_hal`.
+                    drop(hal_guard);
+                    // SAFETY: `open_dev` was created from this exact `adapter` with matching `device_desc`.
+                    match unsafe { adapter.create_device_from_hal::<wgpu::hal::api::Vulkan>(open_dev, &device_desc) } {
+                        Ok(pair) => {
+                            hal_opened = Some(pair);
+                            dmabuf_caps = Some(dmabuf::DmaBufCaps {
+                                device_uuid,
+                                external_memory_dma_buf: true,
+                                external_semaphore_fd: true,
+                            });
+                        }
+                        Err(e) => {
+                            eprintln!("omastudio: Vulkan HAL DMA-BUF device open failed, using standard device: {e}");
+                        }
+                    }
+                } else {
+                    dmabuf_caps = Some(dmabuf::DmaBufCaps {
+                        device_uuid,
+                        external_memory_dma_buf: has_dmabuf_features,
+                        external_semaphore_fd: false,
+                    });
+                }
+            } else {
+                dmabuf_caps = Some(dmabuf::DmaBufCaps {
+                    device_uuid,
+                    external_memory_dma_buf: has_dmabuf_features,
+                    external_semaphore_fd: false,
+                });
+            }
+        }
+    }
+
+    let (device, queue) = match hal_opened {
+        Some(pair) => pair,
+        None => pollster::block_on(adapter.request_device(&device_desc))
+            .map_err(|e| InitError::Transient(format!("{}: {}", info.name, e)))?,
+    };
 
     let (pipeline_cache, pipeline_cache_path) = load_pipeline_cache(&device, &info, features);
 
@@ -728,6 +812,7 @@ fn init() -> Result<Gpu, InitError> {
         info,
         limits,
         features,
+        dmabuf_caps,
         pipeline_cache,
         pipeline_cache_path,
         pipeline_cache_io: Mutex::new(()),
@@ -737,6 +822,7 @@ fn init() -> Result<Gpu, InitError> {
         demosaic: OnceLock::new(),
         point_ops: OnceLock::new(),
         local: OnceLock::new(),
+        dmabuf_pool: OnceLock::new(),
         preview_src: Mutex::new(None),
         stages_auto: OnceLock::new(),
     })

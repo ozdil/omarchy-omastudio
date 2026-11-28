@@ -21,7 +21,9 @@ use cxx_qt_lib::{QList, QString, QStringList};
 use crate::preview_provider;
 use crate::preview_shm::{
     ENV_PREVIEW_FD, PreviewRingReader, create_preview_socketpair, memfd_disabled_by_env,
+    recv_dmabuf_frame_with_ack,
 };
+use crate::viewport_rhi;
 
 #[cxx_qt::bridge]
 pub mod qobject {
@@ -165,6 +167,7 @@ impl Drop for HostProcessRust {
         self.preview_sock = None;
         if self.preview_channel {
             preview_provider::clear_ring(self.generation);
+            viewport_rhi::clear_frames(self.generation);
         }
         terminate(&self.child, Duration::ZERO);
     }
@@ -255,6 +258,7 @@ impl qobject::HostProcess {
         };
         if has_preview {
             preview_provider::clear_ring(prev_gen);
+            viewport_rhi::clear_frames(prev_gen);
         }
         terminate(&child, wait);
         self.set_state(false);
@@ -278,6 +282,7 @@ impl qobject::HostProcess {
         };
         if has_preview {
             preview_provider::clear_ring(prev_gen);
+            viewport_rhi::clear_frames(prev_gen);
         }
         terminate(&child, Duration::ZERO);
         self.set_state(false);
@@ -351,7 +356,21 @@ impl qobject::HostProcess {
         if let Some(parent_fd) = parent_preview_fd {
             std::thread::spawn(move || {
                 match PreviewRingReader::recv_and_ack(parent_fd.as_raw_fd()) {
-                    Ok(Some(reader)) => preview_provider::install_ring(generation, reader),
+                    Ok(Some(reader)) => {
+                        preview_provider::install_ring(generation, reader);
+                        loop {
+                            match recv_dmabuf_frame_with_ack(parent_fd.as_raw_fd(), |frame| {
+                                viewport_rhi::park_frame(generation, frame);
+                            }) {
+                                Ok(true) => {}
+                                Ok(false) => break,
+                                Err(e) => {
+                                    eprintln!("omastudio-app: dma-buf preview channel closed: {e}");
+                                    break;
+                                }
+                            }
+                        }
+                    }
                     Ok(None) => {}
                     Err(e) => eprintln!("omastudio-app: memfd preview handshake failed: {e}"),
                 }
@@ -375,6 +394,7 @@ impl qobject::HostProcess {
                             rust.preview_sock = None;
                             if rust.preview_channel {
                                 preview_provider::clear_ring(generation);
+                                viewport_rhi::clear_frames(generation);
                             }
                             obj.as_mut().set_state(false);
                             obj.as_mut().finished(code, QString::from(output.as_str()));

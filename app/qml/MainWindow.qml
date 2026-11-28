@@ -532,9 +532,29 @@ Rectangle {
         root.sendDaemonCommand({ cmd: "reference", recipe: recipe, proof: root.proofRequest() });
     }
 
+    // Vulkan RHI DMA-BUF preview fallback state (latches to memfd if import ever fails)
+    property bool dmaBufDisabled: false
+    function colorSpaceCode(name) {
+        if (name === "display_p3") return 1;
+        if (name === "bt2020") return 2;
+        if (name === "bt2100_pq") return 3;
+        if (name === "bt2100_hlg") return 4;
+        return 0;
+    }
+    function onDmaBufFailed() {
+        if (root.dmaBufDisabled) return;
+        root.dmaBufDisabled = true;
+        if (root.activePhotoPath !== "") root.requestRender();
+    }
+
     onCompareModeChanged: {
-        if (root.compareMode) root.requestReference();
-        else root.referenceImage = "";
+        if (root.compareMode) {
+            root.requestReference();
+            if (root.viewport && root.viewport.imageSource.indexOf("dmabuf://") === 0)
+                root.requestRender();
+        } else {
+            root.referenceImage = "";
+        }
     }
     onCompareRefChanged: root.requestReference()
     onSnapshotsChanged: if (root.compareRef.indexOf("snap:") === 0) root.requestReference()
@@ -1244,8 +1264,19 @@ Rectangle {
                 if (root.isStalePhotoResponse(respReqId, respPhoto, root.latestAdjustReqId)) return;
                 if (data) {
                     root.activeHistogram = data.histogram;
-                    root.viewport.imageSource = data.image;
-                    root.navigator.imageSource = data.image;
+                    if (data.transport === "dma-buf" && !root.dmaBufDisabled && root.viewport.rhiAvailable) {
+                        root.viewport.showDmaBufPreview(
+                            data.image,
+                            Number(data.generation || 0),
+                            Number(data.width || 0),
+                            Number(data.height || 0),
+                            root.colorSpaceCode(data.color_space)
+                        );
+                        root.navigator.imageSource = data.image;
+                    } else {
+                        root.viewport.imageSource = data.image;
+                        root.navigator.imageSource = data.image;
+                    }
                     root.reportProofError(data.proof_error);
                 }
             } else if (act === "full_ready") {
@@ -1416,6 +1447,16 @@ Rectangle {
         }
     }
 
+    Connections {
+        target: root.viewport
+        function onMaskToolChanged() {
+            if (root.viewport && root.viewport.maskTool === "pick"
+                    && root.viewport.imageSource.indexOf("dmabuf://") === 0) {
+                root.requestRender();
+            }
+        }
+    }
+
     Timer {
         id: renderDebounce
         interval: 20
@@ -1431,6 +1472,9 @@ Rectangle {
                 root.renderWaitedMs = 0;
                 renderWatchdog.restart();
                 var splitVal = root.isSplitView ? root.splitRatio : 0.0;
+                var preferMemfd = root.dmaBufDisabled || Host.softwareRenderer
+                    || !root.viewport.rhiAvailable || root.compareMode
+                    || (root.viewport && root.viewport.maskTool === "pick");
                 root.sendDaemonCommand({
                     cmd: "adjust",
                     recipe: root.buildRecipeObject(),
@@ -1438,7 +1482,8 @@ Rectangle {
                     highlight_mask: root.viewport.showHighlightMask,
                     shadow_mask: root.viewport.showShadowMask,
                     proof: root.proofRequest(),
-                    focus_peaking: root.focusPeaking
+                    focus_peaking: root.focusPeaking,
+                    prefer_memfd: preferMemfd
                 });
             }
         }

@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Layouts
 import QtQuick.Window
 import QtQuick.Controls
+import OmaStudio.Host
 
 Rectangle {
     id: root
@@ -15,6 +16,9 @@ Rectangle {
     color: surroundColor
     clip: true
 
+    readonly property bool rhiAvailable: rhiViewport.available
+    signal dmaBufFailed()
+
     property string imageSource: ""
     property int revisionCounter: 0
     function toImageUrl(src, rev) {
@@ -24,18 +28,27 @@ Rectangle {
         var url = "file://" + src + "?v=" + rev;
         return url;
     }
+    function showDmaBufPreview(url, generation, w, h, colorSpace) {
+        rhiViewport.presentFrame(generation, w, h, colorSpace);
+        root.imageSource = url;
+    }
     onImageSourceChanged: {
         if (!root.imageSource || root.imageSource.length === 0) {
+            rhiViewport.clearFrame();
             imgBuffer0.source = "";
             imgBuffer1.source = "";
             mainImage.currentSource = "";
             return;
         }
-        root.revisionCounter++;
-        var nextSrc = root.toImageUrl(root.imageSource, root.revisionCounter);
         // A new preview means new adjustments: the detail view and the loupe follow
         if (root.detailWanted) detailTimer.restart();
         if (root.loupeActive) root.sendLoupeRequest();
+        if (root.imageSource.indexOf("dmabuf://") === 0) {
+            return;
+        }
+        rhiViewport.clearFrame();
+        root.revisionCounter++;
+        var nextSrc = root.toImageUrl(root.imageSource, root.revisionCounter);
 
         if (imgBuffer0.status !== Image.Ready && imgBuffer1.status !== Image.Ready) {
             imgBuffer0.source = nextSrc;
@@ -660,12 +673,16 @@ Rectangle {
                 property string currentSource: ""
                 readonly property var currentActiveImage: activeBuffer === 0 ? imgBuffer0 : imgBuffer1
                 readonly property var pendingImage: activeBuffer === 0 ? imgBuffer1 : imgBuffer0
-                readonly property real imageWidth: (currentActiveImage && currentActiveImage.implicitWidth > 0)
-                    ? currentActiveImage.implicitWidth
-                    : ((pendingImage && pendingImage.implicitWidth > 0) ? pendingImage.implicitWidth : 1)
-                readonly property real imageHeight: (currentActiveImage && currentActiveImage.implicitHeight > 0)
-                    ? currentActiveImage.implicitHeight
-                    : ((pendingImage && pendingImage.implicitHeight > 0) ? pendingImage.implicitHeight : 1)
+                readonly property real imageWidth: (rhiViewport.dmaBufActive && rhiViewport.frameWidth > 0)
+                    ? rhiViewport.frameWidth
+                    : ((currentActiveImage && currentActiveImage.implicitWidth > 0)
+                        ? currentActiveImage.implicitWidth
+                        : ((pendingImage && pendingImage.implicitWidth > 0) ? pendingImage.implicitWidth : 1))
+                readonly property real imageHeight: (rhiViewport.dmaBufActive && rhiViewport.frameHeight > 0)
+                    ? rhiViewport.frameHeight
+                    : ((currentActiveImage && currentActiveImage.implicitHeight > 0)
+                        ? currentActiveImage.implicitHeight
+                        : ((pendingImage && pendingImage.implicitHeight > 0) ? pendingImage.implicitHeight : 1))
 
                 Item {
                     id: previewSurface
@@ -680,7 +697,7 @@ Rectangle {
                         smooth: true
                         mipmap: true
                         visible: opacity > 0.001
-                        opacity: mainImage.activeBuffer === 0 ? 1.0 : 0.0
+                        opacity: (!rhiViewport.dmaBufActive && mainImage.activeBuffer === 0) ? 1.0 : 0.0
                         z: mainImage.activeBuffer === 0 ? 2 : 1
 
                         onStatusChanged: {
@@ -702,7 +719,7 @@ Rectangle {
                         smooth: true
                         mipmap: true
                         visible: opacity > 0.001
-                        opacity: mainImage.activeBuffer === 1 ? 1.0 : 0.0
+                        opacity: (!rhiViewport.dmaBufActive && mainImage.activeBuffer === 1) ? 1.0 : 0.0
                         z: mainImage.activeBuffer === 1 ? 2 : 1
 
                         onStatusChanged: {
@@ -713,6 +730,15 @@ Rectangle {
                                 }
                             }
                         }
+                    }
+
+                    // Zero-copy Vulkan QQuickRhiItem viewport for DMA-BUF + SYNC_FD FP16 previews
+                    OmaRhiViewport {
+                        id: rhiViewport
+                        anchors.fill: parent
+                        visible: available && (dmaBufActive || root.imageSource.indexOf("dmabuf://") === 0)
+                        z: 3
+                        onDmaBufFailed: root.dmaBufFailed()
                     }
                 }
 

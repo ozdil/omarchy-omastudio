@@ -29,6 +29,9 @@ pub struct RenderResult {
     pub format: Option<&'static str>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub color_space: Option<&'static str>,
+    /// Preview transport (`"dma-buf"` or `"memfd"`), omitted for legacy file-backed responses.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub transport: Option<&'static str>,
 }
 
 impl RenderResult {
@@ -48,6 +51,7 @@ impl RenderResult {
             stride: None,
             format: None,
             color_space: None,
+            transport: None,
         }
     }
 
@@ -67,6 +71,27 @@ impl RenderResult {
             stride: Some(frame.stride),
             format: Some(frame.format.as_str()),
             color_space: Some(frame.color_space.as_str()),
+            transport: Some("memfd"),
+        }
+    }
+
+    pub fn from_dmabuf(
+        desc: &omastudio_engine::preview_shm::DmaBufFrameDesc,
+        histogram: pipeline::histogram::HistogramData,
+        proof_error: Option<String>,
+    ) -> Self {
+        Self {
+            image: format!("dmabuf://omastudio/preview/{}", desc.generation),
+            histogram,
+            proof_error,
+            slot: None,
+            generation: Some(desc.generation),
+            width: Some(desc.width),
+            height: Some(desc.height),
+            stride: Some(desc.stride),
+            format: Some("rgba16f"),
+            color_space: Some(desc.color_space.as_str()),
+            transport: Some("dma-buf"),
         }
     }
 }
@@ -195,4 +220,7 @@ pub struct DaemonCommand {
     /// `detail`: "loupe" renders for the loupe, into files of its own, and is echoed back
     #[serde(default)]
     pub tag: Option<String>,
+    /// `adjust`: request `memfd` transport (used during colour picking, compare, or DMA-BUF fallback)
+    #[serde(default)]
+    pub prefer_memfd: Option<bool>,
 }

@@ -1408,6 +1408,226 @@ fn display_on_with_options(
     Ok((pixels, hist))
 }
 
+/// Zero-copy GPU-to-GPU Vulkan DMA-BUF display path (`WP-15`): runs the entire single-band
+/// preview pipeline on the GPU, writes directly into a double-buffered exportable `Rgba16Float`
+/// `VkImage`, signals an exportable `SYNC_FD` semaphore, and reads back ONLY the tiny scope/
+/// histogram counts (zero pixel readback over PCIe). Returns `None` on unsupported GPUs,
+/// multi-band frames, or any runtime error so the daemon falls back transparently to `memfd`.
+#[allow(clippy::too_many_arguments)]
+pub fn run_display_dmabuf(
+    input: &[u16],
+    w: usize,
+    h: usize,
+    ch: usize,
+    recipe: &Recipe,
+    inputs: &super::point_ops::PointInputs,
+    scale: f32,
+    color_space: crate::preview_shm::ColorSpaceTag,
+) -> Option<super::dmabuf::ExportedDmaBufFrame> {
+    if ch != 3 || w == 0 || h == 0 || w * h < super::point_ops::MIN_PIXELS {
+        return None;
+    }
+    let gpu = super::acquire().filter(|g| {
+        super::stages_worthwhile(g)
+            && g.dmabuf_caps.is_some_and(super::dmabuf::DmaBufCaps::is_supported)
+    })?;
+    match display_dmabuf_on(&gpu, input, w, h, ch, recipe, inputs, scale, color_space) {
+        Ok(frame) => Some(frame),
+        Err(e) => {
+            if super::profiling_enabled() {
+                eprintln!("omastudio: DMA-BUF preview unavailable, falling back to memfd: {e}");
+            }
+            None
+        }
+    }
+}
+
+#[allow(clippy::too_many_arguments)]
+fn display_dmabuf_on(
+    gpu: &Gpu,
+    input: &[u16],
+    w: usize,
+    h: usize,
+    ch: usize,
+    recipe: &Recipe,
+    inputs: &super::point_ops::PointInputs,
+    scale: f32,
+    color_space: crate::preview_shm::ColorSpaceTag,
+) -> Result<super::dmabuf::ExportedDmaBufFrame, String> {
+    if input.len() < w * h * ch {
+        return Err("unsupported buffer".to_string());
+    }
+    let (lay, has_layers) = match layer_step(w, h, (0, 0, w, h), recipe)? {
+        Some((lay, _)) => (lay, true),
+        None => (Vec::new(), false),
+    };
+    let limit = gpu_strip_limit(gpu);
+    let (halo, max_blur_r) = effective_halo_and_blur(recipe, scale, w, h);
+    let strip_plan = compute_strip_plan(w, h, halo, max_blur_r, limit, gpu.limits.max_compute_workgroups_per_dimension)?;
+    if !strip_plan.is_single_band() {
+        return Err("multi-band frame uses memfd fallback".to_string());
+    }
+    let geometry = crate::pipeline::detail::Geometry::new(w, h, recipe);
+    let strips = build_display_strips(w, h, strip_plan, halo, geometry.as_ref())?;
+    if strips.len() != 1 {
+        return Err("multi-strip frame uses memfd fallback".to_string());
+    }
+    let strip = &strips[0];
+    let combine_scopes = gpu.limits.max_compute_workgroup_storage_size >= COMBINED_HIST_WG_STORAGE;
+    let mut steps = Vec::new();
+    if has_layers {
+        steps.push(layer_dispatch(w, h, (0, 0, w, h)));
+    }
+    steps.extend(plan(w, h, w, h, recipe, scale));
+    steps.extend(display_steps_for_strip(w, h, strip, 4, recipe, scale, geometry.as_ref(), combine_scopes));
+
+    let max_groups = gpu.limits.max_compute_workgroups_per_dimension;
+    for s in &steps {
+        if s.groups.0 > max_groups || s.groups.1 > max_groups {
+            return Err("frame exceeds compute workgroup limit".to_string());
+        }
+    }
+
+    let pixels_u64 = (w * h) as u64;
+    let (rgb_size, plane_size) = (pixels_u64 * 12, pixels_u64 * 4);
+    if rgb_size > limit || plane_size * PLANES > limit || plane_size * PLANES > u32::MAX as u64 {
+        return Err("frame exceeds GPU buffer limits".to_string());
+    }
+    let layers_size = (lay.len() * 4) as u64;
+    if layers_size > limit {
+        return Err("masks exceed GPU buffer limits".to_string());
+    }
+
+    let pipeline = pipeline(gpu)?;
+    let pool_mutex = gpu
+        .dmabuf_pool
+        .get_or_init(|| super::dmabuf::DmaBufPool::new(gpu).map(std::sync::Mutex::new))
+        .as_ref()
+        .map_err(|e| e.clone())?;
+
+    let _job = gpu.lock_job(true);
+    let stride = PARAMS_SIZE.next_multiple_of(gpu.limits.min_uniform_buffer_offset_alignment as u64);
+    let params_size = stride * steps.len() as u64;
+    let device = &gpu.device;
+    let timeout = gpu.poll_timeout(true);
+    let mut cache = pipeline.buffers.lock().map_err(|_| "GPU buffer lock poisoned")?;
+    let mut pool = pool_mutex.lock().map_err(|_| "DMA-BUF pool lock poisoned")?;
+
+    let scope = device.push_error_scope(wgpu::ErrorFilter::Validation);
+    let oom = device.push_error_scope(wgpu::ErrorFilter::OutOfMemory);
+    let result = (|| -> Result<super::dmabuf::ExportedDmaBufFrame, String> {
+        if !cache.as_ref().is_some_and(|b| b.compute.fits(params_size, rgb_size, plane_size, layers_size)) {
+            let (p, r, l, m) = cache.as_ref().map_or((0, 0, 0, 0), |b| {
+                (b.compute.params_size, b.compute.rgb_size, b.compute.plane_size, b.compute.layers_size)
+            });
+            *cache = None;
+            *cache = Some(Buffers::new(
+                gpu,
+                &pipeline.layout,
+                params_size.max(p).max(stride * 64),
+                rgb_size.max(r),
+                plane_size.max(l),
+                layers_size.max(m).max(256),
+            ));
+        }
+        let bufs = cache.as_mut().expect("buffers");
+        if !bufs.display.as_ref().is_some_and(|d| d.pixel_cap >= pixels_u64) {
+            let cap = bufs.display.as_ref().map_or(0, |d| d.pixel_cap).max(pixels_u64);
+            bufs.display = None;
+            bufs.display = Some(DisplayBuffers::new(device, &pipeline.layout, &bufs.compute, cap));
+        }
+        let bufs = cache.as_ref().expect("buffers");
+        if !lay.is_empty() {
+            gpu.queue.write_buffer(&bufs.compute.layers, 0, as_bytes(&lay));
+        }
+
+        super::point_ops::run_into(gpu, input, w, ch, 0, h, recipe, inputs, &bufs.compute.rgb)?;
+
+        let mut params_bytes = vec![0u8; params_size as usize];
+        for (i, s) in steps.iter().enumerate() {
+            let at = i * stride as usize;
+            params_bytes[at..at + PARAMS_SIZE as usize].copy_from_slice(as_bytes(&s.params));
+        }
+        if !params_bytes.is_empty() {
+            gpu.queue.write_buffer(&bufs.compute.params, 0, &params_bytes);
+        }
+
+        let disp = bufs.display.as_ref().expect("display buffers");
+        let hist_len = (crate::pipeline::histogram::SCOPE_WORDS * 4) as u64;
+        let mut enc = device.create_command_encoder(&wgpu::CommandEncoderDescriptor { label: Some("local dmabuf") });
+        enc.clear_buffer(&disp.hist, 0, Some(hist_len));
+        {
+            let mut pass = enc.begin_compute_pass(&wgpu::ComputePassDescriptor {
+                label: Some("local dmabuf"),
+                timestamp_writes: None,
+            });
+            for (i, s) in steps.iter().enumerate() {
+                let step_pipeline = if s.entry == HIST_ALL_ENTRY {
+                    pipeline.hist_all.as_ref().expect("hist_all pipeline")
+                } else {
+                    &pipeline.pipelines[s.entry]
+                };
+                pass.set_pipeline(step_pipeline);
+                pass.set_bind_group(0, &disp.bind_display, &[(i as u64 * stride) as u32]);
+                pass.dispatch_workgroups(s.groups.0, s.groups.1, 1);
+            }
+        }
+        // Copy ONLY the tiny scope/histogram buffer — zero full-frame pixel readback.
+        enc.copy_buffer_to_buffer(&disp.hist, 0, &disp.staging_hist, 0, hist_len);
+
+        let (idx, desc, dmabuf_fd, sync_fd) =
+            pool.encode_submit_and_export(gpu, enc, &disp.px8, w as u32, h as u32, color_space)?;
+
+        let (tx, rx) = mpsc::channel();
+        disp.staging_hist.map_async(wgpu::MapMode::Read, 0..hist_len, move |r| {
+            let _ = tx.send(r);
+        });
+        let mut hist_guard = super::StagingGuard::new(&disp.staging_hist);
+        gpu.wait_submission(Some(idx), timeout)?;
+        let hist_map = rx.recv().map_err(|e| e.to_string())?;
+        if hist_map.is_err() {
+            hist_guard.disarm();
+        }
+        hist_map.map_err(|e| e.to_string())?;
+        let words: Vec<u32> = {
+            let hview = disp.staging_hist.get_mapped_range(0..hist_len).map_err(|e| e.to_string())?;
+            hview
+                .as_chunks::<4>()
+                .0
+                .iter()
+                .map(|c| u32::from_ne_bytes(*c))
+                .collect()
+        };
+        hist_guard.unmap_now();
+
+        let hist = crate::pipeline::histogram::histogram_from_scope_words(&words, w * h);
+        Ok(super::dmabuf::ExportedDmaBufFrame {
+            desc,
+            dmabuf_fd,
+            sync_fd,
+            histogram: hist,
+        })
+    })();
+
+    let scope_res = super::drain_scopes(oom, scope);
+    match (result, scope_res) {
+        (Ok(frame), Ok(())) => {
+            if let Some(b) = cache.as_mut() {
+                b.last_used = std::time::Instant::now();
+            }
+            Ok(frame)
+        }
+        (Err(e), Ok(())) => {
+            *cache = None;
+            Err(e)
+        }
+        (Ok(_), Err(e)) | (Err(_), Err(e)) => {
+            *cache = None;
+            Err(e)
+        }
+    }
+}
+
 /// Where [`execute_bands`] puts its result.
 enum Out<'a> {
     /// RGB f32, which is also uploaded when a single-band job uses [`BandSrc::InPlaceF32`].

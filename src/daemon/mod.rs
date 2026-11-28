@@ -11,7 +11,7 @@ pub mod worker;
 
 use std::collections::VecDeque;
 use std::io::{self, BufRead};
-use std::os::fd::AsRawFd;
+use std::os::fd::{AsRawFd, OwnedFd};
 use std::path::Path;
 use std::sync::{Arc, Condvar, Mutex};
 
@@ -21,8 +21,14 @@ use omastudio_engine::{
         apply_jev_decisions_to_recipe,
     },
     fuji, gpu, icc,
-    pipeline::{self, process_buffer_16_to_8_ex, process_split_comparison_16_to_8_ex},
-    preview_shm::{ColorSpaceTag, PreviewRingWriter, SlotKind, take_inherited_preview_fd},
+    pipeline::{
+        self, process_buffer_16_to_8_ex, process_split_comparison_16_to_8_ex,
+        try_process_preview_dmabuf,
+    },
+    preview_shm::{
+        ColorSpaceTag, PreviewRingWriter, SlotKind, dmabuf_enabled_by_env,
+        send_dmabuf_frame_and_wait_ack, take_inherited_preview_fd,
+    },
     raw::{self, RawImage},
     recipe::{Catalog, CatalogFilter, Recipe},
     security,
@@ -176,17 +182,22 @@ fn spawn_stdin_reader(queue: Arc<CommandQueue>) {
 }
 
 pub fn run() {
+    let mut preview_sock: Option<OwnedFd> = None;
     let mut preview_ring: Option<PreviewRingWriter> = take_inherited_preview_fd().and_then(|sock| {
         match PreviewRingWriter::create()
             .and_then(|ring| ring.send_and_wait_ack(sock.as_raw_fd(), 2_000).map(|()| ring))
         {
-            Ok(ring) => Some(ring),
+            Ok(ring) => {
+                preview_sock = Some(sock);
+                Some(ring)
+            }
             Err(e) => {
                 eprintln!("omastudio: memfd preview ring unavailable, falling back to /dev/shm: {e}");
                 None
             }
         }
     });
+    let mut dmabuf_active = preview_sock.is_some() && dmabuf_enabled_by_env();
 
     let cache = Arc::new(Mutex::new(DaemonCache::default()));
     let (export_tx, export_worker) = spawn_export_worker();
@@ -420,6 +431,54 @@ pub fn run() {
                     height as usize,
                     channels as usize,
                 );
+
+                // Stage 4B (WP-15): Zero-copy Vulkan DMA-BUF + explicit SYNC_FD preview when
+                // enabled and no CPU-only overlay (split/clipping/soft-proof/peaking) is active.
+                let allow_dmabuf = dmabuf_active
+                    && cmd_obj.out.is_none()
+                    && cmd_obj.prefer_memfd != Some(true)
+                    && split <= 0.001
+                    && !highlight_mask
+                    && !shadow_mask
+                    && cmd_obj.proof.is_none()
+                    && cmd_obj.focus_peaking != Some(true);
+                if allow_dmabuf
+                    && let Some(sock) = preview_sock.as_ref()
+                    && let Some(exported) = gpu::with_preview_source_key(preview_key, || {
+                        try_process_preview_dmabuf(
+                            buffer,
+                            width,
+                            height,
+                            channels,
+                            &recipe,
+                            transfer,
+                            ColorSpaceTag::Srgb,
+                        )
+                    })
+                {
+                    match send_dmabuf_frame_and_wait_ack(
+                        sock.as_raw_fd(),
+                        &exported.desc,
+                        exported.dmabuf_fd.as_raw_fd(),
+                        exported.sync_fd.as_ref().map(AsRawFd::as_raw_fd),
+                        2_000,
+                    ) {
+                        Ok(()) => {
+                            print_json(
+                                &ResponseWrapper::ok_action(
+                                    "adjust",
+                                    RenderResult::from_dmabuf(&exported.desc, exported.histogram, None),
+                                )
+                                .with_context(req_id, photo_path),
+                            );
+                            continue;
+                        }
+                        Err(e) => {
+                            eprintln!("omastudio: DMA-BUF send failed, switching session to memfd: {e}");
+                            dmabuf_active = false;
+                        }
+                    }
+                }
 
                 let (mut final_buf, hist) = gpu::with_preview_source_key(preview_key, || {
                     if split > 0.001 {

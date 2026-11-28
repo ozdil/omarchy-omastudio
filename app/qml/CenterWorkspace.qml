@@ -182,5 +182,6 @@ ColumnLayout {
             centerColumn.host.scanLocalFolder(folderPath);
             centerColumn.host.showToast(qsTr("Scanning folder %1").arg(folderPath.split("/").pop()), Theme.accentCyan);
         }
+        onDmaBufFailed: if (centerColumn.host) centerColumn.host.onDmaBufFailed()
     }
 }
